@@ -4,6 +4,7 @@ export enum ExtensionInternalCommandType {
     Subscribe = 'EXTENSION_INTERNAL:SUBSCRIBE',
     Unsubscribe = 'EXTENSION_INTERNAL:UNSUBSCRIBE',
     ResizeIframe = 'EXTENSION_INTERNAL:RESIZE_IFRAME',
+    WorkerHandshake = 'EXTENSION_INTERNAL:WORKER_HANDSHAKE',
 }
 
 export interface ExtensionSubscribeCommand {
@@ -29,13 +30,22 @@ export interface ExtensionResizeIframeCommand {
     };
 }
 
+export interface ExtensionWorkerHandshakeCommand {
+    type: ExtensionInternalCommandType.WorkerHandshake;
+    payload: {
+        extensionId: string;
+    };
+}
+
 export interface ExtensionInternalCommandMap {
     [ExtensionInternalCommandType.Subscribe]: ExtensionSubscribeCommand;
     [ExtensionInternalCommandType.Unsubscribe]: ExtensionUnsubscribeCommand;
     [ExtensionInternalCommandType.ResizeIframe]: ExtensionResizeIframeCommand;
+    [ExtensionInternalCommandType.WorkerHandshake]: ExtensionWorkerHandshakeCommand;
 }
 
 export type ExtensionInternalCommand =
     | ExtensionSubscribeCommand
     | ExtensionUnsubscribeCommand
-    | ExtensionResizeIframeCommand;
+    | ExtensionResizeIframeCommand
+    | ExtensionWorkerHandshakeCommand;
