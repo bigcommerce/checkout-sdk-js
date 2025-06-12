@@ -18,8 +18,8 @@
                 "no-param-reassign": "off",
                 "@typescript-eslint/no-unnecessary-condition": "off",
                 "@eslint-disable-next-line": "off",
-                "@typescript-eslint/no-misused-promises": "off"
-
+                "@typescript-eslint/no-misused-promises": "off",
+                "complexity": "off"
             }
         },
         {

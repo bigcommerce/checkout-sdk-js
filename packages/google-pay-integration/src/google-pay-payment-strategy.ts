@@ -54,6 +54,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     async initialize(
         options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions,
     ): Promise<void> {
+        console.log('init payment strategy');
         if (!options?.methodId || !isGooglePayKey(options.methodId)) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" is not a valid key.',

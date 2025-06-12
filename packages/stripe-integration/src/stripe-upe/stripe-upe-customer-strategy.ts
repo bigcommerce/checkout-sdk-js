@@ -14,6 +14,7 @@ import {
     isStripePaymentMethodLike,
     StripeAppearanceOptions,
     StripeClient,
+    StripeElementEvent,
     StripeElements,
     StripeElementType,
     StripeEventType,
@@ -128,7 +129,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
                 this._stripeElements.create(StripeElementType.AUTHENTICATION, options);
 
-            linkAuthenticationElement.on('change', (event: StripeEventType) => {
+            linkAuthenticationElement.on(StripeElementEvent.CHANGE, (event: StripeEventType) => {
                 if (!('authenticated' in event)) {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
                 }
