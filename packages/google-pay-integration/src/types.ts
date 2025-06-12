@@ -1,3 +1,4 @@
+import { BigCommercePaymentsIntent } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     BrowserInfo,
     BuyNowCartRequestBody,
@@ -364,6 +365,27 @@ export interface GooglePayPayPalCommerceInitializationData extends GooglePayBase
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 
+export interface GooglePayBigCommercePaymentsInitializationData
+    extends GooglePayBaseInitializationData {
+    merchantId?: string;
+    clientId: string;
+    attributionId?: string;
+    availableAlternativePaymentMethods: FundingType;
+    buttonStyle?: PayPalButtonStyleOptions;
+    buyerCountry?: string;
+    clientToken?: string;
+    enabledAlternativePaymentMethods: FundingType;
+    isDeveloperModeApplicable?: boolean;
+    intent?: BigCommercePaymentsIntent;
+    isHostedCheckoutEnabled?: boolean;
+    isPayPalCreditAvailable?: boolean;
+    isVenmoEnabled?: boolean;
+    isGooglePayEnabled?: boolean;
+    orderId?: string;
+    shouldRenderFields?: boolean;
+    paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
+}
+
 export interface GooglePayAuthorizeNetInitializationData extends GooglePayBaseInitializationData {
     paymentGatewayId: string;
 }
@@ -386,6 +408,38 @@ export interface GooglePayAdyenV2InitializationData extends GooglePayBaseInitial
     paymentMethodsResponse: object;
 }
 
+export interface GooglePayConfig {
+    allowedPaymentMethods: AllowedPaymentMethods[];
+    apiVersion: number;
+    apiVersionMinor: number;
+    countryCode: string;
+    isEligible: boolean;
+    merchantInfo: {
+        merchantId: string;
+        merchantOrigin: string;
+    };
+}
+
+export interface AllowedPaymentMethods {
+    type: string;
+    parameters: {
+        allowedAuthMethods: string[];
+        allowedCardNetworks: string[];
+        billingAddressRequired: boolean;
+        assuranceDetailsRequired: boolean;
+        billingAddressParameters: {
+            format: string;
+        };
+    };
+    tokenizationSpecification: {
+        type: string;
+        parameters: {
+            gateway: string;
+            gatewayMerchantId: string;
+        };
+    };
+}
+
 export interface GooglePayAdyenV3InitializationData extends GooglePayBaseInitializationData {
     clientKey: string;
     environment?: string;
@@ -400,7 +454,8 @@ export type GooglePayInitializationData =
     | GooglePayAuthorizeNetInitializationData
     | GooglePayStripeInitializationData
     | GooglePayCheckoutComInitializationData
-    | GooglePayPayPalCommerceInitializationData;
+    | GooglePayPayPalCommerceInitializationData
+    | GooglePayBigCommercePaymentsInitializationData;
 
 export interface GooglePaySetExternalCheckoutData {
     nonce: string;
