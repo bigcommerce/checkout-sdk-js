@@ -18,9 +18,6 @@
         "target": "es5",
         "baseUrl": ".",
         "paths": {
-            "@@bigcommerce/checkout-sdk/digitalriver-integration": [
-                "packages/digitalriver-integration/src/index.ts"
-            ],
             "@bigcommerce/checkout-sdk/adyen-integration": [
                 "packages/adyen-integration/src/index.ts"
             ],

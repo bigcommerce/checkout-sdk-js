@@ -137,10 +137,6 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'barclaycard',
         method: 'credit_card',
     },
-    digitalriver: {
-        provider: 'digitalriver',
-        method: 'credit_card',
-    },
     moneris: {
         provider: 'moneris',
         method: 'credit_card',
