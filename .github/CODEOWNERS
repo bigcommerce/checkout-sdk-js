@@ -31,7 +31,6 @@
 /packages/core/src/payment/strategies/checkoutcom @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/clearpay @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/converge @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/digitalriver @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/humm @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/klarna @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/klarnav2 @bigcommerce/team-integrations
@@ -55,7 +54,6 @@
 /packages/checkoutcom-custom-integration @bigcommerce/team-integrations
 /packages/clearpay-integration @bigcommerce/team-integrations
 /packages/cybersource-integration @bigcommerce/team-integrations
-/packages/digitalriver-integration @bigcommerce/team-integrations
 /packages/mollie-integration @bigcommerce/team-integrations
 /packages/sagepay-integration @bigcommerce/team-integrations
 /packages/squarev2-integration @bigcommerce/team-integrations
