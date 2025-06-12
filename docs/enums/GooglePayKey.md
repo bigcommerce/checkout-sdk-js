@@ -11,6 +11,7 @@ The recognized keys to pass the initialization options for Google Pay.
 - [ADYEN_V2](GooglePayKey.md#adyen_v2)
 - [ADYEN_V3](GooglePayKey.md#adyen_v3)
 - [AUTHORIZE_NET](GooglePayKey.md#authorize_net)
+- [BIGCOMMERCE_PAYMENTS](GooglePayKey.md#bigcommerce_payments)
 - [BNZ](GooglePayKey.md#bnz)
 - [BRAINTREE](GooglePayKey.md#braintree)
 - [CHECKOUT_COM](GooglePayKey.md#checkout_com)
@@ -39,6 +40,12 @@ ___
 ### AUTHORIZE\_NET
 
 • **AUTHORIZE\_NET**
+
+___
+
+### BIGCOMMERCE\_PAYMENTS
+
+• **BIGCOMMERCE\_PAYMENTS**
 
 ___
 
