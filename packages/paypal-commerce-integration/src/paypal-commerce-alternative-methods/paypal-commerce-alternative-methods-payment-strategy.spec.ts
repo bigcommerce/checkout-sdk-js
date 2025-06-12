@@ -12,6 +12,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getConfig,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
@@ -632,6 +633,103 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     describe('#finalize()', () => {
         it('throws error to inform that order finalization is not required', async () => {
             await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
+        });
+    });
+
+    describe('#polling mechanism', () => {
+        beforeEach(() => {
+            const storeConfigMock = {
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5192.paypal_commerce_ideal_polling': true,
+                    },
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                Promise.resolve(paymentIntegrationService.getState()),
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+        });
+
+        it('initialize polling mechanism', async () => {
+            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+                PayPalOrderStatus.Approved,
+            );
+
+            const payload = {
+                payment: {
+                    methodId: 'ideal',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await strategy.execute(payload);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.getOrderStatus).toHaveBeenCalled();
+        });
+
+        it('request order status with proper payload', async () => {
+            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+                PayPalOrderStatus.Approved,
+            );
+
+            const payload = {
+                payment: {
+                    methodId: 'ideal',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await strategy.execute(payload);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.getOrderStatus).toHaveBeenCalledWith(
+                'paypalcommercealternativemethods',
+            );
+        });
+
+        it('deinitialize polling mechanism', async () => {
+            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+                PayPalOrderStatus.Approved,
+            );
+
+            const payload = {
+                payment: {
+                    methodId: 'ideal',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+
+            jest.spyOn(global, 'clearTimeout');
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await strategy.execute(payload);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            await strategy.deinitialize();
+
+            expect(clearTimeout).toHaveBeenCalled();
         });
     });
 });
