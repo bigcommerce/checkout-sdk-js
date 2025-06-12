@@ -216,16 +216,16 @@ describe('KlarnaV2PaymentStrategy', () => {
                 'PI-4025.klarna_single_radio_button': true,
             };
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
-                storeConfigMock,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
 
             await strategy.initialize({
                 methodId: paymentMethod.id,
                 gatewayId: paymentMethod.gateway,
                 klarnav2: { container: '#container', onLoad },
             });
-
 
             expect(klarnaPayments.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaPayments.load).toHaveBeenCalledWith(
@@ -295,14 +295,15 @@ describe('KlarnaV2PaymentStrategy', () => {
             );
         });
 
-        it('authorizes against klarnav2 when PI-4025.klarna_single_radio_button experiment is enabled ', async () => {
+        it('authorizes against klarnav2 when PI-4025.klarna_single_radio_button experiment is enabled', async () => {
             storeConfigMock.checkoutSettings.features = {
                 'PI-4025.klarna_single_radio_button': true,
             };
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
-                storeConfigMock,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
 
             const loadCheckoutMock = jest.spyOn(paymentIntegrationService, 'loadCheckout');
 

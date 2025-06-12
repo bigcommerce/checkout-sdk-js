@@ -105,7 +105,12 @@ export default class KlarnaV2PaymentStrategy {
 
         await this.klarnav2TokenUpdater.klarnaOrderInitialization(cartId, clientToken);
 
-        const { authorization_token: authorizationToken } = await this.authorizeOrThrow(methodId, gatewayId);
+        const paymentMethodСategory = this.isKlarnaSingleRadioButtonEnabled()
+            ? gatewayId
+            : methodId;
+        const { authorization_token: authorizationToken } = await this.authorizeOrThrow(
+            paymentMethodСategory,
+        );
 
         await this.paymentIntegrationService.initializePayment(gatewayId, {
             authorizationToken,
@@ -163,7 +168,12 @@ export default class KlarnaV2PaymentStrategy {
 
             this.klarnaPayments.init({ client_token: paymentMethod.clientToken });
             this.klarnaPayments.load(
-                { container, payment_method_category: this.isKlarnaSingleRadioButtonEnabled() ? paymentMethod.gateway : methodId},
+                {
+                    container,
+                    payment_method_category: this.isKlarnaSingleRadioButtonEnabled()
+                        ? paymentMethod.gateway
+                        : methodId,
+                },
                 (response) => {
                     if (onLoad) {
                         onLoad(response);
@@ -228,7 +238,9 @@ export default class KlarnaV2PaymentStrategy {
         return klarnaAddress;
     }
 
-    private async authorizeOrThrow(methodId: string, gatewayId: string): Promise<KlarnaAuthorizationResponse> {
+    private async authorizeOrThrow(
+        paymentMethodСategory: string,
+    ): Promise<KlarnaAuthorizationResponse> {
         await this.paymentIntegrationService.loadCheckout();
 
         const state = this.paymentIntegrationService.getState();
@@ -245,7 +257,9 @@ export default class KlarnaV2PaymentStrategy {
             }
 
             this.klarnaPayments.authorize(
-                { payment_method_category: this.isKlarnaSingleRadioButtonEnabled() ? gatewayId : methodId },
+                {
+                    payment_method_category: paymentMethodСategory,
+                },
                 updateSessionData,
                 (res) => {
                     if (res.approved) {
