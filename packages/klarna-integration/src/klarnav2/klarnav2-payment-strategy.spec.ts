@@ -12,14 +12,17 @@ import {
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
     PaymentMethodInvalidError,
+    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getAddress,
     getCheckout,
+    getConfig,
     getOrderRequestBody,
     getResponse,
     PaymentIntegrationServiceMock,
@@ -51,6 +54,7 @@ describe('KlarnaV2PaymentStrategy', () => {
     let paymentMethodMock: PaymentMethod;
     let klarnav2TokenUpdater: KlarnaV2TokenUpdater;
     let paymentIntegrationService: PaymentIntegrationService;
+    let storeConfigMock: StoreConfig;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -89,6 +93,10 @@ describe('KlarnaV2PaymentStrategy', () => {
         };
 
         checkoutMock = getCheckout();
+        storeConfigMock = getConfig().storeConfig;
+        storeConfigMock.checkoutSettings.features = {
+            'PI-4025.klarna_single_radio_button': false,
+        };
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
@@ -111,6 +119,10 @@ describe('KlarnaV2PaymentStrategy', () => {
 
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
             checkoutMock,
+        );
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigMock,
         );
     });
 
@@ -199,8 +211,60 @@ describe('KlarnaV2PaymentStrategy', () => {
             expect(klarnaPayments.load).toHaveBeenCalledTimes(1);
         });
 
+        it('loads payments widget when PI-4025.klarna_single_radio_button experiment is enabled', async () => {
+            storeConfigMock.checkoutSettings.features = {
+                'PI-4025.klarna_single_radio_button': true,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+                klarnav2: { container: '#container', onLoad },
+            });
+
+            expect(klarnaPayments.init).toHaveBeenCalledWith({ client_token: 'foo' });
+            expect(klarnaPayments.load).toHaveBeenCalledWith(
+                { container: '#container', payment_method_category: paymentMethod.gateway },
+                expect.any(Function),
+            );
+        });
+
         it('triggers callback with response', () => {
             expect(onLoad).toHaveBeenCalledWith({ show_form: true });
+        });
+
+        it('calls loadPaymentsWidget when subscription is triggered and isPaymentMethodInitialized is true', async () => {
+            const loadPaymentsWidgetMock = jest
+                .spyOn(
+                    strategy as unknown as { loadPaymentsWidget: jest.Mock },
+                    'loadPaymentsWidget',
+                )
+                .mockImplementation(jest.fn());
+
+            const subscribeMock = jest.spyOn(paymentIntegrationService, 'subscribe');
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+                klarnav2: { container: '#container' },
+            });
+
+            const subscriber = subscribeMock.mock.calls[0][0];
+
+            subscriber({
+                isPaymentMethodInitialized: () => true,
+            } as unknown as PaymentIntegrationSelectors);
+
+            expect(loadPaymentsWidgetMock).toHaveBeenCalledWith({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+                klarnav2: { container: '#container' },
+            });
         });
     });
 
@@ -222,6 +286,33 @@ describe('KlarnaV2PaymentStrategy', () => {
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
                 { payment_method_category: paymentMethod.id },
+                getKlarnaV2UpdateSessionParamsPhone(),
+                expect.any(Function),
+            );
+            expect(klarnav2TokenUpdater.updateClientToken).toHaveBeenCalledWith(
+                paymentMethod.gateway,
+                { params: { params: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' } },
+            );
+        });
+
+        it('authorizes against klarnav2 when PI-4025.klarna_single_radio_button experiment is enabled', async () => {
+            storeConfigMock.checkoutSettings.features = {
+                'PI-4025.klarna_single_radio_button': true,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            const loadCheckoutMock = jest.spyOn(paymentIntegrationService, 'loadCheckout');
+
+            loadCheckoutMock.mockImplementation(jest.fn());
+
+            await strategy.execute(payload);
+
+            expect(klarnaPayments.authorize).toHaveBeenCalledWith(
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
             );
