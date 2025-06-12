@@ -105,7 +105,7 @@ export default class KlarnaV2PaymentStrategy {
 
         await this.klarnav2TokenUpdater.klarnaOrderInitialization(cartId, clientToken);
 
-        const { authorization_token: authorizationToken } = await this.authorizeOrThrow(methodId);
+        const { authorization_token: authorizationToken } = await this.authorizeOrThrow(methodId, gatewayId);
 
         await this.paymentIntegrationService.initializePayment(gatewayId, {
             authorizationToken,
@@ -163,7 +163,7 @@ export default class KlarnaV2PaymentStrategy {
 
             this.klarnaPayments.init({ client_token: paymentMethod.clientToken });
             this.klarnaPayments.load(
-                { container, payment_method_category: paymentMethod.id },
+                { container, payment_method_category: this.isKlarnaSingleRadioButtonEnabled() ? paymentMethod.gateway : methodId},
                 (response) => {
                     if (onLoad) {
                         onLoad(response);
@@ -228,7 +228,7 @@ export default class KlarnaV2PaymentStrategy {
         return klarnaAddress;
     }
 
-    private async authorizeOrThrow(methodId: string): Promise<KlarnaAuthorizationResponse> {
+    private async authorizeOrThrow(methodId: string, gatewayId: string): Promise<KlarnaAuthorizationResponse> {
         await this.paymentIntegrationService.loadCheckout();
 
         const state = this.paymentIntegrationService.getState();
@@ -245,7 +245,7 @@ export default class KlarnaV2PaymentStrategy {
             }
 
             this.klarnaPayments.authorize(
-                { payment_method_category: methodId },
+                { payment_method_category: this.isKlarnaSingleRadioButtonEnabled() ? gatewayId : methodId },
                 updateSessionData,
                 (res) => {
                     if (res.approved) {
@@ -260,5 +260,13 @@ export default class KlarnaV2PaymentStrategy {
                 },
             );
         });
+    }
+
+    private isKlarnaSingleRadioButtonEnabled(): boolean {
+        const { features } = this.paymentIntegrationService
+            .getState()
+            .getStoreConfigOrThrow().checkoutSettings;
+
+        return features['PI-4025.klarna_single_radio_button'];
     }
 }
