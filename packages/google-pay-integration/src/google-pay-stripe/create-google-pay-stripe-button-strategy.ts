@@ -33,4 +33,5 @@ const createGooglePayStripeButtonStrategy: CheckoutButtonStrategyFactory<
 export default toResolvableModule(createGooglePayStripeButtonStrategy, [
     { id: 'googlepaystripe' },
     { id: 'googlepaystripeupe' },
+    { id: 'googlepaystripeocs' },
 ]);

@@ -33,4 +33,5 @@ const createGooglePayStripePaymentStrategy: PaymentStrategyFactory<GooglePayPaym
 export default toResolvableModule(createGooglePayStripePaymentStrategy, [
     { id: 'googlepaystripe' },
     { id: 'googlepaystripeupe' },
+    { id: 'googlepaystripeocs' },
 ]);
