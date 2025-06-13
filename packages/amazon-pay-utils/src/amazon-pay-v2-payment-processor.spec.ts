@@ -454,30 +454,6 @@ describe('AmazonPayV2PaymentProcessor', () => {
             );
         });
 
-        it('should provide a relative URL to create a checkout session', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
-
-            expectedOptions.createCheckoutSession.url = `/remote-checkout/amazonpay/payment-session`;
-
-            const storeConfigMock = getConfig().storeConfig;
-
-            storeConfigMock.checkoutSettings.features = {
-                'INT-5826.amazon_relative_url': true,
-            };
-
-            jest.spyOn(checkoutState.config, 'getStoreConfigOrThrow').mockReturnValueOnce(
-                storeConfigMock,
-            );
-
-            await processor.initialize(amazonPayV2Mock);
-            renderAmazonPayButton();
-
-            expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith(
-                expectedContainerId,
-                expectedOptions,
-            );
-        });
-
         describe('should use the new button params from API Version 2:', () => {
             beforeEach(() => {
                 const storeConfigMock = getConfig().storeConfig;

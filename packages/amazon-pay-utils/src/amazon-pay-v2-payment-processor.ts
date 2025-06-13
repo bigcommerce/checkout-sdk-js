@@ -288,9 +288,7 @@ export default class AmazonPayV2PaymentProcessor {
 
         const createCheckoutSession = {
             method: checkoutSessionMethod,
-            url: features['INT-5826.amazon_relative_url']
-                ? `/remote-checkout/${methodId}/payment-session`
-                : `${shopPath}/remote-checkout/${methodId}/payment-session`,
+            url: `${shopPath}/remote-checkout/${methodId}/payment-session`,
             extractAmazonCheckoutSessionId,
         };
 
