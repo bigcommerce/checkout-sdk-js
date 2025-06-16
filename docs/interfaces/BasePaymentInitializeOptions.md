@@ -20,7 +20,6 @@ current checkout flow.
 - [braintreevenmo](BasePaymentInitializeOptions.md#braintreevenmo)
 - [braintreevisacheckout](BasePaymentInitializeOptions.md#braintreevisacheckout)
 - [creditCard](BasePaymentInitializeOptions.md#creditcard)
-- [digitalriver](BasePaymentInitializeOptions.md#digitalriver)
 - [gatewayId](BasePaymentInitializeOptions.md#gatewayid)
 - [masterpass](BasePaymentInitializeOptions.md#masterpass)
 - [methodId](BasePaymentInitializeOptions.md#methodid)
@@ -75,15 +74,6 @@ ___
 Please note that this option is currently in an early stage of
 development. Therefore the API is unstable and not ready for public
 consumption.
-
-___
-
-### digitalriver
-
-• `Optional` **digitalriver**: [`DigitalRiverPaymentInitializeOptions`](DigitalRiverPaymentInitializeOptions.md)
-
-The options that are required to initialize the Digital River payment method.
-They can be omitted unless you need to support Digital River.
 
 ___
 

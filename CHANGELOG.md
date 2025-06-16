@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.747.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.747.0...v1.747.1) (2025-06-16)
+
+
+### Code Refactoring
+
+* **payment:** PI-3957 DigitalRiver deprecation ([#2896](https://github.com/bigcommerce/checkout-sdk-js/issues/2896)) ([b4c6493](https://github.com/bigcommerce/checkout-sdk-js/commit/b4c6493803ac1c4ffb84b981e21d94f968403303))
+
 ## [1.747.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.746.0...v1.747.0) (2025-06-16)
 
 

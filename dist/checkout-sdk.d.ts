@@ -705,17 +705,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
 
 declare interface BaseElementOptions {
     /**
-     * Set custom class names on the container DOM element when the Digital River element is in a particular state.
-     */
-    classes?: DigitalRiverElementClasses;
-    /**
-     * Use disabledPaymentMethods to disable specific payment methods.
-     */
-    disabledPaymentMethods?: string[];
-}
-
-declare interface BaseElementOptions_2 {
-    /**
      * Customize the appearance of an element using CSS properties passed in a [Style](https://stripe.com/docs/js/appendix/style) object,
      * which consists of CSS properties nested under objects for each variant.
      */
@@ -730,7 +719,7 @@ declare interface BaseElementOptions_2 {
     disabled?: boolean;
 }
 
-declare interface BaseIndividualElementOptions extends BaseElementOptions_2 {
+declare interface BaseIndividualElementOptions extends BaseElementOptions {
     containerId: string;
 }
 
@@ -771,11 +760,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * support Visa Checkout.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Digital River payment method.
-     * They can be omitted unless you need to support Digital River.
-     */
-    digitalriver?: DigitalRiverPaymentInitializeOptions;
     /**
      * The options that are required to initialize the Masterpass payment method.
      * They can be omitted unless you need to support Masterpass.
@@ -2507,15 +2491,6 @@ declare interface BrowserInfo {
     time_zone_offset: string;
 }
 
-declare interface ButtonResponse {
-    /**
-     * https://docs.digitalriver.com/digital-river-api/payment-integrations-1/drop-in/drop-in-integration-guide#customizing-the-text-of-the-drop-in-button
-     * The text of the Drop-in button is customizable. You can either display pre-configured text or you can specify a unique text
-     * Examples type: "payNow" || type: "buyNow" || type: "completeOrder" || type: "submitOrder"
-     */
-    type: string;
-}
-
 declare interface ButtonStyles extends BlockElementStyles {
     active?: BlockElementStyles;
     focus?: BlockElementStyles;
@@ -2535,7 +2510,7 @@ declare interface CardDataPaymentMethodState {
     };
 }
 
-declare interface CardElementOptions extends BaseElementOptions_2 {
+declare interface CardElementOptions extends BaseElementOptions {
     /**
      * A pre-filled set of values to include in the input (e.g., {postalCode: '94110'}).
      * Note that sensitive card information (card number, CVC, and expiration date)
@@ -5395,135 +5370,6 @@ declare interface DigitalItem extends LineItem {
     downloadSize: string;
 }
 
-/**
- * Custom classes
- * You can specify custom classes as part of a Class object included within the Options object when you create or
- * update an element. If you do not provide custom classes, the system uses the default options.
- * https://docs.digitalriver.com/digital-river-api/payment-integrations-1/digitalriver.js/reference/elements#custom-classes
- */
-declare interface DigitalRiverElementClasses {
-    /**
-     * The Element is in its base state. The user either has not entered anything into the input field or is currently typing.
-     */
-    base?: string;
-    /**
-     * The Element is in its complete state. The user has input value, and it meets the basic validation requirements of that field.
-     */
-    complete?: string;
-    /**
-     * The Element is empty. The Element once had value but is now empty.
-     */
-    empty?: string;
-    /**
-     * The Element has focus.
-     */
-    focus?: string;
-    /**
-     * The Element has value, but it does not meet the basic validation requirements of the field.
-     */
-    invalid?: string;
-    /**
-     * The element has a value that has been automatically filled by the browser.
-     */
-    webkitAutofill?: string;
-}
-
-/**
- * A set of options that are required to initialize the DigitalRiver payment method.
- *
- * When DigitalRiver is initialized, a widget will be inserted into the DOM. The widget has a list of payment options for the customer to choose from.
- *
- * ```html
- * <!-- This is where the widget will be inserted -->
- * <div id="container"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *   methodId: 'digitalriver',
- *   digitalriver: {
- *       containerId: 'digitalriver-component-field',
- *       // Callback for submitting payment form that gets called when a buyer approves DR payment
- *       onSubmitForm: () => {
- *           // Example function
- *           this.submitOrder(
- *               {
- *                   payment: {methodId: 'digitalriver',}
- *               }
- *           );
- *       },
- *       onError: (error) => {
- *           console.log(error);
- *       },
- *   }
- * });
- * ```
- *
- * Additional options can be passed in to customize the components and register
- * event callbacks.
- *
- * ```js
- * service.initializePayment({
- *   methodId: 'digitalriver',
- *   digitalriver: {
- *       containerId: 'digitalriver-component-field',
- *       configuration: {
- *           flow: 'checkout',
- *           showSavePaymentAgreement: false,
- *           showComplianceSection: true,
- *           button: {
- *               type: 'submitOrder',
- *           },
- *           usage: 'unscheduled',
- *           showTermsOfSaleDisclosure: true,
- *           paymentMethodConfiguration: {
- *               classes: {
- *                   // these classes are to control styles on BC side
- *                   base: 'form-input optimizedCheckout-form-input'
- *               },
- *           },
- *       },
- *       // Callback for submitting payment form that gets called when a buyer approves DR payment
- *      onSubmitForm: () => {
- *           // Example function
- *           this.submitOrder(
- *               {
- *                   payment: {methodId: 'digitalriver',}
- *               }
- *           );
- *       },
- *       onError: (error) => {
- *           console.log(error);
- *       },
- *   }
- * });
- * ```
- */
-declare interface DigitalRiverPaymentInitializeOptions {
-    /**
-     * The ID of a container which the Digital River drop in component should be mounted
-     */
-    containerId: string;
-    /**
-     * Create a Configuration object for Drop-in that contains both required and optional values.
-     * https://docs.digitalriver.com/digital-river-api/payment-integrations-1/drop-in/drop-in-integration-guide#step-5-configure-hydrate
-     */
-    configuration: OptionsResponse;
-    /**
-     * Callback for submitting payment form that gets called
-     * when buyer pay with DigitalRiver.
-     */
-    onSubmitForm(): void;
-    /**
-     * Callback used to hide the standard submit button which is rendered right after the payment providers.
-     */
-    onRenderButton?(): void;
-    /**
-     * Callback that gets triggered when an error happens when submitting payment form and contains an object with codes and error messages
-     */
-    onError?(error: Error): void;
-}
-
 declare interface Discount {
     id: string;
     discountedAmount: number;
@@ -6378,7 +6224,7 @@ declare interface HostedStoredCardFieldOptionsMap {
 
 declare type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
-declare interface IbanElementOptions extends BaseElementOptions_2 {
+declare interface IbanElementOptions extends BaseElementOptions {
     /**
      * Specify the list of countries or country-groups whose IBANs you want to allow.
      * Must be ['SEPA'].
@@ -6399,7 +6245,7 @@ declare enum IconStyle {
     Default = "default"
 }
 
-declare interface IdealElementOptions extends BaseElementOptions_2 {
+declare interface IdealElementOptions extends BaseElementOptions {
     value?: string;
     /**
      * Hides the icon in the Element. Default is false.
@@ -6904,44 +6750,6 @@ declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 declare interface Option {
     pickupMethod: PickupMethod;
     itemQuantities: Item;
-}
-
-/**
- * When creating your Drop-in instance, you can specify options to trigger different features or functionality.
- * https://docs.digitalriver.com/digital-river-api/payment-integrations-1/drop-in/drop-in-integration-guide#drop-in-options
- */
-declare interface OptionsResponse {
-    /**
-     * Use this option if you are using Drop-in within a standard checkout flow. Example Value: "checkout"
-     */
-    flow?: string;
-    /**
-     * When enabled, presents the customer with an option to save their payment details for future use within Drop-in.
-     * Enabling this feature will show the appropriate check boxes and localized disclosure statements and facilitate
-     * any necessary Strong Customer Authentication.
-     * If disabled, Drop-in will not present the customer with an option to save their payment details.
-     */
-    showSavePaymentAgreement?: boolean;
-    /**
-     * Will show a localized compliance link section as part of Drop-in. This is an important piece for accessing the Digital River business model.
-     */
-    showComplianceSection?: boolean;
-    /**
-     * Use this option to customize the text of the Drop-in button.
-     */
-    button?: ButtonResponse;
-    /**
-     * Use this option to specify the future use of a source.
-     */
-    usage?: string;
-    /**
-     * Use this option to show the required terms of sale disclosure. These localized terms automatically update if recurring products are purchased.
-     */
-    showTermsOfSaleDisclosure?: boolean;
-    /**
-     * Additional configuration details for drop-in.
-     */
-    paymentMethodConfiguration?: BaseElementOptions;
 }
 
 declare interface Order {

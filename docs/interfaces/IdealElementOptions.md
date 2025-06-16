@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- [`BaseElementOptions_2`](BaseElementOptions_2.md)
+- [`BaseElementOptions`](BaseElementOptions.md)
 
   ↳ **`IdealElementOptions`**
 
@@ -28,7 +28,7 @@ Set custom class names on the container DOM element when the Stripe element is i
 
 #### Inherited from
 
-[BaseElementOptions_2](BaseElementOptions_2.md).[classes](BaseElementOptions_2.md#classes)
+[BaseElementOptions](BaseElementOptions.md).[classes](BaseElementOptions.md#classes)
 
 ___
 
@@ -40,7 +40,7 @@ Applies a disabled state to the Element such that user input is not accepted. De
 
 #### Inherited from
 
-[BaseElementOptions_2](BaseElementOptions_2.md).[disabled](BaseElementOptions_2.md#disabled)
+[BaseElementOptions](BaseElementOptions.md).[disabled](BaseElementOptions.md#disabled)
 
 ___
 
@@ -61,7 +61,7 @@ which consists of CSS properties nested under objects for each variant.
 
 #### Inherited from
 
-[BaseElementOptions_2](BaseElementOptions_2.md).[style](BaseElementOptions_2.md#style)
+[BaseElementOptions](BaseElementOptions.md).[style](BaseElementOptions.md#style)
 
 ___
 
