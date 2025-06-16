@@ -21,7 +21,6 @@
         "core": "packages/core",
         "credit-card-integration": "packages/credit-card-integration",
         "cybersource-integration": "packages/cybersource-integration",
-        "digitalriver-integration": "packages/digitalriver-integration",
         "external-integration": "packages/external-integration",
         "google-pay-integration": "packages/google-pay-integration",
         "hosted-form-v2": "packages/hosted-form-v2",

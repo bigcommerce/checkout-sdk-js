@@ -8,7 +8,6 @@ import {
     BraintreeVenmoInitializeOptions,
     BraintreeVisaCheckoutPaymentInitializeOptions,
 } from './strategies/braintree';
-import { DigitalRiverPaymentInitializeOptions } from './strategies/digitalriver';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 
@@ -63,12 +62,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * support Visa Checkout.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Digital River payment method.
-     * They can be omitted unless you need to support Digital River.
-     */
-    digitalriver?: DigitalRiverPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Masterpass payment method.
