@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.747.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.746.0...v1.747.0) (2025-06-16)
+
+
+### Features
+
+* **payment:** PI-3946 Remove experiment: INT-5826.amazon_relative_url[checkout-js] ([#2894](https://github.com/bigcommerce/checkout-sdk-js/issues/2894)) ([bed1793](https://github.com/bigcommerce/checkout-sdk-js/commit/bed179384fd80233372b7e93e8761432a562095b))
+
 ## [1.746.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.745.1...v1.746.0) (2025-06-12)
 
 
