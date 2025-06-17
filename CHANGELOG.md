@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.748.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.747.1...v1.748.0) (2025-06-17)
+
+
+### Features
+
+* **payment:** Change how payment_method_category parameter is passed to Klarna ([#2890](https://github.com/bigcommerce/checkout-sdk-js/issues/2890)) ([3a8f5bf](https://github.com/bigcommerce/checkout-sdk-js/commit/3a8f5bf7151e1e032f105d01247cf9fe13540bf1))
+
 ### [1.747.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.747.0...v1.747.1) (2025-06-16)
 
 
