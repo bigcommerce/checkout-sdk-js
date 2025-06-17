@@ -112,8 +112,14 @@ export interface PayPalFastlaneSdk {
 
 interface ThreeDomainSecureClientShowResponse {
     liabilityShift: LiabilityShiftEnum;
-    authenticationState: string;
+    authenticationState: TDSecureAuthenticationState;
     nonce: string;
+}
+
+export enum TDSecureAuthenticationState {
+    Success = 'success',
+    Cancelled = 'cancelled',
+    Errored = 'errored',
 }
 
 export enum LiabilityShiftEnum {

@@ -27,12 +27,13 @@ import {
     PayPalFastlaneCardComponentOptions,
     PayPalFastlanePaymentFormattedPayload,
     PayPalFastlaneSdk,
+    TDSecureAuthenticationState,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
+import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
 import { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane-payment-initialize-options';
-import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
@@ -411,7 +412,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             const {
                 liabilityShift, // "no", "unknown", "possible"
                 authenticationState, // "success", "cancelled", "errored"
-                nonce, //Enriched nonce or the original nonce
+                nonce, // Enriched nonce or the original nonce
             } = await threeDomainSecureComponent.show();
 
             if (
@@ -421,16 +422,16 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 throw new PaymentMethodInvalidError();
             }
 
-            if (authenticationState === 'success') {
+            if (authenticationState === TDSecureAuthenticationState.Success) {
                 return nonce;
             }
 
             // Cancelled or errored, merchant can choose to send the customer back to 3D Secure or submit a payment and or vault the payment token.
-            if (authenticationState === 'errored') {
+            if (authenticationState === TDSecureAuthenticationState.Errored) {
                 throw new PaymentMethodInvalidError();
             }
 
-            if (authenticationState === 'canceled') {
+            if (authenticationState === TDSecureAuthenticationState.Cancelled) {
                 console.error('3DS check was canceled');
             }
         }
