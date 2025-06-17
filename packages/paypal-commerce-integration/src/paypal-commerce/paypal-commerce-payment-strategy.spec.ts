@@ -853,6 +853,59 @@ describe('PayPalCommercePaymentStrategy', () => {
                 );
             }
         });
+
+        it('throws specific error if receive additional_action_required error', async () => {
+            Object.defineProperty(window, 'location', {
+                value: {
+                    replace: jest.fn(),
+                },
+            });
+
+            paymentMethod.initializationData.orderId = '1';
+
+            const payload = {
+                payment: {
+                    methodId: defaultMethodId,
+                },
+            };
+
+            const redirectActionError = {
+                status: 'error',
+                three_ds_result: {
+                    acs_url: null,
+                    payer_auth_request: null,
+                    merchant_data: null,
+                    callback_url: null,
+                },
+                body: {
+                    additional_action_required: {
+                        type: 'offsite_redirect',
+                        data: {
+                            redirect_url: 'https://example.redirect.com',
+                        },
+                    },
+                },
+                errors: [
+                    {
+                        code: 'invalid_request_error',
+                        message:
+                            "We're experiencing difficulty processing your transaction. Please contact us or try again later.",
+                    },
+                ],
+            };
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw redirectActionError;
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            void strategy.execute(payload);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(window.location.replace).toHaveBeenCalledWith('https://example.redirect.com');
+        });
     });
 
     describe('#deinitialize()', () => {

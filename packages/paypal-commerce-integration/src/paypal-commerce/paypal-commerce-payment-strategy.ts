@@ -16,7 +16,10 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { isPaypalCommerceProviderError } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import {
+    isPaypalCommerceProviderError,
+    isRedirectActionError,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
@@ -125,6 +128,12 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.submitOrder(order, options);
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error: unknown) {
+            if (isRedirectActionError(error)) {
+                const redirectUrl = error.body.additional_action_required?.data?.redirect_url;
+
+                return new Promise(() => window.location.replace(redirectUrl));
+            }
+
             if (this.isProviderError(error) && shouldHandleInstrumentDeclinedError) {
                 await this.paypalCommerceIntegrationService.loadPayPalSdk(payment.methodId);
 
@@ -359,6 +368,11 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         );
     }
 
+    /**
+     *
+     * Error handling
+     *
+     */
     private isProviderError(error: unknown): boolean {
         if (isPaypalCommerceProviderError(error)) {
             const paypalProviderError = error?.errors?.filter((e) => e.provider_error) || [];
