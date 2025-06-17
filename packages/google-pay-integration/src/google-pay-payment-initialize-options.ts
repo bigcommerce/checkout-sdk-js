@@ -80,6 +80,7 @@ export enum GooglePayKey {
     ORBITAL = 'googlepayorbital',
     STRIPE = 'googlepaystripe',
     STRIPE_UPE = 'googlepaystripeupe',
+    STRIPE_OCS = 'googlepaystripeocs',
     WORLDPAY_ACCESS = 'googlepayworldpayaccess',
     TD_ONLINE_MART = 'googlepaytdonlinemart',
 }
