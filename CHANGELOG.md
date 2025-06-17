@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.749.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.748.0...v1.749.0) (2025-06-17)
+
+
+### Features
+
+* **payment:** redirect action handling ([b2d619d](https://github.com/bigcommerce/checkout-sdk-js/commit/b2d619d2656b2665677a89f15ba7af421237fb39))
+
 ## [1.748.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.747.1...v1.748.0) (2025-06-17)
 
 
