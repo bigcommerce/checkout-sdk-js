@@ -29,6 +29,7 @@ import {
     PayPalFastlaneSdk,
     TDSecureAuthenticationState,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import { LiabilityShiftEnum } from '../paypal-commerce-types';
@@ -311,9 +312,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             fastlaneToken: instrumentId,
         });
 
-        const fastlaneToken = paymentMethod.config.is3dsEnabled
-            ? await this.get3DSNonce(instrumentId)
-            : instrumentId;
+        const fastlaneToken =
+            this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled
+                ? await this.get3DSNonce(instrumentId)
+                : instrumentId;
 
         return {
             methodId,
@@ -352,7 +354,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             fastlaneToken: id,
         });
 
-        const fastlaneToken = paymentMethod.config.is3dsEnabled ? await this.get3DSNonce(id) : id;
+        const fastlaneToken =
+            this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled
+                ? await this.get3DSNonce(id)
+                : id;
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
@@ -472,5 +477,17 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         }
 
         return undefined;
+    }
+
+    /**
+     *
+     * PayPal Fastlane experiments handling
+     *
+     */
+    private isPaypalCommerceFastlaneThreeDSAvailable(): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+
+        return isExperimentEnabled(features, 'PROJECT-7080.paypalcommerce_fastlane_three_ds');
     }
 }
