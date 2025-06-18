@@ -12,6 +12,7 @@ export interface ConfigMetaState {
     variantIdentificationToken?: string;
     host?: string;
     locale?: string;
+    gqlRequestUrl?: string;
 }
 
 export interface ConfigErrorsState {
