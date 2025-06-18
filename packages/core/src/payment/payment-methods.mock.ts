@@ -33,6 +33,7 @@ export function getBraintree(): PaymentMethod {
                 },
             },
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -50,6 +51,7 @@ export function getBraintreeVenmo(): PaymentMethod {
         initializationData: {
             isBrainteeVenmoEnabled: false,
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -75,6 +77,7 @@ export function getBraintreePaypal(): PaymentMethod {
                 },
             },
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -99,6 +102,7 @@ export function getBraintreePaypalCredit(): PaymentMethod {
                 },
             },
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -115,6 +119,7 @@ export function getBraintreeVisaCheckout(): PaymentMethod {
         },
         initializationData: {},
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -129,6 +134,7 @@ export function getPaypalExpress(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -160,6 +166,7 @@ export function getPaypalCommerce(): PaymentMethod {
             isHostedCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -175,6 +182,7 @@ export function getPaypal(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -188,6 +196,7 @@ export function getPPSDK(): PaymentMethod {
         initializationStrategy: {
             type: 'none',
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -201,6 +210,7 @@ export function getUnsupportedPPSDK(): PaymentMethod {
         initializationStrategy: {
             type: 'SOMETHING_UNSUPPORTED',
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -216,6 +226,7 @@ export function getAdyenAmex(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_HOSTED',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -230,6 +241,7 @@ export function getAuthorizenet(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -245,6 +257,7 @@ export function getBlueSnapV2(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_HOSTED',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -261,6 +274,7 @@ export function getCybersource(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'cyberToken',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -277,6 +291,7 @@ export function getBarclays(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'barclaysToken',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -292,6 +307,7 @@ export function getBankDeposit(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_OFFLINE',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -308,6 +324,7 @@ export function getKlarna(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -322,6 +339,7 @@ export function getAffirm(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -335,6 +353,7 @@ export function getHumm(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -353,6 +372,7 @@ export function getStripe(): PaymentMethod {
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -379,6 +399,7 @@ export function getSquare(): PaymentMethod {
                 nonce: undefined,
             },
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -393,6 +414,7 @@ export function getMasterpass(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -410,6 +432,7 @@ export function getWepay(): PaymentMethod {
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -433,6 +456,7 @@ export function getGooglePay(): PaymentMethod {
                 number: '4111',
             },
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -458,6 +482,7 @@ export function getGooglePayAdyenV2(): PaymentMethod {
                 number: '4111',
             },
         },
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -482,6 +507,7 @@ export function getGooglePayAdyenV3(): PaymentMethod {
                 number: '4111',
             },
         },
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -507,6 +533,7 @@ export function getGooglePayCybersourceV2(): PaymentMethod {
                 number: '4111',
             },
         },
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -532,6 +559,7 @@ export function getGooglePayOrbital(): PaymentMethod {
                 number: '4111',
             },
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -550,6 +578,7 @@ export function getZip(): PaymentMethod {
         initializationData: {
             redirectUrl: 'http://some-url',
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -568,6 +597,7 @@ export function getQuadpay(): PaymentMethod {
         initializationData: {
             redirectUrl: 'http://some-url',
         },
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -599,6 +629,7 @@ export function getStripeV3(
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
         returnUrl: 'http://www.example.com',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -622,6 +653,7 @@ export function getStripeUPE(method = 'card'): PaymentMethod {
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
         returnUrl: 'http://www.example.com',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -641,6 +673,7 @@ export function getAdyenV3(method = 'scheme'): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -660,6 +693,7 @@ export function getBolt(): PaymentMethod {
             embeddedOneClickEnabled: false,
         },
         clientToken: 'clientToken',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -683,6 +717,7 @@ export function getCheckoutcom(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -711,6 +746,7 @@ export function getMollie(): PaymentMethod {
             locale: 'en-US',
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -733,6 +769,7 @@ export function getMoneris(): PaymentMethod {
             expiryDateLabel: 'Expiration Date',
             cvdLabel: 'CVV',
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -754,6 +791,7 @@ export function getCBAMPGS(): PaymentMethod {
             isTestModeFlagEnabled: false,
             merchantId: 'ABC123',
         },
+        skipRedirectConfirmationAlert: true,
     };
 }
 
@@ -821,6 +859,7 @@ export function getApplePay() {
             merchantId: 'abc',
             paymentsUrl: 'https://bigpay.service.bcdev',
         },
+        skipRedirectConfirmationAlert: true,
     };
 }
 

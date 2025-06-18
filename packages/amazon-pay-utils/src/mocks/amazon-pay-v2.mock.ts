@@ -123,6 +123,7 @@ export function getAmazonPayV2(region?: string): PaymentMethod<AmazonPayV2Initia
         method: 'credit-card',
         supportedCards: ['VISA', 'AMEX', 'MC'],
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
