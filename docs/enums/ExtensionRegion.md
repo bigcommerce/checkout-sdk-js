@@ -7,6 +7,7 @@
 ### Enumeration Members
 
 - [GlobalWebWorker](ExtensionRegion.md#globalwebworker)
+- [PaymentPaymentMethodListBefore](ExtensionRegion.md#paymentpaymentmethodlistbefore)
 - [ShippingSelectedShippingMethod](ExtensionRegion.md#shippingselectedshippingmethod)
 - [ShippingShippingAddressFormAfter](ExtensionRegion.md#shippingshippingaddressformafter)
 - [ShippingShippingAddressFormBefore](ExtensionRegion.md#shippingshippingaddressformbefore)
@@ -18,6 +19,12 @@
 ### GlobalWebWorker
 
 • **GlobalWebWorker**
+
+___
+
+### PaymentPaymentMethodListBefore
+
+• **PaymentPaymentMethodListBefore**
 
 ___
 
