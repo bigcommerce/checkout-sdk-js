@@ -5,24 +5,31 @@ import {
     CustomerInitializeOptions,
     CustomerStrategy,
     InvalidArgumentError,
+    isRequestError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     Payment,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
+    PaymentMethodFailedError,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { StripeIntegrationService } from '../stripe-utils';
 import { isStripePaymentMethodLike } from '../stripe-utils/is-stripe-payment-method-like';
 import {
+    StripeAdditionalActionRequired,
     StripeClient,
     StripeElement,
     StripeElementEvent,
     StripeElements,
     StripeElementsCreateOptions,
     StripeElementType,
+    StripeError,
     StripeEventType,
+    StripeResult,
     StripeStringConstants,
 } from '../stripe-utils/stripe';
 import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
@@ -47,6 +54,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private scriptLoader: StripeScriptLoader,
+        private stripeIntegrationService: StripeIntegrationService,
     ) {}
 
     async initialize(
@@ -213,61 +221,166 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     }
 
     /** Confirm methods * */
-
     private async _onConfirm(event: StripeEventType) {
-        if ('resolve' in event) {
-            if (!this._methodId) {
-                return event.resolve({});
+        const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
+
+        if (
+            'billingDetails' in event &&
+            'shippingAddress' in event &&
+            this._stripeClient &&
+            this._stripeElements
+        ) {
+            const firstName =
+                event.shippingAddress?.name?.split(' ')[0] ||
+                event.billingDetails?.name?.split(' ')[0] ||
+                '';
+            const lastName =
+                event.shippingAddress?.name?.split(' ')[1] ||
+                event.billingDetails?.name?.split(' ')[1] ||
+                '';
+
+            if (shouldRequireShippingAddress) {
+                const shippingAddress = {
+                    firstName,
+                    lastName,
+                    phone: event.billingDetails?.phone || '',
+                    company: '',
+                    address1: event.shippingAddress?.address?.line1 || '',
+                    address2: event.shippingAddress?.address?.line2 || '',
+                    city: event.shippingAddress?.address?.city || '',
+                    countryCode: event.shippingAddress?.address?.country || '',
+                    postalCode: event.shippingAddress?.address?.postal_code || '',
+                    stateOrProvince: event.shippingAddress?.address?.state || '',
+                    stateOrProvinceCode: event.shippingAddress?.address?.state || '',
+                    customFields: [],
+                };
+
+                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
             }
 
-            const state = this.paymentIntegrationService.getState();
+            await this.paymentIntegrationService.updateBillingAddress({
+                email: event.billingDetails?.email || '',
+                firstName,
+                lastName,
+                phone: event.billingDetails?.phone || '',
+                company: '',
+                address1: event.billingDetails?.address?.line1 || '',
+                address2: '',
+                city: event.billingDetails?.address?.city || '',
+                countryCode: event.billingDetails?.address?.country || '',
+                postalCode: event.billingDetails?.address?.postal_code || '',
+                stateOrProvince: event.billingDetails?.address?.state || '',
+                stateOrProvinceCode: event.shippingAddress?.address?.state || '',
+                customFields: [],
+            });
+
+            await this.paymentIntegrationService.submitOrder();
+
+            const state = await this.paymentIntegrationService.loadPaymentMethod(this._gatewayId, {
+                params: { method: this._methodId, link: 1 },
+            });
 
             const { clientToken } = state.getPaymentMethodOrThrow(this._methodId, this._gatewayId);
-            const paymentPayload = this._getPaymentPayload(this._methodId, clientToken || '');
 
-            await this.paymentIntegrationService.submitPayment(paymentPayload);
-
-            if (this._stripeClient && this._stripeElements) {
-                await this._stripeClient.confirmPayment({
-                    // `elements` instance used to create the Express Checkout Element
-                    elements: this._stripeElements,
-                    // `clientSecret` from the created PaymentIntent
-                    clientSecret: this._stripePublishableKey,
-                    // TODO update example below
-                    confirmParams: {
-                        return_url: 'https://example.com/order/123/complete',
-                    },
-                });
+            if (!clientToken) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
-            // const {error} = await stripe.confirmPayment({
-            //     // `elements` instance used to create the Express Checkout Element
-            //     elements,
-            //     // `clientSecret` from the created PaymentIntent
-            //     clientSecret,
-            //     confirmParams: {
-            //         return_url: 'https://example.com/order/123/complete',
-            //     },
-            // });
-            // await this.paymentIntegrationService.submitOrder(order, options);
-            // await this.paymentIntegrationService.submitPayment(paymentPayload);
-            //
-            // const {error: submitError} = await elements.submit();
-            event.resolve({});
+            const paymentMethod = this._getPaymentPayload(clientToken || '');
+
+            try {
+                await this.paymentIntegrationService.submitPayment(paymentMethod);
+            } catch (error) {
+                await this._processAdditionalAction(error, this._methodId);
+            }
+        }
+
+        return Promise.resolve();
+    }
+
+    private async _processAdditionalAction(
+        error: unknown,
+        methodId: string,
+    ): Promise<PaymentIntegrationSelectors | undefined> {
+        if (
+            !isRequestError(error) ||
+            !this.stripeIntegrationService.isAdditionalActionError(error.body.errors)
+        ) {
+            throw error;
+        }
+
+        if (!this._stripeClient || !this._stripeElements) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const { data: additionalActionData } = error.body.additional_action_required;
+        const { token } = additionalActionData;
+
+        const { paymentIntent } = await this._confirmStripePaymentOrThrow(
+            methodId,
+            additionalActionData,
+        );
+
+        const paymentPayload = this._getPaymentPayload(paymentIntent?.id || token);
+
+        try {
+            return await this.paymentIntegrationService.submitPayment(paymentPayload);
+        } catch (error) {
+            this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         }
     }
 
-    private _getPaymentPayload(methodId: string, token: string): Payment {
+    private async _confirmStripePaymentOrThrow(
+        methodId: string,
+        additionalActionData: StripeAdditionalActionRequired['data'],
+    ): Promise<StripeResult | never> {
+        const { token, redirect_url } = additionalActionData;
+        const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
+            this._stripeElements,
+            redirect_url,
+        );
+        let stripeError: StripeError | undefined;
+
+        try {
+            const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
+                methodId,
+                this._stripeClient,
+            );
+
+            const confirmationResult = !isPaymentCompleted
+                ? await this._stripeClient?.confirmPayment({
+                      elements: stripePaymentData.elements,
+                      clientSecret: token,
+                      redirect: StripeStringConstants.ALWAYS,
+                      confirmParams: {
+                          return_url: stripePaymentData.confirmParams?.return_url,
+                      },
+                  })
+                : await this._stripeClient?.retrievePaymentIntent(token || '');
+
+            stripeError = confirmationResult?.error;
+
+            if (stripeError || !confirmationResult?.paymentIntent) {
+                throw new PaymentMethodFailedError();
+            }
+
+            return confirmationResult;
+        } catch (error: unknown) {
+            return this.stripeIntegrationService.throwStripeError(stripeError);
+        }
+    }
+
+    private _getPaymentPayload(token: string): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
         const formattedPayload = {
             cart_id: cartId,
             credit_card_token: { token },
             confirm: false,
-            payment_method_id: this._methodId,
+            payment_method_id: 'link',
         };
 
         return {
-            methodId,
+            methodId: this._methodId,
             paymentData: {
                 formattedPayload,
             },
