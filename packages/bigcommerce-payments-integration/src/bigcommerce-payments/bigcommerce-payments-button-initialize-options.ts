@@ -9,7 +9,7 @@ import {
  * When BigCommercePayments is initialized, an BigCommercePayments PayPal button will be inserted into the
  * DOM. When a customer clicks on it, it will trigger PayPal flow.
  */
-export default interface BigcommercePaymentsButtonInitializeOptions {
+export default interface BigCommercePaymentsButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
@@ -39,5 +39,5 @@ export default interface BigcommercePaymentsButtonInitializeOptions {
 }
 
 export interface WithBigCommercePaymentsButtonInitializeOptions {
-    bigcommerce_payments?: BigcommercePaymentsButtonInitializeOptions;
+    bigcommerce_payments?: BigCommercePaymentsButtonInitializeOptions;
 }

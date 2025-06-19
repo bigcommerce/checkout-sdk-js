@@ -1,7 +1,7 @@
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import BigcommercePaymentsButtonStrategy from './bigcommerce-payments-button-strategy';
+import BigCommercePaymentsButtonStrategy from './bigcommerce-payments-button-strategy';
 import createBigCommercePaymentsButtonStrategy from './create-bigcommerce-payments-button-strategy';
 
 describe('createBigCommercePaymentsButtonStrategy', () => {
@@ -14,6 +14,6 @@ describe('createBigCommercePaymentsButtonStrategy', () => {
     it('instantiates BigCommercePaymentsButtonStrategy', () => {
         const strategy = createBigCommercePaymentsButtonStrategy(paymentIntegrationService);
 
-        expect(strategy).toBeInstanceOf(BigcommercePaymentsButtonStrategy);
+        expect(strategy).toBeInstanceOf(BigCommercePaymentsButtonStrategy);
     });
 });
