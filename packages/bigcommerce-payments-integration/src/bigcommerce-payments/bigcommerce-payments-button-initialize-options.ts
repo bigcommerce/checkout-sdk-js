@@ -4,12 +4,12 @@ import {
 } from '../bigcommerce-payments-types';
 
 /**
- * A set of options that are required to initialize BigCommercePaymentsPayPal in cart or product details page.
+ * A set of options that are required to initialize BigCommercePaymentsButtonStrategy in cart or product details page.
  *
- * When BigCommercePaymentsPayPal is initialized, an BigCommercePaymentsPayPal button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger Apple sheet.
+ * When BigCommercePayments is initialized, an BigCommercePayments PayPal button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger PayPal flow.
  */
-export default interface BigCommercePaymentsPayPalButtonInitializeOptions {
+export default interface BigcommercePaymentsButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
@@ -38,6 +38,6 @@ export default interface BigCommercePaymentsPayPalButtonInitializeOptions {
     onEligibilityFailure?(): void;
 }
 
-export interface WithBigCommercePaymentsPayPalButtonInitializeOptions {
-    bigcommerce_payments_paypal?: BigCommercePaymentsPayPalButtonInitializeOptions;
+export interface WithBigCommercePaymentsButtonInitializeOptions {
+    bigcommerce_payments?: BigcommercePaymentsButtonInitializeOptions;
 }

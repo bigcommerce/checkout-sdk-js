@@ -6,23 +6,23 @@ import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-
  *
  * Please note that the minimum version of checkout-sdk is 1.100
  *
- * Also, PayPal (also known as BigCommercePayments Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * Also, BigCommercePayments requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
  * ```html
- * <!-- This is where the PayPal button will be inserted -->
+ * <!-- This is where the BigCommercePayments PayPal button will be inserted -->
  * <div id="container"></div>
  * ```
  *
  * ```js
  * service.initializePayment({
- *     methodId: 'bigcommerce_payments_paypal',
- *     bigcommerce_payments_paypal: {
+ *     methodId: 'bigcommerce_payments',
+ *     bigcommerce_payments: {
  *         container: '#container',
  * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
  *         submitForm: () => {
  *         // Example function
  *             this.submitOrder(
  *                {
- *                   payment: { methodId: 'bigcommerce_payments_paypal', }
+ *                   payment: { methodId: 'bigcommerce_payments', }
  *               }
  *            );
  *         },
@@ -44,7 +44,7 @@ import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-
  * });
  * ```
  */
-export default interface BigCommercePaymentsPayPalPaymentInitializeOptions {
+export default interface BigcommercePaymentsPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
@@ -92,11 +92,11 @@ export default interface BigCommercePaymentsPayPalPaymentInitializeOptions {
 
     /**
      * A callback for submitting payment form that gets called
-     * when buyer approved PayPal account.
+     * when buyer approves PayPal payment.
      */
     submitForm(): void;
 }
 
-export interface WithBigCommercePaymentsPayPalPaymentInitializeOptions {
-    bigcommerce_payments_paypal?: BigCommercePaymentsPayPalPaymentInitializeOptions;
+export interface WithBigCommercePaymentsPaymentInitializeOptions {
+    bigcommerce_payments?: BigcommercePaymentsPaymentInitializeOptions;
 }

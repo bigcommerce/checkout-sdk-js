@@ -30,7 +30,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -76,7 +76,7 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
 
         billingAddress = getBillingAddress();
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paymentMethod.id = defaultGatewayId;
         paymentMethod.initializationData.orderId = undefined;
 
@@ -211,7 +211,7 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
             }
         });
 
-        it('throws error if options.bigcommerce_payments_apms or options.bigcommerce_payments_paypal is not provided', async () => {
+        it('throws error if options.bigcommerce_payments_apms or options.bigcommerce_payments is not provided', async () => {
             const options = {
                 methodId: defaultMethodId,
                 gatewayId: defaultGatewayId,

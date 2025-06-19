@@ -26,7 +26,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -70,7 +70,7 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
         };
 
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paymentMethod.id = defaultMethodId;
         paymentMethod.initializationData.orderId = undefined;
 
@@ -177,7 +177,7 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
             }
         });
 
-        it('throws error if options.bigcommerce_payments_paypal is not provided', async () => {
+        it('throws error if options.bigcommerce_payments_paylater is not provided', async () => {
             const options = {
                 methodId: defaultMethodId,
             } as PaymentInitializeOptions;

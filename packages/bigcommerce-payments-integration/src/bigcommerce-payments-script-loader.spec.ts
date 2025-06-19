@@ -12,7 +12,7 @@ import {
     BigCommercePaymentsScriptParams,
     PayPalSDK,
 } from './bigcommerce-payments-types';
-import { getBigCommercePaymentsPayPalPaymentMethod, getPayPalSDKMock } from './mocks';
+import { getBigCommercePaymentsPaymentMethod, getPayPalSDKMock } from './mocks';
 
 describe('BigCommercePaymentsScriptLoader', () => {
     let loader: ScriptLoader;
@@ -25,7 +25,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
 
     beforeEach(() => {
         loader = createScriptLoader();
-        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paypalSdk = getPayPalSDKMock();
 
         jest.spyOn(loader, 'loadScript').mockImplementation(() => {
@@ -365,7 +365,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
     it('successfully loads paypal sdk with dev configuration', async () => {
         const paymentMethodMock = {
             ...paymentMethod,
-            id: 'bigcommerce_payments_paypal',
+            id: 'bigcommerce_payments',
             initializationData: {
                 ...paymentMethod.initializationData,
                 buyerCountry: 'UA',
@@ -392,7 +392,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paymentMethodMock = {
             ...paymentMethod,
             clientToken: '',
-            id: 'bigcommerce_payments_paypal',
+            id: 'bigcommerce_payments',
             initializationData: {
                 ...paymentMethod.initializationData,
                 attributionId: '',

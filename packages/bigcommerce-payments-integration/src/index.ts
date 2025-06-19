@@ -4,17 +4,17 @@ export { default as BigCommercePaymentsScriptLoader } from './bigcommerce-paymen
 
 /**
  *
- * BigCommercePaymentsPaypal strategies
+ * BigCommercePayments strategies
  *
  */
-export { default as createBigCommercePaymentsPaypalButtonStrategy } from './bigcommerce-payments-paypal/create-bigcommerce-payments-paypal-button-strategy';
-export { WithBigCommercePaymentsPayPalButtonInitializeOptions } from './bigcommerce-payments-paypal/bigcommerce-payments-paypal-button-initialize-options';
+export { default as createBigCommercePaymentsButtonStrategy } from './bigcommerce-payments/create-bigcommerce-payments-button-strategy';
+export { WithBigCommercePaymentsButtonInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-button-initialize-options';
 
-export { default as createBigCommercePaymentsPayPalCustomerStrategy } from './bigcommerce-payments-paypal/create-bigcommerce-payments-paypal-customer-strategy';
-export { WithBigCommercePaymentsPayPalCustomerInitializeOptions } from './bigcommerce-payments-paypal/bigcommerce-payments-paypal-customer-initialize-options';
+export { default as createBigCommercePaymentsCustomerStrategy } from './bigcommerce-payments/create-bigcommerce-payments-customer-strategy';
+export { WithBigCommercePaymentsCustomerInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-customer-initialize-options';
 
-export { default as createBigCommercePaymentsPayPalPaymentStrategy } from './bigcommerce-payments-paypal/create-bigcommerce-payments-paypal-payment-strategy';
-export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcommerce-payments-paypal/bigcommerce-payments-paypal-payment-initialize-options';
+export { default as createBigCommercePaymentsPaymentStrategy } from './bigcommerce-payments/create-bigcommerce-payments-payment-strategy';
+export { WithBigCommercePaymentsPaymentInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-payment-initialize-options';
 
 /**
  *

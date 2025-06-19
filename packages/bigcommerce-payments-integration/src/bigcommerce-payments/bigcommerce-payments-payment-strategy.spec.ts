@@ -25,23 +25,23 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
-import BigCommercePaymentsPayPalPaymentInitializeOptions, {
-    WithBigCommercePaymentsPayPalPaymentInitializeOptions,
-} from './bigcommerce-payments-paypal-payment-initialize-options';
-import BigCommercePaymentsPayPalPaymentStrategy from './bigcommerce-payments-paypal-payment-strategy';
+import BigCommercePaymentsPaymentInitializeOptions, {
+    WithBigCommercePaymentsPaymentInitializeOptions,
+} from './bigcommerce-payments-payment-initialize-options';
+import BigCommercePaymentsPaymentStrategy from './bigcommerce-payments-payment-strategy';
 
-describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
+describe('BigCommercePaymentsPaymentStrategy', () => {
     let eventEmitter: EventEmitter;
     let loadingIndicator: LoadingIndicator;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService;
     let paypalSdk: PayPalSDK;
-    let strategy: BigCommercePaymentsPayPalPaymentStrategy;
+    let strategy: BigCommercePaymentsPaymentStrategy;
 
     const paypalOrderId = 'paypal123';
     const storeConfig = getConfig().storeConfig;
@@ -56,31 +56,35 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
         },
     };
 
-    const defaultMethodId = 'bigcommerce_payments_paypal';
+    const defaultMethodId = 'bigcommerce_payments';
     const defaultContainerId = '#container';
 
-    const bigCommercePaymentsOptions: BigCommercePaymentsPayPalPaymentInitializeOptions = {
+    const bigCommercePaymentsOptions: BigCommercePaymentsPaymentInitializeOptions = {
         container: defaultContainerId,
         onValidate: jest.fn(),
         submitForm: jest.fn(),
     };
 
     const initializationOptions: PaymentInitializeOptions &
-        WithBigCommercePaymentsPayPalPaymentInitializeOptions = {
+        WithBigCommercePaymentsPaymentInitializeOptions = {
         methodId: defaultMethodId,
-        bigcommerce_payments_paypal: bigCommercePaymentsOptions,
+        bigcommerce_payments: bigCommercePaymentsOptions,
     };
 
+    // TODO: create new instrument for bigcommerce_payments in packages/payment-integrations-test-utils/src/test-utils/payments.mock.ts
     const paymentInstruments = getInstruments();
-    const accountInstrument = paymentInstruments.find(
-        (instrument) => instrument.provider === 'paypalcommerce', // TODO: refactor packages/payment-integrations-test-utils/src/test-utils/payments.mock.ts
-    );
+    const accountInstrument = {
+        ...(paymentInstruments.find(
+            (instrument) => instrument.provider === 'paypalcommerce', // TODO: refactor packages/payment-integrations-test-utils/src/test-utils/payments.mock.ts
+        ) || {}),
+        provider: 'bigcommerce_payments',
+    };
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
 
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paymentMethod.id = defaultMethodId;
         paymentMethod.initializationData.orderId = undefined;
 
@@ -88,7 +92,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        strategy = new BigCommercePaymentsPayPalPaymentStrategy(
+        strategy = new BigCommercePaymentsPaymentStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
             loadingIndicator,
@@ -170,8 +174,8 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
         delete (window as BigCommercePaymentsHostWindow).paypal;
     });
 
-    it('creates an instance of the BigCommercePaymentsPayPalPaymentStrategy payment strategy', () => {
-        expect(strategy).toBeInstanceOf(BigCommercePaymentsPayPalPaymentStrategy);
+    it('creates an instance of the BigCommercePaymentsPaymentStrategy payment strategy', () => {
+        expect(strategy).toBeInstanceOf(BigCommercePaymentsPaymentStrategy);
     });
 
     describe('#initialize()', () => {
@@ -185,7 +189,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
             }
         });
 
-        it('throws error if options.bigcommerce_payments_paypal is not provided', async () => {
+        it('throws error if options.bigcommerce_payments is not provided', async () => {
             const options = {
                 methodId: defaultMethodId,
             } as PaymentInitializeOptions;
@@ -258,7 +262,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
 
             await strategy.initialize({
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                 },
             });
@@ -271,7 +275,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
 
             const options = {
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     onInit: jest.fn().mockImplementation((renderButtonCallback) => {
                         eventEmitter.on('onInit', () => {
@@ -301,7 +305,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
 
             const options = {
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     onRenderButton: jest.fn(),
                 },
@@ -317,7 +321,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(options.bigcommerce_payments_paypal.onRenderButton).toHaveBeenCalled();
+            expect(options.bigcommerce_payments.onRenderButton).toHaveBeenCalled();
         });
 
         it('renders paypal button if it is eligible', async () => {
@@ -344,7 +348,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(bigCommercePaymentsIntegrationService.createOrder).toHaveBeenCalledWith(
-                'bigcommerce_payments_paypalcheckout',
+                'bigcommerce_paymentscheckout',
                 { shouldSaveInstrument: false },
             );
         });
@@ -352,7 +356,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
         it('creates paypal order with the shouldSaveInstrument gotten from getFieldsValues callback', async () => {
             const options = {
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     getFieldsValues: jest.fn().mockReturnValue({
                         shouldSaveInstrument: true,
@@ -367,7 +371,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(bigCommercePaymentsIntegrationService.createOrder).toHaveBeenCalledWith(
-                'bigcommerce_payments_paypalcheckout',
+                'bigcommerce_paymentscheckout',
                 { shouldSaveInstrument: true },
             );
         });
@@ -379,7 +383,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
 
             await strategy.initialize({
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     onValidate: onValidateMock,
                 },
@@ -395,7 +399,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
         it('triggers the indicator through the validation callback call with provided params', async () => {
             await strategy.initialize({
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     onValidate: jest.fn().mockImplementation((onValidationPassed) => {
                         onValidationPassed();
@@ -417,7 +421,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
 
             await strategy.initialize({
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     submitForm: submitFormMock,
                 },
@@ -435,7 +439,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
 
             await strategy.initialize({
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     submitForm: submitFormMock,
                 },
@@ -478,7 +482,7 @@ describe('BigCommercePaymentsPayPalPaymentStrategy', () => {
 
             await strategy.initialize({
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     onError: onErrorMock,
                 },

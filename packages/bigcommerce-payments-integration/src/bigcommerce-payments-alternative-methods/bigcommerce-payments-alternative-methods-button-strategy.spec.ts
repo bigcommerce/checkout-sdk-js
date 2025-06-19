@@ -22,7 +22,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -87,7 +87,7 @@ describe('BigCommercePaymentsAlternativeMethodsButtonStrategy', () => {
         eventEmitter = new EventEmitter();
 
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
-        paymentMethod = { ...getBigCommercePaymentsPayPalPaymentMethod(), id: defaultMethodId };
+        paymentMethod = { ...getBigCommercePaymentsPaymentMethod(), id: defaultMethodId };
         paypalSdk = getPayPalSDKMock();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
