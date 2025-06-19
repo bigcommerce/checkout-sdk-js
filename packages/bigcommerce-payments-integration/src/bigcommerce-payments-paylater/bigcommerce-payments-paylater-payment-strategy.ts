@@ -58,7 +58,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
 
         if (!bigcommerce_payments_paylater) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommerce_payments_paypal" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_paylater" argument is not provided.`,
             );
         }
 

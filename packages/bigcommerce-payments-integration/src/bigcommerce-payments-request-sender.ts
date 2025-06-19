@@ -38,7 +38,7 @@ export default class BigCommercePaymentsRequestSender {
     async updateOrder(
         requestBody: PayPalUpdateOrderRequestBody,
     ): Promise<PayPalUpdateOrderResponse> {
-        const url = `/api/storefront/initialization/bigcommerce_payments_paypal`;
+        const url = `/api/storefront/initialization/bigcommerce_payments`;
         const body = requestBody;
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
@@ -52,7 +52,7 @@ export default class BigCommercePaymentsRequestSender {
     }
 
     async getOrderStatus(
-        methodId = 'bigcommerce_payments_paypal',
+        methodId = 'bigcommerce_payments',
         options?: RequestOptions,
     ): Promise<PayPalOrderStatusData> {
         const url = `/api/storefront/initialization/${methodId}`;

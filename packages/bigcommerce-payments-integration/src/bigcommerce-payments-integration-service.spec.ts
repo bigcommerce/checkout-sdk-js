@@ -33,7 +33,7 @@ import {
 } from './bigcommerce-payments-types';
 import {
     getBigCommercePaymentsOrderDetails,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getBillingAddressFromOrderDetails,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
@@ -52,7 +52,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
     let bigCommercePaymentsScriptLoader: BigCommercePaymentsScriptLoader;
     let paypalSdk: PayPalSDK;
 
-    const defaultMethodId = 'bigcommerce_payments_paypal';
+    const defaultMethodId = 'bigcommerce_payments';
     const defaultGatewayId = 'bigcommerce_payments_apms';
     const mockedOrderId = 'order123';
 
@@ -61,7 +61,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
         cart = getCart();
         consignments = [getConsignment()];
 
-        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paypalSdk = getPayPalSDKMock();
 
         formPoster = createFormPoster();

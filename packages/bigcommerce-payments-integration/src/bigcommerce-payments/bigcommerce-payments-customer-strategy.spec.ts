@@ -23,28 +23,28 @@ import {
 import {
     getBigCommercePaymentsIntegrationServiceMock,
     getBigCommercePaymentsOrderDetails,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getBillingAddressFromOrderDetails,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
 } from '../mocks';
 
-import BigCommercePaymentsPayPalCustomerInitializeOptions from './bigcommerce-payments-paypal-customer-initialize-options';
-import BigCommercePaymentsPayPalCustomerStrategy from './bigcommerce-payments-paypal-customer-strategy';
+import BigcommercePaymentsCustomerInitializeOptions from './bigcommerce-payments-customer-initialize-options';
+import BigcommercePaymentsCustomerStrategy from './bigcommerce-payments-customer-strategy';
 
-describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
+describe('BigcommercePaymentsCustomerStrategy', () => {
     let eventEmitter: EventEmitter;
-    let strategy: BigCommercePaymentsPayPalCustomerStrategy;
+    let strategy: BigcommercePaymentsCustomerStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService;
     let paypalSdk: PayPalSDK;
 
-    const methodId = 'bigcommerce_payments_paypal';
+    const methodId = 'bigcommerce_payments';
     const defaultContainerId = 'bigcommerce-payments-container-mock-id';
     const approveDataOrderId = 'ORDER_ID';
 
-    const bigCommercePaymentsOptions: BigCommercePaymentsPayPalCustomerInitializeOptions = {
+    const bigCommercePaymentsOptions: BigcommercePaymentsCustomerInitializeOptions = {
         container: defaultContainerId,
         onClick: jest.fn(),
         onComplete: jest.fn(),
@@ -52,17 +52,17 @@ describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
 
     const initializationOptions: CustomerInitializeOptions = {
         methodId,
-        bigcommerce_payments_paypal: bigCommercePaymentsOptions,
+        bigcommerce_payments: bigCommercePaymentsOptions,
     };
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
-        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        strategy = new BigCommercePaymentsPayPalCustomerStrategy(
+        strategy = new BigcommercePaymentsCustomerStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
         );
@@ -190,8 +190,8 @@ describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
         delete (window as BigCommercePaymentsHostWindow).paypal;
     });
 
-    it('creates an interface of the BigCommercePaymentsPayPalCustomerStrategy customer strategy', () => {
-        expect(strategy).toBeInstanceOf(BigCommercePaymentsPayPalCustomerStrategy);
+    it('creates an interface of the BigcommercePaymentsCustomerStrategy customer strategy', () => {
+        expect(strategy).toBeInstanceOf(BigcommercePaymentsCustomerStrategy);
     });
 
     describe('#initialize()', () => {
@@ -205,7 +205,7 @@ describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
             }
         });
 
-        it('throws an error if bigcommerce_payments_paypal is not provided', async () => {
+        it('throws an error if bigcommerce_payments is not provided', async () => {
             const options = { methodId } as CustomerInitializeOptions;
 
             try {
@@ -215,10 +215,10 @@ describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
             }
         });
 
-        it('throws an error if bigcommerce_payments_paypal.container is not provided', async () => {
+        it('throws an error if bigcommerce_payments.container is not provided', async () => {
             const options = {
                 methodId,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     onComplete: jest.fn(),
                     container: undefined,
                 },
@@ -231,10 +231,10 @@ describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
             }
         });
 
-        it('throws an error if bigcommerce_payments_paypal.onClick is provided but it is not a function', async () => {
+        it('throws an error if bigcommerce_payments.onClick is provided but it is not a function', async () => {
             const options = {
                 methodId,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     container: 'container',
                     onClick: 'test',
                     onComplete: jest.fn(),
@@ -248,13 +248,13 @@ describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
             }
         });
 
-        it('loads bigcommerce_payments_paypal payment method', async () => {
+        it('loads bigcommerce_payments payment method', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
         });
 
-        it('does not load bigcommerce_payments_paypal payment method if payment method is already exists', async () => {
+        it('does not load bigcommerce_payments payment method if payment method is already exists', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue(
                 paymentMethod,
             );
@@ -376,7 +376,7 @@ describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(bigCommercePaymentsIntegrationService.createOrder).toHaveBeenCalledWith(
-                'bigcommerce_payments_paypal',
+                'bigcommerce_payments',
             );
         });
     });

@@ -23,7 +23,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -83,7 +83,7 @@ describe('BigCommercePaymentsVenmoButtonStrategy', () => {
         eventEmitter = new EventEmitter();
 
         paymentMethod = {
-            ...getBigCommercePaymentsPayPalPaymentMethod(),
+            ...getBigCommercePaymentsPaymentMethod(),
             id: 'bigcommerce_payments_venmo',
         };
         paypalSdk = getPayPalSDKMock();

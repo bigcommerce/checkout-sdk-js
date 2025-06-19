@@ -1,8 +1,8 @@
 /**
  * A set of options that are required to initialize the customer step of
- * checkout to support BigCommercePaymentsPayPal.
+ * checkout to support BigCommercePayments.
  */
-export default interface BigCommercePaymentsPayPalCustomerInitializeOptions {
+export default interface BigcommercePaymentsCustomerInitializeOptions {
     /**
      * The ID of a container which the checkout button should be inserted into.
      */
@@ -27,10 +27,10 @@ export default interface BigCommercePaymentsPayPalCustomerInitializeOptions {
     onClick?(): void;
 }
 
-export interface WithBigCommercePaymentsPayPalCustomerInitializeOptions {
+export interface WithBigCommercePaymentsCustomerInitializeOptions {
     /**
      * The options that are required to initialize the customer step of checkout
-     * when using BigCommercePaymentsPayPal.
+     * when using BigCommercePayments.
      */
-    bigcommerce_payments_paypal?: BigCommercePaymentsPayPalCustomerInitializeOptions;
+    bigcommerce_payments?: BigcommercePaymentsCustomerInitializeOptions;
 }

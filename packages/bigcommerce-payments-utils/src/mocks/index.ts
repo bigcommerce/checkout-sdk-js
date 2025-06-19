@@ -1,5 +1,5 @@
 export {
-    default as getBigCommercePaymentsPayPalPaymentMethod,
+    default as getBigCommercePaymentsPaymentMethod,
     getBigCommercePaymentsFastlanePaymentMethod,
 } from './get-bigcommerce-payments-payment-method.mock';
 export { default as getPayPalFastlaneSdk } from './get-paypal-fastlane-sdk.mock';

@@ -38,7 +38,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -170,7 +170,7 @@ describe('BigCommercePaymentsCreditCardsPaymentStrategy', () => {
         cart = getCart();
         billingAddress = getBillingAddress();
         eventEmitter = new EventEmitter();
-        paymentMethod = { ...getBigCommercePaymentsPayPalPaymentMethod(), id: methodId };
+        paymentMethod = { ...getBigCommercePaymentsPaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();

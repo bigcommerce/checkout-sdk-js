@@ -25,33 +25,33 @@ import {
 import {
     getBigCommercePaymentsIntegrationServiceMock,
     getBigCommercePaymentsOrderDetails,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getBillingAddressFromOrderDetails,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
 } from '../mocks';
 
-import BigCommercePaymentsPayPalButtonInitializeOptions from './bigcommerce-payments-paypal-button-initialize-options';
-import BigCommercePaymentsPayPalButtonStrategy from './bigcommerce-payments-paypal-button-strategy';
+import BigcommercePaymentsButtonInitializeOptions from './bigcommerce-payments-button-initialize-options';
+import BigcommercePaymentsButtonStrategy from './bigcommerce-payments-button-strategy';
 
-describe('BigCommercePaymentsPayPalButtonStrategy', () => {
+describe('BigcommercePaymentsButtonStrategy', () => {
     let buyNowCart: Cart;
     let cart: Cart;
     let eventEmitter: EventEmitter;
-    let strategy: BigCommercePaymentsPayPalButtonStrategy;
+    let strategy: BigcommercePaymentsButtonStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
     let bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService;
     let paypalSdk: PayPalSDK;
 
-    const defaultMethodId = 'bigcommerce_payments_paypal';
+    const defaultMethodId = 'bigcommerce_payments';
     const defaultButtonContainerId = 'bigcommerce-payments-button-mock-id';
     const paypalOrderId = 'ORDER_ID';
 
     const buyNowCartRequestBody = getBuyNowCartRequestBody();
 
-    const buyNowBigCommercePaymentsOptions: BigCommercePaymentsPayPalButtonInitializeOptions = {
+    const buyNowBigCommercePaymentsOptions: BigcommercePaymentsButtonInitializeOptions = {
         buyNowInitializeOptions: {
             getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
         },
@@ -66,10 +66,10 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
     const buyNowInitializationOptions: CheckoutButtonInitializeOptions = {
         methodId: defaultMethodId,
         containerId: defaultButtonContainerId,
-        bigcommerce_payments_paypal: buyNowBigCommercePaymentsOptions,
+        bigcommerce_payments: buyNowBigCommercePaymentsOptions,
     };
 
-    const bigCommercePaymentsOptions: BigCommercePaymentsPayPalButtonInitializeOptions = {
+    const bigCommercePaymentsOptions: BigcommercePaymentsButtonInitializeOptions = {
         style: {
             height: 45,
         },
@@ -80,7 +80,7 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
     const initializationOptions: CheckoutButtonInitializeOptions = {
         methodId: defaultMethodId,
         containerId: defaultButtonContainerId,
-        bigcommerce_payments_paypal: bigCommercePaymentsOptions,
+        bigcommerce_payments: bigCommercePaymentsOptions,
     };
 
     const paypalShippingAddressPayloadMock = {
@@ -108,12 +108,12 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
         eventEmitter = new EventEmitter();
 
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
-        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paypalSdk = getPayPalSDKMock();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        strategy = new BigCommercePaymentsPayPalButtonStrategy(
+        strategy = new BigcommercePaymentsButtonStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
         );
@@ -266,8 +266,8 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
         }
     });
 
-    it('creates an instance of the BigCommercePaymentsPayPalButtonStrategy checkout button strategy', () => {
-        expect(strategy).toBeInstanceOf(BigCommercePaymentsPayPalButtonStrategy);
+    it('creates an instance of the BigcommercePaymentsButtonStrategy checkout button strategy', () => {
+        expect(strategy).toBeInstanceOf(BigcommercePaymentsButtonStrategy);
     });
 
     describe('#initialize()', () => {
@@ -295,7 +295,7 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
             }
         });
 
-        it('throws an error if bigcommerce_payments_paypal is not provided', async () => {
+        it('throws an error if bigcommerce_payments is not provided', async () => {
             const options = {
                 containerId: defaultButtonContainerId,
                 methodId: defaultMethodId,
@@ -308,12 +308,12 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
             }
         });
 
-        it('throws an error if bigcommerce_payments_paypal.currencyCode is not provided (for buyNowFlow only)', async () => {
+        it('throws an error if bigcommerce_payments.currencyCode is not provided (for buyNowFlow only)', async () => {
             const { currencyCode, ...rest } = buyNowBigCommercePaymentsOptions;
 
             const newInitializationOptions = {
                 ...buyNowInitializationOptions,
-                bigcommerce_payments_paypal: rest,
+                bigcommerce_payments: rest,
             };
 
             try {
@@ -328,7 +328,7 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
 
             const newInitializationOptions = {
                 ...buyNowInitializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...rest,
                     buyNowInitializeOptions: {
                         getBuyNowCartRequestBody: 'string',
@@ -480,7 +480,7 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
 
             await strategy.initialize({
                 ...initializationOptions,
-                bigcommerce_payments_paypal: {
+                bigcommerce_payments: {
                     ...bigCommercePaymentsOptions,
                     onEligibilityFailure: undefined,
                 },
@@ -501,7 +501,7 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(bigCommercePaymentsIntegrationService.createOrder).toHaveBeenCalledWith(
-                'bigcommerce_payments_paypal',
+                'bigcommerce_payments',
             );
         });
     });

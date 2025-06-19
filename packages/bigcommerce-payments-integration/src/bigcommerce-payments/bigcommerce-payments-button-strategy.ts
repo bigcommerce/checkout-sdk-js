@@ -1,16 +1,10 @@
-import { noop } from 'lodash';
-
 import {
-    CustomerCredentials,
-    CustomerInitializeOptions,
-    CustomerStrategy,
-    DefaultCheckoutButtonHeight,
-    ExecutePaymentMethodCheckoutOptions,
+    CheckoutButtonInitializeOptions,
+    CheckoutButtonStrategy,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
     PaymentIntegrationService,
-    RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
@@ -19,26 +13,27 @@ import {
     ApproveCallbackPayload,
     BigCommercePaymentsButtonsOptions,
     BigCommercePaymentsInitializationData,
+    PayPalBuyNowInitializeOptions,
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
 } from '../bigcommerce-payments-types';
 
-import BigCommercePaymentsPayPalCustomerInitializeOptions, {
-    WithBigCommercePaymentsPayPalCustomerInitializeOptions,
-} from './bigcommerce-payments-paypal-customer-initialize-options';
+import BigCommercePaymentsButtonInitializeOptions, {
+    WithBigCommercePaymentsButtonInitializeOptions,
+} from './bigcommerce-payments-button-initialize-options';
 
-export default class BigCommercePaymentsPayPalCustomerStrategy implements CustomerStrategy {
-    private onError = noop;
-
+export default class BigCommercePaymentsButtonStrategy implements CheckoutButtonStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
     ) {}
 
     async initialize(
-        options: CustomerInitializeOptions & WithBigCommercePaymentsPayPalCustomerInitializeOptions,
+        options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsButtonInitializeOptions,
     ): Promise<void> {
-        const { bigcommerce_payments_paypal, methodId } = options;
+        const { bigcommerce_payments, containerId, methodId } = options;
+
+        const isBuyNowFlow = Boolean(bigcommerce_payments?.buyNowInitializeOptions);
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -46,94 +41,84 @@ export default class BigCommercePaymentsPayPalCustomerStrategy implements Custom
             );
         }
 
-        if (!bigcommerce_payments_paypal) {
+        if (!containerId) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce_payments_paypal" argument is not provided.',
+                `Unable to initialize payment because "options.containerId" argument is not provided.`,
             );
         }
 
-        if (!bigcommerce_payments_paypal.container) {
+        if (!bigcommerce_payments) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce_payments_paypal.container" argument is not provided.',
+                `Unable to initialize payment because "options.bigcommerce_payments" argument is not provided.`,
+            );
+        }
+
+        if (isBuyNowFlow && !bigcommerce_payments.currencyCode) {
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.bigcommerce_payments.currencyCode" argument is not provided.`,
             );
         }
 
         if (
-            bigcommerce_payments_paypal.onClick &&
-            typeof bigcommerce_payments_paypal.onClick !== 'function'
+            isBuyNowFlow &&
+            typeof bigcommerce_payments.buyNowInitializeOptions?.getBuyNowCartRequestBody !==
+                'function'
         ) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce_payments_paypal.onClick" argument is not a function.',
+                `Unable to initialize payment because "options.bigcommerce_payments.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
             );
         }
 
-        this.onError = bigcommerce_payments_paypal.onError || noop;
-
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethod(methodId);
-
-        if (!paymentMethod) {
-            await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        if (!isBuyNowFlow) {
+            // Info: default checkout should not be loaded for BuyNow flow,
+            // since there is no checkout session available for that.
+            await this.paymentIntegrationService.loadDefaultCheckout();
         }
 
-        const paypalSdk = await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(methodId);
+        // Info: we are using provided currency code for buy now cart,
+        // because checkout session is not available before buy now cart creation,
+        // hence application will throw an error on getCartOrThrow method call
+        const currencyCode = isBuyNowFlow
+            ? bigcommerce_payments.currencyCode
+            : this.paymentIntegrationService.getState().getCartOrThrow().currency.code;
 
-        if (!paypalSdk || !paypalSdk.Buttons || typeof paypalSdk.Buttons !== 'function') {
-            // eslint-disable-next-line no-console
-            console.error(
-                '[BC PayPal]: PayPal Button could not be rendered, due to issues with loading PayPal SDK',
-            );
+        await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(
+            methodId,
+            currencyCode,
+            false,
+        );
 
-            return;
-        }
-
-        this.renderButton(methodId, bigcommerce_payments_paypal);
+        this.renderButton(containerId, methodId, bigcommerce_payments);
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
     }
 
-    async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
-        await this.paymentIntegrationService.signInCustomer(credentials, options);
-
-        return Promise.resolve();
-    }
-
-    async signOut(options?: RequestOptions): Promise<void> {
-        await this.paymentIntegrationService.signOutCustomer(options);
-
-        return Promise.resolve();
-    }
-
-    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<void> {
-        options?.continueWithCheckoutCallback?.();
-
-        return Promise.resolve();
-    }
-
     private renderButton(
+        containerId: string,
         methodId: string,
-        bigcommerce_payments_paypal: BigCommercePaymentsPayPalCustomerInitializeOptions,
+        bigcommerce_payments: BigCommercePaymentsButtonInitializeOptions,
     ): void {
-        const { container, onClick, onComplete } = bigcommerce_payments_paypal;
+        const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } =
+            bigcommerce_payments;
 
         const paypalSdk = this.bigCommercePaymentsIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, paymentButtonStyles } =
-            paymentMethod.initializationData || {};
-        const { checkoutTopButtonStyles } = paymentButtonStyles || {};
+        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
             createOrder: () =>
-                this.bigCommercePaymentsIntegrationService.createOrder(
-                    'bigcommerce_payments_paypal',
-                ),
+                this.bigCommercePaymentsIntegrationService.createOrder('bigcommerce_payments'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommercePaymentsIntegrationService.tokenizePayment(methodId, orderID),
-            ...(onClick && { onClick: () => onClick() }),
+        };
+
+        const buyNowFlowCallbacks = {
+            onClick: () => this.handleClick(buyNowInitializeOptions),
+            onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
         const hostedCheckoutCallbacks = {
@@ -147,20 +132,33 @@ export default class BigCommercePaymentsPayPalCustomerStrategy implements Custom
 
         const buttonRenderOptions: BigCommercePaymentsButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.bigCommercePaymentsIntegrationService.getValidButtonStyle({
-                ...checkoutTopButtonStyles,
-                height: DefaultCheckoutButtonHeight,
-            }),
+            style: this.bigCommercePaymentsIntegrationService.getValidButtonStyle(style),
             ...defaultCallbacks,
+            ...(buyNowInitializeOptions && buyNowFlowCallbacks),
             ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
         };
 
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            paypalButton.render(`#${container}`);
+            paypalButton.render(`#${containerId}`);
+        } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
+            onEligibilityFailure();
         } else {
-            this.bigCommercePaymentsIntegrationService.removeElement(container);
+            this.bigCommercePaymentsIntegrationService.removeElement(containerId);
+        }
+    }
+
+    private async handleClick(
+        buyNowInitializeOptions?: PayPalBuyNowInitializeOptions,
+    ): Promise<void> {
+        if (buyNowInitializeOptions) {
+            const buyNowCart =
+                await this.bigCommercePaymentsIntegrationService.createBuyNowCartOrThrow(
+                    buyNowInitializeOptions,
+                );
+
+            await this.paymentIntegrationService.loadCheckout(buyNowCart.id);
         }
     }
 
@@ -169,12 +167,13 @@ export default class BigCommercePaymentsPayPalCustomerStrategy implements Custom
         actions: ApproveCallbackActions,
         methodId: string,
         onComplete?: () => void,
-    ): Promise<void> {
+    ): Promise<boolean> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
 
-        const cart = this.paymentIntegrationService.getState().getCartOrThrow();
+        const state = this.paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
         const orderDetails = await actions.order.get();
 
         try {
@@ -201,8 +200,14 @@ export default class BigCommercePaymentsPayPalCustomerStrategy implements Custom
             if (onComplete && typeof onComplete === 'function') {
                 onComplete();
             }
+
+            return true; // FIXME: Do we really need to return true here?
         } catch (error) {
-            this.handleError(error);
+            if (typeof error === 'string') {
+                throw new Error(error);
+            }
+
+            throw error;
         }
     }
 
@@ -218,7 +223,7 @@ export default class BigCommercePaymentsPayPalCustomerStrategy implements Custom
 
         try {
             // Info: we use the same address to fill billing and shipping addresses to have valid quota on BE for order updating process
-            // on this stage we don't have access to valid customer's address except shipping data
+            // on this stage we don't have access to valid customer's address accept shipping data
             await this.paymentIntegrationService.updateBillingAddress(address);
             await this.paymentIntegrationService.updateShippingAddress(address);
 
@@ -228,7 +233,11 @@ export default class BigCommercePaymentsPayPalCustomerStrategy implements Custom
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.bigCommercePaymentsIntegrationService.updateOrder();
         } catch (error) {
-            this.handleError(error);
+            if (typeof error === 'string') {
+                throw new Error(error);
+            }
+
+            throw error;
         }
     }
 
@@ -243,14 +252,10 @@ export default class BigCommercePaymentsPayPalCustomerStrategy implements Custom
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.bigCommercePaymentsIntegrationService.updateOrder();
         } catch (error) {
-            this.handleError(error);
-        }
-    }
+            if (typeof error === 'string') {
+                throw new Error(error);
+            }
 
-    private handleError(error: unknown) {
-        if (typeof this.onError === 'function') {
-            this.onError(error);
-        } else {
             throw error;
         }
     }

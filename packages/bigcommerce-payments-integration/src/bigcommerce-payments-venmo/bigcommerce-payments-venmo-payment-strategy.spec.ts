@@ -21,7 +21,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPayPalPaymentMethod,
+    getBigCommercePaymentsPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -58,7 +58,7 @@ describe('BigCommercePaymentsVenmoPaymentStrategy', () => {
         eventEmitter = new EventEmitter();
 
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paymentMethod.id = defaultMethodId;
         paymentMethod.initializationData.orderId = undefined;
 

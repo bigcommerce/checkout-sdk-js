@@ -30,10 +30,7 @@ describe('BigCommercePaymentsRequestSender', () => {
             instrumentId: 'vaultedInstrumentId',
         };
 
-        await bigCommercePaymentsRequestSender.createOrder(
-            'bigcommerce_payments_paypal',
-            requestBody,
-        );
+        await bigCommercePaymentsRequestSender.createOrder('bigcommerce_payments', requestBody);
 
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
@@ -42,7 +39,7 @@ describe('BigCommercePaymentsRequestSender', () => {
         };
 
         expect(requestSender.post).toHaveBeenCalledWith(
-            '/api/storefront/payment/bigcommerce_payments_paypal',
+            '/api/storefront/payment/bigcommerce_payments',
             expect.objectContaining({
                 body: requestBody,
                 headers,
@@ -77,7 +74,7 @@ describe('BigCommercePaymentsRequestSender', () => {
         await bigCommercePaymentsRequestSender.updateOrder(updateOrderRequestBody);
 
         expect(requestSender.put).toHaveBeenCalledWith(
-            '/api/storefront/initialization/bigcommerce_payments_paypal',
+            '/api/storefront/initialization/bigcommerce_payments',
             expect.objectContaining({
                 body: updateOrderRequestBody,
                 headers,
@@ -95,7 +92,7 @@ describe('BigCommercePaymentsRequestSender', () => {
         await bigCommercePaymentsRequestSender.getOrderStatus();
 
         expect(requestSender.get).toHaveBeenCalledWith(
-            '/api/storefront/initialization/bigcommerce_payments_paypal',
+            '/api/storefront/initialization/bigcommerce_payments',
             expect.objectContaining({
                 headers,
             }),
