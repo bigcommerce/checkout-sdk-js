@@ -49,6 +49,7 @@ export function getBraintree(): PaymentMethod {
             },
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
@@ -352,6 +353,7 @@ export function getBraintreePaypal(): PaymentMethod {
             isBrainteeVenmoEnabled: false,
             enableCheckoutPaywallBanner: false,
         },
+        skipRedirectConfirmationAlert: false,
     };
 }
 

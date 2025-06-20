@@ -14,4 +14,5 @@ export default interface PaymentMethod<T = any> {
     initializationData?: T;
     returnUrl?: string;
     initializationStrategy?: InitializationStrategy;
+    skipRedirectConfirmationAlert: boolean;
 }

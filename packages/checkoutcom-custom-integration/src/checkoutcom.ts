@@ -30,6 +30,7 @@ export function getCheckoutcom(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
+        skipRedirectConfirmationAlert: true,
     };
 }
 

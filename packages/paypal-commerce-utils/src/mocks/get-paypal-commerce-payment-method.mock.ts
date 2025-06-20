@@ -54,6 +54,7 @@ export default function getPayPalCommercePaymentMethod(): PaymentMethod {
             isDeveloperModeApplicable: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
