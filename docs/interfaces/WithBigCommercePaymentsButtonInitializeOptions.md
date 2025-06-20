@@ -12,4 +12,4 @@
 
 ### bigcommerce\_payments
 
-• `Optional` **bigcommerce\_payments**: [`BigcommercePaymentsButtonInitializeOptions`](BigcommercePaymentsButtonInitializeOptions.md)
+• `Optional` **bigcommerce\_payments**: [`BigCommercePaymentsButtonInitializeOptions`](BigCommercePaymentsButtonInitializeOptions.md)

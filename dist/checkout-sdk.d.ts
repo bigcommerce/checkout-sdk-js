@@ -917,6 +917,37 @@ declare interface BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions 
 }
 
 /**
+ * A set of options that are required to initialize BigCommercePaymentsButtonStrategy in cart or product details page.
+ *
+ * When BigCommercePayments is initialized, an BigCommercePayments PayPal button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger PayPal flow.
+ */
+declare interface BigCommercePaymentsButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
+/**
  * A set of options that are required to initialize the BigCommercePayments Credit Card payment
  * method for presenting its credit card form.
  *
@@ -1001,6 +1032,32 @@ declare interface BigCommercePaymentsCreditCardsPaymentInitializeOptions {
      * The callback that gets called when there is an issue with rendering credit card fields
      */
     onCreditCardFieldsRenderingError?: (error: unknown) => void;
+}
+
+/**
+ * A set of options that are required to initialize the customer step of
+ * checkout to support BigCommercePayments.
+ */
+declare interface BigCommercePaymentsCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error?: Error): void;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
 }
 
 /**
@@ -1293,6 +1350,96 @@ declare interface BigCommercePaymentsPayLaterPaymentInitializeOptions {
     submitForm?(): void;
 }
 
+/**
+ * A set of options that are required to initialize the BigCommercePayments payment
+ * method for presenting its PayPal button.
+ *
+ * Please note that the minimum version of checkout-sdk is 1.100
+ *
+ * Also, BigCommercePayments requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * ```html
+ * <!-- This is where the BigCommercePayments PayPal button will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'bigcommerce_payments',
+ *     bigcommerce_payments: {
+ *         container: '#container',
+ * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
+ *         submitForm: () => {
+ *         // Example function
+ *             this.submitOrder(
+ *                {
+ *                   payment: { methodId: 'bigcommerce_payments', }
+ *               }
+ *            );
+ *         },
+ * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
+ *         onValidate: (resolve, reject) => {
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
+ *         onRenderButton: () => {
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
+ *         }
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsPaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * If there is no need to initialize the Smart Payment Button, simply pass false as the option value.
+     * The default value is true
+     */
+    shouldRenderPayPalButtonOnInitialization?: boolean;
+    /**
+     * A callback for getting form fields values.
+     */
+    getFieldsValues?(): HostedInstrument_2;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback that gets called when strategy is in the process of initialization before rendering Smart Payment Button.
+     *
+     * @param callback - A function, that calls the method to render the Smart Payment Button.
+     */
+    onInit?(callback: () => void): void;
+    /**
+     * A callback that gets called when a buyer click on Smart Payment Button
+     * and should validate payment form.
+     *
+     * @param resolve - A function, that gets called if form is valid.
+     * @param reject - A function, that gets called if form is not valid.
+     *
+     * @returns reject() or resolve()
+     */
+    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approves PayPal payment.
+     */
+    submitForm(): void;
+}
+
 declare interface BigCommercePaymentsRatePayPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
@@ -1434,153 +1581,6 @@ declare interface BigCommercePaymentsVenmoPaymentInitializeOptions {
     /**
      * A callback for submitting payment form that gets called
      * when buyer approved PayPal account.
-     */
-    submitForm(): void;
-}
-
-/**
- * A set of options that are required to initialize BigCommercePaymentsButtonStrategy in cart or product details page.
- *
- * When BigCommercePayments is initialized, an BigCommercePayments PayPal button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger PayPal flow.
- */
-declare interface BigcommercePaymentsButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
-/**
- * A set of options that are required to initialize the customer step of
- * checkout to support BigCommercePayments.
- */
-declare interface BigcommercePaymentsCustomerInitializeOptions {
-    /**
-     * The ID of a container which the checkout button should be inserted into.
-     */
-    container: string;
-    /**
-     * A callback that gets called if unable to initialize the widget or select
-     * one of the address options provided by the widget.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error?: Error): void;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
-    /**
-     * A callback that gets called when paypal button clicked.
-     */
-    onClick?(): void;
-}
-
-/**
- * A set of options that are required to initialize the BigCommercePayments payment
- * method for presenting its PayPal button.
- *
- * Please note that the minimum version of checkout-sdk is 1.100
- *
- * Also, BigCommercePayments requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
- * ```html
- * <!-- This is where the BigCommercePayments PayPal button will be inserted -->
- * <div id="container"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'bigcommerce_payments',
- *     bigcommerce_payments: {
- *         container: '#container',
- * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
- *         submitForm: () => {
- *         // Example function
- *             this.submitOrder(
- *                {
- *                   payment: { methodId: 'bigcommerce_payments', }
- *               }
- *            );
- *         },
- * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
- *         onValidate: (resolve, reject) => {
- *         // Example function
- *             const isValid = this.validatePaymentForm();
- *             if (isValid) {
- *                 return resolve();
- *             }
- *             return reject();
- *         },
- * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
- *         onRenderButton: () => {
- *         // Example function
- *             this.hidePaymentSubmitButton();
- *         }
- *     },
- * });
- * ```
- */
-declare interface BigcommercePaymentsPaymentInitializeOptions {
-    /**
-     * The CSS selector of a container where the payment widget should be inserted into.
-     */
-    container: string;
-    /**
-     * If there is no need to initialize the Smart Payment Button, simply pass false as the option value.
-     * The default value is true
-     */
-    shouldRenderPayPalButtonOnInitialization?: boolean;
-    /**
-     * A callback for getting form fields values.
-     */
-    getFieldsValues?(): HostedInstrument_2;
-    /**
-     * A callback for displaying error popup. This callback requires error object as parameter.
-     */
-    onError?(error: unknown): void;
-    /**
-     * A callback right before render Smart Payment Button that gets called when
-     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
-     */
-    onRenderButton?(): void;
-    /**
-     * A callback that gets called when strategy is in the process of initialization before rendering Smart Payment Button.
-     *
-     * @param callback - A function, that calls the method to render the Smart Payment Button.
-     */
-    onInit?(callback: () => void): void;
-    /**
-     * A callback that gets called when a buyer click on Smart Payment Button
-     * and should validate payment form.
-     *
-     * @param resolve - A function, that gets called if form is valid.
-     * @param reject - A function, that gets called if form is not valid.
-     *
-     * @returns reject() or resolve()
-     */
-    onValidate(resolve: () => void, reject: () => void): Promise<void>;
-    /**
-     * A callback for submitting payment form that gets called
-     * when buyer approves PayPal payment.
      */
     submitForm(): void;
 }
@@ -9126,7 +9126,7 @@ declare interface WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOpti
 }
 
 declare interface WithBigCommercePaymentsButtonInitializeOptions {
-    bigcommerce_payments?: BigcommercePaymentsButtonInitializeOptions;
+    bigcommerce_payments?: BigCommercePaymentsButtonInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsCreditCardsPaymentInitializeOptions {
@@ -9138,7 +9138,7 @@ declare interface WithBigCommercePaymentsCustomerInitializeOptions {
      * The options that are required to initialize the customer step of checkout
      * when using BigCommercePayments.
      */
-    bigcommerce_payments?: BigcommercePaymentsCustomerInitializeOptions;
+    bigcommerce_payments?: BigCommercePaymentsCustomerInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsFastlaneCustomerInitializeOptions {
@@ -9162,7 +9162,7 @@ declare interface WithBigCommercePaymentsPayLaterPaymentInitializeOptions {
 }
 
 declare interface WithBigCommercePaymentsPaymentInitializeOptions {
-    bigcommerce_payments?: BigcommercePaymentsPaymentInitializeOptions;
+    bigcommerce_payments?: BigCommercePaymentsPaymentInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsRatePayPaymentInitializeOptions {

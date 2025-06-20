@@ -82,6 +82,37 @@ declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
     onEligibilityFailure?(): void;
 }
 
+/**
+ * A set of options that are required to initialize BigCommercePaymentsButtonStrategy in cart or product details page.
+ *
+ * When BigCommercePayments is initialized, an BigCommercePayments PayPal button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger PayPal flow.
+ */
+declare interface BigCommercePaymentsButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
 declare interface BigCommercePaymentsPayLaterButtonInitializeOptions {
     /**
      * The ID of a container which the messaging should be inserted.
@@ -124,37 +155,6 @@ declare interface BigCommercePaymentsVenmoButtonInitializeOptions {
      * The options that required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
-/**
- * A set of options that are required to initialize BigCommercePaymentsButtonStrategy in cart or product details page.
- *
- * When BigCommercePayments is initialized, an BigCommercePayments PayPal button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger PayPal flow.
- */
-declare interface BigcommercePaymentsButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
     /**
      *
      *  A callback that gets called when PayPal SDK restricts to render PayPal component.
@@ -772,7 +772,7 @@ declare interface WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptio
 }
 
 declare interface WithBigCommercePaymentsButtonInitializeOptions {
-    bigcommerce_payments?: BigcommercePaymentsButtonInitializeOptions;
+    bigcommerce_payments?: BigCommercePaymentsButtonInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsPayLaterButtonInitializeOptions {

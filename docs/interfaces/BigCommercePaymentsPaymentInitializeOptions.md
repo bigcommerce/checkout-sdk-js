@@ -1,6 +1,6 @@
-[@bigcommerce/checkout-sdk](../README.md) / BigcommercePaymentsPaymentInitializeOptions
+[@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsPaymentInitializeOptions
 
-# Interface: BigcommercePaymentsPaymentInitializeOptions
+# Interface: BigCommercePaymentsPaymentInitializeOptions
 
 A set of options that are required to initialize the BigCommercePayments payment
 method for presenting its PayPal button.
@@ -49,17 +49,17 @@ service.initializePayment({
 
 ### Properties
 
-- [container](BigcommercePaymentsPaymentInitializeOptions.md#container)
-- [shouldRenderPayPalButtonOnInitialization](BigcommercePaymentsPaymentInitializeOptions.md#shouldrenderpaypalbuttononinitialization)
+- [container](BigCommercePaymentsPaymentInitializeOptions.md#container)
+- [shouldRenderPayPalButtonOnInitialization](BigCommercePaymentsPaymentInitializeOptions.md#shouldrenderpaypalbuttononinitialization)
 
 ### Methods
 
-- [getFieldsValues](BigcommercePaymentsPaymentInitializeOptions.md#getfieldsvalues)
-- [onError](BigcommercePaymentsPaymentInitializeOptions.md#onerror)
-- [onInit](BigcommercePaymentsPaymentInitializeOptions.md#oninit)
-- [onRenderButton](BigcommercePaymentsPaymentInitializeOptions.md#onrenderbutton)
-- [onValidate](BigcommercePaymentsPaymentInitializeOptions.md#onvalidate)
-- [submitForm](BigcommercePaymentsPaymentInitializeOptions.md#submitform)
+- [getFieldsValues](BigCommercePaymentsPaymentInitializeOptions.md#getfieldsvalues)
+- [onError](BigCommercePaymentsPaymentInitializeOptions.md#onerror)
+- [onInit](BigCommercePaymentsPaymentInitializeOptions.md#oninit)
+- [onRenderButton](BigCommercePaymentsPaymentInitializeOptions.md#onrenderbutton)
+- [onValidate](BigCommercePaymentsPaymentInitializeOptions.md#onvalidate)
+- [submitForm](BigCommercePaymentsPaymentInitializeOptions.md#submitform)
 
 ## Properties
 

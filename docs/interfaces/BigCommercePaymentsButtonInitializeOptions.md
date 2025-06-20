@@ -1,6 +1,6 @@
-[@bigcommerce/checkout-sdk](../README.md) / BigcommercePaymentsButtonInitializeOptions
+[@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsButtonInitializeOptions
 
-# Interface: BigcommercePaymentsButtonInitializeOptions
+# Interface: BigCommercePaymentsButtonInitializeOptions
 
 A set of options that are required to initialize BigCommercePaymentsButtonStrategy in cart or product details page.
 
@@ -11,14 +11,14 @@ DOM. When a customer clicks on it, it will trigger PayPal flow.
 
 ### Properties
 
-- [buyNowInitializeOptions](BigcommercePaymentsButtonInitializeOptions.md#buynowinitializeoptions)
-- [currencyCode](BigcommercePaymentsButtonInitializeOptions.md#currencycode)
-- [style](BigcommercePaymentsButtonInitializeOptions.md#style)
+- [buyNowInitializeOptions](BigCommercePaymentsButtonInitializeOptions.md#buynowinitializeoptions)
+- [currencyCode](BigCommercePaymentsButtonInitializeOptions.md#currencycode)
+- [style](BigCommercePaymentsButtonInitializeOptions.md#style)
 
 ### Methods
 
-- [onComplete](BigcommercePaymentsButtonInitializeOptions.md#oncomplete)
-- [onEligibilityFailure](BigcommercePaymentsButtonInitializeOptions.md#oneligibilityfailure)
+- [onComplete](BigCommercePaymentsButtonInitializeOptions.md#oncomplete)
+- [onEligibilityFailure](BigCommercePaymentsButtonInitializeOptions.md#oneligibilityfailure)
 
 ## Properties
 

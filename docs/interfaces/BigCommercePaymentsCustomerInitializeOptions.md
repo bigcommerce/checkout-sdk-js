@@ -1,6 +1,6 @@
-[@bigcommerce/checkout-sdk](../README.md) / BigcommercePaymentsCustomerInitializeOptions
+[@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsCustomerInitializeOptions
 
-# Interface: BigcommercePaymentsCustomerInitializeOptions
+# Interface: BigCommercePaymentsCustomerInitializeOptions
 
 A set of options that are required to initialize the customer step of
 checkout to support BigCommercePayments.
@@ -9,13 +9,13 @@ checkout to support BigCommercePayments.
 
 ### Properties
 
-- [container](BigcommercePaymentsCustomerInitializeOptions.md#container)
+- [container](BigCommercePaymentsCustomerInitializeOptions.md#container)
 
 ### Methods
 
-- [onClick](BigcommercePaymentsCustomerInitializeOptions.md#onclick)
-- [onComplete](BigcommercePaymentsCustomerInitializeOptions.md#oncomplete)
-- [onError](BigcommercePaymentsCustomerInitializeOptions.md#onerror)
+- [onClick](BigCommercePaymentsCustomerInitializeOptions.md#onclick)
+- [onComplete](BigCommercePaymentsCustomerInitializeOptions.md#oncomplete)
+- [onError](BigCommercePaymentsCustomerInitializeOptions.md#onerror)
 
 ## Properties
 

@@ -12,7 +12,7 @@
 
 ### bigcommerce\_payments
 
-• `Optional` **bigcommerce\_payments**: [`BigcommercePaymentsCustomerInitializeOptions`](BigcommercePaymentsCustomerInitializeOptions.md)
+• `Optional` **bigcommerce\_payments**: [`BigCommercePaymentsCustomerInitializeOptions`](BigCommercePaymentsCustomerInitializeOptions.md)
 
 The options that are required to initialize the customer step of checkout
 when using BigCommercePayments.
