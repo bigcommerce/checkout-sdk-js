@@ -29,12 +29,12 @@ import {
     getShippingAddressFromOrderDetails,
 } from '../mocks';
 
-import BigcommercePaymentsCustomerInitializeOptions from './bigcommerce-payments-customer-initialize-options';
-import BigcommercePaymentsCustomerStrategy from './bigcommerce-payments-customer-strategy';
+import BigCommercePaymentsCustomerInitializeOptions from './bigcommerce-payments-customer-initialize-options';
+import BigCommercePaymentsCustomerStrategy from './bigcommerce-payments-customer-strategy';
 
-describe('BigcommercePaymentsCustomerStrategy', () => {
+describe('BigCommercePaymentsCustomerStrategy', () => {
     let eventEmitter: EventEmitter;
-    let strategy: BigcommercePaymentsCustomerStrategy;
+    let strategy: BigCommercePaymentsCustomerStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService;
@@ -44,7 +44,7 @@ describe('BigcommercePaymentsCustomerStrategy', () => {
     const defaultContainerId = 'bigcommerce-payments-container-mock-id';
     const approveDataOrderId = 'ORDER_ID';
 
-    const bigCommercePaymentsOptions: BigcommercePaymentsCustomerInitializeOptions = {
+    const bigCommercePaymentsOptions: BigCommercePaymentsCustomerInitializeOptions = {
         container: defaultContainerId,
         onClick: jest.fn(),
         onComplete: jest.fn(),
@@ -62,7 +62,7 @@ describe('BigcommercePaymentsCustomerStrategy', () => {
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        strategy = new BigcommercePaymentsCustomerStrategy(
+        strategy = new BigCommercePaymentsCustomerStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
         );
@@ -190,8 +190,8 @@ describe('BigcommercePaymentsCustomerStrategy', () => {
         delete (window as BigCommercePaymentsHostWindow).paypal;
     });
 
-    it('creates an interface of the BigcommercePaymentsCustomerStrategy customer strategy', () => {
-        expect(strategy).toBeInstanceOf(BigcommercePaymentsCustomerStrategy);
+    it('creates an interface of the BigCommercePaymentsCustomerStrategy customer strategy', () => {
+        expect(strategy).toBeInstanceOf(BigCommercePaymentsCustomerStrategy);
     });
 
     describe('#initialize()', () => {

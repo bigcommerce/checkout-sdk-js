@@ -2,7 +2,7 @@
  * A set of options that are required to initialize the customer step of
  * checkout to support BigCommercePayments.
  */
-export default interface BigcommercePaymentsCustomerInitializeOptions {
+export default interface BigCommercePaymentsCustomerInitializeOptions {
     /**
      * The ID of a container which the checkout button should be inserted into.
      */
@@ -32,5 +32,5 @@ export interface WithBigCommercePaymentsCustomerInitializeOptions {
      * The options that are required to initialize the customer step of checkout
      * when using BigCommercePayments.
      */
-    bigcommerce_payments?: BigcommercePaymentsCustomerInitializeOptions;
+    bigcommerce_payments?: BigCommercePaymentsCustomerInitializeOptions;
 }

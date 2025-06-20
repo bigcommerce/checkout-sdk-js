@@ -5,12 +5,12 @@ import {
 
 import createBigCommercePaymentsIntegrationService from '../create-bigcommerce-payments-integration-service';
 
-import BigcommercePaymentsButtonStrategy from './bigcommerce-payments-button-strategy';
+import BigCommercePaymentsButtonStrategy from './bigcommerce-payments-button-strategy';
 
 const createBigCommercePaymentsButtonStrategy: CheckoutButtonStrategyFactory<
-    BigcommercePaymentsButtonStrategy
+    BigCommercePaymentsButtonStrategy
 > = (paymentIntegrationService) =>
-    new BigcommercePaymentsButtonStrategy(
+    new BigCommercePaymentsButtonStrategy(
         paymentIntegrationService,
         createBigCommercePaymentsIntegrationService(paymentIntegrationService),
     );

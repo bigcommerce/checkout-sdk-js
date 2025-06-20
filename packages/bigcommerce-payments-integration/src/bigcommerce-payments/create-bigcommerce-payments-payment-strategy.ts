@@ -7,12 +7,12 @@ import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { LOADING_INDICATOR_STYLES } from '../bigcommerce-payments-constants';
 import createBigCommercePaymentsIntegrationService from '../create-bigcommerce-payments-integration-service';
 
-import BigcommercePaymentsPaymentStrategy from './bigcommerce-payments-payment-strategy';
+import BigCommercePaymentsPaymentStrategy from './bigcommerce-payments-payment-strategy';
 
 const createBigCommercePaymentsPaymentStrategy: PaymentStrategyFactory<
-    BigcommercePaymentsPaymentStrategy
+    BigCommercePaymentsPaymentStrategy
 > = (paymentIntegrationService) =>
-    new BigcommercePaymentsPaymentStrategy(
+    new BigCommercePaymentsPaymentStrategy(
         paymentIntegrationService,
         createBigCommercePaymentsIntegrationService(paymentIntegrationService),
         new LoadingIndicator({
