@@ -414,11 +414,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         );
 
         if (isThreeDomainSecureEligible) {
-            const {
-                liabilityShift, // "no", "unknown", "possible"
-                authenticationState, // "success", "cancelled", "errored"
-                nonce, // Enriched nonce or the original nonce
-            } = await threeDomainSecureComponent.show();
+            const { liabilityShift, authenticationState, nonce } =
+                await threeDomainSecureComponent.show();
 
             if (
                 liabilityShift === LiabilityShiftEnum.No ||
@@ -427,7 +424,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 throw new PaymentMethodInvalidError();
             }
 
-            if (authenticationState === TDSecureAuthenticationState.Success) {
+            if (authenticationState === TDSecureAuthenticationState.Succeeded) {
                 return nonce;
             }
 

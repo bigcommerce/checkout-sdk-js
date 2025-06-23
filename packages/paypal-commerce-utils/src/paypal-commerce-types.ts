@@ -113,11 +113,11 @@ export interface PayPalFastlaneSdk {
 interface ThreeDomainSecureClientShowResponse {
     liabilityShift: LiabilityShiftEnum;
     authenticationState: TDSecureAuthenticationState;
-    nonce: string;
+    nonce: string; // Enriched nonce or the original nonce
 }
 
 export enum TDSecureAuthenticationState {
-    Success = 'success',
+    Succeeded = 'succeeded',
     Cancelled = 'cancelled',
     Errored = 'errored',
 }
