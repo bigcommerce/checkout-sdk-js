@@ -5529,13 +5529,15 @@ declare interface ExtensionCommandMap {
     [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
     [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
     [ExtensionCommandType.ReRenderShippingForm]: ReRenderShippingForm;
+    [ExtensionCommandType.ReRenderShippingStep]: ReRenderShippingStep;
 }
 
 export declare enum ExtensionCommandType {
     ReloadCheckout = "EXTENSION:RELOAD_CHECKOUT",
     ShowLoadingIndicator = "EXTENSION:SHOW_LOADING_INDICATOR",
     SetIframeStyle = "EXTENSION:SET_IFRAME_STYLE",
-    ReRenderShippingForm = "EXTENSION:RE_RENDER_SHIPPING_FORM"
+    ReRenderShippingForm = "EXTENSION:RE_RENDER_SHIPPING_FORM",
+    ReRenderShippingStep = "EXTENSION:RE_RENDER_SHIPPING_STEP"
 }
 
 declare type ExtensionEvent = ConsignmentsChangedEvent;
@@ -8063,6 +8065,10 @@ declare enum RadiusUnit {
 
 declare interface ReRenderShippingForm {
     type: ExtensionCommandType.ReRenderShippingForm;
+}
+
+declare interface ReRenderShippingStep {
+    type: ExtensionCommandType.ReRenderShippingStep;
 }
 
 declare type ReadableCheckoutStore = ReadableDataStore<InternalCheckoutSelectors>;

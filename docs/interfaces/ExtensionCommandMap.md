@@ -8,6 +8,7 @@
 
 - [EXTENSION%3ARELOAD_CHECKOUT](ExtensionCommandMap.md#extension:reload_checkout)
 - [EXTENSION%3ARE_RENDER_SHIPPING_FORM](ExtensionCommandMap.md#extension:re_render_shipping_form)
+- [EXTENSION%3ARE_RENDER_SHIPPING_STEP](ExtensionCommandMap.md#extension:re_render_shipping_step)
 - [EXTENSION%3ASET_IFRAME_STYLE](ExtensionCommandMap.md#extension:set_iframe_style)
 - [EXTENSION%3ASHOW_LOADING_INDICATOR](ExtensionCommandMap.md#extension:show_loading_indicator)
 
@@ -22,6 +23,12 @@ ___
 ### EXTENSION:RE\_RENDER\_SHIPPING\_FORM
 
 • **EXTENSION:RE\_RENDER\_SHIPPING\_FORM**: [`ReRenderShippingForm`](ReRenderShippingForm.md)
+
+___
+
+### EXTENSION:RE\_RENDER\_SHIPPING\_STEP
+
+• **EXTENSION:RE\_RENDER\_SHIPPING\_STEP**: [`ReRenderShippingStep`](ReRenderShippingStep.md)
 
 ___
 

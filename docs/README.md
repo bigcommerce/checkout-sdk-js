@@ -402,6 +402,7 @@
 - [Promotion](interfaces/Promotion.md)
 - [Radius](interfaces/Radius.md)
 - [ReRenderShippingForm](interfaces/ReRenderShippingForm.md)
+- [ReRenderShippingStep](interfaces/ReRenderShippingStep.md)
 - [RecaptchaResult](interfaces/RecaptchaResult.md)
 - [Region](interfaces/Region.md)
 - [ReloadCheckoutCommand](interfaces/ReloadCheckoutCommand.md)

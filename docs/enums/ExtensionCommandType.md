@@ -7,6 +7,7 @@
 ### Enumeration Members
 
 - [ReRenderShippingForm](ExtensionCommandType.md#rerendershippingform)
+- [ReRenderShippingStep](ExtensionCommandType.md#rerendershippingstep)
 - [ReloadCheckout](ExtensionCommandType.md#reloadcheckout)
 - [SetIframeStyle](ExtensionCommandType.md#setiframestyle)
 - [ShowLoadingIndicator](ExtensionCommandType.md#showloadingindicator)
@@ -16,6 +17,12 @@
 ### ReRenderShippingForm
 
 • **ReRenderShippingForm**
+
+___
+
+### ReRenderShippingStep
+
+• **ReRenderShippingStep**
 
 ___
 

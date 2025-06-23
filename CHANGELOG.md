@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.752.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.751.3...v1.752.0) (2025-06-23)
+
+
+### Features
+
+* **checkout:** introduce new command to rerender shipping step ([#2903](https://github.com/bigcommerce/checkout-sdk-js/issues/2903)) ([a4c7d9e](https://github.com/bigcommerce/checkout-sdk-js/commit/a4c7d9eecf86c23662c322cbac68ed32414adc33))
+
 ### [1.751.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.751.2...v1.751.3) (2025-06-20)
 
 ### [1.751.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.751.1...v1.751.2) (2025-06-19)
