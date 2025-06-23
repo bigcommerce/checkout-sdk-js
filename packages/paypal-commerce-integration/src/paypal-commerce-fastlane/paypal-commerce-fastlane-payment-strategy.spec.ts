@@ -597,7 +597,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
                             liabilityShift: 'possible',
-                            authenticationState: 'success',
+                            authenticationState: 'succeeded',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
                     },
