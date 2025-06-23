@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.753.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.752.0...v1.753.0) (2025-06-23)
+
+
+### Features
+
+* **payment:** fastlane success flow fix ([#2904](https://github.com/bigcommerce/checkout-sdk-js/issues/2904)) ([27ff74a](https://github.com/bigcommerce/checkout-sdk-js/commit/27ff74a91bc52179243bd6283a96ed41ee097299))
+
 ## [1.752.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.751.3...v1.752.0) (2025-06-23)
 
 
