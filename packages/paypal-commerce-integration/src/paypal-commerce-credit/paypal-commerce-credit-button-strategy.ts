@@ -100,6 +100,14 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
 
         this.renderButton(containerId, methodId, paypalcommercecredit);
 
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const isBannerImplementationDisabled =
+            features['PAYPAL-5557.Hide_ppc_banner_implementation'] ?? false;
+
+        if (isBannerImplementationDisabled) {
+            return;
+        }
+
         const messagingContainer =
             messagingContainerId && document.getElementById(messagingContainerId);
 

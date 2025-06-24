@@ -11,6 +11,7 @@ import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
     getCart,
+    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -870,6 +871,31 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalCommerceSdkRenderMock).toHaveBeenCalledWith(
+                `#${defaultMessageContainerId}`,
+            );
+        });
+
+        it('do not render PayPal message if experiment is enabled', async () => {
+            const storeConfig = getConfig().storeConfig;
+            const storeConfigWithFeaturesOn = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-5557.Hide_ppc_banner_implementation': true,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalledWith(
                 `#${defaultMessageContainerId}`,
             );
         });
