@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.754.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.753.0...v1.754.0) (2025-06-25)
+
+
+### Features
+
+* **payment:** Refactor code in order to use newly added skipRedirectConfirmationAlert ([#2900](https://github.com/bigcommerce/checkout-sdk-js/issues/2900)) ([602799f](https://github.com/bigcommerce/checkout-sdk-js/commit/602799fa0eb024c90d652b7deb5d95782ea76fbe))
+
 ## [1.753.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.752.0...v1.753.0) (2025-06-23)
 
 

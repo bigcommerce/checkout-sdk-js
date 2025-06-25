@@ -7790,6 +7790,7 @@ declare interface PaymentMethod<T = any> {
     initializationData?: T;
     returnUrl?: string;
     initializationStrategy?: InitializationStrategy;
+    skipRedirectConfirmationAlert: boolean;
 }
 
 declare interface PaymentMethodConfig {

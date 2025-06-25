@@ -22,6 +22,7 @@
 - [method](PaymentMethod.md#method)
 - [nonce](PaymentMethod.md#nonce)
 - [returnUrl](PaymentMethod.md#returnurl)
+- [skipRedirectConfirmationAlert](PaymentMethod.md#skipredirectconfirmationalert)
 - [supportedCards](PaymentMethod.md#supportedcards)
 - [type](PaymentMethod.md#type)
 
@@ -84,6 +85,12 @@ ___
 ### returnUrl
 
 • `Optional` **returnUrl**: `string`
+
+___
+
+### skipRedirectConfirmationAlert
+
+• **skipRedirectConfirmationAlert**: `boolean`
 
 ___
 
