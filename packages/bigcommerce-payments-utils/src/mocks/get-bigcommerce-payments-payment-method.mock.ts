@@ -54,6 +54,7 @@ export default function getBigCommercePaymentsPaymentMethod(): PaymentMethod {
             isDeveloperModeApplicable: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: false,
     };
 }
 
