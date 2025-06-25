@@ -27,7 +27,7 @@ import {
 import BraintreeHostedForm from './braintree-hosted-form';
 import {
     BraintreeFormOptions,
-    BraintreePaymentInitializeOptions,
+    BraintreePaymentInitializeOptions, BraintreeSupportedCardBrands,
     BraintreeThreeDSecureOptions,
 } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
@@ -116,8 +116,8 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    async initializeHostedForm(options: BraintreeFormOptions): Promise<void> {
-        return this._braintreeHostedForm.initialize(options);
+    async initializeHostedForm(options: BraintreeFormOptions, unsupportedCardBrands?: BraintreeSupportedCardBrands[]): Promise<void> {
+        return this._braintreeHostedForm.initialize(options, unsupportedCardBrands);
     }
 
     validateHostedForm() {
