@@ -22,11 +22,12 @@ import {
     BraintreeFormFieldValidateErrorData,
     BraintreeFormFieldValidateEventData,
     BraintreeFormOptions,
-    BraintreeStoredCardFieldsMap,
+    BraintreeStoredCardFieldsMap, BraintreeSupportedCardBrands,
 } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import { isBraintreeFormFieldsMap } from './is-braintree-form-fields-map';
 import { isBraintreeHostedFormError } from './is-braintree-hosted-form-error';
+import { isBraintreeSupportedCardBrand } from './is-braintree-supported-card-brand';
 
 enum BraintreeHostedFormType {
     CreditCard,
@@ -41,14 +42,17 @@ export default class BraintreeHostedForm {
 
     constructor(private _braintreeSDKCreator: BraintreeSDKCreator) {}
 
-    async initialize(options: BraintreeFormOptions): Promise<void> {
+    async initialize(
+        options: BraintreeFormOptions,
+        unsupportedCardBrands?: BraintreeSupportedCardBrands[],
+    ): Promise<void> {
         this._formOptions = options;
 
         this._type = isBraintreeFormFieldsMap(options.fields)
             ? BraintreeHostedFormType.CreditCard
             : BraintreeHostedFormType.StoredCardVerification;
 
-        const fields = this._mapFieldOptions(options.fields);
+        const fields = this._mapFieldOptions(options.fields, unsupportedCardBrands);
 
         if (isEmpty(fields)) {
             this._isInitializedHostedForm = false;
@@ -126,6 +130,8 @@ export default class BraintreeHostedForm {
             if (isBraintreeHostedFormError(error)) {
                 const errors = this._mapTokenizeError(error);
 
+                console.log({ errors, error });
+
                 if (errors) {
                     this._formOptions?.onValidate?.({
                         isValid: false,
@@ -187,14 +193,26 @@ export default class BraintreeHostedForm {
 
     private _mapFieldOptions(
         fields: BraintreeFormFieldsMap | BraintreeStoredCardFieldsMap,
+        unsupportedCardBrands?: BraintreeSupportedCardBrands[],
     ): BraintreeHostedFieldsCreatorConfig['fields'] {
         if (isBraintreeFormFieldsMap(fields)) {
+            let supportedCardBrands: Partial<Record<string, boolean>> = {};
+
+            if (unsupportedCardBrands) {
+                for (const cardBrand of unsupportedCardBrands) {
+                    if (isBraintreeSupportedCardBrand(cardBrand)) {
+                        supportedCardBrands[cardBrand] = false;
+                    }
+                }
+            }
+
             return omitBy(
                 {
                     number: {
                         container: `#${fields.cardNumber.containerId}`,
                         placeholder: fields.cardNumber.placeholder,
                         internalLabel: fields.cardNumber.accessibilityLabel,
+                        ...(supportedCardBrands ?? {}),
                     },
                     expirationDate: {
                         container: `#${fields.cardExpiry.containerId}`,
