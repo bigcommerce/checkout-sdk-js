@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.755.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.754.0...v1.755.0) (2025-06-25)
+
+
+### Features
+
+* **payment:** add hiding logic for messaging ([#2906](https://github.com/bigcommerce/checkout-sdk-js/issues/2906)) ([4df2ab2](https://github.com/bigcommerce/checkout-sdk-js/commit/4df2ab2e50ffd17bfc3b20760c84034a27d62443))
+
 ## [1.754.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.753.0...v1.754.0) (2025-06-25)
 
 
