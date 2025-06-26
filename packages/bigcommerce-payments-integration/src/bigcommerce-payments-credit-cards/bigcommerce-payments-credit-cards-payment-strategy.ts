@@ -141,7 +141,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
             // The condition gets triggered when customer pays with vaulted instrument and shipping address is trusted
             const { orderId } =
                 await this.bigCommercePaymentsIntegrationService.createOrderCardFields(
-                    'bigcommerce_payments_creditcardsscheckout',
+                    'bigcommerce_payments_creditcardscheckout',
                     this.getInstrumentParams(),
                 );
 
