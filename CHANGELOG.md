@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.755.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.755.0...v1.755.1) (2025-06-26)
+
+
+### Bug Fixes
+
+* **payment:** removed type from bigcommerce_payments_creditcardsscheckout in BigCommercePaymentsCreditCardsPaymentStrategy ([#2908](https://github.com/bigcommerce/checkout-sdk-js/issues/2908)) ([11c5ce2](https://github.com/bigcommerce/checkout-sdk-js/commit/11c5ce29858917d927d77d9e3b87b16a090d76fd))
+
 ## [1.755.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.754.0...v1.755.0) (2025-06-25)
 
 
