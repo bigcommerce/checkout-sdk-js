@@ -75,7 +75,7 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         const submitPaymentPayload =
             paymentData && isVaultedInstrument(paymentData)
                 ? await this._getVaultedInstrumentPayload(methodId, paymentData)
-                : await this._getCardPayload(shouldSaveInstrument);
+                : await this._getCardPayload(methodId, shouldSaveInstrument);
 
         await this._paymentIntegrationService.submitPayment({
             ...payment,
@@ -97,18 +97,13 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         return this._squareV2PaymentProcessor.deinitialize();
     }
 
-    private _shouldVerify(): boolean {
-        const { features } = this._paymentIntegrationService
-            .getState()
-            .getStoreConfigOrThrow().checkoutSettings;
+    private async _getCardPayload(methodId: string, shouldSaveInstrument?: boolean) {
+        const { getPaymentMethodOrThrow } = this._paymentIntegrationService.getState();
+        const { initializationData } = getPaymentMethodOrThrow<SquareInitializationData>(methodId);
 
-        return features['PROJECT-3828.add_3ds_support_on_squarev2'];
-    }
-
-    private async _getCardPayload(shouldSaveInstrument?: boolean) {
         const cardTokenizationResult = await this._squareV2PaymentProcessor.tokenize();
 
-        if (!this._shouldVerify()) {
+        if (!initializationData?.isSquareV2ApiV2Enabled) {
             return {
                 credit_card_token: {
                     token: cardTokenizationResult,
@@ -150,8 +145,11 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         methodId: string,
         paymentData: VaultedInstrument,
     ): Promise<SquareFormattedVaultedInstrument> {
+        const { getPaymentMethodOrThrow } = this._paymentIntegrationService.getState();
+        const { initializationData } = getPaymentMethodOrThrow<SquareInitializationData>(methodId);
+
         const { instrumentId } = paymentData;
-        const verificationToken = this._shouldVerify()
+        const verificationToken = initializationData?.isSquareV2ApiV2Enabled
             ? await this._squareV2PaymentProcessor.verifyBuyer(
                   await this._getSquareCardIdOrThrow(methodId, instrumentId),
                   SquareIntent.CHARGE,
