@@ -303,7 +303,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
             createVaultSetupToken: async () => {
                 const { setupToken } =
                     (await this.bigCommercePaymentsIntegrationService.createOrderCardFields(
-                        'bigcommerce_payments_creditcardsscheckout',
+                        'bigcommerce_payments_creditcardscheckout',
                         {
                             ...this.getInstrumentParams(),
                             setupToken: true,
@@ -320,7 +320,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
             createOrder: async () => {
                 const { orderId } =
                     (await this.bigCommercePaymentsIntegrationService.createOrderCardFields(
-                        'bigcommerce_payments_creditcardsscheckout',
+                        'bigcommerce_payments_creditcardscheckout',
                         this.getInstrumentParams(),
                     )) || {};
 
