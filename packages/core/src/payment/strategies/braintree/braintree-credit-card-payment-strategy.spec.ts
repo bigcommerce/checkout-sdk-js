@@ -221,6 +221,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                             cardExpiry: { containerId: 'cardExpiry' },
                         },
                     },
+                    unsupportedCardBrands: ['american-express', 'diners-club'],
                 },
             };
 
@@ -232,6 +233,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             );
             expect(braintreePaymentProcessorMock.initializeHostedForm).toHaveBeenCalledWith(
                 options.braintree.form,
+                options.braintree.unsupportedCardBrands,
             );
             expect(braintreePaymentProcessorMock.isInitializedHostedForm).toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.getSessionId).toHaveBeenCalled();
