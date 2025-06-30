@@ -11,7 +11,6 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getConfig,
     getOrderRequestBody,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -32,17 +31,6 @@ describe('SquareV2PaymentStrategy', () => {
 
     const methodId = 'squarev2';
 
-    const toggle3dsExperiment = (value: boolean) => {
-        const storeConfigMock = getConfig().storeConfig;
-
-        storeConfigMock.checkoutSettings.features = {
-            'PROJECT-3828.add_3ds_support_on_squarev2': value,
-        };
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
-            storeConfigMock,
-        );
-    };
-
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
@@ -50,15 +38,13 @@ describe('SquareV2PaymentStrategy', () => {
         loadPaymentMethodMock.mockReturnValue(paymentIntegrationService.getState());
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-            getSquareV2(),
+            getSquareV2(false),
         );
 
         processor = new SquareV2PaymentProcessor(
             new SquareV2ScriptLoader(createScriptLoader()),
             paymentIntegrationService,
         );
-
-        toggle3dsExperiment(false);
 
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
 
@@ -165,7 +151,10 @@ describe('SquareV2PaymentStrategy', () => {
         });
 
         it('should verify the buyer to get the verification token', async () => {
-            toggle3dsExperiment(true);
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getSquareV2(true));
 
             await strategy.execute(payload);
 
@@ -211,7 +200,10 @@ describe('SquareV2PaymentStrategy', () => {
                 },
             };
 
-            toggle3dsExperiment(true);
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getSquareV2(true));
 
             await strategy.execute(payload);
 
@@ -230,7 +222,10 @@ describe('SquareV2PaymentStrategy', () => {
                     },
                 };
 
-                toggle3dsExperiment(true);
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(getSquareV2(true));
 
                 await strategy.initialize(options);
             });
@@ -327,9 +322,7 @@ describe('SquareV2PaymentStrategy', () => {
                     },
                 };
 
-                toggle3dsExperiment(true);
-
-                const defaultPaymentMethod = getSquareV2();
+                const defaultPaymentMethod = getSquareV2(true);
 
                 jest.spyOn(
                     paymentIntegrationService.getState(),
@@ -349,7 +342,7 @@ describe('SquareV2PaymentStrategy', () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
-                ).mockReturnValue(getSquareV2());
+                ).mockReturnValue(getSquareV2(true));
 
                 let executeError;
 
