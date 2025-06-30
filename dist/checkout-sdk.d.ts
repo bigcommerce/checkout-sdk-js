@@ -2243,6 +2243,28 @@ declare interface BraintreePaymentInitializeOptions {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError?(error: unknown): void;
+    /**
+     * A list of card brands that are not supported by the merchant.
+     *
+     * List of supported brands by braintree can be found here: https://braintree.github.io/braintree-web/current/module-braintree-web_hosted-fields.html#~field
+     * search for `supportedCardBrands` property.
+     *
+     * List of credit cards brands:
+     * 'visa',
+     * 'mastercard',
+     * 'american-express',
+     * 'diners-club',
+     * 'discover',
+     * 'jcb',
+     * 'union-pay',
+     * 'maestro',
+     * 'elo',
+     * 'mir',
+     * 'hiper',
+     * 'hipercard'
+     *
+     * */
+    unsupportedCardBrands?: string[];
 }
 
 declare interface BraintreePaypalButtonInitializeOptions {

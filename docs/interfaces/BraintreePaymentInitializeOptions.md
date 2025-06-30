@@ -84,6 +84,7 @@ service.initializePayment({
 - [containerId](BraintreePaymentInitializeOptions.md#containerid)
 - [form](BraintreePaymentInitializeOptions.md#form)
 - [threeDSecure](BraintreePaymentInitializeOptions.md#threedsecure)
+- [unsupportedCardBrands](BraintreePaymentInitializeOptions.md#unsupportedcardbrands)
 
 ### Methods
 
@@ -124,6 +125,31 @@ ___
 ### threeDSecure
 
 • `Optional` **threeDSecure**: [`BraintreeThreeDSecureOptions`](BraintreeThreeDSecureOptions.md)
+
+___
+
+### unsupportedCardBrands
+
+• `Optional` **unsupportedCardBrands**: `string`[]
+
+A list of card brands that are not supported by the merchant.
+
+List of supported brands by braintree can be found here: https://braintree.github.io/braintree-web/current/module-braintree-web_hosted-fields.html#~field
+search for `supportedCardBrands` property.
+
+List of credit cards brands:
+'visa',
+'mastercard',
+'american-express',
+'diners-club',
+'discover',
+'jcb',
+'union-pay',
+'maestro',
+'elo',
+'mir',
+'hiper',
+'hipercard'
 
 ## Methods
 

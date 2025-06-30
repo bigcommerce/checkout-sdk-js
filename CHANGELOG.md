@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.756.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.755.2...v1.756.0) (2025-06-30)
+
+
+### Features
+
+* **payment:** added unsupported credit card brands to braintree credit cards payment strategy ([#2910](https://github.com/bigcommerce/checkout-sdk-js/issues/2910)) ([1c86f2c](https://github.com/bigcommerce/checkout-sdk-js/commit/1c86f2c541bf6dccf5fb4d5e02840e1cb84f4514))
+
 ### [1.755.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.755.1...v1.755.2) (2025-06-30)
 
 
