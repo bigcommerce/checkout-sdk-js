@@ -17,6 +17,8 @@ describe('BraintreeHostedForm', () => {
     let formOptions: BraintreeFormOptions;
     let subject: BraintreeHostedForm;
 
+    const unsupportedCardBrands = ['american-express', 'maestro'];
+
     function appendContainer(id: string): HTMLElement {
         const container = document.createElement('div');
 
@@ -83,7 +85,7 @@ describe('BraintreeHostedForm', () => {
 
     describe('#initialize', () => {
         it('creates and configures hosted fields', async () => {
-            await subject.initialize(formOptions);
+            await subject.initialize(formOptions, unsupportedCardBrands);
 
             expect(braintreeSdkCreator.createHostedFields).toHaveBeenCalledWith({
                 fields: {
@@ -98,6 +100,10 @@ describe('BraintreeHostedForm', () => {
                     number: {
                         container: '#cardNumber',
                         placeholder: 'Card number',
+                        supportedCardBrands: {
+                            'american-express': false,
+                            maestro: false,
+                        },
                     },
                     cardholderName: {
                         container: '#cardName',

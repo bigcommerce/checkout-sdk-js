@@ -250,6 +250,8 @@ describe('BraintreePaymentProcessor', () => {
         it('initializes the hosted form', () => {
             braintreeHostedForm.initialize = jest.fn();
 
+            const unsupportedCardBrands = ['american-express', 'discover'];
+
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
@@ -264,10 +266,14 @@ describe('BraintreePaymentProcessor', () => {
                 },
             };
 
-            braintreePaymentProcessor.initializeHostedForm(hostedFormInitializationOptions);
+            braintreePaymentProcessor.initializeHostedForm(
+                hostedFormInitializationOptions,
+                unsupportedCardBrands,
+            );
 
             expect(braintreeHostedForm.initialize).toHaveBeenCalledWith(
                 hostedFormInitializationOptions,
+                unsupportedCardBrands,
             );
         });
     });

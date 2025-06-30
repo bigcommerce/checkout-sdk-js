@@ -116,8 +116,11 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    async initializeHostedForm(options: BraintreeFormOptions): Promise<void> {
-        return this._braintreeHostedForm.initialize(options);
+    async initializeHostedForm(
+        options: BraintreeFormOptions,
+        unsupportedCardBrands?: string[],
+    ): Promise<void> {
+        return this._braintreeHostedForm.initialize(options, unsupportedCardBrands);
     }
 
     validateHostedForm() {
