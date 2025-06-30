@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.755.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.755.1...v1.755.2) (2025-06-30)
+
+
+### Bug Fixes
+
+* **payment:** all Moneris payments fail on iOS devices ([6709a47](https://github.com/bigcommerce/checkout-sdk-js/commit/6709a474051665521942223c873f0b04e125da8b))
+
 ### [1.755.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.755.0...v1.755.1) (2025-06-26)
 
 
