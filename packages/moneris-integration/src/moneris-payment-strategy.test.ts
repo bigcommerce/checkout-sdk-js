@@ -242,7 +242,12 @@ describe('MonerisPaymentStrategy', () => {
                 bin: '1234',
             };
 
-            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
+            window.dispatchEvent(
+                new MessageEvent('message', {
+                    origin: 'https://www3.moneris.com',
+                    data: JSON.stringify(mockMonerisIframeMessage),
+                }),
+            );
             await expect(promise).rejects.toThrow(new Error('expected error message'));
             expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
         });
@@ -271,7 +276,13 @@ describe('MonerisPaymentStrategy', () => {
                 bin: '1234',
             };
 
-            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
+            window.dispatchEvent(
+                new MessageEvent('message', {
+                    origin: 'https://www3.moneris.com',
+                    data: JSON.stringify(mockMonerisIframeMessage),
+                }),
+            );
+
             await promise;
             expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(true);
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expectedPayment);
@@ -345,6 +356,9 @@ describe('MonerisPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
 
             const pendingExecution = strategy.execute(vaultingPayload, options);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
             const mockMonerisIframeMessage = {
                 responseCode: ['001'],
                 errorMessage: null,
@@ -352,7 +366,13 @@ describe('MonerisPaymentStrategy', () => {
                 bin: '1234',
             };
 
-            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
+            window.dispatchEvent(
+                new MessageEvent('message', {
+                    origin: 'https://www3.moneris.com',
+                    data: JSON.stringify(mockMonerisIframeMessage),
+                }),
+            );
+
             await pendingExecution;
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
@@ -508,7 +528,12 @@ describe('MonerisPaymentStrategy', () => {
                 bin: '1234',
             };
 
-            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
+            window.dispatchEvent(
+                new MessageEvent('message', {
+                    origin: 'https://www3.moneris.com',
+                    data: JSON.stringify(mockMonerisIframeMessage),
+                }),
+            );
             await expect(promise).rejects.toThrow(new Error('expected error message'));
             await strategy.deinitialize();
             expect(window.removeEventListener).toHaveBeenCalledWith(
@@ -518,6 +543,20 @@ describe('MonerisPaymentStrategy', () => {
         });
         it('deinitializes strategy and removes the iframe if it exists', async () => {
             await strategy.initialize(initializeOptions);
+
+            const mockMonerisIframeMessage = {
+                responseCode: ['001'],
+                errorMessage: null,
+                dataKey: 'ABC123',
+                bin: '1234',
+            };
+
+            window.dispatchEvent(
+                new MessageEvent('message', {
+                    origin: 'https://esqa.moneris.com',
+                    data: JSON.stringify(mockMonerisIframeMessage),
+                }),
+            );
             await strategy.deinitialize();
             expect(container.childElementCount).toBe(0);
         });

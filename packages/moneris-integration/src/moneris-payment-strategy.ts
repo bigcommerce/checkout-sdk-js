@@ -137,6 +137,7 @@ export default class MonerisPaymentStrategy {
 
         const testMode = paymentMethod.config.testMode;
         const paymentData = payment.paymentData || {};
+
         const instrumentSettings = isHostedInstrumentLike(paymentData)
             ? paymentData
             : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
@@ -157,7 +158,10 @@ export default class MonerisPaymentStrategy {
             frameref.postMessage('tokenize', this.monerisURL(!!testMode));
 
             this.windowEventListener = (response: MessageEvent) => {
-                if (typeof response.data !== 'string') {
+                if (
+                    typeof response.data !== 'string' ||
+                    response.origin !== `https://${testMode ? 'esqa' : 'www3'}.moneris.com`
+                ) {
                     return;
                 }
 
@@ -282,6 +286,7 @@ export default class MonerisPaymentStrategy {
         iframe.id = IFRAME_NAME;
         iframe.style.border = 'none';
         iframe.src = `${this.monerisURL(testMode)}?${queryString}`;
+        iframe.allow = 'payment';
 
         container.appendChild(iframe);
 
