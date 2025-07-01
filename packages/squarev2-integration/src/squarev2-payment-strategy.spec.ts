@@ -50,7 +50,7 @@ describe('SquareV2PaymentStrategy', () => {
         loadPaymentMethodMock.mockReturnValue(paymentIntegrationService.getState());
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-            getSquareV2(),
+            getSquareV2(false),
         );
 
         processor = new SquareV2PaymentProcessor(
@@ -165,6 +165,10 @@ describe('SquareV2PaymentStrategy', () => {
         });
 
         it('should verify the buyer to get the verification token', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getSquareV2(true));
             toggle3dsExperiment(true);
 
             await strategy.execute(payload);
@@ -211,6 +215,10 @@ describe('SquareV2PaymentStrategy', () => {
                 },
             };
 
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getSquareV2(true));
             toggle3dsExperiment(true);
 
             await strategy.execute(payload);
@@ -230,6 +238,10 @@ describe('SquareV2PaymentStrategy', () => {
                     },
                 };
 
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(getSquareV2(true));
                 toggle3dsExperiment(true);
 
                 await strategy.initialize(options);
@@ -329,7 +341,7 @@ describe('SquareV2PaymentStrategy', () => {
 
                 toggle3dsExperiment(true);
 
-                const defaultPaymentMethod = getSquareV2();
+                const defaultPaymentMethod = getSquareV2(true);
 
                 jest.spyOn(
                     paymentIntegrationService.getState(),
@@ -349,7 +361,7 @@ describe('SquareV2PaymentStrategy', () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
-                ).mockReturnValue(getSquareV2());
+                ).mockReturnValue(getSquareV2(true));
 
                 let executeError;
 

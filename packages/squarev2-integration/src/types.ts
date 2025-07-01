@@ -7,6 +7,7 @@ export interface SquarePaymentMethodInitializationData {
 
 export interface SquareInitializationData {
     cardId?: string;
+    isSquareV2ApiV2Enabled?: boolean;
 }
 
 export interface SquareCreditCardTokens {
