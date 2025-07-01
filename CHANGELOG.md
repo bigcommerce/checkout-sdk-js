@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.757.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.756.1...v1.757.0) (2025-07-01)
+
+
+### Features
+
+* **payment:** Deprecate PROJECT-3828.add_3ds_support_on_squarev2 experiment ([#2909](https://github.com/bigcommerce/checkout-sdk-js/issues/2909)) ([510390c](https://github.com/bigcommerce/checkout-sdk-js/commit/510390ca3f60266cdfe3adfd15617a3fdee34fa6))
+
 ### [1.756.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.756.0...v1.756.1) (2025-06-30)
 
 ## [1.756.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.755.2...v1.756.0) (2025-06-30)
