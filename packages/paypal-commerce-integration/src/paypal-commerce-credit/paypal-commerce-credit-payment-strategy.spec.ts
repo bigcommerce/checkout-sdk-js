@@ -546,6 +546,23 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
             document.getElementById(defaultMessageContainerId)?.remove();
         });
 
+        it('does not render PayPal message when paypalBNPLConfiguration is not provided', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    paypalBNPLConfiguration: undefined,
+                },
+            });
+
+            await strategy.initialize(options);
+
+            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
+        });
+
         it('does not render PayPal message if banner is disabled in paypalBNPLConfiguration', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
