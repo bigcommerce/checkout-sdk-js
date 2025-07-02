@@ -10,6 +10,7 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { getStripeIntegrationServiceMock, StripeIntegrationService } from '../stripe-utils';
 import {
     StripeClient,
     StripeElement,
@@ -30,6 +31,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
     let elements: jest.Mocked<StripeElements>;
     let element: jest.Mocked<StripeElement>;
     let stripeEventEmitter: EventEmitter;
+    let stripeIntegrationService: StripeIntegrationService;
     const isLoading = jest.fn();
     const expressCheckoutOptionsMock = {
         allowedShippingCountries: ['AU', 'US', 'JP'],
@@ -49,6 +51,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
     };
 
     beforeEach(() => {
+        stripeIntegrationService = getStripeIntegrationServiceMock();
         stripeEventEmitter = new EventEmitter();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
@@ -91,7 +94,11 @@ describe('StripeLinkV2CustomerStrategy', () => {
 
     describe('#initialize()', () => {
         beforeEach(async () => {
-            strategy = new StripeLinkV2CustomerStrategy(paymentIntegrationService, scriptLoader);
+            strategy = new StripeLinkV2CustomerStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                stripeIntegrationService,
+            );
             await strategy.initialize({
                 methodId: 'card',
                 stripeocs: {
@@ -136,7 +143,11 @@ describe('StripeLinkV2CustomerStrategy', () => {
 
     describe('Stripe Link V2 Element mounting', () => {
         beforeEach(async () => {
-            strategy = new StripeLinkV2CustomerStrategy(paymentIntegrationService, scriptLoader);
+            strategy = new StripeLinkV2CustomerStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                stripeIntegrationService,
+            );
             await strategy.initialize({
                 methodId: 'card',
                 stripeocs: {
@@ -161,7 +172,11 @@ describe('StripeLinkV2CustomerStrategy', () => {
         });
 
         it('initialise all events', async () => {
-            strategy = new StripeLinkV2CustomerStrategy(paymentIntegrationService, scriptLoader);
+            strategy = new StripeLinkV2CustomerStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                stripeIntegrationService,
+            );
             await strategy.initialize({
                 methodId: 'card',
                 stripeocs: {
@@ -185,7 +200,11 @@ describe('StripeLinkV2CustomerStrategy', () => {
         });
 
         it('calls onShippingAddressChange callback if event was triggered', async () => {
-            strategy = new StripeLinkV2CustomerStrategy(paymentIntegrationService, scriptLoader);
+            strategy = new StripeLinkV2CustomerStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                stripeIntegrationService,
+            );
             await strategy.initialize({
                 methodId: 'card',
                 stripeocs: {
@@ -209,7 +228,11 @@ describe('StripeLinkV2CustomerStrategy', () => {
         });
 
         it('calls onShippingRateChange callback if event was triggered', async () => {
-            strategy = new StripeLinkV2CustomerStrategy(paymentIntegrationService, scriptLoader);
+            strategy = new StripeLinkV2CustomerStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                stripeIntegrationService,
+            );
             await strategy.initialize({
                 methodId: 'card',
                 stripeocs: {
@@ -237,7 +260,11 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 getCartOrThrow: jest.fn().mockReturnValue(cartMock),
             });
 
-            strategy = new StripeLinkV2CustomerStrategy(paymentIntegrationService, scriptLoader);
+            strategy = new StripeLinkV2CustomerStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                stripeIntegrationService,
+            );
             await strategy.initialize({
                 methodId: 'card',
                 stripeocs: {
