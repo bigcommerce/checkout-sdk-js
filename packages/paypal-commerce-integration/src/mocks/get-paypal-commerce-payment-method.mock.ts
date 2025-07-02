@@ -73,6 +73,7 @@ export default function getPayPalCommercePaymentMethod(): PaymentMethod {
                 },
             ],
         },
+        skipRedirectConfirmationAlert: false,
         type: 'PAYMENT_TYPE_API',
     };
 }

@@ -847,6 +847,23 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
         });
 
+        it('does not render PayPal message if paypalBNPLConfiguration is not provided', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    paypalBNPLConfiguration: undefined,
+                },
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
+        });
+
         it('initializes PayPal Messages component', async () => {
             await strategy.initialize(initializationOptions);
 
