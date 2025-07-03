@@ -73,6 +73,7 @@ export default function getBigCommercePaymentsPaymentMethod(): PaymentMethod {
                 },
             ],
         },
+        skipRedirectConfirmationAlert: false,
         type: 'PAYMENT_TYPE_API',
     };
 }

@@ -112,23 +112,19 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
             const paymentMethod =
                 state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
 
-            // TODO: update paypalBNPLConfiguration with empty array as default value when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
-            const { paypalBNPLConfiguration } = paymentMethod.initializationData || {};
-            let bannerConfiguration: PayPalBNPLConfigurationItem | undefined;
+            const { paypalBNPLConfiguration = [] } = paymentMethod.initializationData || {};
+            const bannerConfiguration =
+                paypalBNPLConfiguration && paypalBNPLConfiguration.find(({ id }) => id === 'cart');
 
-            if (paypalBNPLConfiguration) {
-                bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'cart');
-
-                if (!bannerConfiguration?.status) {
-                    return;
-                }
-
-                // TODO: remove this attributes reset when content service and PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
-                messagingContainer.removeAttribute('data-pp-style-logo-type');
-                messagingContainer.removeAttribute('data-pp-style-logo-position');
-                messagingContainer.removeAttribute('data-pp-style-text-color');
-                messagingContainer.removeAttribute('data-pp-style-text-size');
+            if (!bannerConfiguration?.status) {
+                return;
             }
+
+            // TODO: remove this when data attributes will be removed from related cart banner container in content service
+            messagingContainer.removeAttribute('data-pp-style-logo-type');
+            messagingContainer.removeAttribute('data-pp-style-logo-position');
+            messagingContainer.removeAttribute('data-pp-style-text-color');
+            messagingContainer.removeAttribute('data-pp-style-text-size');
 
             const payPalSdkHelper = await this.payPalSdkHelper.getPayPalMessages(
                 paymentMethod,
@@ -327,21 +323,14 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
     private renderMessages(
         paypalMessagesSdk: PayPalMessagesSdk,
         messagingContainerId: string,
-        bannerConfiguration?: PayPalBNPLConfigurationItem, // TODO: this should not be optional when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+        bannerConfiguration: PayPalBNPLConfigurationItem,
     ): void {
         const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
-        const grandTotal = checkout.outstandingBalance;
-        // TODO: default style can be removed when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
-        const style = bannerConfiguration
-            ? getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration)
-            : {
-                  layout: 'text',
-              };
 
         const paypalMessagesOptions: MessagingOptions = {
-            amount: grandTotal,
+            amount: checkout.outstandingBalance,
             placement: 'cart',
-            style,
+            style: getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration),
         };
 
         const paypalMessages = paypalMessagesSdk.Messages(paypalMessagesOptions);

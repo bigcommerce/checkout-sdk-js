@@ -117,11 +117,18 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                 state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
             const { paypalBNPLConfiguration = [] } = paymentMethod.initializationData || {};
-            const bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'cart');
+            const bannerConfiguration =
+                paypalBNPLConfiguration && paypalBNPLConfiguration.find(({ id }) => id === 'cart');
 
             if (!bannerConfiguration?.status) {
                 return;
             }
+
+            // TODO: remove this code when data attributes will be removed from the banner container in content service
+            messagingContainer.removeAttribute('data-pp-style-logo-type');
+            messagingContainer.removeAttribute('data-pp-style-logo-position');
+            messagingContainer.removeAttribute('data-pp-style-text-color');
+            messagingContainer.removeAttribute('data-pp-style-text-size');
 
             const paypalSdk = await this.paypalCommerceSdk.getPayPalMessages(
                 paymentMethod,

@@ -73,7 +73,9 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         const { bannerContainerId = '', container } = paypalOptions;
 
         if (document.getElementById(bannerContainerId)) {
-            const bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'checkout');
+            const bannerConfiguration =
+                paypalBNPLConfiguration &&
+                paypalBNPLConfiguration.find(({ id }) => id === 'checkout');
 
             if (!bannerConfiguration?.status) {
                 return;
