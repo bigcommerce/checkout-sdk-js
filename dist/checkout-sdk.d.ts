@@ -9433,7 +9433,6 @@ declare interface WithSquareV2PaymentInitializeOptions {
 }
 
 declare interface WithStripeOCSPaymentInitializeOptions {
-    stripeupe?: StripeOCSPaymentInitializeOptions;
     stripeocs?: StripeOCSPaymentInitializeOptions;
 }
 
