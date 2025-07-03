@@ -236,6 +236,9 @@ describe('StripeOCSPaymentStrategy', () => {
                     spacedAccordionItems: false,
                     visibleAccordionItemsCount: 0,
                 },
+                savePaymentMethod: {
+                    maxVisiblePaymentMethods: 20,
+                },
             });
             expect(onErrorMock).not.toHaveBeenCalled();
             expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
@@ -296,6 +299,9 @@ describe('StripeOCSPaymentStrategy', () => {
                     radios: true,
                     spacedAccordionItems: false,
                     visibleAccordionItemsCount: 0,
+                },
+                savePaymentMethod: {
+                    maxVisiblePaymentMethods: 20,
                 },
             });
             expect(onErrorMock).not.toHaveBeenCalled();

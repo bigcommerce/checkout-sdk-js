@@ -2,12 +2,13 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import formatLocale from './format-locale';
 import {
     StripeClient,
-    StripeConfigurationOptions,
     StripeElements,
     StripeElementsOptions,
     StripeHostWindow,
+    StripeInitializationData,
 } from './stripe';
 
 export default class StripeScriptLoader {
@@ -17,33 +18,27 @@ export default class StripeScriptLoader {
     ) {}
 
     async getStripeClient(
-        stripePublishableKey: string,
-        stripeAccount?: string,
-        locale?: string,
-        options?: StripeConfigurationOptions,
+        initializationData: StripeInitializationData,
+        betas?: string[],
+        apiVersion?: string,
     ): Promise<StripeClient> {
-        let stripeClient = this.stripeWindow.bcStripeClient;
-
-        if (!stripeClient) {
-            const stripe = await this.load();
-            const defaultOptions = {
-                stripeAccount,
-                locale,
-                // TODO: move this options to Stripe UPE components
-                betas: [
-                    'payment_element_beta_2',
-                    'alipay_pm_beta_1',
-                    'link_default_integration_beta_1',
-                    'shipping_address_element_beta_1',
-                    'address_element_beta_1',
-                ],
-                apiVersion: '2020-03-02;alipay_beta=v1;link_beta=v1',
-            };
-
-            stripeClient = stripe<StripeClient>(stripePublishableKey, options || defaultOptions);
-
-            Object.assign(this.stripeWindow, { bcStripeClient: stripeClient });
+        if (this.stripeWindow.bcStripeClient) {
+            return this.stripeWindow.bcStripeClient;
         }
+
+        const stripe = await this.load();
+        const { stripePublishableKey, stripeConnectedAccount, shopperLanguage } =
+            initializationData;
+        const options = {
+            ...(shopperLanguage ? { locale: formatLocale(shopperLanguage) } : {}),
+            ...(stripeConnectedAccount ? { stripeAccount: stripeConnectedAccount } : {}),
+            ...(betas ? { betas } : {}),
+            ...(apiVersion ? { apiVersion } : {}),
+        };
+
+        const stripeClient = stripe<StripeClient>(stripePublishableKey, options);
+
+        Object.assign(this.stripeWindow, { bcStripeClient: stripeClient });
 
         return stripeClient;
     }

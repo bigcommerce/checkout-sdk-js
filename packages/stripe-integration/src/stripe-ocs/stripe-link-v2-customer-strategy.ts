@@ -79,7 +79,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         this._stripePublishableKey = stripePublishableKey;
 
-        this._stripeClient = await this.scriptLoader.getStripeClient(this._stripePublishableKey);
+        this._stripeClient = await this.scriptLoader.getStripeClient(initializationData);
 
         await this._mountExpressCheckoutElement(container, this._stripeClient, buttonHeight);
 
