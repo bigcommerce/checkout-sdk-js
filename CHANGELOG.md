@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.758.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.758.0...v1.758.1) (2025-07-03)
+
+
+### Code Refactoring
+
+* **payment:** removed no BNPL related code from BCP strategies ([#2916](https://github.com/bigcommerce/checkout-sdk-js/issues/2916)) ([13852ca](https://github.com/bigcommerce/checkout-sdk-js/commit/13852ca4553c0b599bfb99fab7c9ce78c8bae42d))
+
 ## [1.758.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.757.1...v1.758.0) (2025-07-03)
 
 
