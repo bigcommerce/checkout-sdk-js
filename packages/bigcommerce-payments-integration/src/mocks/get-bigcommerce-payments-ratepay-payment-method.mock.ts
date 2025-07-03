@@ -18,6 +18,7 @@ export default function getBigCommercePaymentsRatePayPaymentMethod(): PaymentMet
             attributionId: '1123JLKJASD12',
             intent: 'capture',
         },
+        skipRedirectConfirmationAlert: false,
         type: 'PAYMENT_TYPE_API',
     };
 }

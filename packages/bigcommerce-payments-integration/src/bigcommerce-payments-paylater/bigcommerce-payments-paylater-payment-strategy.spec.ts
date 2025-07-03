@@ -571,6 +571,23 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
             expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
         });
 
+        it('does not render PayPal message when paypalBNPLConfiguration is not provided', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    paypalBNPLConfiguration: undefined,
+                },
+            });
+
+            await strategy.initialize(options);
+
+            expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
+        });
+
         it('initializes PayPal Messages component', async () => {
             await strategy.initialize(options);
 

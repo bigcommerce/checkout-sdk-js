@@ -67,13 +67,13 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-        // TODO: update paypalBNPLConfiguration with empty array as default value when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
-        const { paypalBNPLConfiguration, orderId } = paymentMethod.initializationData || {};
+        const { paypalBNPLConfiguration = [], orderId } = paymentMethod.initializationData || {};
         const { bannerContainerId = '', container } = bigcommerce_payments_paylater;
 
-        // TODO: remove paypalBNPLConfiguration check when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
-        if (paypalBNPLConfiguration && document.getElementById(bannerContainerId)) {
-            const bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'checkout');
+        if (document.getElementById(bannerContainerId)) {
+            const bannerConfiguration =
+                paypalBNPLConfiguration &&
+                paypalBNPLConfiguration.find(({ id }) => id === 'checkout');
 
             if (!bannerConfiguration?.status) {
                 return;
@@ -85,16 +85,6 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
             );
 
             return this.renderMessages(paypalMessages, bannerContainerId, bannerConfiguration);
-        }
-
-        // TODO: this condition can be removed when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
-        if (document.getElementById(bannerContainerId)) {
-            const paypalMessages = await this.paypalSdkHelper.getPayPalMessages(
-                paymentMethod,
-                state.getCartOrThrow().currency.code,
-            );
-
-            return this.renderMessages(paypalMessages, bannerContainerId);
         }
 
         // Info:
@@ -280,24 +270,14 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
     private renderMessages(
         paypalMessages: PayPalMessagesSdk,
         bannerContainerId: string,
-        bannerConfiguration?: PayPalBNPLConfigurationItem, // TODO: this should not be optional when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+        bannerConfiguration: PayPalBNPLConfigurationItem,
     ): void {
         const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
-        const grandTotal = checkout.outstandingBalance;
-        // TODO: default style can be removed when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
-        const style = bannerConfiguration
-            ? getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration)
-            : {
-                  layout: 'text',
-                  logo: {
-                      type: 'inline',
-                  },
-              };
 
         const paypalMessagesOptions: MessagingOptions = {
-            amount: grandTotal,
+            amount: checkout.outstandingBalance,
             placement: 'payment',
-            style,
+            style: getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration),
         };
 
         paypalMessages.Messages(paypalMessagesOptions).render(`#${bannerContainerId}`);

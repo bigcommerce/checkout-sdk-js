@@ -15,6 +15,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalApmSdk, PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
@@ -29,7 +30,6 @@ import {
 import PayPalCommerceAlternativeMethodsPaymentOptions, {
     WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
 } from './paypal-commerce-alternative-methods-payment-initialize-options';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 const POLLING_INTERVAL = 3000;
 const MAX_POLLING_TIME = 300000;
@@ -64,6 +64,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             paypalcommercealternativemethods,
         } = options;
         const paypalOptions = paypalcommercealternativemethods || paypalcommerce;
+
         this.paypalcommercealternativemethods = paypalcommercealternativemethods;
 
         if (!methodId) {
@@ -91,6 +92,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         );
         const { orderId, shouldRenderFields } = paymentMethod.initializationData || {};
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+
         this.isPollingEnabled = isExperimentEnabled(
             features,
             'PAYPAL-5192.paypal_commerce_ideal_polling',
