@@ -38,6 +38,7 @@ import {
     StripeElementUpdateOptions,
     StripeError,
     StripeEventType,
+    StripeInitializationData,
     StripeIntegrationService,
     StripePaymentMethodType,
     StripeResult,
@@ -46,6 +47,7 @@ import {
 } from '../stripe-utils';
 
 import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
+import { STRIPE_CLIENT_API_VERSION, STRIPE_CLIENT_BETAS } from './stripe-upe-constants';
 import StripeUPEPaymentInitializeOptions, {
     WithStripeUPEPaymentInitializeOptions,
 } from './stripe-upe-initialize-options';
@@ -240,19 +242,14 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const {
-            clientToken,
-            initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage },
-        } = paymentMethod;
+        const { clientToken, initializationData } = paymentMethod;
+        const { shopperLanguage } = initializationData;
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._stripeUPEClient = await this._loadStripeJs(
-            stripePublishableKey,
-            stripeConnectedAccount,
-        );
+        this._stripeUPEClient = await this._loadStripeJs(initializationData);
         this._isStripeElementUpdateEnabled =
             !!checkoutSettings.features['PI-1679.trigger_update_stripe_payment_element'] &&
             typeof initStripeElementUpdateTrigger === 'function';
@@ -442,14 +439,17 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     private async _loadStripeJs(
-        stripePublishableKey: string,
-        stripeConnectedAccount: string,
+        initializationData: StripeInitializationData,
     ): Promise<StripeClient> {
         if (this._stripeUPEClient) {
             return this._stripeUPEClient;
         }
 
-        return this.scriptLoader.getStripeClient(stripePublishableKey, stripeConnectedAccount);
+        return this.scriptLoader.getStripeClient(
+            initializationData,
+            STRIPE_CLIENT_BETAS,
+            STRIPE_CLIENT_API_VERSION,
+        );
     }
 
     private _getPaymentPayload(

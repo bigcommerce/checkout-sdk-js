@@ -28,6 +28,7 @@ import {
     StripeElementType,
     StripeError,
     StripeEventType,
+    StripeInitializationData,
     StripeIntegrationService,
     StripeResult,
     StripeScriptLoader,
@@ -52,13 +53,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     async initialize(
         options: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions,
     ): Promise<void> {
-        const {
-            stripeupe: stripeupeInitData,
-            stripeocs: stripeocsInitData,
-            methodId,
-            gatewayId,
-        } = options;
-        const stripeocs = stripeocsInitData || stripeupeInitData;
+        const { stripeocs, methodId, gatewayId } = options;
 
         if (!stripeocs?.containerId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -139,25 +134,30 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         gatewayId: string,
         methodId: string,
     ) {
-        const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-            params: { method: methodId },
-        });
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        let paymentMethod = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow(methodId);
+
+        if (!paymentMethod?.clientToken) {
+            const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+                params: { method: methodId },
+            });
+
+            paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        }
 
         if (!isStripePaymentMethodLike(paymentMethod)) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const {
-            clientToken,
-            initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage },
-        } = paymentMethod;
+        const { clientToken, initializationData } = paymentMethod;
+        const { shopperLanguage, customerSessionToken } = initializationData;
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this.stripeClient = await this._loadStripeJs(stripePublishableKey, stripeConnectedAccount);
+        this.stripeClient = await this._loadStripeJs(initializationData);
 
         const {
             appearance,
@@ -171,12 +171,13 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         this.stripeElements = await this.scriptLoader.getElements(this.stripeClient, {
             clientSecret: clientToken,
+            customerSessionClientSecret: customerSessionToken,
             locale: formatLocale(shopperLanguage),
             appearance,
             fonts,
         });
 
-        const { getBillingAddress, getShippingAddress } = state;
+        const { getBillingAddress, getShippingAddress } = this.paymentIntegrationService.getState();
         const { postalCode } = getShippingAddress() || getBillingAddress() || {};
 
         const stripeElement: StripeElement =
@@ -199,6 +200,9 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                     googlePay: StripeStringConstants.NEVER,
                 },
                 layout,
+                savePaymentMethod: {
+                    maxVisiblePaymentMethods: 20,
+                },
             });
 
         this.stripeIntegrationService.mountElement(stripeElement, containerId);
@@ -215,14 +219,13 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     }
 
     private async _loadStripeJs(
-        stripePublishableKey: string,
-        stripeConnectedAccount: string,
+        initializationData: StripeInitializationData,
     ): Promise<StripeClient> {
         if (this.stripeClient) {
             return this.stripeClient;
         }
 
-        return this.scriptLoader.getStripeClient(stripePublishableKey, stripeConnectedAccount);
+        return this.scriptLoader.getStripeClient(initializationData);
     }
 
     private _collapseStripeElement() {

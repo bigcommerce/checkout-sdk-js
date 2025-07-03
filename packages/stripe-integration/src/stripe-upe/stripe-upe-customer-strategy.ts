@@ -23,6 +23,7 @@ import {
 } from '../stripe-utils';
 
 import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
+import { STRIPE_CLIENT_API_VERSION, STRIPE_CLIENT_BETAS } from './stripe-upe-constants';
 import { WithStripeUPECustomerInitializeOptions } from './stripeupe-customer-initialize-options';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
@@ -67,10 +68,6 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
         }
 
-        const {
-            initializationData: { stripePublishableKey, stripeConnectedAccount },
-        } = paymentMethod;
-
         const { email } = state.getCustomerOrThrow();
         const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
         const stripePaymentProviderCustomer = isStripeAcceleratedCheckoutCustomer(
@@ -108,8 +105,9 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             }
 
             stripeUPEClient = await this.scriptLoader.getStripeClient(
-                stripePublishableKey,
-                stripeConnectedAccount,
+                paymentMethod.initializationData,
+                STRIPE_CLIENT_BETAS,
+                STRIPE_CLIENT_API_VERSION,
             );
 
             this._stripeElements = await this.scriptLoader.getElements(stripeUPEClient, {

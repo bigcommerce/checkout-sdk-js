@@ -62,6 +62,5 @@ export default interface StripeOCSPaymentInitializeOptions {
 }
 
 export interface WithStripeOCSPaymentInitializeOptions {
-    stripeupe?: StripeOCSPaymentInitializeOptions;
     stripeocs?: StripeOCSPaymentInitializeOptions;
 }

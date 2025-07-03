@@ -120,7 +120,9 @@ describe('StripeLinkV2CustomerStrategy', () => {
 
         it('loads Stripe client and mounts element successfully', () => {
             // TODO remove mock id below
-            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith('key');
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
+                getStripeOCSMock().initializationData,
+            );
             expect(elements.create).toHaveBeenCalledWith(
                 'expressCheckout',
                 expressCheckoutOptionsMock,

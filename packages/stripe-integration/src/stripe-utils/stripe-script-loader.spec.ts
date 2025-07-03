@@ -2,7 +2,12 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeClient, StripeElementsOptions, StripeHostWindow } from './stripe';
+import {
+    StripeClient,
+    StripeElementsOptions,
+    StripeHostWindow,
+    StripeInitializationData,
+} from './stripe';
 import StripeScriptLoader from './stripe-script-loader';
 import { getStripeJsMock } from './stripe.mock';
 
@@ -10,6 +15,14 @@ describe('StripePayScriptLoader', () => {
     let stripeUPEScriptLoader: StripeScriptLoader;
     let scriptLoader: ScriptLoader;
     let mockWindow: StripeHostWindow;
+
+    const defaultInitializationData: StripeInitializationData = {
+        stripePublishableKey: 'STRIPE_PUBLIC_KEY',
+        stripeConnectedAccount: 'STRIPE_CONNECTED_ACCOUNT',
+        shopperLanguage: 'en-US',
+    };
+    const defaultBetas = ['stripe_beta_feature_key_1', 'stripe_beta_feature_key_2'];
+    const defaultApiVersion = '2020-03-02';
 
     beforeEach(() => {
         mockWindow = {} as StripeHostWindow;
@@ -30,22 +43,15 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('loads a single instance of StripeUPEClient', async () => {
-            await stripeUPEScriptLoader.getStripeClient(
-                'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT',
-            );
-            await stripeUPEScriptLoader.getStripeClient(
-                'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT',
-            );
+            await stripeUPEScriptLoader.getStripeClient(defaultInitializationData);
+            await stripeUPEScriptLoader.getStripeClient(defaultInitializationData);
 
             expect(scriptLoader.loadScript).toHaveBeenNthCalledWith(1, 'https://js.stripe.com/v3/');
         });
 
         it('loads a single instance of StripeElements', async () => {
             const getStripeClient = await stripeUPEScriptLoader.getStripeClient(
-                'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT',
+                defaultInitializationData,
             );
 
             stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
@@ -61,12 +67,45 @@ describe('StripePayScriptLoader', () => {
                 return Promise.resolve();
             });
 
-            const result = stripeUPEScriptLoader.getStripeClient(
-                'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT',
-            );
+            const result = stripeUPEScriptLoader.getStripeClient(defaultInitializationData);
 
             await expect(result).rejects.toBeInstanceOf(StandardError);
+        });
+    });
+
+    describe('#getElements', () => {
+        // const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken' };
+        const stripeFactoryMock = jest.fn(() => getStripeJsMock());
+
+        beforeEach(() => {
+            scriptLoader.loadScript = jest.fn(() => {
+                mockWindow.Stripe = stripeFactoryMock;
+
+                return Promise.resolve();
+            });
+        });
+
+        it('get stripe client with all initialization data', async () => {
+            await stripeUPEScriptLoader.getStripeClient(
+                defaultInitializationData,
+                defaultBetas,
+                defaultApiVersion,
+            );
+
+            expect(stripeFactoryMock).toHaveBeenCalledWith('STRIPE_PUBLIC_KEY', {
+                betas: defaultBetas,
+                locale: 'en',
+                stripeAccount: 'STRIPE_CONNECTED_ACCOUNT',
+                apiVersion: defaultApiVersion,
+            });
+        });
+
+        it('get stripe client without optional parameters in initialization data', async () => {
+            await stripeUPEScriptLoader.getStripeClient({
+                stripePublishableKey: defaultInitializationData.stripePublishableKey,
+            } as StripeInitializationData);
+
+            expect(stripeFactoryMock).toHaveBeenCalledWith('STRIPE_PUBLIC_KEY', {});
         });
     });
 
@@ -106,8 +145,7 @@ describe('StripePayScriptLoader', () => {
 
         it('updates stripe elements', async () => {
             const getStripeClient = await stripeUPEScriptLoader.getStripeClient(
-                'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT',
+                defaultInitializationData,
             );
 
             await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);

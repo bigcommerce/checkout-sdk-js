@@ -318,6 +318,7 @@ export interface FieldsOptions {
 export interface WalletOptions {
     applePay?: AutoOrNever;
     googlePay?: AutoOrNever;
+    link?: AutoOrNever;
 }
 
 export interface TermOptions {
@@ -340,7 +341,7 @@ export interface StripeElementsCreateOptions {
     fields?: FieldsOptions;
     wallets?: WalletOptions;
     allowedCountries?: string[];
-    defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
+    defaultValues?: ShippingDefaultValues | CustomerDefaultValues | PaymentDefaultValues;
     validation?: validationElement;
     display?: { name: DisplayName };
     terms?: TermOptions;
@@ -362,6 +363,7 @@ export interface StripeElementsCreateOptions {
         paypal: StripeStringConstants.NEVER;
     };
     buttonHeight?: number;
+    savePaymentMethod?: StripeSavePaymentMethod;
 }
 
 interface validationElement {
@@ -370,6 +372,10 @@ interface validationElement {
 
 interface validationRequiredElement {
     required?: string;
+}
+
+interface PaymentDefaultValues {
+    savePaymentMethod?: boolean;
 }
 
 interface ShippingDefaultValues {
@@ -470,6 +476,12 @@ export interface StripeElementsOptions {
      * Refer to our docs to accept a payment and learn about how client_secret should be handled.
      */
     clientSecret?: string;
+
+    /**
+     * A token that represents the Stripe customer session.
+     * Stripe documentation: https://docs.stripe.com/api/checkout/sessions
+     */
+    customerSessionClientSecret?: string;
 
     /**
      * Match the design of your site with the appearance option.
@@ -586,6 +598,7 @@ export interface StripeInitializationData {
     stripePublishableKey: string;
     stripeConnectedAccount: string;
     shopperLanguage: string;
+    customerSessionToken?: string;
 }
 
 export interface StripeElementUpdateOptions {
@@ -619,4 +632,8 @@ export enum StripeElementEvent {
 export interface LineItem {
     name: string;
     amount: number;
+}
+
+export interface StripeSavePaymentMethod {
+    maxVisiblePaymentMethods?: number;
 }
