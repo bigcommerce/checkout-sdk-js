@@ -74,7 +74,6 @@ describe('StripePayScriptLoader', () => {
     });
 
     describe('#getElements', () => {
-        // const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken' };
         const stripeFactoryMock = jest.fn(() => getStripeJsMock());
 
         beforeEach(() => {
