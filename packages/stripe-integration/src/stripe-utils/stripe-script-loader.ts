@@ -2,7 +2,6 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import formatLocale from './format-locale';
 import {
     StripeClient,
     StripeElements,
@@ -27,10 +26,8 @@ export default class StripeScriptLoader {
         }
 
         const stripe = await this.load();
-        const { stripePublishableKey, stripeConnectedAccount, shopperLanguage } =
-            initializationData;
+        const { stripePublishableKey, stripeConnectedAccount } = initializationData;
         const options = {
-            ...(shopperLanguage ? { locale: formatLocale(shopperLanguage) } : {}),
             ...(stripeConnectedAccount ? { stripeAccount: stripeConnectedAccount } : {}),
             ...(betas ? { betas } : {}),
             ...(apiVersion ? { apiVersion } : {}),

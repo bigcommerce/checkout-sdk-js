@@ -93,7 +93,6 @@ describe('StripePayScriptLoader', () => {
 
             expect(stripeFactoryMock).toHaveBeenCalledWith('STRIPE_PUBLIC_KEY', {
                 betas: defaultBetas,
-                locale: 'en',
                 stripeAccount: 'STRIPE_CONNECTED_ACCOUNT',
                 apiVersion: defaultApiVersion,
             });
