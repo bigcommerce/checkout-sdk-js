@@ -237,7 +237,6 @@ export type ComponentsScriptType = Array<
 
 export interface BigCommercePaymentsHostWindow extends Window {
     paypal?: PayPalSDK;
-    paypalLoadScript?: (options: BigCommercePaymentsScriptParams) => Promise<{ paypal: PayPalSDK }>;
 }
 
 /**

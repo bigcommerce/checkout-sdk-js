@@ -48,7 +48,12 @@ export default interface PayPalCommercePaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
-    container: string;
+    container?: string;
+
+    /**
+     * The location to insert the Pay Later Messages.
+     */
+    bannerContainerId?: string;
 
     /**
      * If there is no need to initialize the Smart Payment Button, simply pass false as the option value.
@@ -88,13 +93,13 @@ export default interface PayPalCommercePaymentInitializeOptions {
      *
      * @returns reject() or resolve()
      */
-    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    onValidate?(resolve: () => void, reject: () => void): Promise<void>;
 
     /**
      * A callback for submitting payment form that gets called
      * when buyer approved PayPal account.
      */
-    submitForm(): void;
+    submitForm?(): void;
 }
 
 export interface WithPayPalCommercePaymentInitializeOptions {
