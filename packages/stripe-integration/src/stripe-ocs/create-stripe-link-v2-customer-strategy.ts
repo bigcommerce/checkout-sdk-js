@@ -16,7 +16,7 @@ const createStripeLinkV2CustomerStrategy: CustomerStrategyFactory<StripeLinkV2Cu
 
     return new StripeLinkV2CustomerStrategy(
         paymentIntegrationService,
-        new StripeScriptLoader(getScriptLoader()),
+        stripeScriptLoader,
         new StripeIntegrationService(paymentIntegrationService, stripeScriptLoader),
     );
 };

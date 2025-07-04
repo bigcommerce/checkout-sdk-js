@@ -16,7 +16,7 @@ import {
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeIntegrationService } from '../stripe-utils';
+import { StripeIntegrationService, StripePaymentMethodType } from '../stripe-utils';
 import { isStripePaymentMethodLike } from '../stripe-utils/is-stripe-payment-method-like';
 import {
     StripeAdditionalActionRequired,
@@ -44,7 +44,6 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _amountTransformer?: AmountTransformer;
     private _onComplete?: (orderId?: number) => Promise<never>;
 
-    private _stripePublishableKey?: string;
     private _currencyCode?: string;
 
     private _methodId = 'optimized_checkout';
@@ -84,9 +83,6 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         }
 
         const { initializationData } = paymentMethod;
-        const { stripePublishableKey } = initializationData;
-
-        this._stripePublishableKey = stripePublishableKey;
 
         this._stripeClient = await this.scriptLoader.getStripeClient(initializationData);
 
@@ -229,7 +225,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             this._stripeClient &&
             this._stripeElements
         ) {
-            await this._prepareAddressesForPayment(event);
+            await this._updateShippingAndBillingAddress(event);
             await this.paymentIntegrationService.submitOrder();
 
             const paymentMethod = this._getPaymentPayload();
@@ -244,7 +240,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         return Promise.resolve();
     }
 
-    private async _prepareAddressesForPayment(event: StripeEventType) {
+    private async _updateShippingAndBillingAddress(event: StripeEventType) {
         if (!('billingDetails' in event && 'shippingAddress' in event)) {
             return;
         }
@@ -261,7 +257,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             '';
 
         if (shouldRequireShippingAddress) {
-            const shippingAddress = this._buildShippingAddress(
+            const shippingAddress = this._mapShippingAddress(
                 event.shippingAddress,
                 event.billingDetails,
                 firstName,
@@ -271,7 +267,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
         }
 
-        const billingAddress = this._buildBillingAddress(
+        const billingAddress = this._mapBillingAddress(
             event.shippingAddress,
             event.billingDetails,
             firstName,
@@ -281,7 +277,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         await this.paymentIntegrationService.updateBillingAddress(billingAddress);
     }
 
-    private _buildShippingAddress(
+    private _mapShippingAddress(
         shippingAddress: StripeLinkV2Event['shippingAddress'],
         billingDetails: StripeLinkV2Event['billingDetails'],
         firstName: string,
@@ -303,7 +299,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         };
     }
 
-    private _buildBillingAddress(
+    private _mapBillingAddress(
         shippingAddress: StripeLinkV2Event['shippingAddress'],
         billingDetails: StripeLinkV2Event['billingDetails'],
         firstName: string,
@@ -408,7 +404,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             cart_id: cartId,
             ...(token ? { credit_card_token: { token } } : {}),
             confirm: false,
-            payment_method_id: 'link',
+            payment_method_id: StripePaymentMethodType.Link,
         };
 
         return {
