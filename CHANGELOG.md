@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.759.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.758.1...v1.759.0) (2025-07-04)
+
+
+### Features
+
+* **payment:** Stripe OCS, broadcast customer token for stored cards ([#2917](https://github.com/bigcommerce/checkout-sdk-js/issues/2917)) ([b9d0134](https://github.com/bigcommerce/checkout-sdk-js/commit/b9d0134c3689f6407cc7a0f403fe8acee29c62c7))
+
 ### [1.758.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.758.0...v1.758.1) (2025-07-03)
 
 
