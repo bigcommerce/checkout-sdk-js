@@ -84,8 +84,7 @@ describe('BraintreeMessages', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    enableCheckoutPaywallBanner: false,
-                    paypalBNPLConfiguration: null,
+                    paypalBNPLConfiguration: undefined,
                 },
             },
         );
@@ -93,40 +92,6 @@ describe('BraintreeMessages', () => {
         braintreeMessages.render(methodId, defaultMessageContainerId, MessagingPlacements.PAYMENT);
 
         expect(paypalSdkMock.Messages).not.toHaveBeenCalled();
-    });
-
-    describe('non BNPL implementation (old approach)', () => {
-        it('renders Braintree Message with provided configuration', () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    enableCheckoutPaywallBanner: true,
-                    paypalBNPLConfiguration: null,
-                },
-            });
-
-            braintreeMessages.render(
-                methodId,
-                defaultMessageContainerId,
-                MessagingPlacements.PAYMENT,
-            );
-
-            expect(paypalSdkMock.Messages).toHaveBeenCalledWith({
-                amount,
-                buyerCountry: 'US',
-                placement: 'payment',
-                style: {
-                    layout: 'text',
-                    logo: {
-                        type: 'inline',
-                    },
-                },
-            });
-        });
     });
 
     describe('BNPL implementation', () => {

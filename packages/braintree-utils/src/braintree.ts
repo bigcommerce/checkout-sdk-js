@@ -113,7 +113,7 @@ export interface BraintreeInitializationData {
     isBraintreeAnalyticsV2Enabled?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: only for BT AXO A/B testing purposes, hence should be removed after testing
     paymentButtonStyles?: Record<string, PaypalStyleOptions>;
-    paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
+    paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[] | null;
 }
 
 export interface BraintreePaypalRequest {

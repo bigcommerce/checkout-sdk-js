@@ -26,53 +26,23 @@ export default class BraintreeMessages {
                 return;
             }
 
-            const { paypalBNPLConfiguration, enableCheckoutPaywallBanner } =
-                paymentMethod.initializationData;
+            const { paypalBNPLConfiguration = [] } = paymentMethod.initializationData;
 
-            // TODO: uncomment when PROJECT-7052.braintree_bnpl_configurator is rolled out to 100% for all tiers
-            // const { paypalBNPLConfiguration = [] } = paymentMethod.initializationData || {};
+            const bannedId = placement === MessagingPlacements.PAYMENT ? 'checkout' : placement;
+            const bannerConfiguration =
+                paypalBNPLConfiguration &&
+                paypalBNPLConfiguration.find(({ id }) => id === bannedId);
 
-            // TODO: this condition can be removed when PROJECT-7052.braintree_bnpl_configurator is rolled out to 100% for all tiers
-            // since banners enablement will be regulated by the paypalBNPLConfiguration via banner status state
-            // Explanation:
-            // - "enableCheckoutPaywallBanner" is an old approach to enable banner on checkout page
-            // - "paypalBNPLConfiguration" could not be provided from BE when PROJECT-7052.braintree_bnpl_configurator is enabled
-            // - "placement == 'payment'" means that banner should be rendered on checkout page
-            // So, when experiment is disabled we should not render banner on checkout page when enableCheckoutPaywallBanner is false
-            // However, when experiment is enabled, then we should ignore enableCheckoutPaywallBanner flag at all
-            if (
-                placement === MessagingPlacements.PAYMENT &&
-                !paypalBNPLConfiguration &&
-                !enableCheckoutPaywallBanner
-            ) {
+            if (!bannerConfiguration || !bannerConfiguration.status) {
                 return;
             }
 
-            let style: MessagesStyleOptions = {
-                layout: 'text',
-                logo: {
-                    type: 'inline',
-                },
-            };
-
-            if (paypalBNPLConfiguration) {
-                const bannedId = placement === MessagingPlacements.PAYMENT ? 'checkout' : placement;
-                const bannerConfiguration = paypalBNPLConfiguration.find(
-                    ({ id }) => id === bannedId,
-                );
-
-                if (!bannerConfiguration || !bannerConfiguration.status) {
-                    return;
-                }
-
-                if (placement === MessagingPlacements.CART) {
-                    messagingContainer.removeAttribute('data-pp-style-logo-type');
-                    messagingContainer.removeAttribute('data-pp-style-logo-position');
-                    messagingContainer.removeAttribute('data-pp-style-text-color');
-                    messagingContainer.removeAttribute('data-pp-style-text-size');
-                }
-
-                style = this.getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration);
+            // TODO: remove this code when this data attributes will be removed from banner div container in content service
+            if (placement === MessagingPlacements.CART) {
+                messagingContainer.removeAttribute('data-pp-style-logo-type');
+                messagingContainer.removeAttribute('data-pp-style-logo-position');
+                messagingContainer.removeAttribute('data-pp-style-text-color');
+                messagingContainer.removeAttribute('data-pp-style-text-size');
             }
 
             this.braintreeHostWindow.paypal
@@ -80,7 +50,7 @@ export default class BraintreeMessages {
                     amount: cart.cartAmount,
                     buyerCountry: billingAddress.countryCode,
                     placement,
-                    style,
+                    style: this.getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration),
                 })
                 .render(`#${containerId}`);
         }
