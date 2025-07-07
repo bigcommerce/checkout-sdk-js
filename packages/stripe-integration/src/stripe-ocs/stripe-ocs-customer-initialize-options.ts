@@ -12,6 +12,8 @@ export default interface StripeOCSCustomerInitializeOptions {
     methodId: string;
 
     gatewayId: string;
+
+    onComplete?: (orderId?: number) => Promise<never>;
 }
 
 export interface WithStripeOCSCustomerInitializeOptions {
