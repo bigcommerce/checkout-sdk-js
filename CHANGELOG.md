@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.759.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.759.0...v1.759.1) (2025-07-07)
+
+
+### Code Refactoring
+
+* **payment:** cleanup unused code in BraintreeMessages class ([#2920](https://github.com/bigcommerce/checkout-sdk-js/issues/2920)) ([a37c3fb](https://github.com/bigcommerce/checkout-sdk-js/commit/a37c3fbd2a501c2d2ace49cf2c427dbe1ac710c5))
+
 ## [1.759.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.758.1...v1.759.0) (2025-07-04)
 
 
