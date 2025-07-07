@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.760.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.759.1...v1.760.0) (2025-07-07)
+
+
+### Features
+
+* **payment:** added PL banner implementation to paypal-commerce-payment-strategy.ts, removed paypalLoadScript since we do not need this method due changed script loading method ([#2919](https://github.com/bigcommerce/checkout-sdk-js/issues/2919)) ([4807abf](https://github.com/bigcommerce/checkout-sdk-js/commit/4807abface6aaa37d56635261606729ac8f8b61c))
+
 ### [1.759.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.759.0...v1.759.1) (2025-07-07)
 
 
