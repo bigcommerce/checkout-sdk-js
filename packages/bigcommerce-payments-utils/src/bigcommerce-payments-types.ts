@@ -95,8 +95,40 @@ export type PayPalSdkComponents = Array<
  * PayPal Sdk instances
  *
  */
+export enum LiabilityShiftEnum {
+    Possible = 'POSSIBLE',
+    No = 'NO',
+    Unknown = 'UNKNOWN',
+    Yes = 'YES',
+}
+
+export interface threeDSecureParameters {
+    amount: string;
+    currency: string;
+    nonce: string;
+    threeDSRequested: boolean;
+    transactionContext: {
+        experience_context: {
+            brand_name?: string;
+            locale: string;
+            return_url: string;
+            cancel_url: string;
+        };
+    };
+}
+
 export interface PayPalFastlaneSdk {
+    ThreeDomainSecureClient: {
+        isEligible(params: threeDSecureParameters): Promise<boolean>;
+        show(): Promise<ThreeDomainSecureClientShowResponse>;
+    };
     Fastlane(options?: PayPalFastlaneOptions): Promise<PayPalFastlane>;
+}
+
+interface ThreeDomainSecureClientShowResponse {
+    liabilityShift: LiabilityShiftEnum;
+    authenticationState: TDSecureAuthenticationState;
+    nonce: string; // Enriched nonce or the original nonce
 }
 
 export interface PayPalMessagesSdk {
@@ -112,6 +144,12 @@ export interface PayPalApmSdk {
 
 export interface PayPalGooglePaySdk {
     Googlepay(): GooglePay;
+}
+
+export enum TDSecureAuthenticationState {
+    Succeeded = 'succeeded',
+    Cancelled = 'cancelled',
+    Errored = 'errored',
 }
 
 /**
