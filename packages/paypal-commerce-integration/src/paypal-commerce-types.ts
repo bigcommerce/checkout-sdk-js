@@ -231,7 +231,6 @@ export type ComponentsScriptType = Array<
 
 export interface PayPalCommerceHostWindow extends Window {
     paypal?: PayPalSDK;
-    paypalLoadScript?: (options: PayPalCommerceScriptParams) => Promise<{ paypal: PayPalSDK }>;
 }
 
 /**
@@ -259,6 +258,14 @@ export interface PayPalCommerceInitializationData {
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
+    paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
+}
+
+export interface PayPalBNPLConfigurationItem {
+    id: string;
+    name: string;
+    status: boolean;
+    styles: Record<string, string>;
 }
 
 /**
