@@ -7,11 +7,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BigCommercePaymentsScriptLoader from './bigcommerce-payments-script-loader';
-import {
-    BigCommercePaymentsHostWindow,
-    BigCommercePaymentsScriptParams,
-    PayPalSDK,
-} from './bigcommerce-payments-types';
+import { BigCommercePaymentsHostWindow, PayPalSDK } from './bigcommerce-payments-types';
 import { getBigCommercePaymentsPaymentMethod, getPayPalSDKMock } from './mocks';
 
 describe('BigCommercePaymentsScriptLoader', () => {
@@ -19,9 +15,6 @@ describe('BigCommercePaymentsScriptLoader', () => {
     let paypalLoader: BigCommercePaymentsScriptLoader;
     let paypalSdk: PayPalSDK;
     let paymentMethod: PaymentMethod;
-    let paypalLoadScript: (
-        options: BigCommercePaymentsScriptParams,
-    ) => Promise<{ paypal: PayPalSDK }>;
 
     beforeEach(() => {
         loader = createScriptLoader();
@@ -39,7 +32,6 @@ describe('BigCommercePaymentsScriptLoader', () => {
 
     afterEach(() => {
         (window as BigCommercePaymentsHostWindow).paypal = undefined;
-        (window as BigCommercePaymentsHostWindow).paypalLoadScript = undefined;
     });
 
     it('throws an error if initializationData is missing', async () => {
@@ -423,43 +415,6 @@ describe('BigCommercePaymentsScriptLoader', () => {
             await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
         } catch (error) {
             expect(error).toEqual(expectedError);
-        }
-    });
-
-    it('throw error if unable window.paypalLoadScript', async () => {
-        jest.spyOn(loader, 'loadScript').mockImplementation(() => {
-            (window as BigCommercePaymentsHostWindow).paypalLoadScript = undefined;
-
-            return Promise.resolve();
-        });
-
-        try {
-            await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
-        } catch (error) {
-            expect(error).toEqual(new PaymentMethodClientUnavailableError());
-        }
-    });
-
-    it('throws an error if paypal is not loaded due to some issues', async () => {
-        paypalLoadScript = jest.fn(
-            () =>
-                new Promise((_, reject) => {
-                    (window as BigCommercePaymentsHostWindow).paypal = undefined;
-
-                    return reject(undefined);
-                }),
-        );
-
-        jest.spyOn(loader, 'loadScript').mockImplementation(() => {
-            (window as BigCommercePaymentsHostWindow).paypalLoadScript = paypalLoadScript;
-
-            return Promise.resolve();
-        });
-
-        try {
-            await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
-        } catch (error) {
-            expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
         }
     });
 });
