@@ -53,6 +53,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     async initialize(
         options: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions,
     ): Promise<void> {
+        console.log('StripeOCSPaymentStrategy vaulting TEST');
         const { stripeocs, methodId, gatewayId } = options;
 
         if (!stripeocs?.containerId) {
@@ -234,13 +235,14 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         stripeElement?.collapse();
     }
 
-    private _getPaymentPayload(methodId: string, token: string): Payment {
+    private _getPaymentPayload(methodId: string, token: string, shouldSaveInstrument = false): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
         const formattedPayload = {
             cart_id: cartId,
             credit_card_token: { token },
             confirm: false,
             payment_method_id: this.selectedMethodId,
+            vault_payment_instrument: shouldSaveInstrument,
         };
 
         return {
@@ -274,13 +276,21 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             additionalActionData,
         );
 
-        const paymentPayload = this._getPaymentPayload(methodId, paymentIntent?.id || token);
+        const shouldSaveCard = this._shouldSaveCard(paymentIntent);
+        const paymentPayload = this._getPaymentPayload(methodId, paymentIntent?.id || token, shouldSaveCard);
 
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         }
+    }
+
+    private _shouldSaveCard(options: StripeResult['paymentIntent']) {
+        console.log('options', options);
+
+        const futureUsage =  options?.payment_method_options?.card?.setup_future_usage;
+        return  futureUsage && (futureUsage === 'on_session' || futureUsage === 'off_session');
     }
 
     private async _confirmStripePaymentOrThrow(
