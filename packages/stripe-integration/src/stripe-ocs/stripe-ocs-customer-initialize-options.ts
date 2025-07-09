@@ -14,6 +14,8 @@ export default interface StripeOCSCustomerInitializeOptions {
     gatewayId: string;
 
     onComplete?: (orderId?: number) => Promise<never>;
+
+    loadingContainerId?: string;
 }
 
 export interface WithStripeOCSCustomerInitializeOptions {
