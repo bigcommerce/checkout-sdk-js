@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.761.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.760.0...v1.761.0) (2025-07-09)
+
+
+### Features
+
+* **payment:** Stripe Link v2 onConfirm method ([5a01821](https://github.com/bigcommerce/checkout-sdk-js/commit/5a018217372d9e98ea7dc735cef3bad26afdb685))
+
 ## [1.760.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.759.1...v1.760.0) (2025-07-07)
 
 
