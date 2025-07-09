@@ -5,16 +5,19 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeScriptLoader } from '../stripe-utils';
+import { StripeIntegrationService, StripeScriptLoader } from '../stripe-utils';
 
 import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
 
 const createStripeLinkV2CustomerStrategy: CustomerStrategyFactory<StripeLinkV2CustomerStrategy> = (
     paymentIntegrationService,
 ) => {
+    const stripeScriptLoader = new StripeScriptLoader(getScriptLoader());
+
     return new StripeLinkV2CustomerStrategy(
         paymentIntegrationService,
-        new StripeScriptLoader(getScriptLoader()),
+        stripeScriptLoader,
+        new StripeIntegrationService(paymentIntegrationService, stripeScriptLoader),
     );
 };
 
