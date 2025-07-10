@@ -12,6 +12,7 @@ import {
     getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import { getStripeIntegrationServiceMock, StripeIntegrationService } from '../stripe-utils';
 import {
@@ -35,6 +36,8 @@ describe('StripeLinkV2CustomerStrategy', () => {
     let element: jest.Mocked<StripeElement>;
     let stripeEventEmitter: EventEmitter;
     let stripeIntegrationService: StripeIntegrationService;
+    let loadingIndicator: LoadingIndicator;
+
     const isLoading = jest.fn();
     let confirmPaymentMock: jest.Mock;
     const mockStripeAddress = {
@@ -83,6 +86,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
         stripeEventEmitter = new EventEmitter();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         confirmPaymentMock = jest.fn();
+        loadingIndicator = new LoadingIndicator();
 
         element = {
             mount: jest.fn(),
@@ -130,6 +134,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 stripeIntegrationService,
+                loadingIndicator,
             );
             await strategy.initialize({
                 methodId: 'card',
@@ -181,6 +186,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 stripeIntegrationService,
+                loadingIndicator,
             );
             await strategy.initialize({
                 methodId: 'card',
@@ -210,6 +216,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 stripeIntegrationService,
+                loadingIndicator,
             );
             await strategy.initialize({
                 methodId: 'card',
@@ -238,6 +245,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 stripeIntegrationService,
+                loadingIndicator,
             );
             await strategy.initialize({
                 methodId: 'card',
@@ -266,6 +274,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 stripeIntegrationService,
+                loadingIndicator,
             );
             await strategy.initialize({
                 methodId: 'card',
@@ -298,6 +307,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 stripeIntegrationService,
+                loadingIndicator,
             );
             await strategy.initialize({
                 methodId: 'card',
@@ -378,6 +388,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                     paymentIntegrationService,
                     scriptLoader,
                     stripeIntegrationService,
+                    loadingIndicator,
                 );
                 await strategy.initialize({
                     methodId: 'card',
@@ -430,6 +441,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                     paymentIntegrationService,
                     scriptLoader,
                     stripeIntegrationService,
+                    loadingIndicator,
                 );
                 await strategy.initialize({
                     methodId: 'card',
@@ -465,6 +477,61 @@ describe('StripeLinkV2CustomerStrategy', () => {
                             payment_method_id: 'link',
                         },
                     },
+                });
+            });
+
+            describe('#toggleLoadingIndicator', () => {
+                beforeEach(() => {
+                    jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
+                    jest.spyOn(loadingIndicator, 'hide').mockReturnValue(undefined);
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
+                        Promise.reject(errorResponse),
+                    );
+                });
+
+                it('shows loading indicator on confirm callback', async () => {
+                    strategy = new StripeLinkV2CustomerStrategy(
+                        paymentIntegrationService,
+                        scriptLoader,
+                        stripeIntegrationService,
+                        loadingIndicator,
+                    );
+                    await strategy.initialize({
+                        methodId: 'card',
+                        stripeocs: {
+                            container: 'checkout-button',
+                            loadingContainerId: 'loadingContainerId',
+                            isLoading,
+                        },
+                    } as any);
+                    stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
+                    await new Promise((resolve) => process.nextTick(resolve));
+
+                    expect(loadingIndicator.show).toHaveBeenCalled();
+                });
+
+                it('hides loading indicator when error occurs', async () => {
+                    strategy = new StripeLinkV2CustomerStrategy(
+                        paymentIntegrationService,
+                        scriptLoader,
+                        stripeIntegrationService,
+                        loadingIndicator,
+                    );
+                    await strategy.initialize({
+                        methodId: 'card',
+                        stripeocs: {
+                            container: 'checkout-button',
+                            loadingContainerId: 'loadingContainerId',
+                            isLoading,
+                        },
+                    } as any);
+
+                    try {
+                        stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
+                        await new Promise((_resolve, reject) => process.nextTick(reject));
+                    } catch (error: unknown) {
+                        expect(loadingIndicator.hide).toHaveBeenCalled();
+                    }
                 });
             });
         });

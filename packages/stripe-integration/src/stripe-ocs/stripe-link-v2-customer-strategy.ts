@@ -15,6 +15,7 @@ import {
     PaymentMethodFailedError,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import { StripeIntegrationService, StripePaymentMethodType } from '../stripe-utils';
 import { isStripePaymentMethodLike } from '../stripe-utils/is-stripe-payment-method-like';
@@ -43,6 +44,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _linkV2Element?: StripeElement;
     private _amountTransformer?: AmountTransformer;
     private _onComplete?: (orderId?: number) => Promise<never>;
+    private _loadingIndicatorContainer?: string;
 
     private _currencyCode?: string;
 
@@ -53,6 +55,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         private paymentIntegrationService: PaymentIntegrationService,
         private scriptLoader: StripeScriptLoader,
         private stripeIntegrationService: StripeIntegrationService,
+        private loadingIndicator: LoadingIndicator,
     ) {}
 
     async initialize(
@@ -74,7 +77,9 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             params: { method: this._methodId },
         });
         const paymentMethod = state.getPaymentMethodOrThrow(this._gatewayId);
-        const { container, buttonHeight, onComplete } = stripeocs;
+        const { container, loadingContainerId, buttonHeight, onComplete } = stripeocs;
+
+        this._loadingIndicatorContainer = loadingContainerId;
 
         this._onComplete = onComplete;
 
@@ -342,9 +347,12 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         const paymentPayload = this._getPaymentPayload(paymentIntent?.id || token);
 
         try {
+            this._toggleLoadingIndicator(true);
             await this.paymentIntegrationService.submitPayment(paymentPayload);
             await this._completeCheckoutFlow();
+            this._toggleLoadingIndicator(false);
         } catch (error) {
+            this._toggleLoadingIndicator(false);
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         }
     }
@@ -537,5 +545,13 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         }
 
         return fallbackValue;
+    }
+
+    private _toggleLoadingIndicator(isLoading: boolean): void {
+        if (isLoading && this._loadingIndicatorContainer) {
+            this.loadingIndicator.show(this._loadingIndicatorContainer);
+        } else {
+            this.loadingIndicator.hide();
+        }
     }
 }
