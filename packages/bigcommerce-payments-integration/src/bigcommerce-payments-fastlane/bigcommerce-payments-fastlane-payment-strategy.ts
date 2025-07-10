@@ -7,7 +7,9 @@ import {
     PayPalFastlaneCardComponentMethods,
     PayPalFastlaneCardComponentOptions,
     PayPalFastlanePaymentFormattedPayload,
+    PayPalFastlaneSdk,
     PayPalSdkHelper,
+    TDSecureAuthenticationState,
 } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     CardInstrument,
@@ -22,6 +24,7 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
+    PaymentMethodInvalidError,
     PaymentRequestOptions,
     PaymentStrategy,
     VaultedInstrument,
@@ -30,9 +33,13 @@ import {
 import BigCommercePaymentsRequestSender from '../bigcommerce-payments-request-sender';
 
 import { WithBigCommercePaymentsFastlanePaymentInitializeOptions } from './bigcommerce-payments-fastlane-payment-initialize-options';
+import { LiabilityShiftEnum } from '../bigcommerce-payments-types';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class BigCommercePaymentsFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
+    private threeDSVerificationMethod?: string;
+    private paypalFastlaneSdk?: PayPalFastlaneSdk;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -90,7 +97,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         const { isDeveloperModeApplicable, isFastlaneStylingEnabled } =
             paymentMethod.initializationData || {};
 
-        const paypalFastlaneSdk = await this.bigCommercePaymentsSdk.getPayPalFastlaneSdk(
+        this.paypalFastlaneSdk = await this.bigCommercePaymentsSdk.getPayPalFastlaneSdk(
             paymentMethod,
             cart.currency.code,
             cart.id,
@@ -106,7 +113,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         );
 
         await this.bigCommercePaymentsFastlaneUtils.initializePayPalFastlane(
-            paypalFastlaneSdk,
+            this.paypalFastlaneSdk,
             !!isDeveloperModeApplicable,
             fastlaneStyles,
         );
@@ -297,10 +304,19 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         const { instrumentId } = paymentData;
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
 
         const { orderId } = await this.bigCommercePaymentsRequestSender.createOrder(methodId, {
             cartId,
+            fastlaneToken: instrumentId,
         });
+
+        const fastlaneToken =
+            this.isBigcommercePaymentsFastlaneThreeDSAvailable() &&
+            paymentMethod.config.is3dsEnabled
+                ? await this.get3DSNonce(instrumentId)
+                : instrumentId;
 
         return {
             methodId,
@@ -308,7 +324,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 formattedPayload: {
                     paypal_fastlane_token: {
                         order_id: orderId,
-                        token: instrumentId,
+                        token: fastlaneToken,
                     },
                 },
             },
@@ -322,6 +338,8 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
         const billingAddress = state.getBillingAddressOrThrow();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
 
         const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
 
@@ -335,10 +353,17 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
 
         const { orderId } = await this.bigCommercePaymentsRequestSender.createOrder(methodId, {
             cartId,
+            fastlaneToken: id,
         });
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        const fastlaneToken =
+            this.isBigcommercePaymentsFastlaneThreeDSAvailable() &&
+            paymentMethod.config.is3dsEnabled
+                ? await this.get3DSNonce(id)
+                : id;
 
         return {
             methodId,
@@ -349,11 +374,74 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 formattedPayload: {
                     paypal_fastlane_token: {
                         order_id: orderId,
-                        token: id,
+                        token: fastlaneToken,
                     },
                 },
             },
         };
+    }
+
+    /**
+     *
+     * 3DSecure methods
+     *
+     * */
+    private async get3DSNonce(paypalNonce: string): Promise<string> {
+        const state = this.paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const order = state.getOrderOrThrow();
+        const checkoutUrl = state.getStoreConfigOrThrow().links.checkoutLink;
+
+        const threeDomainSecureComponent = this.paypalFastlaneSdk?.ThreeDomainSecureClient;
+
+        if (!threeDomainSecureComponent) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        const threeDomainSecureParameters = {
+            amount: order.orderAmount.toFixed(2),
+            currency: cart.currency.code,
+            nonce: paypalNonce,
+            threeDSRequested: this.threeDSVerificationMethod === 'SCA_ALWAYS',
+            transactionContext: {
+                experience_context: {
+                    locale: 'en-US',
+                    return_url: checkoutUrl,
+                    cancel_url: checkoutUrl,
+                },
+            },
+        };
+
+        const isThreeDomainSecureEligible = await threeDomainSecureComponent.isEligible(
+            threeDomainSecureParameters,
+        );
+
+        if (isThreeDomainSecureEligible) {
+            const { liabilityShift, authenticationState, nonce } =
+                await threeDomainSecureComponent.show();
+
+            if (
+                liabilityShift === LiabilityShiftEnum.No ||
+                liabilityShift === LiabilityShiftEnum.Unknown
+            ) {
+                throw new PaymentMethodInvalidError();
+            }
+
+            if (authenticationState === TDSecureAuthenticationState.Succeeded) {
+                return nonce;
+            }
+
+            // Cancelled or errored, merchant can choose to send the customer back to 3D Secure or submit a payment and or vault the payment token.
+            if (authenticationState === TDSecureAuthenticationState.Errored) {
+                throw new PaymentMethodInvalidError();
+            }
+
+            if (authenticationState === TDSecureAuthenticationState.Cancelled) {
+                console.error('3DS check was canceled');
+            }
+        }
+
+        return paypalNonce;
     }
 
     /**
@@ -390,5 +478,17 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         }
 
         return undefined;
+    }
+
+    /**
+     *
+     * Bigcommerce Payments Fastlane experiments handling
+     *
+     */
+    private isBigcommercePaymentsFastlaneThreeDSAvailable(): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+
+        return isExperimentEnabled(features, 'PROJECT-7080.bcp_fastlane_three_ds');
     }
 }
