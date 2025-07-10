@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.762.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.761.0...v1.762.0) (2025-07-10)
+
+
+### Features
+
+* **payment:** Added BCP FL 3DS ([#2922](https://github.com/bigcommerce/checkout-sdk-js/issues/2922)) ([ca4dbae](https://github.com/bigcommerce/checkout-sdk-js/commit/ca4dbaefe02983dbe4321dcbce92a6d80d133a54))
+
 ## [1.761.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.760.0...v1.761.0) (2025-07-09)
 
 
