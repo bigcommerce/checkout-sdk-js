@@ -2896,6 +2896,13 @@ declare enum CheckoutIncludes {
     DigitalItemsCategoryNames = "cart.lineItems.digitalItems.categoryNames"
 }
 
+declare interface CheckoutInitialState {
+    config: Config;
+    formFields: FormFields;
+    checkout: Checkout;
+    extensions: Extension[];
+}
+
 declare interface CheckoutParams {
     include?: CheckoutIncludes[] | CheckoutIncludeParam;
 }
@@ -3027,6 +3034,7 @@ declare class CheckoutService {
      * @returns A function, if called, will unsubscribe the subscriber.
      */
     subscribe(subscriber: (state: CheckoutSelectors) => void, ...filters: Array<(state: CheckoutSelectors) => any>): () => void;
+    hydrate(initialState: CheckoutInitialState): Promise<CheckoutSelectors>;
     /**
      * Loads the current checkout.
      *
