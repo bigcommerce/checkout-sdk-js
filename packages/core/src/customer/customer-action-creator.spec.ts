@@ -96,6 +96,13 @@ describe('CustomerActionCreator', () => {
             ]),
         );
 
+        jest.spyOn(checkoutActionCreator, 'loadCheckout').mockReturnValue(() =>
+            from([
+                createAction(CheckoutActionType.LoadCheckoutRequested),
+                createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
+            ]),
+        );
+
         spamProtectionActionCreator = new SpamProtectionActionCreator(
             googleRecaptcha,
             new SpamProtectionRequestSender(requestSender),
@@ -313,6 +320,31 @@ describe('CustomerActionCreator', () => {
             await from(customerActionCreator.signInCustomer(credentials)(store)).toPromise();
 
             expect(checkoutActionCreator.loadCurrentCheckout).toHaveBeenCalled();
+        });
+
+        it('emits actions to reload checkout by id after signin', async () => {
+            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+
+            const responseWithCrossDevice = {
+                ...getCustomerResponseBody(),
+                data: {
+                    ...getCustomerResponseBody().data,
+                    customer: {
+                        ...getCustomerResponseBody().data.customer,
+                        persistentCartRetrievalInformation: {
+                            id: 'persistent-cart-id',
+                        },
+                    },
+                },
+            };
+
+            await from(customerActionCreator.signInCustomer(credentials)(store)).toPromise();
+
+            jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(
+                Promise.resolve(getResponse(responseWithCrossDevice)),
+            );
+
+            expect(checkoutActionCreator.loadCheckout).toHaveBeenCalled();
         });
     });
 
