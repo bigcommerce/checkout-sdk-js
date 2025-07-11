@@ -329,11 +329,8 @@ describe('CustomerActionCreator', () => {
                 ...getCustomerResponseBody(),
                 data: {
                     ...getCustomerResponseBody().data,
-                    customer: {
-                        ...getCustomerResponseBody().data.customer,
-                        persistentCartRetrievalInformation: {
-                            id: 'persistent-cart-id',
-                        },
+                    persistentCartRetrievalInformation: {
+                        id: 'persistent-cart-id',
                     },
                 },
             };
