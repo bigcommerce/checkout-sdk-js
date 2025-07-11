@@ -6,4 +6,7 @@ export type InternalCustomerResponseBody = InternalResponseBody<InternalCustomer
 
 export interface InternalCustomerResponseData {
     customer: InternalCustomer;
+    persistentCartRetrievalInformation?: {
+        id: string;
+    };
 }

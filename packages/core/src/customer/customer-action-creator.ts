@@ -96,22 +96,38 @@ export default class CustomerActionCreator {
         credentials: CustomerCredentials,
         options?: RequestOptions,
     ): ThunkAction<SignInCustomerAction, InternalCheckoutSelectors> {
-        return (store) =>
-            concat(
+        return (store) => {
+            return concat(
                 of(createAction(CustomerActionType.SignInCustomerRequested)),
                 from(this._customerRequestSender.signInCustomer(credentials, options)).pipe(
-                    switchMap(({ body }) =>
-                        concat(
+                    switchMap(({ body }) => {
+                        if (body.data.persistentCartRetrievalInformation) {
+                            return concat(
+                                this._checkoutActionCreator.loadCheckout(
+                                    body.data.persistentCartRetrievalInformation.id,
+                                    options,
+                                )(store),
+                                of(
+                                    createAction(
+                                        CustomerActionType.SignInCustomerSucceeded,
+                                        body.data,
+                                    ),
+                                ),
+                            );
+                        }
+
+                        return concat(
                             this._checkoutActionCreator.loadCurrentCheckout(options)(store),
                             of(createAction(CustomerActionType.SignInCustomerSucceeded, body.data)),
-                        ),
-                    ),
+                        );
+                    }),
                 ),
             ).pipe(
                 catchError((error) =>
                     throwErrorAction(CustomerActionType.SignInCustomerFailed, error),
                 ),
             );
+        };
     }
 
     signOutCustomer(
