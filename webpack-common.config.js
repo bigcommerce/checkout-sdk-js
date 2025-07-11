@@ -4,7 +4,7 @@ const { DefinePlugin } = require('webpack');
 
 const {
     getNextVersion,
-    packageLoaderRules: { aliasMap: alias, tsSrcPackages },
+    packageLoaderRules: { aliasMap: alias, esbuildSrcPackages },
 } = require('./scripts/webpack');
 
 const libraryName = 'checkoutKit';
@@ -55,7 +55,7 @@ async function getBaseConfig() {
                     enforce: 'pre',
                     loader: require.resolve('source-map-loader'),
                 },
-                ...tsSrcPackages,
+                ...esbuildSrcPackages,
             ],
         },
         plugins: [
@@ -72,35 +72,6 @@ const babelEnvPreset = [
         corejs: 3,
         targets: ['defaults'], // Removed IE 11 support
         useBuiltIns: 'usage',
-    },
-];
-
-// Hybrid approach: esbuild for source code (no node_modules processing needed)
-const hybridLoaderRules = [
-    {
-        test: /\.[tj]s$/,
-        loader: 'esbuild-loader',
-        include: coreSrcPath,
-        exclude: /node_modules/,
-        options: {
-            target: 'es2018', // Modern target without IE 11
-            loader: 'ts',
-        },
-    },
-    // node_modules are already transpiled - no processing needed
-];
-
-// esbuild-loader rules for maximum speed (no polyfills, no node_modules)
-const esbuildLoaderRules = [
-    {
-        test: /\.[tj]s$/,
-        loader: 'esbuild-loader',
-        include: coreSrcPath,
-        exclude: /node_modules/,
-        options: {
-            target: 'es2018', // Modern target without IE 11
-            loader: 'ts',
-        },
     },
 ];
 
@@ -136,8 +107,6 @@ function wrapWithSpeedMeasurePlugin(config) {
 
 module.exports = {
     babelLoaderRules,
-    esbuildLoaderRules,
-    hybridLoaderRules,
     getBaseConfig,
     libraryEntries,
     libraryName,

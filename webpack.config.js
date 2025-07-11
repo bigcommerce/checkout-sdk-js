@@ -3,7 +3,6 @@ const { DefinePlugin } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
 const {
-    hybridLoaderRules,
     getBaseConfig,
     libraryEntries,
     libraryName,
@@ -26,7 +25,7 @@ async function getUmdConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [...hybridLoaderRules, ...baseConfig.module.rules],
+            rules: [...baseConfig.module.rules],
         },
     };
 }
