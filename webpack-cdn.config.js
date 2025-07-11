@@ -5,7 +5,14 @@ const { DefinePlugin } = require('webpack');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 const { getNextVersion, transformManifest } = require('./scripts/webpack');
-const { babelLoaderRules, getBaseConfig, libraryEntries, libraryName, coreSrcPath } = require('./webpack-common.config');
+const {
+    babelLoaderRules,
+    getBaseConfig,
+    libraryEntries,
+    libraryName,
+    coreSrcPath,
+    wrapWithSpeedMeasurePlugin,
+} = require('./webpack-common.config');
 
 const baseOutputPath = path.join(__dirname, 'dist-cdn');
 
@@ -26,10 +33,7 @@ async function getCdnConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [
-                ...babelLoaderRules,
-                ...baseConfig.module.rules,
-            ],
+            rules: [...babelLoaderRules, ...baseConfig.module.rules],
         },
         plugins: [
             ...baseConfig.plugins,
@@ -37,7 +41,7 @@ async function getCdnConfig(options, argv) {
                 entrypoints: true,
                 output: path.join(outputPath, 'manifest.json'),
                 publicPath: path.join(versionDir, '/'),
-                transform: assets => transformManifest(assets, version),
+                transform: (assets) => transformManifest(assets, version),
             }),
         ],
     };
@@ -61,10 +65,7 @@ async function getCdnLoaderConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [
-                ...babelLoaderRules,
-                ...baseConfig.module.rules,
-            ],
+            rules: [...babelLoaderRules, ...baseConfig.module.rules],
         },
         plugins: [
             ...baseConfig.plugins,
@@ -77,7 +78,7 @@ async function getCdnLoaderConfig(options, argv) {
                     compiler.hooks.done.tap('DuplicateLoader', () => {
                         execFileSync('cp', [
                             path.join(outputPath, `loader-v${version}.js`),
-                            path.join(outputPath, `loader.js`)
+                            path.join(outputPath, `loader.js`),
                         ]);
                     });
                 },
@@ -89,10 +90,14 @@ async function getCdnLoaderConfig(options, argv) {
 // This configuration is for building distribution files for CDN deployment
 async function getConfigs(options, argv) {
     if (argv.configName.includes('umd-loader')) {
-        return await getCdnLoaderConfig(options, argv);
+        const loaderConfig = await getCdnLoaderConfig(options, argv);
+
+        return wrapWithSpeedMeasurePlugin(loaderConfig);
     }
 
-    return await getCdnConfig(options, argv);
+    const cdnConfig = await getCdnConfig(options, argv);
+
+    return wrapWithSpeedMeasurePlugin(cdnConfig);
 }
 
 module.exports = getConfigs;

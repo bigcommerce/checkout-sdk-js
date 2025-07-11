@@ -1,4 +1,5 @@
 const path = require('path');
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 
 const {
@@ -95,10 +96,28 @@ const babelLoaderRules = [
     },
 ];
 
+// Speed measure plugin wrapper function
+function wrapWithSpeedMeasurePlugin(config) {
+    if (process.env.WEBPACK_ANALYZE_SPEED) {
+        const smp = new SpeedMeasurePlugin({
+            outputFormat: 'human',
+            outputTarget: (data) => {
+                // eslint-disable-next-line no-console
+                console.log(data);
+            },
+        });
+
+        return smp.wrap(config);
+    }
+
+    return config;
+}
+
 module.exports = {
     babelLoaderRules,
     getBaseConfig,
     libraryEntries,
     libraryName,
     coreSrcPath,
+    wrapWithSpeedMeasurePlugin,
 };
