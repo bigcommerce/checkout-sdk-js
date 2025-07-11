@@ -104,6 +104,7 @@
     "babel-loader": "^8.0.6",
     "check-node-version": "^3.2.0",
     "conventional-recommended-bump": "^6.0.5",
+    "esbuild-loader": "^4.3.0",
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",

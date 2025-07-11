@@ -6,7 +6,7 @@ const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 const { getNextVersion, transformManifest } = require('./scripts/webpack');
 const {
-    babelLoaderRules,
+    hybridLoaderRules,
     getBaseConfig,
     libraryEntries,
     libraryName,
@@ -33,7 +33,7 @@ async function getCdnConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [...babelLoaderRules, ...baseConfig.module.rules],
+            rules: [...hybridLoaderRules, ...baseConfig.module.rules],
         },
         plugins: [
             ...baseConfig.plugins,
@@ -65,7 +65,7 @@ async function getCdnLoaderConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [...babelLoaderRules, ...baseConfig.module.rules],
+            rules: [...hybridLoaderRules, ...baseConfig.module.rules],
         },
         plugins: [
             ...baseConfig.plugins,

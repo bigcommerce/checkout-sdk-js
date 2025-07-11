@@ -70,28 +70,49 @@ const babelEnvPreset = [
     '@babel/preset-env',
     {
         corejs: 3,
-        targets: ['defaults', 'ie 11'],
+        targets: ['defaults'], // Removed IE 11 support
         useBuiltIns: 'usage',
     },
 ];
 
+// Hybrid approach: esbuild for source code (no node_modules processing needed)
+const hybridLoaderRules = [
+    {
+        test: /\.[tj]s$/,
+        loader: 'esbuild-loader',
+        include: coreSrcPath,
+        exclude: /node_modules/,
+        options: {
+            target: 'es2018', // Modern target without IE 11
+            loader: 'ts',
+        },
+    },
+    // node_modules are already transpiled - no processing needed
+];
+
+// esbuild-loader rules for maximum speed (no polyfills, no node_modules)
+const esbuildLoaderRules = [
+    {
+        test: /\.[tj]s$/,
+        loader: 'esbuild-loader',
+        include: coreSrcPath,
+        exclude: /node_modules/,
+        options: {
+            target: 'es2018', // Modern target without IE 11
+            loader: 'ts',
+        },
+    },
+];
+
+// Keep babel-loader rules for fallback/comparison (also exclude node_modules)
 const babelLoaderRules = [
     {
         test: /\.[tj]s$/,
         loader: 'babel-loader',
         include: coreSrcPath,
+        exclude: /node_modules/,
         options: {
             presets: [babelEnvPreset],
-        },
-    },
-    {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        include: path.join(__dirname, 'node_modules'),
-        exclude: [/\/node_modules\/core-js\//, /\/node_modules\/webpack\//],
-        options: {
-            presets: [babelEnvPreset],
-            sourceType: 'unambiguous',
         },
     },
 ];
@@ -115,6 +136,8 @@ function wrapWithSpeedMeasurePlugin(config) {
 
 module.exports = {
     babelLoaderRules,
+    esbuildLoaderRules,
+    hybridLoaderRules,
     getBaseConfig,
     libraryEntries,
     libraryName,
