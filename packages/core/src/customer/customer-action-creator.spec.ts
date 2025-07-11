@@ -338,11 +338,11 @@ describe('CustomerActionCreator', () => {
                 },
             };
 
-            await from(customerActionCreator.signInCustomer(credentials)(store)).toPromise();
-
             jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(
                 Promise.resolve(getResponse(responseWithCrossDevice)),
             );
+
+            await from(customerActionCreator.signInCustomer(credentials)(store)).toPromise();
 
             expect(checkoutActionCreator.loadCheckout).toHaveBeenCalled();
         });
