@@ -161,6 +161,14 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'paypalcommerce',
         method: 'paypal',
     },
+    bigcommerce_payments_creditcards: {
+        provider: 'bigcommerce_payments',
+        method: 'credit_card',
+    },
+    bigcommerce_payments: {
+        provider: 'bigcommerce_payments',
+        method: 'paypal',
+    },
     tdonlinemart: {
         provider: 'tdonlinemart',
         method: 'credit_card',
