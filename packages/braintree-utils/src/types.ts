@@ -27,6 +27,29 @@ export interface BraintreeModule {
     teardown(): Promise<void>;
 }
 
+export interface BraintreeRequestData {
+    data: {
+        creditCard: {
+            billingAddress?: {
+                countryCodeAlpha2: string;
+                locality: string;
+                countryName: string;
+                postalCode: string;
+                streetAddress: string;
+            };
+            cardholderName: string;
+            cvv?: string;
+            expirationDate: string;
+            number: string;
+            options: {
+                validate: boolean;
+            };
+        };
+    };
+    endpoint: string;
+    method: string;
+}
+
 /**
  *
  * Braintree Window
@@ -46,6 +69,7 @@ export type BraintreeClientCreator = BraintreeModuleCreator<BraintreeClient>;
 
 export interface BraintreeClient {
     request(payload: BraintreeClientRequestPayload): Promise<BraintreeClientRequestResponse>;
+    getVersion(): string | void;
 }
 
 export interface BraintreeClientRequestPayload {

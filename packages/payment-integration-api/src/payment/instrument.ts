@@ -1,4 +1,10 @@
-type PaymentInstrument = CardInstrument | AccountInstrument;
+import { HostedInstrument, NonceInstrument } from './payment';
+
+type PaymentInstrument =
+    | CardInstrument
+    | AccountInstrument
+    | HostedInstrument
+    | NonceInstrument;
 
 export default PaymentInstrument;
 

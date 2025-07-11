@@ -46,7 +46,7 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 import { BraintreePaymentInitializeOptions } from './braintree-payment-options';
-import BraintreePaymentProcessor from './braintree-payment-processor';
+import BraintreePaymentProcessor from '../../../braintree-utils/src/braintree-payment-processor';
 import { getTokenizeResponseBody } from './braintree.mock';
 
 describe('BraintreeCreditCardPaymentStrategy', () => {

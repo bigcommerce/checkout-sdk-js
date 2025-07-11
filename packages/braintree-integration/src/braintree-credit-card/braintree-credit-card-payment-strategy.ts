@@ -3,6 +3,7 @@ import { some } from 'lodash';
 import {
     BraintreeIntegrationService,
     isBraintreeAcceleratedCheckoutCustomer,
+    BraintreePaymentProcessor,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     Address,
@@ -62,9 +63,9 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 await this.braintreePaymentProcessor.initializeHostedForm(
                     braintree.form,
                     braintree.unsupportedCardBrands,
-                ); // TODO: FIX
+                );
                 this.isHostedFormInitialized =
-                    this.braintreePaymentProcessor.isInitializedHostedForm(); // TODO: FIX
+                    this.braintreePaymentProcessor.isInitializedHostedForm();
             }
 
             this.is3dsEnabled = this.paymentMethod.config.is3dsEnabled;
@@ -89,7 +90,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         }
 
         if (this.isHostedFormInitialized) {
-            this.braintreePaymentProcessor.validateHostedForm(); // TODO: FIX
+            this.braintreePaymentProcessor.validateHostedForm();
         }
 
         await this.paymentIntegrationService.submitOrder();
@@ -117,14 +118,8 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     async deinitialize(): Promise<void> {
         this.isHostedFormInitialized = false;
 
-        // await Promise.all([
-        //     // this.braintreePaymentProcessor.deinitialize(), //TODO: FIX
-        //     this.braintreeIntegrationService.teardown(),
-        //     this.braintreePaymentProcessor.deinitializeHostedForm(), //TODO: FIX
-        // ]);
-
-         await this.braintreeIntegrationService.teardown();
-         await this.braintreePaymentProcessor.deinitializeHostedForm(); //TODO: FIX
+        await this.braintreeIntegrationService.teardown();
+        await this.braintreePaymentProcessor.deinitializeHostedForm();
 
         return Promise.resolve();
     }
@@ -156,8 +151,8 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
         const { nonce } = this.shouldPerform3DSVerification(payment)
-            ? await this.braintreePaymentProcessor.verifyCard(payment, billingAddress, orderAmount) //TODO:FIX
-            : await this.braintreePaymentProcessor.tokenizeCard(payment, billingAddress); //TODO: FIX
+            ? await this.braintreePaymentProcessor.verifyCard(payment, billingAddress, orderAmount)
+            : await this.braintreePaymentProcessor.tokenizeCard(payment, billingAddress);
 
         return {
             ...commonPaymentData,
@@ -177,7 +172,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
         if (this.isSubmittingWithStoredCard(payment)) {
             const { nonce } =
-                await this.braintreePaymentProcessor.tokenizeHostedFormForStoredCardVerification(); //TODO: FIX
+                await this.braintreePaymentProcessor.tokenizeHostedFormForStoredCardVerification();
 
             return {
                 ...commonPaymentData,
@@ -190,11 +185,11 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
         const { nonce } = this.shouldPerform3DSVerification(payment)
-            ? await this.braintreePaymentProcessor.verifyCardWithHostedForm( //TODO: FIX
+            ? await this.braintreePaymentProcessor.verifyCardWithHostedForm(
                 billingAddress,
                 orderAmount,
             )
-            : await this.braintreePaymentProcessor.tokenizeHostedForm(billingAddress); //TODO: FIX
+            : await this.braintreePaymentProcessor.tokenizeHostedForm(billingAddress);
 
         return {
             ...commonPaymentData,
@@ -227,7 +222,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             }
 
             const instrument = state.getCardInstrumentOrThrow(paymentData.instrumentId);
-            const { nonce } = await this.braintreePaymentProcessor.challenge3DSVerification( //TODO: FIX
+            const { nonce } = await this.braintreePaymentProcessor.challenge3DSVerification(
                 {
                     nonce: storedCreditCardNonce,
                     bin: instrument.iin,
