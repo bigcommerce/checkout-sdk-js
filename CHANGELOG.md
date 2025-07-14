@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.765.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.764.0...v1.765.0) (2025-07-14)
+
+
+### Features
+
+* **payment:** added bigcommerce payment related instruments to a list of supported instruments ([#2924](https://github.com/bigcommerce/checkout-sdk-js/issues/2924)) ([6739a5d](https://github.com/bigcommerce/checkout-sdk-js/commit/6739a5d3df13d0743355d2a2e86a0c70dda7c6f2))
+
 ## [1.764.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.763.0...v1.764.0) (2025-07-14)
 
 
