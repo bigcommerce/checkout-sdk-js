@@ -54,6 +54,14 @@ export interface PaymentIntent {
      * The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.
      */
     last_payment_error: LastPaymentError | null;
+
+    payment_method_options?: StripePIPaymentMethodOptions;
+}
+
+export interface StripePIPaymentMethodOptions {
+    card?: {
+        setup_future_usage?: StripeInstrumentSetupFutureUsage;
+    };
 }
 
 /**
@@ -636,4 +644,9 @@ export interface LineItem {
 
 export interface StripeSavePaymentMethod {
     maxVisiblePaymentMethods?: number;
+}
+
+export enum StripeInstrumentSetupFutureUsage {
+    ON_SESSION = 'on_session',
+    OFF_SESSION = 'off_session',
 }
