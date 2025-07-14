@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.766.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.765.0...v1.766.0) (2025-07-14)
+
+
+### Features
+
+* **payment:** Stripe OCS add status for  instrument vaulting ([#2927](https://github.com/bigcommerce/checkout-sdk-js/issues/2927)) ([1a7be7c](https://github.com/bigcommerce/checkout-sdk-js/commit/1a7be7c6a4cb53cbb058274f82aecdbc6f5e13e1))
+
 ## [1.765.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.764.0...v1.765.0) (2025-07-14)
 
 
