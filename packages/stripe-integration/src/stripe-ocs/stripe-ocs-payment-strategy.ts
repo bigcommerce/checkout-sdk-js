@@ -29,7 +29,9 @@ import {
     StripeError,
     StripeEventType,
     StripeInitializationData,
+    StripeInstrumentSetupFutureUsage,
     StripeIntegrationService,
+    StripePIPaymentMethodOptions,
     StripeResult,
     StripeScriptLoader,
     StripeStringConstants,
@@ -234,13 +236,18 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         stripeElement?.collapse();
     }
 
-    private _getPaymentPayload(methodId: string, token: string): Payment {
+    private _getPaymentPayload(
+        methodId: string,
+        token: string,
+        shouldSaveInstrument = false,
+    ): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
         const formattedPayload = {
             cart_id: cartId,
             credit_card_token: { token },
             confirm: false,
             payment_method_id: this.selectedMethodId,
+            vault_payment_instrument: shouldSaveInstrument,
         };
 
         return {
@@ -273,8 +280,15 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             methodId,
             additionalActionData,
         );
+        const { id: paymentIntentId, payment_method_options: paymentMethodOptions } =
+            paymentIntent || {};
 
-        const paymentPayload = this._getPaymentPayload(methodId, paymentIntent?.id || token);
+        const shouldSaveCard = this._shouldSaveCard(paymentMethodOptions);
+        const paymentPayload = this._getPaymentPayload(
+            methodId,
+            paymentIntentId || token,
+            shouldSaveCard,
+        );
 
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
@@ -328,5 +342,14 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         this.selectedMethodId = event.value.type;
         paymentMethodSelect?.(`${gatewayId}-${methodId}`);
+    }
+
+    private _shouldSaveCard(paymentMethodOptions?: StripePIPaymentMethodOptions) {
+        const futureUsage = paymentMethodOptions?.card?.setup_future_usage;
+
+        return (
+            futureUsage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
+            futureUsage === StripeInstrumentSetupFutureUsage.OFF_SESSION
+        );
     }
 }
