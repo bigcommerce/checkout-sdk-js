@@ -26,7 +26,7 @@
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
     "prepare": "check-node-version --node '>=22' --npm '>=10'",
-    "build": "npm run bundle && npm run bundle-dts",
+    "build": "npx nx reset && npm run bundle && npm run bundle-dts",
     "build:link": "rm -rf dist && npx nx run core:build --skip-nx-cache && npm run bundle-dts",
     "prebuild-cdn": "rm -rf dist-cdn",
     "build-cdn": "npx nx run core:build-cdn",
