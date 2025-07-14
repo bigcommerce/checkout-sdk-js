@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.764.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.763.0...v1.764.0) (2025-07-14)
+
+
+### Features
+
+* **payment:** hot fix (Sentry issue) ([#2926](https://github.com/bigcommerce/checkout-sdk-js/issues/2926)) ([2697017](https://github.com/bigcommerce/checkout-sdk-js/commit/26970177476ec3b17211006848a5b25e88c716dc))
+
 ## [1.763.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.762.0...v1.763.0) (2025-07-10)
 
 
