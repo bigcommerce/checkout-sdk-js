@@ -87,7 +87,9 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         } = paymentMethod.initializationData || {};
 
         if (document.getElementById(bannerContainerId)) {
-            const bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'checkout');
+            const bannerConfiguration = paypalBNPLConfiguration?.find(
+                ({ id }) => id === 'checkout',
+            );
 
             if (isPayPalCreditAvailable || !bannerConfiguration?.status) {
                 return;
