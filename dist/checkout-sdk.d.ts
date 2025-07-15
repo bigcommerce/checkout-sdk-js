@@ -2896,6 +2896,13 @@ declare enum CheckoutIncludes {
     DigitalItemsCategoryNames = "cart.lineItems.digitalItems.categoryNames"
 }
 
+declare interface CheckoutInitialState {
+    config: Config;
+    formFields: FormFields;
+    checkout: Checkout;
+    extensions: Extension[];
+}
+
 declare interface CheckoutParams {
     include?: CheckoutIncludes[] | CheckoutIncludeParam;
 }
@@ -3293,6 +3300,25 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     loadPickupOptions(query: PickupOptionRequestBody): Promise<CheckoutSelectors>;
+    /**
+     * Loads a set of form fields that should be presented to customers in order
+     * to capture their personal information.
+     *
+     * Once the method has been executed successfully, you can call
+     * `CheckoutStoreSelector#getFormFields` to retrieve the set of
+     * form fields.
+     *
+     * ```js
+     * const state = await service.loadFormFields();
+     *
+     * console.log(state.data.getFormFields());
+     * ```
+     *
+     * @alpha
+     * @param options - Options for loading the form fields.
+     * @returns A promise that resolves to the current state.
+     */
+    loadFormFields(options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Loads a set of form fields that should be presented to customers in order
      * to capture their billing address.
@@ -4006,6 +4032,7 @@ declare interface CheckoutServiceOptions {
     host?: string;
     shouldWarnMutation?: boolean;
     externalSource?: string;
+    initialState?: CheckoutInitialState;
 }
 
 declare interface CheckoutSettings {
