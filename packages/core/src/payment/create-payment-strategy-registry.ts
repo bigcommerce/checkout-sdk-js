@@ -1,3 +1,26 @@
+import { RequestSender } from '@bigcommerce/request-sender';
+
+import { CheckoutStore } from '../checkout';
+import { GoogleRecaptcha } from '../spam-protection';
+
+import PaymentStrategyRegistry from './payment-strategy-registry';
+import PaymentStrategyType from './payment-strategy-type';
+
+export default function createPaymentStrategyRegistry(
+    _store: CheckoutStore,
+    _paymentClient: any,
+    _requestSender: RequestSender,
+    _spamProtection: GoogleRecaptcha,
+    _locale: string,
+) {
+    const registry = new PaymentStrategyRegistry({
+        defaultToken: PaymentStrategyType.CREDIT_CARD,
+    });
+
+    return registry;
+}
+
+/*
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
@@ -285,3 +308,4 @@ export default function createPaymentStrategyRegistry(
 
     return registry;
 }
+*/

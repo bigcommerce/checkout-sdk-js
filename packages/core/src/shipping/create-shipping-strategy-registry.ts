@@ -1,4 +1,35 @@
 import { RequestSender } from '@bigcommerce/request-sender';
+
+import { CheckoutRequestSender, CheckoutStore } from '../checkout';
+import { Registry } from '../common/registry';
+
+import ConsignmentActionCreator from './consignment-action-creator';
+import ConsignmentRequestSender from './consignment-request-sender';
+import { ShippingStrategy } from './strategies';
+import { DefaultShippingStrategy } from './strategies/default';
+
+export default function createShippingStrategyRegistry(
+    store: CheckoutStore,
+    requestSender: RequestSender,
+): Registry<ShippingStrategy> {
+    const registry = new Registry<ShippingStrategy>();
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+    const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
+    const consignmentActionCreator = new ConsignmentActionCreator(
+        consignmentRequestSender,
+        checkoutRequestSender,
+    );
+
+    registry.register(
+        'default',
+        () => new DefaultShippingStrategy(store, consignmentActionCreator),
+    );
+
+    return registry;
+}
+
+/*
+import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
@@ -114,3 +145,4 @@ export default function createShippingStrategyRegistry(
 
     return registry;
 }
+*/

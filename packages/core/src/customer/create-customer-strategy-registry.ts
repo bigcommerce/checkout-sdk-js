@@ -5,6 +5,50 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import { createSpamProtection, SpamProtectionRequestSender } from '../spam-protection';
+import SpamProtectionActionCreator from '../spam-protection/spam-protection-action-creator';
+
+import CustomerActionCreator from './customer-action-creator';
+import CustomerRequestSender from './customer-request-sender';
+import { CustomerStrategy } from './strategies';
+import { DefaultCustomerStrategy } from './strategies/default';
+
+export default function createCustomerStrategyRegistry(
+    store: CheckoutStore,
+    requestSender: RequestSender,
+    _locale: string,
+): Registry<CustomerStrategy> {
+    const registry = new Registry<CustomerStrategy>();
+    const scriptLoader = getScriptLoader();
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+    const checkoutActionCreator = new CheckoutActionCreator(
+        checkoutRequestSender,
+        new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+        new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
+    );
+    const spamProtectionActionCreator = new SpamProtectionActionCreator(
+        createSpamProtection(scriptLoader),
+        new SpamProtectionRequestSender(requestSender),
+    );
+    const customerActionCreator = new CustomerActionCreator(
+        new CustomerRequestSender(requestSender),
+        checkoutActionCreator,
+        spamProtectionActionCreator,
+    );
+
+    registry.register('default', () => new DefaultCustomerStrategy(store, customerActionCreator));
+
+    return registry;
+}
+
+/*
+import { RequestSender } from '@bigcommerce/request-sender';
+import { getScriptLoader } from '@bigcommerce/script-loader';
+
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
+import { Registry } from '../common/registry';
+import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
@@ -77,3 +121,4 @@ export default function createCustomerStrategyRegistry(
 
     return registry;
 }
+*/

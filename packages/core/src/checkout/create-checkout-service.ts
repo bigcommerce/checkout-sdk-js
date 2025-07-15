@@ -28,7 +28,7 @@ import {
     WorkerExtensionMessenger,
 } from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
+// import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
@@ -139,7 +139,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        defaultPaymentStrategyFactories,
+        {},
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
