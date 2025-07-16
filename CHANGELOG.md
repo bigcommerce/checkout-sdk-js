@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.767.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.766.0...v1.767.0) (2025-07-16)
+
+
+### Features
+
+* **payment:** Stripe OCS add state code to stripe confirmation details ([#2928](https://github.com/bigcommerce/checkout-sdk-js/issues/2928)) ([dcf5c83](https://github.com/bigcommerce/checkout-sdk-js/commit/dcf5c8312386e8a70b63d577acf53804aea5db37))
+
 ## [1.766.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.765.0...v1.766.0) (2025-07-14)
 
 
