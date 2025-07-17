@@ -69,7 +69,7 @@ const babelEnvPreset = [
     '@babel/preset-env',
     {
         corejs: 3,
-        targets: ['defaults', 'ie 11'],
+        targets: ['es6'],
         useBuiltIns: 'usage',
     },
 ];
