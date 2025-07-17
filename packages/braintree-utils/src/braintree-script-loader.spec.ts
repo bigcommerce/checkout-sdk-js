@@ -1,10 +1,15 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PaymentIntegrationService,
+    PaymentMethodClientUnavailableError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BraintreeScriptLoader from './braintree-script-loader';
 import { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
 import { BRAINTREE_SDK_STABLE_VERSION } from './braintree-sdk-verison';
+import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
 import {
     getBraintreeLocalPaymentMock,
     getBraintreePaypalMock,
@@ -41,10 +46,14 @@ import { VisaCheckoutSDK } from './visacheckout';
 describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;
     let mockWindow: BraintreeHostWindow;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
+    let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
         mockWindow = { braintree: {} } as BraintreeHostWindow;
         scriptLoader = {} as ScriptLoader;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
     });
 
     describe('#loadClient()', () => {
@@ -62,7 +71,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the client', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
             const client = await braintreeScriptLoader.loadClient();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
@@ -82,6 +95,7 @@ describe('BraintreeScriptLoader', () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 {} as BraintreeHostWindow,
+                braintreeSDKVersionManager,
             );
 
             try {
@@ -92,9 +106,13 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the client throw error if client does not exist in window.braintree', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, {
-                braintree: {},
-            } as BraintreeHostWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                {
+                    braintree: {},
+                } as BraintreeHostWindow,
+                braintreeSDKVersionManager,
+            );
 
             try {
                 await braintreeScriptLoader.loadClient();
@@ -104,7 +122,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadClient();
             await braintreeScriptLoader.loadClient();
@@ -128,7 +150,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads fastlane module', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
             const fastlane = await braintreeScriptLoader.loadFastlane();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
@@ -148,6 +174,7 @@ describe('BraintreeScriptLoader', () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 {} as BraintreeHostWindow,
+                braintreeSDKVersionManager,
             );
 
             try {
@@ -158,9 +185,13 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the client throw error if fastlane does not exist in window.braintree', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, {
-                braintree: {},
-            } as BraintreeHostWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                {
+                    braintree: {},
+                } as BraintreeHostWindow,
+                braintreeSDKVersionManager,
+            );
 
             try {
                 await braintreeScriptLoader.loadFastlane();
@@ -170,7 +201,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadFastlane();
             await braintreeScriptLoader.loadFastlane();
@@ -194,7 +229,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads PayPal checkout', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
             const paypalCheckout = await braintreeScriptLoader.loadPaypalCheckout();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
@@ -215,6 +254,7 @@ describe('BraintreeScriptLoader', () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 {} as BraintreeHostWindow,
+                braintreeSDKVersionManager,
             );
 
             try {
@@ -225,9 +265,13 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads PayPal checkout throw error if client does not exist in window.paypalCheckout', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, {
-                braintree: {},
-            } as BraintreeHostWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                {
+                    braintree: {},
+                } as BraintreeHostWindow,
+                braintreeSDKVersionManager,
+            );
 
             try {
                 await braintreeScriptLoader.loadPaypalCheckout();
@@ -237,7 +281,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadPaypalCheckout();
             await braintreeScriptLoader.loadPaypalCheckout();
@@ -261,7 +309,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads local payment methods', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadLocalPayment();
 
@@ -279,7 +331,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadLocalPayment();
             await braintreeScriptLoader.loadLocalPayment();
@@ -303,7 +359,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads google payment methods', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadGooglePayment();
 
@@ -321,7 +381,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadGooglePayment();
             await braintreeScriptLoader.loadGooglePayment();
@@ -345,7 +409,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads braintree paypal payment methods', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadPaypal();
 
@@ -362,7 +430,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadPaypal();
             await braintreeScriptLoader.loadPaypal();
@@ -386,7 +458,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads threeDSecure methods', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.load3DS();
 
@@ -404,7 +480,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.load3DS();
             await braintreeScriptLoader.load3DS();
@@ -428,7 +508,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads visaCheckout methods', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadVisaCheckout();
 
@@ -446,7 +530,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadVisaCheckout();
             await braintreeScriptLoader.loadVisaCheckout();
@@ -470,7 +558,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads hostedFields methods', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadHostedFields();
 
@@ -488,7 +580,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadHostedFields();
             await braintreeScriptLoader.loadHostedFields();
@@ -512,7 +608,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads venmoCheckout methods', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadVenmoCheckout();
 
@@ -529,7 +629,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadVenmoCheckout();
             await braintreeScriptLoader.loadVenmoCheckout();
@@ -553,7 +657,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the data collector library', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
             const dataCollector = await braintreeScriptLoader.loadDataCollector();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
@@ -574,6 +682,7 @@ describe('BraintreeScriptLoader', () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 {} as BraintreeHostWindow,
+                braintreeSDKVersionManager,
             );
 
             try {
@@ -584,9 +693,13 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('throws an error when load data collector module if client does not exist in window.dataCollector', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, {
-                braintree: {},
-            } as BraintreeHostWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                {
+                    braintree: {},
+                } as BraintreeHostWindow,
+                braintreeSDKVersionManager,
+            );
 
             try {
                 await braintreeScriptLoader.loadDataCollector();
@@ -596,7 +709,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadDataCollector();
             await braintreeScriptLoader.loadDataCollector();
@@ -618,7 +735,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads loadVisaCheckoutSdk methods', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadVisaCheckoutSdk();
 
@@ -636,7 +757,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads loadVisaCheckoutSdk in sandbox mode', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadVisaCheckoutSdk(true);
 
@@ -654,7 +779,11 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('does not load module if it is already in the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
 
             await braintreeScriptLoader.loadVisaCheckoutSdk();
             await braintreeScriptLoader.loadVisaCheckoutSdk();

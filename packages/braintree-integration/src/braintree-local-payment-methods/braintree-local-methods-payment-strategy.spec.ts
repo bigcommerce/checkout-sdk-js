@@ -1,10 +1,12 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
+
 import {
     BraintreeLocalPayment,
     BraintreeOrderStatus,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     getBraintreeLocalPaymentMock,
     getDataCollectorMock,
     NonInstantLocalPaymentMethods,
@@ -28,10 +30,9 @@ import {
     getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-import BraintreeRequestSender from '../braintree-request-sender';
 
+import BraintreeRequestSender from '../braintree-request-sender';
 import {
     getBraintreeLocalMethods,
     getBraintreeLocalMethodsInitializationOptions,
@@ -51,6 +52,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
     let lpmButton: HTMLButtonElement;
     let lpmContainer: HTMLElement;
     let braintreeRequestSender: BraintreeRequestSender;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
     const sessionId = getDataCollectorMock().deviceData;
 
     const instantPaymentMethodId = 'ideal';
@@ -66,8 +68,13 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
     };
 
     beforeEach(() => {
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
         loadingIndicator = new LoadingIndicator();
         braintreeRequestSender = new BraintreeRequestSender(requestSender);
