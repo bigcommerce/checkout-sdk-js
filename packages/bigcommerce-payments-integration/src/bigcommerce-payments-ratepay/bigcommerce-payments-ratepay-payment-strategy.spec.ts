@@ -344,6 +344,13 @@ describe('BigCommercePaymentsRatePayPaymentStrategy', () => {
             await strategy.initialize(initializationOptions);
             await strategy.execute(payload);
 
+            expect(bigCommercePaymentsIntegrationService.createOrder).toHaveBeenCalledWith(
+                'bigcommerce_payments_apmscheckout',
+                {
+                    metadataId: expect.any(String),
+                },
+            );
+
             expect(bigCommercePaymentsIntegrationService.getOrderStatus).toHaveBeenCalledWith(
                 'bigcommerce_payments_apms',
                 { params: { useMetadata: true } },

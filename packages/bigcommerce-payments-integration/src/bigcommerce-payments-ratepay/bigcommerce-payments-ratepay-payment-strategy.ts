@@ -131,7 +131,7 @@ export default class BigCommercePaymentsRatePayPaymentStrategy implements Paymen
 
         try {
             const orderId = await this.bigCommercePaymentsIntegrationService.createOrder(
-                'bigcommerce_payments_apms_checkout',
+                'bigcommerce_payments_apmscheckout',
                 { metadataId: this.guid },
             );
 
