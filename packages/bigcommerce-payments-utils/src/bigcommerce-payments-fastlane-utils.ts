@@ -108,16 +108,13 @@ export default class BigCommercePaymentsFastlaneUtils {
      */
     updateStorageSessionId(shouldBeRemoved: boolean, sessionId?: string): void {
         if (shouldBeRemoved) {
-            // TODO: Should be rewritten to cookies implementation
             this.browserStorage.removeItem('sessionId');
         } else {
-            // TODO: Should be rewritten to cookies implementation
             this.browserStorage.setItem('sessionId', sessionId);
         }
     }
 
     getStorageSessionId(): string {
-        // TODO: Should be rewritten to cookies implementation
         return this.browserStorage.getItem('sessionId') || '';
     }
 

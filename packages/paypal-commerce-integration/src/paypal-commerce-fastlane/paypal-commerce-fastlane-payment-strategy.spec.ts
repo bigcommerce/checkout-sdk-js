@@ -158,6 +158,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane');
         jest.spyOn(paypalCommerceFastlaneUtils, 'getStorageSessionId').mockReturnValue(cart.id);
         jest.spyOn(paypalCommerceFastlaneUtils, 'updateStorageSessionId');
+        jest.spyOn(paypalCommerceFastlaneUtils, 'removeStorageSessionId');
         jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockResolvedValue({
             customerContextId,
         });
@@ -372,7 +373,6 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData,
             ).toHaveBeenCalledWith(methodId, authenticationResultMock);
             expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                false,
                 cart.id,
             );
         });
@@ -466,7 +466,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     },
                 },
             });
-            expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(true);
+            expect(paypalCommerceFastlaneUtils.removeStorageSessionId).toHaveBeenCalled();
         });
 
         it('successfully places order with vaulted instruments flow', async () => {
@@ -490,7 +490,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     },
                 },
             });
-            expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(true);
+            expect(paypalCommerceFastlaneUtils.removeStorageSessionId).toHaveBeenCalled();
         });
 
         it('do not create an order if there is an error while receiving a payment order', async () => {
