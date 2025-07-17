@@ -18,15 +18,18 @@ import {
     BraintreeFormOptions,
     BraintreeIntegrationService,
     BraintreePaypalCheckout,
-    BraintreePaypalSdkCreatorConfig, BraintreeRequestData,
+    BraintreePaypalSdkCreatorConfig,
+    BraintreeRequestData,
     BraintreeThreeDSecure,
-    BraintreeThreeDSecureOptions,
     BraintreeVenmoCheckout,
     BraintreeVenmoCreatorConfig,
     BraintreeVerifyPayload,
     TokenizationPayload,
 } from './index';
-import { BraintreePaymentInitializeOptions } from '../../braintree-integration/src/braintree-payment-options';
+import {
+    BraintreePaymentInitializeOptions,
+    BraintreeThreeDSecureOptions,
+} from '@bigcommerce/checkout-sdk/braintree-integration';
 import isCreditCardInstrumentLike from './is-credit-card-instrument-like';
 import { BraintreeHostedForm } from '@bigcommerce/checkout-sdk/braintree-integration';
 

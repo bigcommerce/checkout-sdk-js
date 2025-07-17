@@ -100,7 +100,6 @@ export default class BraintreeIntegrationService {
         if (!this.client) {
             const clientToken = this.getClientTokenOrThrow();
             const clientCreator = await this.braintreeScriptLoader.loadClient();
-
             this.client = clientCreator.create({ authorization: clientToken });
         }
 

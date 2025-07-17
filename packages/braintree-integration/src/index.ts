@@ -47,3 +47,4 @@ export { default as createBraintreeVisaCheckoutCustomerStrategy } from './braint
 export { default as createBraintreeVenmoButtonStrategy } from './braintree-venmo/create-braintree-venmo-button-strategy';
 
 export { default as BraintreeHostedForm } from './braintree-hosted-form/braintree-hosted-form';
+export * from './braintree-payment-options';

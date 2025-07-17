@@ -1,10 +1,10 @@
 import {
     BraintreeError,
     BraintreeFormOptions,
-    BraintreeThreeDSecureOptions,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions } from '@bigcommerce/request-sender';
+import { BraintreeThreeDSecureOptions } from '@bigcommerce/checkout-sdk/braintree-integration';
 
 export interface PaymentRequestOptions extends RequestOptions {
     /**

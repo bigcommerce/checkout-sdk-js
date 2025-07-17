@@ -7,7 +7,9 @@ import {
     BraintreeHostedFields,
     BraintreeHostedFieldsCreatorConfig,
     BraintreeHostedFieldsState,
-    BraintreeHostedFormError, BraintreeIntegrationService, BraintreeScriptLoader,
+    BraintreeHostedFormError,
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
     TokenizationPayload,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -96,6 +98,7 @@ export default class BraintreeHostedForm {
         }
 
         const braintreeHostedFormState = this.cardFields.getState();
+        console.log('CARD FIELDS', this.cardFields.getState());
 
         if (!this.isValidForm(braintreeHostedFormState)) {
             this.handleValidityChange(braintreeHostedFormState);
@@ -151,10 +154,8 @@ export default class BraintreeHostedForm {
     async createHostedFields(
         options: Pick<BraintreeHostedFieldsCreatorConfig, 'fields' | 'styles'>,
     ): Promise<BraintreeHostedFields> {
-        const [client, hostedFields] = await Promise.all([
-            this.braintreeIntegrationService.getClient(),
-            this.braintreeScriptLoader.loadHostedFields(),
-        ]);
+        const client = await this.braintreeIntegrationService.getClient();
+        const hostedFields = await this.braintreeScriptLoader.loadHostedFields();
 
         return hostedFields.create({ ...options, client });
     }
@@ -524,6 +525,7 @@ export default class BraintreeHostedForm {
     };
 
     private isValidForm(event: BraintreeHostedFieldsState): boolean {
+        console.log('isValidForm', event.fields);
         return (
             Object.keys(event.fields) as Array<keyof BraintreeHostedFieldsState['fields']>
         ).every((key) => event.fields[key]?.isValid);

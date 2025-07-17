@@ -56,8 +56,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         }
 
         try {
-            // this.braintreePaymentProcessor.initialize(clientToken, braintree);
-            this.braintreeIntegrationService.initialize(clientToken);
+            this.braintreePaymentProcessor.initialize(clientToken, braintree);
 
             if (this.isHostedPaymentFormEnabled(methodId, gatewayId) && braintree?.form) {
                 await this.braintreePaymentProcessor.initializeHostedForm(
@@ -69,7 +68,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             }
 
             this.is3dsEnabled = this.paymentMethod.config.is3dsEnabled;
-            // this.deviceSessionId = await this.braintreePaymentProcessor.getSessionId();
             this.deviceSessionId = await this.braintreeIntegrationService.getSessionId();
 
             // TODO: remove this part when BT AXO A/B testing will be finished
@@ -289,7 +287,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
-
         this.braintreeIntegrationService.initialize(clientToken);
 
         await this.braintreeIntegrationService.getBraintreeFastlane(cart.id, config.testMode);

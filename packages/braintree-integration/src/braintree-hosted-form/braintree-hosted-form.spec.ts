@@ -1,13 +1,9 @@
 import { EventEmitter } from 'events';
-
-import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { NotInitializedError } from '../../../common/error/errors';
-import { PaymentInvalidFormError } from '../../errors';
-
-import { BraintreeHostedFields } from './braintree';
-import BraintreeHostedForm from './braintree-hosted-form';
-import { BraintreeFormOptions } from './braintree-payment-options';
-import BraintreeSDKCreator from './braintree-sdk-creator';
+import { BraintreeHostedFields } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeFormOptions } from '../braintree-payment-options';
+import { BraintreeHostedForm } from '@bigcommerce/checkout-sdk/braintree-integration';
+import { NotInitializedError, PaymentInvalidFormError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { getBillingAddress } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 describe('BraintreeHostedForm', () => {
     let braintreeSdkCreator: Pick<BraintreeSDKCreator, 'createHostedFields'>;
