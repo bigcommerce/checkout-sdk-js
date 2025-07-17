@@ -80,6 +80,16 @@ describe('StripeLinkV2CustomerStrategy', () => {
         },
         buttonHeight: 40,
     };
+    const initialiseOptions = {
+        methodId: 'stripeocs',
+        stripeocs: {
+            container: 'checkout-button',
+            methodId: 'optimized_checkout',
+            gatewayId: 'stripeocs',
+            loadingContainerId: 'loadingContainerId',
+            isLoading,
+        },
+    };
 
     beforeEach(() => {
         stripeIntegrationService = getStripeIntegrationServiceMock();
@@ -122,6 +132,8 @@ describe('StripeLinkV2CustomerStrategy', () => {
         jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
             Promise.resolve(false),
         );
+
+        jest.spyOn(loadingIndicator, 'show').mockReturnValue();
     });
 
     afterEach(() => {
@@ -136,13 +148,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 stripeIntegrationService,
                 loadingIndicator,
             );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions as any);
         });
 
         it('throws if stripeocs option is missing', async () => {
@@ -188,13 +194,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 stripeIntegrationService,
                 loadingIndicator,
             );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions as any);
         });
 
         it('calls mountExpressCheckoutElement during initialize()', () => {
@@ -218,13 +218,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 stripeIntegrationService,
                 loadingIndicator,
             );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions as any);
 
             expect(element.on).toHaveBeenCalledWith(
                 StripeElementEvent.SHIPPING_ADDRESS_CHANGE,
@@ -247,13 +241,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 stripeIntegrationService,
                 loadingIndicator,
             );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions as any);
 
             stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
                 address: {
@@ -276,13 +264,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 stripeIntegrationService,
                 loadingIndicator,
             );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions as any);
 
             stripeEventEmitter.emit(StripeElementEvent.SHIPPING_RATE_CHANGE, {
                 shippingRate: {
@@ -309,13 +291,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 stripeIntegrationService,
                 loadingIndicator,
             );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions as any);
 
             expect(element.on).not.toHaveBeenCalledWith(
                 StripeElementEvent.SHIPPING_ADDRESS_CHANGE,
@@ -390,13 +366,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                     stripeIntegrationService,
                     loadingIndicator,
                 );
-                await strategy.initialize({
-                    methodId: 'card',
-                    stripeocs: {
-                        container: 'checkout-button',
-                        isLoading,
-                    },
-                } as any);
+                await strategy.initialize(initialiseOptions as any);
 
                 stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -443,13 +413,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                     stripeIntegrationService,
                     loadingIndicator,
                 );
-                await strategy.initialize({
-                    methodId: 'card',
-                    stripeocs: {
-                        container: 'checkout-button',
-                        isLoading,
-                    },
-                } as any);
+                await strategy.initialize(initialiseOptions as any);
 
                 stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -496,14 +460,8 @@ describe('StripeLinkV2CustomerStrategy', () => {
                         stripeIntegrationService,
                         loadingIndicator,
                     );
-                    await strategy.initialize({
-                        methodId: 'card',
-                        stripeocs: {
-                            container: 'checkout-button',
-                            loadingContainerId: 'loadingContainerId',
-                            isLoading,
-                        },
-                    } as any);
+                    await strategy.initialize(initialiseOptions as any);
+
                     stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                     await new Promise((resolve) => process.nextTick(resolve));
 
@@ -517,14 +475,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                         stripeIntegrationService,
                         loadingIndicator,
                     );
-                    await strategy.initialize({
-                        methodId: 'card',
-                        stripeocs: {
-                            container: 'checkout-button',
-                            loadingContainerId: 'loadingContainerId',
-                            isLoading,
-                        },
-                    } as any);
+                    await strategy.initialize(initialiseOptions as any);
 
                     try {
                         stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
