@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.767.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.1...v1.767.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* **payment:** updated provider id used for order creation in BCP Ratepay Payment strategy ([#2931](https://github.com/bigcommerce/checkout-sdk-js/issues/2931)) ([959b152](https://github.com/bigcommerce/checkout-sdk-js/commit/959b1529a8501c792174c5cc458cf8e1516533d8))
+
 ### [1.767.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.0...v1.767.1) (2025-07-17)
 
 
