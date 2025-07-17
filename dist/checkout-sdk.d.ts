@@ -1,12 +1,8 @@
 /// <reference types="applepayjs" />
 /// <reference types="grecaptcha" />
 /// <reference types="lodash" />
-import { Address as Address_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
-import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { BraintreeError } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CardInstrument as CardInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -24,7 +20,6 @@ import { PayPalFastlaneStylesOption as PayPalFastlaneStylesOption_2 } from '@big
 import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaypalStyleOptions as PaypalStyleOptions_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { ReadableDataStore } from '@bigcommerce/data-store';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
@@ -459,11 +454,6 @@ declare interface AmazonPayRemoteCheckout {
 }
 
 /**
- * The required config to render the AmazonPayV2 button.
- */
-declare type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParameters | WithBuyNowFeature;
-
-/**
  * A set of options that are required to initialize the customer step of
  * checkout in order to support AmazonPayV2.
  *
@@ -557,33 +547,6 @@ declare interface AmazonPayV2ShippingInitializeOptions {
 declare type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
 
 /**
- * A set of options that are required to initialize ApplePay in cart.
- *
- * When ApplePay is initialized, an ApplePay button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger Apple sheet.
- */
-declare interface ApplePayButtonInitializeOptions {
-    /**
-     * This option indicates if product requires shipping
-     */
-    requiresShipping?: boolean;
-    /**
-     * Enabling a new version of Apple Pay with using Apple Pay SDK
-     */
-    isWebBrowserSupported?: boolean;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
-    /**
-     * A callback that gets called when a payment is successfully completed.
-     */
-    onPaymentAuthorize(): void;
-}
-
-/**
  * A set of options that are required to initialize the customer step of
  * checkout in order to support ApplePay.
  *
@@ -666,23 +629,6 @@ declare interface Banner {
 declare interface BaseAccountInstrument extends BaseInstrument {
     method: string;
     type: 'account' | 'bank';
-}
-
-declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
-    [key: string]: unknown;
-    /**
-     * The ID of a container which the checkout button should be inserted.
-     */
-    containerId: string;
-    /**
-     * The option that is required to load payment method configuration for provided currency code in Buy Now flow.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to facilitate PayPal. They can be omitted
-     * unless you need to support Paypal.
-     */
-    paypal?: PaypalButtonInitializeOptions;
 }
 
 /**
@@ -775,31 +721,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Braintree Venmo.
      */
     braintreevenmo?: BraintreeVenmoInitializeOptions;
-}
-
-declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
-    /**
-     * Alternative payment method id what used for initialization PayPal button as funding source.
-     */
-    apm: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
 }
 
 /**
@@ -914,37 +835,6 @@ declare interface BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions 
      * when Smart Payment Button is initialized.
      */
     onInitButton(actions: InitCallbackActions): Promise<void>;
-}
-
-/**
- * A set of options that are required to initialize BigCommercePaymentsButtonStrategy in cart or product details page.
- *
- * When BigCommercePayments is initialized, an BigCommercePayments PayPal button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger PayPal flow.
- */
-declare interface BigCommercePaymentsButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
 }
 
 /**
@@ -1221,35 +1111,6 @@ declare interface BigCommercePaymentsFieldsStyleOptions {
     };
 }
 
-declare interface BigCommercePaymentsPayLaterButtonInitializeOptions {
-    /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
 declare interface BigCommercePaymentsPayLaterCustomerInitializeOptions {
     /**
      * The ID of a container which the checkout button should be inserted into.
@@ -1470,27 +1331,6 @@ declare interface BigCommercePaymentsRatePayPaymentInitializeOptions {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError?(error: unknown): void;
-}
-
-declare interface BigCommercePaymentsVenmoButtonInitializeOptions {
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
 }
 
 declare interface BigCommercePaymentsVenmoCustomerInitializeOptions {
@@ -1771,24 +1611,6 @@ declare interface BoletoDataPaymentMethodState {
 
 declare interface BoletoState {
     data: BoletoDataPaymentMethodState;
-}
-
-declare interface BoltButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: BoltBuyNowInitializeOptions;
-    style?: BoltButtonStyleOptions;
-}
-
-declare interface BoltButtonStyleOptions {
-    shape?: StyleButtonShape_2;
-    size?: StyleButtonSize;
-}
-
-declare interface BoltBuyNowInitializeOptions {
-    storefrontApiToken?: string;
-    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
 /**
@@ -2267,102 +2089,6 @@ declare interface BraintreePaymentInitializeOptions {
     unsupportedCardBrands?: string[];
 }
 
-declare interface BraintreePaypalButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: Pick<PaypalStyleOptions_2, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
-    /**
-     * Address to be used for shipping.
-     * If not provided, it will use the first saved address from the active customer.
-     */
-    shippingAddress?: Address_2 | null;
-    /**
-     * A callback that gets called if unable to authorize and tokenize payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onAuthorizeError?(error: BraintreeError | StandardError_2): void;
-    /**
-     * A callback that gets called if unable to submit payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onPaymentError?(error: BraintreeError | StandardError_2): void;
-    /**
-     * A callback that gets called on any error instead of submit payment or authorization errors.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: BraintreeError | StandardError_2): void;
-    /**
-     *
-     *  A callback that gets called when Braintree SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
-declare interface BraintreePaypalCreditButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The ID of a container where the messaging component should be inserted.
-     */
-    messagingContainerId?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: Pick<PaypalStyleOptions_2, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
-    /**
-     * Address to be used for shipping.
-     * If not provided, it will use the first saved address from the active customer.
-     */
-    shippingAddress?: Address_2 | null;
-    /**
-     * A callback that gets called if unable to authorize and tokenize payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onAuthorizeError?(error: BraintreeError | StandardError_2): void;
-    /**
-     * A callback that gets called if unable to submit payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onPaymentError?(error: BraintreeError | StandardError_2): void;
-    /**
-     * A callback that gets called on any error instead of submit payment or authorization errors.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: BraintreeError | StandardError_2): void;
-    /**
-     *
-     *  A callback that gets called when Braintree SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
 declare interface BraintreePaypalCreditCustomerInitializeOptions {
     /**
      * The ID of a container which the checkout button should be inserted into.
@@ -2715,107 +2441,9 @@ declare interface CheckoutButtonDataState {
     };
 }
 
-declare class CheckoutButtonErrorSelector {
-    private _checkoutButton;
-    getInitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
-    getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
-}
-
 declare interface CheckoutButtonErrorsState {
     initializeError?: Error;
     deinitializeError?: Error;
-}
-
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsButtonInitializeOptions & WithBigCommercePaymentsPayLaterButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions & WithBigCommercePaymentsVenmoButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
-
-declare class CheckoutButtonInitializer {
-    private _store;
-    private _buttonStrategyActionCreator;
-    private _state;
-    /**
-     * Returns a snapshot of the current state.
-     *
-     * The method returns a new instance every time there is a change in the
-     * state. You can query the state by calling any of its getter methods.
-     *
-     * ```js
-     * const state = service.getState();
-     *
-     * console.log(state.errors.getInitializeButtonError());
-     * console.log(state.statuses.isInitializingButton());
-     * ```
-     *
-     * @returns The current customer's checkout state
-     */
-    getState(): CheckoutButtonSelectors;
-    /**
-     * Subscribes to any changes to the current state.
-     *
-     * The method registers a callback function and executes it every time there
-     * is a change in the current state.
-     *
-     * ```js
-     * service.subscribe(state => {
-     *     console.log(state.statuses.isInitializingButton());
-     * });
-     * ```
-     *
-     * The method can be configured to notify subscribers only regarding
-     * relevant changes, by providing a filter function.
-     *
-     * ```js
-     * const filter = state => state.errors.getInitializeButtonError();
-     *
-     * // Only trigger the subscriber when the cart changes.
-     * service.subscribe(state => {
-     *     console.log(state.errors.getInitializeButtonError())
-     * }, filter);
-     * ```
-     *
-     * @param subscriber - The function to subscribe to state changes.
-     * @param filters - One or more functions to filter out irrelevant state
-     * changes. If more than one function is provided, the subscriber will only
-     * be triggered if all conditions are met.
-     * @returns A function, if called, will unsubscribe the subscriber.
-     */
-    subscribe(subscriber: (state: CheckoutButtonSelectors) => void, ...filters: Array<(state: CheckoutButtonSelectors) => any>): () => void;
-    /**
-     * Initializes the checkout button of a payment method.
-     *
-     * When the checkout button is initialized, it will be inserted into the DOM,
-     * ready to be interacted with by the customer.
-     *
-     * ```js
-     * initializer.initializeButton({
-     *     methodId: 'braintreepaypal',
-     *     containerId: 'checkoutButton',
-     *     braintreepaypal: {
-     *     },
-     * });
-     * ```
-     *
-     * @param options - Options for initializing the checkout button.
-     * @returns A promise that resolves to the current state.
-     */
-    initializeButton(options: CheckoutButtonInitializeOptions): Promise<CheckoutButtonSelectors>;
-    /**
-     * De-initializes the checkout button by performing any necessary clean-ups.
-     *
-     * ```js
-     * await service.deinitializeButton({
-     *     methodId: 'braintreepaypal',
-     * });
-     * ```
-     *
-     * @param options - Options for deinitializing the checkout button.
-     * @returns A promise that resolves to the current state.
-     */
-    deinitializeButton(options: CheckoutButtonOptions): Promise<CheckoutButtonSelectors>;
-}
-
-declare interface CheckoutButtonInitializerOptions {
-    host?: string;
-    locale?: string;
 }
 
 declare enum CheckoutButtonMethodType {
@@ -2839,16 +2467,6 @@ declare enum CheckoutButtonMethodType {
     PAYPALEXPRESS = "paypalexpress"
 }
 
-/**
- * The set of options for configuring the checkout button.
- */
-declare interface CheckoutButtonOptions extends RequestOptions {
-    /**
-     * The identifier of the payment method.
-     */
-    methodId: CheckoutButtonMethodType;
-}
-
 declare interface CheckoutButtonSelector {
     getState(): CheckoutButtonState;
     isInitializing(methodId?: CheckoutButtonMethodType): boolean;
@@ -2856,11 +2474,6 @@ declare interface CheckoutButtonSelector {
     isDeinitializing(methodId?: CheckoutButtonMethodType): boolean;
     getInitializeError(methodId?: CheckoutButtonMethodType): Error | undefined;
     getDeinitializeError(methodId?: CheckoutButtonMethodType): Error | undefined;
-}
-
-declare interface CheckoutButtonSelectors {
-    errors: CheckoutButtonErrorSelector;
-    statuses: CheckoutButtonStatusSelector;
 }
 
 declare interface CheckoutButtonState {
@@ -2873,12 +2486,6 @@ declare interface CheckoutButtonState {
     statuses: {
         [key in CheckoutButtonMethodType]?: CheckoutButtonStatusesState | undefined;
     };
-}
-
-declare class CheckoutButtonStatusSelector {
-    private _checkoutButton;
-    isInitializingButton(methodId?: CheckoutButtonMethodType): boolean;
-    isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
 }
 
 declare interface CheckoutButtonStatusesState {
@@ -5428,70 +5035,6 @@ declare interface DisplaySettings {
     hidePriceFromGuests: boolean;
 }
 
-declare class EmbeddedCheckout {
-    private _iframeCreator;
-    private _messageListener;
-    private _messagePoster;
-    private _loadingIndicator;
-    private _requestSender;
-    private _storage;
-    private _location;
-    private _options;
-    private _iframe?;
-    private _isAttached;
-    attach(): Promise<this>;
-    detach(): void;
-    private _configureStyles;
-    private _attemptLogin;
-    /**
-     * This workaround is required for certain browsers (namely Safari) that
-     * prevent session cookies to be set for a third party website unless the
-     * user has recently visited such website. Therefore, before we attempt to
-     * login or set an active cart in the session, we need to first redirect the
-     * user to the domain of Embedded Checkout.
-     */
-    private _allowCookie;
-    private _retryAllowCookie;
-}
-
-declare interface EmbeddedCheckoutCompleteEvent {
-    type: EmbeddedCheckoutEventType.CheckoutComplete;
-}
-
-declare interface EmbeddedCheckoutError {
-    message: string;
-    type?: string;
-    subtype?: string;
-}
-
-declare interface EmbeddedCheckoutErrorEvent {
-    type: EmbeddedCheckoutEventType.CheckoutError;
-    payload: EmbeddedCheckoutError;
-}
-
-declare enum EmbeddedCheckoutEventType {
-    CheckoutComplete = "CHECKOUT_COMPLETE",
-    CheckoutError = "CHECKOUT_ERROR",
-    CheckoutLoaded = "CHECKOUT_LOADED",
-    FrameError = "FRAME_ERROR",
-    FrameLoaded = "FRAME_LOADED",
-    SignedOut = "SIGNED_OUT"
-}
-
-declare interface EmbeddedCheckoutFrameErrorEvent {
-    type: EmbeddedCheckoutEventType.FrameError;
-    payload: EmbeddedCheckoutError;
-}
-
-declare interface EmbeddedCheckoutFrameLoadedEvent {
-    type: EmbeddedCheckoutEventType.FrameLoaded;
-    payload?: EmbeddedContentOptions;
-}
-
-declare interface EmbeddedCheckoutLoadedEvent {
-    type: EmbeddedCheckoutEventType.CheckoutLoaded;
-}
-
 declare interface EmbeddedCheckoutMessenger {
     postComplete(): void;
     postError(payload: Error | CustomError): void;
@@ -5505,22 +5048,6 @@ declare interface EmbeddedCheckoutMessenger {
 declare interface EmbeddedCheckoutMessengerOptions {
     parentOrigin: string;
     parentWindow?: Window;
-}
-
-declare interface EmbeddedCheckoutOptions {
-    containerId: string;
-    url: string;
-    styles?: EmbeddedCheckoutStyles;
-    onComplete?(event: EmbeddedCheckoutCompleteEvent): void;
-    onError?(event: EmbeddedCheckoutErrorEvent): void;
-    onFrameError?(event: EmbeddedCheckoutFrameErrorEvent): void;
-    onFrameLoad?(event: EmbeddedCheckoutFrameLoadedEvent): void;
-    onLoad?(event: EmbeddedCheckoutLoadedEvent): void;
-    onSignOut?(event: EmbeddedCheckoutSignedOutEvent): void;
-}
-
-declare interface EmbeddedCheckoutSignedOutEvent {
-    type: EmbeddedCheckoutEventType.SignedOut;
 }
 
 declare interface EmbeddedCheckoutStyles {
@@ -5765,29 +5292,6 @@ declare interface GiftCertificateSelector {
 }
 
 declare type GooglePayButtonColor = 'default' | 'black' | 'white';
-
-declare interface GooglePayButtonInitializeOptions {
-    /**
-     * All Google Pay payment buttons exist in two styles: dark (default) and light.
-     * To provide contrast, use dark buttons on light backgrounds and light buttons on dark or colorful backgrounds.
-     */
-    buttonColor?: GooglePayButtonColor;
-    /**
-     * Variant buttons:
-     * book: The "Book with Google Pay" payment button.
-     * buy: The "Buy with Google Pay" payment button.
-     * checkout: The "Checkout with Google Pay" payment button.
-     * donate: The "Donate with Google Pay" payment button.
-     * order: The "Order with Google Pay" payment button.
-     * pay: The "Pay with Google Pay" payment button.
-     * plain: The Google Pay payment button without the additional text (default).
-     * subscribe: The "Subscribe with Google Pay" payment button.
-     *
-     * Note: "long" and "short" button types have been renamed to "buy" and "plain", but are still valid button types
-     * for backwards compatability.
-     */
-    buttonType?: GooglePayButtonType;
-}
 
 declare type GooglePayButtonType = 'book' | 'buy' | 'checkout' | 'donate' | 'order' | 'pay' | 'plain' | 'subscribe' | 'long' | 'short';
 
@@ -6978,63 +6482,6 @@ declare interface PasswordRequirements {
     error: string;
 }
 
-declare interface PayPalButtonStyleOptions {
-    color?: StyleButtonColor;
-    shape?: StyleButtonShape;
-    height?: number;
-    label?: StyleButtonLabel;
-}
-
-declare interface PayPalButtonStyleOptions_2 {
-    color?: StyleButtonColor_2;
-    shape?: StyleButtonShape_3;
-    height?: number;
-    label?: StyleButtonLabel_2;
-}
-
-/**
- *
- * BigCommerce Payments BuyNow
- *
- */
-declare interface PayPalBuyNowInitializeOptions {
-    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
-}
-
-/**
- *
- * PayPal Commerce BuyNow
- *
- */
-declare interface PayPalBuyNowInitializeOptions_2 {
-    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
-}
-
-declare interface PayPalCommerceAlternativeMethodsButtonOptions {
-    /**
-     * Alternative payment method id what used for initialization PayPal button as funding source.
-     */
-    apm: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions_2;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
  * method for presenting its PayPal button.
@@ -7155,66 +6602,6 @@ declare interface PayPalCommerceAnalyticTrackerService {
     paymentComplete(): void;
     selectedPaymentMethod(methodId: string): void;
     walletButtonClick(methodId: string): void;
-}
-
-/**
- * A set of options that are required to initialize PayPalCommerce in cart or product details page.
- *
- * When PayPalCommerce is initialized, an PayPalCommerce button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger Apple sheet.
- */
-declare interface PayPalCommerceButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions_2;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
-declare interface PayPalCommerceCreditButtonInitializeOptions {
-    /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions_2;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
 }
 
 /**
@@ -7686,27 +7073,6 @@ declare interface PayPalCommercePaymentInitializeOptions {
     submitForm?(): void;
 }
 
-declare interface PayPalCommerceVenmoButtonInitializeOptions {
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions_2;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
 declare interface PayPalCommerceVenmoCustomerInitializeOptions {
     /**
      * The ID of a container which the checkout button should be inserted into.
@@ -7942,66 +7308,6 @@ declare interface PaymentStrategySelector {
     isWidgetInteracting(methodId?: string): boolean;
 }
 
-declare interface PaypalButtonInitializeOptions {
-    /**
-     * The Client ID of the Paypal App
-     */
-    clientId: string;
-    /**
-     * Whether or not to show a credit button.
-     */
-    allowCredit?: boolean;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
-    /**
-     * A callback that gets called if unable to authorize and tokenize payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onAuthorizeError?(error: StandardError): void;
-    /**
-     * A callback that gets called if unable to submit payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onPaymentError?(error: StandardError): void;
-}
-
-declare enum PaypalButtonStyleColorOption {
-    GOLD = "gold",
-    BLUE = "blue",
-    SIlVER = "silver",
-    BLACK = "black",
-    WHITE = "white"
-}
-
-declare enum PaypalButtonStyleLabelOption {
-    CHECKOUT = "checkout",
-    PAY = "pay",
-    BUYNOW = "buynow",
-    PAYPAL = "paypal",
-    CREDIT = "credit"
-}
-
-declare enum PaypalButtonStyleLayoutOption {
-    HORIZONTAL = "horizontal",
-    VERTICAL = "vertical"
-}
-
-declare enum PaypalButtonStyleShapeOption {
-    PILL = "pill",
-    RECT = "rect"
-}
-
-declare enum PaypalButtonStyleSizeOption {
-    SMALL = "small",
-    MEDIUM = "medium",
-    LARGE = "large",
-    RESPONSIVE = "responsive"
-}
-
 declare interface PaypalCommerceRatePay {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
@@ -8058,17 +7364,6 @@ declare interface PaypalCommerceRatePay {
  */
 declare interface PaypalExpressPaymentInitializeOptions {
     useRedirectFlow?: boolean;
-}
-
-declare interface PaypalStyleOptions {
-    layout?: PaypalButtonStyleLayoutOption;
-    size?: PaypalButtonStyleSizeOption;
-    color?: PaypalButtonStyleColorOption;
-    label?: PaypalButtonStyleLabelOption;
-    shape?: PaypalButtonStyleShapeOption;
-    tagline?: boolean;
-    fundingicons?: boolean;
-    height?: number;
 }
 
 declare interface PhysicalItem extends LineItem {
@@ -8956,59 +8251,6 @@ declare interface StripeV3PaymentInitializeOptions {
     form?: HostedFormOptions;
 }
 
-declare enum StyleButtonColor {
-    gold = "gold",
-    blue = "blue",
-    silver = "silver",
-    black = "black",
-    white = "white"
-}
-
-declare enum StyleButtonColor_2 {
-    gold = "gold",
-    blue = "blue",
-    silver = "silver",
-    black = "black",
-    white = "white"
-}
-
-declare enum StyleButtonLabel {
-    paypal = "paypal",
-    checkout = "checkout",
-    buynow = "buynow",
-    pay = "pay",
-    installment = "installment"
-}
-
-declare enum StyleButtonLabel_2 {
-    paypal = "paypal",
-    checkout = "checkout",
-    buynow = "buynow",
-    pay = "pay",
-    installment = "installment"
-}
-
-declare enum StyleButtonShape {
-    pill = "pill",
-    rect = "rect"
-}
-
-declare enum StyleButtonShape_2 {
-    Pill = "pill",
-    Rect = "rect"
-}
-
-declare enum StyleButtonShape_3 {
-    pill = "pill",
-    rect = "rect"
-}
-
-declare enum StyleButtonSize {
-    Small = "small",
-    Medium = "medium",
-    Large = "large"
-}
-
 declare interface StyleOptions {
     /**
      * Base styling applied to the iframe. All styling extends from this style.
@@ -9145,20 +8387,12 @@ declare interface WithAdyenV3PaymentInitializeOptions {
     adyenv3?: AdyenV3PaymentInitializeOptions;
 }
 
-declare interface WithAmazonPayV2ButtonInitializeOptions {
-    amazonpay?: AmazonPayV2ButtonInitializeOptions;
-}
-
 declare interface WithAmazonPayV2CustomerInitializeOptions {
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
 }
 
 declare interface WithAmazonPayV2PaymentInitializeOptions {
     amazonpay?: AmazonPayV2PaymentInitializeOptions;
-}
-
-declare interface WithApplePayButtonInitializeOptions {
-    applepay?: ApplePayButtonInitializeOptions;
 }
 
 declare interface WithApplePayCustomerInitializeOptions {
@@ -9177,16 +8411,8 @@ declare interface WithApplePayPaymentInitializeOptions {
     applepay?: ApplePayPaymentInitializeOptions;
 }
 
-declare interface WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
-    bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsButtonInitializeOptions;
-}
-
 declare interface WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions {
     bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions;
-}
-
-declare interface WithBigCommercePaymentsButtonInitializeOptions {
-    bigcommerce_payments?: BigCommercePaymentsButtonInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsCreditCardsPaymentInitializeOptions {
@@ -9209,10 +8435,6 @@ declare interface WithBigCommercePaymentsFastlanePaymentInitializeOptions {
     bigcommerce_payments_fastlane?: BigCommercePaymentsFastlanePaymentInitializeOptions;
 }
 
-declare interface WithBigCommercePaymentsPayLaterButtonInitializeOptions {
-    bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterButtonInitializeOptions;
-}
-
 declare interface WithBigCommercePaymentsPayLaterCustomerInitializeOptions {
     bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterCustomerInitializeOptions;
 }
@@ -9229,10 +8451,6 @@ declare interface WithBigCommercePaymentsRatePayPaymentInitializeOptions {
     bigcommerce_payments_ratepay?: BigCommercePaymentsRatePayPaymentInitializeOptions;
 }
 
-declare interface WithBigCommercePaymentsVenmoButtonInitializeOptions {
-    bigcommerce_payments_venmo?: BigCommercePaymentsVenmoButtonInitializeOptions;
-}
-
 declare interface WithBigCommercePaymentsVenmoCustomerInitializeOptions {
     bigcommerce_payments_venmo?: BigCommercePaymentsVenmoCustomerInitializeOptions;
 }
@@ -9247,14 +8465,6 @@ declare interface WithBlueSnapDirectAPMPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Apple Pay.
      */
     bluesnapdirect?: BlueSnapDirectAPMInitializeOptions;
-}
-
-declare interface WithBoltButtonInitializeOptions {
-    /**
-     * The options that are required to initialize the Bolt payment
-     * method. They can be omitted unless you need to support Bolt.
-     */
-    bolt?: BoltButtonInitializeOptions;
 }
 
 declare interface WithBoltCustomerInitializeOptions {
@@ -9289,20 +8499,6 @@ declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
     braintreelocalmethods?: BraintreeLocalMethodsPaymentInitializeOptions;
 }
 
-declare interface WithBraintreePaypalButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Braintree PayPal wallet button on Product and Cart page.
-     */
-    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
-}
-
-declare interface WithBraintreePaypalCreditButtonInitializeOptions {
-    /**
-     * The options that are required to initialize Braintree PayPal Credit wallet button on Product and Cart page.
-     */
-    braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
-}
-
 declare interface WithBraintreePaypalCreditCustomerInitializeOptions {
     /**
      * The options that are required to initialize the customer step of checkout
@@ -9317,15 +8513,6 @@ declare interface WithBraintreePaypalCustomerInitializeOptions {
      * when using Braintree PayPal.
      */
     braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
-}
-
-declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
 }
 
 declare interface WithCheckoutcomFawryInstrument {
@@ -9345,14 +8532,6 @@ declare interface WithCreditCardPaymentInitializeOptions {
 declare interface WithDocumentInstrument {
     ccDocument: string;
 }
-
-/**
- * The options that are required to initialize the GooglePay payment method.
- * They can be omitted unless you need to support GooglePay.
- */
-declare type WithGooglePayButtonInitializeOptions = {
-    [k in GooglePayKey]?: GooglePayButtonInitializeOptions;
-};
 
 /**
  * The options that are required to initialize the GooglePay payment method.
@@ -9387,21 +8566,9 @@ declare interface WithMolliePaymentInitializeOptions {
     mollie?: MolliePaymentInitializeOptions;
 }
 
-declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
-    paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsButtonOptions;
-}
-
 declare interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {
     paypalcommerce?: PayPalCommerceAlternativeMethodsPaymentOptions;
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsPaymentOptions;
-}
-
-declare interface WithPayPalCommerceButtonInitializeOptions {
-    paypalcommerce?: PayPalCommerceButtonInitializeOptions;
-}
-
-declare interface WithPayPalCommerceCreditButtonInitializeOptions {
-    paypalcommercecredit?: PayPalCommerceCreditButtonInitializeOptions;
 }
 
 declare interface WithPayPalCommerceCreditCardsPaymentInitializeOptions {
@@ -9440,10 +8607,6 @@ declare interface WithPayPalCommercePaymentInitializeOptions {
 
 declare interface WithPayPalCommerceRatePayPaymentInitializeOptions {
     paypalcommerceratepay?: PaypalCommerceRatePay;
-}
-
-declare interface WithPayPalCommerceVenmoButtonInitializeOptions {
-    paypalcommercevenmo?: PayPalCommerceVenmoButtonInitializeOptions;
 }
 
 declare interface WithPayPalCommerceVenmoCustomerInitializeOptions {
@@ -9543,31 +8706,6 @@ export declare function createBodlService(subscribe: (subscriber: (state: Checko
  * @returns an instance of `BraintreeAnalyticTrackerService`.
  */
 export declare function createBraintreeAnalyticTracker(checkoutService: CheckoutService): BraintreeAnalyticTrackerService;
-
-/**
- * Creates an instance of `CheckoutButtonInitializer`.
- *
- * @remarks
- * ```js
- * const initializer = createCheckoutButtonInitializer();
- *
- * initializer.initializeButton({
- *     methodId: 'braintreepaypal',
- *     braintreepaypal: {
- *         container: '#checkoutButton',
- *     },
- * });
- * ```
- *
- * @alpha
- * Please note that `CheckoutButtonInitializer` is currently in an early stage
- * of development. Therefore the API is unstable and not ready for public
- * consumption.
- *
- * @param options - A set of construction options.
- * @returns an instance of `CheckoutButtonInitializer`.
- */
-export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
 
 /**
  * Creates an instance of `CheckoutService`.
@@ -9695,23 +8833,3 @@ export declare function createStepTracker(checkoutService: CheckoutService, step
  * @returns An instance of `StoredCardHostedFormService`.
  */
 export declare function createStoredCardHostedFormService(host: string): StoredCardHostedFormService;
-
-/**
- * Embed the checkout form in an iframe.
- *
- * @remarks
- * Once the iframe is embedded, it will automatically resize according to the
- * size of the checkout form. It will also notify the parent window when certain
- * events have occurred. i.e.: when the form is loaded and ready to be used.
- *
- * ```js
- * embedCheckout({
- *     url: 'https://checkout/url',
- *     containerId: 'container-id',
- * });
- * ```
- *
- * @param options - Options for embedding the checkout form.
- * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
- */
-export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;
