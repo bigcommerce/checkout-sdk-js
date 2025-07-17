@@ -30,18 +30,21 @@ async function getUmdConfig(options, argv) {
     };
 }
 
-async function getCjsConfig(options, argv) {
+async function getEsmConfig(options, argv) {
     const baseConfig = await getBaseConfig(options, argv);
 
     return {
         ...baseConfig,
-        name: 'cjs',
+        name: 'esm',
         entry: libraryEntries,
         externals: [nodeExternals()],
         output: {
-            filename: '[name].js',
-            libraryTarget: 'commonjs2',
+            filename: '[name].mjs',
+            libraryTarget: 'module',
             path: outputPath,
+        },
+        experiments: {
+            outputModule: true,
         },
         plugins: [
             ...baseConfig.plugins,
@@ -53,7 +56,7 @@ async function getCjsConfig(options, argv) {
 }
 
 async function getConfigs(options, argv) {
-    return [await getCjsConfig(options, argv), await getUmdConfig(options, argv)];
+    return [await getEsmConfig(options, argv), await getUmdConfig(options, argv)];
 }
 
 module.exports = getConfigs;
