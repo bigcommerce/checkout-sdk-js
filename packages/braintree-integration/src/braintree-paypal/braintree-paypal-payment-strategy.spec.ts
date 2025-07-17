@@ -12,6 +12,7 @@ import {
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
     getBraintreePaypal,
     getBraintreePaypalMock,
     getClientMock,
@@ -59,6 +60,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
     let paypalCheckoutCreatorMock: BraintreeModuleCreator<BraintreePaypalCheckout>;
     let paypalSdkMock: PaypalSDK;
     let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const storeConfig = getConfig().storeConfig;
 
@@ -101,7 +103,12 @@ describe('BraintreePaypalPaymentStrategy', () => {
         (window as BraintreeHostWindow).paypal = paypalSdkMock;
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
         braintreeMessages = new BraintreeMessages(paymentIntegrationService);
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,

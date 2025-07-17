@@ -5,6 +5,7 @@ import {
     BraintreeHostWindow,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     VisaCheckoutHostWindow,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -18,7 +19,10 @@ const createBraintreeVisaCheckoutButtonStrategy: CheckoutButtonStrategyFactory<
     BraintreeVisaCheckoutButtonStrategy
 > = (paymentIntegrationService) => {
     const hostWindow: VisaCheckoutHostWindow & BraintreeHostWindow = window;
-    const braintreeSdk = new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), hostWindow));
+    const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+    const braintreeSdk = new BraintreeSdk(
+        new BraintreeScriptLoader(getScriptLoader(), hostWindow, braintreeSDKVersionManager),
+    );
 
     return new BraintreeVisaCheckoutButtonStrategy(
         paymentIntegrationService,

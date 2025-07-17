@@ -4,6 +4,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     getBraintree,
     getDataCollectorMock,
     getDeviceDataMock,
@@ -46,6 +47,7 @@ describe('ApplePayButtonStrategy', () => {
     let applePaySession: MockApplePaySession;
     let braintreeSdk: BraintreeSdk;
     let applePayScriptLoader: ApplePayScriptLoader;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -57,7 +59,10 @@ describe('ApplePayButtonStrategy', () => {
         applePayFactory = new ApplePaySessionFactory();
         requestSender = createRequestSender();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        braintreeSdk = new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), window));
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeSdk = new BraintreeSdk(
+            new BraintreeScriptLoader(getScriptLoader(), window, braintreeSDKVersionManager),
+        );
         applePayScriptLoader = new ApplePayScriptLoader(getScriptLoader());
 
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(getResponse({})));

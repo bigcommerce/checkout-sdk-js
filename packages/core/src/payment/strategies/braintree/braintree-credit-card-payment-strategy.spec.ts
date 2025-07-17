@@ -8,7 +8,10 @@ import { from, Observable, of } from 'rxjs';
 import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { getCart } from '../../../cart/carts.mock';
@@ -62,6 +65,8 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
     let store: CheckoutStore;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     beforeEach(() => {
         braintreePaymentProcessorMock = {} as BraintreePaymentProcessor;
@@ -105,6 +110,8 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         store = createCheckoutStore(getCheckoutStoreState());
 
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
@@ -118,8 +125,9 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(createRequestSender()),
         );
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
         braintreeIntegrationServiceMock = new BraintreeIntegrationService(
-            new BraintreeScriptLoader(getScriptLoader(), window),
+            new BraintreeScriptLoader(getScriptLoader(), window, braintreeSDKVersionManager),
             window,
         );
 

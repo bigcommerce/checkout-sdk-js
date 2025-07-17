@@ -1,7 +1,12 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { Address } from '../../../address';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
@@ -21,9 +26,18 @@ import {
 describe('BraintreeVisaCheckoutPaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
     let requestSender: RequestSender;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     beforeEach(() => {
-        const braintreeScriptLoader = new BraintreeScriptLoader(createScriptLoader(), window);
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+
+        const braintreeScriptLoader = new BraintreeScriptLoader(
+            createScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
 
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         braintreeSDKCreator.initialize = jest.fn();

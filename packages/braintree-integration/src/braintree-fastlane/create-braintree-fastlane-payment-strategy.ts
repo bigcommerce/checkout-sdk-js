@@ -5,6 +5,7 @@ import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     PaymentStrategyFactory,
@@ -19,8 +20,13 @@ const createBraintreeFastlanePaymentStrategy: PaymentStrategyFactory<
     BraintreeFastlanePaymentStrategy
 > = (paymentIntegrationService) => {
     const braintreeHostWindow: BraintreeHostWindow = window;
+    const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
     const braintreeIntegrationService = new BraintreeIntegrationService(
-        new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
+        new BraintreeScriptLoader(
+            getScriptLoader(),
+            braintreeHostWindow,
+            braintreeSDKVersionManager,
+        ),
         braintreeHostWindow,
     );
     const browserStorage = new BrowserStorage('paypalFastlane');
@@ -31,7 +37,11 @@ const createBraintreeFastlanePaymentStrategy: PaymentStrategyFactory<
         browserStorage,
     );
 
-    const braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow);
+    const braintreeScriptLoader = new BraintreeScriptLoader(
+        getScriptLoader(),
+        braintreeHostWindow,
+        braintreeSDKVersionManager,
+    );
 
     const braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 

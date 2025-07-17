@@ -31,6 +31,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
     let paymentMethodMock: PaymentMethod;
     let venmoButtonElement: HTMLDivElement;
     let strategy: BraintreeVenmoButtonStrategy;
+    let braintreeSdk: BraintreeSdk;
 
     const defaultContainerId = 'braintree-venmo-button-mock-id';
 
@@ -88,8 +89,6 @@ describe('BraintreeVenmoButtonStrategy', () => {
         recipientName: 'John Doe',
     };
 
-    const braintreeSdk: BraintreeSdk = createBraintreeSdk();
-
     const expectedAddress = {
         email: 'test@test.com',
         first_name: 'John',
@@ -106,6 +105,8 @@ describe('BraintreeVenmoButtonStrategy', () => {
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         formPoster = createFormPoster();
+
+        braintreeSdk = createBraintreeSdk(paymentIntegrationService);
 
         strategy = new BraintreeVenmoButtonStrategy(
             paymentIntegrationService,
@@ -207,6 +208,8 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
         it('initializes the braintree venmo checkout', async () => {
             const options = getBraintreeVenmoButtonOptionsMock();
+
+            braintreeSdk.initialize = jest.fn();
 
             await strategy.initialize(options);
 

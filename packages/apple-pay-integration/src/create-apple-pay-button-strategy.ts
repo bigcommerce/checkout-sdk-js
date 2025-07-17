@@ -1,7 +1,11 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 
-import { BraintreeScriptLoader, BraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BraintreeScriptLoader,
+    BraintreeSdk,
+    BraintreeSDKVersionManager,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CheckoutButtonStrategyFactory,
     toResolvableModule,
@@ -16,11 +20,15 @@ const createApplePayButtonStrategy: CheckoutButtonStrategyFactory<ApplePayButton
 ) => {
     const { getHost } = paymentIntegrationService.getState();
 
+    const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+
     return new ApplePayButtonStrategy(
         createRequestSender({ host: getHost() }),
         paymentIntegrationService,
         new ApplePaySessionFactory(),
-        new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), window)),
+        new BraintreeSdk(
+            new BraintreeScriptLoader(getScriptLoader(), window, braintreeSDKVersionManager),
+        ),
         new ApplePayScriptLoader(new ScriptLoader()),
     );
 };

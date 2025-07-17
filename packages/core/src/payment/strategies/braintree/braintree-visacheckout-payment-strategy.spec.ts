@@ -3,6 +3,8 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import {
     CheckoutActionCreator,
@@ -23,7 +25,6 @@ import {
 } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createPaymentIntegrationService } from '../../../payment-integration';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import {
     createSpamProtection,
@@ -70,9 +71,12 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         const scriptLoader = createScriptLoader();
         const requestSender = createRequestSender();
 
+        const paymentIntegrationService = new PaymentIntegrationServiceMock();
+
         braintreeVisaCheckoutPaymentProcessor = createBraintreeVisaCheckoutPaymentProcessor(
             scriptLoader,
             requestSender,
+            paymentIntegrationService,
         );
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -107,7 +111,6 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             spamProtection,
             'en_US',
         );
-        const paymentIntegrationService = createPaymentIntegrationService(store);
         const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         const checkoutValidator = new CheckoutValidator(checkoutRequestSender);

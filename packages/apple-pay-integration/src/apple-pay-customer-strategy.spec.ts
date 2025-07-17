@@ -4,6 +4,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     getBraintree,
     getDataCollectorMock,
     getDeviceDataMock,
@@ -47,6 +48,7 @@ describe('ApplePayCustomerStrategy', () => {
     let braintreeSdk: BraintreeSdk;
     let applePayScriptLoader: ApplePayScriptLoader;
     let storeConfigMock: StoreConfig;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -58,7 +60,10 @@ describe('ApplePayCustomerStrategy', () => {
         applePayFactory = new ApplePaySessionFactory();
         requestSender = createRequestSender();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        braintreeSdk = new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), window));
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeSdk = new BraintreeSdk(
+            new BraintreeScriptLoader(getScriptLoader(), window, braintreeSDKVersionManager),
+        );
         applePayScriptLoader = new ApplePayScriptLoader(getScriptLoader());
         storeConfigMock = getConfig().storeConfig;
         storeConfigMock.checkoutSettings.features = {

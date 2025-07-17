@@ -1,6 +1,6 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
-import { noop } from 'lodash';
 import { EventEmitter } from 'events';
+import { noop } from 'lodash';
 
 import {
     Braintree3DSVerifyCardCallback,
@@ -9,6 +9,7 @@ import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     BraintreeThreeDSecure,
     BraintreeThreeDSecureOptions,
     getBraintree,
@@ -35,9 +36,10 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
+import { getThreeDSecureMock } from '../mocks/braintree.mock';
+
 import BraintreeFastlanePaymentStrategy from './braintree-fastlane-payment-strategy';
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
-import { getThreeDSecureMock } from '../mocks/braintree.mock';
 
 describe('BraintreeFastlanePaymentStrategy', () => {
     let braintreeFastlaneUtils: BraintreeFastlaneUtils;
@@ -50,6 +52,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
     let braintreeSdk: BraintreeSdk;
     let threeDSecure: BraintreeThreeDSecure;
     let eventEmitter: EventEmitter;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const methodId = 'braintreeacceleratedcheckout';
     const deviceSessionId = 'device_session_id_mock';
@@ -170,7 +173,12 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         threeDSecure = getThreeDSecureMock();
         eventEmitter = new EventEmitter();
 
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
             window,
@@ -785,6 +793,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                     isFastlaneEnabled: true,
                 },
             };
+
             paymentMethod.config.is3dsEnabled = false;
 
             jest.spyOn(
@@ -940,6 +949,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
         it('should reject with a PaymentMethodCancelledError if customer cancels', async () => {
             paymentMethod.config.is3dsEnabled = true;
+
             const threeDSecureMock = {
                 ...threeDSecure,
                 verifyCard: (_options, callback) => {
@@ -953,8 +963,11 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                     return Promise.resolve('fastlane_token_mock');
                 },
             };
+
             jest.spyOn(braintreeSdk, 'getBraintreeThreeDS').mockResolvedValue(threeDSecureMock);
+
             const onErrorMock = jest.fn();
+
             await strategy.initialize({
                 methodId,
                 braintreefastlane: {
@@ -978,6 +991,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             await strategy.execute(executeOptions);
 
             const next = jest.fn();
+
             eventEmitter.emit('onLookupComplete', next);
 
             expect(next).toHaveBeenCalled();
@@ -991,6 +1005,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             const next = jest.fn();
             const cancelCallback = jest.fn();
+
             eventEmitter.emit('onLookupComplete', next);
             eventEmitter.emit('on', cancelCallback);
 

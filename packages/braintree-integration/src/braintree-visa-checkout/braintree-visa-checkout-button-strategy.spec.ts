@@ -6,6 +6,7 @@ import {
     BraintreeHostWindow,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     BraintreeVisaCheckout,
     getBraintree,
     getDataCollectorMock,
@@ -37,6 +38,7 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
     let visaCheckoutSDKMock: VisaCheckoutSDK;
     let braintreeVisaCheckoutButtonElement: HTMLDivElement;
     let dataCollector: BraintreeDataCollector;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const defaultContainerId = 'braintree-visa-checkout-button-mock-id';
 
@@ -66,7 +68,12 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         formPoster = createFormPoster();
 
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), mockWindow);
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            mockWindow,
+            braintreeSDKVersionManager,
+        );
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
         strategy = new BraintreeVisaCheckoutButtonStrategy(

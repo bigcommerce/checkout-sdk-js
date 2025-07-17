@@ -7,6 +7,7 @@ import {
     BraintreeHostWindow,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     BraintreeThreeDSecure,
     getClientMock,
     getDataCollectorMock,
@@ -39,6 +40,7 @@ describe('GooglePayBraintreeGateway', () => {
     let braintreeThreeDSecureMock: BraintreeThreeDSecure;
     let braintreeClientMock: BraintreeClient;
     let braintreeMock: PaymentMethod;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const token =
         '{"androidPayCards":[{"type":"AndroidPayCard","nonce":"12345678-1234-1234-1515-123412341234","description":"Android Pay","consumed":false,"threeDSecureInfo":null,"details":{"bin":"401288","cardType":"Visa","isNetworkTokenized":false,"lastTwo":"11","lastFour":"1111"},"binData":{"prepaid":"No","healthcare":"Unknown","debit":"Unknown","durbinRegulated":"Unknown","commercial":"Unknown","payroll":"Unknown","issuingBank":"Unknown","countryOfIssuance":"Unknown","productId":"Unknown"}}]}';
@@ -48,9 +50,11 @@ describe('GooglePayBraintreeGateway', () => {
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeHostWindowMock = window as BraintreeHostWindow;
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
         braintreeScriptLoader = new BraintreeScriptLoader(
             getScriptLoader(),
             braintreeHostWindowMock,
+            braintreeSDKVersionManager,
         );
 
         braintreeMock = getBraintree();

@@ -6,6 +6,7 @@ import {
     BraintreeHostWindow,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CustomerStrategyFactory,
@@ -23,8 +24,13 @@ const createGooglePayBraintreePaymentStrategy: CustomerStrategyFactory<
     const requestSender = createRequestSender();
 
     const braintreeHostWindow: BraintreeHostWindow = window;
+    const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
     const braintreeSdk = new BraintreeSdk(
-        new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
+        new BraintreeScriptLoader(
+            getScriptLoader(),
+            braintreeHostWindow,
+            braintreeSDKVersionManager,
+        ),
     );
 
     return new GooglePayCustomerStrategy(
