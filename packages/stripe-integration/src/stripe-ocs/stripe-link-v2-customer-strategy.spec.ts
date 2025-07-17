@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 
 import {
     InvalidArgumentError,
+    MissingDataError,
     NotInitializedError,
     PaymentIntegrationService,
     RequestError,
@@ -26,6 +27,8 @@ import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
 
 import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
 import { getStripeOCSMock } from './stripe-ocs.mock';
+
+import clearAllMocks = jest.clearAllMocks;
 
 describe('StripeLinkV2CustomerStrategy', () => {
     let strategy: StripeLinkV2CustomerStrategy;
@@ -80,6 +83,16 @@ describe('StripeLinkV2CustomerStrategy', () => {
         },
         buttonHeight: 40,
     };
+    const initialiseOptions = {
+        methodId: 'stripeocs',
+        stripeocs: {
+            container: 'checkout-button',
+            methodId: 'optimized_checkout',
+            gatewayId: 'stripeocs',
+            loadingContainerId: 'loadingContainerId',
+            isLoading,
+        },
+    };
 
     beforeEach(() => {
         stripeIntegrationService = getStripeIntegrationServiceMock();
@@ -122,6 +135,15 @@ describe('StripeLinkV2CustomerStrategy', () => {
         jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
             Promise.resolve(false),
         );
+
+        jest.spyOn(loadingIndicator, 'show').mockReturnValue();
+
+        strategy = new StripeLinkV2CustomerStrategy(
+            paymentIntegrationService,
+            scriptLoader,
+            stripeIntegrationService,
+            loadingIndicator,
+        );
     });
 
     afterEach(() => {
@@ -130,25 +152,34 @@ describe('StripeLinkV2CustomerStrategy', () => {
 
     describe('#initialize()', () => {
         beforeEach(async () => {
-            strategy = new StripeLinkV2CustomerStrategy(
-                paymentIntegrationService,
-                scriptLoader,
-                stripeIntegrationService,
-                loadingIndicator,
+            await strategy.initialize(initialiseOptions);
+        });
+
+        it('throws if no options are provided', async () => {
+            await expect(strategy.initialize(undefined as any)).rejects.toThrow(
+                InvalidArgumentError,
             );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
         });
 
         it('throws if stripeocs option is missing', async () => {
             await expect(
                 strategy.initialize({ methodId: 'card', stripeocs: undefined } as any),
             ).rejects.toThrow(InvalidArgumentError);
+        });
+
+        it('throws if stripePublishableKey option is missing', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValueOnce({
+                ...getStripeOCSMock(),
+                initializationData: {
+                    ...getStripeOCSMock().initializationData,
+                    stripePublishableKey: undefined,
+                },
+            });
+
+            await expect(strategy.initialize(initialiseOptions)).rejects.toThrow(MissingDataError);
         });
 
         it('throws if required stripeocs fields are missing', async () => {
@@ -163,7 +194,6 @@ describe('StripeLinkV2CustomerStrategy', () => {
         });
 
         it('loads Stripe client and mounts element successfully', () => {
-            // TODO remove mock id below
             expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
                 getStripeOCSMock().initializationData,
             );
@@ -182,19 +212,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
 
     describe('Stripe Link V2 Element mounting', () => {
         beforeEach(async () => {
-            strategy = new StripeLinkV2CustomerStrategy(
-                paymentIntegrationService,
-                scriptLoader,
-                stripeIntegrationService,
-                loadingIndicator,
-            );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions);
         });
 
         it('calls mountExpressCheckoutElement during initialize()', () => {
@@ -207,24 +225,14 @@ describe('StripeLinkV2CustomerStrategy', () => {
     });
 
     describe('Stripe Events', () => {
+        const stripeEvent = jest.fn();
+
         beforeEach(() => {
             jest.clearAllMocks();
         });
 
         it('initialise all events', async () => {
-            strategy = new StripeLinkV2CustomerStrategy(
-                paymentIntegrationService,
-                scriptLoader,
-                stripeIntegrationService,
-                loadingIndicator,
-            );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions);
 
             expect(element.on).toHaveBeenCalledWith(
                 StripeElementEvent.SHIPPING_ADDRESS_CHANGE,
@@ -241,19 +249,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
         });
 
         it('calls onShippingAddressChange callback if event was triggered', async () => {
-            strategy = new StripeLinkV2CustomerStrategy(
-                paymentIntegrationService,
-                scriptLoader,
-                stripeIntegrationService,
-                loadingIndicator,
-            );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions);
 
             stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
                 address: {
@@ -262,6 +258,34 @@ describe('StripeLinkV2CustomerStrategy', () => {
                     postal_code: '091-22',
                     state: 'CA',
                 },
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalled();
+            expect(paymentIntegrationService.loadShippingCountries).toHaveBeenCalled();
+            expect(stripeEvent).toHaveBeenCalledWith({
+                shippingRates: [
+                    {
+                        amount: 0,
+                        displayName: 'Flat Rate',
+                        id: '0:61d4bb52f746477e1d4fb411221318c3',
+                    },
+                ],
+            });
+        });
+
+        it('calls onShippingAddressChange callback with empty address', async () => {
+            await strategy.initialize(initialiseOptions);
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: '',
+                    country: '',
+                    postal_code: '',
+                    state: '',
+                },
+                resolve: stripeEvent,
             });
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -269,29 +293,132 @@ describe('StripeLinkV2CustomerStrategy', () => {
             expect(paymentIntegrationService.loadShippingCountries).toHaveBeenCalled();
         });
 
-        it('calls onShippingRateChange callback if event was triggered', async () => {
-            strategy = new StripeLinkV2CustomerStrategy(
-                paymentIntegrationService,
-                scriptLoader,
-                stripeIntegrationService,
-                loadingIndicator,
-            );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
+        it('calls onShippingAddressChange callback with no address', async () => {
+            await strategy.initialize(initialiseOptions);
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: undefined,
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalled();
+        });
+
+        it('resolve onShippingAddressChange with empty shippingRates', async () => {
+            jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+                ...paymentIntegrationService.getState(),
+                getConsignments: jest.fn().mockReturnValue(undefined),
+            });
+
+            await strategy.initialize(initialiseOptions);
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: 'London',
+                    country: 'UK',
+                    postal_code: '091-22',
+                    state: 'CA',
                 },
-            } as any);
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(stripeEvent).toHaveBeenCalledWith({ shippingRates: undefined });
+        });
+
+        it('resolve onShippingAddressChange with empty shippingRates if there is no availableShippingOptions', async () => {
+            jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+                ...paymentIntegrationService.getState(),
+                getConsignments: jest
+                    .fn()
+                    .mockReturnValue([{ availableShippingOptions: undefined }]),
+            });
+
+            await strategy.initialize(initialiseOptions);
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: 'London',
+                    country: 'UK',
+                    postal_code: '091-22',
+                    state: 'CA',
+                },
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(stripeEvent).toHaveBeenCalledWith({ shippingRates: [] });
+        });
+
+        it('resolve onShippingAddressChange with selectedId', async () => {
+            jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+                ...paymentIntegrationService.getState(),
+                getConsignments: jest.fn().mockReturnValue([
+                    {
+                        availableShippingOptions: [
+                            {
+                                id: 1,
+                                description: 'description',
+                                cost: 1000,
+                            },
+                            {
+                                id: 2,
+                                description: 'description2',
+                                cost: 2000,
+                            },
+                        ],
+                        selectedShippingOption: {
+                            id: 2,
+                            description: 'description2',
+                            cost: 2000,
+                        },
+                    },
+                ]),
+            });
+
+            await strategy.initialize(initialiseOptions);
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: 'London',
+                    country: 'UK',
+                    postal_code: '091-22',
+                    state: 'CA',
+                },
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(stripeEvent).toHaveBeenCalledWith({
+                shippingRates: [
+                    {
+                        amount: 200000,
+                        displayName: 'description2',
+                        id: 2,
+                    },
+                    {
+                        amount: 100000,
+                        displayName: 'description',
+                        id: 1,
+                    },
+                ],
+            });
+        });
+
+        it('calls onShippingRateChange callback if event was triggered', async () => {
+            await strategy.initialize(initialiseOptions);
 
             stripeEventEmitter.emit(StripeElementEvent.SHIPPING_RATE_CHANGE, {
                 shippingRate: {
                     id: '123',
                 },
+                resolve: stripeEvent,
             });
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();
+            expect(stripeEvent).toHaveBeenCalledWith({});
         });
 
         it('initialise all events correctly if there is no physical items', async () => {
@@ -303,19 +430,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 getCartOrThrow: jest.fn().mockReturnValue(cartMock),
             });
 
-            strategy = new StripeLinkV2CustomerStrategy(
-                paymentIntegrationService,
-                scriptLoader,
-                stripeIntegrationService,
-                loadingIndicator,
-            );
-            await strategy.initialize({
-                methodId: 'card',
-                stripeocs: {
-                    container: 'checkout-button',
-                    isLoading,
-                },
-            } as any);
+            await strategy.initialize(initialiseOptions);
 
             expect(element.on).not.toHaveBeenCalledWith(
                 StripeElementEvent.SHIPPING_ADDRESS_CHANGE,
@@ -335,6 +450,12 @@ describe('StripeLinkV2CustomerStrategy', () => {
             let errorResponse: RequestError;
             let confirmPaymentMock: jest.Mock;
             let retrievePaymentIntentMock: jest.Mock;
+
+            const mockFirstPaymentRequest = (payload: unknown) => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                    Promise.reject(payload),
+                );
+            };
 
             beforeEach(() => {
                 delete (window as any).location;
@@ -383,20 +504,12 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 });
             });
 
+            afterEach(() => {
+                clearAllMocks();
+            });
+
             it('updates addresses when onConfirm callback event triggered', async () => {
-                strategy = new StripeLinkV2CustomerStrategy(
-                    paymentIntegrationService,
-                    scriptLoader,
-                    stripeIntegrationService,
-                    loadingIndicator,
-                );
-                await strategy.initialize({
-                    methodId: 'card',
-                    stripeocs: {
-                        container: 'checkout-button',
-                        isLoading,
-                    },
-                } as any);
+                await strategy.initialize(initialiseOptions);
 
                 stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -432,24 +545,69 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 });
             });
 
-            it('submit second payment request after stripe confirmation', async () => {
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    Promise.reject(errorResponse),
-                );
+            it('updates addresses with empty obejct when onConfirm callback event triggered', async () => {
+                await strategy.initialize(initialiseOptions);
 
-                strategy = new StripeLinkV2CustomerStrategy(
-                    paymentIntegrationService,
-                    scriptLoader,
-                    stripeIntegrationService,
-                    loadingIndicator,
-                );
-                await strategy.initialize({
-                    methodId: 'card',
-                    stripeocs: {
-                        container: 'checkout-button',
-                        isLoading,
+                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, {
+                    billingDetails: {
+                        // name: '',
+                        email: '',
+                        phone: '',
+                        address: {
+                            // line1: '',
+                            // city: '',
+                            // country: '',
+                            // state: '',
+                            // postal_code: '',
+                        },
                     },
-                } as any);
+                    shippingAddress: {
+                        // name: '',
+                        address: {
+                            // line1: '',
+                            // city: '',
+                            // country: '',
+                            // state: '',
+                            // postal_code: '',
+                        },
+                    },
+                });
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith({
+                    address1: '',
+                    address2: '',
+                    city: '',
+                    company: '',
+                    countryCode: '',
+                    customFields: [],
+                    email: '',
+                    firstName: '',
+                    lastName: '',
+                    phone: '',
+                    postalCode: '',
+                    stateOrProvince: '',
+                    stateOrProvinceCode: '',
+                });
+                expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith({
+                    address1: '',
+                    address2: '',
+                    city: '',
+                    company: '',
+                    countryCode: '',
+                    customFields: [],
+                    firstName: '',
+                    lastName: '',
+                    phone: '',
+                    postalCode: '',
+                    stateOrProvince: '',
+                    stateOrProvinceCode: '',
+                });
+            });
+
+            it('submit second payment request after stripe confirmation', async () => {
+                mockFirstPaymentRequest(errorResponse);
+                await strategy.initialize(initialiseOptions);
 
                 stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -480,6 +638,39 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 });
             });
 
+            it('doesn"t submit an order if there is empty event object', async () => {
+                await strategy.initialize(initialiseOptions);
+
+                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, {});
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(0);
+            });
+
+            it('throws not request error', async () => {
+                mockFirstPaymentRequest(new Error('Not request'));
+                await strategy.initialize(initialiseOptions);
+
+                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
+            });
+
+            it('throws not additional action error', async () => {
+                mockFirstPaymentRequest(errorResponse);
+                jest.spyOn(stripeIntegrationService, 'isAdditionalActionError').mockReturnValue(
+                    false,
+                );
+
+                await strategy.initialize(initialiseOptions);
+
+                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
+            });
+
             describe('#toggleLoadingIndicator', () => {
                 beforeEach(() => {
                     jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
@@ -490,20 +681,8 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 });
 
                 it('shows loading indicator on confirm callback', async () => {
-                    strategy = new StripeLinkV2CustomerStrategy(
-                        paymentIntegrationService,
-                        scriptLoader,
-                        stripeIntegrationService,
-                        loadingIndicator,
-                    );
-                    await strategy.initialize({
-                        methodId: 'card',
-                        stripeocs: {
-                            container: 'checkout-button',
-                            loadingContainerId: 'loadingContainerId',
-                            isLoading,
-                        },
-                    } as any);
+                    await strategy.initialize(initialiseOptions);
+
                     stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                     await new Promise((resolve) => process.nextTick(resolve));
 
@@ -511,20 +690,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 });
 
                 it('hides loading indicator when error occurs', async () => {
-                    strategy = new StripeLinkV2CustomerStrategy(
-                        paymentIntegrationService,
-                        scriptLoader,
-                        stripeIntegrationService,
-                        loadingIndicator,
-                    );
-                    await strategy.initialize({
-                        methodId: 'card',
-                        stripeocs: {
-                            container: 'checkout-button',
-                            loadingContainerId: 'loadingContainerId',
-                            isLoading,
-                        },
-                    } as any);
+                    await strategy.initialize(initialiseOptions);
 
                     try {
                         stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
@@ -535,5 +701,21 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 });
             });
         });
+    });
+
+    it('#signIn', async () => {
+        await expect(strategy.signIn()).resolves.toBeUndefined();
+    });
+
+    it('#signOut', async () => {
+        await expect(strategy.signOut()).resolves.toBeUndefined();
+    });
+
+    it('#executePaymentMethodCheckout', async () => {
+        await expect(strategy.executePaymentMethodCheckout()).resolves.toBeUndefined();
+    });
+
+    it('#deinitialize', async () => {
+        await expect(strategy.deinitialize()).resolves.toBeUndefined();
     });
 });
