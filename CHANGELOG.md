@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.767.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.0...v1.767.1) (2025-07-17)
+
+
+### Code Refactoring
+
+* **payment:** updated ppcp fastlane implementation to use cookies instead of local storage ([#2930](https://github.com/bigcommerce/checkout-sdk-js/issues/2930)) ([fe6931d](https://github.com/bigcommerce/checkout-sdk-js/commit/fe6931d94062afbccc679ff7c478a9fd05bd6d10))
+
 ## [1.767.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.766.0...v1.767.0) (2025-07-16)
 
 
