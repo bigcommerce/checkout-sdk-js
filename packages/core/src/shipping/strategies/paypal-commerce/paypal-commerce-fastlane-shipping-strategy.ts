@@ -201,10 +201,11 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         const isAuthenticationFlowCanceled =
             authenticationResult.authenticationState === PayPalFastlaneAuthenticationState.CANCELED;
 
-        this._paypalCommerceFastlaneUtils.updateStorageSessionId(
-            isAuthenticationFlowCanceled,
-            cart.id,
-        );
+        if (isAuthenticationFlowCanceled) {
+            this._paypalCommerceFastlaneUtils.removeStorageSessionId();
+        } else {
+            this._paypalCommerceFastlaneUtils.updateStorageSessionId(cart.id);
+        }
 
         if (billingAddress) {
             await this._store.dispatch(

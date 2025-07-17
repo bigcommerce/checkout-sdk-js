@@ -56,7 +56,6 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     async initialize(
         options: PaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions,
     ): Promise<void> {
-        // TODO: remove paypalcommerceacceleratedcheckout if it was removed on checkout js side
         const { methodId, paypalcommercefastlane } = options;
 
         if (!methodId) {
@@ -153,8 +152,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 paymentPayload,
             );
 
-            // TODO: we should probably update this method with removeStorageSessionId for better reading experience
-            this.paypalCommerceFastlaneUtils.updateStorageSessionId(true);
+            this.paypalCommerceFastlaneUtils.removeStorageSessionId();
         } catch (error) {
             if (error instanceof Error && error.name !== 'FastlaneError') {
                 throw error;
@@ -231,10 +229,11 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 authenticationResult.authenticationState ===
                 PayPalFastlaneAuthenticationState.CANCELED;
 
-            this.paypalCommerceFastlaneUtils.updateStorageSessionId(
-                isAuthenticationFlowCanceled,
-                cart.id,
-            );
+            if (isAuthenticationFlowCanceled) {
+                this.paypalCommerceFastlaneUtils.removeStorageSessionId();
+            } else {
+                this.paypalCommerceFastlaneUtils.updateStorageSessionId(cart.id);
+            }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
         }

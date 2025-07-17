@@ -484,8 +484,8 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                     ? consignments[0]?.availableShippingOptions[0].id
                     : undefined,
             );
+
             expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                false,
                 cart.id,
             );
         });

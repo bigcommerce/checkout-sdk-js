@@ -7,7 +7,7 @@ import {
     PaymentMethodClientUnavailableError,
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
+import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import {
     PayPalCommerceHostWindow,
@@ -27,7 +27,7 @@ import {
 export default class PayPalCommerceFastlaneUtils {
     private window: PayPalCommerceHostWindow;
 
-    constructor(private browserStorage: BrowserStorage) {
+    constructor() {
         this.window = window;
     }
 
@@ -98,7 +98,6 @@ export default class PayPalCommerceFastlaneUtils {
      *
      * 'updateStorageSessionId' method is used to:
      * - set session id after user was authenticated (or unrecognised) to trigger authentication after page refresh
-     * - remove sessionId from browser storage if the customer canceled PayPal Fastlane Authentication
      *
      * Flow info:
      * If user unrecognised then the lookup method will be working but the OTP will not be shown
@@ -106,19 +105,24 @@ export default class PayPalCommerceFastlaneUtils {
      * If user cancels the OPT then OTP will not be triggered after page refresh
      *
      */
-    updateStorageSessionId(shouldBeRemoved: boolean, sessionId?: string): void {
-        if (shouldBeRemoved) {
-            // TODO: Should be rewritten to cookies implementation
-            this.browserStorage.removeItem('sessionId');
-        } else {
-            // TODO: Should be rewritten to cookies implementation
-            this.browserStorage.setItem('sessionId', sessionId);
-        }
+    updateStorageSessionId(sessionId: string): void {
+        const expires = new Date();
+        expires.setDate(expires.getDate() + 14); // 2 weeks expiry
+
+        const cookiesOption = {
+            expires,
+            secure: true,
+        };
+
+        CookieStorage.set('bc-fastlane-sessionId', sessionId, cookiesOption);
+    }
+
+    removeStorageSessionId(): void {
+        CookieStorage.remove('bc-fastlane-sessionId', { secure: true });
     }
 
     getStorageSessionId(): string {
-        // TODO: Should be rewritten to cookies implementation
-        return this.browserStorage.getItem('sessionId') || '';
+        return CookieStorage.get('bc-fastlane-sessionId') || '';
     }
 
     /**
