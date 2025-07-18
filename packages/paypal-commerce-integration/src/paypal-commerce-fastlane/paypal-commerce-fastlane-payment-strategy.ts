@@ -307,7 +307,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
-        if (!this.isPaypalCommerceFastlaneThreeDSAvailable() || !paymentMethod.config.is3dsEnabled) {
+        if (
+            !this.isPaypalCommerceFastlaneThreeDSAvailable() ||
+            !paymentMethod.config.is3dsEnabled
+        ) {
             const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
                 cartId,
                 fastlaneToken: instrumentId,
@@ -353,7 +356,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
         });
 
-        if (!this.isPaypalCommerceFastlaneThreeDSAvailable() || !paymentMethod.config.is3dsEnabled) {
+        if (
+            !this.isPaypalCommerceFastlaneThreeDSAvailable() ||
+            !paymentMethod.config.is3dsEnabled
+        ) {
             const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
                 cartId,
                 fastlaneToken: id,
@@ -391,7 +397,11 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
      * 3DSecure methods
      *
      * */
-    private async get3DSNonce(paypalNonce: string, methodId: string, cartId: string): Promise<string> {
+    private async get3DSNonce(
+        paypalNonce: string,
+        methodId: string,
+        cartId: string,
+    ): Promise<string> {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const order = state.getOrderOrThrow();
