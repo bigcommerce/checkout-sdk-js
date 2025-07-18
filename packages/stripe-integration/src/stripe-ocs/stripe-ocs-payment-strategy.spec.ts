@@ -239,12 +239,17 @@ describe('StripeOCSPaymentStrategy', () => {
                 savePaymentMethod: {
                     maxVisiblePaymentMethods: 20,
                 },
+                defaultValues: {
+                    billingDetails: {
+                        email: 'test@bigcommerce.com',
+                    },
+                },
             });
             expect(onErrorMock).not.toHaveBeenCalled();
             expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
         });
 
-        it('should initialize if postal code unavailable', async () => {
+        it('should initialize if address information unavailable', async () => {
             const onErrorMock = jest.fn();
             const renderMock = jest.fn();
             const createMock = jest.fn().mockImplementation(() => ({
@@ -302,6 +307,11 @@ describe('StripeOCSPaymentStrategy', () => {
                 },
                 savePaymentMethod: {
                     maxVisiblePaymentMethods: 20,
+                },
+                defaultValues: {
+                    billingDetails: {
+                        email: '',
+                    },
                 },
             });
             expect(onErrorMock).not.toHaveBeenCalled();
@@ -1200,17 +1210,24 @@ describe('StripeOCSPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('deinitializes stripe payment strategy', async () => {
-            const unmountMock = jest.fn();
-            const getElementMock = jest.fn().mockImplementation(() => ({
+        let unmountMock: jest.Mock;
+        let destroyMock: jest.Mock;
+        let getElementMock: jest.Mock;
+
+        beforeEach(() => {
+            unmountMock = jest.fn();
+            destroyMock = jest.fn();
+            getElementMock = jest.fn().mockImplementation(() => ({
                 mount: jest.fn(),
                 unmount: unmountMock,
                 on: jest.fn((_, callback) => callback(StripeEventMock)),
                 update: jest.fn(),
-                destroy: jest.fn(),
+                destroy: destroyMock,
                 collapse: jest.fn(),
             }));
+        });
 
+        it('deinitializes stripe payment strategy', async () => {
             jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
                 Promise.resolve({
                     ...stripeUPEJsMock.elements({}),
@@ -1223,9 +1240,10 @@ describe('StripeOCSPaymentStrategy', () => {
 
             expect(stripeIntegrationService.deinitialize).toHaveBeenCalled();
             expect(unmountMock).toHaveBeenCalled();
+            expect(destroyMock).toHaveBeenCalled();
         });
 
-        it('when stripe element not initialized', async () => {
+        it('when stripe payment element not initialized', async () => {
             await stripeOCSPaymentStrategy.initialize(getStripeOCSInitializeOptionsMock());
 
             jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
