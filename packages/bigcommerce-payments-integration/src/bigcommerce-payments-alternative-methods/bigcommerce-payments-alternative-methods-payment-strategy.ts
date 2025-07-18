@@ -15,8 +15,10 @@ import {
     PaymentMethodInvalidError,
     PaymentRequestOptions,
     PaymentStrategy,
+    TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
 import {
@@ -25,11 +27,15 @@ import {
     BigCommercePaymentsButtonsOptions,
     BigCommercePaymentsInitializationData,
     NonInstantAlternativePaymentMethods,
+    PayPalOrderStatus,
 } from '../bigcommerce-payments-types';
 
 import BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions, {
     WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
 } from './bigcommerce-payments-alternative-methods-payment-initialize-options';
+
+const POLLING_INTERVAL = 3000;
+const MAX_POLLING_TIME = 300000;
 
 export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     implements PaymentStrategy
@@ -38,12 +44,18 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     private orderId?: string;
     private bigCommercePaymentsButton?: BigCommercePaymentsButtons;
     private paypalApms?: PayPalApmSdk;
+    private pollingTimer = 0;
+    private stopPolling = noop;
+    private isPollingEnabled = false;
+    private bigCommercePaymentsAlternativeMethods?: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
         private bigCommercePaymentsSdkHelper: PayPalSdkHelper,
         private loadingIndicator: LoadingIndicator,
+        private pollingInterval: number = POLLING_INTERVAL,
+        private maxPollingIntervalTime: number = MAX_POLLING_TIME,
     ) {}
 
     async initialize(
@@ -51,6 +63,8 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
     ): Promise<void> {
         const { gatewayId, methodId, bigcommerce_payments_apms } = options;
+
+        this.bigCommercePaymentsAlternativeMethods = bigcommerce_payments_apms;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -76,6 +90,10 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             gatewayId,
         );
         const { orderId, shouldRenderFields } = paymentMethod.initializationData || {};
+
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+
+        this.isPollingEnabled = isExperimentEnabled(features, 'PAYPAL-5624.bcp_ideal_polling');
 
         // Info:
         // The APM button and fields should not be rendered when shopper was redirected to Checkout page
@@ -114,6 +132,12 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             throw new PaymentMethodInvalidError();
         }
 
+        if (this.isPollingEnabled && methodId === 'ideal') {
+            await new Promise((resolve, reject) => {
+                void this.initializePollingMechanism(methodId, resolve, reject, gatewayId);
+            });
+        }
+
         if (!this.isNonInstantPaymentMethod(methodId)) {
             await this.paymentIntegrationService.submitOrder(order, options);
         }
@@ -132,9 +156,108 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     deinitialize(): Promise<void> {
         this.orderId = undefined;
 
+        if (this.isPollingEnabled) {
+            this.resetPollingMechanism();
+        }
+
         this.bigCommercePaymentsButton?.close();
 
         return Promise.resolve();
+    }
+
+    /**
+     *
+     * Polling mechanism
+     *
+     *
+     * */
+    private async initializePollingMechanism(
+        methodId: string,
+        resolvePromise: (value?: unknown) => void,
+        rejectPromise: (value?: unknown) => void,
+        gatewayId?: string,
+    ): Promise<void> {
+        await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(resolve, this.pollingInterval);
+
+            this.stopPolling = () => {
+                clearTimeout(timeout);
+                this.toggleLoadingIndicator(false);
+
+                return reject();
+            };
+        });
+
+        try {
+            this.pollingTimer += this.pollingInterval;
+
+            const orderStatus = await this.bigCommercePaymentsIntegrationService.getOrderStatus(
+                gatewayId,
+            );
+
+            const isOrderApproved = orderStatus === PayPalOrderStatus.Approved;
+            const isPollingError = orderStatus === PayPalOrderStatus.PollingError;
+
+            if (isOrderApproved) {
+                this.deInitializePollingMechanism();
+
+                return resolvePromise();
+            }
+
+            if (isPollingError) {
+                return rejectPromise();
+            }
+
+            if (!isOrderApproved && this.pollingTimer < this.maxPollingIntervalTime) {
+                return await this.initializePollingMechanism(
+                    methodId,
+                    resolvePromise,
+                    rejectPromise,
+                    gatewayId,
+                );
+            }
+
+            await this.reinitializeStrategy({
+                methodId,
+                gatewayId,
+                bigCommercePaymentsAlternativeMethods: this.bigCommercePaymentsAlternativeMethods,
+            });
+
+            this.handleError(new TimeoutError());
+        } catch (error) {
+            rejectPromise();
+        }
+    }
+
+    private deInitializePollingMechanism(): void {
+        this.stopPolling();
+        this.pollingTimer = 0;
+    }
+
+    private resetPollingMechanism(): void {
+        this.deInitializePollingMechanism();
+    }
+
+    private async reinitializeStrategy(
+        options: PaymentInitializeOptions &
+            WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
+    ) {
+        await this.deinitialize();
+        await this.initialize(options);
+    }
+
+    private handleError(error: unknown) {
+        const { onError } = this.bigCommercePaymentsAlternativeMethods || {};
+
+        if (this.isPollingEnabled) {
+            this.resetPollingMechanism();
+        }
+
+        this.toggleLoadingIndicator(false);
+
+        if (onError && typeof onError === 'function') {
+            onError(error);
+        }
     }
 
     /**
@@ -164,8 +287,14 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             onInit: (_, actions) => bigcommerce_payments_apms.onInitButton(actions),
             createOrder: () => this.onCreateOrder(methodId, gatewayId, bigcommerce_payments_apms),
             onApprove: (data) => this.handleApprove(data, submitForm),
-            onCancel: () => this.toggleLoadingIndicator(false),
-            onError: (error) => this.handleFailure(error, onError),
+            onCancel: () => {
+                this.toggleLoadingIndicator(false);
+                this.deInitializePollingMechanism();
+            },
+            onError: (error) => {
+                this.deInitializePollingMechanism();
+                this.handleFailure(error, onError);
+            },
             onClick: async (_, actions) =>
                 bigcommerce_payments_apms.onValidate(actions.resolve, actions.reject),
         };
