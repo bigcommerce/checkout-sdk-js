@@ -34,12 +34,13 @@ import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
-import { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane-payment-initialize-options';
+import PayPalCommerceFastlanePaymentInitializeOptions, { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane-payment-initialize-options';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
     private paypalFastlaneSdk?: PayPalFastlaneSdk;
     private threeDSVerificationMethod?: string;
+    private paypalcommercefastlane?: PayPalCommerceFastlanePaymentInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -57,6 +58,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         options: PaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, paypalcommercefastlane } = options;
+
+        this.paypalcommercefastlane = paypalcommercefastlane;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -154,6 +157,22 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
             this.paypalCommerceFastlaneUtils.removeStorageSessionId();
         } catch (error) {
+            const errorString = JSON.stringify(error);
+            const errorObject = JSON.parse(errorString);
+
+            if (errorObject.response?.status === 422) {
+                if (
+                    this.paypalcommercefastlane?.onError
+                    && typeof this.paypalcommercefastlane.onError === 'function'
+                ) {
+                   this.paypalcommercefastlane.onError({
+                        translationKey: 'payment.errors.invalid_request_error',
+                    });
+
+                   return Promise.reject();
+                }
+            }
+
             if (error instanceof Error && error.name !== 'FastlaneError') {
                 throw error;
             }
