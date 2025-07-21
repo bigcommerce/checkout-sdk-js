@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.768.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.2...v1.768.0) (2025-07-21)
+
+
+### Features
+
+* **payment:** Stripe OCS add Link logic to accordion ([#2935](https://github.com/bigcommerce/checkout-sdk-js/issues/2935)) ([cc6e7e1](https://github.com/bigcommerce/checkout-sdk-js/commit/cc6e7e14db3a12819a1357e3ccea8aeca261cba8))
+
 ### [1.767.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.1...v1.767.2) (2025-07-17)
 
 
