@@ -123,7 +123,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<void> {
-        this.stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
+        const paymentElement = this.stripeElements?.getElement(StripeElementType.PAYMENT);
+
+        paymentElement?.unmount();
+        paymentElement?.destroy();
         this.stripeIntegrationService.deinitialize();
         this.stripeElements = undefined;
         this.stripeClient = undefined;
@@ -180,7 +183,8 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         });
 
         const { getBillingAddress, getShippingAddress } = this.paymentIntegrationService.getState();
-        const { postalCode } = getShippingAddress() || getBillingAddress() || {};
+        const billingAddress = getBillingAddress();
+        const { postalCode } = getShippingAddress() || billingAddress || {};
 
         const stripeElement: StripeElement =
             this.stripeElements.getElement(StripeElementType.PAYMENT) ||
@@ -204,6 +208,11 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                 layout,
                 savePaymentMethod: {
                     maxVisiblePaymentMethods: 20,
+                },
+                defaultValues: {
+                    billingDetails: {
+                        email: billingAddress?.email || '',
+                    },
                 },
             });
 

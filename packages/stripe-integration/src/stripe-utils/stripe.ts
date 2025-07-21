@@ -335,6 +335,7 @@ export interface TermOptions {
 
 export interface StripeLayoutOptions {
     type?: 'accordion' | 'tabs';
+    linkInAccordion?: boolean;
     defaultCollapsed?: boolean;
     radios?: boolean;
     spacedAccordionItems?: boolean;
@@ -384,6 +385,7 @@ interface validationRequiredElement {
 
 interface PaymentDefaultValues {
     savePaymentMethod?: boolean;
+    billingDetails?: BillingDetailsOptions;
 }
 
 interface ShippingDefaultValues {
