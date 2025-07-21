@@ -65,7 +65,6 @@ describe('StripeOCSPaymentStrategy', () => {
         jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
             jest.fn(() => Promise.resolve(stripeUPEJsMock)),
         );
-        jest.spyOn(stripeScriptLoader, 'getElements').mockImplementation(jest.fn());
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
@@ -228,6 +227,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 wallets: {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
+                    link: StripeStringConstants.NEVER,
                 },
                 layout: {
                     type: 'accordion',
@@ -297,6 +297,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 wallets: {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
+                    link: StripeStringConstants.NEVER,
                 },
                 layout: {
                     type: 'accordion',
@@ -381,6 +382,134 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+        });
+
+        it('should enable Link by initialization data option', async () => {
+            const createMock = jest.fn().mockImplementation(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(StripeEventMock)),
+                update: jest.fn(),
+                destroy: jest.fn(),
+            }));
+            const stripePaymentMethod = getStripeOCSMock();
+
+            jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
+                Promise.resolve({
+                    ...stripeUPEJsMock.elements({}),
+                    create: createMock,
+                }),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...stripePaymentMethod,
+                initializationData: {
+                    ...stripePaymentMethod.initializationData,
+                    enableLink: true,
+                },
+            });
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+            expect(createMock).toHaveBeenCalledWith(StripeElementType.PAYMENT, {
+                fields: {
+                    billingDetails: {
+                        email: StripeStringConstants.NEVER,
+                        address: {
+                            country: StripeStringConstants.NEVER,
+                            city: StripeStringConstants.NEVER,
+                            postalCode: StripeStringConstants.AUTO,
+                        },
+                    },
+                },
+                wallets: {
+                    applePay: StripeStringConstants.NEVER,
+                    googlePay: StripeStringConstants.NEVER,
+                    link: StripeStringConstants.AUTO,
+                },
+                layout: {
+                    type: 'accordion',
+                    defaultCollapsed: false,
+                    radios: true,
+                    spacedAccordionItems: false,
+                    visibleAccordionItemsCount: 0,
+                },
+                savePaymentMethod: {
+                    maxVisiblePaymentMethods: 20,
+                },
+                defaultValues: {
+                    billingDetails: {
+                        email: '',
+                    },
+                },
+            });
+        });
+
+        it('should Disable Link by initialization data option', async () => {
+            const createMock = jest.fn().mockImplementation(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(StripeEventMock)),
+                update: jest.fn(),
+                destroy: jest.fn(),
+            }));
+            const stripePaymentMethod = getStripeOCSMock();
+
+            jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
+                Promise.resolve({
+                    ...stripeUPEJsMock.elements({}),
+                    create: createMock,
+                }),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...stripePaymentMethod,
+                initializationData: {
+                    ...stripePaymentMethod.initializationData,
+                    enableLink: false,
+                },
+            });
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+            expect(createMock).toHaveBeenCalledWith(StripeElementType.PAYMENT, {
+                fields: {
+                    billingDetails: {
+                        email: StripeStringConstants.NEVER,
+                        address: {
+                            country: StripeStringConstants.NEVER,
+                            city: StripeStringConstants.NEVER,
+                            postalCode: StripeStringConstants.AUTO,
+                        },
+                    },
+                },
+                wallets: {
+                    applePay: StripeStringConstants.NEVER,
+                    googlePay: StripeStringConstants.NEVER,
+                    link: StripeStringConstants.NEVER,
+                },
+                layout: {
+                    type: 'accordion',
+                    defaultCollapsed: false,
+                    radios: true,
+                    spacedAccordionItems: false,
+                    visibleAccordionItemsCount: 0,
+                },
+                savePaymentMethod: {
+                    maxVisiblePaymentMethods: 20,
+                },
+                defaultValues: {
+                    billingDetails: {
+                        email: '',
+                    },
+                },
+            });
         });
     });
 
