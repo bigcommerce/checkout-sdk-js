@@ -48,9 +48,6 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
     private _currencyCode?: string;
 
-    private _methodId = 'optimized_checkout';
-    private _gatewayId = 'stripeocs';
-
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private scriptLoader: StripeScriptLoader,
@@ -69,15 +66,17 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             );
         }
 
-        if (!stripeocs.container) {
+        const { methodId, gatewayId, container } = stripeocs;
+
+        if (!container || !methodId || !gatewayId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const state = await this.paymentIntegrationService.loadPaymentMethod(this._gatewayId, {
-            params: { method: this._methodId },
+        const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+            params: { method: methodId },
         });
-        const paymentMethod = state.getPaymentMethodOrThrow(this._gatewayId);
-        const { container, loadingContainerId, buttonHeight, onComplete } = stripeocs;
+        const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
+        const { loadingContainerId, buttonHeight, onComplete } = stripeocs;
 
         this._loadingIndicatorContainer = loadingContainerId;
 
@@ -91,7 +90,12 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         this._stripeClient = await this.scriptLoader.getStripeClient(initializationData);
 
-        await this._mountExpressCheckoutElement(container, this._stripeClient, buttonHeight);
+        await this._mountExpressCheckoutElement(
+            methodId,
+            container,
+            this._stripeClient,
+            buttonHeight,
+        );
 
         return Promise.resolve();
     }
@@ -108,11 +112,12 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         return Promise.resolve();
     }
 
-    deinitialize(): Promise<void> {
+    deinitialize() {
         return Promise.resolve();
     }
 
     private async _mountExpressCheckoutElement(
+        methodId: string,
         container: string,
         stripeExpressCheckoutClient: StripeClient,
         buttonHeight = 40,
@@ -155,12 +160,12 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             expressCheckoutOptions,
         );
         this._linkV2Element.mount(`#${container}`);
-        this._initializeEvents(this._linkV2Element);
+        this._initializeEvents(this._linkV2Element, methodId);
     }
 
     /** Events * */
 
-    private _initializeEvents(expressCheckoutElement: StripeElement): void {
+    private _initializeEvents(expressCheckoutElement: StripeElement, methodId: string): void {
         const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
 
         if (shouldRequireShippingAddress) {
@@ -173,7 +178,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         }
 
         expressCheckoutElement.on(StripeElementEvent.CONFIRM, async (event) =>
-            this._onConfirm(event),
+            this._onConfirm(event, methodId),
         );
     }
 
@@ -223,7 +228,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     }
 
     /** Confirm methods * */
-    private async _onConfirm(event: StripeEventType) {
+    private async _onConfirm(event: StripeEventType, methodId: string) {
         if (
             'billingDetails' in event &&
             'shippingAddress' in event &&
@@ -233,23 +238,19 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             await this._updateShippingAndBillingAddress(event);
             await this.paymentIntegrationService.submitOrder();
 
-            const paymentMethod = this._getPaymentPayload();
+            const paymentMethod = this._getPaymentPayload(methodId);
 
             try {
                 await this.paymentIntegrationService.submitPayment(paymentMethod);
             } catch (error) {
-                await this._processAdditionalAction(error);
+                await this._processAdditionalAction(error, methodId);
             }
         }
 
         return Promise.resolve();
     }
 
-    private async _updateShippingAndBillingAddress(event: StripeEventType) {
-        if (!('billingDetails' in event && 'shippingAddress' in event)) {
-            return;
-        }
-
+    private async _updateShippingAndBillingAddress(event: StripeLinkV2Event) {
         const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
 
         const firstName =
@@ -327,7 +328,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         };
     }
 
-    private async _processAdditionalAction(error: unknown): Promise<void> {
+    private async _processAdditionalAction(error: unknown, methodId: string): Promise<void> {
         if (
             !isRequestError(error) ||
             !this.stripeIntegrationService.isAdditionalActionError(error.body.errors)
@@ -342,9 +343,12 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         const { data: additionalActionData } = error.body.additional_action_required;
         const { token } = additionalActionData;
 
-        const { paymentIntent } = await this._confirmStripePaymentOrThrow(additionalActionData);
+        const { paymentIntent } = await this._confirmStripePaymentOrThrow(
+            additionalActionData,
+            methodId,
+        );
 
-        const paymentPayload = this._getPaymentPayload(paymentIntent?.id || token);
+        const paymentPayload = this._getPaymentPayload(methodId, paymentIntent?.id || token);
 
         try {
             this._toggleLoadingIndicator(true);
@@ -359,6 +363,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
     private async _confirmStripePaymentOrThrow(
         additionalActionData: StripeAdditionalActionRequired['data'],
+        methodId: string,
     ): Promise<StripeResult | never> {
         const { token, redirect_url } = additionalActionData;
         const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
@@ -369,7 +374,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         try {
             const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
-                this._methodId,
+                methodId,
                 this._stripeClient,
             );
 
@@ -406,7 +411,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         return Promise.resolve();
     }
 
-    private _getPaymentPayload(token?: string): Payment {
+    private _getPaymentPayload(methodId: string, token?: string): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
         const formattedPayload = {
             cart_id: cartId,
@@ -416,7 +421,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         };
 
         return {
-            methodId: this._methodId,
+            methodId,
             paymentData: {
                 formattedPayload,
             },
@@ -490,10 +495,6 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         );
 
         const selectedId = consignment.selectedShippingOption?.id;
-
-        if (!options) {
-            return;
-        }
 
         if (!selectedId) {
             await this._handleShippingOptionChange(options[0]?.id);
