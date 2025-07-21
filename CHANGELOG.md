@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.768.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.768.0...v1.768.1) (2025-07-21)
+
+
+### Bug Fixes
+
+* **payment:** updated BCP iDeal amp methods with related changes from PPCP ([#2933](https://github.com/bigcommerce/checkout-sdk-js/issues/2933)) ([7b91576](https://github.com/bigcommerce/checkout-sdk-js/commit/7b91576ed43905ccf27cf25edf6827ffc0b77068))
+
 ## [1.768.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.2...v1.768.0) (2025-07-21)
 
 
