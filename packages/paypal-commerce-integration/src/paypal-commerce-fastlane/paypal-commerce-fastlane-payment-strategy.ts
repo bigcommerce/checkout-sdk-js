@@ -19,6 +19,7 @@ import {
 import {
     getFastlaneStyles,
     isPayPalFastlaneCustomer,
+    isPaypalFastlaneRequestError,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
@@ -34,7 +35,9 @@ import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
-import PayPalCommerceFastlanePaymentInitializeOptions, { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane-payment-initialize-options';
+import PayPalCommerceFastlanePaymentInitializeOptions, {
+    WithPayPalCommerceFastlanePaymentInitializeOptions,
+} from './paypal-commerce-fastlane-payment-initialize-options';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
@@ -157,20 +160,14 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
             this.paypalCommerceFastlaneUtils.removeStorageSessionId();
         } catch (error) {
-            const errorString = JSON.stringify(error);
-            const errorObject = JSON.parse(errorString);
+            if (isPaypalFastlaneRequestError(error) && error.response.name === 'INVALID_REQUEST') {
+                const invalidRequestError = {
+                    translationKey: 'payment.errors.invalid_request_error',
+                };
 
-            if (errorObject.response?.status === 422) {
-                if (
-                    this.paypalcommercefastlane?.onError
-                    && typeof this.paypalcommercefastlane.onError === 'function'
-                ) {
-                   this.paypalcommercefastlane.onError({
-                        translationKey: 'payment.errors.invalid_request_error',
-                    });
+                this.handleError(invalidRequestError);
 
-                   return Promise.reject();
-                }
+                return Promise.reject();
             }
 
             if (error instanceof Error && error.name !== 'FastlaneError') {
@@ -504,5 +501,14 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
         return isExperimentEnabled(features, 'PROJECT-7080.paypalcommerce_fastlane_three_ds');
+    }
+
+    private handleError(error: unknown): void {
+        if (
+            this.paypalcommercefastlane?.onError &&
+            typeof this.paypalcommercefastlane.onError === 'function'
+        ) {
+            this.paypalcommercefastlane.onError(error);
+        }
     }
 }
