@@ -609,6 +609,7 @@ export interface StripeInitializationData {
     stripeConnectedAccount: string;
     shopperLanguage: string;
     customerSessionToken?: string;
+    enableLink?: boolean;
 }
 
 export interface StripeElementUpdateOptions {
