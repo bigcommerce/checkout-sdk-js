@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.771.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.770.0...v1.771.0) (2025-07-22)
+
+
+### Features
+
+* **payment:** Enable Stripe OCS Link from control panel ([#2937](https://github.com/bigcommerce/checkout-sdk-js/issues/2937)) ([4808a58](https://github.com/bigcommerce/checkout-sdk-js/commit/4808a58ddae67908562d4da475f347bd72b9bd3b))
+
 ## [1.770.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.769.0...v1.770.0) (2025-07-21)
 
 
