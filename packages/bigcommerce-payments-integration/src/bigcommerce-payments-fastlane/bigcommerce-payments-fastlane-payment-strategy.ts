@@ -40,6 +40,8 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
     private threeDSVerificationMethod?: string;
     private paypalFastlaneSdk?: PayPalFastlaneSdk;
+    private methodId?: string;
+    private orderId?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -63,6 +65,8 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
             );
         }
+
+        this.methodId = methodId;
 
         if (!bigcommerce_payments_fastlane) {
             throw new InvalidArgumentError(
@@ -144,11 +148,11 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         const isVaultedFlow = paymentData && isVaultedInstrument(paymentData);
 
         try {
+            await this.paymentIntegrationService.submitOrder(order, options);
             const paymentPayload = isVaultedFlow
                 ? await this.prepareVaultedInstrumentPaymentPayload(methodId, paymentData)
                 : await this.preparePaymentPayload(methodId, paymentData);
 
-            await this.paymentIntegrationService.submitOrder(order, options);
             await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
                 paymentPayload,
             );
@@ -303,27 +307,25 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const { instrumentId } = paymentData;
         const state = this.paymentIntegrationService.getState();
-        const cartId = state.getCartOrThrow().id;
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
 
-        const { orderId } = await this.bigCommercePaymentsRequestSender.createOrder(methodId, {
-            cartId,
-            fastlaneToken: instrumentId,
-        });
-
-        const fastlaneToken =
+        const is3DSEnabled =
             this.isBigcommercePaymentsFastlaneThreeDSAvailable() &&
-            paymentMethod.config.is3dsEnabled
-                ? await this.get3DSNonce(instrumentId)
-                : instrumentId;
+            paymentMethod.config.is3dsEnabled;
+
+        if (!is3DSEnabled) {
+            await this.createOrder(instrumentId);
+        }
+
+        const fastlaneToken = is3DSEnabled ? await this.get3DSNonce(instrumentId) : instrumentId;
 
         return {
             methodId,
             paymentData: {
                 formattedPayload: {
                     paypal_fastlane_token: {
-                        order_id: orderId,
+                        order_id: this.orderId,
                         token: fastlaneToken,
                     },
                 },
@@ -336,7 +338,6 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         paymentData: OrderPaymentRequestBody['paymentData'],
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const state = this.paymentIntegrationService.getState();
-        const cartId = state.getCartOrThrow().id;
         const billingAddress = state.getBillingAddressOrThrow();
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
@@ -351,19 +352,18 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 this.bigCommercePaymentsFastlaneUtils.mapBcToPayPalAddress(billingAddress),
         });
 
-        const { orderId } = await this.bigCommercePaymentsRequestSender.createOrder(methodId, {
-            cartId,
-            fastlaneToken: id,
-        });
+        const is3DSEnabled =
+            this.isBigcommercePaymentsFastlaneThreeDSAvailable() &&
+            paymentMethod.config.is3dsEnabled;
+
+        if (!is3DSEnabled) {
+            await this.createOrder(id);
+        }
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
-        const fastlaneToken =
-            this.isBigcommercePaymentsFastlaneThreeDSAvailable() &&
-            paymentMethod.config.is3dsEnabled
-                ? await this.get3DSNonce(id)
-                : id;
+        const fastlaneToken = is3DSEnabled ? await this.get3DSNonce(id) : id;
 
         return {
             methodId,
@@ -373,12 +373,28 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 shouldSetAsDefaultInstrument,
                 formattedPayload: {
                     paypal_fastlane_token: {
-                        order_id: orderId,
+                        order_id: this.orderId,
                         token: fastlaneToken,
                     },
                 },
             },
         };
+    }
+
+    private async createOrder(id: string): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
+        const cartId = state.getCartOrThrow().id;
+        if (this.methodId) {
+            const { orderId } = await this.bigCommercePaymentsRequestSender.createOrder(
+                this.methodId,
+                {
+                    cartId,
+                    fastlaneToken: id,
+                },
+            );
+
+            this.orderId = orderId;
+        }
     }
 
     /**
@@ -426,6 +442,8 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             ) {
                 throw new PaymentMethodInvalidError();
             }
+
+            await this.createOrder(paypalNonce);
 
             if (authenticationState === TDSecureAuthenticationState.Succeeded) {
                 return nonce;
