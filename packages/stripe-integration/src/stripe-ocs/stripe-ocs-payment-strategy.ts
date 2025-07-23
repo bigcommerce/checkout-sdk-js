@@ -156,7 +156,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         }
 
         const { clientToken, initializationData } = paymentMethod;
-        const { shopperLanguage, customerSessionToken } = initializationData;
+        const { shopperLanguage, customerSessionToken, enableLink } = initializationData;
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -204,6 +204,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                 wallets: {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
+                    link: enableLink ? StripeStringConstants.AUTO : StripeStringConstants.NEVER,
                 },
                 layout,
                 savePaymentMethod: {

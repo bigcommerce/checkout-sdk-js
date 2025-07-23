@@ -7,6 +7,7 @@ import {
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
+    PaymentMethodInvalidError,
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -562,7 +563,21 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 ).mockReturnValue(paymentMethodMock());
             });
 
-            it('creates order with fastlaneToken', async () => {
+            it('creates order with fastlaneToken when 3ds is on', async () => {
+                const paypalFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        show: jest.fn().mockReturnValue({
+                            liabilityShift: 'YES',
+                            authenticationState: 'succeeded',
+                            nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
+                        }),
+                    },
+                };
+                jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(paypalFastlaneSdkMock),
+                );
                 await strategy.initialize(initializationOptions);
 
                 await strategy.execute(executeOptions);
@@ -571,6 +586,31 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     cartId: cart.id,
                     fastlaneToken: 'paypal_fastlane_instrument_id_nonce',
                 });
+            });
+
+            it('does not create order if liability shift is not equal "YES"', async () => {
+                const paypalFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        show: jest.fn().mockReturnValue({
+                            liabilityShift: 'UNKNOWN',
+                            authenticationState: 'succeeded',
+                            nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
+                        }),
+                    },
+                };
+                jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(paypalFastlaneSdkMock),
+                );
+                await strategy.initialize(initializationOptions);
+
+                try {
+                    await strategy.execute(executeOptions);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(PaymentMethodInvalidError);
+                    expect(paypalCommerceRequestSender.createOrder).not.toHaveBeenCalled();
+                }
             });
 
             it('calls threeDomainSecureComponent isEligible', async () => {
