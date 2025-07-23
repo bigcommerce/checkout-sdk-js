@@ -403,6 +403,9 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
         const mockedInstrumentId = 'mockInstrumentId123';
 
         const executeOptions = {
@@ -470,7 +473,36 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             expect(paypalCommerceFastlaneUtils.removeStorageSessionId).toHaveBeenCalled();
         });
 
+        it('throws specific error when get 422 error on payment request', async () => {
+            const initOptions = {
+                methodId,
+                paypalcommercefastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(),
+                    onError: jest.fn(),
+                },
+            };
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue({
+                name: 'Error',
+                message: 'Payment request failed',
+                response: {
+                    status: 422,
+                    name: 'INVALID_REQUEST',
+                },
+            });
+            await strategy.initialize(initOptions);
+
+            try {
+                await strategy.execute(executeOptions);
+            } catch (error: unknown) {
+                expect(initOptions.paypalcommercefastlane.onError).toHaveBeenCalledWith({
+                    translationKey: 'payment.errors.invalid_request_error',
+                });
+            }
+        });
+
         it('successfully places order with vaulted instruments flow', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockResolvedValue();
             await strategy.initialize(initializationOptions);
             await strategy.execute(executeOptionsWithVaulting);
 

@@ -62,6 +62,11 @@ export default interface PayPalCommerceFastlanePaymentInitializeOptions {
     onChange?: (showPayPalCardSelector: () => Promise<CardInstrument | undefined>) => void;
 
     /**
+     * Callback that handles errors
+     */
+    onError?: (error: unknown) => void;
+
+    /**
      * Is a stylisation options for customizing PayPal Fastlane components
      *
      * Note: the styles for all PayPalCommerceFastlane strategies should be the same,
