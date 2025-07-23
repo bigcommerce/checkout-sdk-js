@@ -5,6 +5,7 @@ import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader'
 import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 import {
@@ -78,7 +79,10 @@ export default function createPaymentStrategyRegistry(
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
-    const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
+    const braintreePaymentProcessor = createBraintreePaymentProcessor(
+        scriptLoader,
+        paymentIntegrationService,
+    );
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(
@@ -146,7 +150,11 @@ export default function createPaymentStrategyRegistry(
                 paymentMethodActionCreator,
                 braintreePaymentProcessor,
                 new BraintreeIntegrationService(
-                    new BraintreeScriptLoader(getScriptLoader(), window),
+                    new BraintreeScriptLoader(
+                        getScriptLoader(),
+                        window,
+                        new BraintreeSDKVersionManager(paymentIntegrationService),
+                    ),
                     window,
                 ),
             ),
@@ -174,7 +182,11 @@ export default function createPaymentStrategyRegistry(
                 paymentStrategyActionCreator,
                 paymentActionCreator,
                 orderActionCreator,
-                createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
+                createBraintreeVisaCheckoutPaymentProcessor(
+                    scriptLoader,
+                    requestSender,
+                    paymentIntegrationService,
+                ),
                 new VisaCheckoutScriptLoader(scriptLoader),
             ),
     );

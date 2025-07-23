@@ -9,7 +9,10 @@ import BraintreeAchPaymentStrategy from './braintree-ach-payment-strategy';
 const createBraintreeAchPaymentStrategy: PaymentStrategyFactory<BraintreeAchPaymentStrategy> = (
     paymentIntegrationService,
 ) => {
-    return new BraintreeAchPaymentStrategy(paymentIntegrationService, createBraintreeSdk());
+    return new BraintreeAchPaymentStrategy(
+        paymentIntegrationService,
+        createBraintreeSdk(paymentIntegrationService),
+    );
 };
 
 export default toResolvableModule(createBraintreeAchPaymentStrategy, [{ id: 'braintreeach' }]);

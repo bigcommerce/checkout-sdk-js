@@ -3,7 +3,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
-import { BRAINTREE_SDK_STABLE_VERSION } from './braintree-sdk-verison';
+import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
 import {
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
@@ -24,11 +24,10 @@ import {
 import { VisaCheckoutSDK } from './visacheckout';
 
 export default class BraintreeScriptLoader {
-    private braintreeSdkVersion = BRAINTREE_SDK_STABLE_VERSION;
-
     constructor(
         private scriptLoader: ScriptLoader,
         private braintreeHostWindow: BraintreeHostWindow,
+        private braintreeSDKVersionManager: BraintreeSDKVersionManager,
     ) {}
 
     async loadClient(): Promise<BraintreeClientCreator> {
@@ -157,7 +156,9 @@ export default class BraintreeScriptLoader {
             return module as T;
         }
 
-        const scriptPath = `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/${fileName}`;
+        const braintreeSdkVersion = this.braintreeSDKVersionManager.getSDKVersion();
+
+        const scriptPath = `//js.braintreegateway.com/web/${braintreeSdkVersion}/js/${fileName}`;
 
         const integrity = this.getIntegrityValuesByModuleName(braintreeModuleName);
 

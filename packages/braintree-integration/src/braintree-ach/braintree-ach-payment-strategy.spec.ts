@@ -4,6 +4,7 @@ import {
     BraintreeDataCollector,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     BraintreeUsBankAccount,
     getDataCollectorMock,
     getUsBankAccountMock,
@@ -29,6 +30,7 @@ describe('BraintreeAchPaymentStrategy', () => {
     let braintreeDataCollector: BraintreeDataCollector;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeAchPaymentStrategy;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const methodId = 'braintreeach';
     const paymentMethodMock = getBraintreeAchPaymentMethod();
@@ -44,7 +46,12 @@ describe('BraintreeAchPaymentStrategy', () => {
         braintreeUsBankAccount = getUsBankAccountMock();
         braintreeDataCollector = getDataCollectorMock();
 
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 

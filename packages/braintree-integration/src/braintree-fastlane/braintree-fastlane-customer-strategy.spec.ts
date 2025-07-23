@@ -3,6 +3,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
     getBraintree,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -27,6 +28,7 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
     let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeFastlaneCustomerStrategy;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const customer = getGuestCustomer();
     const storeConfig = getConfig().storeConfig;
@@ -48,7 +50,12 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
     };
 
     beforeEach(() => {
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
             window,

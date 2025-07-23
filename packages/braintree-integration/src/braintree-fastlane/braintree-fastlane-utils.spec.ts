@@ -5,6 +5,7 @@ import {
     BraintreeFastlaneAuthenticationState,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
     getBraintreeFastlaneProfileDataMock,
     getFastlaneMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -33,6 +34,7 @@ describe('BraintreeFastlaneUtils', () => {
     let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let subject: BraintreeFastlaneUtils;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const cart = getCart();
     const countries = getCountries();
@@ -47,7 +49,12 @@ describe('BraintreeFastlaneUtils', () => {
         braintreeFastlaneMock = getFastlaneMock();
         jest.spyOn(Date, 'now').mockImplementation(() => 1);
 
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
             window,
