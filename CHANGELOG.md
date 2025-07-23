@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.773.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.772.0...v1.773.0) (2025-07-23)
+
+
+### Features
+
+* **payment:** Added corresponding error for 422 payment status ([#2938](https://github.com/bigcommerce/checkout-sdk-js/issues/2938)) ([31c3813](https://github.com/bigcommerce/checkout-sdk-js/commit/31c3813dcca0861a73ffb9e6e9a4559dd15427aa))
+
 ## [1.772.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.771.0...v1.772.0) (2025-07-23)
 
 
