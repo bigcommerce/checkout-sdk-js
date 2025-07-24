@@ -13,7 +13,7 @@ import {
     BraintreeFastlane,
     BraintreeIntegrationService,
     BraintreePaymentProcessor,
-    BraintreeScriptLoader,
+    BraintreeScriptLoader, BraintreeSDKVersionManager,
     getBraintree,
     getFastlaneMock,
     getHostedFieldsMock,
@@ -40,6 +40,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
     let braintreeHostedForm: BraintreeHostedForm;
     let paymentMethod: any; // TODO: FIX
     let braintreeFastlaneMock: BraintreeFastlane;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     beforeEach(() => {
         const methodId = 'braintree';
@@ -51,7 +52,12 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                 shouldRunAcceleratedCheckout: true,
             },
         };
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
         braintreeFastlaneMock = getFastlaneMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeIntegrationService = new BraintreeIntegrationService(
