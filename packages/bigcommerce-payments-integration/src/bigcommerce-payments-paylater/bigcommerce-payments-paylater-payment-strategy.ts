@@ -68,9 +68,16 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
         const { paypalBNPLConfiguration = [], orderId } = paymentMethod.initializationData || {};
-        const { bannerContainerId = '', container } = bigcommerce_payments_paylater;
+        const { bannerContainerId, container } = bigcommerce_payments_paylater;
 
-        if (document.getElementById(bannerContainerId)) {
+        if (bannerContainerId !== undefined) {
+            if (!document.getElementById(bannerContainerId)) {
+                // eslint-disable-next-line no-console
+                console.error('Unable to create banner without valid banner container ID.');
+
+                return;
+            }
+
             const bannerConfiguration =
                 paypalBNPLConfiguration &&
                 paypalBNPLConfiguration.find(({ id }) => id === 'checkout');

@@ -54,6 +54,14 @@ export interface PaymentIntent {
      * The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.
      */
     last_payment_error: LastPaymentError | null;
+
+    payment_method_options?: StripePIPaymentMethodOptions;
+}
+
+export interface StripePIPaymentMethodOptions {
+    card?: {
+        setup_future_usage?: StripeInstrumentSetupFutureUsage;
+    };
 }
 
 /**
@@ -327,6 +335,7 @@ export interface TermOptions {
 
 export interface StripeLayoutOptions {
     type?: 'accordion' | 'tabs';
+    linkInAccordion?: boolean;
     defaultCollapsed?: boolean;
     radios?: boolean;
     spacedAccordionItems?: boolean;
@@ -376,6 +385,7 @@ interface validationRequiredElement {
 
 interface PaymentDefaultValues {
     savePaymentMethod?: boolean;
+    billingDetails?: BillingDetailsOptions;
 }
 
 interface ShippingDefaultValues {
@@ -599,6 +609,7 @@ export interface StripeInitializationData {
     stripeConnectedAccount: string;
     shopperLanguage: string;
     customerSessionToken?: string;
+    enableLink?: boolean;
 }
 
 export interface StripeElementUpdateOptions {
@@ -636,4 +647,9 @@ export interface LineItem {
 
 export interface StripeSavePaymentMethod {
     maxVisiblePaymentMethods?: number;
+}
+
+export enum StripeInstrumentSetupFutureUsage {
+    ON_SESSION = 'on_session',
+    OFF_SESSION = 'off_session',
 }

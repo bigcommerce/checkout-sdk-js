@@ -5,6 +5,7 @@ import { merge } from 'lodash';
 import {
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
     getBraintree,
     getDataCollectorMock,
     getDeviceDataMock,
@@ -36,6 +37,7 @@ describe('ApplePayPaymentStrategy', () => {
     let paymentMethod: PaymentMethod;
     let applePaySession: MockApplePaySession;
     let braintreeSdk: BraintreeSdk;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -45,8 +47,11 @@ describe('ApplePayPaymentStrategy', () => {
             value: applePaySession,
         });
 
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        braintreeSdk = new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), window));
+        braintreeSdk = new BraintreeSdk(
+            new BraintreeScriptLoader(getScriptLoader(), window, braintreeSDKVersionManager),
+        );
 
         requestSender = createRequestSender();
         applePayFactory = new ApplePaySessionFactory();

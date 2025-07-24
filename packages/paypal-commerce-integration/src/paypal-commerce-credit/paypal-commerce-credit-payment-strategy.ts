@@ -70,9 +70,16 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
         const { paypalBNPLConfiguration = [], orderId } = paymentMethod.initializationData || {};
-        const { bannerContainerId = '', container } = paypalOptions;
+        const { bannerContainerId, container } = paypalOptions;
 
-        if (document.getElementById(bannerContainerId)) {
+        if (bannerContainerId !== undefined) {
+            if (!document.getElementById(bannerContainerId)) {
+                // eslint-disable-next-line no-console
+                console.error('Unable to create banner without valid banner container ID.');
+
+                return;
+            }
+
             const bannerConfiguration =
                 paypalBNPLConfiguration &&
                 paypalBNPLConfiguration.find(({ id }) => id === 'checkout');

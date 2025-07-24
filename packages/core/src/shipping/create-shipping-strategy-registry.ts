@@ -6,6 +6,7 @@ import {
     BraintreeHostWindow,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     createPayPalCommerceFastlaneUtils,
@@ -16,6 +17,7 @@ import { BillingAddressActionCreator, BillingAddressRequestSender } from '../bil
 import { CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
+import { createPaymentIntegrationService } from '../payment-integration';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
@@ -35,6 +37,7 @@ export default function createShippingStrategyRegistry(
     requestSender: RequestSender,
 ): Registry<ShippingStrategy> {
     const registry = new Registry<ShippingStrategy>();
+    const paymentIntegrationService = createPaymentIntegrationService(store);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const consignmentActionCreator = new ConsignmentActionCreator(
@@ -53,6 +56,7 @@ export default function createShippingStrategyRegistry(
         subscriptionsActionCreator,
     );
     const braintreeHostWindow: BraintreeHostWindow = window;
+    const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
 
     registry.register(
         'amazonpay',
@@ -87,7 +91,11 @@ export default function createShippingStrategyRegistry(
                 paymentMethodActionCreator,
                 new PaymentProviderCustomerActionCreator(),
                 new BraintreeIntegrationService(
-                    new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
+                    new BraintreeScriptLoader(
+                        getScriptLoader(),
+                        braintreeHostWindow,
+                        braintreeSDKVersionManager,
+                    ),
                     braintreeHostWindow,
                 ),
             ),

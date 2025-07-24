@@ -5,6 +5,7 @@ import {
     BraintreeIntegrationService,
     BraintreeMessages,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     PaymentStrategyFactory,
@@ -22,8 +23,13 @@ const createBraintreePaypalPaymentStrategy: PaymentStrategyFactory<
     const braintreeHostWindow: BraintreeHostWindow = window;
     const overlay = new Overlay();
 
+    const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
     const braintreeIntegrationService = new BraintreeIntegrationService(
-        new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
+        new BraintreeScriptLoader(
+            getScriptLoader(),
+            braintreeHostWindow,
+            braintreeSDKVersionManager,
+        ),
         braintreeHostWindow,
         overlay,
     );

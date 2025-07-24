@@ -19,6 +19,7 @@ import {
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
+    PaymentMethodInvalidError,
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -406,6 +407,10 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         const mockedInstrumentId = 'mockInstrumentId123';
 
         const executeOptions = {
@@ -548,7 +553,10 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     ...paypalFastlaneSdk,
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
-                        isEligible: jest.fn().mockReturnValue(Promise.resolve(false)),
+                        isEligible: jest.fn().mockReturnValue(Promise.resolve(true)),
+                        show: jest.fn().mockResolvedValue({
+                            liabilityShift: 'YES',
+                        }),
                     },
                 };
 
@@ -567,6 +575,32 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                         fastlaneToken: 'paypal_fastlane_instrument_id_nonce',
                     },
                 );
+            });
+
+            it('does not create order if 3ds on and liability shift not YES', async () => {
+                const bigCommerceFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        isEligible: jest.fn().mockReturnValue(Promise.resolve(true)),
+                        show: jest.fn().mockResolvedValue({
+                            liabilityShift: 'UNKNOWN',
+                        }),
+                    },
+                };
+
+                jest.spyOn(bigCommercePaymentsSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(bigCommerceFastlaneSdkMock),
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                try {
+                    await strategy.execute(executeOptions);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(PaymentMethodInvalidError);
+                    expect(bigCommercePaymentsRequestSender.createOrder).not.toHaveBeenCalled();
+                }
             });
 
             it('calls threeDomainSecureComponent isEligible', async () => {
@@ -709,6 +743,34 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     expect(error).toBeInstanceOf(Error);
                 }
             });
+        });
+
+        it('throws specific error when get 422 error on payment request', async () => {
+            const initOptions = {
+                methodId,
+                bigcommerce_payments_fastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(),
+                    onError: jest.fn(),
+                },
+            };
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue({
+                name: 'Error',
+                message: 'Payment request failed',
+                response: {
+                    status: 422,
+                    name: 'INVALID_REQUEST',
+                },
+            });
+            await strategy.initialize(initOptions);
+
+            try {
+                await strategy.execute(executeOptions);
+            } catch (error: unknown) {
+                expect(initOptions.bigcommerce_payments_fastlane.onError).toHaveBeenCalledWith({
+                    translationKey: 'payment.errors.invalid_request_error',
+                });
+            }
         });
     });
 

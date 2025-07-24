@@ -1041,6 +1041,35 @@ describe('PayPalCommercePaymentStrategy', () => {
             });
         });
 
+        it('does not execute PayPal button initialization logic if bannerContainerId is provided', async () => {
+            await strategy.initialize(options);
+
+            expect(paypalCommerceIntegrationService.loadPayPalSdk).not.toHaveBeenCalledWith(
+                defaultMethodId,
+            );
+        });
+
+        it('show an error if bannerContainerId is provided but does not exist as DOM element', async () => {
+            Object.defineProperty(window, 'console', {
+                value: {
+                    error: jest.fn(),
+                },
+            });
+
+            await strategy.initialize({
+                ...options,
+                paypalcommerce: {
+                    ...options.paypalcommerce,
+                    bannerContainerId: '',
+                },
+            });
+
+            expect(payPalMessagesSdk.Messages).not.toHaveBeenCalled();
+            expect(window.console.error).toHaveBeenCalledWith(
+                'Unable to create banner without valid banner container ID.',
+            );
+        });
+
         it('renders PayPal message', async () => {
             await strategy.initialize(options);
 

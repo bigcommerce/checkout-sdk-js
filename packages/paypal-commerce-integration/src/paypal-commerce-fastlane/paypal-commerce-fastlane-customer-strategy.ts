@@ -145,10 +145,12 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
             authenticationResult.authenticationState === PayPalFastlaneAuthenticationState.CANCELED;
 
         await this.updateCustomerDataState(methodId, authenticationResult);
-        this.paypalCommerceFastlaneUtils.updateStorageSessionId(
-            isAuthenticationFlowCanceled,
-            cartId,
-        );
+
+        if (isAuthenticationFlowCanceled) {
+            this.paypalCommerceFastlaneUtils.removeStorageSessionId();
+        } else {
+            this.paypalCommerceFastlaneUtils.updateStorageSessionId(cartId);
+        }
     }
 
     private async updateCustomerDataState(

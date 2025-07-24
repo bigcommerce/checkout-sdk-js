@@ -65,7 +65,6 @@ describe('StripeOCSPaymentStrategy', () => {
         jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
             jest.fn(() => Promise.resolve(stripeUPEJsMock)),
         );
-        jest.spyOn(stripeScriptLoader, 'getElements').mockImplementation(jest.fn());
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
@@ -228,6 +227,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 wallets: {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
+                    link: StripeStringConstants.NEVER,
                 },
                 layout: {
                     type: 'accordion',
@@ -239,12 +239,17 @@ describe('StripeOCSPaymentStrategy', () => {
                 savePaymentMethod: {
                     maxVisiblePaymentMethods: 20,
                 },
+                defaultValues: {
+                    billingDetails: {
+                        email: 'test@bigcommerce.com',
+                    },
+                },
             });
             expect(onErrorMock).not.toHaveBeenCalled();
             expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
         });
 
-        it('should initialize if postal code unavailable', async () => {
+        it('should initialize if address information unavailable', async () => {
             const onErrorMock = jest.fn();
             const renderMock = jest.fn();
             const createMock = jest.fn().mockImplementation(() => ({
@@ -292,6 +297,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 wallets: {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
+                    link: StripeStringConstants.NEVER,
                 },
                 layout: {
                     type: 'accordion',
@@ -302,6 +308,11 @@ describe('StripeOCSPaymentStrategy', () => {
                 },
                 savePaymentMethod: {
                     maxVisiblePaymentMethods: 20,
+                },
+                defaultValues: {
+                    billingDetails: {
+                        email: '',
+                    },
                 },
             });
             expect(onErrorMock).not.toHaveBeenCalled();
@@ -372,6 +383,134 @@ describe('StripeOCSPaymentStrategy', () => {
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
         });
+
+        it('should enable Link by initialization data option', async () => {
+            const createMock = jest.fn().mockImplementation(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(StripeEventMock)),
+                update: jest.fn(),
+                destroy: jest.fn(),
+            }));
+            const stripePaymentMethod = getStripeOCSMock();
+
+            jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
+                Promise.resolve({
+                    ...stripeUPEJsMock.elements({}),
+                    create: createMock,
+                }),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...stripePaymentMethod,
+                initializationData: {
+                    ...stripePaymentMethod.initializationData,
+                    enableLink: true,
+                },
+            });
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+            expect(createMock).toHaveBeenCalledWith(StripeElementType.PAYMENT, {
+                fields: {
+                    billingDetails: {
+                        email: StripeStringConstants.NEVER,
+                        address: {
+                            country: StripeStringConstants.NEVER,
+                            city: StripeStringConstants.NEVER,
+                            postalCode: StripeStringConstants.AUTO,
+                        },
+                    },
+                },
+                wallets: {
+                    applePay: StripeStringConstants.NEVER,
+                    googlePay: StripeStringConstants.NEVER,
+                    link: StripeStringConstants.AUTO,
+                },
+                layout: {
+                    type: 'accordion',
+                    defaultCollapsed: false,
+                    radios: true,
+                    spacedAccordionItems: false,
+                    visibleAccordionItemsCount: 0,
+                },
+                savePaymentMethod: {
+                    maxVisiblePaymentMethods: 20,
+                },
+                defaultValues: {
+                    billingDetails: {
+                        email: '',
+                    },
+                },
+            });
+        });
+
+        it('should Disable Link by initialization data option', async () => {
+            const createMock = jest.fn().mockImplementation(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(StripeEventMock)),
+                update: jest.fn(),
+                destroy: jest.fn(),
+            }));
+            const stripePaymentMethod = getStripeOCSMock();
+
+            jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
+                Promise.resolve({
+                    ...stripeUPEJsMock.elements({}),
+                    create: createMock,
+                }),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...stripePaymentMethod,
+                initializationData: {
+                    ...stripePaymentMethod.initializationData,
+                    enableLink: false,
+                },
+            });
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+            expect(createMock).toHaveBeenCalledWith(StripeElementType.PAYMENT, {
+                fields: {
+                    billingDetails: {
+                        email: StripeStringConstants.NEVER,
+                        address: {
+                            country: StripeStringConstants.NEVER,
+                            city: StripeStringConstants.NEVER,
+                            postalCode: StripeStringConstants.AUTO,
+                        },
+                    },
+                },
+                wallets: {
+                    applePay: StripeStringConstants.NEVER,
+                    googlePay: StripeStringConstants.NEVER,
+                    link: StripeStringConstants.NEVER,
+                },
+                layout: {
+                    type: 'accordion',
+                    defaultCollapsed: false,
+                    radios: true,
+                    spacedAccordionItems: false,
+                    visibleAccordionItemsCount: 0,
+                },
+                savePaymentMethod: {
+                    maxVisiblePaymentMethods: 20,
+                },
+                defaultValues: {
+                    billingDetails: {
+                        email: '',
+                    },
+                },
+            });
+        });
     });
 
     describe('#execute', () => {
@@ -440,6 +579,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -484,6 +624,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: 'card',
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -530,6 +671,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: 'card',
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -575,6 +717,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -606,6 +749,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -627,6 +771,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -651,6 +796,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -902,6 +1048,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -915,6 +1062,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -951,6 +1099,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -964,6 +1113,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         },
                         confirm: false,
                         payment_method_id: undefined,
+                        vault_payment_instrument: false,
                     },
                 },
             });
@@ -1000,6 +1150,186 @@ describe('StripeOCSPaymentStrategy', () => {
         });
     });
 
+    describe('#vaulted card instrument', () => {
+        let errorResponse: RequestError;
+        let confirmPaymentMock: jest.Mock;
+        let retrievePaymentIntentMock: jest.Mock;
+
+        const mockFirstPaymentRequest = (payload: unknown) => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                Promise.reject(payload),
+            );
+        };
+
+        const mockSetupFutureUsage = (value?: string) => {
+            confirmPaymentMock = jest.fn().mockResolvedValue({
+                paymentIntent: {
+                    id: 'paymentIntentId',
+                    payment_method_options: {
+                        card: {
+                            setup_future_usage: value,
+                        },
+                    },
+                },
+            });
+
+            stripeUPEJsMock = {
+                ...getStripeJsMock(),
+                confirmPayment: confirmPaymentMock,
+                retrievePaymentIntent: jest.fn(),
+            };
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
+                jest.fn(() => Promise.resolve(stripeUPEJsMock)),
+            );
+        };
+
+        beforeEach(() => {
+            jest.spyOn(stripeIntegrationService, 'isAdditionalActionError').mockReturnValue(true);
+            jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
+                Promise.resolve(false),
+            );
+
+            errorResponse = new RequestError(
+                getResponse({
+                    ...getErrorPaymentResponseBody(),
+                    errors: [{ code: 'additional_action_required' }],
+                    additional_action_required: {
+                        type: 'additional_action_requires_payment_method',
+                        data: {
+                            redirect_url: 'https://redirect-url.com',
+                            token: 'token',
+                        },
+                    },
+                    status: 'error',
+                }),
+            );
+
+            confirmPaymentMock = jest.fn();
+            retrievePaymentIntentMock = jest.fn();
+
+            stripeUPEJsMock = {
+                ...getStripeJsMock(),
+                confirmPayment: confirmPaymentMock,
+                retrievePaymentIntent: retrievePaymentIntentMock,
+            };
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
+                jest.fn(() => Promise.resolve(stripeUPEJsMock)),
+            );
+            mockFirstPaymentRequest(errorResponse);
+        });
+
+        it('should not store vaulted card instrument if stripe checkbox was not selected', async () => {
+            mockSetupFutureUsage(undefined);
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+            await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'clientToken',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: false,
+                    },
+                },
+            });
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'paymentIntentId',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: false,
+                    },
+                },
+            });
+        });
+
+        it('should store vaulted card instrument [on_session]', async () => {
+            mockSetupFutureUsage('on_session');
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+            await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'clientToken',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: false,
+                    },
+                },
+            });
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'paymentIntentId',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: true,
+                    },
+                },
+            });
+        });
+
+        it('should store vaulted card instrument [off_session]', async () => {
+            mockSetupFutureUsage('off_session');
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+            await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'clientToken',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: false,
+                    },
+                },
+            });
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'paymentIntentId',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: true,
+                    },
+                },
+            });
+        });
+    });
+
     describe('#finalize()', () => {
         it('throws an error to inform that order finalization is not required', async () => {
             await expect(stripeOCSPaymentStrategy.finalize()).rejects.toBeInstanceOf(
@@ -1009,17 +1339,24 @@ describe('StripeOCSPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('deinitializes stripe payment strategy', async () => {
-            const unmountMock = jest.fn();
-            const getElementMock = jest.fn().mockImplementation(() => ({
+        let unmountMock: jest.Mock;
+        let destroyMock: jest.Mock;
+        let getElementMock: jest.Mock;
+
+        beforeEach(() => {
+            unmountMock = jest.fn();
+            destroyMock = jest.fn();
+            getElementMock = jest.fn().mockImplementation(() => ({
                 mount: jest.fn(),
                 unmount: unmountMock,
                 on: jest.fn((_, callback) => callback(StripeEventMock)),
                 update: jest.fn(),
-                destroy: jest.fn(),
+                destroy: destroyMock,
                 collapse: jest.fn(),
             }));
+        });
 
+        it('deinitializes stripe payment strategy', async () => {
             jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
                 Promise.resolve({
                     ...stripeUPEJsMock.elements({}),
@@ -1032,9 +1369,10 @@ describe('StripeOCSPaymentStrategy', () => {
 
             expect(stripeIntegrationService.deinitialize).toHaveBeenCalled();
             expect(unmountMock).toHaveBeenCalled();
+            expect(destroyMock).toHaveBeenCalled();
         });
 
-        it('when stripe element not initialized', async () => {
+        it('when stripe payment element not initialized', async () => {
             await stripeOCSPaymentStrategy.initialize(getStripeOCSInitializeOptionsMock());
 
             jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(

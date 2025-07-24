@@ -56,6 +56,7 @@ service.initializePayment({
 ### Methods
 
 - [onChange](BigCommercePaymentsFastlanePaymentInitializeOptions.md#onchange)
+- [onError](BigCommercePaymentsFastlanePaymentInitializeOptions.md#onerror)
 - [onInit](BigCommercePaymentsFastlanePaymentInitializeOptions.md#oninit)
 
 ## Properties
@@ -84,6 +85,24 @@ when get triggered
 | Name | Type |
 | :------ | :------ |
 | `showPayPalCardSelector` | () => `Promise`<`undefined` \| `CardInstrument`\> |
+
+#### Returns
+
+`void`
+
+___
+
+### onError
+
+▸ `Optional` **onError**(`error`): `void`
+
+Callback that handles errors
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `unknown` |
 
 #### Returns
 

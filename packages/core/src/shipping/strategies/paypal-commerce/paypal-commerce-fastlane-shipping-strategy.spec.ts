@@ -393,7 +393,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 instruments: [bcInstrumentMock],
             });
             expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                false,
                 cart.id,
             );
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);

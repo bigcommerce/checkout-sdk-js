@@ -1,9 +1,14 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { NotInitializedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    NotInitializedError,
+    PaymentIntegrationService,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSdk from './braintree-sdk';
+import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
 import {
     getBraintreeLocalPaymentMock,
     getClientMock,
@@ -57,14 +62,19 @@ describe('BraintreeSdk', () => {
     let braintreeLocalPayment: BraintreeLocalPayment;
     let braintreeLocalPaymentCreator: BraintreeLocalPaymentCreator;
     let visaCheckoutSdkMock: VisaCheckoutSDK;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const clientTokenMock = 'clientTokenMock';
 
     beforeEach(() => {
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
         braintreeWindowMock = window as BraintreeWindow;
         braintreeScriptLoader = new BraintreeScriptLoader(
             createScriptLoader(),
             braintreeWindowMock,
+            braintreeSDKVersionManager,
         );
         clientMock = getClientMock();
         clientCreatorMock = getModuleCreatorMock(clientMock);

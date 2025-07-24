@@ -78,6 +78,7 @@ export interface PayPalSdkConfig {
         'data-user-id-token'?: string;
         'data-namespace'?: string;
         'data-client-token'?: string;
+        'data-sdk-client-token'?: string;
     };
 }
 
@@ -87,7 +88,7 @@ export enum BigCommercePaymentsIntent {
 }
 
 export type PayPalSdkComponents = Array<
-    'fastlane' | 'messages' | 'buttons' | 'payment-fields' | 'googlepay'
+    'fastlane' | 'messages' | 'buttons' | 'payment-fields' | 'googlepay' | 'three-domain-secure'
 >;
 
 /**

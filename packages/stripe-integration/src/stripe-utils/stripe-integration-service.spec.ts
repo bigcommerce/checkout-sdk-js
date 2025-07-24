@@ -1,4 +1,5 @@
 import {
+    BillingAddress,
     MissingDataError,
     NotInitializedError,
     PaymentInitializeOptions,
@@ -601,6 +602,37 @@ describe('StripeIntegrationService', () => {
         });
 
         it('returns mapped payment data', () => {
+            expect(
+                stripeIntegrationService.mapStripePaymentData(stripeElementsMock, 'redirect.url'),
+            ).toEqual({
+                elements: stripeElementsMock,
+                redirect: 'if_required',
+                confirmParams: {
+                    payment_method_data: {
+                        billing_details: {
+                            email: 'test@bigcommerce.com',
+                            address: {
+                                city: 'Some City',
+                                country: 'US',
+                                line1: '12345 Testing Way',
+                                line2: '',
+                                postal_code: '95555',
+                                state: 'CA',
+                            },
+                            name: 'Test Tester',
+                        },
+                    },
+                    return_url: 'redirect.url',
+                },
+            });
+        });
+
+        it('returns mapped payment data without state code', () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue({
+                ...getBillingAddress(),
+                stateOrProvinceCode: undefined,
+            } as unknown as BillingAddress);
+
             expect(
                 stripeIntegrationService.mapStripePaymentData(stripeElementsMock, 'redirect.url'),
             ).toEqual({

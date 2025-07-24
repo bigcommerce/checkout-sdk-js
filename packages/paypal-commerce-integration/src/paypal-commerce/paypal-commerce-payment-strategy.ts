@@ -78,7 +78,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
-        const { container, bannerContainerId = '' } = paypalcommerce;
+        const { container, bannerContainerId } = paypalcommerce;
 
         const {
             orderId,
@@ -86,8 +86,17 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             isPayPalCreditAvailable,
         } = paymentMethod.initializationData || {};
 
-        if (document.getElementById(bannerContainerId)) {
-            const bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'checkout');
+        if (bannerContainerId !== undefined) {
+            if (!document.getElementById(bannerContainerId)) {
+                // eslint-disable-next-line no-console
+                console.error('Unable to create banner without valid banner container ID.');
+
+                return;
+            }
+
+            const bannerConfiguration = paypalBNPLConfiguration?.find(
+                ({ id }) => id === 'checkout',
+            );
 
             if (isPayPalCreditAvailable || !bannerConfiguration?.status) {
                 return;

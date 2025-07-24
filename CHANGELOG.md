@@ -2,6 +2,123 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.776.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.775.0...v1.776.0) (2025-07-24)
+
+
+### Features
+
+* **payment:** Added BCP FL corresponding error for 422 payment status ([#2941](https://github.com/bigcommerce/checkout-sdk-js/issues/2941)) ([255fcfe](https://github.com/bigcommerce/checkout-sdk-js/commit/255fcfea3722bc8af5190e8cbf565e8504cfe6d9))
+
+## [1.775.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.774.0...v1.775.0) (2025-07-24)
+
+
+### Features
+
+* **payment:** Added liability shift processing for BCP FL ([#2940](https://github.com/bigcommerce/checkout-sdk-js/issues/2940)) ([df840cc](https://github.com/bigcommerce/checkout-sdk-js/commit/df840cc2e138aad54810de27fd991870db50bf72))
+
+## [1.774.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.773.0...v1.774.0) (2025-07-23)
+
+
+### Features
+
+* **payment:** added BraintreeSDKVersionManager ([#2932](https://github.com/bigcommerce/checkout-sdk-js/issues/2932)) ([afa2f19](https://github.com/bigcommerce/checkout-sdk-js/commit/afa2f195a74cfe266d67183a8e47060c1e033b9f))
+
+## [1.773.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.772.0...v1.773.0) (2025-07-23)
+
+
+### Features
+
+* **payment:** Added corresponding error for 422 payment status ([#2938](https://github.com/bigcommerce/checkout-sdk-js/issues/2938)) ([31c3813](https://github.com/bigcommerce/checkout-sdk-js/commit/31c3813dcca0861a73ffb9e6e9a4559dd15427aa))
+
+## [1.772.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.771.0...v1.772.0) (2025-07-23)
+
+
+### Features
+
+* **payment:** Create order after liability shift passed when 3ds is on ([#2936](https://github.com/bigcommerce/checkout-sdk-js/issues/2936)) ([51ddb2e](https://github.com/bigcommerce/checkout-sdk-js/commit/51ddb2ee24c603fb9cf99170a132bd6c62e14205))
+
+
+### Bug Fixes
+
+* **customer:** Fetch updated checkout after carts are merged ([#2923](https://github.com/bigcommerce/checkout-sdk-js/issues/2923)) ([b5c94c4](https://github.com/bigcommerce/checkout-sdk-js/commit/b5c94c424a52d1df62e77730aa724cc31a3c4622))
+
+## [1.771.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.770.0...v1.771.0) (2025-07-22)
+
+
+### Features
+
+* **payment:** Enable Stripe OCS Link from control panel ([#2937](https://github.com/bigcommerce/checkout-sdk-js/issues/2937)) ([4808a58](https://github.com/bigcommerce/checkout-sdk-js/commit/4808a58ddae67908562d4da475f347bd72b9bd3b))
+
+## [1.770.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.769.0...v1.770.0) (2025-07-21)
+
+
+### Features
+
+* **payment:** added banner additional check ([#2929](https://github.com/bigcommerce/checkout-sdk-js/issues/2929)) ([9864c00](https://github.com/bigcommerce/checkout-sdk-js/commit/9864c0045b840fcab3f416a648a0b678a1d9808b))
+
+## [1.769.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.768.1...v1.769.0) (2025-07-21)
+
+
+### Features
+
+* **payment:** Stripe Link v2 options updated ([e7dc95d](https://github.com/bigcommerce/checkout-sdk-js/commit/e7dc95d19d8fa35e2027d28a772a520788d00f8f))
+
+### [1.768.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.768.0...v1.768.1) (2025-07-21)
+
+
+### Bug Fixes
+
+* **payment:** updated BCP iDeal amp methods with related changes from PPCP ([#2933](https://github.com/bigcommerce/checkout-sdk-js/issues/2933)) ([7b91576](https://github.com/bigcommerce/checkout-sdk-js/commit/7b91576ed43905ccf27cf25edf6827ffc0b77068))
+
+## [1.768.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.2...v1.768.0) (2025-07-21)
+
+
+### Features
+
+* **payment:** Stripe OCS add Link logic to accordion ([#2935](https://github.com/bigcommerce/checkout-sdk-js/issues/2935)) ([cc6e7e1](https://github.com/bigcommerce/checkout-sdk-js/commit/cc6e7e14db3a12819a1357e3ccea8aeca261cba8))
+
+### [1.767.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.1...v1.767.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* **payment:** updated provider id used for order creation in BCP Ratepay Payment strategy ([#2931](https://github.com/bigcommerce/checkout-sdk-js/issues/2931)) ([959b152](https://github.com/bigcommerce/checkout-sdk-js/commit/959b1529a8501c792174c5cc458cf8e1516533d8))
+
+### [1.767.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.767.0...v1.767.1) (2025-07-17)
+
+
+### Code Refactoring
+
+* **payment:** updated ppcp fastlane implementation to use cookies instead of local storage ([#2930](https://github.com/bigcommerce/checkout-sdk-js/issues/2930)) ([fe6931d](https://github.com/bigcommerce/checkout-sdk-js/commit/fe6931d94062afbccc679ff7c478a9fd05bd6d10))
+
+## [1.767.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.766.0...v1.767.0) (2025-07-16)
+
+
+### Features
+
+* **payment:** Stripe OCS add state code to stripe confirmation details ([#2928](https://github.com/bigcommerce/checkout-sdk-js/issues/2928)) ([dcf5c83](https://github.com/bigcommerce/checkout-sdk-js/commit/dcf5c8312386e8a70b63d577acf53804aea5db37))
+
+## [1.766.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.765.0...v1.766.0) (2025-07-14)
+
+
+### Features
+
+* **payment:** Stripe OCS add status for  instrument vaulting ([#2927](https://github.com/bigcommerce/checkout-sdk-js/issues/2927)) ([1a7be7c](https://github.com/bigcommerce/checkout-sdk-js/commit/1a7be7c6a4cb53cbb058274f82aecdbc6f5e13e1))
+
+## [1.765.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.764.0...v1.765.0) (2025-07-14)
+
+
+### Features
+
+* **payment:** added bigcommerce payment related instruments to a list of supported instruments ([#2924](https://github.com/bigcommerce/checkout-sdk-js/issues/2924)) ([6739a5d](https://github.com/bigcommerce/checkout-sdk-js/commit/6739a5d3df13d0743355d2a2e86a0c70dda7c6f2))
+
+## [1.764.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.763.0...v1.764.0) (2025-07-14)
+
+
+### Features
+
+* **payment:** hot fix (Sentry issue) ([#2926](https://github.com/bigcommerce/checkout-sdk-js/issues/2926)) ([2697017](https://github.com/bigcommerce/checkout-sdk-js/commit/26970177476ec3b17211006848a5b25e88c716dc))
+
 ## [1.763.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.762.0...v1.763.0) (2025-07-10)
 
 
