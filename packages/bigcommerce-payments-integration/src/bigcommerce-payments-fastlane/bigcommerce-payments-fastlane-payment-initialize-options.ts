@@ -62,6 +62,12 @@ export default interface BigCommercePaymentsFastlanePaymentInitializeOptions {
     onChange?: (showPayPalCardSelector: () => Promise<CardInstrument | undefined>) => void;
 
     /**
+     * Callback that handles errors
+     */
+    onError?: (error: unknown) => void;
+
+
+    /**
      * Is a stylisation options for customizing BigCommercePayments Fastlane components
      *
      * Note: the styles for all BigCommercePaymentsFastlane strategies should be the same,

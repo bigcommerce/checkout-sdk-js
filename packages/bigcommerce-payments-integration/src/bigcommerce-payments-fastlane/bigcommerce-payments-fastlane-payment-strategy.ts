@@ -2,6 +2,7 @@ import {
     BigCommercePaymentsFastlaneUtils,
     BigCommercePaymentsInitializationData,
     getFastlaneStyles,
+    isBigcommerceFastlaneRequestError,
     isPayPalFastlaneCustomer,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneCardComponentMethods,
@@ -32,7 +33,9 @@ import {
 
 import BigCommercePaymentsRequestSender from '../bigcommerce-payments-request-sender';
 
-import { WithBigCommercePaymentsFastlanePaymentInitializeOptions } from './bigcommerce-payments-fastlane-payment-initialize-options';
+import BigCommercePaymentsFastlanePaymentInitializeOptions, {
+    WithBigCommercePaymentsFastlanePaymentInitializeOptions,
+} from './bigcommerce-payments-fastlane-payment-initialize-options';
 import { LiabilityShiftEnum } from '../bigcommerce-payments-types';
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
@@ -40,6 +43,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
     private threeDSVerificationMethod?: string;
     private paypalFastlaneSdk?: PayPalFastlaneSdk;
+    private bigcommerce_payments_fastlane?: BigCommercePaymentsFastlanePaymentInitializeOptions;
     private methodId?: string;
     private orderId?: string;
 
@@ -160,6 +164,19 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             // TODO: we should probably update this method with removeStorageSessionId for better reading experience
             this.bigCommercePaymentsFastlaneUtils.updateStorageSessionId(true);
         } catch (error) {
+            if (
+                isBigcommerceFastlaneRequestError(error) &&
+                error.response.name === 'INVALID_REQUEST'
+            ) {
+                const invalidRequestError = {
+                    translationKey: 'payment.errors.invalid_request_error',
+                };
+
+                this.handleError(invalidRequestError);
+
+                return Promise.reject();
+            }
+
             if (error instanceof Error && error.name !== 'FastlaneError') {
                 throw error;
             }
@@ -509,5 +526,14 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
         return isExperimentEnabled(features, 'PROJECT-7080.bcp_fastlane_three_ds');
+    }
+
+    private handleError(error: unknown): void {
+        if (
+            this.bigcommerce_payments_fastlane?.onError &&
+            typeof this.bigcommerce_payments_fastlane.onError === 'function'
+        ) {
+            this.bigcommerce_payments_fastlane.onError(error);
+        }
     }
 }
