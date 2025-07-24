@@ -3,12 +3,19 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
+    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BraintreeScriptLoader from './braintree-script-loader';
 import { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
-import { BRAINTREE_SDK_STABLE_VERSION } from './braintree-sdk-verison';
+import {
+    BRAINTREE_SDK_DEFAULT_VERSION,
+    BRAINTREE_SDK_STABLE_VERSION,
+} from './braintree-sdk-verison';
 import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
 import {
     getBraintreeLocalPaymentMock,
@@ -48,11 +55,33 @@ describe('BraintreeScriptLoader', () => {
     let mockWindow: BraintreeHostWindow;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
     let paymentIntegrationService: PaymentIntegrationService;
+    let storeConfigMock: StoreConfig;
+    let setDefaultBraintreeSdkVersion: (isExperimentOn?: boolean) => void;
+
+    const braintreeSdkDefaultScriptsIntegrity =
+        BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_DEFAULT_VERSION];
+    const braintreeSdkStableScriptsIntegrity =
+        BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_STABLE_VERSION];
 
     beforeEach(() => {
         mockWindow = { braintree: {} } as BraintreeHostWindow;
         scriptLoader = {} as ScriptLoader;
+        storeConfigMock = getConfig().storeConfig;
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+
+        setDefaultBraintreeSdkVersion = (isExperimentOn = false) => {
+            storeConfigMock.checkoutSettings.features = {
+                'PAYPAL-5636.update_braintree_sdk_version': isExperimentOn,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+        };
+
+        setDefaultBraintreeSdkVersion();
+
         braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
     });
 
@@ -70,7 +99,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads the client', async () => {
+        it('loads the client with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -84,7 +113,30 @@ describe('BraintreeScriptLoader', () => {
                     async: true,
                     attributes: {
                         crossorigin: 'anonymous',
-                        integrity: BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.Client],
+                        integrity: braintreeSdkStableScriptsIntegrity[BraintreeModuleName.Client],
+                    },
+                },
+            );
+            expect(client).toBe(clientMock);
+        });
+
+        it('loads the client with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const client = await braintreeScriptLoader.loadClient();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/client.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity: braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.Client],
                     },
                 },
             );
@@ -149,7 +201,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads fastlane module', async () => {
+        it('loads fastlane module with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -163,7 +215,31 @@ describe('BraintreeScriptLoader', () => {
                     async: true,
                     attributes: {
                         crossorigin: 'anonymous',
-                        integrity: BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.Fastlane],
+                        integrity: braintreeSdkStableScriptsIntegrity[BraintreeModuleName.Fastlane],
+                    },
+                },
+            );
+            expect(fastlane).toBe(fastlaneCreatorMock);
+        });
+
+        it('loads fastlane module with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const fastlane = await braintreeScriptLoader.loadFastlane();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/fastlane.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.Fastlane],
                     },
                 },
             );
@@ -228,7 +304,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads PayPal checkout', async () => {
+        it('loads PayPal checkout with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -243,7 +319,31 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.PaypalCheckout],
+                            braintreeSdkStableScriptsIntegrity[BraintreeModuleName.PaypalCheckout],
+                    },
+                },
+            );
+            expect(paypalCheckout).toBe(paypalCheckoutMock);
+        });
+
+        it('loads PayPal checkout with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const paypalCheckout = await braintreeScriptLoader.loadPaypalCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/paypal-checkout.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.PaypalCheckout],
                     },
                 },
             );
@@ -308,7 +408,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads local payment methods', async () => {
+        it('loads local payment methods with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -324,7 +424,31 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.LocalPayment],
+                            braintreeSdkStableScriptsIntegrity[BraintreeModuleName.LocalPayment],
+                    },
+                },
+            );
+        });
+
+        it('loads local payment methods with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadLocalPayment();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/local-payment.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.LocalPayment],
                     },
                 },
             );
@@ -358,7 +482,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads google payment methods', async () => {
+        it('loads google payment methods with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -374,7 +498,31 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.GooglePayment],
+                            braintreeSdkStableScriptsIntegrity[BraintreeModuleName.GooglePayment],
+                    },
+                },
+            );
+        });
+
+        it('loads google payment methods with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadGooglePayment();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/google-payment.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.GooglePayment],
                     },
                 },
             );
@@ -408,7 +556,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads braintree paypal payment methods', async () => {
+        it('loads braintree paypal payment methods with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -423,7 +571,30 @@ describe('BraintreeScriptLoader', () => {
                     async: true,
                     attributes: {
                         crossorigin: 'anonymous',
-                        integrity: BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.Paypal],
+                        integrity: braintreeSdkStableScriptsIntegrity[BraintreeModuleName.Paypal],
+                    },
+                },
+            );
+        });
+
+        it('loads braintree paypal payment methods with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadPaypal();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/paypal.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity: braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.Paypal],
                     },
                 },
             );
@@ -457,7 +628,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads threeDSecure methods', async () => {
+        it('loads threeDSecure methods with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -473,7 +644,31 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.ThreeDSecure],
+                            braintreeSdkStableScriptsIntegrity[BraintreeModuleName.ThreeDSecure],
+                    },
+                },
+            );
+        });
+
+        it('loads threeDSecure methods with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.load3DS();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/three-d-secure.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.ThreeDSecure],
                     },
                 },
             );
@@ -507,7 +702,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads visaCheckout methods', async () => {
+        it('loads visaCheckout methods with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -523,7 +718,31 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.VisaCheckout],
+                            braintreeSdkStableScriptsIntegrity[BraintreeModuleName.VisaCheckout],
+                    },
+                },
+            );
+        });
+
+        it('loads visaCheckout methods with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/visa-checkout.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.VisaCheckout],
                     },
                 },
             );
@@ -557,7 +776,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads hostedFields methods', async () => {
+        it('loads hostedFields methods with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -573,7 +792,31 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.HostedFields],
+                            braintreeSdkStableScriptsIntegrity[BraintreeModuleName.HostedFields],
+                    },
+                },
+            );
+        });
+
+        it('loads hostedFields methods with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/hosted-fields.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.HostedFields],
                     },
                 },
             );
@@ -607,7 +850,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads venmoCheckout methods', async () => {
+        it('loads venmoCheckout methods with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -622,7 +865,30 @@ describe('BraintreeScriptLoader', () => {
                     async: true,
                     attributes: {
                         crossorigin: 'anonymous',
-                        integrity: BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.Venmo],
+                        integrity: braintreeSdkStableScriptsIntegrity[BraintreeModuleName.Venmo],
+                    },
+                },
+            );
+        });
+
+        it('loads venmoCheckout methods with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadVenmoCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/venmo.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity: braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.Venmo],
                     },
                 },
             );
@@ -656,7 +922,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it('loads the data collector library', async () => {
+        it('loads the data collector library with stable version of braintree sdk', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -671,7 +937,31 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            BRAINTREE_SDK_SCRIPTS_INTEGRITY[BraintreeModuleName.DataCollector],
+                            braintreeSdkStableScriptsIntegrity[BraintreeModuleName.DataCollector],
+                    },
+                },
+            );
+            expect(dataCollector).toBe(dataCollectorMock);
+        });
+
+        it('loads the data collector library with default version of braintree sdk', async () => {
+            setDefaultBraintreeSdkVersion(true);
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const dataCollector = await braintreeScriptLoader.loadDataCollector();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_DEFAULT_VERSION}/js/data-collector.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.DataCollector],
                     },
                 },
             );

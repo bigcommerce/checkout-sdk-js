@@ -1,15 +1,35 @@
-import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    PaymentIntegrationService,
+    StoreConfig,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { BRAINTREE_SDK_STABLE_VERSION } from './braintree-sdk-verison';
+import {
+    BRAINTREE_SDK_DEFAULT_VERSION,
+    BRAINTREE_SDK_STABLE_VERSION,
+} from './braintree-sdk-verison';
 import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
 
 describe('BraintreeSDKVersionManager', () => {
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
     let paymentIntegrationService: PaymentIntegrationService;
+    let storeConfigMock: StoreConfig;
 
     beforeEach(() => {
+        storeConfigMock = getConfig().storeConfig;
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+
+        storeConfigMock.checkoutSettings.features = {
+            'PAYPAL-5636.update_braintree_sdk_version': false,
+        };
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigMock,
+        );
+
         braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
     });
 
@@ -17,7 +37,19 @@ describe('BraintreeSDKVersionManager', () => {
         expect(braintreeSDKVersionManager).toBeInstanceOf(BraintreeSDKVersionManager);
     });
 
-    it('get default braintree sdk version', () => {
+    it('get stable braintree sdk version', () => {
         expect(braintreeSDKVersionManager.getSDKVersion()).toBe(BRAINTREE_SDK_STABLE_VERSION);
+    });
+
+    it('get default braintree sdk version', () => {
+        storeConfigMock.checkoutSettings.features = {
+            'PAYPAL-5636.update_braintree_sdk_version': true,
+        };
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigMock,
+        );
+
+        expect(braintreeSDKVersionManager.getSDKVersion()).toBe(BRAINTREE_SDK_DEFAULT_VERSION);
     });
 });
