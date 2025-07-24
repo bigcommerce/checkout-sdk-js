@@ -1,10 +1,17 @@
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 
-import { NotInitializedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getShippingAddress } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    NotInitializedError,
+    PaymentIntegrationService,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getShippingAddress,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BraintreeIntegrationService from './braintree-integration-service';
 import BraintreeScriptLoader from './braintree-script-loader';
+import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
 import {
     getBraintreeAddress,
     getClientMock,
@@ -42,6 +49,8 @@ describe('BraintreeIntegrationService', () => {
     let paypalCheckoutMock: BraintreePaypalCheckout;
     let paypalCheckoutCreatorMock: BraintreeModuleCreator<BraintreePaypalCheckout>;
     let loader: ScriptLoader;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const clientToken = 'clientToken';
 
@@ -57,9 +66,15 @@ describe('BraintreeIntegrationService', () => {
         threeDSecureMock = getThreeDSecureMock();
         threeDSecureCreatorMock = getModuleCreatorMock(threeDSecureMock);
         loader = createScriptLoader();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
 
         braintreeHostWindowMock = window as BraintreeHostWindow;
-        braintreeScriptLoader = new BraintreeScriptLoader(loader, braintreeHostWindowMock);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            loader,
+            braintreeHostWindowMock,
+            braintreeSDKVersionManager,
+        );
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
             braintreeHostWindowMock,

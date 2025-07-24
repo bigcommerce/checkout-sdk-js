@@ -7513,6 +7513,10 @@ declare interface PayPalCommerceFastlanePaymentInitializeOptions {
      */
     onChange?: (showPayPalCardSelector: () => Promise<CardInstrument_2 | undefined>) => void;
     /**
+     * Callback that handles errors
+     */
+    onError?: (error: unknown) => void;
+    /**
      * Is a stylisation options for customizing PayPal Fastlane components
      *
      * Note: the styles for all PayPalCommerceFastlane strategies should be the same,

@@ -7,6 +7,7 @@ import {
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
+    PaymentMethodInvalidError,
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -402,6 +403,9 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
         const mockedInstrumentId = 'mockInstrumentId123';
 
         const executeOptions = {
@@ -469,7 +473,36 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             expect(paypalCommerceFastlaneUtils.removeStorageSessionId).toHaveBeenCalled();
         });
 
+        it('throws specific error when get 422 error on payment request', async () => {
+            const initOptions = {
+                methodId,
+                paypalcommercefastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(),
+                    onError: jest.fn(),
+                },
+            };
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue({
+                name: 'Error',
+                message: 'Payment request failed',
+                response: {
+                    status: 422,
+                    name: 'INVALID_REQUEST',
+                },
+            });
+            await strategy.initialize(initOptions);
+
+            try {
+                await strategy.execute(executeOptions);
+            } catch (error: unknown) {
+                expect(initOptions.paypalcommercefastlane.onError).toHaveBeenCalledWith({
+                    translationKey: 'payment.errors.invalid_request_error',
+                });
+            }
+        });
+
         it('successfully places order with vaulted instruments flow', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockResolvedValue();
             await strategy.initialize(initializationOptions);
             await strategy.execute(executeOptionsWithVaulting);
 
@@ -530,7 +563,21 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 ).mockReturnValue(paymentMethodMock());
             });
 
-            it('creates order with fastlaneToken', async () => {
+            it('creates order with fastlaneToken when 3ds is on', async () => {
+                const paypalFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        show: jest.fn().mockReturnValue({
+                            liabilityShift: 'YES',
+                            authenticationState: 'succeeded',
+                            nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
+                        }),
+                    },
+                };
+                jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(paypalFastlaneSdkMock),
+                );
                 await strategy.initialize(initializationOptions);
 
                 await strategy.execute(executeOptions);
@@ -539,6 +586,31 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     cartId: cart.id,
                     fastlaneToken: 'paypal_fastlane_instrument_id_nonce',
                 });
+            });
+
+            it('does not create order if liability shift is not equal "YES"', async () => {
+                const paypalFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        show: jest.fn().mockReturnValue({
+                            liabilityShift: 'UNKNOWN',
+                            authenticationState: 'succeeded',
+                            nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
+                        }),
+                    },
+                };
+                jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(paypalFastlaneSdkMock),
+                );
+                await strategy.initialize(initializationOptions);
+
+                try {
+                    await strategy.execute(executeOptions);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(PaymentMethodInvalidError);
+                    expect(paypalCommerceRequestSender.createOrder).not.toHaveBeenCalled();
+                }
             });
 
             it('calls threeDomainSecureComponent isEligible', async () => {

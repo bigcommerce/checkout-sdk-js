@@ -11,6 +11,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
     getBraintree,
     getDataCollectorMock,
     getPayPalCheckoutCreatorMock,
@@ -61,6 +62,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     let paypalSdkMock: PaypalSDK;
     let paypalButtonElement: HTMLDivElement;
     let strategy: BraintreePaypalCreditButtonStrategy;
+    let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const defaultButtonContainerId = 'braintree-paypal-credit-button-mock-id';
     const defaultMessageContainerId = 'braintree-paypal-credit-message-mock-id';
@@ -160,7 +162,12 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
         formPoster = createFormPoster();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+        braintreeScriptLoader = new BraintreeScriptLoader(
+            getScriptLoader(),
+            window,
+            braintreeSDKVersionManager,
+        );
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
             window,

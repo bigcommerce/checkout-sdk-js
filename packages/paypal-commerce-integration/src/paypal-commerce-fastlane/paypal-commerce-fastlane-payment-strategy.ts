@@ -19,6 +19,7 @@ import {
 import {
     getFastlaneStyles,
     isPayPalFastlaneCustomer,
+    isPaypalFastlaneRequestError,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
@@ -34,12 +35,17 @@ import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
-import { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane-payment-initialize-options';
+import PayPalCommerceFastlanePaymentInitializeOptions, {
+    WithPayPalCommerceFastlanePaymentInitializeOptions,
+} from './paypal-commerce-fastlane-payment-initialize-options';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
     private paypalFastlaneSdk?: PayPalFastlaneSdk;
     private threeDSVerificationMethod?: string;
+    private paypalcommercefastlane?: PayPalCommerceFastlanePaymentInitializeOptions;
+    private orderId?: string;
+    private methodId?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -57,6 +63,9 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         options: PaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, paypalcommercefastlane } = options;
+        this.methodId = methodId;
+
+        this.paypalcommercefastlane = paypalcommercefastlane;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -154,6 +163,16 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
             this.paypalCommerceFastlaneUtils.removeStorageSessionId();
         } catch (error) {
+            if (isPaypalFastlaneRequestError(error) && error.response.name === 'INVALID_REQUEST') {
+                const invalidRequestError = {
+                    translationKey: 'payment.errors.invalid_request_error',
+                };
+
+                this.handleError(invalidRequestError);
+
+                return Promise.reject();
+            }
+
             if (error instanceof Error && error.name !== 'FastlaneError') {
                 throw error;
             }
@@ -302,26 +321,23 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const { instrumentId } = paymentData;
         const state = this.paymentIntegrationService.getState();
-        const cartId = state.getCartOrThrow().id;
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const is3DSEnabled =
+            this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled;
 
-        const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
-            cartId,
-            fastlaneToken: instrumentId,
-        });
+        if (!is3DSEnabled) {
+            await this.createOrder(instrumentId);
+        }
 
-        const fastlaneToken =
-            this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled
-                ? await this.get3DSNonce(instrumentId)
-                : instrumentId;
+        const fastlaneToken = is3DSEnabled ? await this.get3DSNonce(instrumentId) : instrumentId;
 
         return {
             methodId,
             paymentData: {
                 formattedPayload: {
                     paypal_fastlane_token: {
-                        order_id: orderId,
+                        order_id: this.orderId,
                         token: fastlaneToken,
                     },
                 },
@@ -334,7 +350,6 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         paymentData: OrderPaymentRequestBody['paymentData'],
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const state = this.paymentIntegrationService.getState();
-        const cartId = state.getCartOrThrow().id;
         const billingAddress = state.getBillingAddressOrThrow();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
@@ -348,15 +363,14 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
         });
 
-        const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
-            cartId,
-            fastlaneToken: id,
-        });
+        const is3DSEnabled =
+            this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled;
 
-        const fastlaneToken =
-            this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled
-                ? await this.get3DSNonce(id)
-                : id;
+        if (!is3DSEnabled) {
+            await this.createOrder(id);
+        }
+
+        const fastlaneToken = is3DSEnabled ? await this.get3DSNonce(id) : id;
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
@@ -369,12 +383,25 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 shouldSetAsDefaultInstrument,
                 formattedPayload: {
                     paypal_fastlane_token: {
-                        order_id: orderId,
+                        order_id: this.orderId,
                         token: fastlaneToken,
                     },
                 },
             },
         };
+    }
+
+    private async createOrder(id: string): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
+        const cartId = state.getCartOrThrow().id;
+        if (this.methodId) {
+            const { orderId } = await this.paypalCommerceRequestSender.createOrder(this.methodId, {
+                cartId,
+                fastlaneToken: id,
+            });
+
+            this.orderId = orderId;
+        }
     }
 
     /**
@@ -423,6 +450,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 throw new PaymentMethodInvalidError();
             }
 
+            await this.createOrder(paypalNonce);
+
             if (authenticationState === TDSecureAuthenticationState.Succeeded) {
                 return nonce;
             }
@@ -434,6 +463,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
             if (authenticationState === TDSecureAuthenticationState.Cancelled) {
                 console.error('3DS check was canceled');
+                throw new PaymentMethodInvalidError();
             }
         }
 
@@ -485,5 +515,14 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
         return isExperimentEnabled(features, 'PROJECT-7080.paypalcommerce_fastlane_three_ds');
+    }
+
+    private handleError(error: unknown): void {
+        if (
+            this.paypalcommercefastlane?.onError &&
+            typeof this.paypalcommercefastlane.onError === 'function'
+        ) {
+            this.paypalcommercefastlane.onError(error);
+        }
     }
 }

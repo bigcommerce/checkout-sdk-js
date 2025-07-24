@@ -456,6 +456,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
 
             if (authenticationState === TDSecureAuthenticationState.Cancelled) {
                 console.error('3DS check was canceled');
+                throw new PaymentMethodInvalidError();
             }
         }
 

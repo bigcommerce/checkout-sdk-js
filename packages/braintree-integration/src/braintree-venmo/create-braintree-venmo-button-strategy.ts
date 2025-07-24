@@ -5,6 +5,7 @@ import {
     BraintreeHostWindow,
     BraintreeScriptLoader,
     BraintreeSdk,
+    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CheckoutButtonStrategyFactory,
@@ -18,7 +19,12 @@ const createBraintreeVenmoButtonStrategy: CheckoutButtonStrategyFactory<
 > = (paymentIntegrationService) => {
     const braintreeHostWindow: BraintreeHostWindow = window;
     const scriptLoader = getScriptLoader();
-    const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, braintreeHostWindow);
+    const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+    const braintreeScriptLoader = new BraintreeScriptLoader(
+        scriptLoader,
+        braintreeHostWindow,
+        braintreeSDKVersionManager,
+    );
 
     const braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
