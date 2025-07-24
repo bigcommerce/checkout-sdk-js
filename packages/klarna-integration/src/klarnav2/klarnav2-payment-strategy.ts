@@ -17,10 +17,12 @@ import {
     PaymentMethodInvalidError,
     PaymentRequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import KlarnaPayments, {
     KlarnaAddress,
     KlarnaAuthorizationResponse,
+    KlarnaInitializationData,
     KlarnaLoadResponse,
     KlarnaUpdateSessionParams,
 } from './klarna-payments';
@@ -110,6 +112,7 @@ export default class KlarnaV2PaymentStrategy {
             : methodId;
         const { authorization_token: authorizationToken } = await this.authorizeOrThrow(
             paymentMethodСategory,
+            methodId,
         );
 
         await this.paymentIntegrationService.initializePayment(gatewayId, {
@@ -186,6 +189,7 @@ export default class KlarnaV2PaymentStrategy {
     }
 
     private getUpdateSessionData(
+        methodId: string,
         billingAddress: BillingAddress,
         shippingAddress?: Address,
     ): KlarnaUpdateSessionParams {
@@ -199,11 +203,19 @@ export default class KlarnaV2PaymentStrategy {
         }
 
         const data: KlarnaUpdateSessionParams = {
-            billing_address: this.mapToKlarnaAddress(billingAddress, billingAddress.email),
+            billing_address: this.mapToKlarnaAddress(
+                methodId,
+                billingAddress,
+                billingAddress.email,
+            ),
         };
 
         if (shippingAddress) {
-            data.shipping_address = this.mapToKlarnaAddress(shippingAddress, billingAddress.email);
+            data.shipping_address = this.mapToKlarnaAddress(
+                methodId,
+                shippingAddress,
+                billingAddress.email,
+            );
         }
 
         return data;
@@ -213,7 +225,12 @@ export default class KlarnaV2PaymentStrategy {
         return includes(supportedCountriesRequiringStates, countryCode);
     }
 
-    private mapToKlarnaAddress(address: Address, email?: string): KlarnaAddress {
+    private mapToKlarnaAddress(methodId: string, address: Address, email?: string): KlarnaAddress {
+        const state = this.paymentIntegrationService.getState();
+        const { checkoutSettings } = state.getStoreConfigOrThrow();
+        const paymentMethod = state.getPaymentMethodOrThrow<KlarnaInitializationData>(methodId);
+        const { enableBillie } = paymentMethod.initializationData || {};
+
         const klarnaAddress: KlarnaAddress = {
             street_address: address.address1,
             city: address.city,
@@ -235,11 +252,20 @@ export default class KlarnaV2PaymentStrategy {
             klarnaAddress.phone = address.phone;
         }
 
+        if (
+            address.company &&
+            enableBillie &&
+            isExperimentEnabled(checkoutSettings.features, 'PI-3915.b2b_payment_session_for_klarna')
+        ) {
+            klarnaAddress.organization_name = address.company;
+        }
+
         return klarnaAddress;
     }
 
     private async authorizeOrThrow(
         paymentMethodСategory: string,
+        methodId: string,
     ): Promise<KlarnaAuthorizationResponse> {
         await this.paymentIntegrationService.loadCheckout();
 
@@ -247,7 +273,11 @@ export default class KlarnaV2PaymentStrategy {
         const billingAddress = state.getBillingAddressOrThrow();
         const shippingAddress = state.getShippingAddress();
 
-        const updateSessionData = this.getUpdateSessionData(billingAddress, shippingAddress);
+        const updateSessionData = this.getUpdateSessionData(
+            methodId,
+            billingAddress,
+            shippingAddress,
+        );
 
         return new Promise<KlarnaAuthorizationResponse>((resolve, reject) => {
             if (!this.klarnaPayments) {

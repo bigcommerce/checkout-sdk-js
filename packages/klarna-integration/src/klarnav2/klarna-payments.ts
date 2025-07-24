@@ -58,4 +58,8 @@ export interface KlarnaAddress {
     postal_code: string;
     region: string;
     email?: string;
+    organization_name?: string;
+}
+export interface KlarnaInitializationData {
+    enableBillie?: string;
 }
