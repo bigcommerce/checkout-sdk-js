@@ -94,14 +94,14 @@ describe('PayPalSdkHelper', () => {
             await subject.getPayPalFastlaneSdk(paymentMethod, 'USD', sessionId);
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane&currency=USD&intent=capture',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane%2Cthree-domain-secure&currency=USD&intent=capture',
                 {
                     async: true,
                     attributes: {
                         'data-client-metadata-id': expectedSessionId,
                         'data-namespace': 'paypalFastlaneSdk',
                         'data-partner-attribution-id': '1123JLKJASD12',
-                        'data-user-id-token': 'asdcvY7XFSQasd',
+                        'data-sdk-client-token': 'asdcvY7XFSQasd',
                     },
                 },
             );
@@ -122,14 +122,14 @@ describe('PayPalSdkHelper', () => {
             await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD', sessionId);
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane&currency=USD&intent=capture',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane%2Cthree-domain-secure&currency=USD&intent=capture',
                 {
                     async: true,
                     attributes: {
                         'data-client-metadata-id': expectedSessionId,
                         'data-namespace': 'paypalFastlaneSdk',
                         'data-partner-attribution-id': '1123JLKJASD12',
-                        'data-user-id-token': 'connectClientToken123',
+                        'data-sdk-client-token': 'asdcvY7XFSQasd',
                     },
                 },
             );

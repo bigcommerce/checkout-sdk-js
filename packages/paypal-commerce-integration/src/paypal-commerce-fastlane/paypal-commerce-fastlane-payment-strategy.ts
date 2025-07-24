@@ -463,6 +463,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
             if (authenticationState === TDSecureAuthenticationState.Cancelled) {
                 console.error('3DS check was canceled');
+                throw new PaymentMethodInvalidError();
             }
         }
 

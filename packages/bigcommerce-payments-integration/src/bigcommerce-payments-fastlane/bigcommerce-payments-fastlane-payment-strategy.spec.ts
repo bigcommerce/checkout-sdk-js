@@ -19,6 +19,7 @@ import {
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
+    PaymentMethodInvalidError,
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -548,7 +549,10 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     ...paypalFastlaneSdk,
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
-                        isEligible: jest.fn().mockReturnValue(Promise.resolve(false)),
+                        isEligible: jest.fn().mockReturnValue(Promise.resolve(true)),
+                        show: jest.fn().mockResolvedValue({
+                            liabilityShift: 'YES',
+                        }),
                     },
                 };
 
@@ -567,6 +571,32 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                         fastlaneToken: 'paypal_fastlane_instrument_id_nonce',
                     },
                 );
+            });
+
+            it('does not create order if 3ds on and liability shift not YES', async () => {
+                const bigCommerceFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        isEligible: jest.fn().mockReturnValue(Promise.resolve(true)),
+                        show: jest.fn().mockResolvedValue({
+                            liabilityShift: 'UNKNOWN',
+                        }),
+                    },
+                };
+
+                jest.spyOn(bigCommercePaymentsSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(bigCommerceFastlaneSdkMock),
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                try {
+                    await strategy.execute(executeOptions);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(PaymentMethodInvalidError);
+                    expect(bigCommercePaymentsRequestSender.createOrder).not.toHaveBeenCalled();
+                }
             });
 
             it('calls threeDomainSecureComponent isEligible', async () => {
