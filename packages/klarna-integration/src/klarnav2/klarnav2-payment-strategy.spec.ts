@@ -40,6 +40,7 @@ import {
     getKlarnaV2UpdateSessionParams,
     getKlarnaV2UpdateSessionParamsForOC,
     getKlarnaV2UpdateSessionParamsPhone,
+    getKlarnaV2UpdateSessionParamsWithOrganizationName,
     getOCBillingAddress,
 } from './klarnav2.mock';
 
@@ -96,6 +97,7 @@ describe('KlarnaV2PaymentStrategy', () => {
         storeConfigMock = getConfig().storeConfig;
         storeConfigMock.checkoutSettings.features = {
             'PI-4025.klarna_single_radio_button': false,
+            'PI-3915.b2b_payment_session_for_klarna': false,
         };
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
@@ -319,6 +321,90 @@ describe('KlarnaV2PaymentStrategy', () => {
             expect(klarnav2TokenUpdater.updateClientToken).toHaveBeenCalledWith(
                 paymentMethod.gateway,
                 { params: { params: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' } },
+            );
+        });
+
+        it('authorizes against klarnav2 when PI-3915.b2b_payment_session_for_klarna experiment is enabled', async () => {
+            storeConfigMock.checkoutSettings.features = {
+                'PI-3915.b2b_payment_session_for_klarna': true,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethodMock,
+                initializationData: {
+                    enableBillie: true,
+                },
+            });
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddressOrThrow',
+            ).mockReturnValue(getEUBillingAddress());
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
+                getAddress(),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            const loadCheckoutMock = jest.spyOn(paymentIntegrationService, 'loadCheckout');
+
+            loadCheckoutMock.mockImplementation(jest.fn());
+
+            await strategy.execute(payload);
+
+            expect(klarnaPayments.authorize).toHaveBeenCalledWith(
+                { payment_method_category: paymentMethod.id },
+                getKlarnaV2UpdateSessionParamsWithOrganizationName(),
+                expect.any(Function),
+            );
+        });
+
+        it('authorizes against klarnav2 when PI-3915.b2b_payment_session_for_klarna experiment is enabled but Billie is disabled in Control Panel', async () => {
+            storeConfigMock.checkoutSettings.features = {
+                'PI-3915.b2b_payment_session_for_klarna': true,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethodMock,
+                initializationData: {
+                    enableBillie: false,
+                },
+            });
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddressOrThrow',
+            ).mockReturnValue(getEUBillingAddress());
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
+                getAddress(),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            const loadCheckoutMock = jest.spyOn(paymentIntegrationService, 'loadCheckout');
+
+            loadCheckoutMock.mockImplementation(jest.fn());
+
+            await strategy.execute(payload);
+
+            expect(klarnaPayments.authorize).toHaveBeenCalledWith(
+                { payment_method_category: paymentMethod.id },
+                getKlarnaV2UpdateSessionParamsPhone(),
+                expect.any(Function),
             );
         });
 
