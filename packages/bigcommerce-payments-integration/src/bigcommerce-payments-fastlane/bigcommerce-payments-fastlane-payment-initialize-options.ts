@@ -66,7 +66,6 @@ export default interface BigCommercePaymentsFastlanePaymentInitializeOptions {
      */
     onError?: (error: unknown) => void;
 
-
     /**
      * Is a stylisation options for customizing BigCommercePayments Fastlane components
      *

@@ -78,6 +78,8 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             );
         }
 
+        this.bigcommerce_payments_fastlane = bigcommerce_payments_fastlane;
+
         if (
             !bigcommerce_payments_fastlane.onInit ||
             typeof bigcommerce_payments_fastlane.onInit !== 'function'
