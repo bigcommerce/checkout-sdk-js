@@ -407,6 +407,10 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         const mockedInstrumentId = 'mockInstrumentId123';
 
         const executeOptions = {
@@ -739,6 +743,34 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     expect(error).toBeInstanceOf(Error);
                 }
             });
+        });
+
+        it('throws specific error when get 422 error on payment request', async () => {
+            const initOptions = {
+                methodId,
+                bigcommerce_payments_fastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(),
+                    onError: jest.fn(),
+                },
+            };
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue({
+                name: 'Error',
+                message: 'Payment request failed',
+                response: {
+                    status: 422,
+                    name: 'INVALID_REQUEST',
+                },
+            });
+            await strategy.initialize(initOptions);
+
+            try {
+                await strategy.execute(executeOptions);
+            } catch (error: unknown) {
+                expect(initOptions.bigcommerce_payments_fastlane.onError).toHaveBeenCalledWith({
+                    translationKey: 'payment.errors.invalid_request_error',
+                });
+            }
         });
     });
 

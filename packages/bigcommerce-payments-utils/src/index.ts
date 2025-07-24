@@ -21,3 +21,5 @@ export { default as PayPalSdkHelper } from './paypal-sdk-helper';
  */
 export { default as createBigCommercePaymentsFastlaneUtils } from './create-bigcommerce-payments-fastlane-utils';
 export { default as BigCommercePaymentsFastlaneUtils } from './bigcommerce-payments-fastlane-utils';
+
+export { default as isBigcommerceFastlaneRequestError } from './utils/is-bigcommerce-fastlane-request-error';
