@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.775.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.774.0...v1.775.0) (2025-07-24)
+
+
+### Features
+
+* **payment:** Added liability shift processing for BCP FL ([#2940](https://github.com/bigcommerce/checkout-sdk-js/issues/2940)) ([df840cc](https://github.com/bigcommerce/checkout-sdk-js/commit/df840cc2e138aad54810de27fd991870db50bf72))
+
 ## [1.774.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.773.0...v1.774.0) (2025-07-23)
 
 
