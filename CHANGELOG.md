@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.776.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.775.0...v1.776.0) (2025-07-24)
+
+
+### Features
+
+* **payment:** Added BCP FL corresponding error for 422 payment status ([#2941](https://github.com/bigcommerce/checkout-sdk-js/issues/2941)) ([255fcfe](https://github.com/bigcommerce/checkout-sdk-js/commit/255fcfea3722bc8af5190e8cbf565e8504cfe6d9))
+
 ## [1.775.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.774.0...v1.775.0) (2025-07-24)
 
 
