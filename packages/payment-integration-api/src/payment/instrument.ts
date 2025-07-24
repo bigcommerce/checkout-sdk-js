@@ -1,4 +1,4 @@
-type PaymentInstrument = CardInstrument | AccountInstrument;
+type PaymentInstrument = | CardInstrument | AccountInstrument;
 
 export default PaymentInstrument;
 

@@ -4,7 +4,7 @@ import {
     Address,
     LegacyAddress,
     NotInitializedError,
-    NotInitializedErrorType,
+    NotInitializedErrorType, UnsupportedBrowserError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
@@ -23,12 +23,13 @@ import {
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
-    BraintreeShippingAddressOverride,
+    BraintreeShippingAddressOverride, BraintreeThreeDSecure,
     BraintreeTokenizationDetails,
-    BraintreeTokenizePayload,
+    BraintreeTokenizePayload, BraintreeVenmoCheckout,
     PAYPAL_COMPONENTS,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
+import { BraintreeVenmoCreatorConfig } from '../../core/src/payment/strategies/braintree';
 
 export interface PaypalConfig {
     amount: number;
@@ -47,6 +48,8 @@ export default class BraintreeIntegrationService {
     private dataCollectors: BraintreeDataCollectors = {};
     private paypalCheckout?: BraintreePaypalCheckout;
     private braintreePaypal?: Promise<BraintreePaypal>;
+    private threeDS?: Promise<BraintreeThreeDSecure>;
+    private venmoCheckout?: Promise<BraintreeVenmoCheckout>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -97,7 +100,6 @@ export default class BraintreeIntegrationService {
         if (!this.client) {
             const clientToken = this.getClientTokenOrThrow();
             const clientCreator = await this.braintreeScriptLoader.loadClient();
-
             this.client = clientCreator.create({ authorization: clientToken });
         }
 
@@ -306,6 +308,54 @@ export default class BraintreeIntegrationService {
 
         // await this.teardownModule(this._visaCheckout);
         // this._visaCheckout = undefined;
+    }
+
+    get3DS(): Promise<BraintreeThreeDSecure> {
+        if (!this.threeDS) {
+            this.threeDS = Promise.all([this.getClient(), this.braintreeScriptLoader.load3DS()]).then(
+                ([client, threeDSecure]) => threeDSecure.create({ client, version: 2 }),
+            );
+        }
+
+        return this.threeDS;
+    }
+
+    async getVenmoCheckout(
+        onSuccess: (braintreeVenmoCheckout: BraintreeVenmoCheckout) => void,
+        onError: (error: BraintreeError | UnsupportedBrowserError) => void,
+        venmoConfig?: BraintreeVenmoCreatorConfig,
+    ): Promise<BraintreeVenmoCheckout> {
+        if (!this.venmoCheckout) {
+            const client = await this.getClient();
+
+            const venmoCheckout = await this.braintreeScriptLoader.loadVenmoCheckout();
+
+            const venmoCheckoutConfig = {
+                client,
+                allowDesktop: true,
+                paymentMethodUsage: 'multi_use',
+                ...(venmoConfig || {}),
+            };
+
+            const venmoCheckoutCallback = (
+                error: BraintreeError,
+                braintreeVenmoCheckout: BraintreeVenmoCheckout,
+            ): void => {
+                if (error) {
+                    return onError(error);
+                }
+
+                if (!braintreeVenmoCheckout.isBrowserSupported()) {
+                    return onError(new UnsupportedBrowserError());
+                }
+
+                onSuccess(braintreeVenmoCheckout);
+            };
+
+            this.venmoCheckout = venmoCheckout.create(venmoCheckoutConfig, venmoCheckoutCallback);
+        }
+
+        return this.venmoCheckout;
     }
 
     private teardownModule(module?: BraintreeModule) {

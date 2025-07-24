@@ -43,6 +43,7 @@ export function getModuleCreatorMock<T>(
  */
 export function getClientMock(): BraintreeClient {
     return {
+        getVersion: jest.fn(),
         request: jest.fn(),
     };
 }

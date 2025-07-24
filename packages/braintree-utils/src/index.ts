@@ -13,3 +13,5 @@ export { BRAINTREE_SDK_STABLE_VERSION } from './braintree-sdk-verison';
 
 export { default as mapToLegacyBillingAddress } from './map-to-legacy-billing-address';
 export { default as mapToLegacyShippingAddress } from './map-to-legacy-shipping-address';
+
+export { default as BraintreePaymentProcessor } from './braintree-payment-processor';
