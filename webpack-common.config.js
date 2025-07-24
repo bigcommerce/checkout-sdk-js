@@ -1,9 +1,10 @@
 const path = require('path');
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 
 const {
     getNextVersion,
-    packageLoaderRules: { aliasMap: alias, tsSrcPackages },
+    packageLoaderRules: { aliasMap: alias, esbuildSrcPackages },
 } = require('./scripts/webpack');
 
 const libraryName = 'checkoutKit';
@@ -54,7 +55,7 @@ async function getBaseConfig() {
                     enforce: 'pre',
                     loader: require.resolve('source-map-loader'),
                 },
-                ...tsSrcPackages,
+                ...esbuildSrcPackages,
             ],
         },
         plugins: [
@@ -69,31 +70,40 @@ const babelEnvPreset = [
     '@babel/preset-env',
     {
         corejs: 3,
-        targets: ['defaults', 'ie 11'],
+        targets: ['defaults'], // Removed IE 11 support
         useBuiltIns: 'usage',
     },
 ];
 
+// Keep babel-loader rules for fallback/comparison (also exclude node_modules)
 const babelLoaderRules = [
     {
         test: /\.[tj]s$/,
         loader: 'babel-loader',
         include: coreSrcPath,
+        exclude: /node_modules/,
         options: {
             presets: [babelEnvPreset],
-        },
-    },
-    {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        include: path.join(__dirname, 'node_modules'),
-        exclude: [/\/node_modules\/core-js\//, /\/node_modules\/webpack\//],
-        options: {
-            presets: [babelEnvPreset],
-            sourceType: 'unambiguous',
         },
     },
 ];
+
+// Speed measure plugin wrapper function
+function wrapWithSpeedMeasurePlugin(config) {
+    if (process.env.WEBPACK_ANALYZE_SPEED) {
+        const smp = new SpeedMeasurePlugin({
+            outputFormat: 'human',
+            outputTarget: (data) => {
+                // eslint-disable-next-line no-console
+                console.log(data);
+            },
+        });
+
+        return smp.wrap(config);
+    }
+
+    return config;
+}
 
 module.exports = {
     babelLoaderRules,
@@ -101,4 +111,5 @@ module.exports = {
     libraryEntries,
     libraryName,
     coreSrcPath,
+    wrapWithSpeedMeasurePlugin,
 };
