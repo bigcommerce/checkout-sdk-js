@@ -48,7 +48,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         );
         strategy = new MockButtonStrategy();
         store = createCheckoutStore();
-        registryV2 = createCheckoutButtonRegistryV2(createPaymentIntegrationService(store));
+        registryV2 = createCheckoutButtonRegistryV2(createPaymentIntegrationService(store), {});
         registry.register(CheckoutButtonMethodType.MASTERPASS, () => strategy);
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(() =>
