@@ -28,7 +28,8 @@ import {
     WorkerExtensionMessenger,
 } from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
+import * as customerStrategyFactories from '../generated/customer-strategies';
+import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
@@ -137,12 +138,19 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         formFieldsActionCreator,
     );
     const paymentIntegrationService = createPaymentIntegrationService(store);
+
+    // eslint-disable-next-line no-console
+    console.log('Registering payment strategies...');
+
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        defaultPaymentStrategyFactories,
+        process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
         { useFallback: true },
     );
-    const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
+    const customerRegistryV2 = createCustomerStrategyRegistryV2(
+        paymentIntegrationService,
+        process.env.ESSENTIAL_BUILD ? {} : customerStrategyFactories,
+    );
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(requestSender),
     );
@@ -192,6 +200,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             registryV2,
             orderActionCreator,
             spamProtectionActionCreator,
+            paymentIntegrationService,
         ),
         new PickupOptionActionCreator(new PickupOptionRequestSender(requestSender)),
         new ShippingCountryActionCreator(

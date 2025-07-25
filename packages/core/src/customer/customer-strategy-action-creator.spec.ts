@@ -67,7 +67,7 @@ describe('CustomerStrategyActionCreator', () => {
 
         const paymentIntegrationService = createPaymentIntegrationService(store);
 
-        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
+        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService, {});
         registry = createCustomerStrategyRegistry(store, createRequestSender(), 'en');
         strategy = new DefaultCustomerStrategy(
             store,

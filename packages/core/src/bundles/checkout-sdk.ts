@@ -14,3 +14,5 @@ export {
 export { createStoredCardHostedFormService } from '../hosted-form';
 export { createBodlService } from '../bodl';
 export { ExtensionCommandType, ExtensionQueryType, ExtensionQueryMap } from '../extension';
+
+export { default as createGooglePayAuthorizeNetPaymentStrategy } from '../../../google-pay-integration/src/factories/payment/create-google-pay-authorizenet-payment-strategy';

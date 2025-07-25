@@ -19,10 +19,30 @@
                 }
             ]
         },
+        "build-analyze": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "commands": [
+                    "webpack --config webpack.config.js --config-name umd --profile --json > webpack-stats.json",
+                    "webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip"
+                ],
+                "parallel": false
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                },
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
+        },
         "build-watch": {
             "executor": "@nrwl/workspace:run-commands",
             "options": {
-                "command": "webpack --config webpack.config.js --config-name cjs --watch --progress"
+                "command": "webpack --config webpack.config.js --config-name esm --watch --progress"
             },
             "dependsOn": [
                 {

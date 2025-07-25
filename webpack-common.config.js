@@ -60,6 +60,7 @@ async function getBaseConfig() {
         plugins: [
             new DefinePlugin({
                 LIBRARY_VERSION: JSON.stringify(await getNextVersion()),
+                'process.env.ESSENTIAL_BUILD': JSON.stringify(process.env.ESSENTIAL_BUILD || true),
             }),
         ],
     };
@@ -69,7 +70,7 @@ const babelEnvPreset = [
     '@babel/preset-env',
     {
         corejs: 3,
-        targets: ['es6'],
+        targets: ['defaults'],
         useBuiltIns: 'usage',
     },
 ];

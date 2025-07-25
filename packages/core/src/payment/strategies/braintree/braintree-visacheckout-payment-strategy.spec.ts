@@ -108,7 +108,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             'en_US',
         );
         const paymentIntegrationService = createPaymentIntegrationService(store);
-        const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
+        const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService, {});
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
@@ -132,6 +132,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
                 spamProtection,
                 new SpamProtectionRequestSender(requestSender),
             ),
+            paymentIntegrationService,
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient(store)),
