@@ -111,9 +111,32 @@ export function getVisaCheckoutMock(): BraintreeVisaCheckout {
     };
 }
 
+const mockHtmlElement = {
+    tagName: 'DIV',
+} as unknown as HTMLElement;
+
+const hostedFieldMock = {
+    container: mockHtmlElement,
+    isFocused: true,
+    isEmpty: true,
+    isPotentiallyValid: true,
+    isValid: true,
+}
+
 export function getHostedFieldsMock(): BraintreeHostedFields {
     return {
-        getState: jest.fn(),
+        getState: () => ({
+            cards: [],
+            emittedBy: 'bank',
+            fields: {
+                number: hostedFieldMock,
+                expirationDate: hostedFieldMock,
+                expirationMonth: hostedFieldMock,
+                expirationYear: hostedFieldMock,
+                cvv: hostedFieldMock,
+                postalCode: hostedFieldMock,
+            },
+        }),
         teardown: jest.fn(() => Promise.resolve()),
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

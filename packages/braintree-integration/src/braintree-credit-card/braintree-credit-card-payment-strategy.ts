@@ -5,24 +5,24 @@ import {
   isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
-  Address,
-  isHostedInstrumentLike,
-  isVaultedInstrument,
-  MissingDataError,
-  MissingDataErrorType,
-  OrderRequestBody,
-  OrderFinalizationNotRequiredError,
-  OrderPaymentRequestBody,
-  PaymentArgumentInvalidError,
-  PaymentInitializeOptions,
-  PaymentInstrument,
-  PaymentInstrumentMeta,
-  PaymentIntegrationService,
-  PaymentMethod,
-  PaymentMethodFailedError,
-  PaymentStrategy,
-  RequestError,
-  NonceInstrument,
+    Address,
+    isHostedInstrumentLike,
+    isVaultedInstrument,
+    MissingDataError,
+    MissingDataErrorType,
+    OrderRequestBody,
+    OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
+    PaymentArgumentInvalidError,
+    PaymentInstrument,
+    PaymentInstrumentMeta,
+    PaymentIntegrationService,
+    PaymentMethod,
+    PaymentMethodFailedError,
+    PaymentStrategy,
+    RequestError,
+    NonceInstrument,
+    PaymentInitializeOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
 import { WithBraintreeCreditCardPaymentInitializeOptions } from './braintree-credit-card-payment-initialize-options';
@@ -61,7 +61,9 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         await this.braintreeHostedForm.initialize(
           braintree.form,
           braintree.unsupportedCardBrands,
+          clientToken,
         );
+
         this.isHostedFormInitialized =
           this.braintreeHostedForm.isInitialized();
       }
@@ -99,7 +101,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
     try {
       await this.paymentIntegrationService.submitOrder(order);
-
       const paymentData = this.isHostedFormInitialized
         ? await this.prepareHostedPaymentData(payment, billingAddress, orderAmount)
         : await this.preparePaymentData(payment, billingAddress, orderAmount);
@@ -142,6 +143,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     const commonPaymentData = { deviceSessionId: this.deviceSessionId };
 
     if (this.isSubmittingWithStoredCard(payment)) {
+      //@ts-ignore
       return {
         ...commonPaymentData,
         ...paymentData,
@@ -157,6 +159,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
     return {
       ...commonPaymentData,
+      //@ts-ignore
       nonce,
       shouldSaveInstrument,
       shouldSetAsDefaultInstrument,
@@ -178,6 +181,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
       return {
         ...commonPaymentData,
         ...paymentData,
+        //@ts-ignore
         nonce,
       };
     }
@@ -194,6 +198,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
     return {
       ...commonPaymentData,
+      //@ts-ignore
       shouldSaveInstrument,
       shouldSetAsDefaultInstrument,
       nonce,

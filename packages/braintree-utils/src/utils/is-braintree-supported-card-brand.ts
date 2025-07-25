@@ -1,6 +1,5 @@
 import { BraintreeSupportedCardBrands } from '@bigcommerce/checkout-sdk/braintree-utils';
 
-
 export const isBraintreeSupportedCardBrand = (
     cardBrand: string,
 ): cardBrand is BraintreeSupportedCardBrands => {

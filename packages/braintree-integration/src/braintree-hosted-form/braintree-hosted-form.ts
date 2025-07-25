@@ -48,9 +48,10 @@ export default class BraintreeHostedForm {
   async initialize(
     options: BraintreeFormOptions,
     unsupportedCardBrands?: string[],
+    clientToken?: string,
   ): Promise<void> {
+    this.clientToken = clientToken;
     this.formOptions = options;
-
     this.type = isBraintreeFormFieldsMap(options.fields)
       ? BraintreeHostedFormType.CreditCard
       : BraintreeHostedFormType.StoredCardVerification;
@@ -90,6 +91,7 @@ export default class BraintreeHostedForm {
   }
 
   validate() {
+      console.log('VALIDATE');
     if (!this.cardFields) {
       throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
     }
@@ -106,6 +108,7 @@ export default class BraintreeHostedForm {
   }
 
   async tokenize(billingAddress: Address): Promise<TokenizationPayload> {
+      console.log('TOKENIZE');
     if (!this.cardFields) {
       throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
     }
@@ -191,15 +194,14 @@ export default class BraintreeHostedForm {
     return hostedFields.create({ ...options, client });
   }
 
-  getClient(): Promise<BraintreeClient> {
+  async getClient(): Promise<BraintreeClient> {
     if (!this.clientToken) {
       throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
     }
 
     if (!this.client) {
-      this.client = this.braintreeScriptLoader
-        .loadClient()
-        .then((client) => client.create({ authorization: this.clientToken }));
+        const client = await this.braintreeScriptLoader.loadClient();
+        this.client = client.create({ authorization: this.clientToken });
     }
 
     return this.client;
