@@ -1,16 +1,20 @@
-import { BraintreeFormFieldsMap, BraintreeStoredCardFieldsMap } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeFormFieldsMap, BraintreeStoredCardFieldsMap } from '../index';
 
 export function isBraintreeFormFieldsMap(
     fields: BraintreeFormFieldsMap | BraintreeStoredCardFieldsMap,
 ): fields is BraintreeFormFieldsMap {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return !!(fields as BraintreeFormFieldsMap).cardNumber;
 }
 
-export default function isBraintreeStoredCardFieldsMap(
+export function isBraintreeStoredCardFieldsMap(
     fields: BraintreeFormFieldsMap | BraintreeStoredCardFieldsMap,
 ): fields is BraintreeStoredCardFieldsMap {
     return !!(
-        (fields as BraintreeStoredCardFieldsMap).cardCodeVerification ||
-        (fields as BraintreeStoredCardFieldsMap).cardNumberVerification
+        Object.keys(fields).length > 0 &&
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        ((fields as BraintreeStoredCardFieldsMap).cardCodeVerification ||
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            (fields as BraintreeStoredCardFieldsMap).cardNumberVerification)
     );
 }

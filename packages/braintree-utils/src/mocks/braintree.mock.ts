@@ -1,6 +1,10 @@
-import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import {
+    OrderPaymentRequestBody,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import BillingAddress, {
+    BillingAddressState,
     BraintreeFastlane,
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneProfileData,
@@ -22,6 +26,7 @@ import {
 } from '../types';
 
 import { getVisaCheckoutTokenizedPayload } from './visacheckout.mock';
+import { getOrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 export function getBraintree(): PaymentMethod {
     return {
@@ -111,9 +116,69 @@ export function getVisaCheckoutMock(): BraintreeVisaCheckout {
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockHtmlElement = {
+    tagName: 'DIV',
+} as unknown as HTMLElement;
+
+const hostedFieldMock = {
+    container: mockHtmlElement,
+    isFocused: true,
+    isEmpty: true,
+    isPotentiallyValid: true,
+    isValid: true,
+};
+
+export function getBraintreePaymentData(): OrderPaymentRequestBody {
+    return {
+        ...getOrderRequestBody().payment,
+        methodId: 'braintree',
+    };
+}
+
+export function getBillingAddress(): BillingAddress {
+    return {
+        id: '55c96cda6f04c',
+        firstName: 'Test',
+        lastName: 'Tester',
+        email: 'test@bigcommerce.com',
+        company: 'Bigcommerce',
+        address1: '12345 Testing Way',
+        address2: '',
+        city: 'Some City',
+        stateOrProvince: 'California',
+        stateOrProvinceCode: 'CA',
+        country: 'United States',
+        countryCode: 'US',
+        postalCode: '95555',
+        shouldSaveAddress: true,
+        phone: '555-555-5555',
+        customFields: [],
+    };
+}
+
+export function getBillingAddressState(): BillingAddressState {
+    return {
+        data: getBillingAddress(),
+        errors: {},
+        statuses: {},
+    };
+}
+
 export function getHostedFieldsMock(): BraintreeHostedFields {
     return {
-        getState: jest.fn(),
+        getState: () => ({
+            cards: [],
+            emittedBy: 'bank',
+            fields: {
+                number: hostedFieldMock,
+                expirationDate: hostedFieldMock,
+                expirationMonth: hostedFieldMock,
+                expirationYear: hostedFieldMock,
+                cvv: hostedFieldMock,
+                postalCode: hostedFieldMock,
+            },
+        }),
         teardown: jest.fn(() => Promise.resolve()),
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

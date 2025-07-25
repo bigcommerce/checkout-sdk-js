@@ -38,7 +38,8 @@ import {
     BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
     BraintreeVerifyPayload,
-    PAYPAL_COMPONENTS, TokenizationPayload,
+    PAYPAL_COMPONENTS,
+    TokenizationPayload,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
 import { isEmpty } from 'lodash';
@@ -70,8 +71,9 @@ export default class BraintreeIntegrationService {
         private overlay?: Overlay,
     ) {}
 
-    initialize(clientToken: string) {
+    initialize(clientToken: string, threeDSecureOptions?: BraintreeThreeDSecureOptions) {
         this.clientToken = clientToken;
+        this.threeDSecureOptions = threeDSecureOptions;
     }
 
     async getBraintreeFastlane(
@@ -324,22 +326,25 @@ export default class BraintreeIntegrationService {
         // this._visaCheckout = undefined;
     }
 
-    private teardownModule(module?: BraintreeModule) {
-        return module ? module.teardown() : Promise.resolve();
-    }
-
-    private getClientTokenOrThrow(): string {
-        if (!this.clientToken) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+    async get3DS(): Promise<BraintreeThreeDSecure> {
+        if (!this.threeDS) {
+            this.threeDS = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.load3DS(),
+            ]).then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2 }));
         }
 
-        return this.clientToken;
+        return this.threeDS;
     }
 
     /*
-        Braintree Credit Card and Braintree Hosted Form
-    */
-    async verifyCard(payment: Payment, billingAddress: Address, amount: number): Promise<NonceInstrument> {
+       Braintree Credit Card and Braintree Hosted Form
+   */
+    async verifyCard(
+        payment: Payment,
+        billingAddress: Address,
+        amount: number,
+    ): Promise<NonceInstrument> {
         const tokenizationPayload = await this.tokenizeCard(payment, billingAddress);
 
         return this.challenge3DSVerification(tokenizationPayload, amount);
@@ -364,8 +369,29 @@ export default class BraintreeIntegrationService {
 
         return {
             nonce: creditCards[0].nonce,
-            bin: creditCards[0].details?.bin,
+            bin: creditCards[0].details.bin,
         };
+    }
+
+    async challenge3DSVerification(
+        tokenizationPayload: TokenizationPayload,
+        amount: number,
+    ): Promise<BraintreeVerifyPayload> {
+        const threeDSecure = await this.get3DS();
+
+        return this.present3DSChallenge(threeDSecure, amount, tokenizationPayload);
+    }
+
+    private teardownModule(module?: BraintreeModule) {
+        return module ? module.teardown() : Promise.resolve();
+    }
+
+    private getClientTokenOrThrow(): string {
+        if (!this.clientToken) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this.clientToken;
     }
 
     private getErrorsRequiredFields(
@@ -383,6 +409,7 @@ export default class BraintreeIntegrationService {
             ];
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!ccExpiry) {
             errors.ccExpiry = [
                 {
@@ -425,22 +452,6 @@ export default class BraintreeIntegrationService {
         };
     }
 
-    async challenge3DSVerification(tokenizationPayload: TokenizationPayload, amount: number): Promise<BraintreeVerifyPayload> {
-        const threeDSecure = await this.get3DS();
-
-        return this.present3DSChallenge(threeDSecure, amount, tokenizationPayload);
-    }
-
-    get3DS(): Promise<BraintreeThreeDSecure> {
-        if (!this.threeDS) {
-            this.threeDS = Promise.all([this.getClient(), this.braintreeScriptLoader.load3DS()]).then(
-                ([client, threeDSecure]) => threeDSecure.create({ client, version: 2 }),
-            );
-        }
-
-        return this.threeDS;
-    }
-
     private present3DSChallenge(
         threeDSecure: BraintreeThreeDSecure,
         amount: number,
@@ -460,7 +471,7 @@ export default class BraintreeIntegrationService {
         } = this.threeDSecureOptions;
         const cancelVerifyCard = async () => {
             const response = await threeDSecure.cancelVerifyCard();
-
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             verification.cancel(new PaymentMethodCancelledError());
 
             return response;
@@ -489,5 +500,5 @@ export default class BraintreeIntegrationService {
         );
 
         return verification.promise;
-    };
+    }
 }

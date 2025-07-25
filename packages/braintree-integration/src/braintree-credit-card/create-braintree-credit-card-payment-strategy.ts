@@ -1,46 +1,45 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-  BraintreeHostWindow,
-  BraintreeIntegrationService,
-  BraintreeScriptLoader,
-  BraintreeSDKVersionManager,
+    BraintreeHostWindow,
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import {
-  PaymentStrategyFactory,
-  toResolvableModule,
+    PaymentStrategyFactory,
+    toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
 
 const createBraintreeCreditCardPaymentStrategy: PaymentStrategyFactory<
-  BraintreeCreditCardPaymentStrategy
+    BraintreeCreditCardPaymentStrategy
 > = (paymentIntegrationService) => {
-  const braintreeHostWindow: BraintreeHostWindow = window;
-  const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
-  const braintreeIntegrationService = new BraintreeIntegrationService(
-    new BraintreeScriptLoader(
-      getScriptLoader(),
-      braintreeHostWindow,
-      braintreeSDKVersionManager,
-    ),
-    braintreeHostWindow,
-  );
-  const braintreeScriptLoader = new BraintreeScriptLoader(
-    getScriptLoader(),
-    braintreeHostWindow,
-    braintreeSDKVersionManager,
-  );
+    const braintreeHostWindow: BraintreeHostWindow = window;
 
-  const braintreeHostedForm = new BraintreeHostedForm(braintreeScriptLoader);
+    const braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
 
-  return new BraintreeCreditCardPaymentStrategy(
-    paymentIntegrationService,
-    braintreeIntegrationService,
-    braintreeHostedForm,
-  );
+    const braintreeScriptLoader = new BraintreeScriptLoader(
+        getScriptLoader(),
+        braintreeHostWindow,
+        braintreeSDKVersionManager,
+    );
+
+    const braintreeIntegrationService = new BraintreeIntegrationService(
+        braintreeScriptLoader,
+        braintreeHostWindow,
+    );
+
+    const braintreeHostedForm = new BraintreeHostedForm(braintreeScriptLoader);
+
+    return new BraintreeCreditCardPaymentStrategy(
+        paymentIntegrationService,
+        braintreeIntegrationService,
+        braintreeHostedForm,
+    );
 };
 
-export default toResolvableModule(createBraintreeCreditCardPaymentStrategy, [
-  { id: 'braintree' },
-]);
+export default toResolvableModule(createBraintreeCreditCardPaymentStrategy, [{ id: 'braintree' }]);

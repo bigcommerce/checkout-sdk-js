@@ -1,3 +1,5 @@
+import { Address } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 export * from './braintree';
 export * from './paypal';
 export * from './visacheckout';
@@ -720,6 +722,11 @@ export interface BraintreeRedirectError {
     };
 }
 
+export default interface BillingAddress extends Address {
+    id: string;
+    email?: string;
+}
+
 export enum BraintreeSupportedCardBrands {
     Visa = 'visa',
     Mastercard = 'mastercard',
@@ -733,6 +740,24 @@ export enum BraintreeSupportedCardBrands {
     Mir = 'mir',
     Hiper = 'hiper',
     Hipercard = 'hipercard',
+}
+
+export interface BillingAddressState {
+    data?: BillingAddress;
+    errors: BillingAddressErrorsState;
+    statuses: BillingAddressStatusesState;
+}
+
+export interface BillingAddressErrorsState {
+    loadError?: Error;
+    updateError?: Error;
+    continueAsGuestError?: Error;
+}
+
+export interface BillingAddressStatusesState {
+    isLoading?: boolean;
+    isUpdating?: boolean;
+    isContinuingAsGuest?: boolean;
 }
 
 export interface BraintreeRequestData {
