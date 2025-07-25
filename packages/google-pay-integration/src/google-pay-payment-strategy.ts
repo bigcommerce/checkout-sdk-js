@@ -7,6 +7,7 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
+    Omit,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,

@@ -1,7 +1,10 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
-import { CustomerStrategy as CustomerStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    CustomerStrategy as CustomerStrategyV2,
+    PaymentIntegrationService,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
@@ -28,6 +31,7 @@ export default class CustomerStrategyActionCreator {
     constructor(
         private _strategyRegistry: Registry<CustomerStrategy>,
         private _strategyRegistryV2: CustomerStrategyRegistryV2,
+        private _paymentIntegrationService: PaymentIntegrationService,
     ) {}
 
     signIn(
@@ -139,6 +143,18 @@ export default class CustomerStrategyActionCreator {
                 const state = store.getState();
                 const methodId = options && options.methodId;
                 const meta = { methodId };
+
+                if (options?.integrations) {
+                    Object.entries(options.integrations).forEach(([id, factory]) => {
+                        if (this._strategyRegistryV2.get({ id })) {
+                            return;
+                        }
+
+                        this._strategyRegistryV2.register({ id }, () =>
+                            factory(this._paymentIntegrationService),
+                        );
+                    });
+                }
 
                 if (methodId && state.customerStrategies.isInitialized(methodId)) {
                     return observer.complete();

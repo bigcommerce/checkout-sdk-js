@@ -3,6 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { createCheckoutStore } from '../checkout';
 import { ConfigState } from '../config';
+import * as defaultCheckoutButtonStrategyFactories from '../generated/checkout-button-strategies';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 
@@ -53,7 +54,10 @@ export default function createCheckoutButtonInitializer(
     const requestSender = createRequestSender({ host });
     const formPoster = createFormPoster({ host });
     const paymentIntegrationService = createPaymentIntegrationService(store);
-    const registryV2 = createCheckoutButtonRegistryV2(paymentIntegrationService);
+    const registryV2 = createCheckoutButtonRegistryV2(
+        paymentIntegrationService,
+        process.env.ESSENTIAL_BUILD ? {} : defaultCheckoutButtonStrategyFactories,
+    );
 
     return new CheckoutButtonInitializer(
         store,

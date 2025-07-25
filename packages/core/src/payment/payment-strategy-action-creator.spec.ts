@@ -13,6 +13,7 @@ import {
 import { createNoPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
     OrderFinalizationNotRequiredError as OrderFinalizationNotRequiredErrorV2,
+    PaymentIntegrationService,
     PaymentStrategyResolveId,
     PaymentStrategy as PaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -32,7 +33,7 @@ import {
 import { MissingDataError } from '../common/error/errors';
 import { ResolveIdRegistry } from '../common/registry';
 import { getCustomerState } from '../customer/customers.mock';
-import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
+import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
@@ -75,6 +76,7 @@ describe('PaymentStrategyActionCreator', () => {
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let actionCreator: PaymentStrategyActionCreator;
+    let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
@@ -97,12 +99,14 @@ describe('PaymentStrategyActionCreator', () => {
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
 
-        const paymentIntegrationService = createPaymentIntegrationService(store);
+        paymentIntegrationService = createPaymentIntegrationService(store);
 
         registryV2 = createPaymentStrategyRegistryV2(
             paymentIntegrationService,
-            defaultPaymentStrategyFactories,
-            { useFallback: true },
+            paymentStrategyFactories,
+            {
+                useFallback: true,
+            },
         );
         strategy = new CreditCardPaymentStrategy(
             store,
@@ -126,6 +130,7 @@ describe('PaymentStrategyActionCreator', () => {
             registryV2,
             orderActionCreator,
             spamProtectionActionCreator,
+            paymentIntegrationService,
         );
 
         jest.spyOn(registry, 'getByMethod').mockReturnValue(strategy);
@@ -514,6 +519,7 @@ describe('PaymentStrategyActionCreator', () => {
                 registryV2,
                 orderActionCreator,
                 spamProtectionActionCreator,
+                paymentIntegrationService,
             );
 
             try {
@@ -548,6 +554,7 @@ describe('PaymentStrategyActionCreator', () => {
                 registryV2,
                 orderActionCreator,
                 spamProtectionActionCreator,
+                paymentIntegrationService,
             );
             const payload = { ...getOrderRequestBody(), useStoreCredit: true };
 
@@ -663,6 +670,7 @@ describe('PaymentStrategyActionCreator', () => {
                 registryV2,
                 orderActionCreator,
                 spamProtectionActionCreator,
+                paymentIntegrationService,
             );
             const strategyV2 = new CreditCardPaymentStrategyV2(
                 createPaymentIntegrationService(store),
@@ -701,6 +709,7 @@ describe('PaymentStrategyActionCreator', () => {
                 registryV2,
                 orderActionCreator,
                 spamProtectionActionCreator,
+                paymentIntegrationService,
             );
 
             try {

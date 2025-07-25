@@ -7,7 +7,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { ResolveIdRegistry } from '../common/registry';
-import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
 
 export interface PaymentStrategyFactories {
     [key: string]: PaymentStrategyFactory<PaymentStrategy>;
@@ -15,7 +14,7 @@ export interface PaymentStrategyFactories {
 
 export default function createPaymentStrategyRegistry(
     paymentIntegrationService: PaymentIntegrationService,
-    paymentStrategyFactories: PaymentStrategyFactories = defaultPaymentStrategyFactories,
+    paymentStrategyFactories: PaymentStrategyFactories,
     options: { useFallback: boolean } = { useFallback: false },
 ): ResolveIdRegistry<PaymentStrategy, PaymentStrategyResolveId> {
     const { useFallback } = options;

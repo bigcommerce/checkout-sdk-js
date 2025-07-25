@@ -1,3 +1,8 @@
+import {
+    CustomerStrategy,
+    CustomerStrategyFactory,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { RequestOptions } from '../common/http-request';
 
 import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
@@ -27,6 +32,11 @@ export interface CustomerRequestOptions extends RequestOptions {
  */
 export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
+
+    /**
+     * @alpha
+     */
+    integrations?: Record<string, CustomerStrategyFactory<CustomerStrategy>>;
 
     /**
      * The options that are required to initialize the Masterpass payment method.
