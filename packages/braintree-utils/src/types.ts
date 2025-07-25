@@ -719,3 +719,41 @@ export interface BraintreeRedirectError {
         };
     };
 }
+
+export enum BraintreeSupportedCardBrands {
+    Visa = 'visa',
+    Mastercard = 'mastercard',
+    AmericanExpress = 'american-express',
+    DinersClub = 'diners-club',
+    Discover = 'discover',
+    Jcb = 'jcb',
+    UnionPay = 'union-pay',
+    Maestro = 'maestro',
+    Elo = 'elo',
+    Mir = 'mir',
+    Hiper = 'hiper',
+    Hipercard = 'hipercard',
+}
+
+export interface BraintreeRequestData {
+    data: {
+        creditCard: {
+            billingAddress?: {
+                countryCodeAlpha2: string;
+                locality: string;
+                countryName: string;
+                postalCode: string;
+                streetAddress: string;
+            };
+            cardholderName: string;
+            cvv?: string;
+            expirationDate: string;
+            number: string;
+            options: {
+                validate: boolean;
+            };
+        };
+    };
+    endpoint: string;
+    method: string;
+}
