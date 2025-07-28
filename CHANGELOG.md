@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.777.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.777.0...v1.777.1) (2025-07-28)
+
+
+### Bug Fixes
+
+* **payment:** Stripe Link v2 Klarna disable ([9b253b9](https://github.com/bigcommerce/checkout-sdk-js/commit/9b253b942860f324d40c013c7d33fb39917432da))
+
 ## [1.777.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.776.0...v1.777.0) (2025-07-28)
 
 
