@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.778.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.777.1...v1.778.0) (2025-07-28)
+
+
+### Features
+
+* **payment:** update braintree version ([#2943](https://github.com/bigcommerce/checkout-sdk-js/issues/2943)) ([74b075c](https://github.com/bigcommerce/checkout-sdk-js/commit/74b075c164b3222634c7b36171ad56e9a8d705c4))
+
+### [1.777.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.777.0...v1.777.1) (2025-07-28)
+
+
+### Bug Fixes
+
+* **payment:** Stripe Link v2 Klarna disable ([9b253b9](https://github.com/bigcommerce/checkout-sdk-js/commit/9b253b942860f324d40c013c7d33fb39917432da))
+
+## [1.777.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.776.0...v1.777.0) (2025-07-28)
+
+
+### Features
+
+* **payment:** Address is not populated to Klarna modal ([#2939](https://github.com/bigcommerce/checkout-sdk-js/issues/2939)) ([8c07840](https://github.com/bigcommerce/checkout-sdk-js/commit/8c0784009c5fdacdbbb5ebf3b72fd040f94c2603))
+
 ## [1.776.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.775.0...v1.776.0) (2025-07-24)
 
 

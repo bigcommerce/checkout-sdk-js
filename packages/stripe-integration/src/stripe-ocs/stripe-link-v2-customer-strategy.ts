@@ -140,6 +140,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
                 googlePay: StripeStringConstants.NEVER,
                 amazonPay: StripeStringConstants.NEVER,
                 paypal: StripeStringConstants.NEVER,
+                klarna: StripeStringConstants.NEVER,
             },
             // Minimal buttonHeight value is 40
             buttonHeight,

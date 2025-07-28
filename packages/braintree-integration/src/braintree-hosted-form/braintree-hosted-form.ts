@@ -305,15 +305,20 @@ export default class BraintreeHostedForm {
     private mapErrors(fields: BraintreeHostedFieldsState['fields']): BraintreeFormErrorsData {
         const errors: BraintreeFormErrorsData = {};
 
-        Object.entries(fields).forEach(([key, value]) => {
-            if (value && this.isValidParam(key)) {
-                errors[key] = {
-                    isValid: value.isValid,
-                    isEmpty: value.isEmpty,
-                    isPotentiallyValid: value.isPotentiallyValid,
-                };
+        if (fields) {
+            // eslint-disable-next-line no-restricted-syntax
+            for (const [key, value] of Object.entries(fields)) {
+                if (value && this.isValidParam(key)) {
+                    const { isValid, isEmpty, isPotentiallyValid } = value;
+
+                    errors[key] = {
+                        isValid,
+                        isEmpty,
+                        isPotentiallyValid,
+                    };
+                }
             }
-        });
+        }
 
         return errors;
     }
@@ -321,14 +326,15 @@ export default class BraintreeHostedForm {
     private mapValidationErrors(
         fields: BraintreeHostedFieldsState['fields'],
     ): BraintreeFormFieldValidateEventData['errors'] {
-        return Object.keys(fields).reduce((result, fieldKey) => {
-            const key = fieldKey as keyof BraintreeHostedFieldsState['fields'];
-            const type = this.mapFieldType(key);
-            return {
+        return (Object.keys(fields) as Array<keyof BraintreeHostedFieldsState['fields']>).reduce(
+            (result, fieldKey) => ({
                 ...result,
-                [type]: fields[key]?.isValid ? undefined : [this.createInvalidError(type)],
-            };
-        }, {});
+                [this.mapFieldType(fieldKey)]: fields[fieldKey]?.isValid
+                    ? undefined
+                    : [this.createInvalidError(this.mapFieldType(fieldKey))],
+            }),
+            {},
+        );
     }
 
     private mapTokenizeError(

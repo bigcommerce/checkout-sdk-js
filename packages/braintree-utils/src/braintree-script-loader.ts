@@ -160,7 +160,10 @@ export default class BraintreeScriptLoader {
 
         const scriptPath = `//js.braintreegateway.com/web/${braintreeSdkVersion}/js/${fileName}`;
 
-        const integrity = this.getIntegrityValuesByModuleName(braintreeModuleName);
+        const integrity = this.getIntegrityValuesByModuleName(
+            braintreeModuleName,
+            braintreeSdkVersion,
+        );
 
         await this.scriptLoader.loadScript(
             scriptPath,
@@ -191,8 +194,11 @@ export default class BraintreeScriptLoader {
         return this.braintreeHostWindow.braintree?.[braintreeModuleName];
     }
 
-    private getIntegrityValuesByModuleName(moduleName: BraintreeModuleName): string {
-        const integrity = BRAINTREE_SDK_SCRIPTS_INTEGRITY[moduleName];
+    private getIntegrityValuesByModuleName(
+        moduleName: BraintreeModuleName,
+        version: keyof typeof BRAINTREE_SDK_SCRIPTS_INTEGRITY,
+    ): string {
+        const integrity = BRAINTREE_SDK_SCRIPTS_INTEGRITY[version][moduleName];
 
         if (!integrity) {
             throw new Error('Unexpected fileName value');

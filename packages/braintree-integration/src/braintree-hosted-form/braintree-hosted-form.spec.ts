@@ -464,21 +464,21 @@ describe('BraintreeHostedForm', () => {
                         {
                             fieldType: 'cardCode',
                             message: 'Invalid card code',
-                            type: 'invalid_card_code',
+                            type: 'card',
                         },
                     ],
                     cardNumber: [
                         {
                             fieldType: 'cardNumber',
                             message: 'Invalid card number',
-                            type: 'invalid_card_number',
+                            type: 'card',
                         },
                     ],
                     cardExpiry: [
                         {
                             fieldType: 'cardExpiry',
                             message: 'Invalid card expiry',
-                            type: 'invalid_card_expiry',
+                            type: 'card',
                         },
                     ],
                 },
