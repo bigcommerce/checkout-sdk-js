@@ -163,8 +163,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 paymentPayload,
             );
 
-            // TODO: we should probably update this method with removeStorageSessionId for better reading experience
-            this.bigCommercePaymentsFastlaneUtils.updateStorageSessionId(true);
+            this.bigCommercePaymentsFastlaneUtils.removeStorageSessionId();
         } catch (error) {
             if (
                 isBigcommerceFastlaneRequestError(error) &&
@@ -254,10 +253,11 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 authenticationResult.authenticationState ===
                 PayPalFastlaneAuthenticationState.CANCELED;
 
-            this.bigCommercePaymentsFastlaneUtils.updateStorageSessionId(
-                isAuthenticationFlowCanceled,
-                cart.id,
-            );
+            if (isAuthenticationFlowCanceled) {
+                this.bigCommercePaymentsFastlaneUtils.removeStorageSessionId();
+            } else {
+                this.bigCommercePaymentsFastlaneUtils.updateStorageSessionId(cart.id);
+            }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
         }

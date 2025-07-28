@@ -145,10 +145,12 @@ export default class BigCommercePaymentsFastlaneCustomerStrategy implements Cust
             authenticationResult.authenticationState === PayPalFastlaneAuthenticationState.CANCELED;
 
         await this.updateCustomerDataState(methodId, authenticationResult);
-        this.bigCommercePaymentsFastlaneUtils.updateStorageSessionId(
-            isAuthenticationFlowCanceled,
-            cartId,
-        );
+
+        if (isAuthenticationFlowCanceled) {
+            this.bigCommercePaymentsFastlaneUtils.removeStorageSessionId();
+        } else {
+            this.bigCommercePaymentsFastlaneUtils.updateStorageSessionId(cartId);
+        }
     }
 
     private async updateCustomerDataState(
