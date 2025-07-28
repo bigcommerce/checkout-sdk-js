@@ -370,6 +370,7 @@ export interface StripeElementsCreateOptions {
         googlePay: StripeStringConstants.NEVER;
         amazonPay: StripeStringConstants.NEVER;
         paypal: StripeStringConstants.NEVER;
+        klarna: StripeStringConstants.NEVER;
     };
     buttonHeight?: number;
     savePaymentMethod?: StripeSavePaymentMethod;
