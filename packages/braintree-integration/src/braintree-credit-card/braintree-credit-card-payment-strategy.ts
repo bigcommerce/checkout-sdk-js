@@ -45,6 +45,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         options: PaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, gatewayId, braintree } = options;
+        await this.paymentIntegrationService.loadPaymentMethod(methodId);
         const state = this.paymentIntegrationService.getState();
 
         this.paymentMethod = state.getPaymentMethodOrThrow(methodId);
@@ -81,7 +82,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
     async execute(orderRequest: OrderRequestBody): Promise<void> {
         const { payment, ...order } = orderRequest;
-        const state = this.paymentIntegrationService.getState();
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -91,12 +91,12 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             this.braintreeHostedForm.validate();
         }
 
+        await this.paymentIntegrationService.submitOrder(order);
+        const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
         const orderAmount = state.getOrderOrThrow().orderAmount;
 
         try {
-            await this.paymentIntegrationService.submitOrder(order);
-
             const paymentData = this.isHostedFormInitialized
                 ? await this.prepareHostedPaymentData(payment, billingAddress, orderAmount)
                 : await this.preparePaymentData(payment, billingAddress, orderAmount);
