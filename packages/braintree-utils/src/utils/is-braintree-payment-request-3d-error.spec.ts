@@ -3,7 +3,7 @@ import isBraintreePaymentRequest3DSError, {
 } from './is-braintree-payment-request-3ds-error';
 
 describe('isBraintreePaymentRequest3DSError', () => {
-    it('returns true for a valid BraintreePaymentRequest3DSError object', () => {
+    it('returns true for a structurally valid object with all required fields', () => {
         const error: BraintreePaymentRequest3DSError = {
             name: 'SomeError',
             body: {
@@ -18,18 +18,31 @@ describe('isBraintreePaymentRequest3DSError', () => {
         expect(isBraintreePaymentRequest3DSError(error)).toBe(true);
     });
 
-    it('returns false if top-level fields are incorrect', () => {
-        const error = {
-            name: 123,
-            body: {},
+    it('returns false when top-level properties are missing', () => {
+        const error: unknown = {
+            body: {
+                status: '400',
+                three_ds_result: {
+                    payer_auth_request: 'auth',
+                },
+                errors: [],
+            },
         };
 
         expect(isBraintreePaymentRequest3DSError(error)).toBe(false);
     });
 
-    it('returns false if nested fields are missing', () => {
-        const error = {
-            name: 'ErrorName',
+    it('returns false when body is missing', () => {
+        const error: unknown = {
+            name: 'MissingBodyError',
+        };
+
+        expect(isBraintreePaymentRequest3DSError(error)).toBe(false);
+    });
+
+    it('returns false when three_ds_result is missing', () => {
+        const error: unknown = {
+            name: 'Missing3DS',
             body: {
                 status: '400',
                 errors: [],
@@ -39,14 +52,12 @@ describe('isBraintreePaymentRequest3DSError', () => {
         expect(isBraintreePaymentRequest3DSError(error)).toBe(false);
     });
 
-    it('returns false if payer_auth_request is not a string', () => {
-        const error = {
-            name: 'ErrorName',
+    it('returns false when payer_auth_request is missing', () => {
+        const error: unknown = {
+            name: 'MissingAuthRequest',
             body: {
                 status: '400',
-                three_ds_result: {
-                    payer_auth_request: 123,
-                },
+                three_ds_result: {},
                 errors: [],
             },
         };
@@ -54,15 +65,14 @@ describe('isBraintreePaymentRequest3DSError', () => {
         expect(isBraintreePaymentRequest3DSError(error)).toBe(false);
     });
 
-    it('returns false if errors is not an array', () => {
-        const error = {
-            name: 'ErrorName',
+    it('returns false when errors is missing', () => {
+        const error: unknown = {
+            name: 'MissingErrors',
             body: {
                 status: '400',
                 three_ds_result: {
-                    payer_auth_request: 'valid',
+                    payer_auth_request: 'some-auth-request',
                 },
-                errors: null,
             },
         };
 
