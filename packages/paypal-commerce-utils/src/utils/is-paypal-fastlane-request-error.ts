@@ -2,7 +2,9 @@ export interface PaypalFastlaneRequestError {
     name: string;
     message: string;
     response: {
-        name: string;
+        body: {
+            name: string;
+        };
     };
 }
 
@@ -14,6 +16,7 @@ export default function isPaypalFastlaneRequestError(
         error !== null &&
         'message' in error &&
         'response' in error &&
-        'name' in (error as PaypalFastlaneRequestError).response
+        'body' in (error as PaypalFastlaneRequestError).response &&
+        'name' in (error as PaypalFastlaneRequestError).response.body
     );
 }
