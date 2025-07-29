@@ -3,6 +3,7 @@ import { some } from 'lodash';
 import {
     BraintreeIntegrationService,
     isBraintreeAcceleratedCheckoutCustomer,
+    isBraintreePaymentRequest3DSError,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 import {
@@ -23,7 +24,6 @@ import {
     PaymentMethod,
     PaymentMethodFailedError,
     PaymentStrategy,
-    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
@@ -44,6 +44,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     async initialize(
         options: PaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions,
     ): Promise<void> {
+        console.log('PACKAGES');
         const { methodId, gatewayId, braintree } = options;
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
         const state = this.paymentIntegrationService.getState();
@@ -218,14 +219,16 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         orderAmount: number,
     ): Promise<void> {
         if (
-            !(error instanceof RequestError) ||
-            !some(error.body.errors, { code: 'three_d_secure_required' })
+            isBraintreePaymentRequest3DSError(error) &&
+            (error.name !== 'RequestError' ||
+                !some(error.body.errors, { code: 'three_d_secure_required' }))
         ) {
             return this.handleError(error);
         }
 
         try {
-            const { payer_auth_request: storedCreditCardNonce } = error.body.three_ds_result || {};
+            const { payer_auth_request: storedCreditCardNonce } =
+                (isBraintreePaymentRequest3DSError(error) && error.body.three_ds_result) || {};
             const { paymentData } = payment;
             const state = this.paymentIntegrationService.getState();
 
@@ -236,7 +239,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             const instrument = state.getCardInstrumentOrThrow(paymentData.instrumentId);
             const { nonce } = await this.braintreeIntegrationService.challenge3DSVerification(
                 {
-                    nonce: storedCreditCardNonce,
+                    nonce: storedCreditCardNonce || '',
                     bin: instrument.iin,
                 },
                 orderAmount,
