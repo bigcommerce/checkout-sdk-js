@@ -163,6 +163,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
             cart.id,
         );
         jest.spyOn(bigCommercePaymentsFastlaneUtils, 'updateStorageSessionId');
+        jest.spyOn(bigCommercePaymentsFastlaneUtils, 'removeStorageSessionId');
         jest.spyOn(bigCommercePaymentsFastlaneUtils, 'lookupCustomerOrThrow').mockResolvedValue({
             customerContextId,
         });
@@ -377,7 +378,6 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                 bigCommercePaymentsFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData,
             ).toHaveBeenCalledWith(methodId, authenticationResultMock);
             expect(bigCommercePaymentsFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                false,
                 cart.id,
             );
         });
@@ -475,9 +475,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     },
                 },
             });
-            expect(bigCommercePaymentsFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                true,
-            );
+            expect(bigCommercePaymentsFastlaneUtils.removeStorageSessionId).toHaveBeenCalled();
         });
 
         it('successfully places order with vaulted instruments flow', async () => {
@@ -501,9 +499,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     },
                 },
             });
-            expect(bigCommercePaymentsFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                true,
-            );
+            expect(bigCommercePaymentsFastlaneUtils.removeStorageSessionId).toHaveBeenCalled();
         });
 
         it('do not create an order if there is an error while receiving a payment order', async () => {

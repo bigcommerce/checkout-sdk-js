@@ -180,9 +180,7 @@ describe('PayPalCommerceFastlaneUtils', () => {
 
             subject.removeStorageSessionId();
 
-            expect(CookieStorage.remove).toHaveBeenCalledWith('bc-fastlane-sessionId', {
-                secure: true,
-            });
+            expect(CookieStorage.remove).toHaveBeenCalledWith('bc-fastlane-sessionId');
         });
     });
 

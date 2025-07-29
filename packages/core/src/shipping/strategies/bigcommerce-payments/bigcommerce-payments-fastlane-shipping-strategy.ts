@@ -200,10 +200,11 @@ export default class BigCommercePaymentsFastlaneShippingStrategy implements Ship
         const isAuthenticationFlowCanceled =
             authenticationResult.authenticationState === PayPalFastlaneAuthenticationState.CANCELED;
 
-        this._bigCommercePaymentsFastlaneUtils.updateStorageSessionId(
-            isAuthenticationFlowCanceled,
-            cart.id,
-        );
+        if (isAuthenticationFlowCanceled) {
+            this._bigCommercePaymentsFastlaneUtils.removeStorageSessionId();
+        } else {
+            this._bigCommercePaymentsFastlaneUtils.updateStorageSessionId(cart.id);
+        }
 
         if (billingAddress) {
             await this._store.dispatch(

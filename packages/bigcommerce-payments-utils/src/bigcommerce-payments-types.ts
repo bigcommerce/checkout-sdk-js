@@ -448,7 +448,7 @@ export interface PayPalFastlaneAuthenticationResult {
 export enum PayPalFastlaneAuthenticationState {
     SUCCEEDED = 'succeeded',
     FAILED = 'failed',
-    CANCELED = 'cancelled',
+    CANCELED = 'canceled',
     UNRECOGNIZED = 'unrecognized',
 }
 
