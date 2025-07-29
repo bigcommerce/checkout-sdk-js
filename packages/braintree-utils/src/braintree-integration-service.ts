@@ -2,9 +2,17 @@ import { supportsPopups } from '@braintree/browser-detection';
 
 import {
     Address,
+    CancellablePromise,
+    CreditCardInstrument,
     LegacyAddress,
+    NonceInstrument,
     NotInitializedError,
     NotInitializedErrorType,
+    Payment,
+    PaymentArgumentInvalidError,
+    PaymentInvalidFormError,
+    PaymentInvalidFormErrorDetails,
+    PaymentMethodCancelledError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
@@ -23,12 +31,19 @@ import {
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
+    BraintreeRequestData,
     BraintreeShippingAddressOverride,
+    BraintreeThreeDSecure,
+    BraintreeThreeDSecureOptions,
     BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
+    BraintreeVerifyPayload,
     PAYPAL_COMPONENTS,
+    TokenizationPayload,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
+import { isEmpty } from 'lodash';
+import isCreditCardInstrumentLike from './utils/is-credit-card-instrument-like';
 
 export interface PaypalConfig {
     amount: number;
@@ -47,6 +62,8 @@ export default class BraintreeIntegrationService {
     private dataCollectors: BraintreeDataCollectors = {};
     private paypalCheckout?: BraintreePaypalCheckout;
     private braintreePaypal?: Promise<BraintreePaypal>;
+    private threeDSecureOptions?: BraintreeThreeDSecureOptions;
+    private threeDS?: Promise<BraintreeThreeDSecure>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -54,8 +71,9 @@ export default class BraintreeIntegrationService {
         private overlay?: Overlay,
     ) {}
 
-    initialize(clientToken: string) {
+    initialize(clientToken: string, threeDSecureOptions?: BraintreeThreeDSecureOptions) {
         this.clientToken = clientToken;
+        this.threeDSecureOptions = threeDSecureOptions;
     }
 
     async getBraintreeFastlane(
@@ -308,6 +326,62 @@ export default class BraintreeIntegrationService {
         // this._visaCheckout = undefined;
     }
 
+    async get3DS(): Promise<BraintreeThreeDSecure> {
+        if (!this.threeDS) {
+            this.threeDS = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.load3DS(),
+            ]).then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2 }));
+        }
+
+        return this.threeDS;
+    }
+
+    /*
+       Braintree Credit Card and Braintree Hosted Form
+   */
+    async verifyCard(
+        payment: Payment,
+        billingAddress: Address,
+        amount: number,
+    ): Promise<NonceInstrument> {
+        const tokenizationPayload = await this.tokenizeCard(payment, billingAddress);
+
+        return this.challenge3DSVerification(tokenizationPayload, amount);
+    }
+
+    async tokenizeCard(payment: Payment, billingAddress: Address): Promise<TokenizationPayload> {
+        const { paymentData } = payment;
+
+        if (!isCreditCardInstrumentLike(paymentData)) {
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
+        }
+
+        const errors = this.getErrorsRequiredFields(paymentData);
+
+        if (!isEmpty(errors)) {
+            throw new PaymentInvalidFormError(errors);
+        }
+
+        const requestData = this.mapToCreditCard(paymentData, billingAddress);
+        const client = await this.getClient();
+        const { creditCards } = await client.request(requestData);
+
+        return {
+            nonce: creditCards[0].nonce,
+            bin: creditCards[0].details.bin,
+        };
+    }
+
+    async challenge3DSVerification(
+        tokenizationPayload: TokenizationPayload,
+        amount: number,
+    ): Promise<BraintreeVerifyPayload> {
+        const threeDSecure = await this.get3DS();
+
+        return this.present3DSChallenge(threeDSecure, amount, tokenizationPayload);
+    }
+
     private teardownModule(module?: BraintreeModule) {
         return module ? module.teardown() : Promise.resolve();
     }
@@ -318,5 +392,113 @@ export default class BraintreeIntegrationService {
         }
 
         return this.clientToken;
+    }
+
+    private getErrorsRequiredFields(
+        paymentData: CreditCardInstrument,
+    ): PaymentInvalidFormErrorDetails {
+        const { ccNumber, ccExpiry } = paymentData;
+        const errors: PaymentInvalidFormErrorDetails = {};
+
+        if (!ccNumber) {
+            errors.ccNumber = [
+                {
+                    message: 'Credit card number is required',
+                    type: 'required',
+                },
+            ];
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (!ccExpiry) {
+            errors.ccExpiry = [
+                {
+                    message: 'Expiration date is required',
+                    type: 'required',
+                },
+            ];
+        }
+
+        return errors;
+    }
+
+    private mapToCreditCard(
+        creditCard: CreditCardInstrument,
+        billingAddress?: Address,
+    ): BraintreeRequestData {
+        return {
+            data: {
+                creditCard: {
+                    cardholderName: creditCard.ccName,
+                    number: creditCard.ccNumber,
+                    cvv: creditCard.ccCvv,
+                    expirationDate: `${creditCard.ccExpiry.month}/${creditCard.ccExpiry.year}`,
+                    options: {
+                        validate: false,
+                    },
+                    billingAddress: billingAddress && {
+                        countryCodeAlpha2: billingAddress.countryCode,
+                        locality: billingAddress.city,
+                        countryName: billingAddress.country,
+                        postalCode: billingAddress.postalCode,
+                        streetAddress: billingAddress.address2
+                            ? `${billingAddress.address1} ${billingAddress.address2}`
+                            : billingAddress.address1,
+                    },
+                },
+            },
+            endpoint: 'payment_methods/credit_cards',
+            method: 'post',
+        };
+    }
+
+    private present3DSChallenge(
+        threeDSecure: BraintreeThreeDSecure,
+        amount: number,
+        tokenizationPayload: TokenizationPayload,
+    ): Promise<BraintreeVerifyPayload> {
+        const { nonce, bin } = tokenizationPayload;
+
+        if (!this.threeDSecureOptions || !nonce) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const {
+            addFrame,
+            removeFrame,
+            challengeRequested = true,
+            additionalInformation,
+        } = this.threeDSecureOptions;
+        const cancelVerifyCard = async () => {
+            const response = await threeDSecure.cancelVerifyCard();
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            verification.cancel(new PaymentMethodCancelledError());
+
+            return response;
+        };
+
+        const roundedAmount = amount.toFixed(2);
+
+        const verification = new CancellablePromise(
+            threeDSecure.verifyCard({
+                addFrame: (error, iframe) => {
+                    if (addFrame) {
+                        addFrame(error, iframe, cancelVerifyCard);
+                    }
+                },
+                amount: Number(roundedAmount),
+                bin,
+                challengeRequested,
+                nonce,
+                removeFrame,
+                onLookupComplete: (_data, next) => {
+                    next();
+                },
+                collectDeviceData: true,
+                additionalInformation,
+            }),
+        );
+
+        return verification.promise;
     }
 }
