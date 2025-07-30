@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.778.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.3...v1.778.4) (2025-07-30)
+
+
+### Bug Fixes
+
+* **payment:** updated getSDKVersion method in BraintreeSDKVersionManager with getStoreConfig instead of getStoreConfigOrThrow ([#2952](https://github.com/bigcommerce/checkout-sdk-js/issues/2952)) ([3e7aa25](https://github.com/bigcommerce/checkout-sdk-js/commit/3e7aa25f7d47fe2c23ba4b68196ec0081d77cba3))
+
 ### [1.778.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.2...v1.778.3) (2025-07-30)
 
 
