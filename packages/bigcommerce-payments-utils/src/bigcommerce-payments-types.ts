@@ -39,6 +39,7 @@ export interface BigCommercePaymentsInitializationData {
     shouldRunAcceleratedCheckout?: boolean; // TODO: remove when BCP Fastlane A/B test will be finished
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
+    threeDSVerificationMethod?: string;
 }
 
 /**
