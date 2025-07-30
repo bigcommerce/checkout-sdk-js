@@ -16,7 +16,7 @@ import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
 describe('BraintreeSDKVersionManager', () => {
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
     let paymentIntegrationService: PaymentIntegrationService;
-    let storeConfigMock: StoreConfig;
+    let storeConfigMock: StoreConfig | undefined;
 
     beforeEach(() => {
         storeConfigMock = getConfig().storeConfig;
@@ -26,7 +26,7 @@ describe('BraintreeSDKVersionManager', () => {
             'PAYPAL-5636.update_braintree_sdk_version': false,
         };
 
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
             storeConfigMock,
         );
 
@@ -41,12 +41,21 @@ describe('BraintreeSDKVersionManager', () => {
         expect(braintreeSDKVersionManager.getSDKVersion()).toBe(BRAINTREE_SDK_STABLE_VERSION);
     });
 
+    it('get default braintree sdk version if store config is not defined', () => {
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
+            undefined,
+        );
+
+        expect(braintreeSDKVersionManager.getSDKVersion()).toBe(BRAINTREE_SDK_DEFAULT_VERSION);
+    });
+
     it('get default braintree sdk version', () => {
+        storeConfigMock = getConfig().storeConfig;
         storeConfigMock.checkoutSettings.features = {
             'PAYPAL-5636.update_braintree_sdk_version': true,
         };
 
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
             storeConfigMock,
         );
 
