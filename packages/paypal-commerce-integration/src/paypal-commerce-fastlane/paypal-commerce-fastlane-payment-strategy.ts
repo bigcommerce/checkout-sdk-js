@@ -163,7 +163,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
             this.paypalCommerceFastlaneUtils.removeStorageSessionId();
         } catch (error) {
-            if (isPaypalFastlaneRequestError(error) && error.response.name === 'INVALID_REQUEST') {
+            if (
+                isPaypalFastlaneRequestError(error) &&
+                error.response.body.name === 'INVALID_REQUEST'
+            ) {
                 const invalidRequestError = {
                     translationKey: 'payment.errors.invalid_request_error',
                 };

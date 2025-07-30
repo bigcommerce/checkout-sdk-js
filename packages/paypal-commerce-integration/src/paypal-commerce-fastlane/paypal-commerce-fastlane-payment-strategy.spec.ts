@@ -486,8 +486,10 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 name: 'Error',
                 message: 'Payment request failed',
                 response: {
-                    status: 422,
-                    name: 'INVALID_REQUEST',
+                    body: {
+                        status: 422,
+                        name: 'INVALID_REQUEST',
+                    },
                 },
             });
             await strategy.initialize(initOptions);
