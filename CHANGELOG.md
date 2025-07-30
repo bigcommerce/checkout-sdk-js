@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.778.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.2...v1.778.3) (2025-07-30)
+
+
+### Bug Fixes
+
+* **payment:** Fix threeDSVerification method assignment ([#2951](https://github.com/bigcommerce/checkout-sdk-js/issues/2951)) ([810bdeb](https://github.com/bigcommerce/checkout-sdk-js/commit/810bdeb74f646a2da476d3060103bd606d07bb75))
+
 ### [1.778.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.1...v1.778.2) (2025-07-30)
 
 
