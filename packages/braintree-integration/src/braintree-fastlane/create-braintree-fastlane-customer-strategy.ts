@@ -10,7 +10,6 @@ import {
     CustomerStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BraintreeFastlaneCustomerStrategy from './braintree-fastlane-customer-strategy';
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
@@ -28,11 +27,9 @@ const createBraintreeFastlaneCustomerStrategy: CustomerStrategyFactory<
         ),
         braintreeHostWindow,
     );
-    const browserStorage = new BrowserStorage('paypalFastlane');
     const braintreeFastlaneUtils = new BraintreeFastlaneUtils(
         paymentIntegrationService,
         braintreeIntegrationService,
-        browserStorage,
     );
 
     return new BraintreeFastlaneCustomerStrategy(paymentIntegrationService, braintreeFastlaneUtils);

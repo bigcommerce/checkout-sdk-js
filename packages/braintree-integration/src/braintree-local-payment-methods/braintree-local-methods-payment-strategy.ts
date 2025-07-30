@@ -31,7 +31,6 @@ import {
     TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import BraintreeRequestSender from '../braintree-request-sender';

@@ -34,7 +34,7 @@ import {
     getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
+import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { getThreeDSecureMock } from '../mocks/braintree.mock';
 
@@ -46,7 +46,6 @@ describe('BraintreeFastlanePaymentStrategy', () => {
     let braintreeFastlaneMock: BraintreeFastlane;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
-    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeFastlanePaymentStrategy;
     let braintreeSdk: BraintreeSdk;
@@ -184,11 +183,9 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             window,
         );
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        browserStorage = new BrowserStorage('paypalFastlane');
         braintreeFastlaneUtils = new BraintreeFastlaneUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
-            browserStorage,
         );
 
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
@@ -196,13 +193,12 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         strategy = new BraintreeFastlanePaymentStrategy(
             paymentIntegrationService,
             braintreeFastlaneUtils,
-            browserStorage,
             braintreeSdk,
         );
 
-        jest.spyOn(browserStorage, 'getItem');
-        jest.spyOn(browserStorage, 'setItem');
-        jest.spyOn(browserStorage, 'removeItem');
+        jest.spyOn(CookieStorage, 'get');
+        jest.spyOn(CookieStorage, 'set');
+        jest.spyOn(CookieStorage, 'remove');
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
@@ -378,7 +374,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         });
 
         it('gets PayPal Fastlane component', async () => {
-            jest.spyOn(browserStorage, 'getItem').mockReturnValue(cart.id);
+            jest.spyOn(CookieStorage, 'get');
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentProviderCustomerOrThrow',
@@ -425,7 +421,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                 'getPaymentProviderCustomerOrThrow',
             ).mockReturnValue({});
 
-            jest.spyOn(browserStorage, 'getItem').mockReturnValue('');
+            jest.spyOn(CookieStorage, 'get').mockReturnValue('');
 
             await strategy.initialize(defaultInitializationOptions);
 
@@ -449,7 +445,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         });
 
         it('triggers fastlane authentication flow', async () => {
-            jest.spyOn(browserStorage, 'getItem').mockReturnValue(cart.id);
+            jest.spyOn(CookieStorage, 'get').mockReturnValue(cart.id);
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentProviderCustomerOrThrow',

@@ -16,7 +16,6 @@ import {
     getGuestCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BraintreeFastlaneCustomerStrategy from './braintree-fastlane-customer-strategy';
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
@@ -25,7 +24,6 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
     let braintreeFastlaneUtils: BraintreeFastlaneUtils;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
-    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeFastlaneCustomerStrategy;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
@@ -60,12 +58,10 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
             braintreeScriptLoader,
             window,
         );
-        browserStorage = new BrowserStorage('paypalConnect');
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeFastlaneUtils = new BraintreeFastlaneUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
-            browserStorage,
         );
 
         strategy = new BraintreeFastlaneCustomerStrategy(
