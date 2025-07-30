@@ -400,7 +400,6 @@ describe('BigCommercePaymentsFastlaneShippingStrategy', () => {
                 instruments: [bcInstrumentMock],
             });
             expect(bigCommercePaymentsFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                false,
                 cart.id,
             );
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);

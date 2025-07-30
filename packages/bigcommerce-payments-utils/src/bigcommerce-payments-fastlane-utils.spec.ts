@@ -2,7 +2,7 @@ import {
     PaymentMethodClientUnavailableError,
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
+import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BigCommercePaymentsFastlaneUtils from './bigcommerce-payments-fastlane-utils';
 import {
@@ -13,7 +13,6 @@ import {
 import { getPayPalFastlaneAuthenticationResultMock, getPayPalFastlaneSdk } from './mocks';
 
 describe('BigCommercePaymentsFastlaneUtils', () => {
-    let browserStorage: BrowserStorage;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let subject: BigCommercePaymentsFastlaneUtils;
 
@@ -59,10 +58,9 @@ describe('BigCommercePaymentsFastlaneUtils', () => {
     };
 
     beforeEach(() => {
-        browserStorage = new BrowserStorage('paypalFastlane');
         paypalFastlaneSdk = getPayPalFastlaneSdk();
 
-        subject = new BigCommercePaymentsFastlaneUtils(browserStorage);
+        subject = new BigCommercePaymentsFastlaneUtils();
 
         jest.spyOn(Date, 'now').mockImplementation(() => 1);
     });
@@ -164,30 +162,35 @@ describe('BigCommercePaymentsFastlaneUtils', () => {
     describe('#updateStorageSessionId', () => {
         const sessionIdMock = 'cartId123';
 
-        it('sets session id to browser storage', () => {
-            jest.spyOn(browserStorage, 'setItem');
+        it('updates browser cookies with session id', () => {
+            jest.spyOn(CookieStorage, 'set');
 
-            subject.updateStorageSessionId(false, sessionIdMock);
+            subject.updateStorageSessionId(sessionIdMock);
 
-            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', sessionIdMock);
+            expect(CookieStorage.set).toHaveBeenCalledWith('bc-fastlane-sessionId', sessionIdMock, {
+                expires: expect.any(Date),
+                secure: true,
+            });
         });
+    });
 
-        it('removes session id from browser storage', () => {
-            jest.spyOn(browserStorage, 'removeItem');
+    describe('#removeStorageSessionId', () => {
+        it('removes session id from browser cookies', () => {
+            jest.spyOn(CookieStorage, 'remove');
 
-            subject.updateStorageSessionId(true, sessionIdMock);
+            subject.removeStorageSessionId();
 
-            expect(browserStorage.removeItem).toHaveBeenCalledWith('sessionId');
+            expect(CookieStorage.remove).toHaveBeenCalledWith('bc-fastlane-sessionId');
         });
     });
 
     describe('#getStorageSessionId', () => {
         it('returns session id to browser storage', () => {
-            jest.spyOn(browserStorage, 'getItem');
+            jest.spyOn(CookieStorage, 'get');
 
             subject.getStorageSessionId();
 
-            expect(browserStorage.getItem).toHaveBeenCalledWith('sessionId');
+            expect(CookieStorage.get).toHaveBeenCalledWith('bc-fastlane-sessionId');
         });
     });
 

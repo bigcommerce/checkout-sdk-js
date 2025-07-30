@@ -118,7 +118,7 @@ export default class PayPalCommerceFastlaneUtils {
     }
 
     removeStorageSessionId(): void {
-        CookieStorage.remove('bc-fastlane-sessionId', { secure: true });
+        CookieStorage.remove('bc-fastlane-sessionId');
     }
 
     getStorageSessionId(): string {

@@ -488,7 +488,6 @@ describe('BigCommercePaymentsFastlaneCustomerStrategy', () => {
                     : undefined,
             );
             expect(bigCommercePaymentsFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                false,
                 cart.id,
             );
         });
