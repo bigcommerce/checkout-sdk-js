@@ -3,8 +3,7 @@ import { BraintreeFormFieldsMap, BraintreeStoredCardFieldsMap } from '../index';
 export function isBraintreeFormFieldsMap(
     fields: BraintreeFormFieldsMap | BraintreeStoredCardFieldsMap,
 ): fields is BraintreeFormFieldsMap {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return !!(fields as BraintreeFormFieldsMap).cardNumber;
+    return 'cardNumber' in fields;
 }
 
 export function isBraintreeStoredCardFieldsMap(

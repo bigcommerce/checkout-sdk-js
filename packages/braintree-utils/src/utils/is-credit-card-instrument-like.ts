@@ -5,6 +5,8 @@ export default function isCreditCardInstrumentLike(
     instrument: any,
 ): instrument is CreditCardInstrument {
     return (
+        typeof instrument === 'object' &&
+        instrument !== null &&
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         typeof instrument.ccExpiry === 'object' &&
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

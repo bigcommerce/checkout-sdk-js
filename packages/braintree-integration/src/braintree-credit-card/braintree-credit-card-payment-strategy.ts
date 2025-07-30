@@ -44,7 +44,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     async initialize(
         options: PaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions,
     ): Promise<void> {
-        console.log('PACKAGES');
         const { methodId, gatewayId, braintree } = options;
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
         const state = this.paymentIntegrationService.getState();
