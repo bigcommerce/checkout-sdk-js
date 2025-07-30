@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.778.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.1...v1.778.2) (2025-07-30)
+
+
+### Bug Fixes
+
+* **payment:** Fix ppcp fl request error message ([#2950](https://github.com/bigcommerce/checkout-sdk-js/issues/2950)) ([e8f0d3d](https://github.com/bigcommerce/checkout-sdk-js/commit/e8f0d3d376d55268754e8e3679dcb51069b94804))
+
 ### [1.778.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.0...v1.778.1) (2025-07-30)
 
 
