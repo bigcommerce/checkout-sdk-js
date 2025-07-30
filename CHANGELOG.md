@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.778.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.0...v1.778.1) (2025-07-30)
+
+
+### Code Refactoring
+
+* **payment:** updated BigCommercePaymentsFastlane strategies implementation to use cookies instead of local storage ([#2948](https://github.com/bigcommerce/checkout-sdk-js/issues/2948)) ([9380161](https://github.com/bigcommerce/checkout-sdk-js/commit/93801611665718d385f235a5e3b2c55104a4bdac))
+
 ## [1.778.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.777.1...v1.778.0) (2025-07-28)
 
 
