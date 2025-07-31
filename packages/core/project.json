@@ -6,11 +6,7 @@
         "build": {
             "executor": "@nrwl/workspace:run-commands",
             "options": {
-                "parallel": false,
-                "commands": [
-                    "webpack --config webpack.config.js",
-                    "nx run core:build-dts"
-                ]
+                "command": "webpack --config webpack.config.js"
             },
             "dependsOn": [
                 {

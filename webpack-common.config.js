@@ -66,28 +66,6 @@ async function getBaseConfig() {
     };
 }
 
-const babelEnvPreset = [
-    '@babel/preset-env',
-    {
-        corejs: 3,
-        targets: ['defaults'], // Removed IE 11 support
-        useBuiltIns: 'usage',
-    },
-];
-
-// Keep babel-loader rules for fallback/comparison (also exclude node_modules)
-const babelLoaderRules = [
-    {
-        test: /\.[tj]s$/,
-        loader: 'babel-loader',
-        include: coreSrcPath,
-        exclude: /node_modules/,
-        options: {
-            presets: [babelEnvPreset],
-        },
-    },
-];
-
 // Speed measure plugin wrapper function
 function wrapWithSpeedMeasurePlugin(config) {
     if (process.env.WEBPACK_ANALYZE_SPEED) {
@@ -106,7 +84,6 @@ function wrapWithSpeedMeasurePlugin(config) {
 }
 
 module.exports = {
-    babelLoaderRules,
     getBaseConfig,
     libraryEntries,
     libraryName,
