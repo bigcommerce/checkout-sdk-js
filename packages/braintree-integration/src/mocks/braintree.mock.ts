@@ -3,7 +3,6 @@ import {
     BraintreeThreeDSecure,
     PaypalButtonStyleColorOption,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-
 import {
     DefaultCheckoutButtonHeight,
     PaymentMethod,
@@ -29,7 +28,6 @@ export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
 
 export function getThreeDSecureMock(): BraintreeThreeDSecure {
     return {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         verifyCard: (_options, callback: Braintree3DSVerifyCardCallback) => {
             if (callback) {
                 callback({ code: '' }, { nonce: 'fastlane_token_mock' });

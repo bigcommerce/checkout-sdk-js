@@ -20,7 +20,7 @@ import {
     PaymentMethodClientUnavailableError,
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
+import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
 
 export default class BraintreeFastlaneUtils {
     private braintreeFastlane?: BraintreeFastlane;
@@ -29,7 +29,6 @@ export default class BraintreeFastlaneUtils {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
-        private browserStorage: BrowserStorage,
     ) {}
 
     async getDeviceSessionId(): Promise<string | undefined> {
@@ -117,7 +116,7 @@ export default class BraintreeFastlaneUtils {
                     instruments: [],
                 });
 
-                this.browserStorage.setItem('sessionId', cart.id);
+                this.saveSessionIdToCookies(cart.id);
 
                 return;
             }
@@ -135,7 +134,7 @@ export default class BraintreeFastlaneUtils {
                     instruments: [],
                 });
 
-                this.browserStorage.removeItem('sessionId');
+                this.removeSessionIdFromCookies();
 
                 return;
             }
@@ -154,7 +153,8 @@ export default class BraintreeFastlaneUtils {
                 billingAddresses,
             );
 
-            this.browserStorage.setItem('sessionId', cart.id);
+            this.saveSessionIdToCookies(cart.id);
+
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
                 authenticationState,
                 addresses,
@@ -193,6 +193,30 @@ export default class BraintreeFastlaneUtils {
             // TODO: we should figure out what to do here
             // TODO: because we should not to stop the flow if the error occurs on paypal side
         }
+    }
+
+    /**
+     *
+     * Session id management
+     *
+     */
+    getSessionIdFromCookies(): string {
+        return CookieStorage.get('bc-fastlane-sessionId') || '';
+    }
+
+    saveSessionIdToCookies(sessionId: string): void {
+        const expires = new Date();
+
+        expires.setDate(expires.getDate() + 14); // 2 weeks expiry
+
+        CookieStorage.set('bc-fastlane-sessionId', sessionId, {
+            expires,
+            secure: true,
+        });
+    }
+
+    removeSessionIdFromCookies(): void {
+        CookieStorage.remove('bc-fastlane-sessionId');
     }
 
     /**

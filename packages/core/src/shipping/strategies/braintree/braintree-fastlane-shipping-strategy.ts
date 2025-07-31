@@ -10,7 +10,7 @@ import {
     getFastlaneStyles,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
+import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
@@ -32,8 +32,6 @@ import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shippin
 import ShippingStrategy from '../shipping-strategy';
 
 export default class BraintreeFastlaneShippingStrategy implements ShippingStrategy {
-    private _browserStorage: BrowserStorage;
-
     constructor(
         private _store: CheckoutStore,
         private _billingAddressActionCreator: BillingAddressActionCreator,
@@ -41,9 +39,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
         private _braintreeIntegrationService: BraintreeIntegrationService,
-    ) {
-        this._browserStorage = new BrowserStorage('paypalFastlane');
-    }
+    ) {}
 
     updateAddress(
         address: AddressRequestBody,
@@ -126,7 +122,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
     private _shouldRunAuthenticationFlow(): boolean {
         const state = this._store.getState();
         const cartId = state.cart.getCart()?.id;
-        const paypalFastlaneSessionId = this._browserStorage.getItem('sessionId');
+        const paypalFastlaneSessionId = CookieStorage.get('bc-fastlane-sessionId') || '';
         const paymentProviderCustomer = state.paymentProviderCustomer.getPaymentProviderCustomer();
         const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
             paymentProviderCustomer,
@@ -197,7 +193,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
                 }),
             );
 
-            this._browserStorage.removeItem('sessionId');
+            CookieStorage.remove('bc-fastlane-sessionId');
 
             return;
         }

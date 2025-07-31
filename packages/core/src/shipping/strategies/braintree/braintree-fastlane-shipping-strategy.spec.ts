@@ -14,7 +14,7 @@ import {
     getPaymentMethod,
     getShippingAddress,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
+import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
@@ -142,8 +142,8 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(
             getBillingAddress(),
         );
-        jest.spyOn(BrowserStorage.prototype, 'getItem').mockReturnValue(getCart().id);
-        jest.spyOn(BrowserStorage.prototype, 'removeItem').mockImplementation(jest.fn());
+        jest.spyOn(CookieStorage, 'get').mockReturnValue(getCart().id);
+        jest.spyOn(CookieStorage, 'remove').mockImplementation(jest.fn());
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -339,7 +339,7 @@ describe('BraintreeFastlaneShippingStrategy', () => {
                 store.getState().paymentProviderCustomer,
                 'getPaymentProviderCustomer',
             ).mockReturnValue(undefined);
-            jest.spyOn(BrowserStorage.prototype, 'getItem').mockReturnValue('123');
+            jest.spyOn(CookieStorage, 'get').mockReturnValue('123');
 
             const strategy = createStrategy();
 
@@ -452,7 +452,7 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             await strategy.initialize(defaultOptions);
 
             expect(triggerAuthenticationFlowMock).toHaveBeenCalled();
-            expect(BrowserStorage.prototype.removeItem).toHaveBeenCalledWith('sessionId');
+            expect(CookieStorage.remove).toHaveBeenCalledWith('bc-fastlane-sessionId');
             expect(updatePaymentProviderCustomerMock).toHaveBeenCalledWith({
                 authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
                 addresses: [],
