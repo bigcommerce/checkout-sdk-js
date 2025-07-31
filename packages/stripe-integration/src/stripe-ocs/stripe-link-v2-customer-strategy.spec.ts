@@ -5,6 +5,7 @@ import {
     MissingDataError,
     NotInitializedError,
     PaymentIntegrationService,
+    PaymentMethodCancelledError,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -247,6 +248,10 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 StripeElementEvent.CONFIRM,
                 expect.any(Function),
             );
+            expect(element.on).toHaveBeenCalledWith(
+                StripeElementEvent.CANCEL,
+                expect.any(Function),
+            );
         });
 
         it('calls onShippingAddressChange callback if event was triggered', async () => {
@@ -422,6 +427,19 @@ describe('StripeLinkV2CustomerStrategy', () => {
             expect(stripeEvent).toHaveBeenCalledWith({});
         });
 
+        it('calls onCancel callback if event was triggered', async () => {
+            await strategy.initialize(initialiseOptions);
+
+            try {
+                stripeEventEmitter.emit(StripeElementEvent.CANCEL, {
+                    resolve: stripeEvent,
+                });
+                await new Promise((resolve) => process.nextTick(resolve));
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodCancelledError);
+            }
+        });
+
         it('initialise all events correctly if there is no physical items', async () => {
             const cartMock = getCart();
 
@@ -443,6 +461,10 @@ describe('StripeLinkV2CustomerStrategy', () => {
             );
             expect(element.on).toHaveBeenCalledWith(
                 StripeElementEvent.CONFIRM,
+                expect.any(Function),
+            );
+            expect(element.on).toHaveBeenCalledWith(
+                StripeElementEvent.CANCEL,
                 expect.any(Function),
             );
         });
