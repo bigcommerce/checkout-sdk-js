@@ -10,10 +10,7 @@ import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BNZPaymentStrategy } from './strategies/bnz';
-import {
-    BraintreeCreditCardPaymentStrategy,
-    BraintreeVisaCheckoutPaymentStrategy,
-} from './strategies/braintree';
+import { BraintreeVisaCheckoutPaymentStrategy } from './strategies/braintree';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
@@ -47,12 +44,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BARCLAYS);
 
         expect(paymentStrategy).toBeInstanceOf(BarclaysPaymentStrategy);
-    });
-
-    it('can instantiate braintree', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE);
-
-        expect(paymentStrategy).toBeInstanceOf(BraintreeCreditCardPaymentStrategy);
     });
 
     it('can instantiate braintreevisacheckout', () => {

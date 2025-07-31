@@ -6,7 +6,6 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BraintreeHostedForm from './braintree-hosted-form';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 
@@ -20,7 +19,6 @@ export default function createBraintreePaymentProcessor(
         new BraintreeSDKVersionManager(paymentIntegrationService),
     );
     const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
-    const braintreeHostedForm = new BraintreeHostedForm(braintreeSDKCreator);
 
-    return new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm);
+    return new BraintreePaymentProcessor(braintreeSDKCreator);
 }
