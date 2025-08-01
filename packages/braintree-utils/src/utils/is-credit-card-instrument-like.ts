@@ -1,17 +1,19 @@
 import { CreditCardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default function isCreditCardInstrumentLike(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    instrument: any,
+    instrument: unknown,
 ): instrument is CreditCardInstrument {
+    if (typeof instrument !== 'object' || instrument === null) {
+        return false;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const creditCardInstrument = instrument as Partial<Record<string, unknown>>;
+
     return (
-        typeof instrument === 'object' &&
-        instrument !== null &&
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        typeof instrument.ccExpiry === 'object' &&
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        typeof instrument.ccNumber === 'string' &&
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        typeof instrument.ccName === 'string'
+        typeof creditCardInstrument.ccExpiry === 'object' &&
+        creditCardInstrument.ccExpiry !== null &&
+        typeof creditCardInstrument.ccNumber === 'string' &&
+        typeof creditCardInstrument.ccName === 'string'
     );
 }

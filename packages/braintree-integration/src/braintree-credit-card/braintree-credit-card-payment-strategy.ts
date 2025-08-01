@@ -18,7 +18,7 @@ import {
     OrderPaymentRequestBody,
     OrderRequestBody,
     PaymentArgumentInvalidError,
-    PaymentInitializeOptions,
+    PaymentInitializeOptions, PaymentInstrument,
     PaymentInstrumentMeta,
     PaymentIntegrationService,
     PaymentMethod,
@@ -137,7 +137,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         payment: OrderPaymentRequestBody,
         billingAddress: Address,
         orderAmount: number,
-    ): Promise<BraintreePaymentInstrument & PaymentInstrumentMeta> {
+    ): Promise<PaymentInstrument & PaymentInstrumentMeta> {
         const { paymentData } = payment;
         const commonPaymentData = { deviceSessionId: this.deviceSessionId };
 

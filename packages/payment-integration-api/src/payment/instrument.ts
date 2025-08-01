@@ -1,8 +1,4 @@
-import { HostedInstrument, NonceInstrument } from './payment';
-
 type PaymentInstrument = CardInstrument | AccountInstrument;
-
-export type BraintreePaymentInstrument = HostedInstrument | NonceInstrument;
 
 export default PaymentInstrument;
 
