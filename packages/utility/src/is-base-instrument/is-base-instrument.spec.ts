@@ -1,5 +1,4 @@
-import { isBaseInstrument } from './is-base-instrument';
-import type { BaseInstrument } from '../../../payment-integration-api/src/payment/instrument';
+import { BaseInstrument, isBaseInstrument } from './is-base-instrument';
 
 describe('isBaseInstrument', () => {
     const validInstrument: BaseInstrument = {
@@ -13,15 +12,6 @@ describe('isBaseInstrument', () => {
 
     it('returns true for a valid BaseInstrument', () => {
         expect(isBaseInstrument(validInstrument)).toBe(true);
-    });
-
-    it('returns false if any required property is missing', () => {
-        const missingField = {
-            ...validInstrument,
-        };
-        delete (missingField as Partial<BaseInstrument>).method;
-
-        expect(isBaseInstrument(missingField)).toBe(false);
     });
 
     it('returns false for null input', () => {

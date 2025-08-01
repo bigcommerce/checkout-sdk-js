@@ -1,18 +1,23 @@
-import { BaseInstrument } from '../../../payment-integration-api/src/payment/instrument';
+export interface BaseInstrument {
+    bigpayToken: string;
+    defaultInstrument: boolean;
+    provider: string;
+    trustedShippingAddress: boolean;
+    method: string;
+    type: string;
+}
 
 export function isBaseInstrument(instrument: unknown): instrument is BaseInstrument {
     if (typeof instrument !== 'object' || instrument === null) {
         return false;
     }
 
-    const baseInstrument = instrument as Record<string, unknown>;
-
     return (
-        'bigpayToken' in baseInstrument &&
-        'defaultInstrument' in baseInstrument &&
-        'provider' in baseInstrument &&
-        'trustedShippingAddress' in baseInstrument &&
-        'method' in baseInstrument &&
-        'type' in baseInstrument
+        'bigpayToken' in instrument &&
+        'defaultInstrument' in instrument &&
+        'provider' in instrument &&
+        'trustedShippingAddress' in instrument &&
+        'method' in instrument &&
+        'type' in instrument
     );
 }

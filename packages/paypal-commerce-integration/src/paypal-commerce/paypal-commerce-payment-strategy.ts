@@ -26,6 +26,7 @@ import {
     PayPalMessagesSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+import { isBaseInstrument } from '@bigcommerce/checkout-sdk/utility';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
@@ -39,7 +40,6 @@ import {
 import PayPalCommercePaymentInitializeOptions, {
     WithPayPalCommercePaymentInitializeOptions,
 } from './paypal-commerce-payment-initialize-options';
-import { isBaseInstrument } from '../../../utility/src/is-base-instrument/is-base-instrument';
 
 export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
@@ -384,8 +384,14 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             const state = this.paymentIntegrationService.getState();
 
             const instruments = state.getInstruments();
-            const findInstrument = instruments?.find(instrument => isBaseInstrument(instrument) && instrument.bigpayToken === paymentData.instrumentId);
-            const trustedShippingAddress = isBaseInstrument(findInstrument) ? findInstrument.trustedShippingAddress : {};
+            const findInstrument = instruments?.find(
+                (instrument) =>
+                    isBaseInstrument(instrument) &&
+                    instrument.bigpayToken === paymentData.instrumentId,
+            );
+            const trustedShippingAddress = isBaseInstrument(findInstrument)
+                ? findInstrument.trustedShippingAddress
+                : {};
 
             return !!trustedShippingAddress;
         }
