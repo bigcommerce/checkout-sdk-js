@@ -39,6 +39,7 @@ import {
 import PayPalCommercePaymentInitializeOptions, {
     WithPayPalCommercePaymentInitializeOptions,
 } from './paypal-commerce-payment-initialize-options';
+import { isBaseInstrument } from '../../../utility/src/is-base-instrument/is-base-instrument';
 
 export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
@@ -383,10 +384,8 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             const state = this.paymentIntegrationService.getState();
 
             const instruments = state.getInstruments();
-
-            const { trustedShippingAddress } =
-                instruments?.find(({ bigpayToken }) => bigpayToken === paymentData.instrumentId) ||
-                {};
+            const findInstrument = instruments?.find(instrument => isBaseInstrument(instrument) && instrument.bigpayToken === paymentData.instrumentId);
+            const trustedShippingAddress = isBaseInstrument(findInstrument) ? findInstrument.trustedShippingAddress : {};
 
             return !!trustedShippingAddress;
         }
