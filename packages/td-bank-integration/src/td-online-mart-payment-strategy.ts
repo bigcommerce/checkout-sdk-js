@@ -18,6 +18,7 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isBaseInstrument } from '@bigcommerce/checkout-sdk/utility';
 
 import isCreateTokenError from './is-create-token-error';
 import { isTdOnlineMartAdditionalAction } from './isTdOnlineMartAdditionalAction';
@@ -254,8 +255,12 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     private isTrustedVaultingInstrument(instrumentId: string): boolean {
         const instruments = this.paymentIntegrationService.getState().getInstruments();
 
-        const { trustedShippingAddress } =
-            instruments?.find(({ bigpayToken }) => bigpayToken === instrumentId) || {};
+        const findInstrument = instruments?.find(
+            (instrument) => isBaseInstrument(instrument) && instrument.bigpayToken === instrumentId,
+        );
+        const trustedShippingAddress = isBaseInstrument(findInstrument)
+            ? findInstrument.trustedShippingAddress
+            : {};
 
         return !!trustedShippingAddress;
     }
