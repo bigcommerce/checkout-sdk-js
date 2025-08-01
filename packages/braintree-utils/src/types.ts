@@ -1,3 +1,5 @@
+import { Address } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 export * from './braintree';
 export * from './paypal';
 export * from './visacheckout';
@@ -718,4 +720,65 @@ export interface BraintreeRedirectError {
             };
         };
     };
+}
+
+export default interface BillingAddress extends Address {
+    id: string;
+    email?: string;
+}
+
+export enum BraintreeSupportedCardBrands {
+    Visa = 'visa',
+    Mastercard = 'mastercard',
+    AmericanExpress = 'american-express',
+    DinersClub = 'diners-club',
+    Discover = 'discover',
+    Jcb = 'jcb',
+    UnionPay = 'union-pay',
+    Maestro = 'maestro',
+    Elo = 'elo',
+    Mir = 'mir',
+    Hiper = 'hiper',
+    Hipercard = 'hipercard',
+}
+
+export interface BillingAddressState {
+    data?: BillingAddress;
+    errors: BillingAddressErrorsState;
+    statuses: BillingAddressStatusesState;
+}
+
+export interface BillingAddressErrorsState {
+    loadError?: Error;
+    updateError?: Error;
+    continueAsGuestError?: Error;
+}
+
+export interface BillingAddressStatusesState {
+    isLoading?: boolean;
+    isUpdating?: boolean;
+    isContinuingAsGuest?: boolean;
+}
+
+export interface BraintreeRequestData {
+    data: {
+        creditCard: {
+            billingAddress?: {
+                countryCodeAlpha2: string;
+                locality: string;
+                countryName: string;
+                postalCode: string;
+                streetAddress: string;
+            };
+            cardholderName: string;
+            cvv?: string;
+            expirationDate: string;
+            number: string;
+            options: {
+                validate: boolean;
+            };
+        };
+    };
+    endpoint: string;
+    method: string;
 }

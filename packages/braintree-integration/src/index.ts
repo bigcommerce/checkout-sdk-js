@@ -45,3 +45,8 @@ export { default as createBraintreeVisaCheckoutCustomerStrategy } from './braint
  * Braintree Venmo
  */
 export { default as createBraintreeVenmoButtonStrategy } from './braintree-venmo/create-braintree-venmo-button-strategy';
+
+/**
+ * Braintree Credit Card Payment Strategies
+ */
+export { default as createBraintreeCreditCardPaymentStrategy } from './braintree-credit-card/create-braintree-credit-card-payment-strategy';
