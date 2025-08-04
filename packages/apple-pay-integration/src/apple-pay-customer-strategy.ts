@@ -130,14 +130,14 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             );
         }
 
-        const applePayButton = this._createThirdPartyButton();
+        const applePayButton = this._createApplePayButtonElement();
 
         container.appendChild(applePayButton);
 
         return applePayButton;
     }
 
-    private _createThirdPartyButton(): HTMLElement {
+    private _createApplePayButtonElement(): HTMLElement {
         const applePayButton = document.createElement('apple-pay-button');
 
         applePayButton.setAttribute('buttonstyle', 'black');

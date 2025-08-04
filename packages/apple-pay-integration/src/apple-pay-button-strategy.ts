@@ -137,14 +137,14 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        const applePayButton = this._createThirdPartyButton(styleOption);
+        const applePayButton = this._createApplePayButtonElement(styleOption);
 
         container.appendChild(applePayButton);
 
         return applePayButton;
     }
 
-    private _createThirdPartyButton(styleOption?: ButtonStyleOption): HTMLElement {
+    private _createApplePayButtonElement(styleOption?: ButtonStyleOption): HTMLElement {
         const applePayButton = document.createElement('apple-pay-button');
 
         applePayButton.setAttribute('buttonstyle', getButtonStyle(styleOption));
