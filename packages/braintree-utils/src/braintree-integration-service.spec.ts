@@ -13,7 +13,9 @@ import BraintreeIntegrationService from './braintree-integration-service';
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
 import {
+    getBillingAddress,
     getBraintreeAddress,
+    getBraintreePaymentData,
     getClientMock,
     getDataCollectorMock,
     getDeviceDataMock,
@@ -543,6 +545,64 @@ describe('BraintreeIntegrationService', () => {
                 kount: true,
                 riskCorrelationId: cartIdMock,
             });
+        });
+    });
+
+    describe('#verifyCard', () => {
+        const threeDSecureOptions = {
+            nonce: '3ds_nonce',
+            amount: 122,
+        };
+        it('tokenizes the card with the right params', async () => {
+            jest.spyOn(braintreeIntegrationService, 'tokenizeCard');
+            jest.spyOn(braintreeIntegrationService, 'verifyCard');
+            jest.spyOn(braintreeScriptLoader, 'load3DS');
+            jest.spyOn(braintreeScriptLoader, 'loadClient').mockResolvedValue({
+                create: jest.fn().mockResolvedValue({
+                    request: jest.fn().mockResolvedValue({
+                        creditCards: [
+                            {
+                                nonce: 'nonce',
+                                details: { bin: 'bin' },
+                            },
+                        ],
+                    }),
+                }),
+            });
+            braintreeIntegrationService.initialize(clientToken, threeDSecureOptions);
+            await braintreeIntegrationService.verifyCard(
+                getBraintreePaymentData(),
+                getBillingAddress(),
+                122,
+            );
+
+            expect(braintreeIntegrationService.tokenizeCard).toHaveBeenCalledWith(
+                getBraintreePaymentData(),
+                getBillingAddress(),
+            );
+        });
+
+        it('loads 3ds', async () => {
+            jest.spyOn(braintreeScriptLoader, 'loadClient').mockResolvedValue({
+                create: jest.fn().mockResolvedValue({
+                    request: jest.fn().mockResolvedValue({
+                        creditCards: [
+                            {
+                                nonce: 'nonce',
+                                details: { bin: 'bin' },
+                            },
+                        ],
+                    }),
+                }),
+            });
+            braintreeIntegrationService.initialize(clientToken, threeDSecureOptions);
+            await braintreeIntegrationService.verifyCard(
+                getBraintreePaymentData(),
+                getBillingAddress(),
+                122,
+            );
+
+            expect(braintreeScriptLoader.load3DS).toHaveBeenCalled();
         });
     });
 
