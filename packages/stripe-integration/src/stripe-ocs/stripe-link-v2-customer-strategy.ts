@@ -12,6 +12,7 @@ import {
     NotInitializedErrorType,
     Payment,
     PaymentIntegrationService,
+    PaymentMethodCancelledError,
     PaymentMethodFailedError,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -181,6 +182,8 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         expressCheckoutElement.on(StripeElementEvent.CONFIRM, async (event) =>
             this._onConfirm(event, methodId),
         );
+
+        expressCheckoutElement.on(StripeElementEvent.CANCEL, this._onCancel);
     }
 
     private async _onShippingAddressChange(event: StripeEventType) {
@@ -214,6 +217,10 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
                 shippingRates,
             });
         }
+    }
+
+    private _onCancel() {
+        throw new PaymentMethodCancelledError();
     }
 
     private async _onShippingRateChange(event: StripeEventType) {
@@ -355,10 +362,10 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             this._toggleLoadingIndicator(true);
             await this.paymentIntegrationService.submitPayment(paymentPayload);
             await this._completeCheckoutFlow();
-            this._toggleLoadingIndicator(false);
         } catch (error) {
-            this._toggleLoadingIndicator(false);
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
+        } finally {
+            this._toggleLoadingIndicator(false);
         }
     }
 
