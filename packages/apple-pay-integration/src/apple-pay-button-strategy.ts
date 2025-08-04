@@ -25,7 +25,7 @@ import ApplePayButtonInitializeOptions, {
     WithApplePayButtonInitializeOptions,
 } from './apple-pay-button-initialize-options';
 import ApplePayScriptLoader from './apple-pay-script-loader';
-import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
+import ApplePaySessionFactory from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -59,47 +59,11 @@ const getButtonStyle = (buttonStyle?: ButtonStyleOption): string => {
     }
 };
 
-const getApplePayButtonStyle = (option?: ButtonStyleOption): Record<string, string> => {
-    const defaultStyle: Record<string, string> = {
-        backgroundPosition: '50% 50%',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: '100% 60%',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        transition: '0.2s ease',
-        minHeight: '32px',
-        minWidth: '90px',
-        padding: '1.5rem',
-        display: 'block',
-    };
-
-    switch (option) {
-        case ButtonStyleOption.White:
-            defaultStyle.backgroundColor = '#fff';
-            defaultStyle.backgroundImage = '-webkit-named-image(apple-pay-logo-black)';
-            break;
-
-        case ButtonStyleOption.WhiteBorder:
-            defaultStyle.backgroundColor = '#fff';
-            defaultStyle.backgroundImage = '-webkit-named-image(apple-pay-logo-black)';
-            defaultStyle.border = '0.5px solid #000';
-            break;
-
-        case ButtonStyleOption.Black:
-        default:
-            defaultStyle.backgroundColor = '#000';
-            defaultStyle.backgroundImage = '-webkit-named-image(apple-pay-logo-white)';
-    }
-
-    return defaultStyle;
-};
-
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
     private _requiresShipping?: boolean;
     private _buyNowInitializeOptions?: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
-    private _isWebBrowserSupported?: boolean;
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
@@ -117,17 +81,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     ): Promise<void> {
         const { methodId, containerId, applepay } = options;
 
-        this._isWebBrowserSupported = applepay?.isWebBrowserSupported;
-
-        if (this._isWebBrowserSupported) {
-            await this._applePayScriptLoader.loadSdk();
-        }
-
-        assertApplePayWindow(window);
-
         if (!methodId || !applepay) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
+
+        await this._applePayScriptLoader.loadSdk();
 
         const { onPaymentAuthorize, buyNowInitializeOptions, requiresShipping } = applepay;
 
@@ -179,9 +137,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        const applePayButton = this._isWebBrowserSupported
-            ? this._createThirdPartyButton(styleOption)
-            : this._createNativeButton(styleOption);
+        const applePayButton = this._createThirdPartyButton(styleOption);
 
         container.appendChild(applePayButton);
 
@@ -197,16 +153,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             'style',
             '--apple-pay-button-width: 100%; --apple-pay-button-height: 40px; --apple-pay-button-border-radius: 4px;',
         );
-
-        return applePayButton;
-    }
-
-    private _createNativeButton(styleOption?: ButtonStyleOption): HTMLElement {
-        const applePayButton = document.createElement('div');
-
-        applePayButton.setAttribute('role', 'button');
-        applePayButton.setAttribute('aria-label', 'Apple Pay button');
-        Object.assign(applePayButton.style, getApplePayButtonStyle(styleOption));
 
         return applePayButton;
     }
