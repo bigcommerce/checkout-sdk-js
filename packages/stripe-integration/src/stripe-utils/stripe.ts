@@ -58,10 +58,13 @@ export interface PaymentIntent {
     payment_method_options?: StripePIPaymentMethodOptions;
 }
 
+export interface StripePIPaymentMethodSavingOptions {
+    setup_future_usage?: StripeInstrumentSetupFutureUsage;
+}
+
 export interface StripePIPaymentMethodOptions {
-    card?: {
-        setup_future_usage?: StripeInstrumentSetupFutureUsage;
-    };
+    card?: StripePIPaymentMethodSavingOptions;
+    us_bank_account?: StripePIPaymentMethodSavingOptions;
 }
 
 /**
