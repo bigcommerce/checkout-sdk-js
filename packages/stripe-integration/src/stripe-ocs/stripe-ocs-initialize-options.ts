@@ -59,6 +59,8 @@ export default interface StripeOCSPaymentInitializeOptions {
     paymentMethodSelect?(id: string): void;
 
     handleClosePaymentMethod?(collapseElement: () => void): void;
+
+    togglePreloader?(showLoader: boolean): void;
 }
 
 export interface WithStripeOCSPaymentInitializeOptions {
