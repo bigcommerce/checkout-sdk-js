@@ -215,6 +215,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             expect(braintreeSdk.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken);
             expect(braintreeSdk.getVenmoCheckoutOrThrow).toHaveBeenCalled();
+            expect(paymentIntegrationService.loadDefaultCheckout).toHaveBeenCalled();
         });
 
         it('successfully renders braintree venmo button', async () => {
