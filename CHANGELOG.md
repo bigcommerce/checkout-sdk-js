@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.779.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.6...v1.779.0) (2025-08-05)
+
+
+### Features
+
+* **payment:** updated venmo button strategy with providing loadDefaultCheckout to load store config ([#2958](https://github.com/bigcommerce/checkout-sdk-js/issues/2958)) ([54fd9d5](https://github.com/bigcommerce/checkout-sdk-js/commit/54fd9d5f7c6011becba2784eac52419e963abafd))
+
 ### [1.778.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.5...v1.778.6) (2025-08-04)
 
 
