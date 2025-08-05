@@ -3,12 +3,8 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
-    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import {
-    getConfig,
-    PaymentIntegrationServiceMock,
-} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BraintreeScriptLoader from './braintree-script-loader';
 import { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
@@ -55,8 +51,6 @@ describe('BraintreeScriptLoader', () => {
     let mockWindow: BraintreeHostWindow;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
     let paymentIntegrationService: PaymentIntegrationService;
-    let storeConfigMock: StoreConfig;
-    let setDefaultBraintreeSdkVersion: (isExperimentOn?: boolean) => void;
 
     const braintreeSdkDefaultScriptsIntegrity =
         BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_DEFAULT_VERSION];
@@ -66,23 +60,12 @@ describe('BraintreeScriptLoader', () => {
     beforeEach(() => {
         mockWindow = { braintree: {} } as BraintreeHostWindow;
         scriptLoader = {} as ScriptLoader;
-        storeConfigMock = getConfig().storeConfig;
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-
-        setDefaultBraintreeSdkVersion = (isExperimentOn = false) => {
-            storeConfigMock.checkoutSettings.features = {
-                'PAYPAL-5636.update_braintree_sdk_version': isExperimentOn,
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigMock);
-        };
-
-        setDefaultBraintreeSdkVersion();
-
         braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+
+        jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+            BRAINTREE_SDK_STABLE_VERSION,
+        );
     });
 
     describe('#loadClient()', () => {
@@ -121,7 +104,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the client with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -223,7 +208,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads fastlane module with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -327,7 +314,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads PayPal checkout with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -431,7 +420,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads local payment methods with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -505,7 +496,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads google payment methods with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -578,7 +571,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads braintree paypal payment methods with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -651,7 +646,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads threeDSecure methods with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -725,7 +722,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads visaCheckout methods with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -799,7 +798,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads hostedFields methods with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -872,7 +873,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads venmoCheckout methods with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -945,7 +948,9 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the data collector library with default version of braintree sdk', async () => {
-            setDefaultBraintreeSdkVersion(true);
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
 
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,

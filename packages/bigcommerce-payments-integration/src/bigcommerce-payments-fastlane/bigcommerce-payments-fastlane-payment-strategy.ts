@@ -107,6 +107,9 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         const { isDeveloperModeApplicable, isFastlaneStylingEnabled } =
             paymentMethod.initializationData || {};
 
+        this.threeDSVerificationMethod =
+            paymentMethod.initializationData?.threeDSVerificationMethod;
+
         this.paypalFastlaneSdk = await this.bigCommercePaymentsSdk.getPayPalFastlaneSdk(
             paymentMethod,
             cart.currency.code,

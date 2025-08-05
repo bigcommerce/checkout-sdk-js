@@ -2,7 +2,6 @@ export { default as InitializeOffsitePaymentConfig } from './initialize-offsite-
 export {
     default as PaymentInstrument,
     AccountInstrument,
-    BraintreePaymentInstrument,
     CardInstrument,
     UntrustedShippingCardVerificationType,
     PayPalInstrument,

@@ -2,6 +2,55 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.779.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.6...v1.779.0) (2025-08-05)
+
+
+### Features
+
+* **payment:** updated venmo button strategy with providing loadDefaultCheckout to load store config ([#2958](https://github.com/bigcommerce/checkout-sdk-js/issues/2958)) ([54fd9d5](https://github.com/bigcommerce/checkout-sdk-js/commit/54fd9d5f7c6011becba2784eac52419e963abafd))
+
+### [1.778.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.5...v1.778.6) (2025-08-04)
+
+
+### Bug Fixes
+
+* **payment:** Stripe Link v2 on cancel event added ([5fc2e48](https://github.com/bigcommerce/checkout-sdk-js/commit/5fc2e48472a0b92ec460c7b5df2a08647f38ab4c))
+
+### [1.778.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.4...v1.778.5) (2025-07-31)
+
+
+### Code Refactoring
+
+* **payment:** updated Braintree Fastlane to use cookies instead of local storage ([#2953](https://github.com/bigcommerce/checkout-sdk-js/issues/2953)) ([d30a21e](https://github.com/bigcommerce/checkout-sdk-js/commit/d30a21eaf81eaa789c16d4347533c859eefc618b))
+
+### [1.778.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.3...v1.778.4) (2025-07-30)
+
+
+### Bug Fixes
+
+* **payment:** updated getSDKVersion method in BraintreeSDKVersionManager with getStoreConfig instead of getStoreConfigOrThrow ([#2952](https://github.com/bigcommerce/checkout-sdk-js/issues/2952)) ([3e7aa25](https://github.com/bigcommerce/checkout-sdk-js/commit/3e7aa25f7d47fe2c23ba4b68196ec0081d77cba3))
+
+### [1.778.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.2...v1.778.3) (2025-07-30)
+
+
+### Bug Fixes
+
+* **payment:** Fix threeDSVerification method assignment ([#2951](https://github.com/bigcommerce/checkout-sdk-js/issues/2951)) ([810bdeb](https://github.com/bigcommerce/checkout-sdk-js/commit/810bdeb74f646a2da476d3060103bd606d07bb75))
+
+### [1.778.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.1...v1.778.2) (2025-07-30)
+
+
+### Bug Fixes
+
+* **payment:** Fix ppcp fl request error message ([#2950](https://github.com/bigcommerce/checkout-sdk-js/issues/2950)) ([e8f0d3d](https://github.com/bigcommerce/checkout-sdk-js/commit/e8f0d3d376d55268754e8e3679dcb51069b94804))
+
+### [1.778.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.778.0...v1.778.1) (2025-07-30)
+
+
+### Code Refactoring
+
+* **payment:** updated BigCommercePaymentsFastlane strategies implementation to use cookies instead of local storage ([#2948](https://github.com/bigcommerce/checkout-sdk-js/issues/2948)) ([9380161](https://github.com/bigcommerce/checkout-sdk-js/commit/93801611665718d385f235a5e3b2c55104a4bdac))
+
 ## [1.778.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.777.1...v1.778.0) (2025-07-28)
 
 

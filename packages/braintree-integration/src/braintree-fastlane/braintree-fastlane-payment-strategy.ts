@@ -25,11 +25,10 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastlane-payment-initialize-options';
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy {
     private braintreeCardComponent?: BraintreeFastlaneCardComponent;
@@ -39,7 +38,6 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeFastlaneUtils: BraintreeFastlaneUtils,
-        private browserStorage: BrowserStorage,
         private braintreeSdk: BraintreeSdk,
     ) {}
 
@@ -134,7 +132,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
 
         await this.paymentIntegrationService.submitPayment(paymentPayload);
 
-        this.browserStorage.removeItem('sessionId');
+        this.braintreeFastlaneUtils.removeSessionIdFromCookies();
     }
 
     finalize(): Promise<void> {
@@ -328,7 +326,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
             ? paymentProviderCustomer
             : {};
 
-        const paypalFastlaneSessionId = this.browserStorage.getItem('sessionId');
+        const paypalFastlaneSessionId = this.braintreeFastlaneUtils.getSessionIdFromCookies();
 
         if (
             !customer.isGuest ||

@@ -18,6 +18,7 @@ import {
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+import { isBaseInstrument } from '@bigcommerce/checkout-sdk/utility';
 
 import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
 import {
@@ -326,9 +327,14 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
 
             const instruments = state.getInstruments();
 
-            const { trustedShippingAddress } =
-                instruments?.find(({ bigpayToken }) => bigpayToken === paymentData.instrumentId) ||
-                {};
+            const findInstrument = instruments?.find(
+                (instrument) =>
+                    isBaseInstrument(instrument) &&
+                    instrument.bigpayToken === paymentData.instrumentId,
+            );
+            const trustedShippingAddress = isBaseInstrument(findInstrument)
+                ? findInstrument.trustedShippingAddress
+                : {};
 
             return !!trustedShippingAddress;
         }

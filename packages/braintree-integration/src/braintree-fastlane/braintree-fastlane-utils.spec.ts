@@ -21,7 +21,7 @@ import {
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
+import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { getBraintreeAcceleratedCheckoutPaymentMethod } from '../mocks/braintree.mock';
 
@@ -31,7 +31,6 @@ describe('BraintreeFastlaneUtils', () => {
     let braintreeFastlaneMock: BraintreeFastlane;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
-    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let subject: BraintreeFastlaneUtils;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
@@ -59,17 +58,15 @@ describe('BraintreeFastlaneUtils', () => {
             braintreeScriptLoader,
             window,
         );
-        browserStorage = new BrowserStorage('paypalConnect');
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         subject = new BraintreeFastlaneUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
-            browserStorage,
         );
 
-        jest.spyOn(browserStorage, 'removeItem');
-        jest.spyOn(browserStorage, 'setItem');
+        jest.spyOn(CookieStorage, 'remove');
+        jest.spyOn(CookieStorage, 'set');
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
@@ -338,7 +335,10 @@ describe('BraintreeFastlaneUtils', () => {
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow();
 
-            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
+            expect(CookieStorage.set).toHaveBeenCalledWith('bc-fastlane-sessionId', cart.id, {
+                expires: expect.any(Date),
+                secure: true,
+            });
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
                 authenticationState: BraintreeFastlaneAuthenticationState.UNRECOGNIZED,
                 addresses: [],
@@ -397,7 +397,10 @@ describe('BraintreeFastlaneUtils', () => {
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow();
 
-            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
+            expect(CookieStorage.set).toHaveBeenCalledWith('bc-fastlane-sessionId', cart.id, {
+                expires: expect.any(Date),
+                secure: true,
+            });
             expect(braintreeFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
@@ -481,7 +484,10 @@ describe('BraintreeFastlaneUtils', () => {
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow();
 
-            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
+            expect(CookieStorage.set).toHaveBeenCalledWith('bc-fastlane-sessionId', cart.id, {
+                expires: expect.any(Date),
+                secure: true,
+            });
             expect(braintreeFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
@@ -506,7 +512,7 @@ describe('BraintreeFastlaneUtils', () => {
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow();
 
-            expect(browserStorage.removeItem).toHaveBeenCalledWith('sessionId');
+            expect(CookieStorage.remove).toHaveBeenCalledWith('bc-fastlane-sessionId');
             expect(braintreeFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,

@@ -11,7 +11,8 @@ export default class BraintreeSDKVersionManager {
 
     getSDKVersion() {
         const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const storeConfig = state.getStoreConfig();
+        const features = storeConfig?.checkoutSettings.features || {};
 
         if (isExperimentEnabled(features, 'PAYPAL-5636.update_braintree_sdk_version')) {
             return BRAINTREE_SDK_DEFAULT_VERSION;

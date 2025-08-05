@@ -1,7 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import { BraintreeOrderStatusData } from '@bigcommerce/checkout-sdk/braintree-utils';
-
 import {
     ContentType,
     INTERNAL_USE_ONLY,

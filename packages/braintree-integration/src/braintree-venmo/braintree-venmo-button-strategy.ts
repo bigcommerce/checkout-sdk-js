@@ -107,6 +107,8 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
             );
         }
 
+        await this.paymentIntegrationService.loadDefaultCheckout();
+
         this.onError = braintreevenmo?.onError || this.handleError;
         this.braintreeSdk.initialize(clientToken);
 

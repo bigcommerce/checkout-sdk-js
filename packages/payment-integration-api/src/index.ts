@@ -130,7 +130,6 @@ export {
     WithSepaInstrument,
     WithIdealInstrument,
     WithPayByBankInstrument,
-    BraintreePaymentInstrument,
     BlueSnapDirectEcpPayload,
     BlueSnapDirectSepaPayload,
     IdealPayload,
