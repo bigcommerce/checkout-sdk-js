@@ -66,9 +66,6 @@ describe('ApplePayCustomerStrategy', () => {
         );
         applePayScriptLoader = new ApplePayScriptLoader(getScriptLoader());
         storeConfigMock = getConfig().storeConfig;
-        storeConfigMock.checkoutSettings.features = {
-            'PAYPAL-4324.applepay_web_browser_support': false,
-        };
 
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(getResponse({})));
 
@@ -107,55 +104,25 @@ describe('ApplePayCustomerStrategy', () => {
             ).mockReturnValue(getApplePay());
         });
 
-        describe('when experiment is enabled', () => {
-            it('load Apple Pay SDK', async () => {
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue({
-                    ...storeConfigMock,
-                    checkoutSettings: {
-                        ...storeConfigMock.checkoutSettings,
-                        features: {
-                            'PAYPAL-4324.applepay_web_browser_support': true,
-                        },
-                    },
-                });
+        it('load Apple Pay SDK', async () => {
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
 
-                const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            await strategy.initialize(customerInitializeOptions);
 
-                await strategy.initialize(customerInitializeOptions);
-
-                expect(applePayScriptLoader.loadSdk).toHaveBeenCalled();
-            });
-
-            it('creates the button', async () => {
-                const customerInitializeOptions = getApplePayCustomerInitializationOptions();
-                let children = container.children;
-
-                expect(children).toHaveLength(0);
-
-                await strategy.initialize(customerInitializeOptions);
-                children = container.children;
-
-                expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
-                expect(children).toHaveLength(1);
-            });
+            expect(applePayScriptLoader.loadSdk).toHaveBeenCalled();
         });
 
-        describe('when isWebBrowserSupported is false', () => {
-            it('creates the button', async () => {
-                const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+        it('creates the button', async () => {
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            let children = container.children;
 
-                let children = container.children;
+            expect(children).toHaveLength(0);
 
-                expect(children).toHaveLength(0);
+            await strategy.initialize(customerInitializeOptions);
+            children = container.children;
 
-                await strategy.initialize(customerInitializeOptions);
-                children = container.children;
-
-                expect(children).toHaveLength(1);
-            });
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
+            expect(children).toHaveLength(1);
         });
 
         it('throws error when payment data is empty', async () => {

@@ -25,6 +25,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import ApplePayPaymentStrategy from './apple-pay-payment-strategy';
+import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 import { getApplePay } from './mocks/apple-pay-method.mock';
 import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
@@ -38,6 +39,7 @@ describe('ApplePayPaymentStrategy', () => {
     let applePaySession: MockApplePaySession;
     let braintreeSdk: BraintreeSdk;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
+    let applePayScriptLoader: ApplePayScriptLoader;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -56,16 +58,20 @@ describe('ApplePayPaymentStrategy', () => {
         requestSender = createRequestSender();
         applePayFactory = new ApplePaySessionFactory();
         paymentMethod = getApplePay();
+        applePayScriptLoader = new ApplePayScriptLoader(getScriptLoader());
 
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(getResponse({})));
 
         jest.spyOn(applePayFactory, 'create').mockReturnValue(applePaySession);
+
+        jest.spyOn(applePayScriptLoader, 'loadSdk').mockReturnValue(Promise.resolve());
 
         strategy = new ApplePayPaymentStrategy(
             requestSender,
             paymentIntegrationService,
             applePayFactory,
             braintreeSdk,
+            applePayScriptLoader,
         );
     });
 
@@ -79,6 +85,12 @@ describe('ApplePayPaymentStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(getApplePay());
+        });
+
+        it('load Apple Pay SDK', async () => {
+            await strategy.initialize({ methodId: 'applepay' });
+
+            expect(applePayScriptLoader.loadSdk).toHaveBeenCalled();
         });
 
         it('throws invalid argument error if no method id', async () => {
