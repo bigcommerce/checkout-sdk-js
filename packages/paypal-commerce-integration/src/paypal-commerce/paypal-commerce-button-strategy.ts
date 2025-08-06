@@ -140,10 +140,12 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             console.log('PAYPAL BUTTONS', paypalButton);
             // AppSwitch Flow
             if (paypalButton?.hasReturned && paypalButton.hasReturned()) {
+                console.log('HAS RETURNED');
                 if (paypalButton.resume) {
                     paypalButton?.resume();
                 }
             } else {
+                console.log('RENDER');
                 paypalButton.render(`#${containerId}`);
             }
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
