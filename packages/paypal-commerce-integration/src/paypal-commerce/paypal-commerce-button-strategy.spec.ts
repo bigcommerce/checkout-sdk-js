@@ -241,6 +241,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
                     close: jest.fn(),
+                    hasReturned: jest.fn(() => false),
+                    resume: jest.fn(),
                 };
             },
         );
@@ -424,6 +426,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                 isEligible: jest.fn(() => true),
                 render: paypalCommerceSdkRenderMock,
                 close: jest.fn(),
+                hasReturned: jest.fn(() => false),
+                resume: jest.fn(),
             }));
 
             await strategy.initialize(initializationOptions);
@@ -438,6 +442,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
                 close: jest.fn(),
+                hasReturned: jest.fn(() => false),
+                resume: jest.fn(),
             }));
 
             await strategy.initialize(initializationOptions);
@@ -452,6 +458,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
                 close: jest.fn(),
+                hasReturned: jest.fn(() => false),
+                resume: jest.fn(),
             }));
 
             await strategy.initialize(initializationOptions);
@@ -466,6 +474,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
                 close: jest.fn(),
+                hasReturned: jest.fn(() => false),
+                resume: jest.fn(),
             }));
 
             await strategy.initialize({
@@ -560,6 +570,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                             render: jest.fn(),
                             isEligible: jest.fn(() => true),
                             close: jest.fn(),
+                            hasReturned: jest.fn(() => false),
+                            resume: jest.fn(),
                         };
                     },
                 );
@@ -600,6 +612,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                             render: jest.fn(),
                             isEligible: jest.fn(() => true),
                             close: jest.fn(),
+                            hasReturned: jest.fn(() => false),
+                            resume: jest.fn(),
                         };
                     },
                 );
