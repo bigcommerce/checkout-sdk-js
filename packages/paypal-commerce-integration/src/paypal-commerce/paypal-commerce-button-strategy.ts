@@ -137,9 +137,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         if (paypalButton.isEligible()) {
             console.log('PAYPAL BUTTONS', paypalButton);
             // AppSwitch Flow
-            //@ts-ignore
             if (paypalButton.hasReturned()) {
-                //@ts-ignore
                 paypalButton.resume();
             } else {
                 paypalButton.render(`#${containerId}`);
