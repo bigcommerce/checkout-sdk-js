@@ -104,6 +104,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
+            appSwitchWhenAvailable: true, // Need an indicator to trigger App Switch
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
@@ -134,7 +135,15 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            paypalButton.render(`#${containerId}`);
+            console.log('PAYPAL BUTTONS', paypalButton);
+            // AppSwitch Flow
+            //@ts-ignore
+            if (paypalButton.hasReturned()) {
+                //@ts-ignore
+                paypalButton.resume();
+            } else {
+                paypalButton.render(`#${containerId}`);
+            }
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {
