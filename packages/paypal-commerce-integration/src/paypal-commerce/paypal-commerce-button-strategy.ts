@@ -105,7 +105,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         const defaultCallbacks = {
             appSwitchWhenAvailable: true, // Need an indicator to trigger App Switch
-            createOrder: () => this.createPayPalOrder(),
+            createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };
@@ -154,86 +154,6 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             this.paypalCommerceIntegrationService.removeElement(containerId);
         }
     }
-
-    ///---------------------------
-    private async getAccessToken() {
-        const clientId =
-            'AVQ8E5FI-dz2P6q3ZZHrTSSl3GjmOReS_ni2lo7AuRX3LlL0DZgZlb_Q8dOjd4CBxjLYNLM8SqzaNY7u';
-        const clientSecret =
-            'EK2LjzZDR2up6pOYKT-UbqHvWpJnOw1zWQVTU8QAmw5hj5IAXkHBaONwXQgXCJBDz9dw3HWMv6n0224U';
-
-        const credentials = btoa(`${clientId}:${clientSecret}`);
-
-        const response = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
-            method: 'POST',
-            headers: {
-                // eslint-disable-next-line prettier/prettier
-                'Authorization': `Basic ${credentials}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'grant_type=client_credentials',
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(`Error fetching token: ${JSON.stringify(data)}`);
-        }
-
-        return data.access_token;
-    }
-
-    private async createPayPalOrder() {
-        try {
-            const accessToken = await this.getAccessToken();
-            const response = await fetch('https://api-m.sandbox.paypal.com/v2/checkout/orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'PayPal-Request-Id': 'YOUR_PAYPAL_REQUEST_ID', // Optional
-                    // eslint-disable-next-line prettier/prettier, @typescript-eslint/restrict-template-expressions
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify({
-                    intent: 'CAPTURE',
-                    payment_source: {
-                        paypal: {
-                            email_address: 'sb-r43m3y28875053@business.example.com',
-                            experience_context: {
-                                user_action: 'PAY_NOW',
-                                return_url: 'https://example.com/merchant_app_universal_link',
-                                cancel_url: 'https://example.com/merchant_app_universal_link',
-                                app_switch_preference: {
-                                    launch_paypal_app: true,
-                                },
-                            },
-                        },
-                    },
-                    purchase_units: [
-                        {
-                            amount: {
-                                currency_code: 'USD',
-                                value: '64.00',
-                            },
-                        },
-                    ],
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`PayPal order creation failed: ${JSON.stringify(errorData)}`);
-            }
-
-            const data = await response.json();
-            console.log('Order created:', data);
-            return data;
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        } catch (error) {
-            console.log('Error', error);
-        }
-    }
-    ///---------------------------
 
     private async handleClick(
         buyNowInitializeOptions?: PayPalBuyNowInitializeOptions,
