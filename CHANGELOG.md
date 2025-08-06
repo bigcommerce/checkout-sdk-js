@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.781.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.780.0...v1.781.0) (2025-08-06)
+
+
+### Features
+
+* **payment:** Remove applepay method filtering logic to show applepay method in Payment Step for third-party browsers ([#2957](https://github.com/bigcommerce/checkout-sdk-js/issues/2957)) ([07c7cb6](https://github.com/bigcommerce/checkout-sdk-js/commit/07c7cb6cb1dedfb52cd80b7ff1b3314e287ce21e))
+
 ## [1.780.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.779.0...v1.780.0) (2025-08-05)
 
 
