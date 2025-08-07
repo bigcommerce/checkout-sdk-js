@@ -452,7 +452,7 @@ The functions provided by the SDK are:
 ## See also
 
 * [Checkout JS](https://github.com/bigcommerce/checkout-js) - This is our reference implementation of a checkout built using the Checkout JS SDK.
-* [Storefront APIs](https://developer.bigcommerce.com/api/v3/storefront.html) - The documentation for Storefront Checkout & Cart Web APIs.
+* [Storefront APIs](https://developer.bigcommerce.com/docs/storefront/cart-checkout/guide/rest-storefront) - The documentation for Storefront Checkout & Cart Web APIs.
 
 
 ## Notes
