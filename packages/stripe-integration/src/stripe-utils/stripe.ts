@@ -56,6 +56,13 @@ export interface PaymentIntent {
     last_payment_error: LastPaymentError | null;
 
     payment_method_options?: StripePIPaymentMethodOptions;
+
+    next_action?: {
+        type: string;
+        value: any;
+    };
+
+    client_secret?: string;
 }
 
 export interface StripePIPaymentMethodSavingOptions {
@@ -550,6 +557,8 @@ export interface StripeClient {
      * Create an `Elements` instance, which manages a group of elements.
      */
     elements(options: StripeElementsOptions): StripeElements;
+
+    verifyMicrodepositsForSetup?(clientSecret: string, data: any): Promise<any>;
 }
 
 export interface StripeResult {

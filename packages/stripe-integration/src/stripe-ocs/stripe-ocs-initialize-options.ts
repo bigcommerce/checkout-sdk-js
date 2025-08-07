@@ -59,6 +59,8 @@ export default interface StripeOCSPaymentInitializeOptions {
     paymentMethodSelect?(id: string): void;
 
     handleClosePaymentMethod?(collapseElement: () => void): void;
+
+    loadConfirmationIframe?(iframe: HTMLIFrameElement, cancel: () => void): void;
 }
 
 export interface WithStripeOCSPaymentInitializeOptions {

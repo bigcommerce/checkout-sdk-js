@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import {
     InvalidArgumentError,
     isRequestError,
@@ -45,6 +47,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private stripeClient?: StripeClient;
     private stripeElements?: StripeElements;
     private selectedMethodId?: string;
+    private loadConfirmationIframe?: (iframe: HTMLIFrameElement, cancel: () => void) => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -114,7 +117,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            await this._processAdditionalAction(error, methodId);
+            await this._processAdditionalAction(error, methodId, gatewayId);
         }
     }
 
@@ -172,6 +175,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             render,
             paymentMethodSelect,
             handleClosePaymentMethod,
+            loadConfirmationIframe,
         } = stripe;
 
         this.stripeElements = await this.scriptLoader.getElements(this.stripeClient, {
@@ -228,6 +232,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         });
 
         handleClosePaymentMethod?.(this._collapseStripeElement.bind(this));
+
+        if (loadConfirmationIframe) {
+            this.loadConfirmationIframe = loadConfirmationIframe;
+        }
     }
 
     private async _loadStripeJs(
@@ -278,6 +286,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private async _processAdditionalAction(
         error: unknown,
         methodId: string,
+        gatewayId: string,
     ): Promise<PaymentIntegrationSelectors | undefined> {
         if (
             !isRequestError(error) ||
@@ -295,8 +304,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         const { paymentIntent } = await this._confirmStripePaymentOrThrow(
             methodId,
+            gatewayId,
             additionalActionData,
         );
+
         const { id: paymentIntentId, payment_method_options: paymentMethodOptions } =
             paymentIntent || {};
 
@@ -315,12 +326,13 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
     private async _confirmStripePaymentOrThrow(
         methodId: string,
+        gatewayId: string,
         additionalActionData: StripeAdditionalActionRequired['data'],
     ): Promise<StripeResult | never> {
-        const { token, redirect_url } = additionalActionData;
+        const { token } = additionalActionData;
         const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
             this.stripeElements,
-            redirect_url,
+            'https://pavlenkom.github.io/',
         );
         let stripeError: StripeError | undefined;
 
@@ -340,10 +352,31 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                 throw new PaymentMethodFailedError();
             }
 
+            await this._stripeConfirmationNextAction(methodId, gatewayId, confirmationResult);
+
             return confirmationResult;
         } catch (error: unknown) {
             return this.stripeIntegrationService.throwStripeError(stripeError);
         }
+    }
+
+    private _stripeConfirmationNextAction(
+        _methodId: string,
+        _gatewayId: string,
+        confirmationResult?: StripeResult,
+    ): Promise<any> {
+        const { next_action } = confirmationResult?.paymentIntent || {};
+
+        const { value } = next_action || {};
+        const frame = this._createIframe(value.hosted_verification_url);
+        let confirmationCancel: () => void = noop;
+        const promise = new Promise<void>((resolve) => {
+            confirmationCancel = resolve;
+        });
+
+        this.loadConfirmationIframe?.(frame, confirmationCancel);
+
+        return promise;
     }
 
     private _onStripeElementChange(
@@ -379,5 +412,21 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         }
 
         return { credit_card_token: { token } };
+    }
+
+    private _createIframe(src: string): HTMLIFrameElement {
+        const iframe = document.createElement('iframe');
+
+        iframe.setAttribute(
+            'sandbox',
+            'allow-top-navigation allow-scripts allow-forms allow-same-origin',
+        );
+
+        iframe.src = src;
+        iframe.name = 'stripe_ocs_hosted_confirmation_page';
+        iframe.style.height = '80vh';
+        iframe.style.width = '60vh';
+
+        return iframe;
     }
 }
