@@ -304,7 +304,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
 
         this.paypalButton = paypalAmpsSdk.Buttons(buttonOptions);
 
-        if (!this.paypalButton.isEligible()) {
+        if (!this.paypalButton?.isEligible()) {
             return;
         }
 

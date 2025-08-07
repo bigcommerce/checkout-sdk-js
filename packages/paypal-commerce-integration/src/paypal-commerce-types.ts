@@ -360,6 +360,8 @@ export interface PayPalCommerceButtons {
     render(id: string): void;
     close(): void;
     isEligible(): boolean;
+    hasReturned?(): boolean;
+    resume?(): void;
 }
 
 export interface PayPalCommerceButtonsOptions {
