@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.781.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.0...v1.781.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* **checkout:** Update Storefront APIs Doc URL ([#2963](https://github.com/bigcommerce/checkout-sdk-js/issues/2963)) ([9bead28](https://github.com/bigcommerce/checkout-sdk-js/commit/9bead28a24a21256653c9b8a781c0e400151fe20))
+
 ## [1.781.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.780.0...v1.781.0) (2025-08-06)
 
 
