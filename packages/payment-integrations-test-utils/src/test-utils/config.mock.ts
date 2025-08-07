@@ -40,6 +40,7 @@ export default function getConfig(): Config {
                 isSpamProtectionEnabled: true,
                 isTrustedShippingAddressEnabled: false,
                 orderTermsAndConditions: '',
+                orderTermsAndConditionsLocation: '',
                 orderTermsAndConditionsLink: '',
                 orderTermsAndConditionsType: '',
                 privacyPolicyUrl: '',
@@ -55,11 +56,15 @@ export default function getConfig(): Config {
                 code: 'USD',
                 decimalPlaces: '2',
                 decimalSeparator: '.',
+                isTransactional: true,
                 symbolLocation: 'left',
                 symbol: '$',
                 thousandsSeparator: ',',
             },
             displayDateFormat: 'dd/MM/yyyy',
+            displaySettings: {
+                hidePriceFromGuests: false,
+            },
             inputDateFormat: 'dd/MM/yyyy',
             formFields: {
                 customerAccount: [],
@@ -74,6 +79,7 @@ export default function getConfig(): Config {
                 forgotPasswordLink:
                     'https://store-k1drp8k8.bcapp.dev/login.php?action=reset_password',
                 loginLink: 'https://store-k1drp8k8.bcapp.dev/login.php',
+                logoutLink: 'https://store-k1drp8k8.bcapp.dev/login.php?action=logout',
                 siteLink: 'https://store-k1drp8k8.bcapp.dev/',
                 orderConfirmationLink:
                     'https://store-k1drp8k8.bcapp.dev/checkout/order-confirmation',

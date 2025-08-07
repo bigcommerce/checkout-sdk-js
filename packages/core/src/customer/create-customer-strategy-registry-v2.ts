@@ -7,7 +7,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { ResolveIdRegistry } from '../common/registry';
-import * as defaultCustomerStrategyFactories from '../generated/customer-strategies';
 
 export interface CustomerStrategyFactories {
     [key: string]: CustomerStrategyFactory<CustomerStrategy>;
@@ -15,7 +14,7 @@ export interface CustomerStrategyFactories {
 
 export default function createCustomerStrategyRegistry(
     paymentIntegrationService: PaymentIntegrationService,
-    customerStrategyFactories: CustomerStrategyFactories = defaultCustomerStrategyFactories,
+    customerStrategyFactories: CustomerStrategyFactories,
 ): ResolveIdRegistry<CustomerStrategy, CustomerStrategyResolveId> {
     const registry = new ResolveIdRegistry<CustomerStrategy, CustomerStrategyResolveId>();
 

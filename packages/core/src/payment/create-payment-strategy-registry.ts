@@ -17,6 +17,7 @@ import {
 import { BrowserStorage } from '../common/storage';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentIntegrationService } from '../payment-integration';
@@ -74,11 +75,15 @@ export default function createPaymentStrategyRegistry(
     const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
     });
+
     const scriptLoader = getScriptLoader();
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const paymentIntegrationService = createPaymentIntegrationService(store);
-    const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
+    const registryV2 = createPaymentStrategyRegistryV2(
+        paymentIntegrationService,
+        process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
+    );
     const braintreePaymentProcessor = createBraintreePaymentProcessor(
         scriptLoader,
         paymentIntegrationService,
@@ -119,6 +124,7 @@ export default function createPaymentStrategyRegistry(
         registryV2,
         orderActionCreator,
         spamProtectionActionCreator,
+        paymentIntegrationService,
     );
     const formPoster = createFormPoster();
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
