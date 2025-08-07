@@ -362,10 +362,11 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
     private _shouldSaveInstrument(paymentMethodOptions?: StripePIPaymentMethodOptions) {
         const paymentMethod = paymentMethodOptions?.card || paymentMethodOptions?.us_bank_account;
+        const setupFutureUsage = paymentMethod?.setup_future_usage;
 
         return (
-            paymentMethod?.setup_future_usage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
-            paymentMethod?.setup_future_usage === StripeInstrumentSetupFutureUsage.OFF_SESSION
+            setupFutureUsage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
+            setupFutureUsage === StripeInstrumentSetupFutureUsage.OFF_SESSION
         );
     }
 
