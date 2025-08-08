@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import {
     InvalidArgumentError,
     isRequestError,
@@ -45,6 +47,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private stripeClient?: StripeClient;
     private stripeElements?: StripeElements;
     private selectedMethodId?: string;
+    private loadConfirmationIframe?: (iframe: HTMLIFrameElement, cancel: () => void) => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -114,7 +117,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            await this._processAdditionalAction(error, methodId);
+            await this._processAdditionalAction(error, methodId, gatewayId);
         }
     }
 
@@ -172,6 +175,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             render,
             paymentMethodSelect,
             handleClosePaymentMethod,
+            loadConfirmationIframe,
         } = stripe;
 
         this.stripeElements = await this.scriptLoader.getElements(this.stripeClient, {
@@ -228,6 +232,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         });
 
         handleClosePaymentMethod?.(this._collapseStripeElement.bind(this));
+
+        if (loadConfirmationIframe) {
+            this.loadConfirmationIframe = loadConfirmationIframe;
+        }
     }
 
     private async _loadStripeJs(
@@ -249,15 +257,22 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private _getPaymentPayload(
         methodId: string,
         token: string,
-        shouldSaveInstrument = false,
+        paymentMethodOptions?: StripePIPaymentMethodOptions,
     ): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
+        const shouldSaveInstrument = this._shouldSaveInstrument(paymentMethodOptions);
+        const tokenizedOptions = this._getTokenizedOptions(
+            token,
+            shouldSaveInstrument,
+            paymentMethodOptions,
+        );
+
         const formattedPayload = {
             cart_id: cartId,
-            credit_card_token: { token },
             confirm: false,
             payment_method_id: this.selectedMethodId,
             vault_payment_instrument: shouldSaveInstrument,
+            ...tokenizedOptions,
         };
 
         return {
@@ -271,6 +286,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private async _processAdditionalAction(
         error: unknown,
         methodId: string,
+        gatewayId: string,
     ): Promise<PaymentIntegrationSelectors | undefined> {
         if (
             !isRequestError(error) ||
@@ -288,16 +304,17 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         const { paymentIntent } = await this._confirmStripePaymentOrThrow(
             methodId,
+            gatewayId,
             additionalActionData,
         );
+
         const { id: paymentIntentId, payment_method_options: paymentMethodOptions } =
             paymentIntent || {};
 
-        const shouldSaveCard = this._shouldSaveCard(paymentMethodOptions);
         const paymentPayload = this._getPaymentPayload(
             methodId,
             paymentIntentId || token,
-            shouldSaveCard,
+            paymentMethodOptions,
         );
 
         try {
@@ -309,12 +326,13 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
     private async _confirmStripePaymentOrThrow(
         methodId: string,
+        gatewayId: string,
         additionalActionData: StripeAdditionalActionRequired['data'],
     ): Promise<StripeResult | never> {
-        const { token, redirect_url } = additionalActionData;
+        const { token } = additionalActionData;
         const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
             this.stripeElements,
-            redirect_url,
+            'https://pavlenkom.github.io/',
         );
         let stripeError: StripeError | undefined;
 
@@ -334,10 +352,31 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                 throw new PaymentMethodFailedError();
             }
 
+            await this._stripeConfirmationNextAction(methodId, gatewayId, confirmationResult);
+
             return confirmationResult;
         } catch (error: unknown) {
             return this.stripeIntegrationService.throwStripeError(stripeError);
         }
+    }
+
+    private _stripeConfirmationNextAction(
+        _methodId: string,
+        _gatewayId: string,
+        confirmationResult?: StripeResult,
+    ): Promise<any> {
+        const { next_action } = confirmationResult?.paymentIntent || {};
+
+        const { value } = next_action || {};
+        const frame = this._createIframe(value.hosted_verification_url);
+        let confirmationCancel: () => void = noop;
+        const promise = new Promise<void>((resolve) => {
+            confirmationCancel = resolve;
+        });
+
+        this.loadConfirmationIframe?.(frame, confirmationCancel);
+
+        return promise;
     }
 
     private _onStripeElementChange(
@@ -354,12 +393,40 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         paymentMethodSelect?.(`${gatewayId}-${methodId}`);
     }
 
-    private _shouldSaveCard(paymentMethodOptions?: StripePIPaymentMethodOptions) {
-        const futureUsage = paymentMethodOptions?.card?.setup_future_usage;
+    private _shouldSaveInstrument(paymentMethodOptions?: StripePIPaymentMethodOptions) {
+        const paymentMethod = paymentMethodOptions?.card || paymentMethodOptions?.us_bank_account;
 
         return (
-            futureUsage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
-            futureUsage === StripeInstrumentSetupFutureUsage.OFF_SESSION
+            paymentMethod?.setup_future_usage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
+            paymentMethod?.setup_future_usage === StripeInstrumentSetupFutureUsage.OFF_SESSION
         );
+    }
+
+    private _getTokenizedOptions(
+        token: string,
+        shouldSaveInstrument?: boolean,
+        paymentMethodOptions?: StripePIPaymentMethodOptions,
+    ) {
+        if (shouldSaveInstrument && paymentMethodOptions?.us_bank_account) {
+            return { tokenized_ach: { token } };
+        }
+
+        return { credit_card_token: { token } };
+    }
+
+    private _createIframe(src: string): HTMLIFrameElement {
+        const iframe = document.createElement('iframe');
+
+        iframe.setAttribute(
+            'sandbox',
+            'allow-top-navigation allow-scripts allow-forms allow-same-origin',
+        );
+
+        iframe.src = src;
+        iframe.name = 'stripe_ocs_hosted_confirmation_page';
+        iframe.style.height = '80vh';
+        iframe.style.width = '60vh';
+
+        return iframe;
     }
 }
