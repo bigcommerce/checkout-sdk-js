@@ -172,6 +172,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             render,
             paymentMethodSelect,
             handleClosePaymentMethod,
+            togglePreloader,
         } = stripe;
 
         this.stripeElements = await this.scriptLoader.getElements(this.stripeClient, {
@@ -218,6 +219,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             });
 
         this.stripeIntegrationService.mountElement(stripeElement, containerId);
+
+        stripeElement.on(StripeElementEvent.LOADER_START, () => {
+            togglePreloader?.(false);
+        });
 
         stripeElement.on(StripeElementEvent.READY, () => {
             render();

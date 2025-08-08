@@ -22,6 +22,5 @@ const createStripeOCSPaymentStrategy: PaymentStrategyFactory<StripeOCSPaymentStr
 };
 
 export default toResolvableModule(createStripeOCSPaymentStrategy, [
-    { gateway: 'stripeupe', id: 'stripe_ocs' },
     { gateway: 'stripeocs', id: 'optimized_checkout' },
 ]);

@@ -640,6 +640,7 @@ export enum StripeElementEvent {
     SHIPPING_RATE_CHANGE = 'shippingratechange',
     CONFIRM = 'confirm',
     CANCEL = 'cancel',
+    LOADER_START = 'loaderstart',
 }
 
 export interface LineItem {
