@@ -34,6 +34,7 @@ import {
 import {
     getBuyNowCart,
     getCart,
+    getConfig,
     getCustomer,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -108,6 +109,12 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                 getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
             },
         },
+    };
+
+    const storeConfigMock = getConfig().storeConfig;
+
+    storeConfigMock.checkoutSettings.features = {
+        'PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk': false,
     };
 
     const getSDKPayPalCheckoutMockWithErrorCallbackCall = () => {
@@ -233,6 +240,10 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         jest.spyOn(paypalSdkMock, 'Messages').mockImplementation(() => ({
             render: jest.fn(),
         }));
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+            storeConfigMock,
+        );
     });
 
     afterEach(() => {
@@ -447,6 +458,28 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                 defaultMessageContainerId,
                 'cart',
             );
+        });
+
+        it('do not calls Braintree Messages render method if experiment is enabled', async () => {
+            const storeConfigWithFeaturesOn = {
+                ...storeConfigMock,
+                checkoutSettings: {
+                    ...storeConfigMock.checkoutSettings,
+                    features: {
+                        ...storeConfigMock.checkoutSettings.features,
+                        'PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk':
+                            true,
+                    },
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+                storeConfigWithFeaturesOn,
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeMessages.render).not.toHaveBeenCalled();
         });
 
         it('renders braintree paylater button', async () => {
