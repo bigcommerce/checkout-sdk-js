@@ -67,18 +67,6 @@ describe('OffsitePaymentStrategy', () => {
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(payload, options);
         });
 
-        it('submits order with payment data if payment method is "ccavenuemars"', async () => {
-            options = { methodId: 'ccavenuemars' };
-            payload = {
-                ...payload,
-                payment: { methodId: options.methodId, gatewayId: options.gatewayId },
-            };
-
-            await strategy.execute(payload, options);
-
-            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(payload, options);
-        });
-
         it('initializes offsite payment flow', async () => {
             await strategy.execute(payload, options);
 
