@@ -3,12 +3,6 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    BraintreeIntegrationService,
-    BraintreeScriptLoader,
-    BraintreeSDKVersionManager,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
-
-import {
     CheckoutActionCreator,
     CheckoutRequestSender,
     CheckoutStore,
@@ -40,7 +34,6 @@ import PaymentStrategyType from './payment-strategy-type';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BNZPaymentStrategy } from './strategies/bnz';
 import {
-    BraintreeCreditCardPaymentStrategy,
     BraintreeVenmoPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
     createBraintreePaymentProcessor,
@@ -136,26 +129,6 @@ export default function createPaymentStrategyRegistry(
                     store,
                     paymentActionCreator,
                     new CardinalClient(new CardinalScriptLoader(scriptLoader)),
-                ),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.BRAINTREE,
-        () =>
-            new BraintreeCreditCardPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                braintreePaymentProcessor,
-                new BraintreeIntegrationService(
-                    new BraintreeScriptLoader(
-                        getScriptLoader(),
-                        window,
-                        new BraintreeSDKVersionManager(paymentIntegrationService),
-                    ),
-                    window,
                 ),
             ),
     );
