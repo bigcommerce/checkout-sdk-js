@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.781.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.2...v1.781.3) (2025-08-08)
+
+
+### Code Refactoring
+
+* **payment:** Removed BT Credit Card Payment Strategy from core ([#2955](https://github.com/bigcommerce/checkout-sdk-js/issues/2955)) ([b7a62b1](https://github.com/bigcommerce/checkout-sdk-js/commit/b7a62b14eeb6d9c9f451bf4cad48351a4b507e92))
+
 ### [1.781.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.1...v1.781.2) (2025-08-07)
 
 
