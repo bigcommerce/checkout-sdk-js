@@ -6,8 +6,6 @@ import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../
 import { NonceInstrument } from '../../payment';
 
 import { BraintreeClient, BraintreeThreeDSecure } from './braintree';
-import BraintreeHostedForm from './braintree-hosted-form';
-import { BraintreeFormOptions } from './braintree-payment-options';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import {
@@ -26,20 +24,15 @@ jest.mock('@braintree/browser-detection', () => ({
 
 describe('BraintreePaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
-    let braintreeHostedForm: BraintreeHostedForm;
 
     const clientToken = 'clientToken';
 
     beforeEach(() => {
         braintreeSDKCreator = {} as BraintreeSDKCreator;
-        braintreeHostedForm = {} as BraintreeHostedForm;
     });
 
     it('creates a instance of the payment processor', () => {
-        const braintreePaymentProcessor = new BraintreePaymentProcessor(
-            braintreeSDKCreator,
-            braintreeHostedForm,
-        );
+        const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
 
         expect(braintreePaymentProcessor).toBeInstanceOf(BraintreePaymentProcessor);
     });
@@ -48,10 +41,7 @@ describe('BraintreePaymentProcessor', () => {
         it('initializes the sdk creator with the client token', () => {
             braintreeSDKCreator.initialize = jest.fn();
 
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
 
             braintreePaymentProcessor.initialize(clientToken);
 
@@ -63,10 +53,7 @@ describe('BraintreePaymentProcessor', () => {
         it('calls teardown in the braintree sdk creator', async () => {
             braintreeSDKCreator.teardown = jest.fn();
 
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
 
             await braintreePaymentProcessor.deinitialize();
 
@@ -78,10 +65,7 @@ describe('BraintreePaymentProcessor', () => {
         it('loading paypal sdk via paypal checkout', async () => {
             braintreeSDKCreator.getPaypalCheckout = jest.fn();
 
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
 
             const config = {
                 isCreditEnabled: true,
@@ -108,10 +92,7 @@ describe('BraintreePaymentProcessor', () => {
                 Promise.resolve(getTokenizeResponseBody()),
             );
             braintreeSDKCreator.getClient = jest.fn().mockReturnValue(Promise.resolve(clientMock));
-            braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
+            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
         });
 
         it('tokenizes a card', async () => {
@@ -158,10 +139,7 @@ describe('BraintreePaymentProcessor', () => {
             braintreeSDKCreator.initialize = jest.fn();
             braintreeSDKCreator.getClient = jest.fn().mockReturnValue(Promise.resolve(clientMock));
 
-            braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
+            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
 
             jest.spyOn(braintreePaymentProcessor, 'tokenizeCard').mockReturnValue(
                 // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
@@ -213,10 +191,7 @@ describe('BraintreePaymentProcessor', () => {
         });
 
         it('appends data to a processed payment', async () => {
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
             const expected = await braintreePaymentProcessor.appendSessionId(
                 Promise.resolve(processedPayment),
             );
@@ -234,135 +209,10 @@ describe('BraintreePaymentProcessor', () => {
                 deviceData: 'my_device_session_id',
             });
 
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
             const expected = await braintreePaymentProcessor.getSessionId();
 
             expect(expected).toBe('my_device_session_id');
-        });
-    });
-
-    describe('#initializeHostedForm', () => {
-        let hostedFormInitializationOptions: BraintreeFormOptions;
-
-        it('initializes the hosted form', () => {
-            braintreeHostedForm.initialize = jest.fn();
-
-            const unsupportedCardBrands = ['american-express', 'discover'];
-
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
-
-            hostedFormInitializationOptions = {
-                fields: {
-                    cardCode: { containerId: 'cardCode', placeholder: 'Card code' },
-                    cardName: { containerId: 'cardName', placeholder: 'Card name' },
-                    cardNumber: { containerId: 'cardNumber', placeholder: 'Card number' },
-                    cardExpiry: { containerId: 'cardExpiry', placeholder: 'Card expiry' },
-                },
-            };
-
-            braintreePaymentProcessor.initializeHostedForm(
-                hostedFormInitializationOptions,
-                unsupportedCardBrands,
-            );
-
-            expect(braintreeHostedForm.initialize).toHaveBeenCalledWith(
-                hostedFormInitializationOptions,
-                unsupportedCardBrands,
-            );
-        });
-    });
-
-    describe('#deinitializeHostedForm', () => {
-        it('deinitializes the hosted form', async () => {
-            braintreeHostedForm.deinitialize = jest.fn();
-
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
-
-            await braintreePaymentProcessor.deinitializeHostedForm();
-
-            expect(braintreeHostedForm.deinitialize).toHaveBeenCalled();
-        });
-    });
-
-    describe('#isInitializedHostedForm()', () => {
-        it('returns false is hosted form is not initialized', async () => {
-            const braintreeHostedForm = new BraintreeHostedForm(braintreeSDKCreator);
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
-
-            await braintreeHostedForm.initialize({ fields: {} });
-
-            expect(braintreePaymentProcessor.isInitializedHostedForm()).toBeFalsy();
-        });
-    });
-
-    describe('#tokenizeHostedForm', () => {
-        it('tokenizes credit card with hosted form', () => {
-            braintreeHostedForm.tokenize = jest.fn();
-
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
-
-            braintreePaymentProcessor.tokenizeHostedForm(getBillingAddress());
-
-            expect(braintreeHostedForm.tokenize).toHaveBeenCalledWith(getBillingAddress());
-        });
-    });
-
-    describe('#tokenizeHostedFormForStoredCardVerification', () => {
-        it('tokenizes stored credit card with hosted form', () => {
-            braintreeHostedForm.tokenizeForStoredCardVerification = jest.fn();
-
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
-
-            braintreePaymentProcessor.tokenizeHostedFormForStoredCardVerification();
-
-            expect(braintreeHostedForm.tokenizeForStoredCardVerification).toHaveBeenCalled();
-        });
-    });
-
-    describe('#verifyCardWithHostedForm', () => {
-        it('verifies the card with hosted form using 3DS', async () => {
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
-
-            braintreeHostedForm.tokenize = jest.fn();
-
-            jest.spyOn(braintreePaymentProcessor, 'challenge3DSVerification').mockResolvedValue({
-                nonce: 'three_ds_nonce',
-            });
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(braintreeHostedForm, 'tokenize').mockResolvedValue({
-                nonce: 'tokenized_nonce',
-            });
-
-            const verifiedCard = await braintreePaymentProcessor.verifyCardWithHostedForm(
-                getBillingAddress(),
-                122,
-            );
-
-            expect(braintreeHostedForm.tokenize).toHaveBeenCalledWith(getBillingAddress());
-            expect(verifiedCard).toEqual({ nonce: 'three_ds_nonce' });
         });
     });
 
@@ -384,10 +234,7 @@ describe('BraintreePaymentProcessor', () => {
                 .fn()
                 .mockReturnValue(Promise.resolve(threeDSecureMock));
 
-            braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-            );
+            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
 
             braintreePaymentProcessor.initialize(clientToken, {
                 threeDSecure: {

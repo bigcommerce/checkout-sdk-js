@@ -23,7 +23,9 @@ import {
     StripeClient,
     StripeElementType,
     StripeEventMock,
+    StripeInstrumentSetupFutureUsage,
     StripeIntegrationService,
+    StripePIPaymentMethodOptions,
     StripeScriptLoader,
     StripeStringConstants,
 } from '../stripe-utils';
@@ -166,6 +168,7 @@ describe('StripeOCSPaymentStrategy', () => {
         it('should initialize', async () => {
             const onErrorMock = jest.fn();
             const renderMock = jest.fn();
+            const togglePreloaderMock = jest.fn();
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
@@ -173,11 +176,13 @@ describe('StripeOCSPaymentStrategy', () => {
                     containerId: 'containerId',
                     render: renderMock,
                     onError: onErrorMock,
+                    togglePreloader: togglePreloaderMock,
                 },
             });
 
             expect(stripeScriptLoader.getElements).toHaveBeenCalled();
             expect(onErrorMock).not.toHaveBeenCalled();
+            expect(togglePreloaderMock).toHaveBeenCalled();
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
             expect(stripeIntegrationService.initCheckoutEventsSubscription).toHaveBeenCalled();
         });
@@ -1022,6 +1027,7 @@ describe('StripeOCSPaymentStrategy', () => {
             confirmPaymentMock = jest.fn().mockResolvedValue({
                 paymentIntent: {
                     id: 'paymentIntentId',
+                    client_secret: 'paymentIntentClientSecret',
                 },
             });
 
@@ -1058,7 +1064,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     formattedPayload: {
                         cart_id: '',
                         credit_card_token: {
-                            token: 'paymentIntentId',
+                            token: 'paymentIntentClientSecret',
                         },
                         confirm: false,
                         payment_method_id: undefined,
@@ -1125,6 +1131,7 @@ describe('StripeOCSPaymentStrategy', () => {
             confirmPaymentMock = jest.fn().mockResolvedValue({
                 paymentIntent: {
                     id: 'paymentIntentId',
+                    client_secret: 'paymentIntentClientSecret',
                 },
             });
 
@@ -1150,7 +1157,7 @@ describe('StripeOCSPaymentStrategy', () => {
         });
     });
 
-    describe('#vaulted card instrument', () => {
+    describe('#vaulted instruments', () => {
         let errorResponse: RequestError;
         let confirmPaymentMock: jest.Mock;
         let retrievePaymentIntentMock: jest.Mock;
@@ -1161,15 +1168,12 @@ describe('StripeOCSPaymentStrategy', () => {
             );
         };
 
-        const mockSetupFutureUsage = (value?: string) => {
+        const mockSetupFutureUsage = (payment_method_options?: StripePIPaymentMethodOptions) => {
             confirmPaymentMock = jest.fn().mockResolvedValue({
                 paymentIntent: {
                     id: 'paymentIntentId',
-                    payment_method_options: {
-                        card: {
-                            setup_future_usage: value,
-                        },
-                    },
+                    client_secret: 'paymentIntentClientSecret',
+                    payment_method_options,
                 },
             });
 
@@ -1218,8 +1222,8 @@ describe('StripeOCSPaymentStrategy', () => {
             mockFirstPaymentRequest(errorResponse);
         });
 
-        it('should not store vaulted card instrument if stripe checkbox was not selected', async () => {
-            mockSetupFutureUsage(undefined);
+        it('should not store vaulted instrument if stripe checkbox was not selected', async () => {
+            mockSetupFutureUsage();
 
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
@@ -1245,7 +1249,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     formattedPayload: {
                         cart_id: '',
                         credit_card_token: {
-                            token: 'paymentIntentId',
+                            token: 'paymentIntentClientSecret',
                         },
                         confirm: false,
                         payment_method_id: undefined,
@@ -1256,7 +1260,11 @@ describe('StripeOCSPaymentStrategy', () => {
         });
 
         it('should store vaulted card instrument [on_session]', async () => {
-            mockSetupFutureUsage('on_session');
+            mockSetupFutureUsage({
+                card: {
+                    setup_future_usage: StripeInstrumentSetupFutureUsage.ON_SESSION,
+                },
+            });
 
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
@@ -1282,7 +1290,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     formattedPayload: {
                         cart_id: '',
                         credit_card_token: {
-                            token: 'paymentIntentId',
+                            token: 'paymentIntentClientSecret',
                         },
                         confirm: false,
                         payment_method_id: undefined,
@@ -1293,7 +1301,11 @@ describe('StripeOCSPaymentStrategy', () => {
         });
 
         it('should store vaulted card instrument [off_session]', async () => {
-            mockSetupFutureUsage('off_session');
+            mockSetupFutureUsage({
+                card: {
+                    setup_future_usage: StripeInstrumentSetupFutureUsage.OFF_SESSION,
+                },
+            });
 
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
@@ -1319,7 +1331,89 @@ describe('StripeOCSPaymentStrategy', () => {
                     formattedPayload: {
                         cart_id: '',
                         credit_card_token: {
-                            token: 'paymentIntentId',
+                            token: 'paymentIntentClientSecret',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: true,
+                    },
+                },
+            });
+        });
+
+        it('should store vaulted ACH instrument [on_session]', async () => {
+            mockSetupFutureUsage({
+                us_bank_account: {
+                    setup_future_usage: StripeInstrumentSetupFutureUsage.ON_SESSION,
+                },
+            });
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+            await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'clientToken',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: false,
+                    },
+                },
+            });
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        tokenized_ach: {
+                            token: 'paymentIntentClientSecret',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: true,
+                    },
+                },
+            });
+        });
+
+        it('should store vaulted ACH instrument [off_session]', async () => {
+            mockSetupFutureUsage({
+                us_bank_account: {
+                    setup_future_usage: StripeInstrumentSetupFutureUsage.OFF_SESSION,
+                },
+            });
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+            await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'clientToken',
+                        },
+                        confirm: false,
+                        payment_method_id: undefined,
+                        vault_payment_instrument: false,
+                    },
+                },
+            });
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        tokenized_ach: {
+                            token: 'paymentIntentClientSecret',
                         },
                         confirm: false,
                         payment_method_id: undefined,

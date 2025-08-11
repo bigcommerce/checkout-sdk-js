@@ -8731,6 +8731,7 @@ declare interface StripeOCSPaymentInitializeOptions {
     initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;
     paymentMethodSelect?(id: string): void;
     handleClosePaymentMethod?(collapseElement: () => void): void;
+    togglePreloader?(showLoader: boolean): void;
 }
 
 declare interface StripeShippingEvent extends StripeEvent {

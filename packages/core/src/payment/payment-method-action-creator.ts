@@ -1,5 +1,4 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { filter } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
@@ -12,11 +11,8 @@ import {
     PaymentMethodActionType,
 } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
-import { isApplePayWindow } from './strategies/apple-pay';
 
 import { PaymentMethod } from '.';
-
-const APPLEPAYID = 'applepay';
 
 const isPaymentMethod = (value: PaymentMethod | undefined): value is PaymentMethod => {
     return !!value;
@@ -95,14 +91,11 @@ export default class PaymentMethodActionCreator {
                             sessionHash: response.headers['x-session-hash'],
                         };
                         const methods = response.body;
-                        const filteredMethods = Array.isArray(methods)
-                            ? this._filterApplePay(methods)
-                            : methods;
 
                         observer.next(
                             createAction(
                                 PaymentMethodActionType.LoadPaymentMethodsSucceeded,
-                                filteredMethods,
+                                methods,
                                 meta,
                             ),
                         );
@@ -158,15 +151,5 @@ export default class PaymentMethodActionCreator {
                         );
                     });
             });
-    }
-
-    private _filterApplePay(methods: PaymentMethod[]): PaymentMethod[] {
-        return filter(methods, (method) => {
-            if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
-                return false;
-            }
-
-            return true;
-        });
     }
 }

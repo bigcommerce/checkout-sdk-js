@@ -39,6 +39,7 @@ service.initializePayment({
 - [onError](StripeOCSPaymentInitializeOptions.md#onerror)
 - [paymentMethodSelect](StripeOCSPaymentInitializeOptions.md#paymentmethodselect)
 - [render](StripeOCSPaymentInitializeOptions.md#render)
+- [togglePreloader](StripeOCSPaymentInitializeOptions.md#togglepreloader)
 
 ## Properties
 
@@ -141,6 +142,22 @@ ___
 ### render
 
 ▸ **render**(): `void`
+
+#### Returns
+
+`void`
+
+___
+
+### togglePreloader
+
+▸ `Optional` **togglePreloader**(`showLoader`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `showLoader` | `boolean` |
 
 #### Returns
 

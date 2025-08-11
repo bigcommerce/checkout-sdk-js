@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.784.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.783.0...v1.784.0) (2025-08-11)
+
+
+### Features
+
+* **payment:** Stripe OCS preloader ([#2959](https://github.com/bigcommerce/checkout-sdk-js/issues/2959)) ([0ea4a96](https://github.com/bigcommerce/checkout-sdk-js/commit/0ea4a96baad51828b8ecb7f69b951f960976017d))
+
+## [1.783.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.782.0...v1.783.0) (2025-08-11)
+
+
+### Features
+
+* **payment:** Stripe OCS ACH vaultings ([#2965](https://github.com/bigcommerce/checkout-sdk-js/issues/2965)) ([1de461c](https://github.com/bigcommerce/checkout-sdk-js/commit/1de461c8da7ffb0fdef6fda10438572ce9a75f80))
+
+## [1.782.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.3...v1.782.0) (2025-08-11)
+
+
+### Features
+
+* **payment:** PAYPAL-5657 hide braintree card banner implementation ([f0afdbf](https://github.com/bigcommerce/checkout-sdk-js/commit/f0afdbf0cc528508a1fa781131686c3da15fed76))
+* **payment:** PAYPAL-5657 hide braintree card banner implementation ([#2966](https://github.com/bigcommerce/checkout-sdk-js/issues/2966)) ([5ecff91](https://github.com/bigcommerce/checkout-sdk-js/commit/5ecff91929e660ff59d62f1f1ddd8d3948d38822))
+
+### [1.781.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.2...v1.781.3) (2025-08-08)
+
+
+### Code Refactoring
+
+* **payment:** Removed BT Credit Card Payment Strategy from core ([#2955](https://github.com/bigcommerce/checkout-sdk-js/issues/2955)) ([b7a62b1](https://github.com/bigcommerce/checkout-sdk-js/commit/b7a62b14eeb6d9c9f451bf4cad48351a4b507e92))
+
+### [1.781.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.1...v1.781.2) (2025-08-07)
+
+
+### Code Refactoring
+
+* **payment:** Moved BT Credit Card Payment Strategy ([#2944](https://github.com/bigcommerce/checkout-sdk-js/issues/2944)) ([9ea7174](https://github.com/bigcommerce/checkout-sdk-js/commit/9ea7174d66282a1aab9035345384232aee56dbc8))
+
+### [1.781.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.0...v1.781.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* **checkout:** Update Storefront APIs Doc URL ([#2963](https://github.com/bigcommerce/checkout-sdk-js/issues/2963)) ([9bead28](https://github.com/bigcommerce/checkout-sdk-js/commit/9bead28a24a21256653c9b8a781c0e400151fe20))
+
+## [1.781.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.780.0...v1.781.0) (2025-08-06)
+
+
+### Features
+
+* **payment:** Remove applepay method filtering logic to show applepay method in Payment Step for third-party browsers ([#2957](https://github.com/bigcommerce/checkout-sdk-js/issues/2957)) ([07c7cb6](https://github.com/bigcommerce/checkout-sdk-js/commit/07c7cb6cb1dedfb52cd80b7ff1b3314e287ce21e))
+
 ## [1.780.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.779.0...v1.780.0) (2025-08-05)
 
 

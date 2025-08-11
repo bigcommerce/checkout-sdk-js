@@ -20,6 +20,7 @@ import {
 
 import { ApplePayGatewayType } from './apple-pay';
 import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
+import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
@@ -46,6 +47,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         private _paymentIntegrationService: PaymentIntegrationService,
         private _sessionFactory: ApplePaySessionFactory,
         private _braintreeSdk: BraintreeSdk,
+        private _applePayScriptLoader: ApplePayScriptLoader,
     ) {}
 
     async initialize(
@@ -58,6 +60,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         }
 
         const { methodId } = options;
+
+        await this._applePayScriptLoader.loadSdk();
 
         this._shippingLabel = options.applepay?.shippingLabel || DefaultLabels.Shipping;
         this._subTotalLabel = options.applepay?.subtotalLabel || DefaultLabels.Subtotal;

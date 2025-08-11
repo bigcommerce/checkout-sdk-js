@@ -24,9 +24,7 @@ import {
     BraintreeVerifyPayload,
     TokenizationPayload,
 } from './braintree';
-import BraintreeHostedForm from './braintree-hosted-form';
 import {
-    BraintreeFormOptions,
     BraintreePaymentInitializeOptions,
     BraintreeThreeDSecureOptions,
 } from './braintree-payment-options';
@@ -36,10 +34,7 @@ import isCreditCardInstrumentLike from './is-credit-card-instrument-like';
 export default class BraintreePaymentProcessor {
     private _threeDSecureOptions?: BraintreeThreeDSecureOptions;
 
-    constructor(
-        private _braintreeSDKCreator: BraintreeSDKCreator,
-        private _braintreeHostedForm: BraintreeHostedForm,
-    ) {}
+    constructor(private _braintreeSDKCreator: BraintreeSDKCreator) {}
 
     initialize(clientToken: string, options?: BraintreePaymentInitializeOptions): void {
         this._braintreeSDKCreator.initialize(clientToken);
@@ -114,42 +109,6 @@ export default class BraintreePaymentProcessor {
                 ...paymentData,
                 deviceSessionId: deviceData,
             }));
-    }
-
-    async initializeHostedForm(
-        options: BraintreeFormOptions,
-        unsupportedCardBrands?: string[],
-    ): Promise<void> {
-        return this._braintreeHostedForm.initialize(options, unsupportedCardBrands);
-    }
-
-    validateHostedForm() {
-        return this._braintreeHostedForm.validate();
-    }
-
-    isInitializedHostedForm(): boolean {
-        return this._braintreeHostedForm.isInitialized();
-    }
-
-    async deinitializeHostedForm(): Promise<void> {
-        await this._braintreeHostedForm.deinitialize();
-    }
-
-    tokenizeHostedForm(billingAddress: Address): Promise<NonceInstrument> {
-        return this._braintreeHostedForm.tokenize(billingAddress);
-    }
-
-    tokenizeHostedFormForStoredCardVerification(): Promise<NonceInstrument> {
-        return this._braintreeHostedForm.tokenizeForStoredCardVerification();
-    }
-
-    async verifyCardWithHostedForm(
-        billingAddress: Address,
-        amount: number,
-    ): Promise<NonceInstrument> {
-        const tokenizationPayload = await this._braintreeHostedForm.tokenize(billingAddress);
-
-        return this.challenge3DSVerification(tokenizationPayload, amount);
     }
 
     async challenge3DSVerification(
