@@ -249,15 +249,22 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private _getPaymentPayload(
         methodId: string,
         token: string,
-        shouldSaveInstrument = false,
+        paymentMethodOptions?: StripePIPaymentMethodOptions,
     ): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
+        const shouldSaveInstrument = this._shouldSaveInstrument(paymentMethodOptions);
+        const tokenizedOptions = this._getTokenizedOptions(
+            token,
+            shouldSaveInstrument,
+            paymentMethodOptions,
+        );
+
         const formattedPayload = {
             cart_id: cartId,
-            credit_card_token: { token },
             confirm: false,
             payment_method_id: this.selectedMethodId,
             vault_payment_instrument: shouldSaveInstrument,
+            ...tokenizedOptions,
         };
 
         return {
@@ -290,14 +297,15 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             methodId,
             additionalActionData,
         );
-        const { id: paymentIntentId, payment_method_options: paymentMethodOptions } =
-            paymentIntent || {};
+        const {
+            client_secret: paymentIntentClientSecret,
+            payment_method_options: paymentMethodOptions,
+        } = paymentIntent || {};
 
-        const shouldSaveCard = this._shouldSaveCard(paymentMethodOptions);
         const paymentPayload = this._getPaymentPayload(
             methodId,
-            paymentIntentId || token,
-            shouldSaveCard,
+            paymentIntentClientSecret || token,
+            paymentMethodOptions,
         );
 
         try {
@@ -354,12 +362,25 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         paymentMethodSelect?.(`${gatewayId}-${methodId}`);
     }
 
-    private _shouldSaveCard(paymentMethodOptions?: StripePIPaymentMethodOptions) {
-        const futureUsage = paymentMethodOptions?.card?.setup_future_usage;
+    private _shouldSaveInstrument(paymentMethodOptions?: StripePIPaymentMethodOptions) {
+        const paymentMethod = paymentMethodOptions?.card || paymentMethodOptions?.us_bank_account;
+        const setupFutureUsage = paymentMethod?.setup_future_usage;
 
         return (
-            futureUsage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
-            futureUsage === StripeInstrumentSetupFutureUsage.OFF_SESSION
+            setupFutureUsage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
+            setupFutureUsage === StripeInstrumentSetupFutureUsage.OFF_SESSION
         );
+    }
+
+    private _getTokenizedOptions(
+        token: string,
+        shouldSaveInstrument?: boolean,
+        paymentMethodOptions?: StripePIPaymentMethodOptions,
+    ) {
+        if (shouldSaveInstrument && paymentMethodOptions?.us_bank_account) {
+            return { tokenized_ach: { token } };
+        }
+
+        return { credit_card_token: { token } };
     }
 }
