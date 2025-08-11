@@ -238,7 +238,6 @@ describe('PayPalCommerceButtonStrategy', () => {
                 });
 
                 return {
-                    // appSwitchWhenAvailable: false,
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
                     close: jest.fn(),
