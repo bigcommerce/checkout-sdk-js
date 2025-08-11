@@ -26,6 +26,7 @@ import {
     PaymentMethod,
     StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import getValidButtonStyle from '../get-valid-button-style';
 import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-address-override';
@@ -99,10 +100,17 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             isCreditEnabled: initializationData.isCreditEnabled,
         };
 
+        // TODO: remove banner rendering implementation in this file when PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk will be rolled out to 100%
+        const features = state.getStoreConfig()?.checkoutSettings.features ?? {};
+        const isBannerImplementationDisabled = isExperimentEnabled(
+            features,
+            'PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk',
+        );
+
         const paypalCheckoutSuccessCallback = (
             braintreePaypalCheckout: BraintreePaypalCheckout,
         ) => {
-            if (braintreepaypalcredit.messagingContainerId) {
+            if (!isBannerImplementationDisabled && braintreepaypalcredit.messagingContainerId) {
                 this.renderPayPalMessages(methodId, braintreepaypalcredit.messagingContainerId);
             }
 
