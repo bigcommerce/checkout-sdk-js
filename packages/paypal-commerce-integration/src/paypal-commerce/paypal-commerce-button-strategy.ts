@@ -132,20 +132,15 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
         };
 
-        console.log('BUTTON RENDER OPTIONS', buttonRenderOptions);
-
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            console.log('PAYPAL BUTTONS', paypalButton);
-            // AppSwitch Flow
+            // AppSwitch Flow, will be covered with corresponding experiment
             if (paypalButton?.hasReturned && paypalButton.hasReturned()) {
-                console.log('HAS RETURNED');
                 if (paypalButton.resume) {
                     paypalButton?.resume();
                 }
             } else {
-                console.log('RENDER');
                 paypalButton.render(`#${containerId}`);
             }
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {

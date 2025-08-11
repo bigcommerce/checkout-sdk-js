@@ -238,6 +238,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 });
 
                 return {
+                    // appSwitchWhenAvailable: false,
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
                     close: jest.fn(),
@@ -335,19 +336,19 @@ describe('PayPalCommerceButtonStrategy', () => {
             }
         });
 
-        it.skip('loads default checkout', async () => {
+        it('loads default checkout', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentIntegrationService.loadDefaultCheckout).toHaveBeenCalled();
         });
 
-        it.skip('does not load default checkout for Buy Now flow', async () => {
+        it('does not load default checkout for Buy Now flow', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(paymentIntegrationService.loadDefaultCheckout).not.toHaveBeenCalled();
         });
 
-        it.skip('loads paypal commerce sdk script', async () => {
+        it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
@@ -357,7 +358,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             );
         });
 
-        it.skip('loads paypal commerce sdk script with provided currency code (Buy Now flow)', async () => {
+        it('loads paypal commerce sdk script with provided currency code (Buy Now flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
@@ -368,15 +369,16 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
     });
 
-    describe.skip('#renderButton', () => {
+    describe('#renderButton', () => {
         it('initializes PayPal button to render (default flow)', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
-                style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                style: paypalCommerceOptions.style,
             });
         });
 
@@ -384,6 +386,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
@@ -410,6 +413,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
@@ -506,7 +510,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
     });
 
-    describe.skip('#handleClick', () => {
+    describe('#handleClick', () => {
         beforeEach(() => {
             jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
                 Promise.resolve(buyNowCart),
@@ -531,7 +535,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
     });
 
-    describe.skip('#onApprove button callback', () => {
+    describe('#onApprove button callback', () => {
         describe('default flow', () => {
             it('tokenizes payment on paypal approve', async () => {
                 await strategy.initialize(initializationOptions);
@@ -689,7 +693,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
     });
 
-    describe.skip('#onShippingAddressChange button callback', () => {
+    describe('#onShippingAddressChange button callback', () => {
         beforeEach(() => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
@@ -734,7 +738,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(address);
         });
 
-        it.skip('selects shipping option after address update', async () => {
+        it('selects shipping option after address update', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingAddressChange');
@@ -747,7 +751,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             );
         });
 
-        it.skip('updates PayPal order after shipping option selection', async () => {
+        it('updates PayPal order after shipping option selection', async () => {
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call
@@ -766,7 +770,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
     });
 
-    describe.skip('#onShippingOptionsChange button callback', () => {
+    describe('#onShippingOptionsChange button callback', () => {
         beforeEach(() => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
@@ -806,7 +810,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
     });
 
-    describe.skip('#onCancel button callback', () => {
+    describe('#onCancel button callback', () => {
         it('loads default checkout onCancel callback (buy now flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
             eventEmitter.emit('onClick');
