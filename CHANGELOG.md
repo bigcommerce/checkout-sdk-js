@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.782.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.3...v1.782.0) (2025-08-11)
+
+
+### Features
+
+* **payment:** PAYPAL-5657 hide braintree card banner implementation ([f0afdbf](https://github.com/bigcommerce/checkout-sdk-js/commit/f0afdbf0cc528508a1fa781131686c3da15fed76))
+* **payment:** PAYPAL-5657 hide braintree card banner implementation ([#2966](https://github.com/bigcommerce/checkout-sdk-js/issues/2966)) ([5ecff91](https://github.com/bigcommerce/checkout-sdk-js/commit/5ecff91929e660ff59d62f1f1ddd8d3948d38822))
+
 ### [1.781.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.781.2...v1.781.3) (2025-08-08)
 
 
