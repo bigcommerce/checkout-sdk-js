@@ -168,6 +168,7 @@ describe('StripeOCSPaymentStrategy', () => {
         it('should initialize', async () => {
             const onErrorMock = jest.fn();
             const renderMock = jest.fn();
+            const togglePreloaderMock = jest.fn();
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
@@ -175,11 +176,13 @@ describe('StripeOCSPaymentStrategy', () => {
                     containerId: 'containerId',
                     render: renderMock,
                     onError: onErrorMock,
+                    togglePreloader: togglePreloaderMock,
                 },
             });
 
             expect(stripeScriptLoader.getElements).toHaveBeenCalled();
             expect(onErrorMock).not.toHaveBeenCalled();
+            expect(togglePreloaderMock).toHaveBeenCalled();
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
             expect(stripeIntegrationService.initCheckoutEventsSubscription).toHaveBeenCalled();
         });
