@@ -46,6 +46,11 @@ export interface PaymentIntent {
     id: string;
 
     /**
+     * The client secret of the PaymentIntent. Used for client-side retrieval using a publishable key.
+     */
+    client_secret?: string;
+
+    /**
      * Status of this PaymentIntent. Read more about each PaymentIntent [status](https://stripe.com/docs/payments/intents#intent-statuses).
      */
     status: 'succeeded' | string;
@@ -58,10 +63,13 @@ export interface PaymentIntent {
     payment_method_options?: StripePIPaymentMethodOptions;
 }
 
+export interface StripePIPaymentMethodSavingOptions {
+    setup_future_usage?: StripeInstrumentSetupFutureUsage;
+}
+
 export interface StripePIPaymentMethodOptions {
-    card?: {
-        setup_future_usage?: StripeInstrumentSetupFutureUsage;
-    };
+    card?: StripePIPaymentMethodSavingOptions;
+    us_bank_account?: StripePIPaymentMethodSavingOptions;
 }
 
 /**
