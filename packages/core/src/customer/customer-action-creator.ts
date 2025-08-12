@@ -2,6 +2,8 @@ import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, from, Observable, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutActionCreator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
@@ -97,9 +99,14 @@ export default class CustomerActionCreator {
         options?: RequestOptions,
     ): ThunkAction<SignInCustomerAction, InternalCheckoutSelectors> {
         return (store) => {
+            const checkout = store.getState().checkout.getCheckoutOrThrow();
+            const cartId = checkout.cart.source === CartSource.BuyNow ? checkout.id : undefined;
+
             return concat(
                 of(createAction(CustomerActionType.SignInCustomerRequested)),
-                from(this._customerRequestSender.signInCustomer(credentials, options)).pipe(
+                from(
+                    this._customerRequestSender.signInCustomer({ ...credentials, cartId }, options),
+                ).pipe(
                     switchMap(({ body }) => {
                         if (body.data.persistentCartRetrievalInformation) {
                             return concat(
@@ -133,10 +140,13 @@ export default class CustomerActionCreator {
     signOutCustomer(
         options?: RequestOptions,
     ): ThunkAction<SignOutCustomerAction, InternalCheckoutSelectors> {
-        return (store) =>
-            concat(
+        return (store) => {
+            const checkout = store.getState().checkout.getCheckoutOrThrow();
+            const cartId = checkout.cart.source === CartSource.BuyNow ? checkout.id : undefined;
+
+            return concat(
                 of(createAction(CustomerActionType.SignOutCustomerRequested)),
-                from(this._customerRequestSender.signOutCustomer(options)).pipe(
+                from(this._customerRequestSender.signOutCustomer(options, cartId)).pipe(
                     switchMap(({ body }) =>
                         concat(
                             this._checkoutActionCreator.loadCurrentCheckout(options)(store),
@@ -154,5 +164,6 @@ export default class CustomerActionCreator {
                     throwErrorAction(CustomerActionType.SignOutCustomerFailed, error),
                 ),
             );
+        };
     }
 }

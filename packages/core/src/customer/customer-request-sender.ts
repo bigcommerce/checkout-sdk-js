@@ -49,11 +49,16 @@ export default class CustomerRequestSender {
         });
     }
 
-    signOutCustomer({ timeout }: RequestOptions = {}): Promise<
-        Response<InternalCustomerResponseBody>
-    > {
+    signOutCustomer(
+        { timeout }: RequestOptions = {},
+        cartId?: string,
+    ): Promise<Response<InternalCustomerResponseBody>> {
         const url = '/internalapi/v1/checkout/customer';
 
-        return this._requestSender.delete(url, { timeout, headers: SDK_VERSION_HEADERS });
+        return this._requestSender.delete(url, {
+            timeout,
+            headers: SDK_VERSION_HEADERS,
+            ...(cartId && { body: { cartId } }),
+        });
     }
 }
