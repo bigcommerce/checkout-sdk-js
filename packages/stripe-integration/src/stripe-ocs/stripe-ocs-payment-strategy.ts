@@ -267,7 +267,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         const formattedPayload = {
             cart_id: cartId,
             confirm: false,
-            payment_method_id: this.selectedMethodId,
+            method: this.selectedMethodId,
             vault_payment_instrument: shouldSaveInstrument,
             ...tokenizedOptions,
         };
