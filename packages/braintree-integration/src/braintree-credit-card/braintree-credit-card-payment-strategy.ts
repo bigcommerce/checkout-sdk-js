@@ -2,10 +2,10 @@ import { some } from 'lodash';
 
 import {
     BraintreeIntegrationService,
+    BraintreeThreeDSecureOptions,
     isBraintreeAcceleratedCheckoutCustomer,
     isBraintreePaymentRequest3DSError,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-
 import {
     Address,
     isHostedInstrumentLike,
@@ -27,6 +27,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
+
 import { WithBraintreeCreditCardPaymentInitializeOptions } from './braintree-credit-card-payment-initialize-options';
 
 export default class BraintreeCreditCardPaymentStrategy implements PaymentStrategy {
@@ -34,6 +35,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     private isHostedFormInitialized?: boolean;
     private deviceSessionId?: string;
     private paymentMethod?: PaymentMethod;
+    private threeDSecure?: BraintreeThreeDSecureOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -45,18 +47,23 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         options: PaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, gatewayId, braintree } = options;
+
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
+
         const state = this.paymentIntegrationService.getState();
 
         this.paymentMethod = state.getPaymentMethodOrThrow(methodId);
+
         const { clientToken } = this.paymentMethod;
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
+        this.threeDSecure = braintree?.threeDSecure;
+
         try {
-            this.braintreeIntegrationService.initialize(clientToken, braintree?.threeDSecure);
+            this.braintreeIntegrationService.initialize(clientToken, this.threeDSecure);
 
             if (this.isHostedPaymentFormEnabled(methodId, gatewayId) && braintree?.form) {
                 await this.braintreeHostedForm.initialize(
@@ -92,6 +99,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         }
 
         await this.paymentIntegrationService.submitOrder(order);
+
         const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
         const orderAmount = state.getOrderOrThrow().orderAmount;
@@ -299,7 +307,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this.braintreeIntegrationService.initialize(clientToken);
+        this.braintreeIntegrationService.initialize(clientToken, this.threeDSecure);
 
         await this.braintreeIntegrationService.getBraintreeFastlane(cart.id, config.testMode);
     }
