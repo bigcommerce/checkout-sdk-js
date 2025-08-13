@@ -145,7 +145,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             //     }
             // } else {
             //     console.log('RENDER');
-                paypalButton.render(`#${containerId}`);
+            paypalButton.render(`#${containerId}`);
             // }
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
