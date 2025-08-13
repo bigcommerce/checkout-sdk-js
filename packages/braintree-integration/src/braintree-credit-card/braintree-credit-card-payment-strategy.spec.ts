@@ -1,4 +1,14 @@
-import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
+import { getScriptLoader } from '@bigcommerce/script-loader';
+import { merge } from 'lodash';
+
+import {
+    BraintreeFastlane,
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
+    getBraintree,
+    getFastlaneMock,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     MissingDataError,
     OrderFinalizationNotRequiredError,
@@ -13,27 +23,20 @@ import {
     getOrderRequestBody,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import {
-    BraintreeFastlane,
-    BraintreeIntegrationService,
-    BraintreeScriptLoader,
-    BraintreeSDKVersionManager,
-    getBraintree,
-    getFastlaneMock,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
-import { getScriptLoader } from '@bigcommerce/script-loader';
+
+import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
 import {
     getBillingAddress,
     getThreeDSecureMock,
     getThreeDSecureOptionsMock,
     getTokenizeResponseBody,
 } from '../mocks/braintree.mock';
-import { merge } from 'lodash';
-import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
+
 import {
     BraintreeCreditCardPaymentInitializeOptions,
     WithBraintreeCreditCardPaymentInitializeOptions,
 } from './braintree-credit-card-payment-initialize-options';
+import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 
 describe('BraintreeCreditCardPaymentStrategy', () => {
     let braintreeCreditCardPaymentStrategy: BraintreeCreditCardPaymentStrategy;
@@ -47,6 +50,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
     beforeEach(() => {
         const methodId = 'braintree';
+
         paymentMethod = {
             ...getBraintree(),
             id: methodId,
@@ -155,8 +159,10 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethod.clientToken,
+                undefined,
             );
             expect(braintreeIntegrationService.getSessionId).toHaveBeenCalled();
+
             jest.spyOn(braintreeHostedForm, 'initialize');
         });
     });
@@ -183,6 +189,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
             paymentMethod.clientToken,
+            undefined,
         );
         expect(braintreeHostedForm.initialize).toHaveBeenCalledWith(
             options.braintree.form,
@@ -211,6 +218,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             {
                 methodId: paymentMethod.id,
                 braintree: {
+                    threeDSecure: getThreeDSecureOptionsMock(),
                     form: {
                         fields: {
                             cardName: { containerId: 'cardName' },
@@ -224,7 +232,10 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         await braintreeCreditCardPaymentStrategy.initialize(options);
 
-        expect(braintreeIntegrationService.initialize).toHaveBeenCalled();
+        expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
+            paymentMethod.clientToken,
+            options.braintree?.threeDSecure,
+        );
         expect(braintreeIntegrationService.getBraintreeFastlane).toHaveBeenCalled();
     });
 
@@ -346,6 +357,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     jest.spyOn(braintreeIntegrationService, 'getClient').mockResolvedValue({
                         request: jest.fn().mockResolvedValue(getTokenizeResponseBody()),
                     });
+
                     const expected = {
                         ...getOrderRequestBody().payment,
                         paymentData: {
@@ -378,6 +390,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     jest.spyOn(braintreeIntegrationService, 'getClient').mockResolvedValue({
                         request: jest.fn().mockResolvedValue(getTokenizeResponseBody()),
                     });
+
                     const options3ds = {
                         methodId: paymentMethod.id,
                         braintree: {
@@ -408,6 +421,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     };
 
                     await braintreeCreditCardPaymentStrategy.execute(getOrderRequestBody());
+
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expected);
                 });
             });
