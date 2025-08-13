@@ -2,7 +2,10 @@ import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, empty, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { PaymentStrategy as PaymentStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PaymentIntegrationService,
+    PaymentStrategy as PaymentStrategyV2,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
@@ -41,6 +44,7 @@ export default class PaymentStrategyActionCreator {
         private _strategyRegistryV2: PaymentStrategyRegistryV2,
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
+        private _paymentIntegrationService: PaymentIntegrationService,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -151,6 +155,18 @@ export default class PaymentStrategyActionCreator {
 
         return (store) =>
             defer(() => {
+                if (options.integrations) {
+                    Object.entries(options.integrations).forEach(([id, factory]) => {
+                        if (this._strategyRegistryV2.get({ id })) {
+                            return;
+                        }
+
+                        this._strategyRegistryV2.register({ id }, () =>
+                            factory(this._paymentIntegrationService),
+                        );
+                    });
+                }
+
                 const state = store.getState();
                 const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
 
