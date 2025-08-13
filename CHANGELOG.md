@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.786.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.785.0...v1.786.0) (2025-08-13)
+
+
+### Features
+
+* **payment:** PAYPAL-5729 provided 3ds option to avoid specific error related to 3ds request error when fastlane is enabled ([#2972](https://github.com/bigcommerce/checkout-sdk-js/issues/2972)) ([a50dbd9](https://github.com/bigcommerce/checkout-sdk-js/commit/a50dbd922ac9ab9ca193c33ba58a9d992685826b))
+
 ## [1.785.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.784.1...v1.785.0) (2025-08-12)
 
 
