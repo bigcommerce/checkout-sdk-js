@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.787.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.786.0...v1.787.0) (2025-08-13)
+
+
+### Features
+
+* **customer:** CHECKOUT-9403 Pass cart id in payload to sign in and sign out for customer ([#2971](https://github.com/bigcommerce/checkout-sdk-js/issues/2971)) ([3cea9cd](https://github.com/bigcommerce/checkout-sdk-js/commit/3cea9cdbd54e5deece1405015bb595de09df8785))
+
 ## [1.786.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.785.0...v1.786.0) (2025-08-13)
 
 

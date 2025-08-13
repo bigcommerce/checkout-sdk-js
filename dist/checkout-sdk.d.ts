@@ -5318,6 +5318,7 @@ declare type CustomerAddressRequestBody = AddressRequestBody;
 declare interface CustomerCredentials {
     email: string;
     password: string;
+    cartId?: string;
 }
 
 declare interface CustomerGroup {

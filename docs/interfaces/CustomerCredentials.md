@@ -6,10 +6,17 @@
 
 ### Properties
 
+- [cartId](CustomerCredentials.md#cartid)
 - [email](CustomerCredentials.md#email)
 - [password](CustomerCredentials.md#password)
 
 ## Properties
+
+### cartId
+
+• `Optional` **cartId**: `string`
+
+___
 
 ### email
 
