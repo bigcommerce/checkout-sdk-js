@@ -5,7 +5,7 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CartSource, ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
     CheckoutActionCreator,
@@ -292,6 +292,43 @@ describe('CustomerActionCreator', () => {
             ]);
         });
 
+        it('emits actions if able to sign in customer with cart id', async () => {
+            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+            const buyNowCheckout = {
+                ...getCheckout(),
+                cart: {
+                    ...getCheckout().cart,
+                    source: CartSource.BuyNow,
+                },
+            };
+
+            jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(
+                buyNowCheckout,
+            );
+
+            jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout').mockReturnValue(() =>
+                from([
+                    createAction(CheckoutActionType.LoadCheckoutRequested),
+                    createAction(CheckoutActionType.LoadCheckoutSucceeded, buyNowCheckout),
+                ]),
+            );
+
+            const actions = await from(
+                customerActionCreator.signInCustomer({ ...credentials, cartId: buyNowCheckout.id })(
+                    store,
+                ),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CustomerActionType.SignInCustomerRequested },
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: buyNowCheckout },
+                { type: CustomerActionType.SignInCustomerSucceeded, payload: response.body.data },
+            ]);
+        });
+
         it('emits error actions if unable to sign in customer', async () => {
             jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(
                 Promise.reject(errorResponse),
@@ -355,6 +392,44 @@ describe('CustomerActionCreator', () => {
                 { type: CustomerActionType.SignOutCustomerRequested },
                 { type: CheckoutActionType.LoadCheckoutRequested },
                 { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+                { type: CustomerActionType.SignOutCustomerSucceeded, payload: response.body.data },
+            ]);
+        });
+
+        it('emits actions if able to sign out customer with cart id', async () => {
+            const buyNowCheckout = {
+                ...getCheckout(),
+                cart: {
+                    ...getCheckout().cart,
+                    source: CartSource.BuyNow,
+                },
+            };
+
+            jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(
+                buyNowCheckout,
+            );
+
+            jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout').mockReturnValue(() =>
+                from([
+                    createAction(CheckoutActionType.LoadCheckoutRequested),
+                    createAction(CheckoutActionType.LoadCheckoutSucceeded, buyNowCheckout),
+                ]),
+            );
+
+            const actions = await from(customerActionCreator.signOutCustomer()(store))
+                .pipe(toArray())
+                .toPromise();
+
+            // Verify that signOutCustomer was called with the checkout ID as cartId
+            expect(customerRequestSender.signOutCustomer).toHaveBeenCalledWith(
+                undefined,
+                buyNowCheckout.id,
+            );
+
+            expect(actions).toEqual([
+                { type: CustomerActionType.SignOutCustomerRequested },
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: buyNowCheckout },
                 { type: CustomerActionType.SignOutCustomerSucceeded, payload: response.body.data },
             ]);
         });

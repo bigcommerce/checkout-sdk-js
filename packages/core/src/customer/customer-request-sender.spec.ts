@@ -138,6 +138,20 @@ describe('CustomerRequestSender', () => {
                 body: credentials,
             });
         });
+
+        it('posts customer credentials with timeout and cartId', async () => {
+            const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
+            const output = await customerRequestSender.signInCustomer(
+                { ...credentials, cartId: 'test' },
+                options,
+            );
+
+            expect(output).toEqual(response);
+            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
+                ...options,
+                body: { ...credentials, cartId: 'test' },
+            });
+        });
     });
 
     describe('#signOutCustomer()', () => {
@@ -168,6 +182,17 @@ describe('CustomerRequestSender', () => {
                 '/internalapi/v1/checkout/customer',
                 options,
             );
+        });
+
+        it('signs out customer with timeout and calls with cart id', async () => {
+            const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
+            const output = await customerRequestSender.signOutCustomer(options, 'test');
+
+            expect(output).toEqual(response);
+            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
+                ...options,
+                body: { cartId: 'test' },
+            });
         });
     });
 });
