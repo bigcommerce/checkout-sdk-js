@@ -4,6 +4,7 @@ import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/p
 
 import { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
 import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
+import isManageableBraintreeSDKVersion from './isManageableBraintreeSDKVersion';
 import {
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
@@ -160,10 +161,9 @@ export default class BraintreeScriptLoader {
 
         const scriptPath = `//js.braintreegateway.com/web/${braintreeSdkVersion}/js/${fileName}`;
 
-        const integrity = this.getIntegrityValuesByModuleName(
-            braintreeModuleName,
-            braintreeSdkVersion,
-        );
+        const integrity = isManageableBraintreeSDKVersion(braintreeSdkVersion)
+            ? this.getIntegrityValuesByModuleName(braintreeModuleName, braintreeSdkVersion)
+            : undefined;
 
         await this.scriptLoader.loadScript(
             scriptPath,
