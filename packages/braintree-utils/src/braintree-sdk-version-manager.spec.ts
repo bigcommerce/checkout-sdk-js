@@ -7,6 +7,7 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { BraintreeHostWindow } from './braintree';
 import {
     BRAINTREE_SDK_DEFAULT_VERSION,
     BRAINTREE_SDK_STABLE_VERSION,
@@ -17,6 +18,7 @@ describe('BraintreeSDKVersionManager', () => {
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
     let paymentIntegrationService: PaymentIntegrationService;
     let storeConfigMock: StoreConfig | undefined;
+    const braintreeWindow: BraintreeHostWindow = window;
 
     beforeEach(() => {
         storeConfigMock = getConfig().storeConfig;
@@ -31,6 +33,10 @@ describe('BraintreeSDKVersionManager', () => {
         );
 
         braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
+    });
+
+    afterEach(() => {
+        braintreeWindow.braintree = undefined;
     });
 
     it('instantiates braintree sdk version manager', () => {
@@ -60,5 +66,17 @@ describe('BraintreeSDKVersionManager', () => {
         );
 
         expect(braintreeSDKVersionManager.getSDKVersion()).toBe(BRAINTREE_SDK_DEFAULT_VERSION);
+    });
+
+    it('should get unmanageable version if exist in window.braintree', () => {
+        Object.defineProperty(braintreeWindow, 'braintree', {
+            value: {
+                client: {
+                    VERSION: '1.123.4',
+                },
+            },
+        });
+
+        expect(braintreeSDKVersionManager.getSDKVersion()).toBe('1.123.4');
     });
 });
