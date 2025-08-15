@@ -3,10 +3,10 @@ const { DefinePlugin } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
 const {
-    babelLoaderRules,
     getBaseConfig,
     libraryEntries,
     libraryName,
+    wrapWithSpeedMeasurePlugin,
 } = require('./webpack-common.config');
 
 const outputPath = path.join(__dirname, 'dist');
@@ -25,7 +25,7 @@ async function getUmdConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [...babelLoaderRules, ...baseConfig.module.rules],
+            rules: [...baseConfig.module.rules],
         },
     };
 }
@@ -53,7 +53,9 @@ async function getCjsConfig(options, argv) {
 }
 
 async function getConfigs(options, argv) {
-    return [await getCjsConfig(options, argv), await getUmdConfig(options, argv)];
+    const configs = [await getCjsConfig(options, argv), await getUmdConfig(options, argv)];
+
+    return configs.map((config) => wrapWithSpeedMeasurePlugin(config));
 }
 
 module.exports = getConfigs;
