@@ -60,6 +60,7 @@ async function getBaseConfig() {
         plugins: [
             new DefinePlugin({
                 LIBRARY_VERSION: JSON.stringify(await getNextVersion()),
+                'process.env.NODE_ENV': 'process.env.NODE_ENV',
             }),
         ],
     };
