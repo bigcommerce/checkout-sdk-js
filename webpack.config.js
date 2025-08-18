@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 
@@ -29,14 +30,7 @@ async function getEsmConfig(options, argv) {
         name: 'esm',
         entry: libraryEntries,
         externalsPresets: { node: true },
-        externals: {
-            'intl-messageformat': 'intl-messageformat',
-            lodash: 'lodash',
-            reselect: 'reselect',
-            rxjs: 'rxjs',
-            tslib: 'tslib',
-            yup: 'yup',
-        },
+        externals: [esmExternals()],
         output: {
             filename: '[name].js',
             libraryTarget: 'module',
@@ -45,6 +39,34 @@ async function getEsmConfig(options, argv) {
         experiments: {
             outputModule: true,
         },
+    };
+}
+
+function esmExternals() {
+    return ({ request }, callback) => {
+        if (!request || request.startsWith('.') || request.startsWith('/')) {
+            return callback();
+        }
+
+        const packageName = request.startsWith('@')
+            ? request.split('/').slice(0, 2).join('/')
+            : request.split('/')[0];
+
+        const packagePath = path.join(
+            path.join(__dirname, 'node_modules'),
+            packageName,
+            'package.json',
+        );
+
+        if (fs.existsSync(packagePath)) {
+            const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+
+            if (packageJson.module) {
+                return callback(null, request);
+            }
+        }
+
+        return callback();
     };
 }
 
