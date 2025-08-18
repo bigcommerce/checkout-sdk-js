@@ -469,8 +469,8 @@ export interface BraintreeVenmoCheckout extends BraintreeModule {
 }
 
 export interface BraintreeVenmoCreatorConfig extends BraintreeModuleCreatorConfig {
-    allowDesktop: boolean;
-    paymentMethodUsage: string;
+    allowDesktop?: boolean;
+    paymentMethodUsage?: string;
 }
 
 /**
