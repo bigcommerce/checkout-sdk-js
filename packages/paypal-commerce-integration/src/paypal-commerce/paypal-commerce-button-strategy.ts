@@ -24,6 +24,8 @@ import PayPalCommerceButtonInitializeOptions, {
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
+    private methodId?: string;
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
@@ -68,6 +70,8 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
                 `Unable to initialize payment because "options.paypalcommerce.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
             );
         }
+
+        this.methodId = methodId;
 
         if (!isBuyNowFlow) {
             // Info: default checkout should not be loaded for BuyNow flow,
@@ -264,13 +268,20 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
     /**
      *
-     * PayPal AppSwitch experiments handling
+     * PayPal AppSwitch enabling handling
      *
      */
     private isPaypalCommerceAppSwitchEnabled(): boolean {
         const state = this.paymentIntegrationService.getState();
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
+            this.methodId || '',
+        );
+        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
-        return isExperimentEnabled(features, 'PAYPAL-5716.app_switch_functionality');
+        return (
+            !isHostedCheckoutEnabled &&
+            isExperimentEnabled(features, 'PAYPAL-5716.app_switch_functionality')
+        );
     }
 }

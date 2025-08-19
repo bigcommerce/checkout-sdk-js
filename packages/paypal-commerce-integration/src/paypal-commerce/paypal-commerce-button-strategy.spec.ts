@@ -103,6 +103,7 @@ describe('PayPalCommerceButtonStrategy', () => {
     };
 
     const storeConfig = getConfig().storeConfig;
+    const resumeMock = jest.fn();
 
     beforeEach(() => {
         buyNowCart = getBuyNowCart();
@@ -244,6 +245,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
                     close: jest.fn(),
+                    hasReturned: jest.fn().mockReturnValue(true),
+                    resume: resumeMock,
                 };
             },
         );
@@ -371,15 +374,44 @@ describe('PayPalCommerceButtonStrategy', () => {
 
     describe('#renderButton', () => {
         it('initializes PayPal button to render (default flow)', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5716.app_switch_functionality': false,
+                    },
+                },
+            });
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
             });
+        });
+
+        it('calls PayPal button resume', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5716.app_switch_functionality': true,
+                    },
+                },
+            });
+            await strategy.initialize(initializationOptions);
+
+            expect(resumeMock).toHaveBeenCalled();
         });
 
         it('initializes PayPal button to render (buy now flow)', async () => {
@@ -413,7 +445,6 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
@@ -486,6 +517,30 @@ describe('PayPalCommerceButtonStrategy', () => {
                 defaultButtonContainerId,
             );
         });
+
+        it('initializes PayPal button to render with appSwitch flag', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5716.app_switch_functionality': true,
+                    },
+                },
+            });
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
+                fundingSource: paypalSdk.FUNDING.PAYPAL,
+                style: paypalCommerceOptions.style,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
     });
 
     describe('#createOrder', () => {
@@ -510,6 +565,35 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommerce',
+            );
+        });
+
+        it('creates paypal order with user agent', async () => {
+            Object.defineProperty(window.navigator, 'userAgent', {
+                value: 'Mozilla',
+                configurable: true,
+            });
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5716.app_switch_functionality': true,
+                    },
+                },
+            });
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+                'paypalcommerce',
+                { userAgent: 'Mozilla' },
             );
         });
     });
