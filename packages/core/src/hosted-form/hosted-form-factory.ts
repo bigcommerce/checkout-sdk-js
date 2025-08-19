@@ -20,7 +20,7 @@ import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer
 export default class HostedFormFactory {
     constructor(private _store: ReadableCheckoutStore) {}
 
-    create(host: string, options: LegacyHostedFormOptions): HostedForm {
+    create(host: string, options: LegacyHostedFormOptions, checkoutId?: string): HostedForm {
         const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {
             const fields = options.fields as HostedStoredCardFieldOptionsMap &
@@ -42,6 +42,7 @@ export default class HostedFormFactory {
                     new IframeEventPoster(host),
                     new IframeEventListener(host),
                     new DetachmentObserver(new MutationObserverFactory()),
+                    checkoutId,
                     'instrumentId' in fieldOptions
                         ? this._getCardInstrument(fieldOptions.instrumentId)
                         : undefined,
