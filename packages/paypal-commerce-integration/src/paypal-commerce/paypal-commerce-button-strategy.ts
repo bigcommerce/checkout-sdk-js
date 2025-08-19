@@ -97,7 +97,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
-        const userAgent = navigator.userAgent;
+        const userAgent = navigator?.userAgent || '';
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
