@@ -14,10 +14,7 @@ import {
     PAYPAL_COMPONENTS,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
-import {
-    NotInitializedError,
-    NotInitializedErrorType,
-} from '../../../common/error/errors';
+import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaypalHostWindow } from '../paypal';
 
 export default class BraintreeSDKCreator {
