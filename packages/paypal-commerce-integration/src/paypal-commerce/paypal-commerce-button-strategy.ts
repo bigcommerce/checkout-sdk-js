@@ -21,6 +21,7 @@ import {
 import PayPalCommerceButtonInitializeOptions, {
     WithPayPalCommerceButtonInitializeOptions,
 } from './paypal-commerce-button-initialize-options';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
     constructor(
@@ -96,6 +97,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
+        const userAgent = navigator.userAgent;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -104,7 +106,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
-            createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
+            ...(this.isPaypalCommerceAppSwitchEnabled() && { appSwitchWhenAvailable: true }),
+            createOrder: () => this.paypalCommerceIntegrationService.createOrder(
+                'paypalcommerce',
+                ...(this.isPaypalCommerceAppSwitchEnabled() ? [{ userAgent: userAgent }] : [])
+            ),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };
@@ -134,7 +140,14 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            paypalButton.render(`#${containerId}`);
+            if (
+                paypalButton.hasReturned?.() &&
+                this.isPaypalCommerceAppSwitchEnabled()
+            ) {
+                paypalButton.resume?.();
+            } else {
+                paypalButton.render(`#${containerId}`);
+            }
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {
@@ -249,5 +262,17 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
             throw error;
         }
+    }
+
+    /**
+     *
+     * PayPal AppSwitch experiments handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled(): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+
+        return isExperimentEnabled(features, 'PAYPAL-5716.app_switch_functionality');
     }
 }

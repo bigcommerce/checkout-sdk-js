@@ -371,6 +371,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
@@ -382,6 +383,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
@@ -408,6 +410,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
@@ -492,6 +495,9 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommerce',
+                {
+                    userAgent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/16.7.0',
+                },
             );
         });
     });
