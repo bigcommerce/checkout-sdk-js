@@ -11,6 +11,7 @@ import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
     getCart,
+    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -100,6 +101,8 @@ describe('PayPalCommerceButtonStrategy', () => {
         selected: true,
         type: 'type_shipping',
     };
+
+    const storeConfig = getConfig().storeConfig;
 
     beforeEach(() => {
         buyNowCart = getBuyNowCart();
@@ -487,6 +490,18 @@ describe('PayPalCommerceButtonStrategy', () => {
 
     describe('#createOrder', () => {
         it('creates paypal order', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5716.app_switch_functionality': false,
+                    },
+                },
+            });
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
@@ -495,10 +510,6 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommerce',
-                {
-                    userAgent:
-                        'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/16.7.0',
-                },
             );
         });
     });
