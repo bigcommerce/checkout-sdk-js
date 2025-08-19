@@ -496,7 +496,8 @@ describe('PayPalCommerceButtonStrategy', () => {
             expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommerce',
                 {
-                    userAgent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/16.7.0',
+                    userAgent:
+                        'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/16.7.0',
                 },
             );
         });

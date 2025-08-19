@@ -107,10 +107,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         const defaultCallbacks = {
             ...(this.isPaypalCommerceAppSwitchEnabled() && { appSwitchWhenAvailable: true }),
-            createOrder: () => this.paypalCommerceIntegrationService.createOrder(
-                'paypalcommerce',
-                ...(this.isPaypalCommerceAppSwitchEnabled() ? [{ userAgent: userAgent }] : [])
-            ),
+            createOrder: () =>
+                this.paypalCommerceIntegrationService.createOrder(
+                    'paypalcommerce',
+                    ...(this.isPaypalCommerceAppSwitchEnabled() ? [{ userAgent }] : []),
+                ),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };
@@ -140,10 +141,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            if (
-                paypalButton.hasReturned?.() &&
-                this.isPaypalCommerceAppSwitchEnabled()
-            ) {
+            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled()) {
                 paypalButton.resume?.();
             } else {
                 paypalButton.render(`#${containerId}`);
