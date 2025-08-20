@@ -428,6 +428,37 @@ describe('ApplePayButtonStrategy', () => {
             }
         });
 
+        it('creates buyNowCart on PDP page on button click for physical product and execute verifyCheckoutSpamProtection if shouldExecuteSpamCheck is true', async () => {
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
+                Promise.resolve(getBuyNowCart()),
+            );
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
+                ...getCheckout(),
+                shouldExecuteSpamCheck: true,
+            });
+
+            const CheckoutButtonInitializeOptions =
+                getApplePayButtonInitializationOptionsWithBuyNow();
+
+            await strategy.initialize(CheckoutButtonInitializeOptions);
+
+            if (CheckoutButtonInitializeOptions.applepay) {
+                const button = container.firstChild as HTMLElement;
+
+                if (button) {
+                    button.click();
+
+                    await applePaySession.onpaymentmethodselected();
+
+                    expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
+                    expect(
+                        paymentIntegrationService.verifyCheckoutSpamProtection,
+                    ).toHaveBeenCalled();
+                }
+            }
+        });
+
         it('doesnt call applePaySession.onpaymentmethodselected Buy Now flow with for digital item', async () => {
             applePaySession.onpaymentmethodselected = jest.fn();
 
