@@ -50,7 +50,11 @@ export default class HostedField {
     ) {
         this._iframe = document.createElement('iframe');
 
-        this._iframe.src = `/checkout/payment/hosted-field?version=${LIBRARY_VERSION}&checkoutId=${this._checkoutId}`;
+        const src = this._checkoutId
+            ? `/checkout/payment/hosted-field?version=${LIBRARY_VERSION}&checkoutId=${this._checkoutId}`
+            : `/checkout/payment/hosted-field?version=${LIBRARY_VERSION}`;
+
+        this._iframe.src = src;
         this._iframe.style.border = 'none';
         this._iframe.style.height = '100%';
         this._iframe.style.overflow = 'hidden';
