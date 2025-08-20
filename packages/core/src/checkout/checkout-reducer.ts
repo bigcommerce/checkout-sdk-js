@@ -22,6 +22,7 @@ import CheckoutState, {
     CheckoutStatusesState,
     DEFAULT_STATE,
 } from './checkout-state';
+import { CheckoutHydrateAction, CheckoutHydrateActionType } from './checkout-hydrate-actions';
 
 export default function checkoutReducer(
     state: CheckoutState = DEFAULT_STATE,
@@ -46,7 +47,8 @@ function dataReducer(
         | GiftCertificateAction
         | OrderAction
         | SpamProtectionAction
-        | StoreCreditAction,
+        | StoreCreditAction
+        | CheckoutHydrateAction,
 ): CheckoutDataState | undefined {
     switch (action.type) {
         case CheckoutActionType.LoadCheckoutSucceeded:
@@ -77,6 +79,19 @@ function dataReducer(
 
         case OrderActionType.SubmitOrderSucceeded:
             return objectSet(data, 'orderId', action.payload && action.payload.order.orderId);
+
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return objectMerge(
+                data,
+                omit(action.payload?.checkout, [
+                    'billingAddress',
+                    'cart',
+                    'consignments',
+                    'customer',
+                    'coupons',
+                    'giftCertificates',
+                ]),
+            ) as CheckoutDataState;
 
         default:
             return data;

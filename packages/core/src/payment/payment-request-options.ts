@@ -1,4 +1,8 @@
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import {
+    PaymentStrategy,
+    PaymentStrategyFactory,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { RequestOptions } from '../common/http-request';
 
@@ -36,6 +40,11 @@ export interface PaymentRequestOptions extends RequestOptions {
  * current checkout flow.
  */
 export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
+    /**
+     * @alpha
+     */
+    integrations?: Record<string, PaymentStrategyFactory<PaymentStrategy>>;
+
     /**
      * @alpha
      * Please note that this option is currently in an early stage of

@@ -85,6 +85,7 @@ export interface StoreCurrency {
     code: string;
     decimalPlaces: string;
     decimalSeparator: string;
+    isTransactional: boolean;
     symbolLocation: string;
     symbol: string;
     thousandsSeparator: string;
@@ -117,6 +118,7 @@ export interface CheckoutSettings {
     isSpamProtectionEnabled: boolean;
     isTrustedShippingAddressEnabled: boolean;
     orderTermsAndConditions: string;
+    orderTermsAndConditionsLocation: string;
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
     privacyPolicyUrl: string;
