@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.788.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.2...v1.788.3) (2025-08-20)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-5710 Moved Braintree Venmo payment strategy to packages ([#2976](https://github.com/bigcommerce/checkout-sdk-js/issues/2976)) ([28b3bcd](https://github.com/bigcommerce/checkout-sdk-js/commit/28b3bcdb4cb14decf3021865dd93a9c9a3a3d78e))
+
 ### [1.788.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.1...v1.788.2) (2025-08-20)
 
 
