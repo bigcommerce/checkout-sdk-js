@@ -14,14 +14,18 @@ describe('HostedFormFactory', () => {
     });
 
     it('creates hosted form', () => {
-        const result = factory.create('https://store.foobar.com', {
-            fields: {
-                [HostedFieldType.CardCode]: { containerId: 'card-code' },
-                [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },
-                [HostedFieldType.CardName]: { containerId: 'card-name' },
-                [HostedFieldType.CardNumber]: { containerId: 'card-number' },
+        const result = factory.create(
+            'https://store.foobar.com',
+            {
+                fields: {
+                    [HostedFieldType.CardCode]: { containerId: 'card-code' },
+                    [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },
+                    [HostedFieldType.CardName]: { containerId: 'card-name' },
+                    [HostedFieldType.CardNumber]: { containerId: 'card-number' },
+                },
             },
-        });
+            'some-checkout-id',
+        );
 
         expect(result).toBeInstanceOf(HostedForm);
     });
