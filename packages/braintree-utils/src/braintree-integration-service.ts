@@ -13,6 +13,7 @@ import {
     PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
     PaymentMethodCancelledError,
+    UnsupportedBrowserError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
@@ -37,6 +38,8 @@ import {
     BraintreeThreeDSecureOptions,
     BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
+    BraintreeVenmoCheckout,
+    BraintreeVenmoCreatorConfig,
     BraintreeVerifyPayload,
     PAYPAL_COMPONENTS,
     TokenizationPayload,
@@ -64,6 +67,7 @@ export default class BraintreeIntegrationService {
     private braintreePaypal?: Promise<BraintreePaypal>;
     private threeDSecureOptions?: BraintreeThreeDSecureOptions;
     private threeDS?: Promise<BraintreeThreeDSecure>;
+    private venmoCheckout?: BraintreeVenmoCheckout;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -335,6 +339,43 @@ export default class BraintreeIntegrationService {
         }
 
         return this.threeDS;
+    }
+
+    async getVenmoCheckout(
+        venmoConfig?: BraintreeVenmoCreatorConfig,
+    ): Promise<BraintreeVenmoCheckout> {
+        if (!this.venmoCheckout) {
+            const client = await this.getClient();
+            const venmoCheckout = await this.braintreeScriptLoader.loadVenmoCheckout();
+
+            const venmoCheckoutConfig = {
+                client,
+                allowDesktop: true,
+                paymentMethodUsage: 'multi_use',
+                ...(venmoConfig || {}),
+            };
+
+            this.venmoCheckout = await new Promise<BraintreeVenmoCheckout>((resolve, reject) => {
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                venmoCheckout.create(
+                    venmoCheckoutConfig,
+                    (error: BraintreeError, braintreeVenmoCheckout: BraintreeVenmoCheckout) => {
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        if (error) {
+                            return reject(error);
+                        }
+
+                        if (!braintreeVenmoCheckout.isBrowserSupported()) {
+                            return reject(new UnsupportedBrowserError());
+                        }
+
+                        resolve(braintreeVenmoCheckout);
+                    },
+                );
+            });
+        }
+
+        return this.venmoCheckout;
     }
 
     /*
