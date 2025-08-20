@@ -21,7 +21,7 @@
 
 ### constructor
 
-• **new HostedField**(`_type`, `_containerId`, `_placeholder`, `_accessibilityLabel`, `_styles`, `_eventPoster`, `_eventListener`, `_detachmentObserver`, `_cardInstrument?`)
+• **new HostedField**(`_type`, `_containerId`, `_placeholder`, `_accessibilityLabel`, `_styles`, `_eventPoster`, `_eventListener`, `_detachmentObserver`, `_checkoutId?`, `_cardInstrument?`)
 
 #### Parameters
 
@@ -35,6 +35,7 @@
 | `_eventPoster` | [`IframeEventPoster`](IframeEventPoster.md)<[`HostedFieldEvent`](../README.md#hostedfieldevent), `undefined`\> |
 | `_eventListener` | [`IframeEventListener`](IframeEventListener.md)<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md), `undefined`\> |
 | `_detachmentObserver` | [`DetachmentObserver`](DetachmentObserver.md) |
+| `_checkoutId?` | `string` |
 | `_cardInstrument?` | [`CardInstrument`](../interfaces/CardInstrument.md) |
 
 ## Methods

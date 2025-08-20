@@ -5949,9 +5949,10 @@ declare class HostedField {
     private _eventPoster;
     private _eventListener;
     private _detachmentObserver;
+    private _checkoutId?;
     private _cardInstrument?;
     private _iframe;
-    constructor(_type: HostedFieldType, _containerId: string, _placeholder: string, _accessibilityLabel: string, _styles: HostedFieldStylesMap, _eventPoster: IframeEventPoster<HostedFieldEvent>, _eventListener: IframeEventListener<HostedInputEventMap>, _detachmentObserver: DetachmentObserver, _cardInstrument?: CardInstrument | undefined);
+    constructor(_type: HostedFieldType, _containerId: string, _placeholder: string, _accessibilityLabel: string, _styles: HostedFieldStylesMap, _eventPoster: IframeEventPoster<HostedFieldEvent>, _eventListener: IframeEventListener<HostedInputEventMap>, _detachmentObserver: DetachmentObserver, _checkoutId?: string | undefined, _cardInstrument?: CardInstrument | undefined);
     getType(): HostedFieldType;
     attach(): Promise<void>;
     detach(): void;
@@ -6071,7 +6072,7 @@ declare type HostedFormEventCallbacks = Pick<LegacyHostedFormOptions, 'onBlur' |
 declare class HostedFormFactory {
     private _store;
     constructor(_store: ReadableCheckoutStore);
-    create(host: string, options: LegacyHostedFormOptions): HostedForm;
+    create(host: string, options: LegacyHostedFormOptions, checkoutId?: string): HostedForm;
     private _getCardInstrument;
 }
 
