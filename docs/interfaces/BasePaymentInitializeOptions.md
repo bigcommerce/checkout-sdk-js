@@ -17,7 +17,6 @@ current checkout flow.
 
 - [bluesnapv2](BasePaymentInitializeOptions.md#bluesnapv2)
 - [braintree](BasePaymentInitializeOptions.md#braintree)
-- [braintreevenmo](BasePaymentInitializeOptions.md#braintreevenmo)
 - [braintreevisacheckout](BasePaymentInitializeOptions.md#braintreevisacheckout)
 - [creditCard](BasePaymentInitializeOptions.md#creditcard)
 - [gatewayId](BasePaymentInitializeOptions.md#gatewayid)
@@ -44,15 +43,6 @@ ___
 
 The options that are required to initialize the Braintree payment method.
 They can be omitted unless you need to support Braintree.
-
-___
-
-### braintreevenmo
-
-• `Optional` **braintreevenmo**: [`BraintreeVenmoInitializeOptions`](BraintreeVenmoInitializeOptions.md)
-
-The options that are required to initialize the Braintree Venmo payment method.
-They can be omitted unless you need to support Braintree Venmo.
 
 ___
 

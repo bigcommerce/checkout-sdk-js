@@ -770,11 +770,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support PayPal Express.
      */
     paypalexpress?: PaypalExpressPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Braintree Venmo payment method.
-     * They can be omitted unless you need to support Braintree Venmo.
-     */
-    braintreevenmo?: BraintreeVenmoInitializeOptions;
 }
 
 declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
@@ -2442,14 +2437,6 @@ declare interface BraintreeThreeDSecureOptions {
     additionalInformation?: {
         acsWindowSize?: '01' | '02' | '03' | '04' | '05';
     };
-}
-
-declare interface BraintreeVenmoInitializeOptions {
-    /**
-     * An option that can provide different payment authorization methods, for more information use the following link: https://developer.paypal.com/braintree/docs/guides/venmo/client-side/javascript/v3/#desktop-qr-code
-     * If no value is specified, it will be true
-     */
-    allowDesktop?: boolean;
 }
 
 declare interface BraintreeVerifyPayload {

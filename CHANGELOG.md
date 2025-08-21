@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.788.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.3...v1.788.4) (2025-08-21)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-5710 removed BT Venmo payment strategy from core ([#2977](https://github.com/bigcommerce/checkout-sdk-js/issues/2977)) ([7b0af01](https://github.com/bigcommerce/checkout-sdk-js/commit/7b0af011c5a5ac8074ab886b59a667a3204bc75d))
+
 ### [1.788.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.2...v1.788.3) (2025-08-20)
 
 
