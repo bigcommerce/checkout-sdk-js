@@ -770,11 +770,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support PayPal Express.
      */
     paypalexpress?: PaypalExpressPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Braintree Venmo payment method.
-     * They can be omitted unless you need to support Braintree Venmo.
-     */
-    braintreevenmo?: BraintreeVenmoInitializeOptions;
 }
 
 declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
@@ -2442,14 +2437,6 @@ declare interface BraintreeThreeDSecureOptions {
     additionalInformation?: {
         acsWindowSize?: '01' | '02' | '03' | '04' | '05';
     };
-}
-
-declare interface BraintreeVenmoInitializeOptions {
-    /**
-     * An option that can provide different payment authorization methods, for more information use the following link: https://developer.paypal.com/braintree/docs/guides/venmo/client-side/javascript/v3/#desktop-qr-code
-     * If no value is specified, it will be true
-     */
-    allowDesktop?: boolean;
 }
 
 declare interface BraintreeVerifyPayload {
@@ -5949,9 +5936,10 @@ declare class HostedField {
     private _eventPoster;
     private _eventListener;
     private _detachmentObserver;
+    private _checkoutId?;
     private _cardInstrument?;
     private _iframe;
-    constructor(_type: HostedFieldType, _containerId: string, _placeholder: string, _accessibilityLabel: string, _styles: HostedFieldStylesMap, _eventPoster: IframeEventPoster<HostedFieldEvent>, _eventListener: IframeEventListener<HostedInputEventMap>, _detachmentObserver: DetachmentObserver, _cardInstrument?: CardInstrument | undefined);
+    constructor(_type: HostedFieldType, _containerId: string, _placeholder: string, _accessibilityLabel: string, _styles: HostedFieldStylesMap, _eventPoster: IframeEventPoster<HostedFieldEvent>, _eventListener: IframeEventListener<HostedInputEventMap>, _detachmentObserver: DetachmentObserver, _checkoutId?: string | undefined, _cardInstrument?: CardInstrument | undefined);
     getType(): HostedFieldType;
     attach(): Promise<void>;
     detach(): void;
@@ -6071,7 +6059,7 @@ declare type HostedFormEventCallbacks = Pick<LegacyHostedFormOptions, 'onBlur' |
 declare class HostedFormFactory {
     private _store;
     constructor(_store: ReadableCheckoutStore);
-    create(host: string, options: LegacyHostedFormOptions): HostedForm;
+    create(host: string, options: LegacyHostedFormOptions, checkoutId?: string): HostedForm;
     private _getCardInstrument;
 }
 

@@ -66,7 +66,9 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     }
 
     createHostedForm(host: string, options: HostedFormOptions): HostedForm {
-        return this._hostedFormFactory.create(host, options);
+        const checkoutId = this._storeProjection.getState().getCheckoutOrThrow().id;
+
+        return this._hostedFormFactory.create(host, options, checkoutId);
     }
 
     subscribe(

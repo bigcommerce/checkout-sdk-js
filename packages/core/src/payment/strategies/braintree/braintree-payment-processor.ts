@@ -19,8 +19,6 @@ import {
     BraintreePaypalSdkCreatorConfig,
     BraintreeRequestData,
     BraintreeThreeDSecure,
-    BraintreeVenmoCheckout,
-    BraintreeVenmoCreatorConfig,
     BraintreeVerifyPayload,
     TokenizationPayload,
 } from './braintree';
@@ -118,14 +116,6 @@ export default class BraintreePaymentProcessor {
         const threeDSecure = await this._braintreeSDKCreator.get3DS();
 
         return this._present3DSChallenge(threeDSecure, amount, tokenizationPayload);
-    }
-
-    async getVenmoCheckout(
-        venmoConfig?: BraintreeVenmoCreatorConfig,
-    ): Promise<BraintreeVenmoCheckout> {
-        return new Promise((resolve, reject) => {
-            this._braintreeSDKCreator.getVenmoCheckout(resolve, reject, venmoConfig);
-        });
     }
 
     private _getErrorsRequiredFields(

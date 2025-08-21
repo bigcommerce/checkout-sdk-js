@@ -28,7 +28,7 @@
 
 ### create
 
-▸ **create**(`host`, `options`): [`HostedForm`](HostedForm.md)
+▸ **create**(`host`, `options`, `checkoutId?`): [`HostedForm`](HostedForm.md)
 
 #### Parameters
 
@@ -36,6 +36,7 @@
 | :------ | :------ |
 | `host` | `string` |
 | `options` | [`LegacyHostedFormOptions`](../interfaces/LegacyHostedFormOptions.md) |
+| `checkoutId?` | `string` |
 
 #### Returns
 

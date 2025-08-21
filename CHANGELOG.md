@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.788.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.3...v1.788.4) (2025-08-21)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-5710 removed BT Venmo payment strategy from core ([#2977](https://github.com/bigcommerce/checkout-sdk-js/issues/2977)) ([7b0af01](https://github.com/bigcommerce/checkout-sdk-js/commit/7b0af011c5a5ac8074ab886b59a667a3204bc75d))
+
+### [1.788.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.2...v1.788.3) (2025-08-20)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-5710 Moved Braintree Venmo payment strategy to packages ([#2976](https://github.com/bigcommerce/checkout-sdk-js/issues/2976)) ([28b3bcd](https://github.com/bigcommerce/checkout-sdk-js/commit/28b3bcdb4cb14decf3021865dd93a9c9a3a3d78e))
+
+### [1.788.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.1...v1.788.2) (2025-08-20)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-9448 check for checkout id before attaching to iframe ([#2980](https://github.com/bigcommerce/checkout-sdk-js/issues/2980)) ([7ed5eb7](https://github.com/bigcommerce/checkout-sdk-js/commit/7ed5eb742e2f9b0adb68d2beff8dd28d7079f970))
+
+### [1.788.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.0...v1.788.1) (2025-08-20)
+
 ## [1.788.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.787.0...v1.788.0) (2025-08-14)
 
 

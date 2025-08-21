@@ -98,7 +98,9 @@ describe('DefaultPaymentIntegrationService', () => {
         requestSender = createRequestSender();
         cartRequestSender = new CartRequestSender(requestSender);
         hostedFormFactory = new HostedFormFactory(store as CheckoutStore);
-        paymentIntegrationSelectors = {} as PaymentIntegrationSelectors;
+        paymentIntegrationSelectors = {
+            getCheckoutOrThrow: () => getCheckout(),
+        } as PaymentIntegrationSelectors;
 
         internalCheckoutSelectors = {
             order: {

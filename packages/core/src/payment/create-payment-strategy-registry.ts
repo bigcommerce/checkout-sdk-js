@@ -34,9 +34,7 @@ import PaymentStrategyType from './payment-strategy-type';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BNZPaymentStrategy } from './strategies/bnz';
 import {
-    BraintreeVenmoPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
-    createBraintreePaymentProcessor,
     createBraintreeVisaCheckoutPaymentProcessor,
     VisaCheckoutScriptLoader,
 } from './strategies/braintree';
@@ -72,10 +70,6 @@ export default function createPaymentStrategyRegistry(
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
-    const braintreePaymentProcessor = createBraintreePaymentProcessor(
-        scriptLoader,
-        paymentIntegrationService,
-    );
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(
@@ -130,18 +124,6 @@ export default function createPaymentStrategyRegistry(
                     paymentActionCreator,
                     new CardinalClient(new CardinalScriptLoader(scriptLoader)),
                 ),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.BRAINTREE_VENMO,
-        () =>
-            new BraintreeVenmoPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                braintreePaymentProcessor,
             ),
     );
 

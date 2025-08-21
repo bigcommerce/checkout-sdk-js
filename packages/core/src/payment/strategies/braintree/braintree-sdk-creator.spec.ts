@@ -280,55 +280,6 @@ describe('Braintree SDK Creator', () => {
                 Promise.resolve(clientMock),
             );
         });
-
-        it('returns a promise that resolves to the BraintreeVenmoCheckout', async () => {
-            const onSuccessCallback = jest.fn();
-            const onErrorCallback = jest.fn();
-            const braintreeVenmoCheckout = await braintreeSDKCreator.getVenmoCheckout(
-                onSuccessCallback,
-                onErrorCallback,
-            );
-
-            expect(braintreeVenmoCheckoutCreatorMock.create).toHaveBeenCalled();
-            expect(braintreeVenmoCheckout).toBe(braintreeVenmoCheckoutMock);
-        });
-
-        it('create a venmo by passing an additional configuration to it', async () => {
-            const onSuccessCallback = jest.fn();
-            const onErrorCallback = jest.fn();
-            const braintreeVenmoCheckout = await braintreeSDKCreator.getVenmoCheckout(
-                onSuccessCallback,
-                onErrorCallback,
-                {
-                    mobileWebFallBack: false,
-                    allowDesktop: false,
-                },
-            );
-
-            expect(braintreeVenmoCheckoutCreatorMock.create).toHaveBeenCalledWith(
-                expect.objectContaining({ mobileWebFallBack: false, allowDesktop: false }),
-                expect.any(Function),
-            );
-            expect(braintreeVenmoCheckout).toBe(braintreeVenmoCheckoutMock);
-        });
-
-        it('always returns the same instance of the BraintreeVenmoCheckout client', async () => {
-            const onSuccessCallback = jest.fn();
-            const onErrorCallback = jest.fn();
-
-            const braintreeVenmoCheckout1 = await braintreeSDKCreator.getVenmoCheckout(
-                onSuccessCallback,
-                onErrorCallback,
-            );
-            const braintreeVenmoCheckout2 = await braintreeSDKCreator.getVenmoCheckout(
-                onSuccessCallback,
-                onErrorCallback,
-            );
-
-            expect(braintreeVenmoCheckout1).toBe(braintreeVenmoCheckout2);
-            expect(braintreeScriptLoader.loadVenmoCheckout).toHaveBeenCalledTimes(1);
-            expect(braintreeVenmoCheckoutCreatorMock.create).toHaveBeenCalledTimes(1);
-        });
     });
 
     describe('#createHostedFields()', () => {
@@ -416,14 +367,12 @@ describe('Braintree SDK Creator', () => {
             await braintreeSDKCreator.get3DS();
             await braintreeSDKCreator.getDataCollector();
             await braintreeSDKCreator.getVisaCheckout();
-            await braintreeSDKCreator.getVenmoCheckout(jest.fn(), jest.fn());
 
             await braintreeSDKCreator.teardown();
 
             expect(dataCollectorMock.teardown).toHaveBeenCalled();
             expect(threeDSecureMock.teardown).toHaveBeenCalled();
             expect(visaCheckoutMock.teardown).toHaveBeenCalled();
-            expect(braintreeVenmoCheckout.teardown).toHaveBeenCalled();
         });
 
         it('only teardown instantiated dependencies', async () => {

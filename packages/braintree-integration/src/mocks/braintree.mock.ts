@@ -32,6 +32,24 @@ export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
     };
 }
 
+export function getBraintreeVenmo(): PaymentMethod {
+    return {
+        id: 'braintreevenmo',
+        logoUrl: '',
+        method: 'paypal',
+        supportedCards: [],
+        config: {
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
+        initializationData: {
+            isBrainteeVenmoEnabled: false,
+        },
+        skipRedirectConfirmationAlert: false,
+    };
+}
+
 export function getThreeDSecureMock(): BraintreeThreeDSecure {
     return {
         verifyCard: (_options, callback: Braintree3DSVerifyCardCallback) => {
