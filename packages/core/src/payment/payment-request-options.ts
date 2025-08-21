@@ -5,7 +5,6 @@ import { RequestOptions } from '../common/http-request';
 import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
 import {
     BraintreePaymentInitializeOptions,
-    BraintreeVenmoInitializeOptions,
     BraintreeVisaCheckoutPaymentInitializeOptions,
 } from './strategies/braintree';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
@@ -74,10 +73,4 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support PayPal Express.
      */
     paypalexpress?: PaypalExpressPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Braintree Venmo payment method.
-     * They can be omitted unless you need to support Braintree Venmo.
-     */
-    braintreevenmo?: BraintreeVenmoInitializeOptions;
 }
