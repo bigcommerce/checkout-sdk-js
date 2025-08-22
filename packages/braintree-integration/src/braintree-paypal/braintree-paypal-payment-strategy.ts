@@ -267,7 +267,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     }
 
     private async loadPaypalCheckoutInstance() {
-        const { clientToken, initializationData } = this.paymentMethod || {};
+        const { clientToken, initializationData, id: paymentMethodId } = this.paymentMethod || {};
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -285,12 +285,20 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 isCreditEnabled: initializationData?.isCreditEnabled,
             };
 
+            const isBraintreePaypalCredit = paymentMethodId === 'braintreepaypalcredit';
+            const shouldShowPayPalCreditBanner =
+                isBraintreePaypalCredit || !initializationData?.isCreditEnabled;
+
             await this.braintreeIntegrationService.getPaypalCheckout(
                 paypalCheckoutConfig,
                 (braintreePaypalCheckout) => {
-                    if (this.paymentMethod?.id && this.braintree?.bannerContainerId) {
+                    if (
+                        shouldShowPayPalCreditBanner &&
+                        paymentMethodId &&
+                        this.braintree?.bannerContainerId
+                    ) {
                         this.renderPayPalMessages(
-                            this.paymentMethod.id,
+                            paymentMethodId,
                             this.braintree.bannerContainerId,
                         );
                     }
