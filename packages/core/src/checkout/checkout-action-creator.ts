@@ -44,11 +44,7 @@ export default class CheckoutActionCreator {
                         .then(({ body }) => {
                             return createAction(
                                 CheckoutActionType.LoadCheckoutSucceeded,
-                                this._shouldTransformCustomerAddress(
-                                    store.getState().config.getStoreConfigOrThrow(),
-                                )
-                                    ? this._transformCustomerAddresses(body)
-                                    : body,
+                                this._transformCustomerAddresses(body),
                             );
                         });
                 }),
@@ -91,9 +87,7 @@ export default class CheckoutActionCreator {
 
                     return createAction(
                         CheckoutActionType.LoadCheckoutSucceeded,
-                        this._shouldTransformCustomerAddress(state.config.getStoreConfigOrThrow())
-                            ? this._transformCustomerAddresses(body)
-                            : body,
+                        this._transformCustomerAddresses(body),
                     );
                 }),
             ).pipe(
@@ -147,14 +141,6 @@ export default class CheckoutActionCreator {
 
             return this.loadCheckout(checkout.id, options)(store);
         };
-    }
-
-    private _shouldTransformCustomerAddress(storeConfig: StoreConfig): boolean {
-        return (
-            storeConfig.checkoutSettings.features[
-                'CHECKOUT-8183.set_shouldSaveAddress_false_for_existing_address'
-            ] ?? true
-        );
     }
 
     private _transformCustomerAddresses(body: Checkout): Checkout {
