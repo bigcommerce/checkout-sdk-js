@@ -875,12 +875,6 @@ describe('consignmentActionCreator', () => {
                 data: [consignment],
             };
 
-            if (configState.data && configState.data.storeConfig.checkoutSettings.features) {
-                configState.data.storeConfig.checkoutSettings.features = {
-                    'CHECKOUT-8999.remove_duplicate_shipping_option_call': true,
-                };
-            }
-
             const stateWithExperiment = {
                 ...state,
                 config: configState,

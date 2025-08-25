@@ -24,7 +24,7 @@ export default class CheckoutActionCreator {
         id: string,
         options?: RequestOptions,
     ): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
-        return (store) => {
+        return () => {
             return concat(
                 of(createAction(CheckoutActionType.LoadCheckoutRequested)),
                 merge(
