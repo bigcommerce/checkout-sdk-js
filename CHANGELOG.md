@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.788.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.4...v1.788.5) (2025-08-25)
+
+
+### Bug Fixes
+
+* **payment:** PI-4266 Apple Pay fails on product pages with reCAPTCHA enabled ([#2982](https://github.com/bigcommerce/checkout-sdk-js/issues/2982)) ([668c970](https://github.com/bigcommerce/checkout-sdk-js/commit/668c970fa40be0de752ac26476a6bc2217de63f9))
+
 ### [1.788.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.3...v1.788.4) (2025-08-21)
 
 
