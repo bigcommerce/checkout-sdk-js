@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { ConfigActionCreator, StoreConfig } from '../config';
+import { ConfigActionCreator } from '../config';
 import { FormFieldsActionCreator } from '../form';
 
 import Checkout, { CheckoutRequestBody } from './checkout';
