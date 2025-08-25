@@ -357,6 +357,13 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             );
 
             await this._paymentIntegrationService.loadCheckout(buyNowCart.id);
+
+            const state = this._paymentIntegrationService.getState();
+            const { shouldExecuteSpamCheck } = state.getCheckoutOrThrow();
+
+            if (shouldExecuteSpamCheck) {
+                await this._paymentIntegrationService.verifyCheckoutSpamProtection();
+            }
         } catch (error) {
             throw new BuyNowCartCreationError();
         }
