@@ -2,8 +2,6 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { find } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
-
 import { AddressRequestBody } from '../address';
 import { Cart } from '../cart';
 import {
@@ -360,25 +358,17 @@ export default class ConsignmentActionCreator {
         return (store) =>
             Observable.create((observer: Observer<UpdateShippingOptionAction>) => {
                 const checkout = store.getState().checkout.getCheckout();
-                const { checkoutSettings } = store.getState().config.getStoreConfigOrThrow();
 
-                if (
-                    isExperimentEnabled(
-                        checkoutSettings.features,
-                        'CHECKOUT-8999.remove_duplicate_shipping_option_call',
-                    )
-                ) {
-                    const consignmentInMemory = store
-                        .getState()
-                        .consignments.getConsignmentById(consignment.id);
+                const consignmentInMemory = store
+                    .getState()
+                    .consignments.getConsignmentById(consignment.id);
 
-                    const alreadySelectedOptionId = consignmentInMemory?.selectedShippingOption?.id;
+                const alreadySelectedOptionId = consignmentInMemory?.selectedShippingOption?.id;
 
-                    if (alreadySelectedOptionId === consignment.shippingOptionId) {
-                        observer.complete();
+                if (alreadySelectedOptionId === consignment.shippingOptionId) {
+                    observer.complete();
 
-                        return;
-                    }
+                    return;
                 }
 
                 if (!checkout || !checkout.id) {

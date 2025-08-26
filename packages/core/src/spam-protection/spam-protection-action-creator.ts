@@ -23,12 +23,6 @@ export default class SpamProtectionActionCreator {
         options?: SpamProtectionOptions,
     ): ThunkAction<SpamProtectionAction, InternalCheckoutSelectors> {
         return (store) => {
-            const state = store.getState();
-            const isRecaptchaResetExperimentEnabled =
-                state.config.getConfig()?.storeConfig.checkoutSettings.features[
-                    'CHECKOUT-8264.recaptcha_error_fix'
-                ] ?? false;
-
             return concat(
                 of(createAction(SpamProtectionActionType.InitializeRequested, undefined)),
                 defer(async () => {
@@ -36,12 +30,10 @@ export default class SpamProtectionActionCreator {
                         ? options.containerId
                         : 'spamProtectionContainer';
 
-                    if (isRecaptchaResetExperimentEnabled) {
-                        const element = document.getElementById(spamProtectionElementId);
+                    const element = document.getElementById(spamProtectionElementId);
 
-                        if (element) {
-                            this._googleRecaptcha.reset(spamProtectionElementId);
-                        }
+                    if (element) {
+                        this._googleRecaptcha.reset(spamProtectionElementId);
                     }
 
                     if (!options && !document.getElementById(spamProtectionElementId)) {

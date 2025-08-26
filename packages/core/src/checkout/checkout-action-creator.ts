@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { ConfigActionCreator, StoreConfig } from '../config';
+import { ConfigActionCreator } from '../config';
 import { FormFieldsActionCreator } from '../form';
 
 import Checkout, { CheckoutRequestBody } from './checkout';
@@ -24,7 +24,7 @@ export default class CheckoutActionCreator {
         id: string,
         options?: RequestOptions,
     ): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
-        return (store) => {
+        return () => {
             return concat(
                 of(createAction(CheckoutActionType.LoadCheckoutRequested)),
                 merge(
@@ -44,11 +44,7 @@ export default class CheckoutActionCreator {
                         .then(({ body }) => {
                             return createAction(
                                 CheckoutActionType.LoadCheckoutSucceeded,
-                                this._shouldTransformCustomerAddress(
-                                    store.getState().config.getStoreConfigOrThrow(),
-                                )
-                                    ? this._transformCustomerAddresses(body)
-                                    : body,
+                                this._transformCustomerAddresses(body),
                             );
                         });
                 }),
@@ -91,9 +87,7 @@ export default class CheckoutActionCreator {
 
                     return createAction(
                         CheckoutActionType.LoadCheckoutSucceeded,
-                        this._shouldTransformCustomerAddress(state.config.getStoreConfigOrThrow())
-                            ? this._transformCustomerAddresses(body)
-                            : body,
+                        this._transformCustomerAddresses(body),
                     );
                 }),
             ).pipe(
@@ -147,14 +141,6 @@ export default class CheckoutActionCreator {
 
             return this.loadCheckout(checkout.id, options)(store);
         };
-    }
-
-    private _shouldTransformCustomerAddress(storeConfig: StoreConfig): boolean {
-        return (
-            storeConfig.checkoutSettings.features[
-                'CHECKOUT-8183.set_shouldSaveAddress_false_for_existing_address'
-            ] ?? true
-        );
     }
 
     private _transformCustomerAddresses(body: Checkout): Checkout {
