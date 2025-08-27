@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.789.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.6...v1.789.0) (2025-08-27)
+
+
+### Features
+
+* **payment:** PAYPAL-5660 add Braintree PayPal message render condition ([dcc08ff](https://github.com/bigcommerce/checkout-sdk-js/commit/dcc08ff83ab61a03dbdebc353956c714ca858d83))
+* **payment:** PAYPAL-5660 add Braintree PayPal message render condition ([cf256f6](https://github.com/bigcommerce/checkout-sdk-js/commit/cf256f673e209e51da33fd99ed460ee8f27d6c31))
+
 ### [1.788.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.5...v1.788.6) (2025-08-26)
 
 ### [1.788.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.4...v1.788.5) (2025-08-25)
