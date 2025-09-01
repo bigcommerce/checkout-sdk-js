@@ -1,5 +1,4 @@
 import {
-    BillingAddress,
     MissingDataError,
     NotInitializedError,
     PaymentInitializeOptions,
@@ -627,14 +626,44 @@ describe('StripeIntegrationService', () => {
             });
         });
 
-        it('returns mapped payment data without state code', () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue({
-                ...getBillingAddress(),
-                stateOrProvinceCode: undefined,
-            } as unknown as BillingAddress);
-
+        it('returns mapped payment data with allow_redisplay: always', () => {
             expect(
-                stripeIntegrationService.mapStripePaymentData(stripeElementsMock, 'redirect.url'),
+                stripeIntegrationService.mapStripePaymentData(
+                    stripeElementsMock,
+                    'redirect.url',
+                    true,
+                ),
+            ).toEqual({
+                elements: stripeElementsMock,
+                redirect: 'if_required',
+                confirmParams: {
+                    payment_method_data: {
+                        allow_redisplay: 'always',
+                        billing_details: {
+                            email: 'test@bigcommerce.com',
+                            address: {
+                                city: 'Some City',
+                                country: 'US',
+                                line1: '12345 Testing Way',
+                                line2: '',
+                                postal_code: '95555',
+                                state: 'CA',
+                            },
+                            name: 'Test Tester',
+                        },
+                    },
+                    return_url: 'redirect.url',
+                },
+            });
+        });
+
+        it('returns mapped payment data without allow_redisplay: always', () => {
+            expect(
+                stripeIntegrationService.mapStripePaymentData(
+                    stripeElementsMock,
+                    'redirect.url',
+                    false,
+                ),
             ).toEqual({
                 elements: stripeElementsMock,
                 redirect: 'if_required',
@@ -648,6 +677,7 @@ describe('StripeIntegrationService', () => {
                                 line1: '12345 Testing Way',
                                 line2: '',
                                 postal_code: '95555',
+                                state: 'CA',
                             },
                             name: 'Test Tester',
                         },

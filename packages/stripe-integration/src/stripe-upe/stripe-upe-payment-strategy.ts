@@ -56,6 +56,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeUPEClient?: StripeClient;
     private _stripeElements?: StripeElements;
     private _isStripeElementUpdateEnabled?: boolean;
+    private _allowRedisplayForStoredInstruments?: boolean;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -243,7 +244,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         const { clientToken, initializationData } = paymentMethod;
-        const { shopperLanguage } = initializationData;
+        const { shopperLanguage, allowRedisplayForStoredInstruments = false } = initializationData;
+
+        this._allowRedisplayForStoredInstruments = allowRedisplayForStoredInstruments;
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -364,6 +367,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
             this._stripeElements,
             redirect_url,
+            !!this._allowRedisplayForStoredInstruments,
         );
         let stripeError: StripeError | undefined;
 
