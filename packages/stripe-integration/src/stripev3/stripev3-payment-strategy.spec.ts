@@ -367,6 +367,40 @@ describe('StripeV3PaymentStrategy', () => {
                         expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
                     });
 
+                    it('with allow_redisplay: always', async () => {
+                        jest.spyOn(
+                            paymentIntegrationService.getState(),
+                            'getPaymentMethodOrThrow',
+                        ).mockReturnValueOnce({
+                            paymentMethodMock,
+                            initializationData: {
+                                ...paymentMethodMock.initializationData,
+                                allowRedisplayForStoredInstruments: true,
+                            },
+                        });
+
+                        const startV3OrderRequestGatewayId: OrderRequestBody = {
+                            payment: {
+                                methodId: StripeElementType.CreditCard,
+                                paymentData: {
+                                    shouldSaveInstrument: false,
+                                },
+                                gatewayId: 'stripev3',
+                            },
+                        };
+
+                        await strategy.initialize(options);
+
+                        await strategy.execute(startV3OrderRequestGatewayId);
+
+                        expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalledWith({
+                            type: StripePaymentMethodType.CreditCard,
+                            card: cardElement,
+                            billing_details: getStripeBillingAddress(),
+                            allow_redisplay: 'always',
+                        });
+                    });
+
                     it('with a guest user', async () => {
                         jest.spyOn(
                             paymentIntegrationService.getState(),
