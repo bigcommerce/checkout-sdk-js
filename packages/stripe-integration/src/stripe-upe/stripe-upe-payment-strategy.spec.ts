@@ -1230,6 +1230,7 @@ describe('StripeUPEPaymentStrategy', () => {
                 expect(stripeUPEIntegrationService.mapStripePaymentData).toHaveBeenCalledWith(
                     expect.any(Object),
                     'redirect.url',
+                    true,
                 );
                 expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledTimes(1);
                 expect(stripeUPEJsMock.retrievePaymentIntent).not.toHaveBeenCalled();
@@ -1317,6 +1318,7 @@ describe('StripeUPEPaymentStrategy', () => {
                 expect(stripeUPEIntegrationService.mapStripePaymentData).toHaveBeenCalledWith(
                     expect.any(Object),
                     'redirect.url',
+                    true,
                 );
                 expect(stripeUPEJsMock.retrievePaymentIntent).toHaveBeenCalledTimes(1);
                 expect(stripeUPEJsMock.retrievePaymentIntent).toHaveBeenCalledWith(
