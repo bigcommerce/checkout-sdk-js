@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.791.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.790.0...v1.791.0) (2025-09-02)
+
+
+### Features
+
+* **payment:** Stripe UPE allow_redirect added ([85289e9](https://github.com/bigcommerce/checkout-sdk-js/commit/85289e909dd48b47a03f2dda79e78a3d60ac31e5))
+
 ## [1.790.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.789.0...v1.790.0) (2025-08-29)
 
 
