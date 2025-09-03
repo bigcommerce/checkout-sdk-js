@@ -1,0 +1,17 @@
+import {
+    PaymentProviderCustomer,
+    PayPalConnectCustomer,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+// TODO: update PayPalConnectCustomer with PayPalFastlaneCustomer
+export default function isPayPalFastlaneCustomer(
+    customer?: PaymentProviderCustomer,
+): customer is PayPalConnectCustomer {
+    if (!customer) {
+        return false;
+    }
+
+    return (
+        'authenticationState' in customer || 'addresses' in customer || 'instruments' in customer
+    );
+}
