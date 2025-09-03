@@ -170,6 +170,7 @@ export default class StripeIntegrationService {
     mapStripePaymentData(
         stripeElements?: StripeElements,
         returnUrl?: string,
+        shouldAllowRedisplay = false,
     ): StripeConfirmPaymentData {
         const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
         const { firstName, lastName, email } = billingAddress || {};
@@ -188,6 +189,7 @@ export default class StripeIntegrationService {
             redirect: StripeStringConstants.IF_REQUIRED,
             confirmParams: {
                 payment_method_data: {
+                    ...(shouldAllowRedisplay ? { allow_redisplay: 'always' } : {}),
                     billing_details: {
                         email,
                         address,

@@ -34,10 +34,6 @@ export default class BillingAddressActionCreator {
         return (store) => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
-            const isBillingFixExperimentEnabled =
-                state.config.getConfig()?.storeConfig.checkoutSettings.features[
-                    'CHECKOUT-8392.fix_billing_creation_in_checkout'
-                ] ?? true;
 
             if (!checkout) {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -73,7 +69,6 @@ export default class BillingAddressActionCreator {
                         const { body } = await this._createOrUpdateBillingAddress(
                             checkout.id,
                             billingAddressRequestBody,
-                            isBillingFixExperimentEnabled,
                             hasBillingAddress,
                             options,
                         );
@@ -101,10 +96,6 @@ export default class BillingAddressActionCreator {
             Observable.create((observer: Observer<UpdateBillingAddressAction>) => {
                 const state = store.getState();
                 const checkout = state.checkout.getCheckout();
-                const isBillingFixExperimentEnabled =
-                    state.config.getConfig()?.storeConfig.checkoutSettings.features[
-                        'CHECKOUT-8392.fix_billing_creation_in_checkout'
-                    ] ?? true;
 
                 if (!checkout) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -136,7 +127,6 @@ export default class BillingAddressActionCreator {
                 this._createOrUpdateBillingAddress(
                     checkout.id,
                     billingAddressRequestBody,
-                    isBillingFixExperimentEnabled,
                     hasBillingAddress,
                     options,
                 )
@@ -184,19 +174,10 @@ export default class BillingAddressActionCreator {
     private _createOrUpdateBillingAddress(
         checkoutId: string,
         address: Partial<BillingAddressUpdateRequestBody>,
-        isBillingFixExperimentEnabled: boolean,
         hasBillingAddress: boolean,
         options?: RequestOptions,
     ): Promise<Response<Checkout>> {
-        if (isBillingFixExperimentEnabled) {
-            if (!hasBillingAddress) {
-                return this._requestSender.createAddress(checkoutId, address, options);
-            }
-
-            return this._requestSender.updateAddress(checkoutId, address, options);
-        }
-
-        if (!address.id) {
+        if (!hasBillingAddress) {
             return this._requestSender.createAddress(checkoutId, address, options);
         }
 

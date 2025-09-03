@@ -405,12 +405,6 @@ describe('BillingAddressActionCreator', () => {
             it('emits actions if able to update billing address when experiment is enabled', async () => {
                 const configState = getConfigState();
 
-                if (configState.data && configState.data.storeConfig.checkoutSettings.features) {
-                    configState.data.storeConfig.checkoutSettings.features = {
-                        'CHECKOUT-8392.fix_billing_creation_in_checkout': true,
-                    };
-                }
-
                 const stateWithExperiment = {
                     ...state,
                     config: configState,

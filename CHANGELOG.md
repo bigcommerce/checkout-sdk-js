@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.792.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.791.0...v1.792.0) (2025-09-02)
+
+
+### Features
+
+* **payment:** Stripe V3 allow_redirect added ([c7cdbbc](https://github.com/bigcommerce/checkout-sdk-js/commit/c7cdbbc4ba5142b36e5270c8d085844cb7fd9fa7))
+
+## [1.791.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.790.0...v1.791.0) (2025-09-02)
+
+
+### Features
+
+* **payment:** Stripe UPE allow_redirect added ([85289e9](https://github.com/bigcommerce/checkout-sdk-js/commit/85289e909dd48b47a03f2dda79e78a3d60ac31e5))
+
+## [1.790.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.789.0...v1.790.0) (2025-08-29)
+
+
+### Features
+
+* **payment:** PAYPAL-5740 paypal-utils package ([#2988](https://github.com/bigcommerce/checkout-sdk-js/issues/2988)) ([3007614](https://github.com/bigcommerce/checkout-sdk-js/commit/30076143bf4056ebecf8029aa663c09e3f01d375))
+
+## [1.789.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.6...v1.789.0) (2025-08-27)
+
+
+### Features
+
+* **payment:** PAYPAL-5660 add Braintree PayPal message render condition ([dcc08ff](https://github.com/bigcommerce/checkout-sdk-js/commit/dcc08ff83ab61a03dbdebc353956c714ca858d83))
+* **payment:** PAYPAL-5660 add Braintree PayPal message render condition ([cf256f6](https://github.com/bigcommerce/checkout-sdk-js/commit/cf256f673e209e51da33fd99ed460ee8f27d6c31))
+
+### [1.788.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.5...v1.788.6) (2025-08-26)
+
+### [1.788.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.4...v1.788.5) (2025-08-25)
+
+
+### Bug Fixes
+
+* **payment:** PI-4266 Apple Pay fails on product pages with reCAPTCHA enabled ([#2982](https://github.com/bigcommerce/checkout-sdk-js/issues/2982)) ([668c970](https://github.com/bigcommerce/checkout-sdk-js/commit/668c970fa40be0de752ac26476a6bc2217de63f9))
+
 ### [1.788.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.788.3...v1.788.4) (2025-08-21)
 
 

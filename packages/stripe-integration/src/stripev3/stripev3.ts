@@ -850,6 +850,7 @@ export interface CreatePaymentMethodParams {
     type: StripePaymentMethodType;
     card: StripeElement;
     billing_details?: StripeBillingDetails;
+    allow_redisplay?: 'always' | 'limited' | 'unspecified';
 }
 
 export interface StripeHostWindow extends Window {
@@ -926,4 +927,5 @@ export interface StripeV3InitializationData {
     stripePublishableKey: string;
     stripeConnectedAccount: string;
     useIndividualCardFields: boolean;
+    allowRedisplayForStoredInstruments?: boolean;
 }

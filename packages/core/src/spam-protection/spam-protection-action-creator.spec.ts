@@ -131,12 +131,6 @@ describe('SpamProtectionActionCreator', () => {
         it('emits actions if able to execute spam protection again', async () => {
             const configState = getConfigState();
 
-            if (configState.data && configState.data.storeConfig.checkoutSettings.features) {
-                configState.data.storeConfig.checkoutSettings.features = {
-                    'CHECKOUT-8264.recaptcha_error_fix': true,
-                };
-            }
-
             const stateWithExperiment = {
                 ...state,
                 config: configState,

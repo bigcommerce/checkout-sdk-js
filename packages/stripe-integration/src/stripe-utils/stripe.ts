@@ -286,6 +286,7 @@ export interface BillingDetailsProperties {
  */
 export interface PaymentMethodDataOptions {
     billing_details: BillingDetailsOptions;
+    allow_redisplay?: 'always' | 'limited' | 'unspecified';
 }
 
 /**
@@ -619,6 +620,7 @@ export interface StripeInitializationData {
     shopperLanguage: string;
     customerSessionToken?: string;
     enableLink?: boolean;
+    allowRedisplayForStoredInstruments?: boolean;
 }
 
 export interface StripeElementUpdateOptions {

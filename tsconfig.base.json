@@ -38,9 +38,11 @@
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/bigcommerce-payments-utils": ["packages/bigcommerce-payments-utils/src/index.ts"],
             "@bigcommerce/checkout-sdk/bigcommerce-payments-integration": [
                 "packages/bigcommerce-payments-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/bigcommerce-payments-utils": [
+                "packages/bigcommerce-payments-utils/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/bluesnap-direct-integration": [
                 "packages/bluesnap-direct-integration/src/index.ts"
@@ -116,6 +118,7 @@
             "@bigcommerce/checkout-sdk/paypal-pro-integration": [
                 "packages/paypal-pro-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/paypal-utils": ["packages/paypal-utils/src/index.ts"],
             "@bigcommerce/checkout-sdk/sagepay-integration": [
                 "packages/sagepay-integration/src/index.ts"
             ],
