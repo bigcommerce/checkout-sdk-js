@@ -66,7 +66,7 @@ jobs:
 
   build:
     <<: *node_executor
-    resource_class: large
+    resource_class: xlarge
     steps:
       - ci/pre-setup
       - node/npm-install
@@ -110,7 +110,7 @@ jobs:
 
   build_cdn:
     <<: *node_executor
-    resource_class: medium+
+    resource_class: xlarge
     steps:
       - ci/pre-setup
       - node/npm-install

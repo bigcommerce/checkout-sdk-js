@@ -18,6 +18,14 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
         return this._registry.get(this._encodeToken(resolveId));
     }
 
+    getFactory(resolveId: TToken): Factory<TType> | undefined {
+        try {
+            return this._registry.getFactory(this._encodeToken(resolveId));
+        } catch (error) {
+            return undefined;
+        }
+    }
+
     register(resolveId: TToken, factory: Factory<TType>): void {
         this._registry.register(this._encodeToken(resolveId), factory);
     }

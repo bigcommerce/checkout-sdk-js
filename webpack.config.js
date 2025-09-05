@@ -1,32 +1,44 @@
 const path = require('path');
-const { DefinePlugin } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
 const {
     babelLoaderRules,
     getBaseConfig,
     libraryEntries,
-    libraryName,
+    coreSrcPath,
 } = require('./webpack-common.config');
 
 const outputPath = path.join(__dirname, 'dist');
 
-async function getUmdConfig(options, argv) {
+async function getEsmConfig(options, argv) {
     const baseConfig = await getBaseConfig(options, argv);
 
     return {
         ...baseConfig,
-        name: 'umd',
+        name: 'esm',
         entry: libraryEntries,
+        externals: [
+            nodeExternals({
+                importType: 'module',
+            }),
+        ],
+        externalsPresets: {
+            node: true,
+        },
         output: {
-            filename: '[name].umd.js',
-            library: libraryName,
-            libraryTarget: 'umd',
-            path: outputPath,
+            filename: '[name].js',
+            path: `${outputPath}/esm`,
+            library: {
+                type: 'module',
+            },
+            environment: {
+                module: true,
+            },
         },
-        module: {
-            rules: [...babelLoaderRules, ...baseConfig.module.rules],
+        experiments: {
+            outputModule: true,
         },
+        target: ['web', 'es6'],
     };
 }
 
@@ -37,23 +49,78 @@ async function getCjsConfig(options, argv) {
         ...baseConfig,
         name: 'cjs',
         entry: libraryEntries,
-        externals: [nodeExternals()],
         output: {
             filename: '[name].js',
             libraryTarget: 'commonjs2',
-            path: outputPath,
+            path: `${outputPath}/cjs`,
         },
-        plugins: [
-            ...baseConfig.plugins,
-            new DefinePlugin({
-                'process.env.NODE_ENV': 'process.env.NODE_ENV',
+        module: {
+            rules: [...babelLoaderRules, ...baseConfig.module.rules],
+        },
+    };
+}
+
+async function getEssentialBuildEsmConfig(options, argv) {
+    const baseConfig = await getBaseConfig(options, { ...argv, essentialBuild: true });
+
+    return {
+        ...baseConfig,
+        name: 'esm-essential',
+        entry: {
+            'checkout-sdk-essential': path.join(coreSrcPath, 'bundles', 'checkout-sdk.ts'),
+        },
+        externals: [
+            nodeExternals({
+                importType: 'module',
             }),
         ],
+        externalsPresets: {
+            node: true,
+        },
+        output: {
+            filename: '[name].js',
+            path: `${outputPath}/esm`,
+            library: {
+                type: 'module',
+            },
+            environment: {
+                module: true,
+            },
+        },
+        experiments: {
+            outputModule: true,
+        },
+        target: ['web', 'es6'],
+    };
+}
+
+async function getEssentialBuildCjsConfig(options, argv) {
+    const baseConfig = await getBaseConfig(options, { ...argv, essentialBuild: true });
+
+    return {
+        ...baseConfig,
+        name: 'cjs-essential',
+        entry: {
+            'checkout-sdk-essential': path.join(coreSrcPath, 'bundles', 'checkout-sdk.ts'),
+        },
+        output: {
+            filename: '[name].js',
+            libraryTarget: 'commonjs2',
+            path: `${outputPath}/cjs`,
+        },
+        module: {
+            rules: [...babelLoaderRules, ...baseConfig.module.rules],
+        },
     };
 }
 
 async function getConfigs(options, argv) {
-    return [await getCjsConfig(options, argv), await getUmdConfig(options, argv)];
+    return [
+        await getEsmConfig(options, argv),
+        await getEssentialBuildEsmConfig(options, argv),
+        await getCjsConfig(options, argv),
+        await getEssentialBuildCjsConfig(options, argv),
+    ];
 }
 
 module.exports = getConfigs;

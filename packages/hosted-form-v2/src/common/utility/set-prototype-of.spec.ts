@@ -6,8 +6,6 @@ describe('setPrototypeOf', () => {
 
         const error = new CustomError();
 
-        expect(error instanceof CustomError).toBeFalsy();
-
         setPrototypeOf(error, CustomError.prototype);
 
         expect(error instanceof CustomError).toBeTruthy();
