@@ -1,10 +1,15 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
-import { CustomerStrategy as CustomerStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    CustomerStrategy as CustomerStrategyV2,
+    PaymentIntegrationService,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
+import { matchExistingIntegrations, registerIntegrations } from '../payment-integration';
 
 import CustomerCredentials from './customer-credentials';
 import {
@@ -28,6 +33,7 @@ export default class CustomerStrategyActionCreator {
     constructor(
         private _strategyRegistry: Registry<CustomerStrategy>,
         private _strategyRegistryV2: CustomerStrategyRegistryV2,
+        private _paymentIntegrationService: PaymentIntegrationService,
     ) {}
 
     signIn(
@@ -139,6 +145,28 @@ export default class CustomerStrategyActionCreator {
                 const state = store.getState();
                 const methodId = options && options.methodId;
                 const meta = { methodId };
+
+                const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
+                const experimentEnabled = isExperimentEnabled(
+                    features,
+                    'CHECKOUT-9450.lazy_load_payment_strategies',
+                    false,
+                );
+
+                if (experimentEnabled) {
+                    const resolveId = { id: methodId || '' };
+
+                    matchExistingIntegrations(
+                        this._strategyRegistryV2,
+                        options?.integrations ?? [],
+                        resolveId,
+                    );
+                    registerIntegrations(
+                        this._strategyRegistryV2,
+                        options?.integrations ?? [],
+                        this._paymentIntegrationService,
+                    );
+                }
 
                 if (methodId && state.customerStrategies.isInitialized(methodId)) {
                     return observer.complete();

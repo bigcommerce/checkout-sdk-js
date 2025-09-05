@@ -47,7 +47,11 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
                 },
             } = error;
 
-            return new Promise(() => this.redirectUrl(redirect_url));
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            return new Promise(() => {
+                this.redirectUrl(redirect_url);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            }) as any;
         }
     }
 

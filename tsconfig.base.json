@@ -6,8 +6,8 @@
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "importHelpers": false,
-        "lib": ["dom", "dom.iterable", "es6", "scripthost"],
-        "module": "es6",
+        "lib": ["dom", "dom.iterable", "esnext", "scripthost"],
+        "module": "esnext",
         "moduleResolution": "node",
         "noUnusedParameters": true,
         "noUnusedLocals": true,
@@ -15,7 +15,7 @@
         "sourceMap": true,
         "strict": true,
         "stripInternal": true,
-        "target": "es5",
+        "target": "es6",
         "baseUrl": ".",
         "paths": {
             "@bigcommerce/checkout-sdk/adyen-integration": [
