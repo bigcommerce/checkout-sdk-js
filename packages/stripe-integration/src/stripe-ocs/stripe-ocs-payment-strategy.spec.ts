@@ -1264,6 +1264,9 @@ describe('StripeOCSPaymentStrategy', () => {
                 card: {
                     setup_future_usage: StripeInstrumentSetupFutureUsage.ON_SESSION,
                 },
+                us_bank_account: {
+                    verification_method: 'automatic',
+                },
             });
 
             await stripeOCSPaymentStrategy.initialize(stripeOptions);

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.793.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.793.0...v1.793.1) (2025-09-05)
+
+
+### Bug Fixes
+
+* **payment:** Stripe OCS fix token property in payload ([#2991](https://github.com/bigcommerce/checkout-sdk-js/issues/2991)) ([b16997b](https://github.com/bigcommerce/checkout-sdk-js/commit/b16997b13fb86d4db1db7387e14a1d6282f39af3))
+
+## [1.793.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.792.0...v1.793.0) (2025-09-03)
+
+
+### Features
+
+* **payment:** PAYPAL-5741 combined paypal-commerce-utils and bigcommerce-payments-utils into paypal-utils ([#2990](https://github.com/bigcommerce/checkout-sdk-js/issues/2990)) ([2940929](https://github.com/bigcommerce/checkout-sdk-js/commit/294092962272a0edeae80366b31ae6ce7655df34))
+
 ## [1.792.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.791.0...v1.792.0) (2025-09-02)
 
 
