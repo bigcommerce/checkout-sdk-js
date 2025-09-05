@@ -195,11 +195,7 @@ export interface AdyenAdditionalActionCallbacks {
 
 export interface AdyenAdditionalActionErrorResponse {
     provider_data: AdyenAdditionalAction;
-    errors: [
-        {
-            code: string;
-        },
-    ];
+    errors: [{ code: string }];
 }
 
 export interface AdyenAdditionalActionOptions extends AdyenAdditionalActionCallbacks {

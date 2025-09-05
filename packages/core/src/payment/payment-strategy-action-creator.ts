@@ -2,7 +2,11 @@ import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, empty, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { PaymentStrategy as PaymentStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PaymentIntegrationService,
+    PaymentStrategy as PaymentStrategyV2,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
@@ -15,6 +19,7 @@ import {
     OrderRequestBody,
 } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
+import { matchExistingIntegrations, registerIntegrations } from '../payment-integration';
 import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
 
 import PaymentMethod from './payment-method';
@@ -41,6 +46,7 @@ export default class PaymentStrategyActionCreator {
         private _strategyRegistryV2: PaymentStrategyRegistryV2,
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
+        private _paymentIntegrationService: PaymentIntegrationService,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -160,6 +166,32 @@ export default class PaymentStrategyActionCreator {
 
                 if (methodId && state.paymentStrategies.isInitialized({ methodId, gatewayId })) {
                     return empty();
+                }
+
+                const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
+                const experimentEnabled = isExperimentEnabled(
+                    features,
+                    'CHECKOUT-9450.lazy_load_payment_strategies',
+                    false,
+                );
+
+                if (experimentEnabled) {
+                    const resolveId = {
+                        id: method.id,
+                        gateway: method.gateway,
+                        type: method.type,
+                    };
+
+                    matchExistingIntegrations(
+                        this._strategyRegistryV2,
+                        options.integrations ?? [],
+                        resolveId,
+                    );
+                    registerIntegrations(
+                        this._strategyRegistryV2,
+                        options.integrations ?? [],
+                        this._paymentIntegrationService,
+                    );
                 }
 
                 const strategy = this._getStrategy(method);

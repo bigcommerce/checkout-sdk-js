@@ -16,6 +16,7 @@ const libraryEntries = {
     'checkout-button': path.join(coreSrcPath, 'bundles', 'checkout-button.ts'),
     'embedded-checkout': path.join(coreSrcPath, 'bundles', 'embedded-checkout.ts'),
     extension: path.join(coreSrcPath, 'bundles', 'extension.ts'),
+    integrations: path.join(coreSrcPath, 'bundles', 'integrations.ts'),
     'hosted-form': path.join(coreSrcPath, 'bundles', 'hosted-form.ts'),
     'internal-mappers': path.join(coreSrcPath, 'bundles', 'internal-mappers.ts'),
     'hosted-form-v2-iframe-content': path.join(
@@ -30,7 +31,7 @@ const libraryEntries = {
     ),
 };
 
-async function getBaseConfig() {
+async function getBaseConfig(_options, argv = {}) {
     return {
         stats: {
             errorDetails: true,
@@ -60,6 +61,12 @@ async function getBaseConfig() {
         plugins: [
             new DefinePlugin({
                 LIBRARY_VERSION: JSON.stringify(await getNextVersion()),
+                'process.env.NODE_ENV': JSON.stringify(
+                    process.env.NODE_ENV || argv.mode || 'production',
+                ),
+                'process.env.ESSENTIAL_BUILD': JSON.stringify(
+                    process.env.ESSENTIAL_BUILD || argv.essentialBuild || false,
+                ),
             }),
         ],
     };
@@ -69,7 +76,7 @@ const babelEnvPreset = [
     '@babel/preset-env',
     {
         corejs: 3,
-        targets: ['defaults', 'ie 11'],
+        targets: ['defaults'],
         useBuiltIns: 'usage',
     },
 ];
