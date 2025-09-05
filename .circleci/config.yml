@@ -66,12 +66,14 @@ jobs:
 
   build:
     <<: *node_executor
-    resource_class: large
+    resource_class: xlarge
     steps:
       - ci/pre-setup
       - node/npm-install
       - run:
           name: "Build distribution files"
+          environment:
+            INCLUDE_CJS: true
           command: npm run build && npm run docs
       - persist_to_workspace:
           root: .
@@ -110,7 +112,7 @@ jobs:
 
   build_cdn:
     <<: *node_executor
-    resource_class: medium+
+    resource_class: xlarge
     steps:
       - ci/pre-setup
       - node/npm-install

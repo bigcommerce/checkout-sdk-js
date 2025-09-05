@@ -19,10 +19,30 @@
                 }
             ]
         },
+        "build-analyze": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "commands": [
+                    "webpack --config webpack.config.js --config-name esm --profile --json > webpack-stats.json",
+                    "webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip"
+                ],
+                "parallel": false
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                },
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
+        },
         "build-watch": {
             "executor": "@nrwl/workspace:run-commands",
             "options": {
-                "command": "webpack --config webpack.config.js --config-name cjs --watch --progress"
+                "command": "webpack --config webpack.config.js --config-name esm --watch --progress"
             },
             "dependsOn": [
                 {
@@ -62,7 +82,7 @@
                 "parallel": false,
                 "commands": [
                     "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
-                    "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
+                    "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/integrations.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
                     "rm -rf ../../temp",
                     "nx run hosted-form-v2:build-dts"
                 ]

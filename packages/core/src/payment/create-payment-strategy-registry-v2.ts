@@ -4,10 +4,10 @@ import {
     PaymentStrategy,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
+    toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { ResolveIdRegistry } from '../common/registry';
-import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
 
 export interface PaymentStrategyFactories {
     [key: string]: PaymentStrategyFactory<PaymentStrategy>;
@@ -15,7 +15,7 @@ export interface PaymentStrategyFactories {
 
 export default function createPaymentStrategyRegistry(
     paymentIntegrationService: PaymentIntegrationService,
-    paymentStrategyFactories: PaymentStrategyFactories = defaultPaymentStrategyFactories,
+    paymentStrategyFactories: PaymentStrategyFactories,
     options: { useFallback: boolean } = { useFallback: false },
 ): ResolveIdRegistry<PaymentStrategy, PaymentStrategyResolveId> {
     const { useFallback } = options;
@@ -31,7 +31,13 @@ export default function createPaymentStrategyRegistry(
         }
 
         for (const resolverId of createPaymentStrategy.resolveIds) {
-            registry.register(resolverId, () => createPaymentStrategy(paymentIntegrationService));
+            // TODO: Remove toResolvableModule once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
+            const factory = toResolvableModule(
+                () => createPaymentStrategy(paymentIntegrationService),
+                createPaymentStrategy.resolveIds,
+            );
+
+            registry.register(resolverId, factory);
         }
     }
 

@@ -1,0 +1,22 @@
+{
+    "compiler": {
+        "configType": "tsconfig",
+        "rootFolder": "."
+    },
+    "project": {
+        "entryPointSourceFile": "../../temp/core/src/bundles/integrations.d.ts"
+    },
+    "validationRules": {
+        "missingReleaseTags": "allow"
+    },
+    "apiReviewFile": {
+        "enabled": false
+    },
+    "apiJsonFile": {
+        "enabled": false
+    },
+    "dtsRollup": {
+        "enabled": true,
+        "mainDtsRollupPath": "integrations.d.ts"
+    }
+}
