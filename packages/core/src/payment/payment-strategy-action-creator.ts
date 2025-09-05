@@ -1,8 +1,14 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { isEqual } from 'lodash';
 import { concat, defer, empty, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { PaymentStrategy as PaymentStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    isResolvableModule,
+    PaymentIntegrationService,
+    PaymentStrategy as PaymentStrategyV2,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
@@ -41,6 +47,8 @@ export default class PaymentStrategyActionCreator {
         private _strategyRegistryV2: PaymentStrategyRegistryV2,
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
+        private _paymentIntegrationService: PaymentIntegrationService,
+        private _captureMessage: (message: string) => void = console.log, // eslint-disable-line no-console
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -160,6 +168,47 @@ export default class PaymentStrategyActionCreator {
 
                 if (methodId && state.paymentStrategies.isInitialized({ methodId, gatewayId })) {
                     return empty();
+                }
+
+                const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
+                const experimentEnabled = isExperimentEnabled(
+                    features,
+                    'CHECKOUT-9450.lazy_load_payment_strategies',
+                    false,
+                );
+
+                if (experimentEnabled && options.integrations) {
+                    const resolveId = {
+                        id: method.id,
+                        gateway: method.gateway,
+                        type: method.type,
+                    };
+                    const existingFactory = this._strategyRegistryV2.getFactory(resolveId);
+
+                    const matchedExisting = options.integrations.some(
+                        (factory) =>
+                            isResolvableModule(existingFactory) &&
+                            isResolvableModule(factory) &&
+                            isEqual(existingFactory.resolveIds, factory.resolveIds),
+                    );
+
+                    // During the initial rollout, all strategies will continue to be registered with `strategyRegistryV2`
+                    // and bundled together by default. This allows us to compare the passed-in strategies with the existing
+                    // ones to ensure they match. Once confirmed, we can remove the comparison logic and the existing strategies,
+                    // relying solely on the passed-in strategies.
+                    if (!matchedExisting) {
+                        this._captureMessage(`A different strategy is registered for ${methodId}.`);
+                    }
+
+                    options.integrations.forEach((factory) => {
+                        if (this._strategyRegistryV2.getFactory(resolveId)) {
+                            return;
+                        }
+
+                        this._strategyRegistryV2.register(resolveId, () =>
+                            factory(this._paymentIntegrationService),
+                        );
+                    });
                 }
 
                 const strategy = this._getStrategy(method);

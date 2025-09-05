@@ -32,6 +32,13 @@ export default class Registry<T, K extends string = string> {
         }
     }
 
+    getFactory(token: string): Factory<T> | undefined {
+        const resolvedToken = this._tokenResolver(token, Object.keys(this._factories));
+        const factory = resolvedToken ? this._factories[resolvedToken] : undefined;
+
+        return factory;
+    }
+
     register(token: K, factory: Factory<T>): void {
         if (this._hasFactory(token)) {
             throw new InvalidArgumentError(`'${token}' is already registered.`);
@@ -50,8 +57,7 @@ export default class Registry<T, K extends string = string> {
 
     private _getInstance(token: string, cacheToken: string): T {
         if (!this._hasInstance(cacheToken)) {
-            const resolvedToken = this._tokenResolver(token, Object.keys(this._factories));
-            const factory = resolvedToken && this._factories[resolvedToken];
+            const factory = this.getFactory(token);
 
             if (!factory) {
                 throw new InvalidArgumentError(`'${token}' is not registered.`);
