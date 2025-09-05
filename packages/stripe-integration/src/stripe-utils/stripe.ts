@@ -65,6 +65,7 @@ export interface PaymentIntent {
 
 export interface StripePIPaymentMethodSavingOptions {
     setup_future_usage?: StripeInstrumentSetupFutureUsage;
+    verification_method?: string;
 }
 
 export interface StripePIPaymentMethodOptions {
