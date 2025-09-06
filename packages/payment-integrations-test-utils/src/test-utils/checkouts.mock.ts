@@ -47,6 +47,7 @@ export default function getCheckout(): Checkout {
                 ],
             },
         ],
+        version: 2,
     };
 }
 
