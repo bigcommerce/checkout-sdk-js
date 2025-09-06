@@ -78,6 +78,7 @@ declare interface Cart {
     createdTime: string;
     updatedTime: string;
     source?: CartSource;
+    version: number;
 }
 
 declare interface Checkout {
@@ -115,6 +116,7 @@ declare interface Checkout {
     payments?: CheckoutPayment[];
     channelId: number;
     fees: Fee[];
+    version: number;
 }
 
 declare interface CheckoutPayment {

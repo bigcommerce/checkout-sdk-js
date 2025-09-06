@@ -2622,6 +2622,7 @@ declare interface Cart {
     createdTime: string;
     updatedTime: string;
     source?: CartSource;
+    version: number;
 }
 
 declare class CartChangedError extends StandardError {
@@ -2698,6 +2699,7 @@ declare interface Checkout {
     payments?: CheckoutPayment[];
     channelId: number;
     fees: Fee[];
+    version: number;
 }
 
 declare interface CheckoutButtonDataState {
