@@ -1,4 +1,4 @@
-import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Omit, StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { PaypalStyleOptions } from './paypal-express-types';
 

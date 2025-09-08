@@ -22,6 +22,10 @@ export default function isAutoExportConfig(config: unknown): config is AutoExpor
             return false;
         }
 
+        if (!hasKey(entry, 'packageOutputPath') || typeof entry.packageOutputPath !== 'string') {
+            return false;
+        }
+
         if (!hasKey(entry, 'memberPattern') || typeof entry.memberPattern !== 'string') {
             return false;
         }
