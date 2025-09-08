@@ -14,7 +14,10 @@ import {
     PaymentInvalidFormError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
@@ -74,7 +77,7 @@ describe('BraintreeHostedForm', () => {
             window,
             braintreeSDKVersionManager,
         );
-        subject = new BraintreeHostedForm(braintreeScriptLoader);
+        subject = new BraintreeHostedForm(braintreeScriptLoader, paymentIntegrationService);
 
         containers = [
             appendContainer('cardCode'),
@@ -87,6 +90,10 @@ describe('BraintreeHostedForm', () => {
             create: jest.fn().mockResolvedValue(getClientMock()),
         });
 
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            getConfig().storeConfig,
+        );
+
         jest.spyOn(braintreeScriptLoader, 'loadHostedFields').mockResolvedValue({
             create: jest.fn().mockResolvedValue({ on: jest.fn() }),
         });
@@ -96,6 +103,7 @@ describe('BraintreeHostedForm', () => {
         containers.forEach((container) => {
             container.parentElement?.removeChild(container);
         });
+        jest.clearAllMocks();
     });
 
     describe('#initialize', () => {
@@ -105,6 +113,16 @@ describe('BraintreeHostedForm', () => {
                 ...getClientMock(),
                 request: expect.any(Function),
             };
+
+            const storeConfigMock = getConfig().storeConfig;
+            storeConfigMock.checkoutSettings.features = {
+                'PAYPAL-5809.braintree_hosted_fields_fix_version': false,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
 
             const options = {
                 fields: {
@@ -152,12 +170,76 @@ describe('BraintreeHostedForm', () => {
             });
         });
 
+        it('creates and configures hosted fields with preventCursorJumps', async () => {
+            const createMock = jest.fn();
+            const clientMock = {
+                ...getClientMock(),
+                request: expect.any(Function),
+            };
+
+            const options = {
+                fields: {
+                    cvv: {
+                        container: '#cardCode',
+                        internalLabel: undefined,
+                        placeholder: 'Card code',
+                    },
+                    expirationDate: {
+                        container: '#cardExpiry',
+                        internalLabel: undefined,
+                        placeholder: 'Card expiry',
+                    },
+                    number: {
+                        container: '#cardNumber',
+                        internalLabel: undefined,
+                        placeholder: 'Card number',
+                        supportedCardBrands: {
+                            'american-express': false,
+                            maestro: false,
+                        },
+                    },
+                    cardholderName: {
+                        container: '#cardName',
+                        internalLabel: undefined,
+                        placeholder: 'Card name',
+                    },
+                },
+                styles: {
+                    input: { color: '#000' },
+                    '.invalid': { color: '#f00', 'font-weight': 'bold' },
+                    ':focus': { color: '#00f' },
+                },
+                preventCursorJumps: true,
+            };
+
+            jest.spyOn(braintreeScriptLoader, 'loadHostedFields').mockResolvedValue({
+                create: createMock,
+            });
+
+            await subject.initialize(formOptions, unsupportedCardBrands, 'clientToken');
+
+            expect(createMock).toHaveBeenCalledWith({
+                ...options,
+                client: clientMock,
+            });
+        });
+
         it('creates and configures hosted fields for stored card verification', async () => {
             const createMock = jest.fn();
             const clientMock = {
                 ...getClientMock(),
                 request: expect.any(Function),
             };
+
+            const storeConfigMock = getConfig().storeConfig;
+            storeConfigMock.checkoutSettings.features = {
+                'PAYPAL-5809.braintree_hosted_fields_fix_version': false,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
 
             jest.spyOn(braintreeScriptLoader, 'loadHostedFields').mockResolvedValue({
                 create: createMock,
