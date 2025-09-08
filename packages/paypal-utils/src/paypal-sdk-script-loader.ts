@@ -8,19 +8,45 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    FundingType,
     PayPalFastlaneSdk,
     PayPalGooglePaySdk,
     PayPalHostWindow,
     PayPalInitializationData,
     PayPalMessagesSdk,
+    PayPalSDK,
+    PayPalSdkComponents,
     PayPalSdkConfig,
 } from './paypal-types';
 
-export default class PaypalSdk {
+export default class PaypalSdkScriptLoader {
     private window: PayPalHostWindow;
 
     constructor(private scriptLoader: ScriptLoader) {
         this.window = window;
+    }
+
+    async getPayPalSDK(
+        paymentMethod: PaymentMethod<PayPalInitializationData>,
+        currencyCode: string,
+        initializesOnCheckoutPage?: boolean,
+        forceLoad?: boolean,
+    ): Promise<PayPalSDK> {
+        if (!this.window.paypal || forceLoad) {
+            const paypalSdkScriptConfig = this.getPayPalSdkScriptConfigOrThrow(
+                paymentMethod,
+                currencyCode,
+                initializesOnCheckoutPage,
+            );
+
+            await this.loadPayPalSdk(paypalSdkScriptConfig);
+
+            if (!this.window.paypal) {
+                throw new PaymentMethodClientUnavailableError();
+            }
+        }
+
+        return this.window.paypal;
     }
 
     async getPayPalFastlaneSdk(
@@ -130,6 +156,94 @@ export default class PaypalSdk {
      * Configurations section
      *
      */
+    private getPayPalSdkScriptConfigOrThrow(
+        paymentMethod: PaymentMethod<PayPalInitializationData>,
+        currencyCode: string,
+        initializesOnCheckoutPage = true,
+    ): PayPalSdkConfig {
+        const { id, clientToken, initializationData } = paymentMethod;
+
+        if (!initializationData?.clientId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const {
+            intent,
+            clientId,
+            merchantId,
+            buyerCountry,
+            attributionId,
+            isVenmoEnabled,
+            isHostedCheckoutEnabled,
+            isPayPalCreditAvailable,
+            isDeveloperModeApplicable,
+            availableAlternativePaymentMethods = [],
+            enabledAlternativePaymentMethods = [],
+            isGooglePayEnabled,
+        } = initializationData;
+
+        const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
+
+        const shouldEnableCard =
+            id === 'paypalcommercecreditcards' || id === 'bigcommerce_payments_creditcards';
+        const enableCardFunding = shouldEnableCard ? ['card'] : [];
+        const disableCardFunding = !shouldEnableCard ? ['card'] : [];
+
+        const enableCreditFunding = isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
+        const disableCreditFunding = !isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
+
+        const shouldEnableAPMs = initializesOnCheckoutPage || !commit;
+        const enableVenmoFunding = isVenmoEnabled ? ['venmo'] : [];
+        const disableVenmoFunding = !isVenmoEnabled ? ['venmo'] : [];
+        const enableAPMsFunding = shouldEnableAPMs ? enabledAlternativePaymentMethods : [];
+        const disableAPMsFunding = shouldEnableAPMs
+            ? availableAlternativePaymentMethods.filter(
+                  (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
+              )
+            : availableAlternativePaymentMethods;
+        const googlePayComponent: PayPalSdkComponents = isGooglePayEnabled ? ['googlepay'] : [];
+        const cardFieldsComponent: PayPalSdkComponents = initializesOnCheckoutPage
+            ? ['card-fields']
+            : [];
+        const disableFunding: FundingType = [
+            ...disableCardFunding,
+            ...disableCreditFunding,
+            ...disableVenmoFunding,
+            ...disableAPMsFunding,
+        ];
+        const enableFunding: FundingType = [
+            ...enableCardFunding,
+            ...enableCreditFunding,
+            ...enableVenmoFunding,
+            ...enableAPMsFunding,
+        ];
+
+        return {
+            options: {
+                'client-id': clientId,
+                'merchant-id': merchantId,
+                'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
+                'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
+                commit,
+                components: [
+                    'buttons',
+                    'hosted-fields',
+                    'payment-fields',
+                    'legal',
+                    ...googlePayComponent,
+                    ...cardFieldsComponent,
+                ],
+                currency: currencyCode,
+                intent,
+                ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+            },
+            attributes: {
+                'data-partner-attribution-id': attributionId,
+                'data-client-token': clientToken,
+            },
+        };
+    }
+
     private getPayPalFastlaneSdkConfiguration(
         paymentMethod: PaymentMethod<PayPalInitializationData>,
         currencyCode: string,

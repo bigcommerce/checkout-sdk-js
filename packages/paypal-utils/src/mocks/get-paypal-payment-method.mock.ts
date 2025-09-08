@@ -51,7 +51,31 @@ export default function getPayPalPaymentMethod(): PaymentMethod {
             shouldRenderFields: true,
             shouldRunAcceleratedCheckout: false,
             isHostedCheckoutEnabled: false,
-            isDeveloperModeApplicable: false,
+            paypalBNPLConfiguration: [
+                {
+                    id: 'checkout',
+                    name: 'Checkout page',
+                    status: true,
+                    styles: {
+                        layout: 'text',
+                        'logo-type': 'alternative',
+                        'text-color': 'white',
+                        'text-size': '10',
+                    },
+                },
+                {
+                    id: 'cart',
+                    name: 'Cart page',
+                    status: true,
+                    styles: {
+                        layout: 'text',
+                        'logo-type': 'alternative',
+                        'logo-position': 'right',
+                        'text-color': 'white',
+                        'text-size': '10',
+                    },
+                },
+            ],
         },
         type: 'PAYMENT_TYPE_API',
         skipRedirectConfirmationAlert: false,

@@ -1,4 +1,11 @@
-import { CardInstrument, CustomerAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    BuyNowCartRequestBody,
+    CardInstrument,
+    CustomerAddress,
+    HostedInstrument,
+    ShippingOption,
+    VaultedInstrument,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  *
@@ -7,6 +14,25 @@ import { CardInstrument, CustomerAddress } from '@bigcommerce/checkout-sdk/payme
  */
 export type FundingType = string[];
 export type EnableFundingType = FundingType | string;
+
+export interface PayPalCommerceSDKFunding {
+    CARD: string;
+    PAYPAL: string;
+    CREDIT: string;
+    PAYLATER: string;
+    OXXO: string;
+    SEPA: string;
+    VENMO: string;
+}
+
+/**
+ *
+ * PayPal BuyNow
+ *
+ */
+export interface PayPalBuyNowInitializeOptions {
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
+}
 
 /**
  *
@@ -49,6 +75,7 @@ export interface PayPalInitializationData {
  *
  */
 export interface PayPalHostWindow extends Window {
+    paypal?: PayPalSDK;
     paypalFastlane?: PayPalFastlane;
     paypalFastlaneSdk?: PayPalFastlaneSdk;
     paypalMessages?: PayPalMessagesSdk;
@@ -89,19 +116,129 @@ export enum PayPalIntent {
 
 export type PayPalSdkComponents = Array<
     | 'fastlane'
-    | 'messages'
-    | 'buttons'
-    | 'payment-fields'
     | 'three-domain-secure'
+    | 'buttons'
+    | 'funding-eligibility'
     | 'hosted-fields'
+    | 'messages'
+    | 'payment-fields'
+    | 'legal'
     | 'googlepay'
+    | 'connect'
+    | 'card-fields'
 >;
+
+export type PayPalLegal = (params: { fundingSource: string }) => {
+    render(container: string): void;
+};
+
+export interface LegalFunding {
+    FUNDING: {
+        PAY_UPON_INVOICE: string;
+    };
+}
 
 /**
  *
  * PayPal Sdk instances
  *
  */
+export interface PayPalSDK {
+    CardFields: (data: PaypalCardFieldsConfig) => Promise<PayPalCardFields>;
+    Googlepay: () => {
+        config: () => Promise<GooglePayConfig>;
+        confirmOrder: (arg0: {
+            orderId: string;
+            paymentMethodData: ConfirmOrderData;
+        }) => Promise<{ status: string }>;
+        initiatePayerAction: () => void;
+    };
+    FUNDING: PayPalCommerceSDKFunding;
+    HostedFields: {
+        isEligible(): boolean;
+        render(data: PayPalHostedFieldsRenderOptions): Promise<PayPalHostedFields>;
+    };
+    Legal: PayPalLegal & LegalFunding;
+    Buttons(options: PayPalButtonsOptions): PayPalButtons;
+    PaymentFields(options: PayPalPaymentFieldsOptions): PayPalPaymentFields;
+    Messages(options: PayPalMessagesOptions): PayPalMessages;
+}
+
+export interface PaypalCardFieldsConfig {
+    inputEvents: {
+        onChange(data: PayPalCardFieldsState): void;
+        onFocus(data: PayPalCardFieldsState): void;
+        onBlur(data: PayPalCardFieldsState): void;
+        onInputSubmitRequest(data: PayPalCardFieldsState): void;
+    };
+    createVaultSetupToken?: (data: PayPalCardFieldsState) => void;
+    createOrder?: () => Promise<string>;
+    style: PayPalHostedFieldsRenderOptions['styles'];
+    onApprove(data: PayPalCardFieldsOnApproveData): void;
+    onError(): void;
+}
+
+interface PayPalFieldsInitializationData {
+    placeholder?: string;
+}
+
+export interface PayPalCardFields {
+    isEligible(): boolean;
+    CVVField(config?: PayPalFieldsInitializationData): PayPalFields;
+    ExpiryField(config?: PayPalFieldsInitializationData): PayPalFields;
+    NameField(config?: PayPalFieldsInitializationData): PayPalFields;
+    NumberField(config?: PayPalFieldsInitializationData): PayPalFields;
+    submit(config?: PayPalCardFieldsSubmitConfig): Promise<void>;
+    getState(): Promise<PayPalCardFieldsState>;
+}
+
+export interface PayPalCardFieldsSubmitConfig {
+    billingAddress: {
+        company?: string;
+        addressLine1: string;
+        addressLine2?: string;
+        adminArea1: string; // State
+        adminArea2: string; // City
+        postalCode: string;
+        countryCode?: string;
+    };
+}
+
+export interface PayPalCardFieldsOnApproveData {
+    vaultSetupToken?: string;
+    orderID: string;
+    liabilityShift?: LiabilityShiftEnum;
+}
+
+interface PayPalCardFieldsFieldData {
+    isFocused: boolean;
+    isEmpty: boolean;
+    isValid: boolean;
+    isPotentiallyValid: boolean;
+}
+
+type PayPalCardFieldsCard = PayPalHostedFieldsCard;
+
+export interface PayPalCardFieldsState {
+    cards: PayPalCardFieldsCard[];
+    emittedBy: string;
+    isFormValid: boolean;
+    errors: string[];
+    fields: {
+        cardCvvField: PayPalCardFieldsFieldData;
+        cardNumberField: PayPalCardFieldsFieldData;
+        cardNameField?: PayPalCardFieldsFieldData;
+        cardExpiryField: PayPalCardFieldsFieldData;
+    };
+}
+
+export interface PayPalFields {
+    render(container: HTMLElement | string): Promise<void>;
+    clear(): void;
+    removeClass(className: string): Promise<void>;
+    close(): Promise<void>;
+}
+
 export interface PayPalFastlaneSdk {
     ThreeDomainSecureClient: {
         isEligible(params: threeDSecureParameters): Promise<boolean>;
@@ -155,6 +292,258 @@ export interface PayPalApmSdk {
 
 export interface PayPalGooglePaySdk {
     Googlepay(): GooglePay;
+}
+
+/**
+ *
+ * PayPal Payments Hosted Fields
+ *
+ */
+export interface PayPalHostedFieldsRenderOptions {
+    fields?: {
+        number?: PayPalHostedFieldOption;
+        cvv?: PayPalHostedFieldOption;
+        expirationDate?: PayPalHostedFieldOption;
+    };
+    paymentsSDK?: boolean;
+    styles?: {
+        input?: { [key: string]: string };
+        '.invalid'?: { [key: string]: string };
+        '.valid'?: { [key: string]: string };
+        ':focus'?: { [key: string]: string };
+    };
+    createOrder(): Promise<string>;
+}
+
+export interface PayPalHostedFieldOption {
+    selector: string;
+    placeholder?: string;
+}
+
+export interface PayPalHostedFields {
+    submit(options?: PayPalHostedFieldsSubmitOptions): Promise<PayPalHostedFieldsApprove>;
+    getState(): PayPalHostedFieldsState;
+    on(eventName: string, callback: (event: PayPalHostedFieldsState) => void): void;
+}
+
+export interface PayPalHostedFieldsSubmitOptions {
+    contingencies?: Array<'3D_SECURE'>;
+    cardholderName?: string;
+}
+
+export interface PayPalHostedFieldsApprove {
+    orderId: string;
+    liabilityShift?: 'POSSIBLE' | 'NO' | 'UNKNOWN';
+}
+
+export interface PayPalHostedFieldsState {
+    cards: PayPalHostedFieldsCard[];
+    emittedBy: string;
+    fields: {
+        number?: PayPalHostedFieldsFieldData;
+        expirationDate?: PayPalHostedFieldsFieldData;
+        expirationMonth?: PayPalHostedFieldsFieldData;
+        expirationYear?: PayPalHostedFieldsFieldData;
+        cvv?: PayPalHostedFieldsFieldData;
+        postalCode?: PayPalHostedFieldsFieldData;
+    };
+}
+
+export interface PayPalHostedFieldsCard {
+    type: string;
+    niceType: string;
+    code: {
+        name: string;
+        size: number;
+    };
+}
+
+export interface PayPalHostedFieldsFieldData {
+    container: HTMLElement;
+    isFocused: boolean;
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
+}
+
+/**
+ *
+ * PayPal Buttons
+ *
+ */
+export interface PayPalButtons {
+    render(id: string): void;
+    close(): void;
+    isEligible(): boolean;
+}
+
+export interface PayPalButtonsOptions {
+    experience?: string;
+    style?: PayPalButtonStyleOptions;
+    fundingSource: string;
+    createOrder(): Promise<string>;
+    onApprove(
+        data: ApproveCallbackPayload,
+        actions: ApproveCallbackActions,
+    ): Promise<boolean | void> | void;
+    onInit?(data: InitCallbackPayload, actions: InitCallbackActions): Promise<void>;
+    onComplete?(data: CompleteCallbackDataPayload): Promise<void>;
+    onClick?(data: ClickCallbackPayload, actions: ClickCallbackActions): Promise<void> | void;
+    onError?(error: Error): void;
+    onCancel?(): void;
+    onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
+    onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
+}
+
+export interface ShippingOptionChangeCallbackPayload {
+    orderId: string;
+    selectedShippingOption: PayPalSelectedShippingOption;
+}
+
+export interface ShippingAddressChangeCallbackPayload {
+    orderId: string;
+    shippingAddress: PayPalAddress;
+}
+
+export interface ClickCallbackPayload {
+    fundingSource: string;
+}
+
+export interface ClickCallbackActions {
+    reject(): void;
+    resolve(): void;
+}
+
+export interface InitCallbackPayload {
+    correlationID: string;
+}
+
+export interface InitCallbackActions {
+    disable(): void;
+    enable(): void;
+}
+
+export interface PayPalAddress {
+    city: string;
+    countryCode: string;
+    postalCode: string;
+    state: string;
+}
+
+export interface PaypalAddressCallbackData {
+    city: string;
+    country_code: string;
+    postal_code: string;
+    state: string;
+}
+
+export interface PayPalSelectedShippingOption {
+    amount: {
+        currency_code: string;
+        value: string;
+    };
+    id: string;
+    label: string;
+    selected: boolean;
+    type: string;
+}
+
+export interface ApproveCallbackPayload {
+    orderID?: string;
+}
+
+export interface ApproveCallbackActions {
+    order: {
+        get: () => Promise<PayPalOrderDetails>;
+    };
+}
+
+export interface PayPalOrderDetails {
+    payer: {
+        name: {
+            given_name: string;
+            surname: string;
+        };
+        email_address: string;
+        address: PayPalOrderAddress;
+        phone?: {
+            phone_number: {
+                national_number: string;
+            };
+        };
+    };
+    purchase_units: Array<{
+        shipping: {
+            address: PayPalOrderAddress;
+            name: {
+                full_name: string;
+            };
+        };
+    }>;
+}
+
+export interface PayPalOrderAddress {
+    address_line_1: string;
+    address_line_2: string;
+    admin_area_2: string;
+    admin_area_1?: string;
+    postal_code: string;
+    country_code: string;
+}
+
+export interface CompleteCallbackDataPayload {
+    intent: string;
+    orderID: string;
+}
+
+export enum StyleButtonLabel {
+    paypal = 'paypal',
+    checkout = 'checkout',
+    buynow = 'buynow',
+    pay = 'pay',
+    installment = 'installment',
+}
+
+export enum StyleButtonColor {
+    gold = 'gold',
+    blue = 'blue',
+    silver = 'silver',
+    black = 'black',
+    white = 'white',
+}
+
+export enum StyleButtonShape {
+    pill = 'pill',
+    rect = 'rect',
+}
+
+export interface PayPalButtonStyleOptions {
+    color?: StyleButtonColor;
+    shape?: StyleButtonShape;
+    height?: number;
+    label?: StyleButtonLabel;
+}
+
+/**
+ *
+ * PayPal Messages
+ */
+// TODO: This interface can be removed once the PayPaySDK interface is removed
+export interface PayPalMessages {
+    render(id: string): void;
+}
+
+// TODO: This interface can be removed once the PayPaySDK interface is removed
+export interface PayPalMessagesOptions {
+    amount: number;
+    placement: string;
+    style?: PayPalMessagesStyleOptions;
+    fundingSource?: string;
+}
+
+// TODO: This interface can be removed once the PayPaySDK interface is removed
+export interface PayPalMessagesStyleOptions {
+    layout?: string;
 }
 
 /**
@@ -220,117 +609,6 @@ export interface AllowedPaymentMethods {
             gatewayMerchantId: string;
         };
     };
-}
-
-/**
- *
- * PayPal  Buttons
- *
- */
-export interface PayPalButtons {
-    render(id: string): void;
-    close(): void;
-    isEligible(): boolean;
-}
-
-export interface PayPalButtonsOptions {
-    style?: PayPalButtonStyleOptions;
-    fundingSource: string;
-    createOrder(): Promise<string>;
-    onApprove(
-        data: PayPalButtonApproveCallbackPayload,
-        actions: PayPalButtonApproveCallbackActions,
-    ): Promise<boolean | void> | void;
-    onInit?(
-        data: PayPalButtonInitCallbackPayload,
-        actions: PayPalButtonInitCallbackActions,
-    ): Promise<void>;
-    onClick?(
-        data: PayPalButtonClickCallbackPayload,
-        actions: PayPalButtonClickCallbackActions,
-    ): Promise<void> | void;
-    onError?(error: Error): void;
-    onCancel?(): void;
-}
-
-export interface PayPalButtonClickCallbackPayload {
-    fundingSource: string;
-}
-
-export interface PayPalButtonClickCallbackActions {
-    reject(): void;
-    resolve(): void;
-}
-
-export interface PayPalButtonInitCallbackPayload {
-    correlationID: string;
-}
-
-export interface PayPalButtonInitCallbackActions {
-    disable(): void;
-    enable(): void;
-}
-
-export interface PayPalButtonApproveCallbackPayload {
-    orderID?: string;
-}
-
-export interface PayPalButtonApproveCallbackActions {
-    order: {
-        get: () => Promise<PayPalOrderDetails>;
-    };
-}
-
-export interface PayPalOrderDetails {
-    payer: {
-        name: {
-            given_name: string;
-            surname: string;
-        };
-        email_address: string;
-        address: PayPalOrderAddress;
-    };
-    purchase_units: Array<{
-        shipping: {
-            address: PayPalOrderAddress;
-        };
-    }>;
-}
-
-export interface PayPalOrderAddress {
-    address_line_1: string;
-    admin_area_2: string;
-    admin_area_1?: string;
-    postal_code: string;
-    country_code: string;
-}
-
-export enum StyleButtonLabel {
-    paypal = 'paypal',
-    checkout = 'checkout',
-    buynow = 'buynow',
-    pay = 'pay',
-    installment = 'installment',
-}
-
-export enum StyleButtonColor {
-    gold = 'gold',
-    blue = 'blue',
-    silver = 'silver',
-    black = 'black',
-    white = 'white',
-}
-
-export enum StyleButtonShape {
-    pill = 'pill',
-    rect = 'rect',
-}
-
-export interface PayPalButtonStyleOptions {
-    color?: StyleButtonColor;
-    shape?: StyleButtonShape;
-    height?: number;
-    label?: StyleButtonLabel;
 }
 
 /**
@@ -657,4 +935,53 @@ export interface FastlaneStylesSettings {
     fastlaneTextCaptionSettingsFontSize?: string;
     fastlaneTextCaptionSettingsColor?: string;
     fastlaneBrandingSettings?: string;
+}
+
+/**
+ *
+ * Other
+ *
+ */
+export enum NonInstantAlternativePaymentMethods {
+    OXXO = 'oxxo',
+}
+
+export interface PayPalOrderData {
+    orderId: string;
+    setupToken?: string;
+    approveUrl: string;
+}
+
+export interface PayPalUpdateOrderRequestBody {
+    availableShippingOptions?: ShippingOption[];
+    cartId: string;
+    selectedShippingOption?: ShippingOption;
+}
+
+export interface PayPalUpdateOrderResponse {
+    statusCode: number;
+}
+
+export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
+    cartId: string;
+    metadataId?: string;
+    setupToken?: boolean;
+    fastlaneToken?: string;
+}
+
+export enum PayPalOrderStatus {
+    Approved = 'APPROVED',
+    Created = 'CREATED',
+    PayerActionRequired = 'PAYER_ACTION_REQUIRED',
+    PollingStop = 'POLLING_STOP',
+    PollingError = 'POLLING_ERROR',
+}
+
+export interface PayPalOrderStatusData {
+    status: PayPalOrderStatus;
+}
+
+export interface PayPalCreateOrderCardFieldsResponse {
+    orderId: string;
+    setupToken?: string;
 }
