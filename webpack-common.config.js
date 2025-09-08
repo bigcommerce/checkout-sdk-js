@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 
@@ -16,7 +17,6 @@ const libraryEntries = {
     'checkout-button': path.join(coreSrcPath, 'bundles', 'checkout-button.ts'),
     'embedded-checkout': path.join(coreSrcPath, 'bundles', 'embedded-checkout.ts'),
     extension: path.join(coreSrcPath, 'bundles', 'extension.ts'),
-    integrations: path.join(coreSrcPath, 'bundles', 'integrations.ts'),
     'hosted-form': path.join(coreSrcPath, 'bundles', 'hosted-form.ts'),
     'internal-mappers': path.join(coreSrcPath, 'bundles', 'internal-mappers.ts'),
     'hosted-form-v2-iframe-content': path.join(
@@ -29,6 +29,7 @@ const libraryEntries = {
         'bundles',
         'hosted-form-v2-iframe-host.ts',
     ),
+    ...getIntegrationEntries(),
 };
 
 async function getBaseConfig(_options, argv = {}) {
@@ -70,6 +71,25 @@ async function getBaseConfig(_options, argv = {}) {
             }),
         ],
     };
+}
+
+function getIntegrationEntries() {
+    const integrationsPath = path.join(coreSrcPath, 'generated', 'integrations');
+    const integrationFolders = {};
+
+    fs.readdirSync(integrationsPath)
+        .filter((file) => {
+            return fs.statSync(path.join(integrationsPath, file)).isDirectory();
+        })
+        .forEach((folder) => {
+            integrationFolders[`integrations/${folder}`] = path.join(
+                integrationsPath,
+                folder,
+                'index.ts',
+            );
+        });
+
+    return integrationFolders;
 }
 
 const babelEnvPreset = [

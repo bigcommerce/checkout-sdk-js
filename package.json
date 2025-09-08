@@ -17,10 +17,10 @@
       "import": "./dist/esm/checkout-sdk-essential.js",
       "require": "./dist/cjs/checkout-sdk-essential.js"
     },
-    "./integrations": {
-      "types": "./dist/integrations.d.ts",
-      "import": "./dist/esm/integrations.js",
-      "require": "./dist/cjs/integrations.js"
+    "./integrations/*": {
+      "types": "./dist/integrations/*.d.ts",
+      "import": "./dist/esm/integrations/*.js",
+      "require": "./dist/cjs/integrations/*.js"
     }
   },
   "files": [

@@ -7,24 +7,108 @@ import { promisify } from 'util';
 export interface AutoExportOptions {
     inputPath: string;
     outputPath: string;
+    packageOutputPath: string;
     memberPattern: string;
+    apiExtractorConfig: {
+        entryPointSourceFile: string;
+        mainDtsRollupPath: string;
+    };
 }
 
-export default async function autoExport({
+export interface AutoExportResult {
+    packageExports: Map<string, string>;
+    packageExportsGrouped: string;
+    apiExtractorConfigs?: Map<string, string>;
+}
+
+export default async function autoExport(options: AutoExportOptions): Promise<AutoExportResult> {
+    const { packageExports, apiExtractorConfigs } = await createPackageExports(options);
+    const packageExportsGrouped = await createPackageExportsGrouped(options);
+
+    return {
+        packageExports,
+        packageExportsGrouped,
+        apiExtractorConfigs,
+    };
+}
+
+async function createPackageExports({
+    inputPath,
+    packageOutputPath,
+    memberPattern,
+    apiExtractorConfig,
+}: AutoExportOptions): Promise<{
+    packageExports: Map<string, string>;
+    apiExtractorConfigs?: Map<string, string>;
+}> {
+    const filePaths = await promisify(glob)(inputPath);
+    const results = (
+        await Promise.all(
+            filePaths.map((filePath) =>
+                createExportDeclaration(filePath, packageOutputPath, memberPattern),
+            ),
+        )
+    ).filter(exists);
+    const packageExports = new Map<string, string>();
+    const packageGroups = new Map<string, ts.ExportDeclaration[]>();
+
+    results.forEach((result) => {
+        const packageName = result.packageName;
+
+        if (!packageGroups.has(packageName)) {
+            packageGroups.set(packageName, []);
+        }
+
+        const declarations = packageGroups.get(packageName);
+
+        if (declarations) {
+            declarations.push(result.exportDeclaration);
+        }
+    });
+
+    Array.from(packageGroups.entries()).forEach(([packageName, declarations]) => {
+        const packageContent = ts
+            .createPrinter()
+            .printList(
+                ts.ListFormat.MultiLine,
+                ts.factory.createNodeArray(declarations),
+                ts.createSourceFile('', '', ts.ScriptTarget.ESNext),
+            );
+
+        packageExports.set(packageName, packageContent);
+    });
+
+    const apiExtractorConfigs = createApiExtractorConfigs(
+        Array.from(packageGroups.keys()),
+        apiExtractorConfig.entryPointSourceFile,
+        apiExtractorConfig.mainDtsRollupPath,
+    );
+
+    return {
+        packageExports,
+        apiExtractorConfigs,
+    };
+}
+
+async function createPackageExportsGrouped({
     inputPath,
     outputPath,
     memberPattern,
 }: AutoExportOptions): Promise<string> {
     const filePaths = await promisify(glob)(inputPath);
-    const exportDeclarations = await Promise.all(
-        filePaths.map((filePath) => createExportDeclaration(filePath, outputPath, memberPattern)),
-    );
+    const results = (
+        await Promise.all(
+            filePaths.map((filePath) =>
+                createExportDeclaration(filePath, outputPath, memberPattern),
+            ),
+        )
+    ).filter(exists);
 
     return ts
         .createPrinter()
         .printList(
             ts.ListFormat.MultiLine,
-            ts.factory.createNodeArray(exportDeclarations.filter(exists)),
+            ts.factory.createNodeArray(results.map((result) => result.exportDeclaration)),
             ts.createSourceFile(outputPath, '', ts.ScriptTarget.ESNext),
         );
 }
@@ -33,7 +117,13 @@ async function createExportDeclaration(
     filePath: string,
     outputPath: string,
     memberPattern: string,
-): Promise<ts.ExportDeclaration | undefined> {
+): Promise<
+    | {
+          exportDeclaration: ts.ExportDeclaration;
+          packageName: string;
+      }
+    | undefined
+> {
     const root = await getSource(filePath);
 
     const memberNames = root.statements
@@ -56,7 +146,7 @@ async function createExportDeclaration(
         return;
     }
 
-    return ts.factory.createExportDeclaration(
+    const exportDeclaration = ts.factory.createExportDeclaration(
         undefined,
         undefined,
         false,
@@ -71,6 +161,13 @@ async function createExportDeclaration(
         ),
         ts.factory.createStringLiteral(getImportPath(filePath, outputPath), true),
     );
+
+    const packageName = extractPackageName(filePath);
+
+    return {
+        exportDeclaration,
+        packageName,
+    };
 }
 
 async function getSource(filePath: string): Promise<ts.SourceFile> {
@@ -88,6 +185,55 @@ function getImportPath(filePath: string, outputPath: string): string {
     return fileName === 'index' ? importFolder : path.join(importFolder, fileName);
 }
 
+function extractPackageName(filePath: string): string {
+    const pathParts = filePath.split(path.sep);
+    const packagesIndex = pathParts.findIndex((part) => part === 'packages');
+
+    if (packagesIndex !== -1 && packagesIndex + 1 < pathParts.length) {
+        return pathParts[packagesIndex + 1];
+    }
+
+    return path.basename(path.dirname(path.dirname(filePath)));
+}
+
 function exists<TValue>(value?: TValue): value is NonNullable<TValue> {
     return value !== null && value !== undefined;
+}
+
+function createApiExtractorConfigs(
+    packageNames: string[],
+    entryPointSourceFile: string,
+    mainDtsRollupPath: string,
+): Map<string, string> {
+    const apiExtractorConfigs = new Map<string, string>();
+
+    packageNames.forEach((packageName) => {
+        const moduleName = packageName.replace(/-integration$/, '');
+        const config = {
+            compiler: {
+                configType: 'tsconfig',
+                rootFolder: '../../../..',
+            },
+            project: {
+                entryPointSourceFile: entryPointSourceFile.replace('<moduleName>', moduleName),
+            },
+            validationRules: {
+                missingReleaseTags: 'allow',
+            },
+            apiReviewFile: {
+                enabled: false,
+            },
+            apiJsonFile: {
+                enabled: false,
+            },
+            dtsRollup: {
+                enabled: true,
+                mainDtsRollupPath: mainDtsRollupPath.replace('<moduleName>', moduleName),
+            },
+        };
+
+        apiExtractorConfigs.set(packageName, JSON.stringify(config, null, 4));
+    });
+
+    return apiExtractorConfigs;
 }
