@@ -1,2 +1,2 @@
-/packages/core/src/generated/*.ts
+/packages/core/src/generated/**/*.ts
 /dist/*

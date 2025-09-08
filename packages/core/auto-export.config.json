@@ -3,17 +3,24 @@
         {
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/payment-strategies.ts",
+            "packageOutputPath": "packages/core/src/generated/integrations/<moduleName>/index.ts",
             "memberPattern": "^create.+PaymentStrategy$"
         },
         {
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/customer-strategies.ts",
+            "packageOutputPath": "packages/core/src/generated/integrations/<moduleName>/index.ts",
             "memberPattern": "^create.+CustomerStrategy$"
         },
         {
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/checkout-button-strategies.ts",
+            "packageOutputPath": "packages/core/src/generated/integrations/<moduleName>/index.ts",
             "memberPattern": "^create.+ButtonStrategy$"
         }
-    ]
+    ],
+    "apiExtractorConfig": {
+        "entryPointSourceFile": "../../temp/core/src/generated/integrations/<moduleName>/index.d.ts",
+        "mainDtsRollupPath": "integrations/<moduleName>.d.ts"
+    }
 }
