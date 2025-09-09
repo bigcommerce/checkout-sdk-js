@@ -21,7 +21,6 @@ import {
 import PayPalCommerceButtonInitializeOptions, {
     WithPayPalCommerceButtonInitializeOptions,
 } from './paypal-commerce-button-initialize-options';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
     constructor(
@@ -251,17 +250,5 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
             throw error;
         }
-    }
-
-    /**
-     *
-     * PayPal AppSwitch experiments handling
-     *
-     */
-    private isPaypalCommerceAppSwitchEnabled(): boolean {
-        const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-
-        return isExperimentEnabled(features, 'PAYPAL-5716.app_switch_functionality');
     }
 }
