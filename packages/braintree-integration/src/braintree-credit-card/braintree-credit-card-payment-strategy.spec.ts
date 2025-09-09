@@ -73,7 +73,10 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             braintreeScriptLoader,
             window,
         );
-        braintreeHostedForm = new BraintreeHostedForm(braintreeScriptLoader);
+        braintreeHostedForm = new BraintreeHostedForm(
+            braintreeScriptLoader,
+            paymentIntegrationService,
+        );
         braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
             paymentIntegrationService,
             braintreeIntegrationService,

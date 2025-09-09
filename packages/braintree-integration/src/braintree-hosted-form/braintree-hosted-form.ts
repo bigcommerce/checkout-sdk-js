@@ -27,9 +27,11 @@ import {
     Address,
     NotInitializedError,
     NotInitializedErrorType,
+    PaymentIntegrationService,
     PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 enum BraintreeHostedFormType {
     CreditCard,
@@ -44,7 +46,10 @@ export default class BraintreeHostedForm {
     private clientToken?: string;
     private isInitializedHostedForm = false;
 
-    constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
+    constructor(
+        private braintreeScriptLoader: BraintreeScriptLoader,
+        private paymentIntegrationService: PaymentIntegrationService,
+    ) {}
 
     async initialize(
         options: BraintreeFormOptions,
@@ -174,8 +179,18 @@ export default class BraintreeHostedForm {
     ): Promise<BraintreeHostedFields> {
         const client = await this.getClient();
         const hostedFields = await this.braintreeScriptLoader.loadHostedFields();
+        const state = this.paymentIntegrationService.getState();
+        const features = state?.getStoreConfigOrThrow()?.checkoutSettings?.features || {};
+        const isBraintreeHostedFieldsFixedVersionEnabled = isExperimentEnabled(
+            features,
+            'PAYPAL-5809.braintree_hosted_fields_fix_version',
+        );
 
-        return hostedFields.create({ ...options, client });
+        const hostedFieldsOptions = isBraintreeHostedFieldsFixedVersionEnabled
+            ? { ...options, preventCursorJumps: true }
+            : options;
+
+        return hostedFields.create({ ...hostedFieldsOptions, client });
     }
 
     async getClient(): Promise<BraintreeClient> {
