@@ -23,7 +23,6 @@ import {
     isBraintreeSupportedCardBrand,
     TokenizationPayload,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-
 import {
     Address,
     NotInitializedError,
@@ -62,6 +61,7 @@ export default class BraintreeHostedForm {
 
         if (isEmpty(fields)) {
             this.isInitializedHostedForm = false;
+
             return;
         }
 
@@ -101,6 +101,7 @@ export default class BraintreeHostedForm {
             this.handleValidityChange(state);
 
             const errors = this.mapValidationErrors(state.fields);
+
             throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
         }
     }
@@ -184,6 +185,7 @@ export default class BraintreeHostedForm {
 
         if (!this.client) {
             const client = await this.braintreeScriptLoader.loadClient();
+
             this.client = client.create({ authorization: this.clientToken });
         }
 
@@ -364,6 +366,7 @@ export default class BraintreeHostedForm {
 
         return error.details?.invalidFieldKeys?.reduce((result, key) => {
             const type = this.mapFieldType(key);
+
             return {
                 ...result,
                 [type]: [this.createInvalidError(type)],
@@ -393,19 +396,37 @@ export default class BraintreeHostedForm {
     private createInvalidError(
         fieldType: BraintreeFormFieldType,
     ): BraintreeFormFieldValidateErrorData {
-        const messages = {
-            [BraintreeFormFieldType.CardCode]: 'Invalid card code',
-            [BraintreeFormFieldType.CardCodeVerification]: 'Invalid card code',
-            [BraintreeFormFieldType.CardNumber]: 'Invalid card number',
-            [BraintreeFormFieldType.CardNumberVerification]: 'Invalid card number',
-            [BraintreeFormFieldType.CardExpiry]: 'Invalid card expiry',
-            [BraintreeFormFieldType.CardName]: 'Invalid card name',
+        const formFields = {
+            [BraintreeFormFieldType.CardCode]: {
+                message: 'Invalid card code',
+                type: 'invalid_card_code',
+            },
+            [BraintreeFormFieldType.CardCodeVerification]: {
+                message: 'Invalid card code',
+                type: 'invalid_card_code',
+            },
+            [BraintreeFormFieldType.CardNumber]: {
+                message: 'Invalid card number',
+                type: 'invalid_card_number',
+            },
+            [BraintreeFormFieldType.CardNumberVerification]: {
+                message: 'Invalid card number',
+                type: 'invalid_card_number',
+            },
+            [BraintreeFormFieldType.CardExpiry]: {
+                message: 'Invalid card expiry',
+                type: 'invalid_card_expiry',
+            },
+            [BraintreeFormFieldType.CardName]: {
+                message: 'Invalid card name',
+                type: 'invalid_card_name',
+            },
         };
 
         return {
             fieldType,
-            message: messages[fieldType] ?? 'Invalid field',
-            type: messages[fieldType]?.split(' ')[1] || 'invalid',
+            message: formFields[fieldType]?.message ?? 'Invalid field',
+            type: formFields[fieldType]?.type ?? 'invalid',
         };
     }
 
