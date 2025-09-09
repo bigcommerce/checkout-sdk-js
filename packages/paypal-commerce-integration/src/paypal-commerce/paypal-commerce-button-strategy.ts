@@ -136,14 +136,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            if (
-                paypalButton.hasReturned?.() &&
-                this.isPaypalCommerceAppSwitchEnabled()
-            ) {
-                paypalButton.resume?.();
-            } else {
-                paypalButton.render(`#${containerId}`);
-            }
+            paypalButton.render(`#${containerId}`);
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {
