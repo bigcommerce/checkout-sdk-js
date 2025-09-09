@@ -97,8 +97,6 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
-        const userAgent = navigator.userAgent;
-
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
@@ -106,10 +104,8 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
-            ...(this.isPaypalCommerceAppSwitchEnabled() && { appSwitchWhenAvailable: true }),
             createOrder: () => this.paypalCommerceIntegrationService.createOrder(
                 'paypalcommerce',
-                ...(this.isPaypalCommerceAppSwitchEnabled() ? [{ userAgent: userAgent }] : [])
             ),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
