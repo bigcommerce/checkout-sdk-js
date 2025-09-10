@@ -26,12 +26,12 @@ export default class BraintreeSDKVersionManager {
             return preloadedVersion;
         }
 
-        if (isExperimentEnabled(features, 'PAYPAL-5636.update_braintree_sdk_version')) {
-            return BRAINTREE_SDK_DEFAULT_VERSION;
-        }
-
         if (isExperimentEnabled(features, 'PAYPAL-5809.braintree_hosted_fields_fix_version')) {
             return BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION;
+        }
+
+        if (isExperimentEnabled(features, 'PAYPAL-5636.update_braintree_sdk_version')) {
+            return BRAINTREE_SDK_DEFAULT_VERSION;
         }
 
         return BRAINTREE_SDK_STABLE_VERSION;

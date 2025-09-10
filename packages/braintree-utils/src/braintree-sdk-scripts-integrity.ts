@@ -60,7 +60,7 @@ export const BRAINTREE_SDK_SCRIPTS_INTEGRITY = {
     },
     [BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION]: {
         [BraintreeModuleName.Client]:
-            'sha384-9ndM/mgw6O0A+bW00GkQepJmY6Q6A3qioH406Z3WiEn+kqE6+1z/bNfr083WS/rt',
+            'sha384-0WNxksIpRP+fYZiIdr12g6DBUQfLDzYCQJZtR/C8KkcwSGhPHfcFp3tTaGcMyFTq',
         [BraintreeModuleName.PaypalCheckout]:
             'sha384-lWM1jk4BOxoDNV6Kop7tVNvQgINlmEVz0c/OwM+HNHK3QC8xqwd54Ovrt2QRDTjh',
         [BraintreeModuleName.Paypal]:

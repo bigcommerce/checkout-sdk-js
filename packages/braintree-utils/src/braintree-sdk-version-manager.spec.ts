@@ -49,12 +49,18 @@ describe('BraintreeSDKVersionManager', () => {
         expect(braintreeSDKVersionManager.getSDKVersion()).toBe(BRAINTREE_SDK_STABLE_VERSION);
     });
 
-    it('get default braintree sdk version if store config is not defined', () => {
+    it('get hosted fields fixed braintree sdk version if store config is not defined', () => {
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+            storeConfigMock,
+        );
+
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
             undefined,
         );
 
-        expect(braintreeSDKVersionManager.getSDKVersion()).toBe(BRAINTREE_SDK_DEFAULT_VERSION);
+        expect(braintreeSDKVersionManager.getSDKVersion()).toBe(
+            BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+        );
     });
 
     it('get default braintree sdk version', () => {

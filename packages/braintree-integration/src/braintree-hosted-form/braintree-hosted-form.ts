@@ -49,7 +49,7 @@ export default class BraintreeHostedForm {
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
         private braintreeSDKVersionManager: BraintreeSDKVersionManager,
-        ) {}
+    ) {}
 
     async initialize(
         options: BraintreeFormOptions,
