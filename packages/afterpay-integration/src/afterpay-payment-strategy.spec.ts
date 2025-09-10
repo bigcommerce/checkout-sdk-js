@@ -187,7 +187,35 @@ describe('AfterpayPaymentStrategy', () => {
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
                 paymentMethod.gateway,
-                { params: { method: paymentMethod.id } },
+                { 
+                    params: { 
+                        method: paymentMethod.id,
+                        quote: {
+                            id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                        },
+                    } 
+                },
+            );
+        });
+
+        it('calls loadPaymentMethod with empty quote ID when cart is not available', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue(undefined);
+
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            strategy.execute(payload).then(successHandler);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                paymentMethod.gateway,
+                { 
+                    params: { 
+                        method: paymentMethod.id,
+                        quote: {
+                            id: '',
+                        },
+                    } 
+                },
             );
         });
 

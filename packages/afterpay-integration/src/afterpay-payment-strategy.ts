@@ -67,6 +67,9 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             await this._paymentIntegrationService.applyStoreCredit(useStoreCredit);
         }
 
+        // Ensure checkout/cart data is loaded before loading payment method
+        await this._paymentIntegrationService.loadCheckout();
+
         await this._loadPaymentMethod(gatewayId, methodId, options);
 
         const state = this._paymentIntegrationService.getState();
@@ -141,10 +144,21 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         methodId: string,
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors> {
+        const state = this._paymentIntegrationService.getState();
+        const cartId = state.getCart()?.id || '';
+
+        console.log('>>>> cartId', cartId);
+
         try {
             return await this._paymentIntegrationService.loadPaymentMethod(gatewayId, {
                 ...options,
-                params: { ...options?.params, method: methodId },
+                params: { 
+                    ...options?.params, 
+                    method: methodId,
+                    quote: {
+                        id: cartId,
+                    },
+                },
             });
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
