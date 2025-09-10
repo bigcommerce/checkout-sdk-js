@@ -1,6 +1,7 @@
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 
 import {
+    BRAINTREE_SDK_DEFAULT_VERSION,
     BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BraintreeFormOptions,
     BraintreeHostedFields,
@@ -15,11 +16,11 @@ import {
     PaymentInvalidFormError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import {PaymentIntegrationServiceMock} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import {getScriptLoader} from '@bigcommerce/script-loader';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import {getBillingAddress} from '../mocks/braintree.mock';
+import { getBillingAddress } from '../mocks/braintree.mock';
 
 import BraintreeHostedForm from './braintree-hosted-form';
 
@@ -105,6 +106,9 @@ describe('BraintreeHostedForm', () => {
 
     describe('#initialize', () => {
         it('creates and configures hosted fields', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
             const createMock = jest.fn();
             const clientMock = {
                 ...getClientMock(),
@@ -212,6 +216,9 @@ describe('BraintreeHostedForm', () => {
         });
 
         it('creates and configures hosted fields for stored card verification', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
             const createMock = jest.fn();
             const clientMock = {
                 ...getClientMock(),
