@@ -1,6 +1,7 @@
 import { Dictionary, isEmpty, isNil, omitBy } from 'lodash';
 
 import {
+    BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BraintreeBillingAddressRequestData,
     BraintreeClient,
     BraintreeFormErrorDataKeys,
@@ -17,6 +18,7 @@ import {
     BraintreeHostedFieldsState,
     BraintreeHostedFormError,
     BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
     BraintreeStoredCardFieldsMap,
     isBraintreeFormFieldsMap,
     isBraintreeHostedFormError,
@@ -44,7 +46,10 @@ export default class BraintreeHostedForm {
     private clientToken?: string;
     private isInitializedHostedForm = false;
 
-    constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
+    constructor(
+        private braintreeScriptLoader: BraintreeScriptLoader,
+        private braintreeSDKVersionManager: BraintreeSDKVersionManager,
+        ) {}
 
     async initialize(
         options: BraintreeFormOptions,
@@ -175,7 +180,13 @@ export default class BraintreeHostedForm {
         const client = await this.getClient();
         const hostedFields = await this.braintreeScriptLoader.loadHostedFields();
 
-        return hostedFields.create({ ...options, client });
+        const currentSdkVersion = this.braintreeSDKVersionManager.getSDKVersion();
+        const hostedFieldsOptions =
+            currentSdkVersion === BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION
+                ? { ...options, preventCursorJumps: true }
+                : options;
+
+        return hostedFields.create({ ...hostedFieldsOptions, client });
     }
 
     async getClient(): Promise<BraintreeClient> {

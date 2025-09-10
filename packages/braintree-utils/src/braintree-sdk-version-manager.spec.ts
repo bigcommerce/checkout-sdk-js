@@ -10,6 +10,7 @@ import {
 import { BraintreeHostWindow } from './braintree';
 import {
     BRAINTREE_SDK_DEFAULT_VERSION,
+    BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BRAINTREE_SDK_STABLE_VERSION,
 } from './braintree-sdk-verison';
 import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
@@ -26,6 +27,7 @@ describe('BraintreeSDKVersionManager', () => {
 
         storeConfigMock.checkoutSettings.features = {
             'PAYPAL-5636.update_braintree_sdk_version': false,
+            'PAYPAL-5809.braintree_hosted_fields_fix_version': false,
         };
 
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
@@ -59,6 +61,7 @@ describe('BraintreeSDKVersionManager', () => {
         storeConfigMock = getConfig().storeConfig;
         storeConfigMock.checkoutSettings.features = {
             'PAYPAL-5636.update_braintree_sdk_version': true,
+            'PAYPAL-5809.braintree_hosted_fields_fix_version': false,
         };
 
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
@@ -66,6 +69,22 @@ describe('BraintreeSDKVersionManager', () => {
         );
 
         expect(braintreeSDKVersionManager.getSDKVersion()).toBe(BRAINTREE_SDK_DEFAULT_VERSION);
+    });
+
+    it('get braintree sdk version with fixed hosted fields focus', () => {
+        storeConfigMock = getConfig().storeConfig;
+        storeConfigMock.checkoutSettings.features = {
+            'PAYPAL-5809.braintree_hosted_fields_fix_version': true,
+            'PAYPAL-5636.update_braintree_sdk_version': false,
+        };
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+            storeConfigMock,
+        );
+
+        expect(braintreeSDKVersionManager.getSDKVersion()).toBe(
+            BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+        );
     });
 
     it('should get unmanageable version if exist in window.braintree', () => {

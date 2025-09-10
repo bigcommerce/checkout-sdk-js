@@ -10,6 +10,7 @@ import BraintreeScriptLoader from './braintree-script-loader';
 import { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
 import {
     BRAINTREE_SDK_DEFAULT_VERSION,
+    BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BRAINTREE_SDK_STABLE_VERSION,
 } from './braintree-sdk-verison';
 import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
@@ -56,6 +57,8 @@ describe('BraintreeScriptLoader', () => {
         BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_DEFAULT_VERSION];
     const braintreeSdkStableScriptsIntegrity =
         BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_STABLE_VERSION];
+    const braintreeSdkFixedHostedFieldsScriptsIntegrity =
+        BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION];
     const thirdPartyBraintreeVersion = '3.123.4';
 
     beforeEach(() => {
@@ -123,6 +126,34 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity: braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.Client],
+                    },
+                },
+            );
+            expect(client).toBe(clientMock);
+        });
+
+        it('loads the client with fixed hosted fields version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const client = await braintreeScriptLoader.loadClient();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/client.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.Client
+                                ],
                     },
                 },
             );

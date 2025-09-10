@@ -10,6 +10,8 @@ export { default as createBraintreeSdk } from './create-braintree-sdk';
 export { default as BraintreeSDKVersionManager } from './braintree-sdk-version-manager';
 export { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
 export { BRAINTREE_SDK_STABLE_VERSION } from './braintree-sdk-verison';
+export { BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION } from './braintree-sdk-verison';
+
 
 export { default as mapToLegacyBillingAddress } from './map-to-legacy-billing-address';
 export { default as mapToLegacyShippingAddress } from './map-to-legacy-shipping-address';

@@ -1,6 +1,7 @@
 import { BraintreeModuleName } from './braintree';
 import {
     BRAINTREE_SDK_DEFAULT_VERSION,
+    BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BRAINTREE_SDK_STABLE_VERSION,
 } from './braintree-sdk-verison';
 
@@ -56,5 +57,31 @@ export const BRAINTREE_SDK_SCRIPTS_INTEGRITY = {
             'sha384-Aw9EesSaUeWxe36PqEHiOyOyOq8M6CIb1gw7/yHNVPRzGtFXXcd2OQ8qXrIlOj2P',
         [BraintreeModuleName.Fastlane]:
             'sha384-rhBL1hpZ71JqG+2TsT0Dih47mbjx8cjJCpeZjk9tw3df1gFMKfCTmMyZunhr7H4Y',
+    },
+    [BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION]: {
+        [BraintreeModuleName.Client]:
+            'sha384-9ndM/mgw6O0A+bW00GkQepJmY6Q6A3qioH406Z3WiEn+kqE6+1z/bNfr083WS/rt',
+        [BraintreeModuleName.PaypalCheckout]:
+            'sha384-lWM1jk4BOxoDNV6Kop7tVNvQgINlmEVz0c/OwM+HNHK3QC8xqwd54Ovrt2QRDTjh',
+        [BraintreeModuleName.Paypal]:
+            'sha384-fXUmVxC2EMZBDXZ7eTHSTL/LFBrHej/MSXT/vTBXvra4lzgLNGvREAp+x0GYObuH',
+        [BraintreeModuleName.LocalPayment]:
+            'sha384-pha1xGuGSkmZH5x9aqHvRaO4xLea7rmQ/79PFj9zxNzxuFcOWZg7gOP7FibygOEC',
+        [BraintreeModuleName.DataCollector]:
+            'sha384-Q6PI2F9eekWbAxhroybl+aEcvqhdowN/EQlGwBUyJOzPFn9982u9xl6SU6XfGKzc',
+        [BraintreeModuleName.UsBankAccount]:
+            'sha384-W3RLQSKJL1tQ3+Y7mP6tmkamtZ8bV4Yw/XxL9Jj5JtXHraD8loMF8hAIG5m2zK7F',
+        [BraintreeModuleName.GooglePayment]:
+            'sha384-TITQMsFWA3elDNGP2mWz2oKBo4qjt+TlqzovcaPoeBiAh/wPBi6nae50ADdgU1/i',
+        [BraintreeModuleName.ThreeDSecure]:
+            'sha384-YiycYN89ZlL/Evcaq4y1ajW1mhd7JYfZBDuOwHtIn4/Jnm20GL+/XCM+zYAwWD8D',
+        [BraintreeModuleName.VisaCheckout]:
+            'sha384-/OdaTv9qrkKzjObtUe6yzfDhHozFW/+uXlrSl736sOZRJpjGQETvpYXqMFFg69xv',
+        [BraintreeModuleName.Venmo]:
+            'sha384-dA+ojdW9vbJS4JavcXyOs9d5uZHJg5dNtYupoPSH2zsXIiYDVS5amLb/u8qmQ6oz',
+        [BraintreeModuleName.HostedFields]:
+            'sha384-31ZkS58+iaWsW06ftW52zzVZFp43WPd7pNYRiddYynSNg6Oh7WGbSFGorAUH6T1z',
+        [BraintreeModuleName.Fastlane]:
+            'sha384-jlbrwNvL3HvLAUCtLSmrnQ2GH1udCUrRS/bVmReAS5fuIVvcW8Pko/Gkg82tlgtr',
     },
 };
