@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.794.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.794.0...v1.794.1) (2025-09-11)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-9493 Pass checkout id to hosted form ppsdk providers ([#2998](https://github.com/bigcommerce/checkout-sdk-js/issues/2998)) ([dab4e00](https://github.com/bigcommerce/checkout-sdk-js/commit/dab4e00bbb786f285a0764588ef0e68c732fe4f2))
+
 ## [1.794.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.793.1...v1.794.0) (2025-09-05)
 
 
