@@ -215,6 +215,7 @@ export interface BraintreeHostedFieldsCreatorConfig extends BraintreeModuleCreat
         '.valid'?: { [key: string]: string };
         ':focus'?: { [key: string]: string };
     };
+    preventCursorJumps?: boolean;
 }
 
 export interface BraintreeHostedFieldOption {

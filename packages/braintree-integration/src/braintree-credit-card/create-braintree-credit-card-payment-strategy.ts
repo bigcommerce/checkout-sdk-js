@@ -33,7 +33,10 @@ const createBraintreeCreditCardPaymentStrategy: PaymentStrategyFactory<
         braintreeHostWindow,
     );
 
-    const braintreeHostedForm = new BraintreeHostedForm(braintreeScriptLoader);
+    const braintreeHostedForm = new BraintreeHostedForm(
+        braintreeScriptLoader,
+        braintreeSDKVersionManager,
+    );
 
     return new BraintreeCreditCardPaymentStrategy(
         paymentIntegrationService,
