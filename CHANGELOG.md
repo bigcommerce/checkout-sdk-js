@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.794.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.794.3...v1.794.4) (2025-09-12)
+
+
+### Code Refactoring
+
+* **core:** CHECKOUT-9450 Upgrade webpack version to improve tree-shaking ([56f32f5](https://github.com/bigcommerce/checkout-sdk-js/commit/56f32f53c5185c7c252496e1721e5c8ed24512af))
+
 ### [1.794.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.794.1...v1.794.3) (2025-09-11)
 
 ### [1.794.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.794.1...v1.794.2) (2025-09-11)
