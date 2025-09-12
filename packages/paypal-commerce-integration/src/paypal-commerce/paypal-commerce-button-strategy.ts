@@ -21,6 +21,7 @@ import {
 import PayPalCommerceButtonInitializeOptions, {
     WithPayPalCommerceButtonInitializeOptions,
 } from './paypal-commerce-button-initialize-options';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
     constructor(
@@ -102,6 +103,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features || {};
+        const isAppSwitchEnabled = isExperimentEnabled(
+            features,
+            'PAYPAL-5716.app_switch_functionality',
+        );
 
         const defaultCallbacks = {
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
@@ -115,10 +121,12 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         };
 
         const hostedCheckoutCallbacks = {
-            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                this.onShippingAddressChange(data),
-            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                this.onShippingOptionsChange(data),
+            ...(!isAppSwitchEnabled && {
+                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                    this.onShippingAddressChange(data),
+                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                    this.onShippingOptionsChange(data),
+            }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
