@@ -5,20 +5,20 @@
   "license": "MIT",
   "main": "dist/cjs/checkout-sdk.js",
   "module": "dist/esm/checkout-sdk.js",
-  "typings": "dist/checkout-sdk.d.ts",
+  "typings": "dist/types/checkout-sdk.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/checkout-sdk.d.ts",
+      "types": "./dist/types/checkout-sdk.d.ts",
       "import": "./dist/esm/checkout-sdk.js",
       "require": "./dist/cjs/checkout-sdk.js"
     },
     "./essential": {
-      "types": "./dist/checkout-sdk.d.ts",
+      "types": "./dist/types/checkout-sdk.d.ts",
       "import": "./dist/esm/checkout-sdk-essential.js",
       "require": "./dist/cjs/checkout-sdk-essential.js"
     },
     "./integrations/*": {
-      "types": "./dist/integrations/*.d.ts",
+      "types": "./dist/types/integrations/*.d.ts",
       "import": "./dist/esm/integrations/*.js",
       "require": "./dist/cjs/integrations/*.js"
     }
