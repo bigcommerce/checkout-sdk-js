@@ -19,10 +19,30 @@
                 }
             ]
         },
+        "build-analyze": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "commands": [
+                    "webpack --config webpack.config.js --config-name esm --profile --json > webpack-stats.json",
+                    "webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip"
+                ],
+                "parallel": false
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                },
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
+        },
         "build-watch": {
             "executor": "@nrwl/workspace:run-commands",
             "options": {
-                "command": "webpack --config webpack.config.js --config-name cjs --watch --progress"
+                "command": "webpack --config webpack.config.js --config-name esm --watch --progress"
             },
             "dependsOn": [
                 {
@@ -63,6 +83,7 @@
                 "commands": [
                     "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
                     "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
+                    "find src/generated/integrations -name 'api-extractor.json' | xargs -I {} -P 8 sh -c 'cd \"$(dirname \"{}\")\" && npx api-extractor run --config api-extractor.json'",
                     "rm -rf ../../temp",
                     "nx run hosted-form-v2:build-dts"
                 ]
@@ -74,7 +95,7 @@
                 "cwd": "packages/core",
                 "parallel": false,
                 "commands": [
-                    "mkdir -p src/generated && cp ../../dist/checkout-sdk.d.ts src/generated/checkout-sdk.d.ts",
+                    "mkdir -p src/generated && cp ../../dist/types/checkout-sdk.d.ts src/generated/checkout-sdk.d.ts",
                     "typedoc --plugin typedoc-plugin-markdown --options typedoc.json --tsconfig tsconfig.json src/generated/checkout-sdk.d.ts"
                 ]
             },
@@ -118,6 +139,7 @@
             "executor": "@nrwl/workspace:run-commands",
             "options": {
                 "commands": [
+                    "rm -rf packages/core/src/generated",
                     "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:auto-export --projectName=core",
                     "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:extend-interface --projectName=core",
                     "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:create-enum --projectName=core"

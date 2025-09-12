@@ -26,7 +26,7 @@ describe('CheckoutButtonInitializer', () => {
 
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster(), 'en'),
-            createCheckoutButtonRegistryV2(createPaymentIntegrationService(store)),
+            createCheckoutButtonRegistryV2(createPaymentIntegrationService(store), {}),
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender())),
         );
 
