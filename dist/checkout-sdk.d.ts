@@ -13,6 +13,8 @@ import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import { Currency as Currency_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerAddress as CustomerAddress_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CustomerStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CustomerStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedInstrument as HostedInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -24,6 +26,8 @@ import { PayPalFastlaneStylesOption as PayPalFastlaneStylesOption_2 } from '@big
 import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaypalStyleOptions as PaypalStyleOptions_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { ReadableDataStore } from '@bigcommerce/data-store';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
@@ -697,6 +701,10 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
 declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
     /**
+     * @alpha
+     */
+    integrations?: Array<CustomerStrategyFactory<CustomerStrategy>>;
+    /**
      * The options that are required to initialize the Masterpass payment method.
      * They can be omitted unless you need to support Masterpass.
      */
@@ -737,6 +745,10 @@ declare interface BaseInstrument {
  * current checkout flow.
  */
 declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
+    /**
+     * @alpha
+     */
+    integrations?: Array<PaymentStrategyFactory<PaymentStrategy>>;
     /**
      * @alpha
      * Please note that this option is currently in an early stage of
