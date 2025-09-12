@@ -95,7 +95,7 @@
                 "cwd": "packages/core",
                 "parallel": false,
                 "commands": [
-                    "mkdir -p src/generated && cp ../../dist/checkout-sdk.d.ts src/generated/checkout-sdk.d.ts",
+                    "mkdir -p src/generated && cp ../../dist/types/checkout-sdk.d.ts src/generated/checkout-sdk.d.ts",
                     "typedoc --plugin typedoc-plugin-markdown --options typedoc.json --tsconfig tsconfig.json src/generated/checkout-sdk.d.ts"
                 ]
             },
