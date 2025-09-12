@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.795.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.794.4...v1.795.0) (2025-09-12)
+
+
+### Features
+
+* **payment:** PAYPAL-5742  PPC/BCP service packages refactoring ([#2995](https://github.com/bigcommerce/checkout-sdk-js/issues/2995)) ([a37be69](https://github.com/bigcommerce/checkout-sdk-js/commit/a37be697e3f90a3c5e4a3558ae5650769b3f49ad))
+
 ### [1.794.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.794.3...v1.794.4) (2025-09-12)
 
 
