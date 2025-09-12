@@ -21,6 +21,6 @@
     ],
     "apiExtractorConfig": {
         "entryPointSourceFile": "../../temp/core/src/generated/integrations/<moduleName>/index.d.ts",
-        "mainDtsRollupPath": "integrations/<moduleName>.d.ts"
+        "mainDtsRollupPath": "types/integrations/<moduleName>.d.ts"
     }
 }
