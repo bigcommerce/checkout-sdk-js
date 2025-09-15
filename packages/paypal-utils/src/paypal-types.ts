@@ -524,6 +524,14 @@ export interface PayPalButtonStyleOptions {
     label?: StyleButtonLabel;
 }
 
+export interface PayPalButtonOptions {
+    fundingSource: string;
+    style?: PayPalButtonStyleOptions;
+    onClick?: () => void;
+    onCancel?: () => void;
+    onPaymentComplete?: () => void;
+}
+
 /**
  *
  * PayPal Messages
