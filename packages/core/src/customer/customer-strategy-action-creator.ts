@@ -8,6 +8,7 @@ import {
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { InternalCheckoutSelectors } from '../checkout';
+import { ErrorLogger } from '../common/error';
 import { Registry } from '../common/registry';
 import { matchExistingIntegrations, registerIntegrations } from '../payment-integration';
 
@@ -34,6 +35,7 @@ export default class CustomerStrategyActionCreator {
         private _strategyRegistry: Registry<CustomerStrategy>,
         private _strategyRegistryV2: CustomerStrategyRegistryV2,
         private _paymentIntegrationService: PaymentIntegrationService,
+        private _errorLogger: ErrorLogger,
     ) {}
 
     signIn(
@@ -160,6 +162,7 @@ export default class CustomerStrategyActionCreator {
                         this._strategyRegistryV2,
                         options?.integrations ?? [],
                         resolveId,
+                        this._errorLogger,
                     );
                     registerIntegrations(
                         this._strategyRegistryV2,

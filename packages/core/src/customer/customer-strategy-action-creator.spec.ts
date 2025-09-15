@@ -15,6 +15,7 @@ import {
 } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MutationObserverFactory } from '../common/dom';
+import { ErrorLogger } from '../common/error';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
@@ -44,6 +45,7 @@ describe('CustomerStrategyActionCreator', () => {
     let store: CheckoutStore;
     let strategy: DefaultCustomerStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
+    let errorLogger: ErrorLogger;
 
     beforeEach(() => {
         const requestSender = createRequestSender();
@@ -69,6 +71,9 @@ describe('CustomerStrategyActionCreator', () => {
         store = createCheckoutStore(state);
 
         paymentIntegrationService = createPaymentIntegrationService(store);
+        errorLogger = {
+            log: jest.fn(),
+        };
 
         customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService, {});
         registry = createCustomerStrategyRegistry(store, createRequestSender(), 'en');
@@ -105,6 +110,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
 
             await from(actionCreator.initialize({ methodId: 'default' })(store))
@@ -119,6 +125,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const options = { methodId: 'default' };
 
@@ -132,6 +139,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const strategy = registry.get('amazon');
 
@@ -147,6 +155,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const actions = await from(actionCreator.initialize({ methodId: 'default' })(store))
                 .pipe(toArray())
@@ -169,6 +178,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const initializeError = new Error();
             const errorHandler = jest.fn((action) => of(action));
@@ -211,6 +221,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
 
             await from(actionCreator.deinitialize({ methodId: 'default' })(store))
@@ -225,6 +236,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const options = { methodId: 'default' };
 
@@ -238,6 +250,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const strategy = registry.get('amazon');
 
@@ -253,6 +266,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const actions = await from(actionCreator.deinitialize({ methodId: 'default' })(store))
                 .pipe(toArray())
@@ -275,6 +289,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const deinitializeError = new Error();
             const errorHandler = jest.fn((action) => of(action));
@@ -311,6 +326,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
 
             await actionCreator
@@ -326,6 +342,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const credentials = { email: 'foo@bar.com', password: 'password1' };
             const options = { methodId: 'default' };
@@ -340,6 +357,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const actions = await actionCreator
                 .signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
@@ -357,6 +375,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const signInError = new Error();
             const errorHandler = jest.fn((action) => of(action));
@@ -391,6 +410,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
 
             await actionCreator.signOut({ methodId: 'default' }).pipe(toArray()).toPromise();
@@ -403,6 +423,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const options = { methodId: 'default' };
 
@@ -416,6 +437,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const actions = await actionCreator
                 .signOut({ methodId: 'default' })
@@ -439,6 +461,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const signOutError = new Error();
             const errorHandler = jest.fn((action) => of(action));
@@ -472,6 +495,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const options = { methodId: 'default' };
             const fakeMethod = jest.fn(() => Promise.resolve());
@@ -486,6 +510,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const actions = await actionCreator
                 .widgetInteraction(
@@ -512,6 +537,7 @@ describe('CustomerStrategyActionCreator', () => {
                 registry,
                 customerRegistryV2,
                 paymentIntegrationService,
+                errorLogger,
             );
             const signInError = new Error();
             const errorHandler = jest.fn((action) => of(action));

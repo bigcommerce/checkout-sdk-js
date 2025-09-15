@@ -3,6 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { createCheckoutStore } from '../checkout';
+import { ErrorLogger } from '../common/error';
 import { createSpamProtection } from '../spam-protection';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
@@ -26,6 +27,7 @@ describe('CreatePaymentStrategyRegistry', () => {
         const requestSender = createRequestSender();
         const paymentClient = createPaymentClient();
         const spamProtection = createSpamProtection(createScriptLoader());
+        const errorLogger: ErrorLogger = { log: jest.fn() };
 
         registry = createPaymentStrategyRegistry(
             store,
@@ -33,6 +35,7 @@ describe('CreatePaymentStrategyRegistry', () => {
             requestSender,
             spamProtection,
             'en_US',
+            errorLogger,
         );
     });
 

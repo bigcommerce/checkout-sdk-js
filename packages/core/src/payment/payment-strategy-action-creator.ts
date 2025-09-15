@@ -9,7 +9,7 @@ import {
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
-import { throwErrorAction } from '../common/error';
+import { ErrorLogger, throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import {
@@ -47,6 +47,7 @@ export default class PaymentStrategyActionCreator {
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentIntegrationService: PaymentIntegrationService,
+        private _errorLogger: ErrorLogger,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -186,6 +187,7 @@ export default class PaymentStrategyActionCreator {
                         this._strategyRegistryV2,
                         options.integrations ?? [],
                         resolveId,
+                        this._errorLogger,
                     );
                     registerIntegrations(
                         this._strategyRegistryV2,

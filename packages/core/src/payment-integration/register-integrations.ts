@@ -6,8 +6,8 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { ErrorLogger } from '../common/error';
 import { ResolveIdRegistry } from '../common/registry';
-import { SentryWindow } from '../common/types/sentry';
 
 export type StrategyFactory<TStrategy> = (
     paymentIntegrationService: PaymentIntegrationService,
@@ -44,6 +44,7 @@ export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: 
     registry: ResolveIdRegistry<TStrategy, TResolveId>,
     integrations: Array<StrategyFactory<TStrategy>>,
     resolveId: TResolveId,
+    errorLogger: ErrorLogger,
 ): boolean {
     const existingFactory = registry.getFactory(resolveId);
     const matchedExisting = integrations.some(
@@ -59,14 +60,8 @@ export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: 
     // relying solely on the passed-in strategies.
     if (existingFactory && !matchedExisting) {
         const message = `A different strategy is registered for ${JSON.stringify(resolveId)}.`;
-        const { Sentry } = window as SentryWindow;
 
-        if (Sentry?.captureMessage) {
-            Sentry.captureMessage(message);
-        } else {
-            // eslint-disable-next-line no-console
-            console.log(message);
-        }
+        errorLogger.log(new Error(message));
     }
 
     return matchedExisting;
