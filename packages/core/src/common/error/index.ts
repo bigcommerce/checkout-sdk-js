@@ -1,4 +1,5 @@
 export * from './error-actions';
+export * from './error-logger';
 
 export { default as clearErrorReducer } from './clear-error-reducer';
 export { default as createRequestErrorFactory } from './create-request-error-factory';

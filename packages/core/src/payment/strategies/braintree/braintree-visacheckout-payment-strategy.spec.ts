@@ -104,12 +104,14 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
 
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
+        const errorLogger = { log: jest.fn() };
         const registry = createPaymentStrategyRegistry(
             store,
             paymentClient,
             requestSender,
             spamProtection,
             'en_US',
+            errorLogger,
         );
         const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService, {});
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
@@ -136,6 +138,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
                 new SpamProtectionRequestSender(requestSender),
             ),
             paymentIntegrationService,
+            errorLogger,
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient(store)),

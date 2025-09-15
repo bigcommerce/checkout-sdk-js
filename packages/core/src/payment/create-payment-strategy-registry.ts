@@ -8,6 +8,7 @@ import {
     CheckoutStore,
     CheckoutValidator,
 } from '../checkout';
+import { ErrorLogger } from '../common/error';
 import { BrowserStorage } from '../common/storage';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
@@ -62,6 +63,7 @@ export default function createPaymentStrategyRegistry(
     requestSender: RequestSender,
     spamProtection: GoogleRecaptcha,
     locale: string,
+    errorLogger: ErrorLogger,
 ) {
     const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
@@ -114,6 +116,7 @@ export default function createPaymentStrategyRegistry(
         orderActionCreator,
         spamProtectionActionCreator,
         paymentIntegrationService,
+        errorLogger,
     );
     const formPoster = createFormPoster();
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
