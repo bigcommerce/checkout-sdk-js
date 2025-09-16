@@ -1,5 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { EmptyCartError } from '../cart/errors';
 import { Checkout, CHECKOUT_DEFAULT_INCLUDES } from '../checkout';
 import {
     ContentType,
@@ -22,14 +23,22 @@ export default class GiftCertificateRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.post(url, {
-            headers,
-            timeout,
-            params: {
-                include: joinIncludes(CHECKOUT_DEFAULT_INCLUDES),
-            },
-            body: { giftCertificateCode },
-        });
+        return this._requestSender
+            .post<Checkout>(url, {
+                headers,
+                timeout,
+                params: {
+                    include: joinIncludes(CHECKOUT_DEFAULT_INCLUDES),
+                },
+                body: { giftCertificateCode },
+            })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 
     removeGiftCertificate(
@@ -43,12 +52,20 @@ export default class GiftCertificateRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.delete(url, {
-            headers,
-            timeout,
-            params: {
-                include: joinIncludes(CHECKOUT_DEFAULT_INCLUDES),
-            },
-        });
+        return this._requestSender
+            .delete<Checkout>(url, {
+                headers,
+                timeout,
+                params: {
+                    include: joinIncludes(CHECKOUT_DEFAULT_INCLUDES),
+                },
+            })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 }

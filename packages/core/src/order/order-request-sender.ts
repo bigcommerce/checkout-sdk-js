@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { isNil, omitBy } from 'lodash';
 
-import { CartConsistencyError } from '../cart/errors';
+import { CartConsistencyError, EmptyCartError } from '../cart/errors';
 import {
     ContentType,
     joinIncludes,
@@ -82,6 +82,10 @@ export default class OrderRequestSender {
 
                 if (error.body.type === 'invalid_shipping_address') {
                     throw new InvalidShippingAddressError(error.body.detail);
+                }
+
+                if (error.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
                 }
 
                 throw error;
