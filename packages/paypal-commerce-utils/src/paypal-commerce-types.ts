@@ -40,6 +40,7 @@ export interface PayPalCommerceInitializationData {
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
     threeDSVerificationMethod?: string;
+    isAppSwitchEnabled?: boolean;
 }
 
 /**

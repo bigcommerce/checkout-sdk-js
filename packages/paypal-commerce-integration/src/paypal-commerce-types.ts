@@ -259,6 +259,7 @@ export interface PayPalCommerceInitializationData {
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
+    isAppSwitchEnabled?: boolean;
 }
 
 export interface PayPalBNPLConfigurationItem {
