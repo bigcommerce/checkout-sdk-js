@@ -1,5 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { EmptyCartError } from '../cart/errors';
 import { Checkout, CHECKOUT_DEFAULT_INCLUDES, CheckoutIncludes } from '../checkout';
 import {
     ContentType,
@@ -22,17 +23,25 @@ export default class CouponRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.post(url, {
-            headers,
-            timeout,
-            params: {
-                include: joinIncludes([
-                    ...CHECKOUT_DEFAULT_INCLUDES,
-                    CheckoutIncludes.AvailableShippingOptions,
-                ]),
-            },
-            body: { couponCode },
-        });
+        return this._requestSender
+            .post<Checkout>(url, {
+                headers,
+                timeout,
+                params: {
+                    include: joinIncludes([
+                        ...CHECKOUT_DEFAULT_INCLUDES,
+                        CheckoutIncludes.AvailableShippingOptions,
+                    ]),
+                },
+                body: { couponCode },
+            })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 
     removeCoupon(
@@ -46,15 +55,23 @@ export default class CouponRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.delete(url, {
-            headers,
-            timeout,
-            params: {
-                include: joinIncludes([
-                    ...CHECKOUT_DEFAULT_INCLUDES,
-                    CheckoutIncludes.AvailableShippingOptions,
-                ]),
-            },
-        });
+        return this._requestSender
+            .delete<Checkout>(url, {
+                headers,
+                timeout,
+                params: {
+                    include: joinIncludes([
+                        ...CHECKOUT_DEFAULT_INCLUDES,
+                        CheckoutIncludes.AvailableShippingOptions,
+                    ]),
+                },
+            })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 }

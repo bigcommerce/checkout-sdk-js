@@ -1,8 +1,9 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
+import { EmptyCartError } from '../cart/errors';
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
-import { getResponse } from '../common/http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import CouponRequestSender from './coupon-request-sender';
 
@@ -79,6 +80,24 @@ describe('Coupon Request Sender', () => {
                 },
             );
         });
+
+        it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 422,
+                    title: 'The request could not process',
+                    type: 'empty_cart',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            await expect(couponRequestSender.applyCoupon(checkoutId, couponCode)).rejects.toThrow(
+                EmptyCartError,
+            );
+        });
     });
 
     describe('#removeCoupon()', () => {
@@ -125,6 +144,24 @@ describe('Coupon Request Sender', () => {
                         include: defaultIncludes,
                     },
                 },
+            );
+        });
+
+        it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 422,
+                    title: 'The request could not process',
+                    type: 'empty_cart',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.reject(error));
+
+            await expect(couponRequestSender.removeCoupon(checkoutId, couponCode)).rejects.toThrow(
+                EmptyCartError,
             );
         });
     });
