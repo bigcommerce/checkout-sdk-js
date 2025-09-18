@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.797.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.796.0...v1.797.0) (2025-09-18)
+
+
+### Features
+
+* **payment:** PAYPAL-5891 fixed way of getting of appswitch experiment ([#3007](https://github.com/bigcommerce/checkout-sdk-js/issues/3007)) ([1e19653](https://github.com/bigcommerce/checkout-sdk-js/commit/1e19653c207364730e7e558f5787f0d0bc96b11c))
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-9506 Catch empty cart error message in mutation and return it to clients ([#3005](https://github.com/bigcommerce/checkout-sdk-js/issues/3005)) ([d166eba](https://github.com/bigcommerce/checkout-sdk-js/commit/d166eba19636802c84e845a4774d9398027b623e))
+
 ## [1.796.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.795.1...v1.796.0) (2025-09-15)
 
 
