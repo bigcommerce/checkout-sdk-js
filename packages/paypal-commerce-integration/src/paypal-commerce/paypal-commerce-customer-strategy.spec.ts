@@ -336,25 +336,13 @@ describe('PayPalCommerceCustomerStrategy', () => {
         it('initializes paypal buttons without shipping callbacks what appSwitch enabled', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': true,
-                    },
-                },
-            });
-            jest.spyOn(
-                paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue({
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
+                    isAppSwitchEnabled: true,
                 },
             });
 
