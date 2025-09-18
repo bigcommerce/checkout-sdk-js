@@ -26,7 +26,6 @@ import {
 import PayPalCommerceCreditCustomerInitializeOptions, {
     WithPayPalCommerceCreditCustomerInitializeOptions,
 } from './paypal-commerce-credit-customer-initialize-options';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class PayPalCommerceCreditCustomerStrategy implements CustomerStrategy {
     private onError = noop;
@@ -115,14 +114,9 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, paymentButtonStyles } =
+        const { isHostedCheckoutEnabled, paymentButtonStyles, isAppSwitchEnabled } =
             paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features || {};
-        const isAppSwitchEnabled = isExperimentEnabled(
-            features,
-            'PAYPAL-5716.app_switch_functionality',
-        );
 
         const defaultCallbacks = {
             createOrder: () =>

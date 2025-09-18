@@ -434,24 +434,12 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': true,
-                    },
-                },
-            });
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
+                    isAppSwitchEnabled: true,
                 },
             };
 
