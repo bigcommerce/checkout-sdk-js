@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events';
 
 import {
+    BRAINTREE_SDK_DEFAULT_VERSION,
+    BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BraintreeFormOptions,
     BraintreeHostedFields,
     BraintreeScriptLoader,
@@ -74,7 +76,7 @@ describe('BraintreeHostedForm', () => {
             window,
             braintreeSDKVersionManager,
         );
-        subject = new BraintreeHostedForm(braintreeScriptLoader);
+        subject = new BraintreeHostedForm(braintreeScriptLoader, braintreeSDKVersionManager);
 
         containers = [
             appendContainer('cardCode'),
@@ -90,6 +92,10 @@ describe('BraintreeHostedForm', () => {
         jest.spyOn(braintreeScriptLoader, 'loadHostedFields').mockResolvedValue({
             create: jest.fn().mockResolvedValue({ on: jest.fn() }),
         });
+
+        jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+            BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+        );
     });
 
     afterEach(() => {
@@ -100,6 +106,9 @@ describe('BraintreeHostedForm', () => {
 
     describe('#initialize', () => {
         it('creates and configures hosted fields', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
             const createMock = jest.fn();
             const clientMock = {
                 ...getClientMock(),
@@ -152,7 +161,64 @@ describe('BraintreeHostedForm', () => {
             });
         });
 
+        it('creates and configures hosted fields with preventCursorJumps', async () => {
+            const createMock = jest.fn();
+            const clientMock = {
+                ...getClientMock(),
+                request: expect.any(Function),
+            };
+
+            const options = {
+                fields: {
+                    cvv: {
+                        container: '#cardCode',
+                        internalLabel: undefined,
+                        placeholder: 'Card code',
+                    },
+                    expirationDate: {
+                        container: '#cardExpiry',
+                        internalLabel: undefined,
+                        placeholder: 'Card expiry',
+                    },
+                    number: {
+                        container: '#cardNumber',
+                        internalLabel: undefined,
+                        placeholder: 'Card number',
+                        supportedCardBrands: {
+                            'american-express': false,
+                            maestro: false,
+                        },
+                    },
+                    cardholderName: {
+                        container: '#cardName',
+                        internalLabel: undefined,
+                        placeholder: 'Card name',
+                    },
+                },
+                styles: {
+                    input: { color: '#000' },
+                    '.invalid': { color: '#f00', 'font-weight': 'bold' },
+                    ':focus': { color: '#00f' },
+                },
+                preventCursorJumps: true,
+            };
+
+            jest.spyOn(braintreeScriptLoader, 'loadHostedFields').mockResolvedValue({
+                create: createMock,
+            });
+
+            await subject.initialize(formOptions, unsupportedCardBrands, 'clientToken');
+
+            expect(createMock).toHaveBeenCalledWith({
+                ...options,
+                client: clientMock,
+            });
+        });
+
         it('creates and configures hosted fields for stored card verification', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_DEFAULT_VERSION,
+            );
             const createMock = jest.fn();
             const clientMock = {
                 ...getClientMock(),
