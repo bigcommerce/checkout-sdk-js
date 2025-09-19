@@ -26,7 +26,6 @@ export function getApplePayButtonInitializationOptionsWithBuyNow(): CheckoutButt
                 getBuyNowCartRequestBody: jest.fn().mockReturnValue(getBuyNowCartRequestBody()),
             },
             requiresShipping: false,
-            isWebBrowserSupported: true,
         },
     };
 }
