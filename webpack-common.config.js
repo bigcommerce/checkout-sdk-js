@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 
@@ -28,9 +29,10 @@ const libraryEntries = {
         'bundles',
         'hosted-form-v2-iframe-host.ts',
     ),
+    ...getIntegrationEntries(),
 };
 
-async function getBaseConfig() {
+async function getBaseConfig(_options, argv = {}) {
     return {
         stats: {
             errorDetails: true,
@@ -60,16 +62,41 @@ async function getBaseConfig() {
         plugins: [
             new DefinePlugin({
                 LIBRARY_VERSION: JSON.stringify(await getNextVersion()),
+                'process.env.NODE_ENV': JSON.stringify(
+                    process.env.NODE_ENV || argv.mode || 'production',
+                ),
+                'process.env.ESSENTIAL_BUILD': JSON.stringify(
+                    process.env.ESSENTIAL_BUILD || argv.essentialBuild || false,
+                ),
             }),
         ],
     };
+}
+
+function getIntegrationEntries() {
+    const integrationsPath = path.join(coreSrcPath, 'generated', 'integrations');
+    const integrationFolders = {};
+
+    fs.readdirSync(integrationsPath)
+        .filter((file) => {
+            return fs.statSync(path.join(integrationsPath, file)).isDirectory();
+        })
+        .forEach((folder) => {
+            integrationFolders[`integrations/${folder}`] = path.join(
+                integrationsPath,
+                folder,
+                'index.ts',
+            );
+        });
+
+    return integrationFolders;
 }
 
 const babelEnvPreset = [
     '@babel/preset-env',
     {
         corejs: 3,
-        targets: ['defaults', 'ie 11'],
+        targets: ['defaults'],
         useBuiltIns: 'usage',
     },
 ];

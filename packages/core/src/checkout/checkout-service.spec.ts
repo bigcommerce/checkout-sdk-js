@@ -253,8 +253,8 @@ describe('CheckoutService', () => {
         jest.spyOn(paymentStrategy, 'deinitialize').mockResolvedValue(Promise.resolve());
 
         paymentStrategyRegistry = new PaymentStrategyRegistry();
-        paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
-        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
+        paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService, {});
+        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService, {});
 
         // This can't be fixed until we have differences between core and payment integration api payment strategy types
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
@@ -379,6 +379,7 @@ describe('CheckoutService', () => {
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
             createCustomerStrategyRegistry(store, requestSender, locale),
             customerRegistryV2,
+            paymentIntegrationService,
         );
 
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
@@ -397,6 +398,7 @@ describe('CheckoutService', () => {
             paymentStrategyRegistryV2,
             orderActionCreator,
             spamProtectionActionCreator,
+            paymentIntegrationService,
         );
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(

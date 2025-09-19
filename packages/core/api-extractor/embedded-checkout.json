@@ -4,6 +4,6 @@
         "entryPointSourceFile": "../../temp/core/src/bundles/embedded-checkout.d.ts"
     },
     "dtsRollup": {
-        "mainDtsRollupPath": "embedded-checkout.d.ts"
+        "mainDtsRollupPath": "types/embedded-checkout.d.ts"
     }
 }
