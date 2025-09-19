@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.801.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.800.0...v1.801.0) (2025-09-19)
+
+
+### Features
+
+* **payment:** PAYPAL-5386 remove new apple pay version param ([e4e561b](https://github.com/bigcommerce/checkout-sdk-js/commit/e4e561b4886450ba4ec0d9d5a374adc96a0f11f4))
+* **payment:** PAYPAL-5386 remove new apple pay version param ([9456f76](https://github.com/bigcommerce/checkout-sdk-js/commit/9456f76df3475ba09a15ead9ad9cb886338a8fe3))
+
 ## [1.800.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.799.0...v1.800.0) (2025-09-19)
 
 
