@@ -220,8 +220,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const executeCallback = this.getExecuteCallback(fields);
-        const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
         const cardFieldsConfig: PayPalCommerceCardFieldsConfig = {
             style: this.getInputStyles(styles),
@@ -231,9 +229,8 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                 liabilityShift,
             }: PayPalCommerceCardFieldsOnApproveData) => {
                 if (
-                    features?.['PAYPAL-4591.paypal_commerce_3ds_verification'] &&
-                    (liabilityShift === LiabilityShiftEnum.No ||
-                        liabilityShift === LiabilityShiftEnum.Unknown)
+                    liabilityShift === LiabilityShiftEnum.No ||
+                    liabilityShift === LiabilityShiftEnum.Unknown
                 ) {
                     throw new Error();
                 }
