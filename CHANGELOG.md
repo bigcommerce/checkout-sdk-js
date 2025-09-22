@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.802.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.801.0...v1.802.0) (2025-09-22)
+
+
+### Features
+
+* **payment:** PAYPAL-5348 remove paypal 3ds experiment ([b843e02](https://github.com/bigcommerce/checkout-sdk-js/commit/b843e02fac1cc1980b1fea9727fecf95e79387f0))
+
 ## [1.801.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.800.0...v1.801.0) (2025-09-19)
 
 
