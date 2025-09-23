@@ -1,9 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`autoExport() export matching members from files to another file 1`] = `
-"export { StrategyA } from '../__fixtures__/strategy-a';
+Object {
+  "apiExtractorConfigs": Map {
+    "workspace-tools" => "{
+    \\"compiler\\": {
+        \\"configType\\": \\"tsconfig\\",
+        \\"rootFolder\\": \\"../../../..\\"
+    },
+    \\"project\\": {
+        \\"entryPointSourceFile\\": \\"/__temp__/workspace-tools/index.d.ts\\"
+    },
+    \\"validationRules\\": {
+        \\"missingReleaseTags\\": \\"allow\\"
+    },
+    \\"apiReviewFile\\": {
+        \\"enabled\\": false
+    },
+    \\"apiJsonFile\\": {
+        \\"enabled\\": false
+    },
+    \\"dtsRollup\\": {
+        \\"enabled\\": true,
+        \\"mainDtsRollupPath\\": \\"/__temp__/workspace-tools.d.ts\\"
+    }
+}",
+  },
+  "packageExports": Map {
+    "workspace-tools" => "export { StrategyA } from '../../__fixtures__/strategy-a';
+export { StrategyB } from '../../__fixtures__/strategy-b';
+",
+  },
+  "packageExportsGrouped": "export { StrategyA } from '../__fixtures__/strategy-a';
 export { StrategyB } from '../__fixtures__/strategy-b';
-"
+",
+}
 `;
 
-exports[`autoExport() handles scenario where no matching member is found 1`] = `""`;
+exports[`autoExport() handles scenario where no matching member is found 1`] = `
+Object {
+  "apiExtractorConfigs": Map {},
+  "packageExports": Map {},
+  "packageExportsGrouped": "",
+}
+`;

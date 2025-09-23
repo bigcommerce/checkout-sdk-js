@@ -3,8 +3,26 @@
   "version": "1.795.1",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
-  "main": "dist/checkout-sdk.js",
-  "typings": "dist/checkout-sdk.d.ts",
+  "main": "dist/cjs/checkout-sdk.js",
+  "module": "dist/esm/checkout-sdk.js",
+  "typings": "dist/types/checkout-sdk.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/checkout-sdk.d.ts",
+      "import": "./dist/esm/checkout-sdk.js",
+      "require": "./dist/cjs/checkout-sdk.js"
+    },
+    "./essential": {
+      "types": "./dist/types/checkout-sdk.d.ts",
+      "import": "./dist/esm/checkout-sdk-essential.js",
+      "require": "./dist/cjs/checkout-sdk-essential.js"
+    },
+    "./integrations/*": {
+      "types": "./dist/types/integrations/*.d.ts",
+      "import": "./dist/esm/integrations/*.js",
+      "require": "./dist/cjs/integrations/*.js"
+    }
+  },
   "files": [
     "dist/",
     "docs/"
@@ -32,7 +50,7 @@
     "build-cdn": "npx nx run core:build-cdn",
     "prebundle": "rm -rf dist",
     "bundle": "npx nx run core:build",
-    "bundle:analyze": "npm run --silent bundle -- --config-name umd --profile --json > webpack-stats.json && webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip",
+    "bundle:analyze": "npx nx run core:build-analyze",
     "bundle:watch": "export WATCH=true; npx nx run core:build-watch",
     "bundle-dts": "npx nx run core:build-dts",
     "docs": "npx nx run core:docs",
