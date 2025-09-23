@@ -5,7 +5,14 @@ const { DefinePlugin } = require('webpack');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 const { getNextVersion, transformManifest } = require('./scripts/webpack');
-const { babelLoaderRules, getBaseConfig, libraryEntries, libraryName, coreSrcPath } = require('./webpack-common.config');
+const { getPackageLoaderRules } = require('./scripts/webpack/package-loader-rule');
+const {
+    babelLoaderRules,
+    getBaseConfig,
+    libraryEntries,
+    libraryName,
+    coreSrcPath,
+} = require('./webpack-common.config');
 
 const baseOutputPath = path.join(__dirname, 'dist-cdn');
 
@@ -14,6 +21,7 @@ async function getCdnConfig(options, argv) {
     const version = await getNextVersion();
     const versionDir = `v${major(version)}`;
     const outputPath = path.join(baseOutputPath, versionDir);
+    const tsSrcPackages = getPackageLoaderRules('cjs');
 
     return {
         ...baseConfig,
@@ -26,10 +34,7 @@ async function getCdnConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [
-                ...babelLoaderRules,
-                ...baseConfig.module.rules,
-            ],
+            rules: [...babelLoaderRules, ...baseConfig.module.rules, ...tsSrcPackages],
         },
         plugins: [
             ...baseConfig.plugins,
@@ -37,7 +42,7 @@ async function getCdnConfig(options, argv) {
                 entrypoints: true,
                 output: path.join(outputPath, 'manifest.json'),
                 publicPath: path.join(versionDir, '/'),
-                transform: assets => transformManifest(assets, version),
+                transform: (assets) => transformManifest(assets, version),
             }),
         ],
     };
@@ -61,10 +66,7 @@ async function getCdnLoaderConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [
-                ...babelLoaderRules,
-                ...baseConfig.module.rules,
-            ],
+            rules: [...babelLoaderRules, ...baseConfig.module.rules],
         },
         plugins: [
             ...baseConfig.plugins,
@@ -77,7 +79,7 @@ async function getCdnLoaderConfig(options, argv) {
                     compiler.hooks.done.tap('DuplicateLoader', () => {
                         execFileSync('cp', [
                             path.join(outputPath, `loader-v${version}.js`),
-                            path.join(outputPath, `loader.js`)
+                            path.join(outputPath, `loader.js`),
                         ]);
                     });
                 },

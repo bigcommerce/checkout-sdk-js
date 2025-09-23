@@ -1,8 +1,6 @@
 export { createTimeout } from '@bigcommerce/request-sender';
 
-export { createCheckoutServiceWithIntegrations as createCheckoutService } from '../checkout';
-export { createCheckoutButtonInitializer } from '../checkout-buttons';
-export { embedCheckout } from '../embedded-checkout';
+export { createCheckoutService } from '../checkout';
 export { createEmbeddedCheckoutMessenger } from '../embedded-checkout/iframe-content';
 export { createLanguageService } from '../locale';
 export { createCurrencyService } from '../currency';
@@ -11,6 +9,5 @@ export {
     createBraintreeAnalyticTracker,
     createPayPalCommerceAnalyticTracker,
 } from '../analytics';
-export { createStoredCardHostedFormService } from '../hosted-form';
 export { createBodlService } from '../bodl';
 export { ExtensionCommandType, ExtensionQueryType, ExtensionQueryMap } from '../extension';

@@ -1,11 +1,8 @@
+const { EsbuildPlugin } = require('esbuild-loader');
 const fs = require('fs');
 const path = require('path');
-const { DefinePlugin } = require('webpack');
 
-const {
-    getNextVersion,
-    packageLoaderRules: { aliasMap: alias, tsSrcPackages },
-} = require('./scripts/webpack');
+const { getNextVersion, getPackageAliases } = require('./scripts/webpack');
 
 const libraryName = 'checkoutKit';
 
@@ -33,6 +30,16 @@ const libraryEntries = {
 };
 
 async function getBaseConfig(_options, argv = {}) {
+    const alias = getPackageAliases();
+    const esbuildPlugin = new EsbuildPlugin({
+        define: {
+            LIBRARY_VERSION: JSON.stringify(await getNextVersion()),
+            'process.env.NODE_ENV': JSON.stringify(
+                process.env.NODE_ENV || argv.mode || 'production',
+            ),
+        },
+    });
+
     return {
         stats: {
             errorDetails: true,
@@ -56,20 +63,9 @@ async function getBaseConfig(_options, argv = {}) {
                     enforce: 'pre',
                     loader: require.resolve('source-map-loader'),
                 },
-                ...tsSrcPackages,
             ],
         },
-        plugins: [
-            new DefinePlugin({
-                LIBRARY_VERSION: JSON.stringify(await getNextVersion()),
-                'process.env.NODE_ENV': JSON.stringify(
-                    process.env.NODE_ENV || argv.mode || 'production',
-                ),
-                'process.env.ESSENTIAL_BUILD': JSON.stringify(
-                    process.env.ESSENTIAL_BUILD || argv.essentialBuild || false,
-                ),
-            }),
-        ],
+        plugins: [esbuildPlugin],
     };
 }
 

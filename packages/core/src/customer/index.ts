@@ -9,7 +9,10 @@ export { default as InternalCustomer } from './internal-customer';
 export { default as Customer, CustomerAddress } from './customer';
 
 export { default as createCustomerStrategyRegistry } from './create-customer-strategy-registry';
-export { default as createCustomerStrategyRegistryV2 } from './create-customer-strategy-registry-v2';
+export {
+    default as createCustomerStrategyRegistryV2,
+    CustomerStrategyFactories,
+} from './create-customer-strategy-registry-v2';
 export { CustomerAction, CustomerActionType } from './customer-actions';
 export { default as customerReducer } from './customer-reducer';
 export {

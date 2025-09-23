@@ -1,22 +1,41 @@
 const path = require('path');
+
 const { projects } = require('../../workspace.json');
 
-const tsSrcPackages = [];
-const aliasMap = {};
+function getPackageLoaderRules(format) {
+    const tsSrcPackages = [];
 
-for (const [packageName, packagePath] of Object.entries(projects)) {
-    const packageSrcPath =  path.join(__dirname, '../../', `${packagePath}/src`);
+    Object.entries(projects).forEach(([_, packagePath]) => {
+        const packageSrcPath = path.join(__dirname, '../../', `${packagePath}/src`);
 
-    tsSrcPackages.push({
-        test: /\.[tj]s$/,
-        include: packageSrcPath,
-        loader: 'ts-loader',
+        tsSrcPackages.push({
+            test: /\.[tj]s$/,
+            include: packageSrcPath,
+            loader: 'esbuild-loader',
+            options: {
+                loader: 'ts',
+                target: 'es6',
+                format: ['cjs', 'esm'].includes(format) ? format : 'esm',
+            },
+        });
     });
 
-    aliasMap[`@bigcommerce/checkout-sdk/${packageName}`] = packageSrcPath;
+    return tsSrcPackages;
+}
+
+function getPackageAliases() {
+    const aliasMap = {};
+
+    Object.entries(projects).forEach(([packageName, packagePath]) => {
+        const packageSrcPath = path.join(__dirname, '../../', `${packagePath}/src`);
+
+        aliasMap[`@bigcommerce/checkout-sdk/${packageName}`] = packageSrcPath;
+    });
+
+    return aliasMap;
 }
 
 module.exports = {
-    aliasMap,
-    tsSrcPackages
+    getPackageLoaderRules,
+    getPackageAliases,
 };

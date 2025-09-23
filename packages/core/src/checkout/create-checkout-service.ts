@@ -19,6 +19,7 @@ import {
     CustomerActionCreator,
     CustomerRequestSender,
     CustomerStrategyActionCreator,
+    CustomerStrategyFactories,
 } from '../customer';
 import {
     createExtensionEventBroadcaster,
@@ -28,8 +29,6 @@ import {
     WorkerExtensionMessenger,
 } from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import * as customerStrategyFactories from '../generated/customer-strategies';
-import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
@@ -39,6 +38,7 @@ import {
     PaymentMethodActionCreator,
     PaymentMethodRequestSender,
     PaymentStrategyActionCreator,
+    PaymentStrategyFactories,
 } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
@@ -86,6 +86,12 @@ import createCheckoutStore from './create-checkout-store';
  * @returns an instance of `CheckoutService`.
  */
 export default function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService {
+    return createCheckoutServiceWithInternalOptions(options);
+}
+
+export function createCheckoutServiceWithInternalOptions(
+    options?: CheckoutServiceOptions & CheckoutServiceInternalOptions,
+): CheckoutService {
     if (document.location.protocol !== 'https:') {
         getDefaultLogger().warn(
             'The BigCommerce Checkout SDK should not be used on a non-HTTPS page',
@@ -112,6 +118,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         locale = '',
         shouldWarnMutation = true,
         errorLogger = new DefaultErrorLogger(),
+        integrations,
     } = options || {};
     const requestSender = createRequestSender({ host: options && options.host });
     const store = createCheckoutStore({ config }, { shouldWarnMutation });
@@ -144,16 +151,12 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        paymentStrategyFactories,
-        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
+        integrations?.payment ?? {},
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(
         paymentIntegrationService,
-        customerStrategyFactories,
-        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? {} : customerStrategyFactories,
+        integrations?.customer ?? {},
     );
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(requestSender),
@@ -203,6 +206,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
                 spamProtection,
                 locale,
                 errorLogger,
+                integrations?.payment,
             ),
             registryV2,
             orderActionCreator,
@@ -232,4 +236,11 @@ export interface CheckoutServiceOptions {
     shouldWarnMutation?: boolean;
     externalSource?: string;
     errorLogger?: ErrorLogger;
+}
+
+export interface CheckoutServiceInternalOptions {
+    integrations?: {
+        payment?: PaymentStrategyFactories;
+        customer?: CustomerStrategyFactories;
+    };
 }

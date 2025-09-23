@@ -13,7 +13,10 @@ export {
 } from './payment-additional-action';
 export { default as createPaymentClient } from './create-payment-client';
 export { default as createPaymentStrategyRegistry } from './create-payment-strategy-registry';
-export { default as createPaymentStrategyRegistryV2 } from './create-payment-strategy-registry-v2';
+export {
+    default as createPaymentStrategyRegistryV2,
+    PaymentStrategyFactories,
+} from './create-payment-strategy-registry-v2';
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
 export { default as isNonceLike } from './is-nonce-like';
 export { default as isVaultedInstrument } from './is-vaulted-instrument';

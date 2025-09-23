@@ -12,7 +12,6 @@ import { ErrorLogger } from '../common/error';
 import { BrowserStorage } from '../common/storage';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentIntegrationService } from '../payment-integration';
@@ -24,7 +23,9 @@ import {
     SpamProtectionRequestSender,
 } from '../spam-protection';
 
-import createPaymentStrategyRegistryV2 from './create-payment-strategy-registry-v2';
+import createPaymentStrategyRegistryV2, {
+    PaymentStrategyFactories,
+} from './create-payment-strategy-registry-v2';
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import PaymentMethodRequestSender from './payment-method-request-sender';
@@ -64,6 +65,7 @@ export default function createPaymentStrategyRegistry(
     spamProtection: GoogleRecaptcha,
     locale: string,
     errorLogger: ErrorLogger,
+    paymentStrategyFactories?: PaymentStrategyFactories,
 ) {
     const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
@@ -75,9 +77,7 @@ export default function createPaymentStrategyRegistry(
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        paymentStrategyFactories,
-        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
+        paymentStrategyFactories ?? {},
     );
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);

@@ -43,6 +43,7 @@ export { default as InternalCheckoutSelectors } from './internal-checkout-select
 
 export { default as createActionTransformer } from './create-action-transformer';
 export { default as createCheckoutService } from './create-checkout-service';
+export { default as createCheckoutServiceWithIntegrations } from './create-checkout-service-with-integrations';
 export { default as createCheckoutStore } from './create-checkout-store';
 export { default as createCheckoutSelectors } from './create-checkout-selectors';
 export {

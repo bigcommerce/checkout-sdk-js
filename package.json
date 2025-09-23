@@ -13,7 +13,7 @@
       "require": "./dist/cjs/checkout-sdk.js"
     },
     "./essential": {
-      "types": "./dist/types/checkout-sdk.d.ts",
+      "types": "./dist/types/checkout-sdk-essential.d.ts",
       "import": "./dist/esm/checkout-sdk-essential.js",
       "require": "./dist/cjs/checkout-sdk-essential.js"
     },
@@ -120,6 +120,7 @@
     "babel-loader": "^8.0.6",
     "check-node-version": "^3.2.0",
     "conventional-recommended-bump": "^6.0.5",
+    "esbuild-loader": "^4.3.0",
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
