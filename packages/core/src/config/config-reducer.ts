@@ -1,5 +1,6 @@
 import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
+import { CheckoutHydrateAction, CheckoutHydrateActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
 
@@ -20,10 +21,16 @@ export default function configReducer(
     return reducer(state, action);
 }
 
-function dataReducer(data: Config | undefined, action: LoadConfigAction): Config | undefined {
+function dataReducer(
+    data: Config | undefined,
+    action: LoadConfigAction | CheckoutHydrateAction,
+): Config | undefined {
     switch (action.type) {
         case ConfigActionType.LoadConfigSucceeded:
             return objectMerge(data, action.payload);
+
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return objectMerge(data, action.payload?.config);
 
         default:
             return data;
