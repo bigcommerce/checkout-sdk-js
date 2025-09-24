@@ -1,4 +1,5 @@
 export * from './checkout-actions';
+export * from './checkout-hydrate-actions';
 
 export { default as Checkout, CheckoutPayment } from './checkout';
 export { default as CHECKOUT_DEFAULT_INCLUDES } from './checkout-default-includes';
