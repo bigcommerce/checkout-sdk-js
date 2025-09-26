@@ -586,7 +586,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
                 expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
                     cartId: cart.id,
-                    fastlaneToken: 'paypal_fastlane_instrument_id_nonce',
+                    fastlaneToken: 'paypal_fastlane_instrument_id_nonce_3ds',
                 });
             });
 
