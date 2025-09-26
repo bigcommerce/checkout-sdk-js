@@ -21,6 +21,7 @@ export const defaultAccordionStyles: Record<string, string | number> = { fieldTe
 export function getStripeOCSMock(method = methodId): PaymentMethod {
     return {
         id: method,
+        skipRedirectConfirmationAlert: true,
         gateway: gatewayId,
         logoUrl: '',
         method,

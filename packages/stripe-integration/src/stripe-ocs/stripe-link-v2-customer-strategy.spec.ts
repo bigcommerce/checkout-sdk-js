@@ -41,6 +41,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
     let stripeEventEmitter: EventEmitter;
     let stripeIntegrationService: StripeIntegrationService;
     let loadingIndicator: LoadingIndicator;
+    const stripePaymentMethod = getStripeOCSMock();
 
     const isLoading = jest.fn();
     let confirmPaymentMock: jest.Mock;
@@ -132,7 +133,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
             paymentIntegrationService.getState(),
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-            getStripeOCSMock(),
+            stripePaymentMethod,
         );
         jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
             Promise.resolve(false),
@@ -195,10 +196,14 @@ describe('StripeLinkV2CustomerStrategy', () => {
             ).rejects.toThrow(NotInitializedError);
         });
 
-        it('loads Stripe client and mounts element successfully', () => {
-            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
-                getStripeOCSMock().initializationData,
-            );
+        it('loads Stripe client and mounts element successfully with captureMethod: automatic', async () => {
+            stripePaymentMethod.initializationData.captureMethod = 'automatic';
+            await strategy.initialize(initialiseOptions);
+
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith({
+                ...stripePaymentMethod.initializationData,
+                captureMethod: 'automatic',
+            });
             expect(elements.create).toHaveBeenCalledWith(
                 'expressCheckout',
                 expressCheckoutOptionsMock,
@@ -206,6 +211,28 @@ describe('StripeLinkV2CustomerStrategy', () => {
             expect(stripeClient.elements).toHaveBeenCalledWith({
                 amount: 19000,
                 currency: 'usd',
+                captureMethod: 'automatic',
+                mode: 'payment',
+            });
+            expect(element.mount).toHaveBeenCalledWith('#checkout-button');
+        });
+
+        it('loads Stripe client and mounts element successfully with captureMethod: manual', async () => {
+            stripePaymentMethod.initializationData.captureMethod = 'manual';
+            await strategy.initialize(initialiseOptions);
+
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith({
+                ...stripePaymentMethod.initializationData,
+                captureMethod: 'manual',
+            });
+            expect(elements.create).toHaveBeenCalledWith(
+                'expressCheckout',
+                expressCheckoutOptionsMock,
+            );
+            expect(stripeClient.elements).toHaveBeenCalledWith({
+                amount: 19000,
+                currency: 'usd',
+                captureMethod: 'manual',
                 mode: 'payment',
             });
             expect(element.mount).toHaveBeenCalledWith('#checkout-button');

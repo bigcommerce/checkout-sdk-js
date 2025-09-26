@@ -46,7 +46,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _amountTransformer?: AmountTransformer;
     private _onComplete?: (orderId?: number) => Promise<never>;
     private _loadingIndicatorContainer?: string;
-
+    private _captureMethod?: 'automatic' | 'manual';
     private _currencyCode?: string;
 
     constructor(
@@ -88,7 +88,9 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         }
 
         const { initializationData } = paymentMethod;
+        const { captureMethod } = initializationData;
 
+        this._captureMethod = captureMethod;
         this._stripeClient = await this.scriptLoader.getStripeClient(initializationData);
 
         await this._mountExpressCheckoutElement(
@@ -153,6 +155,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             mode: 'payment',
             amount: this._toCents(cartAmount),
             currency: this._getCurrency(),
+            ...(this._captureMethod ? { captureMethod: this._captureMethod } : {}),
         };
 
         this._stripeElements = stripeExpressCheckoutClient.elements(elementsOptions);
