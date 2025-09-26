@@ -2,7 +2,6 @@ import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/cr
 
 import { RequestOptions } from '../common/http-request';
 
-import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
 import {
     BraintreePaymentInitializeOptions,
     BraintreeVisaCheckoutPaymentInitializeOptions,
@@ -42,12 +41,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the BlueSnapV2 payment method.
-     * They can be omitted unless you need to support BlueSnapV2.
-     */
-    bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Braintree payment method.

@@ -6,3 +6,5 @@ export {
     BlueSnapDirectAPMInitializeOptions,
     WithBlueSnapDirectAPMPaymentInitializeOptions,
 } from './types';
+
+export { WithBlueSnapV2PaymentInitializeOptions } from './bluesnapv2/bluesnapv2-payment-options';
