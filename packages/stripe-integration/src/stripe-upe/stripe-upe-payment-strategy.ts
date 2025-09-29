@@ -23,10 +23,11 @@ import {
     RequestError,
     StripeUPEIntent,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import {
-    formatLocale,
+    formatStripeLocale,
     isStripePaymentMethodLike,
+    STRIPE_UPE_CLIENT_API_VERSION,
+    STRIPE_UPE_CLIENT_BETAS,
     StripeAdditionalActionRequired,
     StripeAppearanceOptions,
     StripeClient,
@@ -44,10 +45,9 @@ import {
     StripeResult,
     StripeScriptLoader,
     StripeStringConstants,
-} from '../stripe-utils';
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
-import { STRIPE_CLIENT_API_VERSION, STRIPE_CLIENT_BETAS } from './stripe-upe-constants';
 import StripeUPEPaymentInitializeOptions, {
     WithStripeUPEPaymentInitializeOptions,
 } from './stripe-upe-initialize-options';
@@ -272,7 +272,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: clientToken,
-            locale: formatLocale(shopperLanguage),
+            locale: formatStripeLocale(shopperLanguage),
             appearance,
         });
 
@@ -451,8 +451,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         return this.scriptLoader.getStripeClient(
             initializationData,
-            STRIPE_CLIENT_BETAS,
-            STRIPE_CLIENT_API_VERSION,
+            STRIPE_UPE_CLIENT_BETAS,
+            STRIPE_UPE_CLIENT_API_VERSION,
         );
     }
 

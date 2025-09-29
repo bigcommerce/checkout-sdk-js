@@ -1,7 +1,5 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeLinkV2Event, StripeLinkV2ShippingRate } from '../stripe-ocs/stripe-ocs';
-
 /**
  * Initialization options.
  */
@@ -362,7 +360,7 @@ export interface StripeElementsCreateOptions {
     allowedCountries?: string[];
     defaultValues?: ShippingDefaultValues | CustomerDefaultValues | PaymentDefaultValues;
     validation?: validationElement;
-    display?: { name: DisplayName };
+    display?: { name: StripeDisplayName };
     terms?: TermOptions;
     layout?: StripeLayoutOptions;
     paymentMethodOrder?: string[];
@@ -419,7 +417,7 @@ export enum StripeFormMode {
     BILLING = 'billing',
 }
 
-export enum DisplayName {
+export enum StripeDisplayName {
     SPLIT = 'split',
     FULL = 'full',
     ORGANIZATION = 'organization',
@@ -430,7 +428,7 @@ interface CustomerDefaultValues {
     email: string;
     allowedCountries?: string[];
     display?: {
-        name: DisplayName;
+        name: StripeDisplayName;
     };
 }
 
@@ -667,4 +665,66 @@ export interface StripeSavePaymentMethod {
 export enum StripeInstrumentSetupFutureUsage {
     ON_SESSION = 'on_session',
     OFF_SESSION = 'off_session',
+}
+
+export interface StripeLinkV2Event {
+    value?: null;
+    billingDetails?: {
+        name?: string;
+        email?: string;
+        phone?: string;
+        address?: {
+            line1?: string;
+            city?: string;
+            country?: string;
+            postal_code?: string;
+            state?: string;
+        };
+    };
+    shippingAddress?: {
+        name?: string;
+        address?: {
+            line1?: string;
+            line2?: string;
+            city?: string;
+            country?: string;
+            postal_code?: string;
+            state?: string;
+        };
+    };
+    address?: {
+        line1?: string;
+        city?: string;
+        country?: string;
+        postal_code?: string;
+        state?: string;
+    };
+    shippingRate?: StripeLinkV2ShippingRate;
+    elementType: string;
+    expressPaymentType: string;
+    resolve(data: StripeLinkV2EventResolveData): void;
+}
+
+export interface StripeLinkV2EventResolveData {
+    lineItems?: LineItem[];
+    allowedShippingCountries?: string[];
+    shippingAddressRequired?: boolean;
+    shippingRates?: StripeLinkV2ShippingRate[];
+    billingAddressRequired?: boolean;
+    emailRequired?: boolean;
+    phoneNumberRequired?: boolean;
+}
+
+export interface StripeLinkV2ShippingRate {
+    id: string;
+    amount: number;
+    displayName: string;
+}
+
+export interface StripeLinkV2Options {
+    clientSecret?: string;
+    mode?: string;
+    currency?: string;
+    captureMethod?: 'automatic' | 'manual';
+    amount?: number;
 }
