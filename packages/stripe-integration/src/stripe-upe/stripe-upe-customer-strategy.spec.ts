@@ -13,14 +13,13 @@ import {
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
 import {
     StripeClient,
     StripeCustomerEvent,
     StripeElement,
     StripeHostWindow,
     StripeScriptLoader,
-} from '../stripe-utils';
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import StripeUPECustomerStrategy from './stripe-upe-customer-strategy';
 import {

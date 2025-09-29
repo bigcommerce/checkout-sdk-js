@@ -4,9 +4,11 @@ import {
     CustomerStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    StripeIntegrationService,
+    StripeScriptLoader,
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 import { DEFAULT_CONTAINER_STYLES, LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import { StripeIntegrationService, StripeScriptLoader } from '../stripe-utils';
 
 import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
 

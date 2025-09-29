@@ -4,8 +4,10 @@ import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { StripeIntegrationService, StripeScriptLoader } from '../stripe-utils';
+import {
+    StripeIntegrationService,
+    StripeScriptLoader,
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 
