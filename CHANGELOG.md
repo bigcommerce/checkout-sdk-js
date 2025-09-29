@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.803.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.802.0...v1.803.0) (2025-09-29)
+
+
+### Features
+
+* **core:** CHECKOUT-9450 Export ESM modules and separate payment integration strategies from core bundle ([c88606f](https://github.com/bigcommerce/checkout-sdk-js/commit/c88606f92a53f75562bd45e9844f48bd698bb9e9))
+* **payment:** Stripe OCS Link captureMethod added ([2d8ac28](https://github.com/bigcommerce/checkout-sdk-js/commit/2d8ac28ab7869b8675683fc992a91370a8d95b19))
+
 ## [1.802.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.801.0...v1.802.0) (2025-09-22)
 
 
