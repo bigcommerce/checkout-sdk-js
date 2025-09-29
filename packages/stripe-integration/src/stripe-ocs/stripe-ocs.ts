@@ -58,5 +58,6 @@ export interface StripeLinkV2Options {
     clientSecret?: string;
     mode?: string;
     currency?: string;
+    captureMethod?: 'automatic' | 'manual';
     amount?: number;
 }

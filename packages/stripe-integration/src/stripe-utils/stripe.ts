@@ -622,6 +622,7 @@ export interface StripeInitializationData {
     customerSessionToken?: string;
     enableLink?: boolean;
     allowRedisplayForStoredInstruments?: boolean;
+    captureMethod?: 'automatic' | 'manual';
 }
 
 export interface StripeElementUpdateOptions {
