@@ -57,6 +57,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
     };
 
     const storeConfig = getConfig().storeConfig;
+    const resumeMock = jest.fn();
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
@@ -182,6 +183,8 @@ describe('PayPalCommerceCustomerStrategy', () => {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
                     close: jest.fn(),
+                    hasReturned: jest.fn().mockReturnValue(true),
+                    resume: resumeMock,
                 };
             },
         );
@@ -289,6 +292,24 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
             });
+        });
+
+        it('calls PayPal button resume', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5716.app_switch_functionality': true,
+                    },
+                },
+            });
+            await strategy.initialize(initializationOptions);
+
+            expect(resumeMock).toHaveBeenCalled();
         });
 
         it('initializes paypal buttons with config related to hosted checkout feature', async () => {
