@@ -70,8 +70,6 @@ describe('PayPalCommerceButtonStrategy', () => {
         paypalcommerce: buyNowPayPalCommerceOptions,
     };
 
-    const storeConfig = getConfig().storeConfig;
-
     const paypalCommerceOptions: PayPalCommerceButtonInitializeOptions = {
         style: {
             height: 45,
@@ -609,10 +607,6 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('creates paypal order with user agent', async () => {
-            Object.defineProperty(window.navigator, 'userAgent', {
-                value: 'Mozilla',
-                configurable: true,
-            });
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getStoreConfigOrThrow',
@@ -633,7 +627,6 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommerce',
-                { userAgent: 'Mozilla' },
             );
         });
     });
