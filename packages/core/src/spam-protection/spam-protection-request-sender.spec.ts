@@ -1,8 +1,9 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
+import { EmptyCartError } from '../cart/errors';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
-import { getResponse } from '../common/http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import SpamProtectionRequestSender from './spam-protection-request-sender';
 
@@ -66,6 +67,24 @@ describe('SpamProtection Request Sender', () => {
                         token,
                     },
                 },
+            );
+        });
+
+        it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 422,
+                    title: 'The request could not process',
+                    type: 'empty_cart',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            await expect(spamProtectionRequestSender.validate(checkoutId, token)).rejects.toThrow(
+                EmptyCartError,
             );
         });
     });

@@ -107,7 +107,8 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
+        const { isHostedCheckoutEnabled, isAppSwitchEnabled } =
+            paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
             ...(this.isPaypalCommerceAppSwitchEnabled() && { appSwitchWhenAvailable: true }),
@@ -126,10 +127,12 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         };
 
         const hostedCheckoutCallbacks = {
-            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                this.onShippingAddressChange(data),
-            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                this.onShippingOptionsChange(data),
+            ...(!isAppSwitchEnabled && {
+                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                    this.onShippingAddressChange(data),
+                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                    this.onShippingOptionsChange(data),
+            }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };

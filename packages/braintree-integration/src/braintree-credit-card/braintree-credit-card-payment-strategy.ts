@@ -9,6 +9,7 @@ import {
 import {
     Address,
     isHostedInstrumentLike,
+    isRequestError,
     isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
@@ -27,6 +28,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
+import isBraintreeError from '../is-braintree-error';
 
 import { WithBraintreeCreditCardPaymentInitializeOptions } from './braintree-credit-card-payment-initialize-options';
 
@@ -134,7 +136,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     }
 
     private handleError(error: unknown): never {
-        if (error instanceof Error && error.name === 'BraintreeError') {
+        if (isBraintreeError(error)) {
             throw new PaymentMethodFailedError(error.message);
         }
 
@@ -226,9 +228,8 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         orderAmount: number,
     ): Promise<void> {
         if (
-            isBraintreePaymentRequest3DSError(error) &&
-            (error.name !== 'RequestError' ||
-                !some(error.body.errors, { code: 'three_d_secure_required' }))
+            !isRequestError(error) ||
+            !some(error.body.errors, { code: 'three_d_secure_required' })
         ) {
             return this.handleError(error);
         }

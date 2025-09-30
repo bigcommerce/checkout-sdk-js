@@ -26,6 +26,7 @@ export function getStripeUPEMock(method = 'card'): PaymentMethod {
             stripeConnectedAccount: 'key',
             browserLanguageEnabled: false,
             shopperLanguage: 'en',
+            allowRedisplayForStoredInstruments: true,
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',

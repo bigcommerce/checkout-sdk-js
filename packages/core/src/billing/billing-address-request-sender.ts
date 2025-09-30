@@ -1,6 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { AddressRequestBody } from '../address';
+import { EmptyCartError } from '../cart/errors';
 import { Checkout } from '../checkout';
 import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
@@ -29,12 +30,20 @@ export default class BillingAddressRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.post(url, {
-            body: address,
-            params: DEFAULT_PARAMS,
-            headers,
-            timeout,
-        });
+        return this._requestSender
+            .post<Checkout>(url, {
+                body: address,
+                params: DEFAULT_PARAMS,
+                headers,
+                timeout,
+            })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 
     updateAddress(
@@ -49,6 +58,14 @@ export default class BillingAddressRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.put(url, { params: DEFAULT_PARAMS, body, headers, timeout });
+        return this._requestSender
+            .put<Checkout>(url, { params: DEFAULT_PARAMS, body, headers, timeout })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 }

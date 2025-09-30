@@ -448,25 +448,16 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
             if (
                 liabilityShift === LiabilityShiftEnum.No ||
-                liabilityShift === LiabilityShiftEnum.Unknown
+                liabilityShift === LiabilityShiftEnum.Unknown ||
+                authenticationState === TDSecureAuthenticationState.Errored ||
+                authenticationState === TDSecureAuthenticationState.Cancelled
             ) {
                 throw new PaymentMethodInvalidError();
             }
 
-            await this.createOrder(paypalNonce);
-
             if (authenticationState === TDSecureAuthenticationState.Succeeded) {
+                await this.createOrder(nonce);
                 return nonce;
-            }
-
-            // Cancelled or errored, merchant can choose to send the customer back to 3D Secure or submit a payment and or vault the payment token.
-            if (authenticationState === TDSecureAuthenticationState.Errored) {
-                throw new PaymentMethodInvalidError();
-            }
-
-            if (authenticationState === TDSecureAuthenticationState.Cancelled) {
-                console.error('3DS check was canceled');
-                throw new PaymentMethodInvalidError();
             }
         }
 

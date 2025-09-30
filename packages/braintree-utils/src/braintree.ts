@@ -215,6 +215,7 @@ export interface BraintreeHostedFieldsCreatorConfig extends BraintreeModuleCreat
         '.valid'?: { [key: string]: string };
         ':focus'?: { [key: string]: string };
     };
+    preventCursorJumps?: boolean;
 }
 
 export interface BraintreeHostedFieldOption {
@@ -469,8 +470,8 @@ export interface BraintreeVenmoCheckout extends BraintreeModule {
 }
 
 export interface BraintreeVenmoCreatorConfig extends BraintreeModuleCreatorConfig {
-    allowDesktop: boolean;
-    paymentMethodUsage: string;
+    allowDesktop?: boolean;
+    paymentMethodUsage?: string;
 }
 
 /**

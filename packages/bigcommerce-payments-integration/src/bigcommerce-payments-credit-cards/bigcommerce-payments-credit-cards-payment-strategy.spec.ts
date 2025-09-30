@@ -25,7 +25,6 @@ import {
 import {
     getBillingAddress,
     getCart,
-    getConfig,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -479,18 +478,6 @@ describe('BigCommercePaymentsCreditCardsPaymentStrategy', () => {
         });
 
         it('does not submit order and payment if 3ds failed', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                ...getConfig().storeConfig,
-                checkoutSettings: {
-                    ...getConfig().storeConfig.checkoutSettings,
-                    features: {
-                        'PAYPAL-4591.paypal_commerce_3ds_verification': true,
-                    },
-                },
-            });
             jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
                 (options: BigCommercePaymentsCardFieldsConfig) => {
                     eventEmitter.on('onApprove', () => {

@@ -10,6 +10,7 @@ import BraintreeScriptLoader from './braintree-script-loader';
 import { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
 import {
     BRAINTREE_SDK_DEFAULT_VERSION,
+    BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BRAINTREE_SDK_STABLE_VERSION,
 } from './braintree-sdk-verison';
 import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
@@ -56,6 +57,8 @@ describe('BraintreeScriptLoader', () => {
         BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_DEFAULT_VERSION];
     const braintreeSdkStableScriptsIntegrity =
         BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_STABLE_VERSION];
+    const braintreeSdkFixedHostedFieldsScriptsIntegrity =
+        BRAINTREE_SDK_SCRIPTS_INTEGRITY[BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION];
     const thirdPartyBraintreeVersion = '3.123.4';
 
     beforeEach(() => {
@@ -123,6 +126,34 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity: braintreeSdkDefaultScriptsIntegrity[BraintreeModuleName.Client],
+                    },
+                },
+            );
+            expect(client).toBe(clientMock);
+        });
+
+        it('loads the client with fixed hosted fields version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const client = await braintreeScriptLoader.loadClient();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/client.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.Client
+                            ],
                     },
                 },
             );
@@ -221,6 +252,33 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity: braintreeSdkStableScriptsIntegrity[BraintreeModuleName.Fastlane],
+                    },
+                },
+            );
+            expect(fastlane).toBe(fastlaneCreatorMock);
+        });
+
+        it('loads fastlane module with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const fastlane = await braintreeScriptLoader.loadFastlane();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/fastlane.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.Fastlane
+                            ],
                     },
                 },
             );
@@ -352,6 +410,34 @@ describe('BraintreeScriptLoader', () => {
             expect(paypalCheckout).toBe(paypalCheckoutMock);
         });
 
+        it('loads the paypalCheckout with fixed hosted fields version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const paypalCheckout = await braintreeScriptLoader.loadPaypalCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/paypal-checkout.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.PaypalCheckout
+                            ],
+                    },
+                },
+            );
+            expect(paypalCheckout).toBe(paypalCheckout);
+        });
+
         it('loads PayPal checkout with default version of braintree sdk', async () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
                 BRAINTREE_SDK_DEFAULT_VERSION,
@@ -477,6 +563,33 @@ describe('BraintreeScriptLoader', () => {
             );
         });
 
+        it('loads local payment methods with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadLocalPayment();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/local-payment.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.LocalPayment
+                            ],
+                    },
+                },
+            );
+        });
+
         it('loads local payment methods with default version of braintree sdk', async () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
                 BRAINTREE_SDK_DEFAULT_VERSION,
@@ -567,6 +680,33 @@ describe('BraintreeScriptLoader', () => {
                         crossorigin: 'anonymous',
                         integrity:
                             braintreeSdkStableScriptsIntegrity[BraintreeModuleName.GooglePayment],
+                    },
+                },
+            );
+        });
+
+        it('loads google payment methods with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadGooglePayment();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/google-payment.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.GooglePayment
+                            ],
                     },
                 },
             );
@@ -666,6 +806,33 @@ describe('BraintreeScriptLoader', () => {
             );
         });
 
+        it('loads braintree paypal payment methods with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadPaypal();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/paypal.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.Paypal
+                            ],
+                    },
+                },
+            );
+        });
+
         it('loads braintree paypal payment methods with default version of braintree sdk', async () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
                 BRAINTREE_SDK_DEFAULT_VERSION,
@@ -755,6 +922,33 @@ describe('BraintreeScriptLoader', () => {
                         crossorigin: 'anonymous',
                         integrity:
                             braintreeSdkStableScriptsIntegrity[BraintreeModuleName.ThreeDSecure],
+                    },
+                },
+            );
+        });
+
+        it('loads threeDSecure methods with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.load3DS();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/three-d-secure.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.ThreeDSecure
+                            ],
                     },
                 },
             );
@@ -855,6 +1049,33 @@ describe('BraintreeScriptLoader', () => {
             );
         });
 
+        it('loads visaCheckout methods with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/visa-checkout.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.VisaCheckout
+                            ],
+                    },
+                },
+            );
+        });
+
         it('loads visaCheckout methods with default version of braintree sdk', async () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
                 BRAINTREE_SDK_DEFAULT_VERSION,
@@ -945,6 +1166,33 @@ describe('BraintreeScriptLoader', () => {
                         crossorigin: 'anonymous',
                         integrity:
                             braintreeSdkStableScriptsIntegrity[BraintreeModuleName.HostedFields],
+                    },
+                },
+            );
+        });
+
+        it('loads hostedFields methods with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/hosted-fields.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.HostedFields
+                            ],
                     },
                 },
             );
@@ -1044,6 +1292,33 @@ describe('BraintreeScriptLoader', () => {
             );
         });
 
+        it('loads venmoCheckout methods with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+
+            await braintreeScriptLoader.loadVenmoCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/venmo.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.Venmo
+                            ],
+                    },
+                },
+            );
+        });
+
         it('loads venmoCheckout methods with default version of braintree sdk', async () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
                 BRAINTREE_SDK_DEFAULT_VERSION,
@@ -1132,6 +1407,33 @@ describe('BraintreeScriptLoader', () => {
                         crossorigin: 'anonymous',
                         integrity:
                             braintreeSdkStableScriptsIntegrity[BraintreeModuleName.DataCollector],
+                    },
+                },
+            );
+            expect(dataCollector).toBe(dataCollectorMock);
+        });
+
+        it('loads the data collector library with hosted fields fix version of braintree sdk', async () => {
+            jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
+                BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
+            );
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                mockWindow,
+                braintreeSDKVersionManager,
+            );
+            const dataCollector = await braintreeScriptLoader.loadDataCollector();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION}/js/data-collector.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            braintreeSdkFixedHostedFieldsScriptsIntegrity[
+                                BraintreeModuleName.DataCollector
+                            ],
                     },
                 },
             );

@@ -40,6 +40,7 @@ describe('HostedField', () => {
             eventPoster as IframeEventPoster<HostedFieldEvent>,
             eventListener as IframeEventListener<HostedInputEventMap>,
             detachmentObserver as DetachmentObserver,
+            'some-checkout-id',
         );
     });
 
@@ -53,12 +54,12 @@ describe('HostedField', () => {
         expect(document.querySelector('#field-container-id iframe')).toBeDefined();
     });
 
-    it('sets iframe URL with version param', () => {
+    it('sets iframe URL with version param and checkout param', () => {
         field.attach();
 
         // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
-            `${location.origin}/checkout/payment/hosted-field?version=1.0.0`,
+            `${location.origin}/checkout/payment/hosted-field?version=1.0.0&checkoutId=some-checkout-id`,
         );
     });
 

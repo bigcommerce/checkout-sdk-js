@@ -7,6 +7,7 @@ import {
     guard,
     NotInitializedError,
     NotInitializedErrorType,
+    Omit,
     PaymentMethod,
     PaymentMethodFailedError,
     SDK_VERSION_HEADERS,

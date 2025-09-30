@@ -32,6 +32,7 @@ import {
     StripeInstrumentSetupFutureUsage,
     StripeIntegrationService,
     StripePIPaymentMethodOptions,
+    StripePIPaymentMethodSavingOptions,
     StripeResult,
     StripeScriptLoader,
     StripeStringConstants,
@@ -257,12 +258,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         paymentMethodOptions?: StripePIPaymentMethodOptions,
     ): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
-        const shouldSaveInstrument = this._shouldSaveInstrument(paymentMethodOptions);
-        const tokenizedOptions = this._getTokenizedOptions(
-            token,
-            shouldSaveInstrument,
-            paymentMethodOptions,
-        );
+        const { card, us_bank_account } = paymentMethodOptions || {};
+        const shouldSaveInstrument =
+            this._shouldSaveInstrument(card) || this._shouldSaveInstrument(us_bank_account);
+        const tokenizedOptions = this._getTokenizedOptions(token, paymentMethodOptions);
 
         const formattedPayload = {
             cart_id: cartId,
@@ -367,9 +366,8 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         paymentMethodSelect?.(`${gatewayId}-${methodId}`);
     }
 
-    private _shouldSaveInstrument(paymentMethodOptions?: StripePIPaymentMethodOptions) {
-        const paymentMethod = paymentMethodOptions?.card || paymentMethodOptions?.us_bank_account;
-        const setupFutureUsage = paymentMethod?.setup_future_usage;
+    private _shouldSaveInstrument(paymentMethodOptions?: StripePIPaymentMethodSavingOptions) {
+        const setupFutureUsage = paymentMethodOptions?.setup_future_usage;
 
         return (
             setupFutureUsage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
@@ -379,10 +377,9 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
     private _getTokenizedOptions(
         token: string,
-        shouldSaveInstrument?: boolean,
         paymentMethodOptions?: StripePIPaymentMethodOptions,
     ) {
-        if (shouldSaveInstrument && paymentMethodOptions?.us_bank_account) {
+        if (this._shouldSaveInstrument(paymentMethodOptions?.us_bank_account)) {
             return { tokenized_ach: { token } };
         }
 

@@ -251,7 +251,27 @@ describe('BraintreePaypalPaymentStrategy', () => {
             );
         });
 
-        it('renders Braintree PayPal message', async () => {
+        it('renders Braintree PayPal message for braintreepaypalcredit', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({ ...paymentMethodMock, id: 'braintreepaypalcredit' });
+
+            const options = {
+                methodId: 'braintreepaypalcredit',
+                braintree: { bannerContainerId: 'banner-container-id' },
+            };
+
+            await strategy.initialize(options);
+
+            expect(braintreeMessages.render).toHaveBeenCalledWith(
+                'braintreepaypalcredit',
+                'banner-container-id',
+                'payment',
+            );
+        });
+
+        it('renders Braintree PayPal message if isCreditEnabled is falsy', async () => {
             const options = {
                 methodId: paymentMethodMock.id,
                 braintree: { bannerContainerId: 'banner-container-id' },
@@ -264,6 +284,26 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 'banner-container-id',
                 'payment',
             );
+        });
+
+        it('does NOT render Braintree PayPal message if method is not braintreepaypalcredit and isCreditEnabled is true', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethodMock,
+                id: 'braintreepaypal',
+                initializationData: { isCreditEnabled: true },
+            });
+
+            const options = {
+                methodId: 'braintreepaypal',
+                braintree: { bannerContainerId: 'banner-container-id' },
+            };
+
+            await strategy.initialize(options);
+
+            expect(braintreeMessages.render).not.toHaveBeenCalled();
         });
 
         it('throws error if unable to initialize', async () => {

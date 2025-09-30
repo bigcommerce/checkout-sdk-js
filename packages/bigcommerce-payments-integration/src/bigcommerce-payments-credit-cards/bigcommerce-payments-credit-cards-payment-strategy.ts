@@ -227,8 +227,6 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
 
         const paypalSdk = this.bigCommercePaymentsIntegrationService.getPayPalSdkOrThrow();
         const executeCallback = this.getExecuteCallback(fields);
-        const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
         const cardFieldsConfig: BigCommercePaymentsCardFieldsConfig = {
             style: this.getInputStyles(styles),
@@ -238,9 +236,8 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
                 liabilityShift,
             }: BigCommercePaymentsCardFieldsOnApproveData) => {
                 if (
-                    features?.['PAYPAL-4591.paypal_commerce_3ds_verification'] &&
-                    (liabilityShift === LiabilityShiftEnum.No ||
-                        liabilityShift === LiabilityShiftEnum.Unknown)
+                    liabilityShift === LiabilityShiftEnum.No ||
+                    liabilityShift === LiabilityShiftEnum.Unknown
                 ) {
                     throw new Error();
                 }

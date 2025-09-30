@@ -1,7 +1,9 @@
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 
+import { EmptyCartError } from '../cart/errors';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
@@ -117,6 +119,31 @@ describe('ConsignmentRequestSender', () => {
                 },
             );
         });
+
+        it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 422,
+                    title: 'The request could not process',
+                    type: 'empty_cart',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            await expect(
+                consignmentRequestSender.createConsignments(checkoutId, consignments, {
+                    ...options,
+                    params: {
+                        include: {
+                            'consignments.availableShippingOptions': false,
+                        },
+                    },
+                }),
+            ).rejects.toThrow(EmptyCartError);
+        });
     });
 
     describe('#updateConsignment()', () => {
@@ -184,6 +211,31 @@ describe('ConsignmentRequestSender', () => {
                 },
             );
         });
+
+        it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 422,
+                    title: 'The request could not process',
+                    type: 'empty_cart',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'put').mockReturnValue(Promise.reject(error));
+
+            await expect(
+                consignmentRequestSender.updateConsignment(checkoutId, consignment, {
+                    ...options,
+                    params: {
+                        include: {
+                            'consignments.availableShippingOptions': false,
+                        },
+                    },
+                }),
+            ).rejects.toThrow(EmptyCartError);
+        });
     });
 
     describe('#deleteConsignment()', () => {
@@ -220,6 +272,31 @@ describe('ConsignmentRequestSender', () => {
                     },
                 },
             );
+        });
+
+        it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 422,
+                    title: 'The request could not process',
+                    type: 'empty_cart',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.reject(error));
+
+            await expect(
+                consignmentRequestSender.deleteConsignment(checkoutId, consignment.id, {
+                    ...options,
+                    params: {
+                        include: {
+                            'consignments.availableShippingOptions': false,
+                        },
+                    },
+                }),
+            ).rejects.toThrow(EmptyCartError);
         });
     });
 });

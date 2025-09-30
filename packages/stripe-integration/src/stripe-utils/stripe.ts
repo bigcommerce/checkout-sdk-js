@@ -65,6 +65,7 @@ export interface PaymentIntent {
 
 export interface StripePIPaymentMethodSavingOptions {
     setup_future_usage?: StripeInstrumentSetupFutureUsage;
+    verification_method?: string;
 }
 
 export interface StripePIPaymentMethodOptions {
@@ -286,6 +287,7 @@ export interface BillingDetailsProperties {
  */
 export interface PaymentMethodDataOptions {
     billing_details: BillingDetailsOptions;
+    allow_redisplay?: 'always' | 'limited' | 'unspecified';
 }
 
 /**
@@ -619,6 +621,8 @@ export interface StripeInitializationData {
     shopperLanguage: string;
     customerSessionToken?: string;
     enableLink?: boolean;
+    allowRedisplayForStoredInstruments?: boolean;
+    captureMethod?: 'automatic' | 'manual';
 }
 
 export interface StripeElementUpdateOptions {

@@ -1,5 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { EmptyCartError } from '../cart/errors';
 import { Checkout, CheckoutParams } from '../checkout';
 import {
     ContentType,
@@ -33,14 +34,22 @@ export default class ConsignmentRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.post(url, {
-            body: consignments,
-            params: {
-                include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
-            },
-            headers,
-            timeout,
-        });
+        return this._requestSender
+            .post<Checkout>(url, {
+                body: consignments,
+                params: {
+                    include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
+                },
+                headers,
+                timeout,
+            })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 
     updateConsignment(
@@ -55,14 +64,22 @@ export default class ConsignmentRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.put(url, {
-            body,
-            params: {
-                include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
-            },
-            headers,
-            timeout,
-        });
+        return this._requestSender
+            .put<Checkout>(url, {
+                body,
+                params: {
+                    include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
+                },
+                headers,
+                timeout,
+            })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 
     deleteConsignment(
@@ -77,6 +94,14 @@ export default class ConsignmentRequestSender {
         };
         const include = joinIncludes(DEFAULT_INCLUDES);
 
-        return this._requestSender.delete(url, { params: { include }, headers, timeout });
+        return this._requestSender
+            .delete<Checkout>(url, { params: { include }, headers, timeout })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 }

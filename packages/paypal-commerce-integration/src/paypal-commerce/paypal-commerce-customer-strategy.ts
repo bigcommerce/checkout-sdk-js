@@ -118,7 +118,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, paymentButtonStyles } =
+        const { isHostedCheckoutEnabled, paymentButtonStyles, isAppSwitchEnabled } =
             paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
@@ -130,10 +130,12 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         };
 
         const hostedCheckoutCallbacks = {
-            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                this.onShippingAddressChange(data),
-            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                this.onShippingOptionsChange(data),
+            ...(!isAppSwitchEnabled && {
+                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                    this.onShippingAddressChange(data),
+                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                    this.onShippingOptionsChange(data),
+            }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };

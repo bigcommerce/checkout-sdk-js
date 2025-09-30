@@ -6,6 +6,7 @@ import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 import { BraintreeHostWindow } from './braintree';
 import {
     BRAINTREE_SDK_DEFAULT_VERSION,
+    BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BRAINTREE_SDK_STABLE_VERSION,
 } from './braintree-sdk-verison';
 
@@ -23,6 +24,10 @@ export default class BraintreeSDKVersionManager {
 
         if (preloadedVersion) {
             return preloadedVersion;
+        }
+
+        if (isExperimentEnabled(features, 'PAYPAL-5809.braintree_hosted_fields_fix_version')) {
+            return BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION;
         }
 
         if (isExperimentEnabled(features, 'PAYPAL-5636.update_braintree_sdk_version')) {

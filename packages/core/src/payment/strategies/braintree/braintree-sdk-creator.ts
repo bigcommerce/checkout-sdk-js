@@ -14,14 +14,8 @@ import {
     PAYPAL_COMPONENTS,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
-import {
-    NotInitializedError,
-    NotInitializedErrorType,
-    UnsupportedBrowserError,
-} from '../../../common/error/errors';
+import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaypalHostWindow } from '../paypal';
-
-import { BraintreeVenmoCreatorConfig } from './braintree';
 
 export default class BraintreeSDKCreator {
     private _client?: Promise<BraintreeClient>;
@@ -90,44 +84,6 @@ export default class BraintreeSDKCreator {
         this._paypalCheckout = paypalCheckout.create(paypalCheckoutConfig, paypalCheckoutCallback);
 
         return this._paypalCheckout;
-    }
-
-    async getVenmoCheckout(
-        onSuccess: (braintreeVenmoCheckout: BraintreeVenmoCheckout) => void,
-        onError: (error: BraintreeError | UnsupportedBrowserError) => void,
-        venmoConfig?: BraintreeVenmoCreatorConfig,
-    ): Promise<BraintreeVenmoCheckout> {
-        if (!this._venmoCheckout) {
-            const client = await this.getClient();
-
-            const venmoCheckout = await this._braintreeScriptLoader.loadVenmoCheckout();
-
-            const venmoCheckoutConfig = {
-                client,
-                allowDesktop: true,
-                paymentMethodUsage: 'multi_use',
-                ...(venmoConfig || {}),
-            };
-
-            const venmoCheckoutCallback = (
-                error: BraintreeError,
-                braintreeVenmoCheckout: BraintreeVenmoCheckout,
-            ): void => {
-                if (error) {
-                    return onError(error);
-                }
-
-                if (!braintreeVenmoCheckout.isBrowserSupported()) {
-                    return onError(new UnsupportedBrowserError());
-                }
-
-                onSuccess(braintreeVenmoCheckout);
-            };
-
-            this._venmoCheckout = venmoCheckout.create(venmoCheckoutConfig, venmoCheckoutCallback);
-        }
-
-        return this._venmoCheckout;
     }
 
     get3DS(): Promise<BraintreeThreeDSecure> {

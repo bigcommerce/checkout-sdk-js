@@ -99,6 +99,7 @@ describe('CardSubStrategy', () => {
                 'https://bigpay.integration.zone',
                 // tslint:disable-next-line:no-non-null-assertion
                 initializeOptions.creditCard!.form,
+                store.getState().checkout.getCheckoutOrThrow().id,
             );
         });
 

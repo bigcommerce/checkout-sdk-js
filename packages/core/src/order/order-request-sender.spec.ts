@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
-import { CartConsistencyError } from '../cart/errors';
+import { CartConsistencyError, EmptyCartError } from '../cart/errors';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -200,6 +200,27 @@ describe('OrderRequestSender', () => {
             await expect(orderRequestSender.submitOrder(payload)).rejects.toThrow(
                 InvalidShippingAddressError,
             );
+        });
+
+        it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 422,
+                    title: 'The request could not process',
+                    type: 'empty_cart',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            const payload = {
+                cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                useStoreCredit: false,
+            };
+
+            await expect(orderRequestSender.submitOrder(payload)).rejects.toThrow(EmptyCartError);
         });
 
         it('submits order and returns response with timeout', async () => {

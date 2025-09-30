@@ -56,15 +56,16 @@ export class CardSubStrategy implements SubStrategy {
 
     async initialize(options?: PaymentInitializeOptions): Promise<void> {
         const formOptions = options && options.creditCard && options.creditCard.form;
-        const { config } = this._store.getState();
+        const { config, checkout } = this._store.getState();
         const { paymentSettings: { bigpayBaseUrl: host = '' } = {} } =
             config.getStoreConfig() || {};
+        const checkoutId = checkout.getCheckoutOrThrow().id;
 
         if (!formOptions) {
             throw new InvalidArgumentError();
         }
 
-        const form = formOptions && this._hostedFormFactory.create(host, formOptions);
+        const form = formOptions && this._hostedFormFactory.create(host, formOptions, checkoutId);
 
         await form.attach();
 

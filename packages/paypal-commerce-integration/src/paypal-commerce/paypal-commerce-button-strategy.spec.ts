@@ -70,6 +70,8 @@ describe('PayPalCommerceButtonStrategy', () => {
         paypalcommerce: buyNowPayPalCommerceOptions,
     };
 
+    const storeConfig = getConfig().storeConfig;
+
     const paypalCommerceOptions: PayPalCommerceButtonInitializeOptions = {
         style: {
             height: 45,
@@ -429,6 +431,19 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('initializes PayPal button to render (with shipping options feature enabled)', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-5716.app_switch_functionality': false,
+                    },
+                },
+            });
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
@@ -450,6 +465,31 @@ describe('PayPalCommerceButtonStrategy', () => {
                 createOrder: expect.any(Function),
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
+        it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                    isAppSwitchEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYPAL,
+                style: paypalCommerceOptions.style,
+                createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
             });
         });
@@ -794,6 +834,19 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('updates billing and shipping address with data returned from PayPal', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-5716.app_switch_functionality': false,
+                    },
+                },
+            });
             const address = {
                 firstName: '',
                 lastName: '',
@@ -823,6 +876,19 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('selects shipping option after address update', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-5716.app_switch_functionality': false,
+                    },
+                },
+            });
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingAddressChange');
@@ -836,6 +902,19 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('updates PayPal order after shipping option selection', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-5716.app_switch_functionality': false,
+                    },
+                },
+            });
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call
@@ -871,6 +950,19 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('selects shipping option', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-5716.app_switch_functionality': false,
+                    },
+                },
+            });
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');
@@ -884,6 +976,19 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('updates PayPal order', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-5716.app_switch_functionality': false,
+                    },
+                },
+            });
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');

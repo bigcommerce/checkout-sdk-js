@@ -66,6 +66,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private useIndividualCardFields?: boolean;
     private hostedForm?: HostedForm;
     private isDeinitialize?: boolean;
+    private _allowRedisplayForStoredInstruments?: boolean;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -93,8 +94,11 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 stripePublishableKey,
                 stripeConnectedAccount,
                 useIndividualCardFields,
+                allowRedisplayForStoredInstruments,
             },
         } = paymentMethod as StripeV3PaymentMethod;
+
+        this._allowRedisplayForStoredInstruments = allowRedisplayForStoredInstruments;
 
         const form = this.getInitializeOptions().form;
 
@@ -313,11 +317,13 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                     this.paymentIntegrationService.getState().getBillingAddress(),
                     this.paymentIntegrationService.getState().getCustomer(),
                 );
+                const shouldAllowRedisplay = this._allowRedisplayForStoredInstruments;
 
                 return this.getStripeJs().createPaymentMethod({
                     type: StripePaymentMethodType.CreditCard,
                     card,
                     billing_details: billingDetails,
+                    ...(shouldAllowRedisplay ? { allow_redisplay: 'always' } : {}),
                 });
             }
         }

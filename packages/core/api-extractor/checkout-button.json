@@ -4,6 +4,6 @@
         "entryPointSourceFile": "../../temp/core/src/bundles/checkout-button.d.ts"
     },
     "dtsRollup": {
-        "mainDtsRollupPath": "checkout-button.d.ts"
+        "mainDtsRollupPath": "types/checkout-button.d.ts"
     }
 }
