@@ -43,7 +43,7 @@ function dataReducer(
             return replace(data, action.payload && action.payload.billingAddress);
 
         case CheckoutHydrateActionType.HydrateInitialState:
-            return replace(data, action.payload?.checkout.billingAddress);
+            return replace(data, action.payload?.checkout?.billingAddress);
 
         default:
             return data;

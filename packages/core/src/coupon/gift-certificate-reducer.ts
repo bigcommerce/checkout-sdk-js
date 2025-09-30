@@ -54,7 +54,7 @@ function dataReducer(
             return arrayReplace(data, action.payload && action.payload.giftCertificates);
 
         case CheckoutHydrateActionType.HydrateInitialState:
-            return arrayReplace(data, action.payload?.checkout.giftCertificates);
+            return arrayReplace(data, action.payload?.checkout?.giftCertificates);
 
         default:
             return data;

@@ -52,7 +52,7 @@ function dataReducer(data: Customer | undefined, action: ReducerActionType): Cus
             return objectMerge(data, action.payload);
 
         case CheckoutHydrateActionType.HydrateInitialState:
-            return objectMerge(data, action.payload?.checkout.customer);
+            return objectMerge(data, action.payload?.checkout?.customer);
 
         default:
             return data;
