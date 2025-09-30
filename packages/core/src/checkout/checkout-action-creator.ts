@@ -1,4 +1,4 @@
-import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { Action, createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, merge, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -10,6 +10,8 @@ import { FormFieldsActionCreator } from '../form';
 
 import Checkout, { CheckoutRequestBody } from './checkout';
 import { CheckoutActionType, LoadCheckoutAction, UpdateCheckoutAction } from './checkout-actions';
+import { CheckoutHydrateActionType } from './checkout-hydrate-actions';
+import CheckoutInitialState from './checkout-initial-state';
 import CheckoutRequestSender from './checkout-request-sender';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
@@ -140,6 +142,13 @@ export default class CheckoutActionCreator {
             }
 
             return this.loadCheckout(checkout.id, options)(store);
+        };
+    }
+
+    hydrateInitialState(state: CheckoutInitialState): Action<CheckoutInitialState> {
+        return {
+            type: CheckoutHydrateActionType.HydrateInitialState,
+            payload: state,
         };
     }
 

@@ -108,6 +108,7 @@ import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-cre
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import CheckoutActionCreator from './checkout-action-creator';
+import CheckoutInitialState from './checkout-initial-state';
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutService from './checkout-service';
@@ -1628,6 +1629,26 @@ describe('CheckoutService', () => {
                 ExtensionQueryType.GetConsignments,
                 handler,
             );
+        });
+    });
+
+    describe('#hydrateInitialState', () => {
+        it('creates instance with initial data', async () => {
+            const initialState: CheckoutInitialState = {
+                config: getConfig(),
+                formFields: getFormFields(),
+                checkout: getCheckout(),
+                extensions: getExtensions(),
+            };
+
+            const state = await checkoutService.hydrateInitialState(initialState);
+
+            expect(state.data.getCheckout()).toEqual(initialState.checkout);
+            expect(state.data.getConfig()).toEqual(initialState.config.storeConfig);
+            expect(state.data.getCustomerAccountFields()).toEqual(
+                initialState.formFields.customerAccount,
+            );
+            expect(state.data.getExtensions()).toEqual(initialState.extensions);
         });
     });
 });
