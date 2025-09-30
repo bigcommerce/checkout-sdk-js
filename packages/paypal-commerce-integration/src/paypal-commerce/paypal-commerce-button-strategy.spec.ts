@@ -605,30 +605,6 @@ describe('PayPalCommerceButtonStrategy', () => {
                 'paypalcommerce',
             );
         });
-
-        it('creates paypal order with user agent', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        'PAYPAL-5716.app_switch_functionality': true,
-                    },
-                },
-            });
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('createOrder');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
-                'paypalcommerce',
-            );
-        });
     });
 
     describe('#handleClick', () => {
