@@ -61,7 +61,6 @@ import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-cre
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import CheckoutActionCreator from './checkout-action-creator';
-import CheckoutInitialState from './checkout-initial-state';
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutService from './checkout-service';
 import CheckoutValidator from './checkout-validator';
@@ -110,7 +109,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     };
     const { locale = '', shouldWarnMutation = true } = options || {};
     const requestSender = createRequestSender({ host: options && options.host });
-    const store = createCheckoutStore({ config }, options?.initialState, { shouldWarnMutation });
+    const store = createCheckoutStore({ config }, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
     const orderRequestSender = new OrderRequestSender(requestSender);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
@@ -214,5 +213,4 @@ export interface CheckoutServiceOptions {
     host?: string;
     shouldWarnMutation?: boolean;
     externalSource?: string;
-    initialState?: CheckoutInitialState;
 }

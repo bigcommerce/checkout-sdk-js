@@ -16,13 +16,13 @@ import { SpamProtectionAction, SpamProtectionActionType } from '../spam-protecti
 import { StoreCreditAction, StoreCreditActionType } from '../store-credit';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
+import { CheckoutHydrateAction, CheckoutHydrateActionType } from './checkout-hydrate-actions';
 import CheckoutState, {
     CheckoutDataState,
     CheckoutErrorsState,
     CheckoutStatusesState,
     DEFAULT_STATE,
 } from './checkout-state';
-import { CheckoutHydrateAction, CheckoutHydrateActionType } from './checkout-hydrate-actions';
 
 export default function checkoutReducer(
     state: CheckoutState = DEFAULT_STATE,
