@@ -26,9 +26,11 @@ import {
 import PayPalCommerceCustomerInitializeOptions, {
     WithPayPalCommerceCustomerInitializeOptions,
 } from './paypal-commerce-customer-initialize-options';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class PayPalCommerceCustomerStrategy implements CustomerStrategy {
     private onError = noop;
+    private methodId?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -123,6 +125,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
+            ...(this.isPaypalCommerceAppSwitchEnabled() && { appSwitchWhenAvailable: true }),
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
@@ -153,7 +156,11 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            paypalButton.render(`#${container}`);
+            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled()) {
+                paypalButton.resume?.();
+            } else {
+                paypalButton.render(`#${container}`);
+            }
         } else {
             this.paypalCommerceIntegrationService.removeElement(container);
         }
@@ -247,5 +254,24 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         } else {
             throw error;
         }
+    }
+
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled(): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
+            this.methodId || '',
+        );
+        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
+
+        return (
+            !isHostedCheckoutEnabled &&
+            isExperimentEnabled(features, 'PAYPAL-5716.app_switch_functionality')
+        );
     }
 }

@@ -361,6 +361,35 @@ describe('PayPalCommerceCustomerStrategy', () => {
             });
         });
 
+        it('initializes PayPal button to render with appSwitch flag', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5716.app_switch_functionality': true,
+                    },
+                },
+            });
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYPAL,
+                style: {
+                    height: DefaultCheckoutButtonHeight,
+                    color: StyleButtonColor.silver,
+                    label: 'checkout',
+                },
+                appSwitchWhenAvailable: true,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+                onClick: expect.any(Function),
+            });
+        });
+
         it('renders PayPal button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
