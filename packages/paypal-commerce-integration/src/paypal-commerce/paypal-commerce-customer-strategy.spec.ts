@@ -8,7 +8,6 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -56,7 +55,6 @@ describe('PayPalCommerceCustomerStrategy', () => {
         paypalcommerce: paypalCommerceOptions,
     };
 
-    const storeConfig = getConfig().storeConfig;
     const resumeMock = jest.fn();
 
     beforeEach(() => {
@@ -102,17 +100,6 @@ describe('PayPalCommerceCustomerStrategy', () => {
         jest.spyOn(paypalCommerceIntegrationService, 'getShippingOptionOrThrow').mockReturnValue(
             getShippingOption(),
         );
-
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue({
-            ...storeConfig,
-            checkoutSettings: {
-                ...storeConfig.checkoutSettings,
-                features: {
-                    ...storeConfig.checkoutSettings.features,
-                    'PAYPAL-5716.app_switch_functionality': false,
-                },
-            },
-        });
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
@@ -295,37 +282,24 @@ describe('PayPalCommerceCustomerStrategy', () => {
         });
 
         it('calls PayPal button resume', async () => {
+            const paymentMethodWithAppSwitch = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isAppSwitchEnabled: true,
+                },
+            };
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        'PAYPAL-5716.app_switch_functionality': true,
-                    },
-                },
-            });
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithAppSwitch);
             await strategy.initialize(initializationOptions);
 
             expect(resumeMock).toHaveBeenCalled();
         });
 
         it('initializes paypal buttons with config related to hosted checkout feature', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
-                    },
-                },
-            });
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -370,31 +344,32 @@ describe('PayPalCommerceCustomerStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
+                createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: {
                     height: DefaultCheckoutButtonHeight,
                     color: StyleButtonColor.silver,
                     label: 'checkout',
                 },
-                createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
             });
         });
 
         it('initializes PayPal button to render with appSwitch flag', async () => {
+            const paymentMethodWithAppSwitch = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isAppSwitchEnabled: true,
+                },
+            };
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        'PAYPAL-5716.app_switch_functionality': true,
-                    },
-                },
-            });
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithAppSwitch);
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({

@@ -18,7 +18,7 @@ import {
 } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { createDataStoreProjection, DataStoreProjection } from '../common/data-store';
-import { ErrorActionCreator } from '../common/error';
+import { ErrorActionCreator, ErrorLogger } from '../common/error';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ResolveIdRegistry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
@@ -253,8 +253,8 @@ describe('CheckoutService', () => {
         jest.spyOn(paymentStrategy, 'deinitialize').mockResolvedValue(Promise.resolve());
 
         paymentStrategyRegistry = new PaymentStrategyRegistry();
-        paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
-        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
+        paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService, {});
+        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService, {});
 
         // This can't be fixed until we have differences between core and payment integration api payment strategy types
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
@@ -376,9 +376,13 @@ describe('CheckoutService', () => {
             checkoutRequestSender,
         );
 
+        const errorLogger: ErrorLogger = { log: jest.fn() };
+
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
             createCustomerStrategyRegistry(store, requestSender, locale),
             customerRegistryV2,
+            paymentIntegrationService,
+            errorLogger,
         );
 
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
@@ -397,6 +401,8 @@ describe('CheckoutService', () => {
             paymentStrategyRegistryV2,
             orderActionCreator,
             spamProtectionActionCreator,
+            paymentIntegrationService,
+            errorLogger,
         );
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(

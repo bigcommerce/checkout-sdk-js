@@ -750,6 +750,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     onError: jest.fn(),
                 },
             };
+
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue({
                 name: 'Error',
                 message: 'Payment request failed',

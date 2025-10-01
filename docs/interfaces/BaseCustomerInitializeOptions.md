@@ -24,12 +24,21 @@ information in order to initialize the customer step of checkout.
 
 ### Properties
 
+- [integrations](BaseCustomerInitializeOptions.md#integrations)
 - [masterpass](BaseCustomerInitializeOptions.md#masterpass)
 - [methodId](BaseCustomerInitializeOptions.md#methodid)
 - [params](BaseCustomerInitializeOptions.md#params)
 - [timeout](BaseCustomerInitializeOptions.md#timeout)
 
 ## Properties
+
+### integrations
+
+• `Optional` **integrations**: `CustomerStrategyFactory`<`default`\>[]
+
+**`alpha`**
+
+___
 
 ### masterpass
 
