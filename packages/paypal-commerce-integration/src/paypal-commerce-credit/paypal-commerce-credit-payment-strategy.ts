@@ -222,7 +222,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         };
 
         if (onValidate && typeof onValidate === 'function') {
-            await onValidate(onValidationPassed, reject);
+            return onValidate(onValidationPassed, reject);
         }
     }
 
