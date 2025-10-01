@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.804.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.803.0...v1.804.0) (2025-10-01)
+
+
+### Features
+
+* **core:** CHECKOUT-9450 Lazy load payment strategies through essential build ([3f76e30](https://github.com/bigcommerce/checkout-sdk-js/commit/3f76e3029601bab395f2e8593d2ca9ec4f1ada72))
+
+
+### Bug Fixes
+
+* **payment:** blusnapv2 removal from the core/payments directory ([#3015](https://github.com/bigcommerce/checkout-sdk-js/issues/3015)) ([64d49e9](https://github.com/bigcommerce/checkout-sdk-js/commit/64d49e9044d25b683c194a3130777e57222194f6))
+* **payment:** PAYPAL-5925 fixed 3ds PPCP FL nonce ([#3013](https://github.com/bigcommerce/checkout-sdk-js/issues/3013)) ([f889eee](https://github.com/bigcommerce/checkout-sdk-js/commit/f889eee664bf5c583e2c77963155cabad51137e6))
+
 ## [1.803.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.802.0...v1.803.0) (2025-09-29)
 
 

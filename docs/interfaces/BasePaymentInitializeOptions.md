@@ -15,11 +15,11 @@ current checkout flow.
 
 ### Properties
 
-- [bluesnapv2](BasePaymentInitializeOptions.md#bluesnapv2)
 - [braintree](BasePaymentInitializeOptions.md#braintree)
 - [braintreevisacheckout](BasePaymentInitializeOptions.md#braintreevisacheckout)
 - [creditCard](BasePaymentInitializeOptions.md#creditcard)
 - [gatewayId](BasePaymentInitializeOptions.md#gatewayid)
+- [integrations](BasePaymentInitializeOptions.md#integrations)
 - [masterpass](BasePaymentInitializeOptions.md#masterpass)
 - [methodId](BasePaymentInitializeOptions.md#methodid)
 - [params](BasePaymentInitializeOptions.md#params)
@@ -27,15 +27,6 @@ current checkout flow.
 - [timeout](BasePaymentInitializeOptions.md#timeout)
 
 ## Properties
-
-### bluesnapv2
-
-• `Optional` **bluesnapv2**: [`BlueSnapV2PaymentInitializeOptions`](BlueSnapV2PaymentInitializeOptions.md)
-
-The options that are required to initialize the BlueSnapV2 payment method.
-They can be omitted unless you need to support BlueSnapV2.
-
-___
 
 ### braintree
 
@@ -78,6 +69,14 @@ i.e.: Adyen and Klarna.
 #### Inherited from
 
 [PaymentRequestOptions](PaymentRequestOptions.md).[gatewayId](PaymentRequestOptions.md#gatewayid)
+
+___
+
+### integrations
+
+• `Optional` **integrations**: `PaymentStrategyFactory`<`default`\>[]
+
+**`alpha`**
 
 ___
 
