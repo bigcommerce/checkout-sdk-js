@@ -374,6 +374,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
@@ -385,6 +386,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
@@ -424,6 +426,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: paypalCommerceOptions.style,
                 createOrder: expect.any(Function),
