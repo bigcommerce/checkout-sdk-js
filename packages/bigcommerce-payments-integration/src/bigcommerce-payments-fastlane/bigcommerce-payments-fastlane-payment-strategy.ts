@@ -30,14 +30,14 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import BigCommercePaymentsRequestSender from '../bigcommerce-payments-request-sender';
+import { LiabilityShiftEnum } from '../bigcommerce-payments-types';
 
 import BigCommercePaymentsFastlanePaymentInitializeOptions, {
     WithBigCommercePaymentsFastlanePaymentInitializeOptions,
 } from './bigcommerce-payments-fastlane-payment-initialize-options';
-import { LiabilityShiftEnum } from '../bigcommerce-payments-types';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class BigCommercePaymentsFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
@@ -158,6 +158,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
 
         try {
             await this.paymentIntegrationService.submitOrder(order, options);
+
             const paymentPayload = isVaultedFlow
                 ? await this.prepareVaultedInstrumentPaymentPayload(methodId, paymentData)
                 : await this.preparePaymentPayload(methodId, paymentData);
@@ -406,6 +407,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
     private async createOrder(id: string): Promise<void> {
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
+
         if (this.methodId) {
             const { orderId } = await this.bigCommercePaymentsRequestSender.createOrder(
                 this.methodId,
