@@ -13,6 +13,8 @@ import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import { Currency as Currency_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerAddress as CustomerAddress_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CustomerStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CustomerStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedInstrument as HostedInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -24,6 +26,8 @@ import { PayPalFastlaneStylesOption as PayPalFastlaneStylesOption_2 } from '@big
 import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaypalStyleOptions as PaypalStyleOptions_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { ReadableDataStore } from '@bigcommerce/data-store';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
@@ -693,6 +697,10 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
 declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
     /**
+     * @alpha
+     */
+    integrations?: Array<CustomerStrategyFactory<CustomerStrategy>>;
+    /**
      * The options that are required to initialize the Masterpass payment method.
      * They can be omitted unless you need to support Masterpass.
      */
@@ -735,16 +743,15 @@ declare interface BaseInstrument {
 declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
     /**
      * @alpha
+     */
+    integrations?: Array<PaymentStrategyFactory<PaymentStrategy>>;
+    /**
+     * @alpha
      * Please note that this option is currently in an early stage of
      * development. Therefore the API is unstable and not ready for public
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the BlueSnapV2 payment method.
-     * They can be omitted unless you need to support BlueSnapV2.
-     */
-    bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
     /**
      * The options that are required to initialize the Braintree payment method.
      * They can be omitted unless you need to support Braintree.
@@ -3993,6 +4000,7 @@ declare interface CheckoutServiceOptions {
     host?: string;
     shouldWarnMutation?: boolean;
     externalSource?: string;
+    errorLogger?: ErrorLogger;
 }
 
 declare interface CheckoutSettings {
@@ -5508,6 +5516,10 @@ declare interface EmbeddedCheckoutStyles {
 
 declare interface EmbeddedContentOptions {
     contentId?: string;
+}
+
+declare interface ErrorLogger {
+    log(error: Error): void;
 }
 
 /**
@@ -7788,7 +7800,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBlueSnapV2PaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -9214,6 +9226,10 @@ declare interface WithBlueSnapDirectAPMPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Apple Pay.
      */
     bluesnapdirect?: BlueSnapDirectAPMInitializeOptions;
+}
+
+declare interface WithBlueSnapV2PaymentInitializeOptions {
+    bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
 }
 
 declare interface WithBoltButtonInitializeOptions {

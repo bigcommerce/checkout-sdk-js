@@ -8,9 +8,11 @@ import {
     CheckoutStore,
     CheckoutValidator,
 } from '../checkout';
+import { ErrorLogger } from '../common/error';
 import { BrowserStorage } from '../common/storage';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentIntegrationService } from '../payment-integration';
@@ -61,15 +63,22 @@ export default function createPaymentStrategyRegistry(
     requestSender: RequestSender,
     spamProtection: GoogleRecaptcha,
     locale: string,
+    errorLogger: ErrorLogger,
 ) {
     const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
     });
+
     const scriptLoader = getScriptLoader();
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const paymentIntegrationService = createPaymentIntegrationService(store);
-    const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
+    const registryV2 = createPaymentStrategyRegistryV2(
+        paymentIntegrationService,
+        paymentStrategyFactories,
+        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
+        // process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
+    );
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(
@@ -106,6 +115,8 @@ export default function createPaymentStrategyRegistry(
         registryV2,
         orderActionCreator,
         spamProtectionActionCreator,
+        paymentIntegrationService,
+        errorLogger,
     );
     const formPoster = createFormPoster();
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);

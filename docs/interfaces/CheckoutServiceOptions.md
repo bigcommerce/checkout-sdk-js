@@ -6,12 +6,19 @@
 
 ### Properties
 
+- [errorLogger](CheckoutServiceOptions.md#errorlogger)
 - [externalSource](CheckoutServiceOptions.md#externalsource)
 - [host](CheckoutServiceOptions.md#host)
 - [locale](CheckoutServiceOptions.md#locale)
 - [shouldWarnMutation](CheckoutServiceOptions.md#shouldwarnmutation)
 
 ## Properties
+
+### errorLogger
+
+• `Optional` **errorLogger**: [`ErrorLogger`](ErrorLogger.md)
+
+___
 
 ### externalSource
 

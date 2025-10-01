@@ -4,6 +4,8 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -13,6 +15,7 @@ import {
 } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MutationObserverFactory } from '../common/dom';
+import { ErrorLogger } from '../common/error';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
@@ -41,6 +44,8 @@ describe('CustomerStrategyActionCreator', () => {
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: DefaultCustomerStrategy;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let errorLogger: ErrorLogger;
 
     beforeEach(() => {
         const requestSender = createRequestSender();
@@ -65,9 +70,12 @@ describe('CustomerStrategyActionCreator', () => {
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
 
-        const paymentIntegrationService = createPaymentIntegrationService(store);
+        paymentIntegrationService = createPaymentIntegrationService(store);
+        errorLogger = {
+            log: jest.fn(),
+        };
 
-        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
+        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService, {});
         registry = createCustomerStrategyRegistry(store, createRequestSender(), 'en');
         strategy = new DefaultCustomerStrategy(
             store,
@@ -98,7 +106,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('finds customer strategy by id', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
 
             await from(actionCreator.initialize({ methodId: 'default' })(store))
                 .pipe(toArray())
@@ -108,7 +121,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('initializes customer strategy', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const options = { methodId: 'default' };
 
             await from(actionCreator.initialize(options)(store)).pipe(toArray()).toPromise();
@@ -117,7 +135,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('does not initialize if strategy is already initialized', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const strategy = registry.get('amazon');
 
             jest.spyOn(strategy, 'initialize').mockReturnValue(Promise.resolve(store.getState()));
@@ -128,7 +151,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits action to notify initialization progress', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const actions = await from(actionCreator.initialize({ methodId: 'default' })(store))
                 .pipe(toArray())
                 .toPromise();
@@ -146,7 +174,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to initialize', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const initializeError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 
@@ -184,7 +217,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('finds customer strategy by id', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
 
             await from(actionCreator.deinitialize({ methodId: 'default' })(store))
                 .pipe(toArray())
@@ -194,7 +232,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('deinitializes customer strategy', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const options = { methodId: 'default' };
 
             await from(actionCreator.deinitialize(options)(store)).pipe(toArray()).toPromise();
@@ -203,7 +246,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('does not deinitialize if strategy is not initialized', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const strategy = registry.get('amazon');
 
             jest.spyOn(strategy, 'deinitialize').mockReturnValue(Promise.resolve(store.getState()));
@@ -214,7 +262,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits action to notify initialization progress', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const actions = await from(actionCreator.deinitialize({ methodId: 'default' })(store))
                 .pipe(toArray())
                 .toPromise();
@@ -232,7 +285,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to deinitialize', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const deinitializeError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 
@@ -264,7 +322,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('finds customer strategy by id', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
 
             await actionCreator
                 .signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
@@ -275,7 +338,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('executes customer strategy', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const credentials = { email: 'foo@bar.com', password: 'password1' };
             const options = { methodId: 'default' };
 
@@ -285,7 +353,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits action to notify sign-in progress', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const actions = await actionCreator
                 .signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
                 .pipe(toArray())
@@ -298,7 +371,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to sign in', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const signInError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 
@@ -328,7 +406,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('finds customer strategy by id', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
 
             await actionCreator.signOut({ methodId: 'default' }).pipe(toArray()).toPromise();
 
@@ -336,7 +419,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('executes customer strategy', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const options = { methodId: 'default' };
 
             await actionCreator.signOut(options).pipe(toArray()).toPromise();
@@ -345,7 +433,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits action to notify sign-out progress', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const actions = await actionCreator
                 .signOut({ methodId: 'default' })
                 .pipe(toArray())
@@ -364,7 +457,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to sign out', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const signOutError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 
@@ -393,7 +491,12 @@ describe('CustomerStrategyActionCreator', () => {
 
     describe('#widgetInteraction()', () => {
         it('executes widget interaction callback', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const options = { methodId: 'default' };
             const fakeMethod = jest.fn(() => Promise.resolve());
 
@@ -403,7 +506,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits action to notify widget interaction in progress', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const actions = await actionCreator
                 .widgetInteraction(
                     jest.fn(() => Promise.resolve()),
@@ -425,7 +533,12 @@ describe('CustomerStrategyActionCreator', () => {
         });
 
         it('emits error action if widget interaction fails', async () => {
-            const actionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
+            const actionCreator = new CustomerStrategyActionCreator(
+                registry,
+                customerRegistryV2,
+                paymentIntegrationService,
+                errorLogger,
+            );
             const signInError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 
