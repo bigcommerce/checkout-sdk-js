@@ -199,6 +199,7 @@ export default class BraintreeHostedForm {
 
             this.client = client.create({ authorization: this.clientToken });
         }
+        console.log('JJJ');
 
         return this.client;
     }

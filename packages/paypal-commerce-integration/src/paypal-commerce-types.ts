@@ -361,6 +361,8 @@ export interface PayPalCommerceButtons {
     render(id: string): void;
     close(): void;
     isEligible(): boolean;
+    hasReturned?(): boolean;
+    resume?(): void;
 }
 
 export interface PayPalCommerceButtonsOptions {
@@ -608,6 +610,7 @@ export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedI
     metadataId?: string;
     setupToken?: boolean;
     fastlaneToken?: string;
+    userAgent?: string;
 }
 
 export enum PayPalOrderStatus {
