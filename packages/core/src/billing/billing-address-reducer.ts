@@ -1,6 +1,11 @@
 import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
-import { CheckoutAction, CheckoutActionType } from '../checkout';
+import {
+    CheckoutAction,
+    CheckoutActionType,
+    CheckoutHydrateAction,
+    CheckoutHydrateActionType,
+} from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { objectSet, replace } from '../common/utility';
 import { OrderAction } from '../order';
@@ -29,13 +34,16 @@ export default function billingAddressReducer(
 
 function dataReducer(
     data: BillingAddress | undefined,
-    action: CheckoutAction | BillingAddressAction | OrderAction,
+    action: CheckoutAction | BillingAddressAction | OrderAction | CheckoutHydrateAction,
 ): BillingAddress | undefined {
     switch (action.type) {
         case BillingAddressActionType.UpdateBillingAddressSucceeded:
         case BillingAddressActionType.ContinueAsGuestSucceeded:
         case CheckoutActionType.LoadCheckoutSucceeded:
             return replace(data, action.payload && action.payload.billingAddress);
+
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return replace(data, action.payload?.checkout?.billingAddress);
 
         default:
             return data;

@@ -9,14 +9,15 @@ import createCheckoutStoreReducer from './create-checkout-store-reducer';
 import { createInternalCheckoutSelectorsFactory } from './create-internal-checkout-selectors';
 
 export default function createCheckoutStore(
-    initialState: Partial<CheckoutStoreState> = {},
+    initialStoreState: Partial<CheckoutStoreState> = {},
     options?: CheckoutStoreOptions,
 ): CheckoutStore {
     const actionTransformer = createActionTransformer(createRequestErrorFactory());
     const createInternalCheckoutSelectors = createInternalCheckoutSelectorsFactory();
     const stateTransformer = (state: CheckoutStoreState) => createInternalCheckoutSelectors(state);
+    const reducer = createCheckoutStoreReducer();
 
-    return createDataStore(createCheckoutStoreReducer(), initialState, {
+    return createDataStore(reducer, initialStoreState, {
         actionTransformer,
         stateTransformer,
         ...options,

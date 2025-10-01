@@ -16,6 +16,7 @@ import { SpamProtectionAction, SpamProtectionActionType } from '../spam-protecti
 import { StoreCreditAction, StoreCreditActionType } from '../store-credit';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
+import { CheckoutHydrateAction, CheckoutHydrateActionType } from './checkout-hydrate-actions';
 import CheckoutState, {
     CheckoutDataState,
     CheckoutErrorsState,
@@ -46,7 +47,8 @@ function dataReducer(
         | GiftCertificateAction
         | OrderAction
         | SpamProtectionAction
-        | StoreCreditAction,
+        | StoreCreditAction
+        | CheckoutHydrateAction,
 ): CheckoutDataState | undefined {
     switch (action.type) {
         case CheckoutActionType.LoadCheckoutSucceeded:
@@ -77,6 +79,19 @@ function dataReducer(
 
         case OrderActionType.SubmitOrderSucceeded:
             return objectSet(data, 'orderId', action.payload && action.payload.order.orderId);
+
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return objectMerge(
+                data,
+                omit(action.payload?.checkout, [
+                    'billingAddress',
+                    'cart',
+                    'consignments',
+                    'customer',
+                    'coupons',
+                    'giftCertificates',
+                ]),
+            ) as CheckoutDataState;
 
         default:
             return data;
