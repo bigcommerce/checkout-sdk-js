@@ -337,7 +337,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             return resolve();
         };
 
-        await onValidate?.(onValidationPassed, reject);
+        return onValidate?.(onValidationPassed, reject);
     }
 
     private handleApprove(

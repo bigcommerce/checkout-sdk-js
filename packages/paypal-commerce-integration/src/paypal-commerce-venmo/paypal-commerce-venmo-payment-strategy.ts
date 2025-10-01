@@ -164,7 +164,7 @@ export default class PayPalCommerceVenmoPaymentStrategy implements PaymentStrate
             return resolve();
         };
 
-        await onValidate(onValidationPassed, reject);
+        return onValidate(onValidationPassed, reject);
     }
 
     private handleApprove(
