@@ -16,6 +16,7 @@ export default interface ConfigSelector {
     getContextConfig(): ContextConfig | undefined;
     getExternalSource(): string | undefined;
     getHost(): string | undefined;
+    getGQLRequestUrl(): string | undefined;
     getLocale(): string | undefined;
     getVariantIdentificationToken(): string | undefined;
     getLoadError(): Error | undefined;
@@ -90,6 +91,11 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
         (data) => () => data,
     );
 
+    const getGQLRequestUrl = createSelector(
+        (state: ConfigState) => state.meta?.gqlRequestUrl,
+        (data) => () => data,
+    );
+
     const getLocale = createSelector(
         (state: ConfigState) => state.meta?.locale,
         (data) => () => data,
@@ -120,6 +126,7 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
                 getContextConfig: getContextConfig(state),
                 getExternalSource: getExternalSource(state),
                 getHost: getHost(state),
+                getGQLRequestUrl: getGQLRequestUrl(state),
                 getLocale: getLocale(state),
                 getVariantIdentificationToken: getVariantIdentificationToken(state),
                 getLoadError: getLoadError(state),

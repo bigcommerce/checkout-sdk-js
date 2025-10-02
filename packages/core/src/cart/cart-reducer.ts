@@ -13,6 +13,7 @@ import {
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 
 import Cart from './cart';
+import { CartActionType, LoadCartAction } from './cart-actions';
 import CartState, { CartErrorsState, CartStatusesState, DEFAULT_STATE } from './cart-state';
 
 export default function cartReducer(state: CartState = DEFAULT_STATE, action: Action): CartState {
@@ -32,7 +33,8 @@ function dataReducer(
         | CheckoutAction
         | ConsignmentAction
         | CouponAction
-        | GiftCertificateAction,
+        | GiftCertificateAction
+        | LoadCartAction,
 ): Cart | undefined {
     switch (action.type) {
         case BillingAddressActionType.UpdateBillingAddressSucceeded:
@@ -47,6 +49,9 @@ function dataReducer(
         case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
         case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
             return objectMerge(data, action.payload && action.payload.cart);
+
+        case CartActionType.LoadCartSucceeded:
+            return objectMerge(data, action.payload && action.payload);
 
         default:
             return data;
