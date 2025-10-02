@@ -105,6 +105,9 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
+            // ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+            //     appSwitchWhenAvailable: true,
+            // }),
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
@@ -137,7 +140,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            paypalButton.render(`#${containerId}`);
+            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
+                paypalButton.resume?.();
+            } else {
+                paypalButton.render(`#${containerId}`);
+            }
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {
@@ -252,5 +259,18 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
             throw error;
         }
+    }
+
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+
+        return paymentMethod.initializationData?.isAppSwitchEnabled || false;
     }
 }
