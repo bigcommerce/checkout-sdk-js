@@ -21,11 +21,8 @@ import {
 import PayPalCommerceButtonInitializeOptions, {
     WithPayPalCommerceButtonInitializeOptions,
 } from './paypal-commerce-button-initialize-options';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
-    private methodId?: string;
-
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
@@ -71,8 +68,6 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             );
         }
 
-        this.methodId = methodId;
-
         if (!isBuyNowFlow) {
             // Info: default checkout should not be loaded for BuyNow flow,
             // since there is no checkout session available for that.
@@ -88,7 +83,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, paypalcommerce);
+        this.renderButton(containerId, methodId, paypalcommerce, isBuyNowFlow);
     }
 
     deinitialize(): Promise<void> {
@@ -99,6 +94,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         containerId: string,
         methodId: string,
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
+        isBuyNowFlow?: boolean,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
 
@@ -110,9 +106,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
-            ...(this.isPaypalCommerceAppSwitchEnabled() && { appSwitchWhenAvailable: true }),
-            createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
+            ...(!isBuyNowFlow &&
+                this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+                    appSwitchWhenAvailable: true,
+                }),
+            createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };
@@ -144,7 +142,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled()) {
+            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
                 paypalButton.resume?.();
             } else {
                 paypalButton.render(`#${containerId}`);
@@ -270,17 +268,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
      * PayPal AppSwitch enabling handling
      *
      */
-    private isPaypalCommerceAppSwitchEnabled(): boolean {
+    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
         const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-        const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
-            this.methodId || '',
-        );
-        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
-        return (
-            !isHostedCheckoutEnabled &&
-            isExperimentEnabled(features, 'PAYPAL-5716.app_switch_functionality')
-        );
+        return paymentMethod.initializationData?.isAppSwitchEnabled || false;
     }
 }
