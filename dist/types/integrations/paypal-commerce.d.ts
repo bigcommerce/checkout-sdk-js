@@ -427,6 +427,12 @@ declare class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private onHostedCheckoutApprove;
     private onShippingAddressChange;
     private onShippingOptionsChange;
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled;
 }
 
 /**
@@ -438,6 +444,8 @@ declare interface PayPalCommerceButtons {
     render(id: string): void;
     close(): void;
     isEligible(): boolean;
+    hasReturned?(): boolean;
+    resume?(): void;
 }
 
 declare interface PayPalCommerceButtonsOptions {
