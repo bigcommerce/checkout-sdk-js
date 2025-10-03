@@ -123,6 +123,9 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
+            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+                appSwitchWhenAvailable: true,
+            }),
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
@@ -153,7 +156,11 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            paypalButton.render(`#${container}`);
+            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
+                paypalButton.resume?.();
+            } else {
+                paypalButton.render(`#${container}`);
+            }
         } else {
             this.paypalCommerceIntegrationService.removeElement(container);
         }
@@ -247,5 +254,18 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         } else {
             throw error;
         }
+    }
+
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+
+        return paymentMethod.initializationData?.isAppSwitchEnabled || false;
     }
 }
