@@ -3,8 +3,7 @@ import {
     PaymentInitializeOptions,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { StripePaymentMethodType } from '../stripe-utils';
+import { StripePaymentMethodType } from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
 
@@ -31,6 +30,7 @@ export function getStripeUPEMock(method = 'card'): PaymentMethod {
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
         returnUrl: 'http://www.example.com',
+        skipRedirectConfirmationAlert: true,
     };
 }
 

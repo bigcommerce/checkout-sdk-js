@@ -3,6 +3,15 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
+import {
+    StripeClient,
+    StripeDisplayName,
+    StripeElement,
+    StripeHostWindow,
+    StripeScriptLoader,
+    StripeShippingEvent,
+} from '@bigcommerce/checkout-sdk/stripe-utils';
+
 import { CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -19,21 +28,6 @@ import {
     PaymentMethodRequestSender,
 } from '../../../payment';
 import { getStripeUPE } from '../../../payment/payment-methods.mock';
-import {
-    DisplayName,
-    StripeElement,
-    StripeHostWindow,
-    StripeScriptLoader,
-    StripeShippingEvent,
-    StripeUPEClient,
-} from '../../../payment/strategies/stripe-upe';
-import {
-    getShippingStripeUPEJsMock,
-    getShippingStripeUPEJsMockWithAnElementCreated,
-    getShippingStripeUPEJsOnMock,
-    getStripeUPEInitializeOptionsMockWithStyles,
-    getStripeUPEShippingInitializeOptionsMock,
-} from '../../../shipping/strategies/stripe-upe/stripe-upe-shipping.mock';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ConsignmentActionType } from '../../consignment-actions';
 import ConsignmentRequestSender from '../../consignment-request-sender';
@@ -42,6 +36,13 @@ import { getShippingAddress } from '../../shipping-addresses.mock';
 import { ShippingInitializeOptions } from '../../shipping-request-options';
 
 import StripeUPEShippingStrategy from './stripe-upe-shipping-strategy';
+import {
+    getShippingStripeUPEJsMock,
+    getShippingStripeUPEJsMockWithAnElementCreated,
+    getShippingStripeUPEJsOnMock,
+    getStripeUPEInitializeOptionsMockWithStyles,
+    getStripeUPEShippingInitializeOptionsMock,
+} from './stripe-upe-shipping.mock';
 
 // TODO: CHECKOUT-7766
 describe('StripeUPEShippingStrategy', () => {
@@ -51,7 +52,7 @@ describe('StripeUPEShippingStrategy', () => {
     let consignmentActionCreator: ConsignmentActionCreator;
     let strategy: StripeUPEShippingStrategy;
     let stripeScriptLoader: StripeScriptLoader;
-    let stripeUPEJsMock: StripeUPEClient;
+    let stripeUPEJsMock: StripeClient;
     let loadPaymentMethodAction: Observable<LoadPaymentMethodAction>;
     let paymentMethodMock: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
@@ -77,7 +78,7 @@ describe('StripeUPEShippingStrategy', () => {
                 phone: '+523333333333',
             },
             display: {
-                name: DisplayName.SPLIT,
+                name: StripeDisplayName.SPLIT,
             },
         };
     };
@@ -312,7 +313,9 @@ describe('StripeUPEShippingStrategy', () => {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn((_, callback) => callback(stripeShippingEvent(true))),
+                collapse: jest.fn(),
             };
             const stripeUPEJsMockWithElement = getShippingStripeUPEJsOnMock(stripeMockElement);
 
@@ -341,7 +344,9 @@ describe('StripeUPEShippingStrategy', () => {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn((_, callback) => callback(stripeShippingEvent(false))),
+                collapse: jest.fn(),
             };
             const stripeUPEJsMockWithElement = getShippingStripeUPEJsOnMock(stripeMockElement);
 
@@ -370,34 +375,31 @@ describe('StripeUPEShippingStrategy', () => {
         });
 
         it('triggers onChange event callback and throws error if event data is missing', async () => {
-            const missingShippingEvent = (): StripeShippingEvent => {
-                return {
-                    complete: false,
-                    elementType: '',
-                    empty: false,
-                    phoneFieldRequired: false,
-                    value: {
-                        address: {
-                            city: '',
-                            country: '',
-                            line1: '',
-                            line2: '',
-                            postal_code: '',
-                            state: '',
-                        },
-                        name: '',
-                        phone: '',
+            const missingShippingEvent = {
+                complete: false,
+                elementType: '',
+                empty: false,
+                phoneFieldRequired: false,
+                value: {
+                    address: {
+                        city: '',
+                        country: '',
+                        line1: '',
+                        line2: '',
+                        postal_code: '',
+                        state: '',
                     },
-                };
+                    name: '',
+                    phone: '',
+                },
             };
             const stripeMockElement: StripeElement = {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
+                update: jest.fn(),
                 on: jest.fn((_, callback) => callback(missingShippingEvent)),
+                collapse: jest.fn(),
             };
 
             jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(

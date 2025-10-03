@@ -28,5 +28,6 @@ export function getStripeV3(
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
         returnUrl: 'http://www.example.com',
+        skipRedirectConfirmationAlert: true,
     };
 }

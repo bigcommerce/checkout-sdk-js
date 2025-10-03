@@ -23,7 +23,6 @@ import {
     getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
 import {
     getConfirmPaymentResponse,
     getFailingStripeJsMock,
@@ -40,7 +39,7 @@ import {
     StripePaymentMethodType,
     StripeScriptLoader,
     StripeStringConstants,
-} from '../stripe-utils';
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';

@@ -1,13 +1,18 @@
 import {
     OrderRequestBody,
     PaymentInitializeOptions,
+    PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { WithStripeUPEPaymentInitializeOptions } from '../stripe-upe/stripe-upe-initialize-options';
-
 import { StripeClient, StripePaymentMethodType } from './stripe';
+import StripePaymentInitializeOptions from './stripe-initialize-options';
 
 const gatewayId = 'stripeupe';
+
+export interface WithStripePaymentInitializeOptions {
+    stripeupe?: StripePaymentInitializeOptions;
+    stripeocs?: StripePaymentInitializeOptions;
+}
 
 export const StripeEventMock = {
     complete: false,
@@ -17,6 +22,31 @@ export const StripeEventMock = {
         type: StripePaymentMethodType.CreditCard,
     },
 };
+
+export function getStripeMock(method = 'card'): PaymentMethod {
+    return {
+        id: method,
+        logoUrl: '',
+        method,
+        supportedCards: [],
+        config: {
+            displayName: 'Stripe',
+            merchantId: '',
+            testMode: true,
+        },
+        initializationData: {
+            stripePublishableKey: 'key',
+            stripeConnectedAccount: 'key',
+            browserLanguageEnabled: false,
+            shopperLanguage: 'en',
+            allowRedisplayForStoredInstruments: true,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+        returnUrl: 'http://www.example.com',
+        skipRedirectConfirmationAlert: true,
+    };
+}
 
 export function getStripeJsMock(): StripeClient {
     return {
@@ -65,7 +95,7 @@ export function getFailingStripeJsMock(): StripeClient {
 export function getStripeInitializeOptionsMock(
     stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard,
     style: { [key: string]: string } = { fieldText: '#ccc' },
-): PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions {
+): PaymentInitializeOptions & WithStripePaymentInitializeOptions {
     return {
         methodId: stripePaymentMethodType,
         gatewayId,

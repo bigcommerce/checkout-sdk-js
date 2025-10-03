@@ -16,11 +16,8 @@ import {
     PaymentMethodFailedError,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import { StripeIntegrationService, StripePaymentMethodType } from '../stripe-utils';
-import { isStripePaymentMethodLike } from '../stripe-utils/is-stripe-payment-method-like';
 import {
+    isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
     StripeClient,
     StripeElement,
@@ -30,13 +27,18 @@ import {
     StripeElementType,
     StripeError,
     StripeEventType,
+    StripeIntegrationService,
+    StripeLinkV2Event,
+    StripeLinkV2Options,
+    StripeLinkV2ShippingRate,
+    StripePaymentMethodType,
     StripeResult,
+    StripeScriptLoader,
     StripeStringConstants,
-} from '../stripe-utils/stripe';
-import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
+} from '@bigcommerce/checkout-sdk/stripe-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import { expressCheckoutAllowedCountryCodes } from './constants';
-import { StripeLinkV2Event, StripeLinkV2Options, StripeLinkV2ShippingRate } from './stripe-ocs';
 import { WithStripeOCSCustomerInitializeOptions } from './stripe-ocs-customer-initialize-options';
 
 export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {

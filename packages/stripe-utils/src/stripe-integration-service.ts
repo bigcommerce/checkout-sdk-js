@@ -11,9 +11,6 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import StripeOCSPaymentInitializeOptions from '../stripe-ocs/stripe-ocs-initialize-options';
-import StripeUPEPaymentInitializeOptions from '../stripe-upe/stripe-upe-initialize-options';
-
 import { isStripeError } from './is-stripe-error';
 import {
     AddressOptions,
@@ -27,6 +24,7 @@ import {
     StripePaymentIntentStatus,
     StripeStringConstants,
 } from './stripe';
+import StripePaymentInitializeOptions from './stripe-initialize-options';
 import StripeScriptLoader from './stripe-script-loader';
 
 export default class StripeIntegrationService {
@@ -46,9 +44,7 @@ export default class StripeIntegrationService {
     initCheckoutEventsSubscription(
         gatewayId: string,
         methodId: string,
-        stripeInitializationOptions:
-            | StripeUPEPaymentInitializeOptions
-            | StripeOCSPaymentInitializeOptions,
+        stripeInitializationOptions: StripePaymentInitializeOptions,
         stripeElements?: StripeElements,
     ): void {
         this.checkoutEventsUnsubscribe = this.paymentIntegrationService.subscribe(
@@ -93,7 +89,7 @@ export default class StripeIntegrationService {
         this.isMounted = true;
     }
 
-    mapAppearanceVariables(styles: NonNullable<StripeUPEPaymentInitializeOptions['style']>) {
+    mapAppearanceVariables(styles: NonNullable<StripePaymentInitializeOptions['style']>) {
         return {
             colorPrimary: styles.fieldInnerShadow,
             colorBackground: styles.fieldBackground,
@@ -105,7 +101,7 @@ export default class StripeIntegrationService {
         };
     }
 
-    mapInputAppearanceRules(styles: NonNullable<StripeUPEPaymentInitializeOptions['style']>) {
+    mapInputAppearanceRules(styles: NonNullable<StripePaymentInitializeOptions['style']>) {
         return {
             borderColor: styles.fieldBorder,
             color: styles.fieldText,
@@ -173,7 +169,7 @@ export default class StripeIntegrationService {
         shouldAllowRedisplay = false,
     ): StripeConfirmPaymentData {
         const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
-        const { firstName, lastName, email } = billingAddress || {};
+        const { firstName = '', lastName = '', email = '' } = billingAddress || {};
         const address = this._mapStripeAddress(billingAddress);
 
         if (!stripeElements) {

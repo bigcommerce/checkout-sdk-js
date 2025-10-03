@@ -1,3 +1,18 @@
+import {
+    STRIPE_UPE_CLIENT_API_VERSION,
+    STRIPE_UPE_CLIENT_BETAS,
+    StripeAppearanceOptions,
+    StripeClient,
+    StripeDisplayName,
+    StripeElementEvent,
+    StripeElements,
+    StripeElementsCreateOptions,
+    StripeElementType,
+    StripeEventType,
+    StripeFormMode,
+    StripeScriptLoader,
+} from '@bigcommerce/checkout-sdk/stripe-utils';
+
 import { AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
@@ -6,23 +21,12 @@ import {
     MissingDataErrorType,
 } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import {
-    DisplayName,
-    StripeElements,
-    StripeElementsCreateOptions,
-    StripeElementType,
-    StripeEventType,
-    StripeFormMode,
-    StripeScriptLoader,
-    StripeUPEAppearanceOptions,
-    StripeUPEClient,
-} from '../../../payment/strategies/stripe-upe';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
 
 export default class StripeUPEShippingStrategy implements ShippingStrategy {
-    private _stripeUPEClient?: StripeUPEClient;
+    private _stripeUPEClient?: StripeClient;
     private _stripeElements?: StripeElements;
     private sendData?: ReturnType<typeof setTimeout>;
 
@@ -80,9 +84,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             }),
         );
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
-        const {
-            initializationData: { stripePublishableKey, stripeConnectedAccount },
-        } = paymentMethod;
+        const { initializationData } = paymentMethod;
 
         if (
             !paymentMethod ||
@@ -93,11 +95,12 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         }
 
         this._stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
-            stripePublishableKey,
-            stripeConnectedAccount,
+            initializationData,
+            STRIPE_UPE_CLIENT_BETAS,
+            STRIPE_UPE_CLIENT_API_VERSION,
         );
 
-        let appearance: StripeUPEAppearanceOptions;
+        let appearance: StripeAppearanceOptions;
         const styles = getStyles && getStyles();
 
         const {
@@ -136,10 +139,13 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             };
         }
 
-        this._stripeElements = this._stripeUPEScriptLoader.getElements(this._stripeUPEClient, {
-            clientSecret: paymentMethod.clientToken,
-            appearance,
-        });
+        this._stripeElements = await this._stripeUPEScriptLoader.getElements(
+            this._stripeUPEClient,
+            {
+                clientSecret: paymentMethod.clientToken,
+                appearance,
+            },
+        );
 
         const shipping = getShippingAddress();
         const shippingPhoneField = shippingFields.find((field) => field.name === 'phone');
@@ -156,7 +162,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 },
             },
             display: {
-                name: DisplayName.SPLIT,
+                name: StripeDisplayName.SPLIT,
             },
         };
 
@@ -203,7 +209,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
 
         shippingAddressElement = this._stripeElements.create(StripeElementType.SHIPPING, option);
 
-        shippingAddressElement.on('change', (event: StripeEventType) => {
+        shippingAddressElement.on(StripeElementEvent.CHANGE, (event: StripeEventType) => {
             if (!('isNewAddress' in event)) {
                 throw new MissingDataError(MissingDataErrorType.MissingShippingAddress);
             }

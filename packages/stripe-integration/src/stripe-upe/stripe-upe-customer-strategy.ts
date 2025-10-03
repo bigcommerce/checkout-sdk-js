@@ -9,9 +9,10 @@ import {
     PaymentIntegrationService,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import {
     isStripePaymentMethodLike,
+    STRIPE_UPE_CLIENT_API_VERSION,
+    STRIPE_UPE_CLIENT_BETAS,
     StripeAppearanceOptions,
     StripeClient,
     StripeElementEvent,
@@ -20,10 +21,9 @@ import {
     StripeEventType,
     StripeFormMode,
     StripeScriptLoader,
-} from '../stripe-utils';
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
-import { STRIPE_CLIENT_API_VERSION, STRIPE_CLIENT_BETAS } from './stripe-upe-constants';
 import { WithStripeUPECustomerInitializeOptions } from './stripeupe-customer-initialize-options';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
@@ -106,8 +106,8 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
             stripeUPEClient = await this.scriptLoader.getStripeClient(
                 paymentMethod.initializationData,
-                STRIPE_CLIENT_BETAS,
-                STRIPE_CLIENT_API_VERSION,
+                STRIPE_UPE_CLIENT_BETAS,
+                STRIPE_UPE_CLIENT_API_VERSION,
             );
 
             this._stripeElements = await this.scriptLoader.getElements(stripeUPEClient, {

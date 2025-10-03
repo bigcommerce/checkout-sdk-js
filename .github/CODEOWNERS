@@ -15,7 +15,6 @@
 /packages/core/src/customer/strategies/chasepay @bigcommerce/team-integrations
 /packages/core/src/customer/strategies/masterpass @bigcommerce/team-integrations
 /packages/core/src/customer/strategies/square @bigcommerce/team-integrations
-/packages/core/src/customer/strategies/stripe-upe @bigcommerce/team-integrations
 /packages/core/src/shipping/strategies/amazon-pay-v2 @bigcommerce/team-integrations
 /packages/core/src/shipping/strategies/stripe-upe @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/adyenv2 @bigcommerce/team-integrations
@@ -39,8 +38,6 @@
 /packages/core/src/payment/strategies/ppsdk @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/quadpay @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/square @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/stripe-upe @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/stripev3 @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/wepay @bigcommerce/team-integrations
 /packages/adyen-integration @bigcommerce/team-integrations
 /packages/adyen-utils @bigcommerce/team-integrations
@@ -58,6 +55,7 @@
 /packages/sagepay-integration @bigcommerce/team-integrations
 /packages/squarev2-integration @bigcommerce/team-integrations
 /packages/stripe-integration @bigcommerce/team-integrations
+/packages/stripe-utils @bigcommerce/team-integrations
 /packages/td-bank-integration @bigcommerce/team-integrations
 /packages/klarna-integration @bigcommerce/team-integrations
 /packages/humm-integration @bigcommerce/team-integrations

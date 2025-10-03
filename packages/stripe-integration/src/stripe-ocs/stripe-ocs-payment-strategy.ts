@@ -15,9 +15,8 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import {
-    formatLocale,
+    formatStripeLocale,
     isStripePaymentEvent,
     isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
@@ -36,7 +35,7 @@ import {
     StripeResult,
     StripeScriptLoader,
     StripeStringConstants,
-} from '../stripe-utils';
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import StripeOCSPaymentInitializeOptions, {
     WithStripeOCSPaymentInitializeOptions,
@@ -179,7 +178,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         this.stripeElements = await this.scriptLoader.getElements(this.stripeClient, {
             clientSecret: clientToken,
             customerSessionClientSecret: customerSessionToken,
-            locale: formatLocale(shopperLanguage),
+            locale: formatStripeLocale(shopperLanguage),
             appearance,
             fonts,
         });

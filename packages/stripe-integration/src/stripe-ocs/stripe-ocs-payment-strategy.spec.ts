@@ -16,7 +16,6 @@ import {
     getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
 import {
     getStripeIntegrationServiceMock,
     getStripeJsMock,
@@ -28,7 +27,7 @@ import {
     StripePIPaymentMethodOptions,
     StripeScriptLoader,
     StripeStringConstants,
-} from '../stripe-utils';
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import { WithStripeOCSPaymentInitializeOptions } from './stripe-ocs-initialize-options';
 import StripeOCSPaymentStrategy from './stripe-ocs-payment-strategy';
