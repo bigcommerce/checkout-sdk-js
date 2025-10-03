@@ -40,6 +40,7 @@ export { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastl
  */
 export { default as createBraintreeVisaCheckoutButtonStrategy } from './braintree-visa-checkout/create-braintree-visa-checkout-button-strategy';
 export { default as createBraintreeVisaCheckoutCustomerStrategy } from './braintree-visa-checkout/create-braintree-visa-checkout-customer-strategy';
+export { default as createBraintreeVisaCheckoutPaymentStrategy } from './braintree-visa-checkout/create-braintree-visa-checkout-payment-strategy';
 
 /**
  * Braintree Venmo

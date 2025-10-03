@@ -11,9 +11,11 @@ import {
     getBraintree,
     getDataCollectorMock,
     getDeviceDataMock,
+    getPaymentSuccessPayload,
     getVisaCheckoutMock,
     getVisaCheckoutSDKMock,
     VisaCheckoutHostWindow,
+    VisaCheckoutPaymentSuccessPayload,
     VisaCheckoutSDK,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -41,6 +43,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     let braintreeVisaCheckoutButtonElement: HTMLDivElement;
     let dataCollector: BraintreeDataCollector;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
+    let visaPayload: VisaCheckoutPaymentSuccessPayload;
 
     const defaultContainerId = 'braintree-visa-checkout-button-mock-id';
 
@@ -54,6 +57,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     };
 
     beforeEach(() => {
+        visaPayload = getPaymentSuccessPayload();
+
         mockWindow = {} as VisaCheckoutHostWindow & BraintreeHostWindow;
 
         dataCollector = getDataCollectorMock();
@@ -91,29 +96,19 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(paymentIntegrationService, 'loadCheckout').mockReturnValue(true);
+        jest.spyOn(paymentIntegrationService, 'loadCheckout');
 
         jest.spyOn(braintreeSdk, 'initialize');
         jest.spyOn(braintreeSdk, 'deinitialize');
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(braintreeSdk, 'getBraintreeVisaCheckout').mockReturnValue(braintreeVisaCheckout);
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockReturnValue(dataCollector);
+        jest.spyOn(braintreeSdk, 'getBraintreeVisaCheckout').mockResolvedValue(
+            braintreeVisaCheckout,
+        );
+        jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockResolvedValue(dataCollector);
 
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         jest.spyOn(braintreeSdk, 'getVisaCheckoutSdk').mockImplementation(() => {
             mockWindow.V = visaCheckoutSDKMock;
 
-            return mockWindow.V;
+            return Promise.resolve(mockWindow.V);
         });
 
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
@@ -135,7 +130,6 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             try {
                 await strategy.initialize({
                     ...initializationOptions,
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     braintreevisacheckout: {},
@@ -163,14 +157,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
 
         it('throws error if methodId is missing', async () => {
             try {
-                await strategy.initialize({
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    braintreevisacheckout: {
-                        ...initializationOptions.braintreevisacheckout,
-                    },
-                });
+                await strategy.initialize({});
             } catch (error) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
@@ -209,13 +196,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         });
 
         it('visa Checkout tokenization', async () => {
-            // TODO: remove rule and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            visaCheckoutSDKMock.on = jest.fn((type, callback) => {
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                return type === 'payment.success' ? callback('data') : undefined;
+            jest.spyOn(visaCheckoutSDKMock, 'on').mockImplementation((_, callback) => {
+                callback(visaPayload, new Error());
             });
 
             await strategy.initialize(initializationOptions);
@@ -225,13 +207,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         });
 
         it('registers the error and success callbacks', async () => {
-            // TODO: remove rule and update test with related type (PAYPAL-4383)
-
-            visaCheckoutSDKMock.on = jest.fn((_, callback) => {
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                callback();
+            jest.spyOn(visaCheckoutSDKMock, 'on').mockImplementation((_, callback) => {
+                callback(visaPayload, new Error());
             });
             await strategy.initialize(initializationOptions);
 
@@ -247,13 +224,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
 
         describe('when payment.success', () => {
             beforeEach(() => {
-                // TODO: remove rule and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                visaCheckoutSDKMock.on = jest.fn((type, callback) => {
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    return type === 'payment.success' ? callback('data') : undefined;
+                jest.spyOn(visaCheckoutSDKMock, 'on').mockImplementation((_, callback) => {
+                    callback(visaPayload, new Error());
                 });
             });
 
@@ -301,14 +273,9 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             it('payment error triggers onError from the options', async () => {
                 const errorMock = new Error();
 
-                // TODO: remove rule and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                visaCheckoutSDKMock.on = jest.fn((type, callback) =>
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    type === 'payment.error' ? callback('data', errorMock) : undefined,
-                );
+                jest.spyOn(visaCheckoutSDKMock, 'on').mockImplementation((_, callback) => {
+                    callback(visaPayload, errorMock);
+                });
 
                 await strategy.initialize(initializationOptions);
 

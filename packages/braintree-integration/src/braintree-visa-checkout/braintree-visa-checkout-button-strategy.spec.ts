@@ -11,9 +11,11 @@ import {
     getBraintree,
     getDataCollectorMock,
     getDeviceDataMock,
+    getPaymentSuccessPayload,
     getVisaCheckoutMock,
     getVisaCheckoutSDKMock,
     VisaCheckoutHostWindow,
+    VisaCheckoutPaymentSuccessPayload,
     VisaCheckoutSDK,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -39,6 +41,7 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
     let braintreeVisaCheckoutButtonElement: HTMLDivElement;
     let dataCollector: BraintreeDataCollector;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
+    let visaPayload: VisaCheckoutPaymentSuccessPayload;
 
     const defaultContainerId = 'braintree-visa-checkout-button-mock-id';
 
@@ -48,6 +51,8 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
     };
 
     beforeEach(() => {
+        visaPayload = getPaymentSuccessPayload();
+
         mockWindow = {} as VisaCheckoutHostWindow & BraintreeHostWindow;
 
         dataCollector = getDataCollectorMock();
@@ -180,13 +185,8 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         });
 
         it('visa Checkout tokenization', async () => {
-            // TODO: remove rule and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            visaCheckoutSDKMock.on = jest.fn((type, callback) => {
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                return type === 'payment.success' ? callback('data') : undefined;
+            jest.spyOn(visaCheckoutSDKMock, 'on').mockImplementation((_, callback) => {
+                callback(visaPayload, new Error());
             });
 
             await strategy.initialize(initializationOptions);
@@ -209,13 +209,8 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
                 postal_code: '2008',
             });
 
-            // TODO: remove rule and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            visaCheckoutSDKMock.on = jest.fn((type, callback) => {
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                return type === 'payment.success' ? callback('data') : undefined;
+            jest.spyOn(visaCheckoutSDKMock, 'on').mockImplementation((_, callback) => {
+                callback(visaPayload, new Error());
             });
 
             await strategy.initialize(initializationOptions);
