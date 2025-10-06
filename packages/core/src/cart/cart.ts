@@ -35,4 +35,5 @@ export default interface Cart {
     createdTime: string;
     updatedTime: string;
     source?: CartSource;
+    version: number;
 }
