@@ -977,6 +977,12 @@ declare class PayPalCommerceCustomerStrategy implements CustomerStrategy {
     private onShippingAddressChange;
     private onShippingOptionsChange;
     private handleError;
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled;
 }
 
 /**

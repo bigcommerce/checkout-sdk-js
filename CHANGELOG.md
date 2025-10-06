@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.807.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.806.0...v1.807.0) (2025-10-06)
+
+
+### Features
+
+* **payment:** PAYPAL-5718 added appSwitch for PPCP customer strategy ([#3017](https://github.com/bigcommerce/checkout-sdk-js/issues/3017)) ([2da0cb5](https://github.com/bigcommerce/checkout-sdk-js/commit/2da0cb5ed3e35f260d1c0d9f55d7f74cd3aba330))
+
 ## [1.806.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.805.0...v1.806.0) (2025-10-03)
 
 
