@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.808.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.807.0...v1.808.0) (2025-10-07)
+
+
+### Features
+
+* **core:** CHECKOUT-9513 Add option to pass initial state during initialisation ([b0d9a83](https://github.com/bigcommerce/checkout-sdk-js/commit/b0d9a837c998759a1d8da46a9972c66e8282e23b))
+* **core:** CHECKOUT-9513 Pass initial state through separate method to reduce work in single microtask ([ce90ae3](https://github.com/bigcommerce/checkout-sdk-js/commit/ce90ae349f6056aee792a568dcd571d7927f1899))
+* **payment:** PAYPAL-2615 moved braintree visa checkout to separate package ([#3021](https://github.com/bigcommerce/checkout-sdk-js/issues/3021)) ([1656773](https://github.com/bigcommerce/checkout-sdk-js/commit/1656773b53b9c406214896aaefe1a2839ecb7854))
+
 ## [1.807.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.806.0...v1.807.0) (2025-10-06)
 
 

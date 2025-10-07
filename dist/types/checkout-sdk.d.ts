@@ -2890,6 +2890,13 @@ declare enum CheckoutIncludes {
     DigitalItemsCategoryNames = "cart.lineItems.digitalItems.categoryNames"
 }
 
+declare interface CheckoutInitialState {
+    config?: Config;
+    formFields?: FormFields;
+    checkout?: Checkout;
+    extensions?: Extension[];
+}
+
 declare interface CheckoutParams {
     include?: CheckoutIncludes[] | CheckoutIncludeParam;
 }
@@ -3021,6 +3028,27 @@ declare class CheckoutService {
      * @returns A function, if called, will unsubscribe the subscriber.
      */
     subscribe(subscriber: (state: CheckoutSelectors) => void, ...filters: Array<(state: CheckoutSelectors) => any>): () => void;
+    /**
+     * Hydrates the checkout service with an initial state.
+     *
+     * The initial state can contain various checkout data such as cart items,
+     * customer information, and other relevant state.
+     *
+     * ```js
+     * const initialState = {
+     *     // ... initial checkout state data
+     * };
+     *
+     * const state = await service.hydrateInitialState(initialState);
+     *
+     * console.log(state.data.getCheckout());
+     * ```
+     *
+     * @alpha
+     * @param state - The initial state data to hydrate the checkout service with.
+     * @returns A promise that resolves to the current state after hydration.
+     */
+    hydrateInitialState(state: CheckoutInitialState): Promise<CheckoutSelectors>;
     /**
      * Loads the current checkout.
      *
@@ -4027,6 +4055,7 @@ declare interface CheckoutSettings {
     isSpamProtectionEnabled: boolean;
     isTrustedShippingAddressEnabled: boolean;
     orderTermsAndConditions: string;
+    orderTermsAndConditionsLocation: string;
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
     privacyPolicyUrl: string;
@@ -8440,6 +8469,7 @@ declare interface StoreCurrency {
     code: string;
     decimalPlaces: string;
     decimalSeparator: string;
+    isTransactional: boolean;
     symbolLocation: string;
     symbol: string;
     thousandsSeparator: string;

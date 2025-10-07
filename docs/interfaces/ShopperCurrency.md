@@ -63,6 +63,10 @@ ___
 
 • **isTransactional**: `boolean`
 
+#### Overrides
+
+[StoreCurrency](StoreCurrency.md).[isTransactional](StoreCurrency.md#istransactional)
+
 ___
 
 ### symbol

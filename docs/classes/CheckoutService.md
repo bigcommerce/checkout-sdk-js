@@ -37,6 +37,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [getState](CheckoutService.md#getstate)
 - [handleExtensionCommand](CheckoutService.md#handleextensioncommand)
 - [handleExtensionQuery](CheckoutService.md#handleextensionquery)
+- [hydrateInitialState](CheckoutService.md#hydrateinitialstate)
 - [initializeCustomer](CheckoutService.md#initializecustomer)
 - [initializePayment](CheckoutService.md#initializepayment)
 - [initializeShipping](CheckoutService.md#initializeshipping)
@@ -748,6 +749,41 @@ Manages the query handler for an extension.
 `void`
 
 A function that, when called, will deregister the query handler.
+
+___
+
+### hydrateInitialState
+
+▸ **hydrateInitialState**(`state`): `Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+Hydrates the checkout service with an initial state.
+
+The initial state can contain various checkout data such as cart items,
+customer information, and other relevant state.
+
+```js
+const initialState = {
+    // ... initial checkout state data
+};
+
+const state = await service.hydrateInitialState(initialState);
+
+console.log(state.data.getCheckout());
+```
+
+**`alpha`**
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `state` | [`CheckoutInitialState`](../interfaces/CheckoutInitialState.md) | The initial state data to hydrate the checkout service with. |
+
+#### Returns
+
+`Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+A promise that resolves to the current state after hydration.
 
 ___
 

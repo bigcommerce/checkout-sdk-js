@@ -15,6 +15,7 @@
 - [code](StoreCurrency.md#code)
 - [decimalPlaces](StoreCurrency.md#decimalplaces)
 - [decimalSeparator](StoreCurrency.md#decimalseparator)
+- [isTransactional](StoreCurrency.md#istransactional)
 - [symbol](StoreCurrency.md#symbol)
 - [symbolLocation](StoreCurrency.md#symbollocation)
 - [thousandsSeparator](StoreCurrency.md#thousandsseparator)
@@ -36,6 +37,12 @@ ___
 ### decimalSeparator
 
 • **decimalSeparator**: `string`
+
+___
+
+### isTransactional
+
+• **isTransactional**: `boolean`
 
 ___
 

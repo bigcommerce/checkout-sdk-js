@@ -898,6 +898,37 @@ declare class BraintreeVisaCheckoutCustomerStrategy implements CustomerStrategy 
     private handleError;
 }
 
+declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
+    /**
+     * A callback that gets called when Visa Checkout fails to initialize or
+     * selects a payment option.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
+    onPaymentSelect?(): void;
+}
+
+declare class BraintreeVisaCheckoutPaymentStrategy implements PaymentStrategy {
+    private paymentIntegrationService;
+    private formPoster;
+    private braintreeSdk;
+    private paymentMethod?;
+    constructor(paymentIntegrationService: PaymentIntegrationService, formPoster: FormPoster, braintreeSdk: BraintreeSdk);
+    initialize(options: PaymentInitializeOptions & WithBraintreeVisaCheckoutPaymentInitializeOptions): Promise<void>;
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
+    finalize(): Promise<any>;
+    deinitialize(): Promise<void>;
+    private tokenizePayment;
+    private mapToVisaCheckoutAddress;
+    private postForm;
+    private getAddress;
+    private handleError;
+}
+
 declare interface BuyNowInitializeOptions {
     getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
 }
@@ -987,6 +1018,10 @@ declare interface WithBraintreeVisaCheckoutCustomerInitializeOptions {
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
 }
 
+declare interface WithBraintreeVisaCheckoutPaymentInitializeOptions {
+    braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
+}
+
 export declare const createBraintreeAchPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BraintreeAchPaymentStrategy>, {
     id: string;
 }>;
@@ -1040,5 +1075,9 @@ export declare const createBraintreeVisaCheckoutButtonStrategy: import("../../..
 }>;
 
 export declare const createBraintreeVisaCheckoutCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BraintreeVisaCheckoutCustomerStrategy>, {
+    id: string;
+}>;
+
+export declare const createBraintreeVisaCheckoutPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BraintreeVisaCheckoutPaymentStrategy>, {
     id: string;
 }>;

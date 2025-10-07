@@ -28,6 +28,7 @@
 - [isTrustedShippingAddressEnabled](CheckoutSettings.md#istrustedshippingaddressenabled)
 - [orderTermsAndConditions](CheckoutSettings.md#ordertermsandconditions)
 - [orderTermsAndConditionsLink](CheckoutSettings.md#ordertermsandconditionslink)
+- [orderTermsAndConditionsLocation](CheckoutSettings.md#ordertermsandconditionslocation)
 - [orderTermsAndConditionsType](CheckoutSettings.md#ordertermsandconditionstype)
 - [privacyPolicyUrl](CheckoutSettings.md#privacypolicyurl)
 - [providerWithCustomCheckout](CheckoutSettings.md#providerwithcustomcheckout)
@@ -172,6 +173,12 @@ ___
 ### orderTermsAndConditionsLink
 
 • **orderTermsAndConditionsLink**: `string`
+
+___
+
+### orderTermsAndConditionsLocation
+
+• **orderTermsAndConditionsLocation**: `string`
 
 ___
 
