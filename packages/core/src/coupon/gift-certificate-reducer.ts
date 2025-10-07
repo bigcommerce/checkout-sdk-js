@@ -1,6 +1,11 @@
 import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
-import { CheckoutAction, CheckoutActionType } from '../checkout';
+import {
+    CheckoutAction,
+    CheckoutActionType,
+    CheckoutHydrateAction,
+    CheckoutHydrateActionType,
+} from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { arrayReplace, objectSet } from '../common/utility';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
@@ -29,7 +34,12 @@ export default function giftCertificateReducer(
 
 function dataReducer(
     data: GiftCertificate[] | undefined,
-    action: CheckoutAction | GiftCertificateAction | ConsignmentAction | CouponAction,
+    action:
+        | CheckoutAction
+        | GiftCertificateAction
+        | ConsignmentAction
+        | CouponAction
+        | CheckoutHydrateAction,
 ): GiftCertificate[] | undefined {
     switch (action.type) {
         case CheckoutActionType.LoadCheckoutSucceeded:
@@ -42,6 +52,9 @@ function dataReducer(
         case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
         case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
             return arrayReplace(data, action.payload && action.payload.giftCertificates);
+
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return arrayReplace(data, action.payload?.checkout?.giftCertificates);
 
         default:
             return data;

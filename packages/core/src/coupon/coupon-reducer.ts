@@ -1,6 +1,11 @@
 import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
-import { CheckoutAction, CheckoutActionType } from '../checkout';
+import {
+    CheckoutAction,
+    CheckoutActionType,
+    CheckoutHydrateAction,
+    CheckoutHydrateActionType,
+} from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { arrayReplace, objectSet } from '../common/utility';
 import { OrderAction, OrderActionType } from '../order';
@@ -25,7 +30,7 @@ export default function couponReducer(
 
 function dataReducer(
     data: Coupon[] | undefined,
-    action: CouponAction | CheckoutAction | OrderAction | ConsignmentAction,
+    action: CouponAction | CheckoutAction | OrderAction | ConsignmentAction | CheckoutHydrateAction,
 ): Coupon[] | undefined {
     switch (action.type) {
         case CheckoutActionType.LoadCheckoutSucceeded:
@@ -34,6 +39,9 @@ function dataReducer(
         case CouponActionType.RemoveCouponSucceeded:
         case OrderActionType.LoadOrderSucceeded:
             return arrayReplace(data, action.payload && action.payload.coupons);
+
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return arrayReplace(data, action.payload?.checkout?.coupons);
 
         default:
             return data;

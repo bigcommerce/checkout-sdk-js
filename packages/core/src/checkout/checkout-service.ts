@@ -60,6 +60,7 @@ import { Subscriptions, SubscriptionsActionCreator } from '../subscription';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
+import CheckoutInitialState from './checkout-initial-state';
 import CheckoutParams from './checkout-params';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
@@ -178,6 +179,30 @@ export default class CheckoutService {
         ...filters: Array<(state: CheckoutSelectors) => any>
     ): () => void {
         return this._storeProjection.subscribe(subscriber, ...filters);
+    }
+
+    /**
+     * Hydrates the checkout service with an initial state.
+     *
+     * The initial state can contain various checkout data such as cart items,
+     * customer information, and other relevant state.
+     *
+     * ```js
+     * const initialState = {
+     *     // ... initial checkout state data
+     * };
+     *
+     * const state = await service.hydrateInitialState(initialState);
+     *
+     * console.log(state.data.getCheckout());
+     * ```
+     *
+     * @alpha
+     * @param state - The initial state data to hydrate the checkout service with.
+     * @returns A promise that resolves to the current state after hydration.
+     */
+    hydrateInitialState(state: CheckoutInitialState): Promise<CheckoutSelectors> {
+        return this._dispatch(this._checkoutActionCreator.hydrateInitialState(state));
     }
 
     /**

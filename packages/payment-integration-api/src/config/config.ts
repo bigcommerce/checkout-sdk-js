@@ -11,6 +11,7 @@ export interface StoreConfig {
     checkoutSettings: CheckoutSettings;
     currency: StoreCurrency;
     displayDateFormat: string;
+    displaySettings: DisplaySettings;
     inputDateFormat: string;
 
     /**
@@ -75,6 +76,7 @@ export interface StoreLinks {
     createAccountLink: string;
     forgotPasswordLink: string;
     loginLink: string;
+    logoutLink: string;
     siteLink: string;
     orderConfirmationLink: string;
 }
@@ -83,6 +85,7 @@ export interface StoreCurrency {
     code: string;
     decimalPlaces: string;
     decimalSeparator: string;
+    isTransactional: boolean;
     symbolLocation: string;
     symbol: string;
     thousandsSeparator: string;
@@ -115,6 +118,7 @@ export interface CheckoutSettings {
     isSpamProtectionEnabled: boolean;
     isTrustedShippingAddressEnabled: boolean;
     orderTermsAndConditions: string;
+    orderTermsAndConditionsLocation: string;
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
     privacyPolicyUrl: string;
@@ -146,4 +150,8 @@ export interface ContextConfig {
         formId?: string;
         token?: string;
     };
+}
+
+export interface DisplaySettings {
+    hidePriceFromGuests: boolean;
 }
