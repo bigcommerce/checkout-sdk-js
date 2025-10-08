@@ -301,6 +301,9 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         }
 
         const buttonOptions: PayPalCommerceButtonsOptions = {
+            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+                appSwitchWhenAvailable: true,
+            }),
             fundingSource: paypalSdk.FUNDING.PAYPAL,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(
                 checkoutPaymentButtonStyles,
@@ -322,7 +325,11 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             onRenderButton();
         }
 
-        this.paypalButton.render(container);
+        if (this.paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
+            this.paypalButton.resume?.();
+        } else {
+            this.paypalButton.render(container);
+        }
     }
 
     private async handleClick(
@@ -459,5 +466,18 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         }
 
         return false;
+    }
+
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+
+        return paymentMethod.initializationData?.isAppSwitchEnabled || false;
     }
 }
