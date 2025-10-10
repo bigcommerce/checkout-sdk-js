@@ -3,6 +3,7 @@ export { default as createStripeUPEPaymentStrategy } from './stripe-upe/create-s
 export { default as createStripeUPECustomerStrategy } from './stripe-upe/create-stripe-upe-customer-strategy';
 export { default as createStripeOCSPaymentStrategy } from './stripe-ocs/create-stripe-ocs-payment-strategy';
 export { default as createStripeLinkV2CustomerStrategy } from './stripe-ocs/create-stripe-link-v2-customer-strategy';
+export { default as createLinkV2ButtonStrategy } from './stripe-ocs/create-stripe-link-v2-button-strategy';
 
 export { default as StripeScriptLoader } from './stripev3/stripev3-script-loader';
 

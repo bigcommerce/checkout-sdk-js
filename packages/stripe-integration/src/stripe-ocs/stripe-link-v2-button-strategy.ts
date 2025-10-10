@@ -2,8 +2,8 @@ import { round } from 'lodash';
 
 import {
     AmountTransformer,
+    CheckoutButtonStrategy,
     CustomerInitializeOptions,
-    CustomerStrategy,
     InvalidArgumentError,
     isRequestError,
     MissingDataError,
@@ -39,7 +39,7 @@ import { expressCheckoutAllowedCountryCodes } from './constants';
 import { StripeLinkV2Event, StripeLinkV2Options, StripeLinkV2ShippingRate } from './stripe-ocs';
 import { WithStripeOCSCustomerInitializeOptions } from './stripe-ocs-customer-initialize-options';
 
-export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
+export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
     private _stripeClient?: StripeClient;
     private _stripeElements?: StripeElements;
     private _linkV2Element?: StripeElement;
@@ -59,8 +59,9 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     async initialize(
         options: CustomerInitializeOptions & WithStripeOCSCustomerInitializeOptions,
     ): Promise<void> {
+        console.log('StripeLinkV2ButtonStrategy', options);
         const { stripeocs } = options || {};
-        console.log(2123, options);
+
         if (!stripeocs) {
             throw new InvalidArgumentError(
                 `Unable to proceed because "options" argument is not provided.`,
@@ -76,6 +77,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
+
         const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
         const { loadingContainerId, buttonHeight, onComplete } = stripeocs;
 
@@ -123,6 +125,8 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         stripeExpressCheckoutClient: StripeClient,
         buttonHeight = 40,
     ) {
+        await this.paymentIntegrationService.loadDefaultCheckout();
+
         const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
         const expressCheckoutOptions: StripeElementsCreateOptions = {
             shippingAddressRequired: shouldRequireShippingAddress,
@@ -147,7 +151,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             buttonHeight,
         };
 
-        const { cartAmount } = this.paymentIntegrationService.getState().getCartOrThrow();
+        const { cartAmount = 0 } = this.paymentIntegrationService.getState().getCart() || {};
 
         const elementsOptions: StripeLinkV2Options = {
             mode: 'payment',
@@ -388,13 +392,13 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
             const confirmationResult = !isPaymentCompleted
                 ? await this._stripeClient?.confirmPayment({
-                      elements: stripePaymentData.elements,
-                      clientSecret: token,
-                      redirect: StripeStringConstants.IF_REQUIRED,
-                      confirmParams: {
-                          return_url: stripePaymentData.confirmParams?.return_url,
-                      },
-                  })
+                    elements: stripePaymentData.elements,
+                    clientSecret: token,
+                    redirect: StripeStringConstants.IF_REQUIRED,
+                    confirmParams: {
+                        return_url: stripePaymentData.confirmParams?.return_url,
+                    },
+                })
                 : await this._stripeClient?.retrievePaymentIntent(token || '');
 
             stripeError = confirmationResult?.error;
@@ -439,10 +443,11 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     /** Utils * */
 
     private _shouldRequireShippingAddress() {
-        const { getCartOrThrow } = this.paymentIntegrationService.getState();
-        const { lineItems } = getCartOrThrow();
+        const { getCart } = this.paymentIntegrationService.getState();
+        console.log('getCart()', getCart());
+        const { lineItems } = getCart() || {};
 
-        return !!lineItems.physicalItems.length;
+        return !!lineItems?.physicalItems.length;
     }
 
     private async _updateDisplayedPrice() {
@@ -457,11 +462,13 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
     private _getCurrency() {
         if (!this._currencyCode) {
-            const { code: currencyCode } = this.paymentIntegrationService
+            const currencyCode = this.paymentIntegrationService
                 .getState()
-                .getCartOrThrow().currency;
+                .getCart()?.currency;
 
-            this._currencyCode = currencyCode.toLowerCase();
+            if (currencyCode) {
+                this._currencyCode = currencyCode.code.toLowerCase();
+            }
         }
 
         return this._currencyCode;
@@ -470,8 +477,8 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private async _getTotalPrice(): Promise<number> {
         await this.paymentIntegrationService.loadCheckout();
 
-        const { getCheckoutOrThrow, getCartOrThrow } = this.paymentIntegrationService.getState();
-        const { decimalPlaces } = getCartOrThrow().currency;
+        const { getCheckoutOrThrow, getCart } = this.paymentIntegrationService.getState();
+        const { decimalPlaces } = getCart()?.currency || {};
         const totalPrice = round(getCheckoutOrThrow().outstandingBalance, decimalPlaces).toFixed(
             decimalPlaces,
         );
