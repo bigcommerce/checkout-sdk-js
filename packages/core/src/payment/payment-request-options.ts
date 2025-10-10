@@ -6,10 +6,7 @@ import {
 
 import { RequestOptions } from '../common/http-request';
 
-import {
-    BraintreePaymentInitializeOptions,
-    BraintreeVisaCheckoutPaymentInitializeOptions,
-} from './strategies/braintree';
+import { BraintreePaymentInitializeOptions } from './strategies/braintree';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 
@@ -56,13 +53,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Braintree.
      */
     braintree?: BraintreePaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Visa Checkout payment
-     * method provided by Braintree. They can be omitted unless you need to
-     * support Visa Checkout.
-     */
-    braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Masterpass payment method.

@@ -60,7 +60,6 @@ import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
-import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 
@@ -94,14 +93,7 @@ describe('PaymentStrategyActionCreator', () => {
         errorLogger = {
             log: jest.fn(),
         };
-        registry = createPaymentStrategyRegistry(
-            store,
-            paymentClient,
-            requestSender,
-            spamProtection,
-            'en_US',
-            errorLogger,
-        );
+        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
@@ -197,29 +189,6 @@ describe('PaymentStrategyActionCreator', () => {
                 methodId: method.id,
                 gatewayId: method.gateway,
             });
-        });
-
-        it('does not initialize if strategy is already initialized', async () => {
-            store = createCheckoutStore(
-                merge({}, state, {
-                    paymentStrategies: {
-                        data: { braintreevisacheckout: { isInitialized: true } },
-                    },
-                }),
-            );
-
-            const strategy = registry.get(PaymentStrategyType.BRAINTREE_VISA_CHECKOUT);
-
-            jest.spyOn(strategy, 'initialize').mockReturnValue(Promise.resolve(store.getState()));
-
-            const actions = await from(
-                actionCreator.initialize({ methodId: 'braintreevisacheckout' })(store),
-            )
-                .pipe(toArray())
-                .toPromise();
-
-            expect(strategy.initialize).not.toHaveBeenCalled();
-            expect(actions).toEqual([]);
         });
 
         it('emits action to notify initialization progress', async () => {
@@ -498,18 +467,6 @@ describe('PaymentStrategyActionCreator', () => {
             expect(strategy.deinitialize).toHaveBeenCalled();
         });
 
-        it('does not deinitialize if strategy is not initialized', async () => {
-            const strategy = registry.get(PaymentStrategyType.BRAINTREE_VISA_CHECKOUT);
-
-            jest.spyOn(strategy, 'deinitialize').mockReturnValue(Promise.resolve(store.getState()));
-
-            await from(
-                actionCreator.deinitialize({ methodId: 'braintreevisacheckout' })(store),
-            ).toPromise();
-
-            expect(strategy.deinitialize).not.toHaveBeenCalled();
-        });
-
         it('emits action to notify deinitialization progress', async () => {
             const actions = await from(
                 actionCreator.deinitialize({
@@ -678,14 +635,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 paymentMethods: { ...state.paymentMethods, data: [] },
             });
-            registry = createPaymentStrategyRegistry(
-                store,
-                paymentClient,
-                requestSender,
-                spamProtection,
-                'en_US',
-                errorLogger,
-            );
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
 
             const actionCreator = new PaymentStrategyActionCreator(
                 registry,
@@ -713,14 +663,7 @@ describe('PaymentStrategyActionCreator', () => {
                 }),
             });
 
-            registry = createPaymentStrategyRegistry(
-                store,
-                paymentClient,
-                requestSender,
-                spamProtection,
-                'en_US',
-                errorLogger,
-            );
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
 
             jest.spyOn(registryV2, 'get').mockReturnValue(noPaymentDataStrategy);
 
@@ -833,14 +776,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 order: getOrderState(),
             });
-            registry = createPaymentStrategyRegistry(
-                store,
-                paymentClient,
-                requestSender,
-                spamProtection,
-                'en_US',
-                errorLogger,
-            );
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
 
             const actionCreator = new PaymentStrategyActionCreator(
                 registry,
@@ -874,14 +810,7 @@ describe('PaymentStrategyActionCreator', () => {
                     data: [],
                 },
             });
-            registry = createPaymentStrategyRegistry(
-                store,
-                paymentClient,
-                requestSender,
-                spamProtection,
-                'en_US',
-                errorLogger,
-            );
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
 
             const actionCreator = new PaymentStrategyActionCreator(
                 registry,

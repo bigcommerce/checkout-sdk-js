@@ -8,7 +8,6 @@ import {
     BraintreeModuleCreator,
     BraintreeThreeDSecure,
     BraintreeVenmoCheckout,
-    BraintreeVisaCheckout,
 } from './braintree';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import {
@@ -20,7 +19,6 @@ import {
     getModuleCreatorNewMock,
     getThreeDSecureMock,
     getVenmoCheckoutMock,
-    getVisaCheckoutMock,
 } from './braintree.mock';
 
 describe('Braintree SDK Creator', () => {
@@ -220,50 +218,6 @@ describe('Braintree SDK Creator', () => {
         });
     });
 
-    describe('#getVisaCheckout()', () => {
-        let visaCheckoutMock: BraintreeVisaCheckout;
-        let visaCheckoutCreatorMock: BraintreeModuleCreator<BraintreeVisaCheckout>;
-        let braintreeSDKCreator: BraintreeSDKCreator;
-
-        beforeEach(() => {
-            visaCheckoutMock = getVisaCheckoutMock();
-            visaCheckoutCreatorMock = getModuleCreatorMock(visaCheckoutMock);
-            braintreeScriptLoader.loadVisaCheckout = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(visaCheckoutCreatorMock));
-            braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
-            jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(
-                Promise.resolve(clientMock),
-            );
-        });
-
-        it('returns a promise that resolves to the VisaCheckout client', async () => {
-            const visaCheckout = await braintreeSDKCreator.getVisaCheckout();
-
-            expect(visaCheckoutCreatorMock.create).toHaveBeenCalledWith({ client: clientMock });
-            expect(visaCheckout).toBe(visaCheckoutMock);
-        });
-
-        it('always returns the same instance of the VisaCheckout client', async () => {
-            const visaCheckout1 = await braintreeSDKCreator.getVisaCheckout();
-            const visaCheckout2 = await braintreeSDKCreator.getVisaCheckout();
-
-            expect(visaCheckout1).toBe(visaCheckout2);
-            expect(braintreeScriptLoader.loadVisaCheckout).toHaveBeenCalledTimes(1);
-            expect(visaCheckoutCreatorMock.create).toHaveBeenCalledTimes(1);
-        });
-
-        it('throws if getting the client throws', () => {
-            const errorMessage = 'some_error';
-
-            jest.spyOn(braintreeSDKCreator, 'getClient').mockImplementation(() => {
-                throw new Error(errorMessage);
-            });
-
-            expect(() => braintreeSDKCreator.getVisaCheckout()).toThrow(errorMessage);
-        });
-    });
-
     describe('#getVenmoCheckoutMock()', () => {
         let braintreeVenmoCheckoutMock: BraintreeVenmoCheckout;
         let braintreeVenmoCheckoutCreatorMock: BraintreeModuleCreator<BraintreeVenmoCheckout>;
@@ -334,13 +288,11 @@ describe('Braintree SDK Creator', () => {
         let braintreeSDKCreator: BraintreeSDKCreator;
         let dataCollectorMock: BraintreeDataCollector;
         let threeDSecureMock: BraintreeThreeDSecure;
-        let visaCheckoutMock: BraintreeVisaCheckout;
         let braintreeVenmoCheckout: BraintreeVenmoCheckout;
 
         beforeEach(() => {
             dataCollectorMock = getDataCollectorMock();
             threeDSecureMock = getThreeDSecureMock();
-            visaCheckoutMock = getVisaCheckoutMock();
             braintreeVenmoCheckout = getVenmoCheckoutMock();
 
             braintreeScriptLoader.loadDataCollector = jest
@@ -349,9 +301,6 @@ describe('Braintree SDK Creator', () => {
             braintreeScriptLoader.load3DS = jest
                 .fn()
                 .mockReturnValue(Promise.resolve(getModuleCreatorMock(threeDSecureMock)));
-            braintreeScriptLoader.loadVisaCheckout = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(getModuleCreatorMock(visaCheckoutMock)));
             braintreeScriptLoader.loadClient = jest
                 .fn()
                 .mockReturnValue(Promise.resolve(getModuleCreatorMock(clientMock)));
@@ -366,13 +315,11 @@ describe('Braintree SDK Creator', () => {
         it('calls teardown in all the dependencies', async () => {
             await braintreeSDKCreator.get3DS();
             await braintreeSDKCreator.getDataCollector();
-            await braintreeSDKCreator.getVisaCheckout();
 
             await braintreeSDKCreator.teardown();
 
             expect(dataCollectorMock.teardown).toHaveBeenCalled();
             expect(threeDSecureMock.teardown).toHaveBeenCalled();
-            expect(visaCheckoutMock.teardown).toHaveBeenCalled();
         });
 
         it('only teardown instantiated dependencies', async () => {
@@ -382,7 +329,6 @@ describe('Braintree SDK Creator', () => {
 
             expect(dataCollectorMock.teardown).toHaveBeenCalled();
             expect(threeDSecureMock.teardown).not.toHaveBeenCalled();
-            expect(visaCheckoutMock.teardown).not.toHaveBeenCalled();
         });
     });
 });

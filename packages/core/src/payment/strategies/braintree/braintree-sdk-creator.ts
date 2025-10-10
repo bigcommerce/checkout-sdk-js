@@ -10,7 +10,6 @@ import {
     BraintreeScriptLoader,
     BraintreeThreeDSecure,
     BraintreeVenmoCheckout,
-    BraintreeVisaCheckout,
     PAYPAL_COMPONENTS,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
@@ -22,7 +21,6 @@ export default class BraintreeSDKCreator {
     private _3ds?: Promise<BraintreeThreeDSecure>;
     private _paypalCheckout?: Promise<BraintreePaypalCheckout>;
     private _clientToken?: string;
-    private _visaCheckout?: Promise<BraintreeVisaCheckout>;
     private _venmoCheckout?: Promise<BraintreeVenmoCheckout>;
     private _dataCollectors: {
         default?: Promise<BraintreeDataCollector>;
@@ -122,17 +120,6 @@ export default class BraintreeSDKCreator {
         return cached;
     }
 
-    getVisaCheckout(): Promise<BraintreeVisaCheckout> {
-        if (!this._visaCheckout) {
-            this._visaCheckout = Promise.all([
-                this.getClient(),
-                this._braintreeScriptLoader.loadVisaCheckout(),
-            ]).then(([client, visaCheckout]) => visaCheckout.create({ client }));
-        }
-
-        return this._visaCheckout;
-    }
-
     async createHostedFields(
         options: Pick<BraintreeHostedFieldsCreatorConfig, 'fields' | 'styles'>,
     ): Promise<BraintreeHostedFields> {
@@ -151,13 +138,11 @@ export default class BraintreeSDKCreator {
             this._teardown(this._dataCollectors.paypal),
             this._teardown(this._paypalCheckout),
             this._teardown(this._venmoCheckout),
-            this._teardown(this._visaCheckout),
         ]).then(() => {
             this._3ds = undefined;
             this._dataCollectors = {};
             this._paypalCheckout = undefined;
             this._venmoCheckout = undefined;
-            this._visaCheckout = undefined;
         });
     }
 
