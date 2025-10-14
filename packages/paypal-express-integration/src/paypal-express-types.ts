@@ -78,6 +78,12 @@ export enum PaypalButtonStyleShapeOption {
     RECT = 'rect',
 }
 
+export enum PaymentStatusTypes {
+    ACKNOWLEDGE = 'ACKNOWLEDGE',
+    FINALIZE = 'FINALIZE',
+    INITIALIZE = 'INITIALIZE',
+}
+
 export interface PaypalStyleOptions {
     layout?: PaypalButtonStyleLayoutOption;
     size?: PaypalButtonStyleSizeOption;
