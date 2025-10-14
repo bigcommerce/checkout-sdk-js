@@ -24,4 +24,8 @@ const createCyberSourceV2PaymentStrategy: PaymentStrategyFactory<CyberSourceV2Pa
     );
 };
 
-export default toResolvableModule(createCyberSourceV2PaymentStrategy, [{ id: 'cybersourcev2' }]);
+export default toResolvableModule(createCyberSourceV2PaymentStrategy, [
+    { id: 'cybersourcev2' },
+    { id: 'bnz' },
+    { id: 'barclays' },
+]);
