@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.809.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.808.0...v1.809.0) (2025-10-15)
+
+
+### Features
+
+* **payment:** create Stripe utils package ([#3012](https://github.com/bigcommerce/checkout-sdk-js/issues/3012)) ([e494d5e](https://github.com/bigcommerce/checkout-sdk-js/commit/e494d5e16aeb7dc7911eb4a7e68dd550fb051634))
+
 ## [1.808.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.807.0...v1.808.0) (2025-10-07)
 
 

@@ -23,6 +23,12 @@ service.initializePayment({
 });
 ```
 
+## Hierarchy
+
+- `default`
+
+  ↳ **`StripeOCSPaymentInitializeOptions`**
+
 ## Table of contents
 
 ### Properties
@@ -31,11 +37,11 @@ service.initializePayment({
 - [containerId](StripeOCSPaymentInitializeOptions.md#containerid)
 - [fonts](StripeOCSPaymentInitializeOptions.md#fonts)
 - [layout](StripeOCSPaymentInitializeOptions.md#layout)
+- [style](StripeOCSPaymentInitializeOptions.md#style)
 
 ### Methods
 
 - [handleClosePaymentMethod](StripeOCSPaymentInitializeOptions.md#handleclosepaymentmethod)
-- [initStripeElementUpdateTrigger](StripeOCSPaymentInitializeOptions.md#initstripeelementupdatetrigger)
 - [onError](StripeOCSPaymentInitializeOptions.md#onerror)
 - [paymentMethodSelect](StripeOCSPaymentInitializeOptions.md#paymentmethodselect)
 - [render](StripeOCSPaymentInitializeOptions.md#render)
@@ -45,7 +51,7 @@ service.initializePayment({
 
 ### appearance
 
-• `Optional` **appearance**: [`StripeAppearanceOptions`](StripeAppearanceOptions.md)
+• `Optional` **appearance**: `StripeAppearanceOptions`
 
 Stripe OCS appearance options for styling the accordion.
 
@@ -57,11 +63,15 @@ ___
 
 The location to insert the credit card number form field.
 
+#### Overrides
+
+StripePaymentInitializeOptions.containerId
+
 ___
 
 ### fonts
 
-• `Optional` **fonts**: [`StripeCustomFont`](../README.md#stripecustomfont)[]
+• `Optional` **fonts**: `StripeCustomFont`[]
 
 Stripe OCS fonts options for styling the accordion.
 
@@ -72,6 +82,18 @@ ___
 • `Optional` **layout**: `Record`<`string`, `string` \| `number` \| `boolean`\>
 
 Stripe OCS layout options
+
+___
+
+### style
+
+• `Optional` **style**: `Record`<`string`, `StripeAppearanceValues`\>
+
+Checkout styles from store theme
+
+#### Overrides
+
+StripePaymentInitializeOptions.style
 
 ## Methods
 
@@ -84,22 +106,6 @@ Stripe OCS layout options
 | Name | Type |
 | :------ | :------ |
 | `collapseElement` | () => `void` |
-
-#### Returns
-
-`void`
-
-___
-
-### initStripeElementUpdateTrigger
-
-▸ `Optional` **initStripeElementUpdateTrigger**(`updateTriggerFn`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `updateTriggerFn` | (`payload`: [`StripeElementUpdateOptions`](StripeElementUpdateOptions.md)) => `void` |
 
 #### Returns
 
@@ -120,6 +126,10 @@ ___
 #### Returns
 
 `void`
+
+#### Overrides
+
+StripePaymentInitializeOptions.onError
 
 ___
 
@@ -146,6 +156,10 @@ ___
 #### Returns
 
 `void`
+
+#### Overrides
+
+StripePaymentInitializeOptions.render
 
 ___
 

@@ -102,7 +102,7 @@ A callback that gets called whenever the Stripe Link Shipping Element's object i
 
 | Name | Type |
 | :------ | :------ |
-| `shipping` | [`StripeEventType`](../README.md#stripeeventtype) |
+| `shipping` | `StripeEventType` |
 
 #### Returns
 
