@@ -40,7 +40,6 @@ import { PaymentStrategy } from './strategies';
 
 export default class PaymentStrategyActionCreator {
     private _paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator;
-    private _isV2Strategy: boolean;
 
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
@@ -51,7 +50,6 @@ export default class PaymentStrategyActionCreator {
         private _errorLogger: ErrorLogger,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
-        this._isV2Strategy = false;
     }
 
     execute(
@@ -178,9 +176,15 @@ export default class PaymentStrategyActionCreator {
                     false,
                 );
 
-                const strategy = this._getStrategy(method);
+                let hasV1Strategy = false;
 
-                if (experimentEnabled && this._isV2Strategy) {
+                try {
+                    this._strategyRegistry.getByMethod(method);
+                } catch {
+                    hasV1Strategy = true;
+                }
+
+                if (experimentEnabled && hasV1Strategy) {
                     const resolveId = {
                         id: method.id,
                         gateway: method.gateway,
@@ -199,6 +203,8 @@ export default class PaymentStrategyActionCreator {
                         this._paymentIntegrationService,
                     );
                 }
+
+                const strategy = this._getStrategy(method);
 
                 const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({
                     ...options,
@@ -290,8 +296,6 @@ export default class PaymentStrategyActionCreator {
     private _getStrategy(method: PaymentMethod): PaymentStrategy | PaymentStrategyV2 {
         let strategy: PaymentStrategy | PaymentStrategyV2;
 
-        this._isV2Strategy = false;
-
         try {
             strategy = this._strategyRegistry.getByMethod(method);
         } catch {
@@ -300,7 +304,6 @@ export default class PaymentStrategyActionCreator {
                 gateway: method.gateway,
                 type: method.type,
             });
-            this._isV2Strategy = true;
         }
 
         return strategy;
