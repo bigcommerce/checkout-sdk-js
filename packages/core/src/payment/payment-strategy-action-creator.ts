@@ -176,7 +176,15 @@ export default class PaymentStrategyActionCreator {
                     false,
                 );
 
-                if (experimentEnabled) {
+                let hasV1Strategy = false;
+
+                try {
+                    this._strategyRegistry.getByMethod(method);
+                } catch {
+                    hasV1Strategy = true;
+                }
+
+                if (experimentEnabled && hasV1Strategy) {
                     const resolveId = {
                         id: method.id,
                         gateway: method.gateway,
