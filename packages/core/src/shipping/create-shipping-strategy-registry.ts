@@ -12,6 +12,7 @@ import {
     createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { StripeScriptLoader } from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutRequestSender, CheckoutStore } from '../checkout';
@@ -19,7 +20,6 @@ import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
-import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import ConsignmentActionCreator from './consignment-action-creator';

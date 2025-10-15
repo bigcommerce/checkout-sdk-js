@@ -1,8 +1,9 @@
 import {
     StripeAppearanceOptions,
+    StripeAppearanceValues,
     StripeCustomFont,
-    StripeElementUpdateOptions,
-} from '../stripe-utils';
+    StripePaymentInitializeOptions,
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 /**
  * A set of options that are required to initialize the Stripe payment method.
@@ -27,11 +28,16 @@ import {
  * ```
  */
 
-export default interface StripeOCSPaymentInitializeOptions {
+export default interface StripeOCSPaymentInitializeOptions extends StripePaymentInitializeOptions {
     /**
      * The location to insert the credit card number form field.
      */
     containerId: string;
+
+    /**
+     * Checkout styles from store theme
+     */
+    style?: Record<string, StripeAppearanceValues>;
 
     /**
      * Stripe OCS layout options
@@ -51,10 +57,6 @@ export default interface StripeOCSPaymentInitializeOptions {
     onError?(error?: Error): void;
 
     render(): void;
-
-    initStripeElementUpdateTrigger?(
-        updateTriggerFn: (payload: StripeElementUpdateOptions) => void,
-    ): void;
 
     paymentMethodSelect?(id: string): void;
 

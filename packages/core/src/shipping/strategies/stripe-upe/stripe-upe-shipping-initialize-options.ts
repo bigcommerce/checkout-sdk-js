@@ -1,4 +1,4 @@
-import { StripeEventType } from '../../../payment/strategies/stripe-upe';
+import { StripeEventType } from '@bigcommerce/checkout-sdk/stripe-utils';
 
 /**
  * A set of options that are required to initialize the shipping step of
