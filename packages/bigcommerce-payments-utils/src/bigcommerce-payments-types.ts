@@ -5,8 +5,7 @@ import { CardInstrument, CustomerAddress } from '@bigcommerce/checkout-sdk/payme
  * BigCommerce Payments Funding sources
  *
  */
-export type FundingType = string[];
-export type EnableFundingType = FundingType | string;
+export type FundingType = string;
 
 /**
  *
@@ -15,14 +14,14 @@ export type EnableFundingType = FundingType | string;
  */
 export interface BigCommercePaymentsInitializationData {
     attributionId?: string;
-    availableAlternativePaymentMethods: FundingType;
+    availableAlternativePaymentMethods: FundingType[];
     buttonStyle?: PayPalButtonStyleOptions;
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
     fastlaneStyles?: FastlaneStylesSettings;
     connectClientToken?: string; // TODO: remove when BCP Fastlane A/B test will be finished
-    enabledAlternativePaymentMethods: FundingType;
+    enabledAlternativePaymentMethods: FundingType[];
     isDeveloperModeApplicable?: boolean;
     intent?: BigCommercePaymentsIntent;
     isAcceleratedCheckoutEnabled?: boolean; // PayPal Fastlane related
@@ -66,8 +65,8 @@ export interface PayPalSdkConfig {
         'client-id'?: string;
         'merchant-id'?: string;
         'buyer-country'?: string;
-        'enable-funding'?: EnableFundingType;
-        'disable-funding'?: FundingType;
+        'enable-funding'?: FundingType[];
+        'disable-funding'?: FundingType[];
         currency?: string;
         commit?: boolean;
         intent?: BigCommercePaymentsIntent;
