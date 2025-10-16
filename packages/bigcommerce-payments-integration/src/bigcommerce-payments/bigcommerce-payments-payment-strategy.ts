@@ -99,10 +99,6 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
         const { onError } = this.bigcommerce_payments || {};
-        const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-        const shouldHandleInstrumentDeclinedError =
-            features && features['PAYPAL-3438.handling_instrument_declined_error_ppc'];
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -126,7 +122,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
             await this.paymentIntegrationService.submitOrder(order, options);
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error: unknown) {
-            if (this.isProviderError(error) && shouldHandleInstrumentDeclinedError) {
+            if (this.isProviderError(error)) {
                 await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(payment.methodId);
 
                 await new Promise((_resolve, reject) => {

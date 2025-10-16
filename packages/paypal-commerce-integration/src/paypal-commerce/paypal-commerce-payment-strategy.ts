@@ -148,10 +148,6 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
         const { onError } = this.paypalcommerce || {};
-        const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-        const shouldHandleInstrumentDeclinedError =
-            features && features['PAYPAL-3438.handling_instrument_declined_error_ppc'];
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -181,7 +177,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
                 return new Promise(() => window.location.replace(redirectUrl));
             }
 
-            if (this.isProviderError(error) && shouldHandleInstrumentDeclinedError) {
+            if (this.isProviderError(error)) {
                 await this.paypalCommerceIntegrationService.loadPayPalSdk(payment.methodId);
 
                 await new Promise((_resolve, reject) => {

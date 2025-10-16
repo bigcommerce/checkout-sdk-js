@@ -11,7 +11,6 @@ import {
     PaymentMethodInvalidError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getConfig,
     getInstruments,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -44,17 +43,6 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
     let strategy: BigCommercePaymentsPaymentStrategy;
 
     const paypalOrderId = 'paypal123';
-    const storeConfig = getConfig().storeConfig;
-    const storeConfigWithFeaturesOn = {
-        ...storeConfig,
-        checkoutSettings: {
-            ...storeConfig.checkoutSettings,
-            features: {
-                ...storeConfig.checkoutSettings.features,
-                'PAYPAL-3438.handling_instrument_declined_error_ppc': true,
-            },
-        },
-    };
 
     const defaultMethodId = 'bigcommerce_payments';
     const defaultContainerId = '#container';
@@ -600,7 +588,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
             });
         });
 
-        it('loads paypalsdk script if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
+        it('loads paypalsdk script if receive INSTRUMENT_DECLINED error', async () => {
             paymentMethod.initializationData.orderId = '1';
 
             const payload = {
@@ -608,11 +596,6 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
                     methodId: defaultMethodId,
                 },
             };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
 
             const providerError = {
                 status: 'error',
@@ -651,7 +634,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
             }
         });
 
-        it('paypalsdk script should not be loaded if the INSTRUMENT_DECLINED error is not received and the experiment is enabled', async () => {
+        it('paypalsdk script should not be loaded if the INSTRUMENT_DECLINED error is not received', async () => {
             paymentMethod.initializationData.orderId = '1';
 
             const payload = {
@@ -659,11 +642,6 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
                     methodId: defaultMethodId,
                 },
             };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
 
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw new Error();
@@ -678,7 +656,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
             }
         });
 
-        it('renders paypal spb if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
+        it('renders paypal spb if receive INSTRUMENT_DECLINED error', async () => {
             paymentMethod.initializationData.orderId = '1';
 
             const payload = {
@@ -686,11 +664,6 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
                     methodId: defaultMethodId,
                 },
             };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
 
             const providerError = {
                 status: 'error',
@@ -761,11 +734,6 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
                 },
             };
 
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
-
             const providerError = {
                 status: 'error',
                 three_ds_result: {
@@ -806,7 +774,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
             }
         });
 
-        it('throws specific error if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
+        it('throws specific error if receive INSTRUMENT_DECLINED error', async () => {
             paymentMethod.initializationData.orderId = '1';
 
             const payload = {
@@ -816,10 +784,6 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
             };
 
             bigCommercePaymentsOptions.onError = jest.fn();
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
 
             const providerError = {
                 status: 'error',
