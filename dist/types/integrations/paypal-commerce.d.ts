@@ -1537,6 +1537,12 @@ declare class PayPalCommercePaymentStrategy implements PaymentStrategy {
      *
      */
     private isProviderError;
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled;
 }
 
 declare class PayPalCommerceRequestSender {
