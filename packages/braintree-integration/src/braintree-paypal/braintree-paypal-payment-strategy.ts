@@ -104,10 +104,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         const { payment, ...order } = orderRequest;
 
         const { onError } = this.braintree || {};
-        const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-        const shouldHandleInstrumentDeclinedError =
-            features && features['PAYPAL-3521.handling_declined_error_braintree'];
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -119,7 +115,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.submitOrder(order, options);
             await this.paymentIntegrationService.submitPayment(paymentData);
         } catch (error) {
-            if (this.isProviderError(error) && shouldHandleInstrumentDeclinedError) {
+            if (this.isProviderError(error)) {
                 await this.loadPaypal();
 
                 this.paypalButtonRender?.close();
