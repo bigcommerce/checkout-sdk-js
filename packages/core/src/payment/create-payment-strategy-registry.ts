@@ -15,11 +15,6 @@ import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import {
-    CardinalClient,
-    CardinalScriptLoader,
-    CardinalThreeDSecureFlowV2,
-} from './strategies/cardinal';
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
@@ -66,25 +61,6 @@ export default function createPaymentStrategyRegistry(
     const formPoster = createFormPoster();
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
-
-    registry.register(
-        PaymentStrategyType.BRAINTREE_VISA_CHECKOUT,
-        () =>
-            new BraintreeVisaCheckoutPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createBraintreeVisaCheckoutPaymentProcessor(
-                    scriptLoader,
-                    requestSender,
-                    paymentIntegrationService,
-                ),
-                new VisaCheckoutScriptLoader(scriptLoader),
-            ),
-    );
 
     registry.register(
         PaymentStrategyType.CBA_MPGS,
