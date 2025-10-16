@@ -15,8 +15,6 @@ import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import { BarclaysPaymentStrategy } from './strategies/barclays';
-import { BNZPaymentStrategy } from './strategies/bnz';
 import {
     CardinalClient,
     CardinalScriptLoader,
@@ -70,18 +68,21 @@ export default function createPaymentStrategyRegistry(
     const hostedFormFactory = new HostedFormFactory(store);
 
     registry.register(
-        PaymentStrategyType.BARCLAYS,
+        PaymentStrategyType.BRAINTREE_VISA_CHECKOUT,
         () =>
-            new BarclaysPaymentStrategy(
+            new BraintreeVisaCheckoutPaymentStrategy(
                 store,
-                orderActionCreator,
+                checkoutActionCreator,
+                paymentMethodActionCreator,
+                paymentStrategyActionCreator,
                 paymentActionCreator,
-                hostedFormFactory,
-                new CardinalThreeDSecureFlowV2(
-                    store,
-                    paymentActionCreator,
-                    new CardinalClient(new CardinalScriptLoader(scriptLoader)),
+                orderActionCreator,
+                createBraintreeVisaCheckoutPaymentProcessor(
+                    scriptLoader,
+                    requestSender,
+                    paymentIntegrationService,
                 ),
+                new VisaCheckoutScriptLoader(scriptLoader),
             ),
     );
 
@@ -108,22 +109,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 hostedFormFactory,
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.BNZ,
-        () =>
-            new BNZPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                new CardinalThreeDSecureFlowV2(
-                    store,
-                    paymentActionCreator,
-                    new CardinalClient(new CardinalScriptLoader(scriptLoader)),
-                ),
             ),
     );
 

@@ -1,14 +1,17 @@
-import { StripeElement, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
+import { StripeClient, StripeElement } from '@bigcommerce/checkout-sdk/stripe-utils';
+
 import { ShippingInitializeOptions } from '../../shipping-request-options';
 
-export function getShippingStripeUPEJsMock(): StripeUPEClient {
+export function getShippingStripeUPEJsMock(): StripeClient {
     return {
         elements: jest.fn(() => ({
             create: jest.fn(() => ({
                 mount: jest.fn(),
                 unmount: jest.fn(),
                 on: jest.fn(),
+                update: jest.fn(),
                 destroy: jest.fn(),
+                collapse: jest.fn(),
             })),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
@@ -20,7 +23,7 @@ export function getShippingStripeUPEJsMock(): StripeUPEClient {
     };
 }
 
-export function getShippingStripeUPEJsOnMock(returnElement?: StripeElement): StripeUPEClient {
+export function getShippingStripeUPEJsOnMock(returnElement?: StripeElement): StripeClient {
     return {
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -37,20 +40,24 @@ export function getShippingStripeUPEJsOnMock(returnElement?: StripeElement): Str
     };
 }
 
-export function getShippingStripeUPEJsMockWithAnElementCreated(): StripeUPEClient {
+export function getShippingStripeUPEJsMockWithAnElementCreated(): StripeClient {
     return {
         elements: jest.fn(() => ({
             create: jest.fn(() => ({
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn(),
                 destroy: jest.fn(),
+                collapse: jest.fn(),
             })),
             getElement: jest.fn(() => ({
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn(),
                 destroy: jest.fn(),
+                collapse: jest.fn(),
             })),
             update: jest.fn(),
             fetchUpdates: jest.fn(),

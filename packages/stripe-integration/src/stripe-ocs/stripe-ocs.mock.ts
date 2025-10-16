@@ -40,11 +40,12 @@ export function getStripeOCSMock(method = methodId): PaymentMethod {
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
         returnUrl: 'http://www.example.com',
+        skipRedirectConfirmationAlert: true,
     };
 }
 
 export function getStripeOCSInitializeOptionsMock(
-    style = defaultAccordionStyles,
+    appearance = defaultAccordionStyles,
 ): PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions {
     return {
         methodId,
@@ -52,7 +53,7 @@ export function getStripeOCSInitializeOptionsMock(
         [gatewayId]: {
             containerId: `${gatewayId}-${methodId}-component-field`,
             layout: defaultAccordionLayout,
-            style,
+            appearance,
             render: jest.fn(),
         },
     };

@@ -1,6 +1,5 @@
 import { CustomerInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { StripeClient, StripeElement } from '../stripe-utils';
+import { StripeClient, StripeElement } from '@bigcommerce/checkout-sdk/stripe-utils';
 
 export interface StripeUpeCustomerInitializeOptions extends CustomerInitializeOptions {
     stripeupe: {

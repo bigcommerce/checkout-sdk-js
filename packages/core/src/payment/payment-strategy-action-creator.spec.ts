@@ -305,6 +305,9 @@ describe('PaymentStrategyActionCreator', () => {
 
                 jest.spyOn(registryV2, 'getFactory').mockReturnValue(undefined);
                 jest.spyOn(registryV2, 'register');
+                jest.spyOn(registry, 'getByMethod').mockImplementation(() => {
+                    throw new Error('Strategy not found in registry v1');
+                });
                 jest.spyOn(registryV2, 'get').mockReturnValue(mockStrategy);
 
                 await from(

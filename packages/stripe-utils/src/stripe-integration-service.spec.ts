@@ -13,11 +13,6 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import StripeUPEPaymentInitializeOptions, {
-    WithStripeUPEPaymentInitializeOptions,
-} from '../stripe-upe//stripe-upe-initialize-options';
-import { getStripeUPEMock } from '../stripe-upe/stripe-upe.mock';
-
 import {
     StripeClient,
     StripeElement,
@@ -25,15 +20,21 @@ import {
     StripeError,
     StripePaymentMethodType,
 } from './stripe';
+import StripePaymentInitializeOptions from './stripe-initialize-options';
 import StripeIntegrationService from './stripe-integration-service';
 import StripeScriptLoader from './stripe-script-loader';
-import { getStripeInitializeOptionsMock, getStripeJsMock } from './stripe.mock';
+import {
+    getStripeInitializeOptionsMock,
+    getStripeJsMock,
+    getStripeMock,
+    WithStripePaymentInitializeOptions,
+} from './stripe.mock';
 
 describe('StripeIntegrationService', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let stripeIntegrationService: StripeIntegrationService;
-    let initializeOptions: PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
-    let stripeupeMock: StripeUPEPaymentInitializeOptions;
+    let initializeOptions: PaymentInitializeOptions & WithStripePaymentInitializeOptions;
+    let stripeupeMock: StripePaymentInitializeOptions;
     let stripeUPEJsMock: StripeClient;
     const gatewayId = 'stripeupe';
     const methodId = StripePaymentMethodType.OCS;
@@ -145,7 +146,7 @@ describe('StripeIntegrationService', () => {
                     return jest.fn();
                 },
             );
-            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(getStripeUPEMock());
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(getStripeMock());
         });
 
         it('skip subscription actions if no stripe elements initialized', () => {
@@ -450,7 +451,7 @@ describe('StripeIntegrationService', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue(getStripeUPEMock(StripePaymentMethodType.CreditCard));
+            ).mockReturnValue(getStripeMock(StripePaymentMethodType.CreditCard));
         });
 
         it('returns true if payment intent already completed', async () => {
@@ -467,7 +468,7 @@ describe('StripeIntegrationService', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue({
-                ...getStripeUPEMock(StripePaymentMethodType.CreditCard),
+                ...getStripeMock(StripePaymentMethodType.CreditCard),
                 clientToken: undefined,
             });
 
@@ -755,7 +756,7 @@ describe('StripeIntegrationService', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue({
-                ...getStripeUPEMock(),
+                ...getStripeMock(),
                 clientToken: undefined,
             });
 

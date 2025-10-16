@@ -1,4 +1,8 @@
-import { StripeAppearanceValues, StripeElementUpdateOptions } from '../stripe-utils';
+import {
+    StripeAppearanceValues,
+    StripeElementUpdateOptions,
+    StripePaymentInitializeOptions,
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 /**
  * A set of options that are required to initialize the Stripe payment method.
@@ -22,7 +26,7 @@ import { StripeAppearanceValues, StripeElementUpdateOptions } from '../stripe-ut
  * ```
  */
 
-export default interface StripeUPEPaymentInitializeOptions {
+export default interface StripeUPEPaymentInitializeOptions extends StripePaymentInitializeOptions {
     /**
      * The location to insert the credit card number form field.
      */

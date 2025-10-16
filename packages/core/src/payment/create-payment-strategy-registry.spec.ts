@@ -6,8 +6,6 @@ import { createCheckoutStore } from '../checkout';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import { BarclaysPaymentStrategy } from './strategies/barclays';
-import { BNZPaymentStrategy } from './strategies/bnz';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
@@ -30,22 +28,10 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(registry).toEqual(expect.any(PaymentStrategyRegistry));
     });
 
-    it('can instantiate barclays', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.BARCLAYS);
-
-        expect(paymentStrategy).toBeInstanceOf(BarclaysPaymentStrategy);
-    });
-
     it('can instantiate converge', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
 
         expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
-    });
-
-    it('can instantiate bankofnewzealand', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.BNZ);
-
-        expect(paymentStrategy).toBeInstanceOf(BNZPaymentStrategy);
     });
 
     it('can instantiate paypalexpress', () => {

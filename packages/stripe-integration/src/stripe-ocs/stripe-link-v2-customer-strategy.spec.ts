@@ -14,17 +14,17 @@ import {
     getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import { getStripeIntegrationServiceMock, StripeIntegrationService } from '../stripe-utils';
 import {
+    getStripeIntegrationServiceMock,
     StripeClient,
     StripeElement,
     StripeElementEvent,
     StripeElements,
+    StripeIntegrationService,
+    StripeScriptLoader,
     StripeStringConstants,
-} from '../stripe-utils/stripe';
-import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
+} from '@bigcommerce/checkout-sdk/stripe-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
 import { getStripeOCSMock } from './stripe-ocs.mock';

@@ -35,6 +35,12 @@ import { Response } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StorefrontErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { StripeAppearanceOptions } from '@bigcommerce/checkout-sdk/stripe-utils';
+import { StripeAppearanceValues } from '@bigcommerce/checkout-sdk/stripe-utils';
+import { StripeCustomFont } from '@bigcommerce/checkout-sdk/stripe-utils';
+import { StripeElementUpdateOptions } from '@bigcommerce/checkout-sdk/stripe-utils';
+import { StripeEventType } from '@bigcommerce/checkout-sdk/stripe-utils';
+import { StripePaymentInitializeOptions } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -5185,19 +5191,6 @@ declare interface CreditCardPlaceHolder {
     encryptedSecurityCode: string;
 }
 
-/**
- * This object is used to pass custom fonts when creating an [Elements](https://stripe.com/docs/js/elements_object/create) object.
- */
-declare interface CssFontSource {
-    /**
-     * A relative or absolute URL pointing to a CSS file with [@font-face](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face) definitions, for example:
-     * `https://fonts.googleapis.com/css?family=Open+Sans`
-     * Note that if you are using a [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) (CSP),
-     * [additional directives](https://stripe.com/docs/security#content-security-policy) may be necessary.
-     */
-    cssSrc: string;
-}
-
 declare interface CssProperties {
     background?: string;
     caretColor?: string;
@@ -5253,37 +5246,6 @@ declare interface CustomError extends Error {
     message: string;
     type: string;
     subtype?: string;
-}
-
-/**
- * This object is used to pass custom fonts when creating an [Elements](https://stripe.com/docs/js/elements_object/create) object.
- */
-declare interface CustomFontSource {
-    /**
-     * The name to give the font.
-     */
-    family: string;
-    /**
-     * A valid [src](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/src) value pointing to your
-     * custom font file. This is usually (though not always) a link to a file with a .woff , .otf, or .svg suffix.
-     */
-    src: string;
-    /**
-     * A valid [font-display](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display) value.
-     */
-    display?: string;
-    /**
-     * One of normal, italic, oblique. Defaults to normal.
-     */
-    style?: string;
-    /**
-     * A valid [unicode-range](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/unicode-range) value.
-     */
-    unicodeRange?: string;
-    /**
-     * A valid [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight). Note that this is a string, not a number.
-     */
-    weight?: string;
 }
 
 declare interface CustomItem {
@@ -8536,26 +8498,6 @@ declare class StoredCardHostedFormService {
 }
 
 /**
- * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
- */
-declare interface StripeAppearanceOptions {
-    variables?: Record<string, StripeAppearanceValues>;
-    rules?: Record<string, Record<string, StripeAppearanceValues>>;
-}
-
-declare type StripeAppearanceValues = string | string[] | number | undefined;
-
-declare type StripeCustomFont = CssFontSource | CustomFontSource;
-
-declare interface StripeCustomerEvent extends StripeEvent {
-    collapsed?: boolean;
-    authenticated: boolean;
-    value: {
-        email: string;
-    };
-}
-
-/**
  * CSS properties supported by Stripe.js.
  */
 declare interface StripeElementCSSProperties {
@@ -8702,18 +8644,6 @@ declare interface StripeElementStyleVariant extends StripeElementCSSProperties {
     };
 }
 
-declare interface StripeElementUpdateOptions {
-    shouldShowTerms?: boolean;
-}
-
-declare interface StripeEvent {
-    complete: boolean;
-    elementType: string;
-    empty: boolean;
-}
-
-declare type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
-
 /**
  * A set of options that are required to initialize the Stripe payment method.
  *
@@ -8736,11 +8666,15 @@ declare type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
  * });
  * ```
  */
-declare interface StripeOCSPaymentInitializeOptions {
+declare interface StripeOCSPaymentInitializeOptions extends StripePaymentInitializeOptions {
     /**
      * The location to insert the credit card number form field.
      */
     containerId: string;
+    /**
+     * Checkout styles from store theme
+     */
+    style?: Record<string, StripeAppearanceValues>;
     /**
      * Stripe OCS layout options
      */
@@ -8755,36 +8689,9 @@ declare interface StripeOCSPaymentInitializeOptions {
     fonts?: StripeCustomFont[];
     onError?(error?: Error): void;
     render(): void;
-    initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;
     paymentMethodSelect?(id: string): void;
     handleClosePaymentMethod?(collapseElement: () => void): void;
     togglePreloader?(showLoader: boolean): void;
-}
-
-declare interface StripeShippingEvent extends StripeEvent {
-    mode?: string;
-    isNewAddress?: boolean;
-    phoneFieldRequired: boolean;
-    value: {
-        address: {
-            city: string;
-            country: string;
-            line1: string;
-            line2?: string;
-            postal_code: string;
-            state: string;
-        };
-        name?: string;
-        firstName?: string;
-        lastName?: string;
-        phone?: string;
-    };
-    fields?: {
-        phone: string;
-    };
-    display?: {
-        name: string;
-    };
 }
 
 declare interface StripeUPECustomerInitializeOptions {
@@ -8842,7 +8749,7 @@ declare interface StripeUPECustomerInitializeOptions {
  * });
  * ```
  */
-declare interface StripeUPEPaymentInitializeOptions {
+declare interface StripeUPEPaymentInitializeOptions extends StripePaymentInitializeOptions {
     /**
      * The location to insert the credit card number form field.
      */

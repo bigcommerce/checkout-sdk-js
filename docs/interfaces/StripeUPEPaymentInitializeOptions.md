@@ -22,6 +22,12 @@ service.initializePayment({
 });
 ```
 
+## Hierarchy
+
+- `default`
+
+  ↳ **`StripeUPEPaymentInitializeOptions`**
+
 ## Table of contents
 
 ### Properties
@@ -43,13 +49,21 @@ service.initializePayment({
 
 The location to insert the credit card number form field.
 
+#### Overrides
+
+StripePaymentInitializeOptions.containerId
+
 ___
 
 ### style
 
-• `Optional` **style**: `Record`<`string`, [`StripeAppearanceValues`](../README.md#stripeappearancevalues)\>
+• `Optional` **style**: `Record`<`string`, `StripeAppearanceValues`\>
 
 Checkout styles from store theme
+
+#### Overrides
+
+StripePaymentInitializeOptions.style
 
 ## Methods
 
@@ -61,7 +75,7 @@ Checkout styles from store theme
 
 | Name | Type |
 | :------ | :------ |
-| `updateTriggerFn` | (`payload`: [`StripeElementUpdateOptions`](StripeElementUpdateOptions.md)) => `void` |
+| `updateTriggerFn` | (`payload`: `StripeElementUpdateOptions`) => `void` |
 
 #### Returns
 
@@ -83,6 +97,10 @@ ___
 
 `void`
 
+#### Overrides
+
+StripePaymentInitializeOptions.onError
+
 ___
 
 ### render
@@ -92,3 +110,7 @@ ___
 #### Returns
 
 `void`
+
+#### Overrides
+
+StripePaymentInitializeOptions.render
