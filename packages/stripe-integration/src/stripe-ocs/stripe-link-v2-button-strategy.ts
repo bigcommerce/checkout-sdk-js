@@ -2,8 +2,10 @@ import { round } from 'lodash';
 
 import {
     AmountTransformer,
+    BuyNowCartCreationError,
+    Cart,
+    CheckoutButtonInitializeOptions,
     CheckoutButtonStrategy,
-    CustomerInitializeOptions,
     InvalidArgumentError,
     isRequestError,
     MissingDataError,
@@ -37,7 +39,11 @@ import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
 
 import { expressCheckoutAllowedCountryCodes } from './constants';
 import { StripeLinkV2Event, StripeLinkV2Options, StripeLinkV2ShippingRate } from './stripe-ocs';
-import { WithStripeOCSCustomerInitializeOptions } from './stripe-ocs-customer-initialize-options';
+import {
+    StripeLinkV2BuyNowInitializeOptions,
+    WithStripeOCSCustomerInitializeOptions
+} from './stripe-ocs-customer-initialize-options';
+import {GooglePayBuyNowInitializeOptions} from '../../../google-pay-integration/src/types';
 
 export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
     private _stripeClient?: StripeClient;
@@ -46,8 +52,11 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
     private _amountTransformer?: AmountTransformer;
     private _onComplete?: (orderId?: number) => Promise<never>;
     private _loadingIndicatorContainer?: string;
-
     private _currencyCode?: string;
+
+    private _isBuyNowFlow?: boolean;
+    private _buyNowCart?: Cart;
+    private _buyNowInitializeOptions?: StripeLinkV2BuyNowInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -57,27 +66,29 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
     ) {}
 
     async initialize(
-        options: CustomerInitializeOptions & WithStripeOCSCustomerInitializeOptions,
+        options: CheckoutButtonInitializeOptions & WithStripeOCSCustomerInitializeOptions,
     ): Promise<void> {
-        console.log('StripeLinkV2ButtonStrategy', options);
-        const { stripeocs } = options || {};
+        const defaultMethodId = 'optimized_checkout';
+        const defaultGatewayId = 'stripeocs';
 
-        if (!stripeocs) {
-            throw new InvalidArgumentError(
-                `Unable to proceed because "options" argument is not provided.`,
-            );
+        console.log('StripeLinkV2ButtonStrategy options', options);
+        const { stripeocs, containerId } = options || {};
+
+        if (!stripeocs || !containerId) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { methodId, gatewayId, container } = stripeocs;
+        const { methodId = defaultMethodId, gatewayId = defaultGatewayId, buyNowInitializeOptions, currencyCode } = stripeocs;
 
-        if (!container || !methodId || !gatewayId) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        this._isBuyNowFlow = !!buyNowInitializeOptions;
+
+        if (this._isBuyNowFlow) {
+            await this._initializeWithBuyNowFlow(buyNowInitializeOptions, currencyCode);
         }
 
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
-
         const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
         const { loadingContainerId, buttonHeight, onComplete } = stripeocs;
 
@@ -93,9 +104,13 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
 
         this._stripeClient = await this.scriptLoader.getStripeClient(initializationData);
 
+        if (!this._isBuyNowFlow) {
+            await this.paymentIntegrationService.loadDefaultCheckout();
+        }
+
         await this._mountExpressCheckoutElement(
             methodId,
-            container,
+            containerId,
             this._stripeClient,
             buttonHeight,
         );
@@ -119,14 +134,50 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         return Promise.resolve();
     }
 
+    private async _initializeWithBuyNowFlow(buyNowInitializeOptions?: StripeLinkV2BuyNowInitializeOptions, currencyCode?: string) {
+        if (
+            this._isBuyNowFlow && (
+                !buyNowInitializeOptions?.storefrontApiToken ||
+                typeof buyNowInitializeOptions.storefrontApiToken !== 'string')
+        ) {
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.storefrontApiToken" argument is not provided.`,
+            );
+        }
+
+        this._currencyCode = currencyCode?.toLowerCase();
+        this._buyNowInitializeOptions = buyNowInitializeOptions;
+        await this._createBuyNowCartOrThrow(buyNowInitializeOptions);
+    }
+
+    private async _createBuyNowCartOrThrow(
+        buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions,
+    ): Promise<void> {
+        if (typeof buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function') {
+            const cartRequestBody = buyNowInitializeOptions.getBuyNowCartRequestBody();
+
+            try {
+                this._buyNowCart = await this.paymentIntegrationService.createBuyNowCart(
+                    cartRequestBody,
+                );
+
+                await this.paymentIntegrationService.loadCheckout(this._buyNowCart.id);
+            } catch (error) {
+                if (typeof error === 'string') {
+                    throw new BuyNowCartCreationError(error);
+                }
+
+                throw error;
+            }
+        }
+    }
+
     private async _mountExpressCheckoutElement(
         methodId: string,
         container: string,
         stripeExpressCheckoutClient: StripeClient,
         buttonHeight = 40,
     ) {
-        await this.paymentIntegrationService.loadDefaultCheckout();
-
         const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
         const expressCheckoutOptions: StripeElementsCreateOptions = {
             shippingAddressRequired: shouldRequireShippingAddress,
@@ -151,7 +202,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             buttonHeight,
         };
 
-        const { cartAmount = 0 } = this.paymentIntegrationService.getState().getCart() || {};
+        const { cartAmount = 1 } = this.paymentIntegrationService.getState().getCart() || {};
 
         const elementsOptions: StripeLinkV2Options = {
             mode: 'payment',
@@ -186,6 +237,25 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         expressCheckoutElement.on(StripeElementEvent.CONFIRM, async (event) =>
             this._onConfirm(event, methodId),
         );
+
+        // expressCheckoutElement.on(StripeElementEvent.CLICK, async (event) => {
+        //     if ('resolve' in event) {
+        //         if (this._stripeElements && this._isBuyNowFlow) {
+        //             const { lineItems = [] } = this._buyNowInitializeOptions?.getBuyNowCartRequestBody() || {};
+        //
+        //             const amount = this._toCents((lineItems[0]?.price || 0) * (lineItems[0]?.quantity));
+        //
+        //             this._stripeElements.update({
+        //                 currency: this._getCurrency(),
+        //                 mode: 'payment',
+        //                 amount,
+        //             });
+        //         }
+        //         // We don't need to await this promise because CLICK event should be resolved in 1 sec.
+        //         // this._createBuyNowCartOrThrow(this._buyNowInitializeOptions);
+        //         event.resolve({});
+        //     }
+        // });
 
         expressCheckoutElement.on(StripeElementEvent.CANCEL, this._onCancel);
     }
@@ -418,7 +488,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             return this._onComplete();
         }
 
-        window.location.replace('/order-confirmation');
+        window.location.replace('/checkout/order-confirmation');
 
         return Promise.resolve();
     }
@@ -444,7 +514,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
 
     private _shouldRequireShippingAddress() {
         const { getCart } = this.paymentIntegrationService.getState();
-        console.log('getCart()', getCart());
+
         const { lineItems } = getCart() || {};
 
         return !!lineItems?.physicalItems.length;
@@ -452,11 +522,23 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
 
     private async _updateDisplayedPrice() {
         if (this._stripeElements) {
-            this._stripeElements.update({
-                currency: this._getCurrency(),
-                mode: 'payment',
-                amount: await this._getTotalPrice(),
-            });
+            if (this._isBuyNowFlow) {
+                const { lineItems = [] } = this._buyNowInitializeOptions?.getBuyNowCartRequestBody() || {};
+
+                const amount = this._toCents((lineItems[0]?.price || 0) * (lineItems[0]?.quantity));
+
+                this._stripeElements.update({
+                    currency: this._getCurrency(),
+                    mode: 'payment',
+                    amount,
+                });
+            } else {
+                this._stripeElements.update({
+                    currency: this._getCurrency(),
+                    mode: 'payment',
+                    amount: await this._getTotalPrice(),
+                });
+            }
         }
     }
 
@@ -518,6 +600,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             options.sort((option) => (option.id === selectedId ? -1 : 0));
         }
 
+        console.log('shipping rates', options);
         return options;
     }
 
