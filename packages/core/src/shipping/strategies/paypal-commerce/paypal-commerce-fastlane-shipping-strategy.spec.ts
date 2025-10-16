@@ -9,17 +9,17 @@ import {
     getShippingAddress,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalCommerceFastlaneUtils,
-    createPayPalCommerceSdk,
-    getPayPalCommerceAcceleratedCheckoutPaymentMethod,
+    createPayPalFastlaneUtils,
+    createPaypalSdk,
+    getPayPalAcceleratedCheckoutPaymentMethod,
     getPayPalFastlane,
     getPayPalFastlaneAuthenticationResultMock,
     getPayPalFastlaneSdk,
-    PayPalCommerceFastlaneUtils,
-    PayPalCommerceSdk,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    PayPalFastlaneUtils,
+    PaypalSdk,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import { BillingAddress, BillingAddressActionCreator } from '../../../billing';
 import BillingAddressRequestSender from '../../../billing/billing-address-request-sender';
@@ -48,8 +48,8 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
     let paymentMethod: PaymentMethod;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
-    let paypalCommerceSdk: PayPalCommerceSdk;
-    let paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils;
+    let paypalCommerceSdk: PaypalSdk;
+    let paypalCommerceFastlaneUtils: PayPalFastlaneUtils;
     let store: CheckoutStore;
     let storeConfig: StoreConfig;
     let strategy: PayPalCommerceFastlaneShippingStrategy;
@@ -98,7 +98,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         cart = getCart();
         customer = { ...getCustomer(), isGuest: true };
         storeConfig = getConfig().storeConfig;
-        paymentMethod = getPayPalCommerceAcceleratedCheckoutPaymentMethod();
+        paymentMethod = getPayPalAcceleratedCheckoutPaymentMethod();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
 
         store = createCheckoutStore();
@@ -114,8 +114,8 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             new PaymentMethodRequestSender(requestSender),
         );
         paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
-        paypalCommerceSdk = createPayPalCommerceSdk();
-        paypalCommerceFastlaneUtils = createPayPalCommerceFastlaneUtils();
+        paypalCommerceSdk = createPaypalSdk();
+        paypalCommerceFastlaneUtils = createPayPalFastlaneUtils();
 
         strategy = new PayPalCommerceFastlaneShippingStrategy(
             store,
