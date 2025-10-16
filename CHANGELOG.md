@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.811.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.810.0...v1.811.0) (2025-10-16)
+
+
+### Features
+
+* **payment:** PAYPAL-5338 remove instrument declined experiment for ppc ([04895a7](https://github.com/bigcommerce/checkout-sdk-js/commit/04895a7aef3ae93c931d61307b67f22728ebc72d))
+* **payment:** PAYPAL-5339 remove instrument declined experiment for braintree ([1d65cdb](https://github.com/bigcommerce/checkout-sdk-js/commit/1d65cdb536465e3c59fe74623af1b27cf624209b))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2197 move payment strategy to paypal-express-integration package ([97a4e84](https://github.com/bigcommerce/checkout-sdk-js/commit/97a4e849e60afd95677c74ced4bfa8e14c9ebdcf))
+
 ## [1.810.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.809.2...v1.810.0) (2025-10-16)
 
 

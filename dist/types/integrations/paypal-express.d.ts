@@ -3,7 +3,12 @@ import { CheckoutButtonStrategy } from '@bigcommerce/checkout-sdk/payment-integr
 import { CheckoutButtonStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { FormPoster } from '@bigcommerce/form-poster';
 import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -156,6 +161,50 @@ declare interface PaypalExpressCheckoutOptions {
     environment: string;
 }
 
+/**
+ * A set of options that are required to initialize the PayPal Express payment
+ * method.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalexpress',
+ * });
+ * ```
+ *
+ * An additional flag can be passed in to always start the payment flow through
+ * a redirect rather than a popup.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalexpress',
+ *     paypalexpress: {
+ *         useRedirectFlow: true,
+ *     },
+ * });
+ * ```
+ */
+declare interface PaypalExpressPaymentInitializeOptions {
+    paypalexpress?: {
+        useRedirectFlow?: boolean;
+    };
+}
+
+declare class PaypalExpressPaymentStrategy implements PaymentStrategy {
+    private paymentIntegrationService;
+    private scriptLoader;
+    private paypalSdk?;
+    private paymentMethod?;
+    private useRedirectFlow;
+    private window;
+    constructor(paymentIntegrationService: PaymentIntegrationService, scriptLoader: PaypalScriptLoader);
+    initialize(options: PaymentInitializeOptions & PaypalExpressPaymentInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<undefined>;
+    finalize(options?: PaymentRequestOptions): Promise<void>;
+    private isAcknowledgedOrFinalized;
+    private isInContextEnabled;
+}
+
 declare interface PaypalFundingType {
     allowed?: string[];
     disallowed?: string[];
@@ -248,4 +297,9 @@ declare interface WithPaypalExpressButtonInitializeOptions {
 
 export declare const createPaypalExpressButtonStrategy: import("../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<PaypalButtonStrategy>, {
     id: string;
+}>;
+
+export declare const createPaypalExpressPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PaypalExpressPaymentStrategy>, {
+    id: string;
+    type: string;
 }>;
