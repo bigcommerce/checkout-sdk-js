@@ -36,7 +36,6 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getConfig,
     getOrderRequestBody,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -61,19 +60,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
     let paypalSdkMock: PaypalSDK;
     let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
-
-    const storeConfig = getConfig().storeConfig;
-
-    const storeConfigWithFeaturesOn = {
-        ...storeConfig,
-        checkoutSettings: {
-            ...storeConfig.checkoutSettings,
-            features: {
-                ...storeConfig.checkoutSettings.features,
-                'PAYPAL-3521.handling_declined_error_braintree': true,
-            },
-        },
-    };
 
     const providerError = {
         errors: [
@@ -513,12 +499,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             }
         });
 
-        it('throws specific error if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
-
+        it('throws specific error if receive INSTRUMENT_DECLINED error', async () => {
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
@@ -542,11 +523,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('rendering the paypal button when a specific INSTRUMENT_DECLINED error occurs', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
-
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
@@ -587,11 +563,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 },
             };
 
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
-
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
@@ -626,11 +597,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('#createOrder button callback', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
-
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
