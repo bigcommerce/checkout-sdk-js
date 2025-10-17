@@ -160,7 +160,6 @@
 - [BraintreeStoredCardFieldsMap](interfaces/BraintreeStoredCardFieldsMap.md)
 - [BraintreeThreeDSecureOptions](interfaces/BraintreeThreeDSecureOptions.md)
 - [BraintreeVerifyPayload](interfaces/BraintreeVerifyPayload.md)
-- [BraintreeVisaCheckoutPaymentInitializeOptions](interfaces/BraintreeVisaCheckoutPaymentInitializeOptions.md)
 - [BrowserInfo](interfaces/BrowserInfo.md)
 - [ButtonStyles](interfaces/ButtonStyles.md)
 - [CardCvcElementOptions](interfaces/CardCvcElementOptions.md)

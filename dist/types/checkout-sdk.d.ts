@@ -764,12 +764,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      */
     braintree?: BraintreePaymentInitializeOptions;
     /**
-     * The options that are required to initialize the Visa Checkout payment
-     * method provided by Braintree. They can be omitted unless you need to
-     * support Visa Checkout.
-     */
-    braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
-    /**
      * The options that are required to initialize the Masterpass payment method.
      * They can be omitted unless you need to support Masterpass.
      */
@@ -2458,50 +2452,6 @@ declare interface BraintreeVerifyPayload {
     description?: string;
     liabilityShiftPossible?: boolean;
     liabilityShifted?: boolean;
-}
-
-/**
- * A set of options that are required to initialize the Visa Checkout payment
- * method provided by Braintree.
- *
- * If the customer chooses to pay with Visa Checkout, they will be asked to
- * enter their payment details via a modal. You can hook into events emitted by
- * the modal by providing the callbacks listed below.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'braintreevisacheckout',
- * });
- * ```
- *
- * Additional event callbacks can be registered.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'braintreevisacheckout',
- *     braintreevisacheckout: {
- *         onError(error) {
- *             console.log(error);
- *         },
- *         onPaymentSelect() {
- *             console.log('Selected');
- *         },
- *     },
- * });
- * ```
- */
-declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
-    /**
-     * A callback that gets called when Visa Checkout fails to initialize or
-     * selects a payment option.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: Error): void;
-    /**
-     * A callback that gets called when the customer selects a payment option.
-     */
-    onPaymentSelect?(): void;
 }
 
 declare interface BrowserInfo {
