@@ -1,12 +1,6 @@
 import { Omit } from '../../../common/types';
 import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from '../paypal';
 
-import {
-    VisaCheckoutInitOptions,
-    VisaCheckoutPaymentSuccessPayload,
-    VisaCheckoutTokenizedPayload,
-} from './visacheckout';
-
 /**
  *
  * Constants
@@ -47,7 +41,6 @@ export interface BraintreeSDK {
     paypalCheckout?: BraintreePaypalCheckoutCreator;
     threeDSecure?: BraintreeThreeDSecureCreator;
     venmo?: BraintreeVenmoCheckoutCreator;
-    visaCheckout?: BraintreeVisaCheckoutCreator;
 }
 
 export interface BraintreePaypalRequest {
@@ -479,18 +472,6 @@ export interface BraintreeVenmoCreatorConfig extends BraintreeModuleCreatorConfi
     allowDesktop?: boolean;
     paymentMethodUsage?: string;
     mobileWebFallBack?: boolean;
-}
-
-/**
- *
- * Braintree Visa Checkout
- *
- */
-export type BraintreeVisaCheckoutCreator = BraintreeModuleCreator<BraintreeVisaCheckout>;
-
-export interface BraintreeVisaCheckout extends BraintreeModule {
-    tokenize(payment: VisaCheckoutPaymentSuccessPayload): Promise<VisaCheckoutTokenizedPayload>;
-    createInitOptions(options: Partial<VisaCheckoutInitOptions>): VisaCheckoutInitOptions;
 }
 
 /**

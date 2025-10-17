@@ -2,42 +2,19 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 
-import {
-    CheckoutActionCreator,
-    CheckoutRequestSender,
-    CheckoutStore,
-    CheckoutValidator,
-} from '../checkout';
-import { ErrorLogger } from '../common/error';
+import { CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { BrowserStorage } from '../common/storage';
-import { ConfigActionCreator, ConfigRequestSender } from '../config';
-import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
-import { createPaymentIntegrationService } from '../payment-integration';
-import {
-    createSpamProtection,
-    GoogleRecaptcha,
-    PaymentHumanVerificationHandler,
-    SpamProtectionActionCreator,
-    SpamProtectionRequestSender,
-} from '../spam-protection';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
-import createPaymentStrategyRegistryV2 from './create-payment-strategy-registry-v2';
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import PaymentMethodRequestSender from './payment-method-request-sender';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
-import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import {
-    BraintreeVisaCheckoutPaymentStrategy,
-    createBraintreeVisaCheckoutPaymentProcessor,
-    VisaCheckoutScriptLoader,
-} from './strategies/braintree';
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
@@ -54,9 +31,7 @@ export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
     paymentClient: any,
     requestSender: RequestSender,
-    spamProtection: GoogleRecaptcha,
     locale: string,
-    errorLogger: ErrorLogger,
 ) {
     const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
@@ -65,19 +40,8 @@ export default function createPaymentStrategyRegistry(
     const scriptLoader = getScriptLoader();
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
-    const paymentIntegrationService = createPaymentIntegrationService(store);
-    const registryV2 = createPaymentStrategyRegistryV2(
-        paymentIntegrationService,
-        paymentStrategyFactories,
-        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
-    );
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const spamProtectionActionCreator = new SpamProtectionActionCreator(
-        spamProtection,
-        new SpamProtectionRequestSender(requestSender),
-    );
     const orderActionCreator = new OrderActionCreator(
         new OrderRequestSender(requestSender),
         checkoutValidator,
@@ -94,45 +58,9 @@ export default function createPaymentStrategyRegistry(
     const paymentMethodActionCreator = new PaymentMethodActionCreator(
         new PaymentMethodRequestSender(requestSender),
     );
-    const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
-    const formFieldsActionCreator = new FormFieldsActionCreator(
-        new FormFieldsRequestSender(requestSender),
-    );
-    const checkoutActionCreator = new CheckoutActionCreator(
-        checkoutRequestSender,
-        configActionCreator,
-        formFieldsActionCreator,
-    );
-    const paymentStrategyActionCreator = new PaymentStrategyActionCreator(
-        registry,
-        registryV2,
-        orderActionCreator,
-        spamProtectionActionCreator,
-        paymentIntegrationService,
-        errorLogger,
-    );
     const formPoster = createFormPoster();
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
-
-    registry.register(
-        PaymentStrategyType.BRAINTREE_VISA_CHECKOUT,
-        () =>
-            new BraintreeVisaCheckoutPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createBraintreeVisaCheckoutPaymentProcessor(
-                    scriptLoader,
-                    requestSender,
-                    paymentIntegrationService,
-                ),
-                new VisaCheckoutScriptLoader(scriptLoader),
-            ),
-    );
 
     registry.register(
         PaymentStrategyType.CBA_MPGS,

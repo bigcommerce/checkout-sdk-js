@@ -196,14 +196,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         orderActionCreator,
         new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(
-                store,
-                paymentClient,
-                requestSender,
-                spamProtection,
-                locale,
-                errorLogger,
-            ),
+            createPaymentStrategyRegistry(store, paymentClient, requestSender, locale),
             registryV2,
             orderActionCreator,
             spamProtectionActionCreator,

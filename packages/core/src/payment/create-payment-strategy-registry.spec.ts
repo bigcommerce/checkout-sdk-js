@@ -1,15 +1,11 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { createCheckoutStore } from '../checkout';
-import { ErrorLogger } from '../common/error';
-import { createSpamProtection } from '../spam-protection';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import { BraintreeVisaCheckoutPaymentStrategy } from './strategies/braintree';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
@@ -24,27 +20,12 @@ describe('CreatePaymentStrategyRegistry', () => {
         const store = createCheckoutStore();
         const requestSender = createRequestSender();
         const paymentClient = createPaymentClient();
-        const spamProtection = createSpamProtection(createScriptLoader());
-        const errorLogger: ErrorLogger = { log: jest.fn() };
 
-        registry = createPaymentStrategyRegistry(
-            store,
-            paymentClient,
-            requestSender,
-            spamProtection,
-            'en_US',
-            errorLogger,
-        );
+        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
     });
 
     it('can create a payment strategy registry', () => {
         expect(registry).toEqual(expect.any(PaymentStrategyRegistry));
-    });
-
-    it('can instantiate braintreevisacheckout', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_VISA_CHECKOUT);
-
-        expect(paymentStrategy).toBeInstanceOf(BraintreeVisaCheckoutPaymentStrategy);
     });
 
     it('can instantiate converge', () => {
