@@ -163,7 +163,7 @@ export default class PaypalSdkScriptLoader {
     ): PayPalSdkConfig {
         const { id, clientToken, initializationData } = paymentMethod;
 
-        if (!initializationData?.clientId) {
+        if (!initializationData || !initializationData.clientId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 

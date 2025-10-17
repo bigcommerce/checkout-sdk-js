@@ -212,9 +212,15 @@ export default class PayPalIntegrationService {
 
         const selectedShippingOption = selectedShippingOptionId
             ? availableShippingOptions.find((option) => option.id === selectedShippingOptionId)
-            : availableShippingOptions.find(
-                  (option) => option.id === consignment.selectedShippingOption?.id,
-              );
+            : availableShippingOptions.find((option) => {
+                  if (consignment.selectedShippingOption) {
+                      const shippingOptionId = consignment.selectedShippingOption.id;
+
+                      return option.id === shippingOptionId;
+                  }
+
+                  return false;
+              });
 
         const shippingOptionToSelect =
             selectedShippingOption || recommendedShippingOption || availableShippingOptions[0];
@@ -293,8 +299,8 @@ export default class PayPalIntegrationService {
      * Buttons style methods
      *
      */
-    getValidButtonStyle(style?: PayPalButtonStyleOptions): PayPalButtonStyleOptions {
-        const { color, height, label, shape } = style || {};
+    getValidButtonStyle(style: PayPalButtonStyleOptions = {}): PayPalButtonStyleOptions {
+        const { color, height, label, shape } = style;
 
         const validStyles = {
             color: color && StyleButtonColor[color] ? color : undefined,
