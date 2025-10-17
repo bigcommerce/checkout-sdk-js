@@ -1,7 +1,6 @@
 import { GooglePayConfig } from '../types';
 
-export type FundingType = string[];
-export type EnableFundingType = FundingType | string;
+export type FundingType = string;
 
 /**
  *
@@ -39,8 +38,8 @@ export interface BigCommercePaymentsScriptParams {
         'client-id'?: string;
         'merchant-id'?: string;
         'buyer-country'?: string;
-        'disable-funding'?: FundingType;
-        'enable-funding'?: EnableFundingType;
+        'disable-funding'?: FundingType[];
+        'enable-funding'?: FundingType[];
         currency?: string;
         commit?: boolean;
         intent?: BigCommercePaymentsIntent;
