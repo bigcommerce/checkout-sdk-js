@@ -2,8 +2,10 @@ import { round } from 'lodash';
 
 import {
     AmountTransformer,
-    CustomerInitializeOptions,
-    CustomerStrategy,
+    BuyNowCartCreationError,
+    Cart,
+    CheckoutButtonInitializeOptions,
+    CheckoutButtonStrategy,
     InvalidArgumentError,
     isRequestError,
     MissingDataError,
@@ -16,8 +18,11 @@ import {
     PaymentMethodFailedError,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
+import { StripeIntegrationService, StripePaymentMethodType } from '../stripe-utils';
+import { isStripePaymentMethodLike } from '../stripe-utils/is-stripe-payment-method-like';
 import {
-    isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
     StripeClient,
     StripeElement,
@@ -27,29 +32,31 @@ import {
     StripeElementType,
     StripeError,
     StripeEventType,
-    StripeIntegrationService,
-    StripeLinkV2Event,
-    StripeLinkV2Options,
-    StripeLinkV2ShippingRate,
-    StripePaymentMethodType,
     StripeResult,
-    StripeScriptLoader,
     StripeStringConstants,
-} from '@bigcommerce/checkout-sdk/stripe-utils';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+} from '../stripe-utils/stripe';
+import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
 
 import { expressCheckoutAllowedCountryCodes } from './constants';
-import { WithStripeOCSCustomerInitializeOptions } from './stripe-ocs-customer-initialize-options';
+import { StripeLinkV2Event, StripeLinkV2Options, StripeLinkV2ShippingRate } from './stripe-ocs';
+import {
+    StripeLinkV2BuyNowInitializeOptions,
+    WithStripeOCSCustomerInitializeOptions
+} from './stripe-ocs-customer-initialize-options';
+import {GooglePayBuyNowInitializeOptions} from '../../../google-pay-integration/src/types';
 
-export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
+export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
     private _stripeClient?: StripeClient;
     private _stripeElements?: StripeElements;
     private _linkV2Element?: StripeElement;
     private _amountTransformer?: AmountTransformer;
     private _onComplete?: (orderId?: number) => Promise<never>;
     private _loadingIndicatorContainer?: string;
-    private _captureMethod?: 'automatic' | 'manual';
     private _currencyCode?: string;
+
+    private _isBuyNowFlow?: boolean;
+    private _buyNowCart?: Cart;
+    private _buyNowInitializeOptions?: StripeLinkV2BuyNowInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -59,20 +66,24 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     ) {}
 
     async initialize(
-        options: CustomerInitializeOptions & WithStripeOCSCustomerInitializeOptions,
+        options: CheckoutButtonInitializeOptions & WithStripeOCSCustomerInitializeOptions,
     ): Promise<void> {
-        const { stripeocs } = options || {};
-        console.log(2123, options);
-        if (!stripeocs) {
-            throw new InvalidArgumentError(
-                `Unable to proceed because "options" argument is not provided.`,
-            );
+        const defaultMethodId = 'optimized_checkout';
+        const defaultGatewayId = 'stripeocs';
+
+        console.log('StripeLinkV2ButtonStrategy options', options);
+        const { stripeocs, containerId } = options || {};
+
+        if (!stripeocs || !containerId) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { methodId, gatewayId, container } = stripeocs;
+        const { methodId = defaultMethodId, gatewayId = defaultGatewayId, buyNowInitializeOptions, currencyCode } = stripeocs;
 
-        if (!container || !methodId || !gatewayId) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        this._isBuyNowFlow = !!buyNowInitializeOptions;
+
+        if (this._isBuyNowFlow) {
+            await this._initializeWithBuyNowFlow(buyNowInitializeOptions, currencyCode);
         }
 
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
@@ -90,14 +101,16 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         }
 
         const { initializationData } = paymentMethod;
-        const { captureMethod } = initializationData;
 
-        this._captureMethod = captureMethod;
         this._stripeClient = await this.scriptLoader.getStripeClient(initializationData);
+
+        if (!this._isBuyNowFlow) {
+            await this.paymentIntegrationService.loadDefaultCheckout();
+        }
 
         await this._mountExpressCheckoutElement(
             methodId,
-            container,
+            containerId,
             this._stripeClient,
             buttonHeight,
         );
@@ -119,6 +132,44 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
     deinitialize() {
         return Promise.resolve();
+    }
+
+    private async _initializeWithBuyNowFlow(buyNowInitializeOptions?: StripeLinkV2BuyNowInitializeOptions, currencyCode?: string) {
+        if (
+            this._isBuyNowFlow && (
+                !buyNowInitializeOptions?.storefrontApiToken ||
+                typeof buyNowInitializeOptions.storefrontApiToken !== 'string')
+        ) {
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.storefrontApiToken" argument is not provided.`,
+            );
+        }
+
+        this._currencyCode = currencyCode?.toLowerCase();
+        this._buyNowInitializeOptions = buyNowInitializeOptions;
+        await this._createBuyNowCartOrThrow(buyNowInitializeOptions);
+    }
+
+    private async _createBuyNowCartOrThrow(
+        buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions,
+    ): Promise<void> {
+        if (typeof buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function') {
+            const cartRequestBody = buyNowInitializeOptions.getBuyNowCartRequestBody();
+
+            try {
+                this._buyNowCart = await this.paymentIntegrationService.createBuyNowCart(
+                    cartRequestBody,
+                );
+
+                await this.paymentIntegrationService.loadCheckout(this._buyNowCart.id);
+            } catch (error) {
+                if (typeof error === 'string') {
+                    throw new BuyNowCartCreationError(error);
+                }
+
+                throw error;
+            }
+        }
     }
 
     private async _mountExpressCheckoutElement(
@@ -151,13 +202,12 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             buttonHeight,
         };
 
-        const { cartAmount } = this.paymentIntegrationService.getState().getCartOrThrow();
+        const { cartAmount = 1 } = this.paymentIntegrationService.getState().getCart() || {};
 
         const elementsOptions: StripeLinkV2Options = {
             mode: 'payment',
             amount: this._toCents(cartAmount),
             currency: this._getCurrency(),
-            ...(this._captureMethod ? { captureMethod: this._captureMethod } : {}),
         };
 
         this._stripeElements = stripeExpressCheckoutClient.elements(elementsOptions);
@@ -187,6 +237,25 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         expressCheckoutElement.on(StripeElementEvent.CONFIRM, async (event) =>
             this._onConfirm(event, methodId),
         );
+
+        // expressCheckoutElement.on(StripeElementEvent.CLICK, async (event) => {
+        //     if ('resolve' in event) {
+        //         if (this._stripeElements && this._isBuyNowFlow) {
+        //             const { lineItems = [] } = this._buyNowInitializeOptions?.getBuyNowCartRequestBody() || {};
+        //
+        //             const amount = this._toCents((lineItems[0]?.price || 0) * (lineItems[0]?.quantity));
+        //
+        //             this._stripeElements.update({
+        //                 currency: this._getCurrency(),
+        //                 mode: 'payment',
+        //                 amount,
+        //             });
+        //         }
+        //         // We don't need to await this promise because CLICK event should be resolved in 1 sec.
+        //         // this._createBuyNowCartOrThrow(this._buyNowInitializeOptions);
+        //         event.resolve({});
+        //     }
+        // });
 
         expressCheckoutElement.on(StripeElementEvent.CANCEL, this._onCancel);
     }
@@ -393,13 +462,13 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
             const confirmationResult = !isPaymentCompleted
                 ? await this._stripeClient?.confirmPayment({
-                      elements: stripePaymentData.elements,
-                      clientSecret: token,
-                      redirect: StripeStringConstants.IF_REQUIRED,
-                      confirmParams: {
-                          return_url: stripePaymentData.confirmParams?.return_url,
-                      },
-                  })
+                    elements: stripePaymentData.elements,
+                    clientSecret: token,
+                    redirect: StripeStringConstants.IF_REQUIRED,
+                    confirmParams: {
+                        return_url: stripePaymentData.confirmParams?.return_url,
+                    },
+                })
                 : await this._stripeClient?.retrievePaymentIntent(token || '');
 
             stripeError = confirmationResult?.error;
@@ -419,7 +488,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             return this._onComplete();
         }
 
-        window.location.replace('/order-confirmation');
+        window.location.replace('/checkout/order-confirmation');
 
         return Promise.resolve();
     }
@@ -444,29 +513,44 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     /** Utils * */
 
     private _shouldRequireShippingAddress() {
-        const { getCartOrThrow } = this.paymentIntegrationService.getState();
-        const { lineItems } = getCartOrThrow();
+        const { getCart } = this.paymentIntegrationService.getState();
 
-        return !!lineItems.physicalItems.length;
+        const { lineItems } = getCart() || {};
+
+        return !!lineItems?.physicalItems.length;
     }
 
     private async _updateDisplayedPrice() {
         if (this._stripeElements) {
-            this._stripeElements.update({
-                currency: this._getCurrency(),
-                mode: 'payment',
-                amount: await this._getTotalPrice(),
-            });
+            if (this._isBuyNowFlow) {
+                const { lineItems = [] } = this._buyNowInitializeOptions?.getBuyNowCartRequestBody() || {};
+
+                const amount = this._toCents((lineItems[0]?.price || 0) * (lineItems[0]?.quantity));
+
+                this._stripeElements.update({
+                    currency: this._getCurrency(),
+                    mode: 'payment',
+                    amount,
+                });
+            } else {
+                this._stripeElements.update({
+                    currency: this._getCurrency(),
+                    mode: 'payment',
+                    amount: await this._getTotalPrice(),
+                });
+            }
         }
     }
 
     private _getCurrency() {
         if (!this._currencyCode) {
-            const { code: currencyCode } = this.paymentIntegrationService
+            const currencyCode = this.paymentIntegrationService
                 .getState()
-                .getCartOrThrow().currency;
+                .getCart()?.currency;
 
-            this._currencyCode = currencyCode.toLowerCase();
+            if (currencyCode) {
+                this._currencyCode = currencyCode.code.toLowerCase();
+            }
         }
 
         return this._currencyCode;
@@ -475,8 +559,8 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private async _getTotalPrice(): Promise<number> {
         await this.paymentIntegrationService.loadCheckout();
 
-        const { getCheckoutOrThrow, getCartOrThrow } = this.paymentIntegrationService.getState();
-        const { decimalPlaces } = getCartOrThrow().currency;
+        const { getCheckoutOrThrow, getCart } = this.paymentIntegrationService.getState();
+        const { decimalPlaces } = getCart()?.currency || {};
         const totalPrice = round(getCheckoutOrThrow().outstandingBalance, decimalPlaces).toFixed(
             decimalPlaces,
         );
@@ -516,6 +600,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             options.sort((option) => (option.id === selectedId ? -1 : 0));
         }
 
+        console.log('shipping rates', options);
         return options;
     }
 
