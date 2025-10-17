@@ -8,7 +8,6 @@ import { RequestOptions } from '../common/http-request';
 
 import { BraintreePaymentInitializeOptions } from './strategies/braintree';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
-import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
 
@@ -59,10 +58,4 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Masterpass.
      */
     masterpass?: MasterpassPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the PayPal Express payment method.
-     * They can be omitted unless you need to support PayPal Express.
-     */
-    paypalexpress?: PaypalExpressPaymentInitializeOptions;
 }
