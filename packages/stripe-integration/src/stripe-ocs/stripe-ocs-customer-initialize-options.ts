@@ -1,4 +1,6 @@
-export default interface StripeOCSCustomerInitializeOptions {
+import {BuyNowCartRequestBody} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export default interface StripeLinkV2InitializeOptions {
     buttonHeight?: number;
 
     /**
@@ -16,8 +18,16 @@ export default interface StripeOCSCustomerInitializeOptions {
     onComplete?: (orderId?: number) => Promise<never>;
 
     loadingContainerId?: string;
+
+    buyNowInitializeOptions?: StripeLinkV2BuyNowInitializeOptions;
+    currencyCode?: string;
+}
+
+export interface StripeLinkV2BuyNowInitializeOptions {
+    storefrontApiToken?: string;
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
 export interface WithStripeOCSCustomerInitializeOptions {
-    stripeocs?: StripeOCSCustomerInitializeOptions;
+    stripeocs?: StripeLinkV2InitializeOptions;
 }
