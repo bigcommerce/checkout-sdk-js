@@ -23,6 +23,7 @@ import { Observable } from 'rxjs';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { PayPalFastlaneStylesOption as PayPalFastlaneStylesOption_2 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PayPalFastlaneStylesOption as PayPalFastlaneStylesOption_3 } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -7480,7 +7481,7 @@ declare interface PayPalCommerceFastlaneShippingInitializeOptions {
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
-    styles?: PayPalFastlaneStylesOption_2;
+    styles?: PayPalFastlaneStylesOption_3;
     /**
      * Is a callback that shows PayPal Fastlane popup with customer addresses
      * when get triggered
