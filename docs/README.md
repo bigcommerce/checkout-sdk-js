@@ -390,7 +390,6 @@
 - [PaymentStrategySelector](interfaces/PaymentStrategySelector.md)
 - [PaypalButtonInitializeOptions](interfaces/PaypalButtonInitializeOptions.md)
 - [PaypalCommerceRatePay](interfaces/PaypalCommerceRatePay.md)
-- [PaypalExpressPaymentInitializeOptions](interfaces/PaypalExpressPaymentInitializeOptions.md)
 - [PaypalStyleOptions](interfaces/PaypalStyleOptions.md)
 - [PhysicalItem](interfaces/PhysicalItem.md)
 - [PickupMethod](interfaces/PickupMethod.md)

@@ -22,7 +22,6 @@ current checkout flow.
 - [masterpass](BasePaymentInitializeOptions.md#masterpass)
 - [methodId](BasePaymentInitializeOptions.md#methodid)
 - [params](BasePaymentInitializeOptions.md#params)
-- [paypalexpress](BasePaymentInitializeOptions.md#paypalexpress)
 - [timeout](BasePaymentInitializeOptions.md#timeout)
 
 ## Properties
@@ -99,15 +98,6 @@ The parameters of the request, if required.
 #### Inherited from
 
 [PaymentRequestOptions](PaymentRequestOptions.md).[params](PaymentRequestOptions.md#params)
-
-___
-
-### paypalexpress
-
-• `Optional` **paypalexpress**: [`PaypalExpressPaymentInitializeOptions`](PaypalExpressPaymentInitializeOptions.md)
-
-The options that are required to initialize the PayPal Express payment method.
-They can be omitted unless you need to support PayPal Express.
 
 ___
 

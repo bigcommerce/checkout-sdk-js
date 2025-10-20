@@ -53,7 +53,7 @@ ___
 
 ### style
 
-• `Optional` **style**: `Pick`<`PaypalStyleOptions`, ``"color"`` \| ``"height"`` \| ``"label"`` \| ``"size"`` \| ``"layout"`` \| ``"shape"`` \| ``"tagline"`` \| ``"fundingicons"``\>
+• `Optional` **style**: `Pick`<`PaypalStyleOptions`, ``"color"`` \| ``"height"`` \| ``"label"`` \| ``"layout"`` \| ``"size"`` \| ``"shape"`` \| ``"tagline"`` \| ``"fundingicons"``\>
 
 A set of styling options for the checkout button.
 

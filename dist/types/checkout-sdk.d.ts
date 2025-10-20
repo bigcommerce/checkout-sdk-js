@@ -769,11 +769,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Masterpass.
      */
     masterpass?: MasterpassPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the PayPal Express payment method.
-     * They can be omitted unless you need to support PayPal Express.
-     */
-    paypalexpress?: PaypalExpressPaymentInitializeOptions;
 }
 
 declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
@@ -7952,32 +7947,6 @@ declare interface PaypalCommerceRatePay {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError?(error: unknown): void;
-}
-
-/**
- * A set of options that are required to initialize the PayPal Express payment
- * method.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'paypalexpress',
- * });
- * ```
- *
- * An additional flag can be passed in to always start the payment flow through
- * a redirect rather than a popup.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'paypalexpress',
- *     paypalexpress: {
- *         useRedirectFlow: true,
- *     },
- * });
- * ```
- */
-declare interface PaypalExpressPaymentInitializeOptions {
-    useRedirectFlow?: boolean;
 }
 
 declare interface PaypalStyleOptions {

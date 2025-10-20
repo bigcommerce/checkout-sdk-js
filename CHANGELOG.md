@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.813.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.813.0...v1.813.1) (2025-10-20)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2197 delete paypal-express payment strategy from core ([9884c4b](https://github.com/bigcommerce/checkout-sdk-js/commit/9884c4bc7b8923b71a946594678aa686cedeb410))
+
 ## [1.813.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.812.0...v1.813.0) (2025-10-20)
 
 
