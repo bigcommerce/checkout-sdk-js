@@ -1,34 +1,34 @@
+/* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/dot-notation */
+
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 
-import {  ThreeDSjs } from './cba-mpgs';
 import {
-    getCBAMPGS,
-    getCBAMPGSScriptMock,
-    getCBAMPGSScriptMockRetryOnly,
-} from './cba-mpgs.mock';
-import CBAMPGSScriptLoader from './cba-mpgs-script-loader';
-import {
-    OrderRequestBody,
-    PaymentIntegrationService,
-    PaymentMethod,
     MissingDataError,
     NotInitializedError,
-    PaymentMethodFailedError,
-    PaymentArgumentInvalidError,
     OrderFinalizationNotRequiredError,
+    OrderRequestBody,
+    PaymentArgumentInvalidError,
+    PaymentIntegrationService,
+    PaymentMethod,
+    PaymentMethodFailedError,
     PaymentStatusTypes,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import CBAMPGSPaymentStrategy from './cba-mpgs-payment-strategy';
 import {
     getConfig,
+    getErrorPaymentResponseBody,
     getOrder,
     getOrderRequestBody,
-    PaymentIntegrationServiceMock,
-    getErrorPaymentResponseBody,
     getResponse,
+    PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
+import { ThreeDSjs } from './cba-mpgs';
+import CBAMPGSPaymentStrategy from './cba-mpgs-payment-strategy';
+import CBAMPGSScriptLoader from './cba-mpgs-script-loader';
+import { getCBAMPGS, getCBAMPGSScriptMock, getCBAMPGSScriptMockRetryOnly } from './cba-mpgs.mock';
 
 describe('CBAMPGSPaymentStrategy', () => {
     let scriptLoader: ScriptLoader;
@@ -46,10 +46,7 @@ describe('CBAMPGSPaymentStrategy', () => {
 
         cbaMPGSScriptLoader = new CBAMPGSScriptLoader(scriptLoader);
 
-        strategy = new CBAMPGSPaymentStrategy(
-            paymentIntegrationService,
-            cbaMPGSScriptLoader,
-        );
+        strategy = new CBAMPGSPaymentStrategy(paymentIntegrationService, cbaMPGSScriptLoader);
 
         paymentMethod = getCBAMPGS();
 
@@ -63,13 +60,20 @@ describe('CBAMPGSPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
         jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
         jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockImplementation(jest.fn());
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(paymentIntegrationService.getState());
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(getConfig().storeConfig);
-        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+            paymentIntegrationService.getState(),
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            getConfig().storeConfig,
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
         jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(getOrder());
         jest.spyOn(cbaMPGSScriptLoader, 'load').mockResolvedValue(threeDSjs);
-        jest.spyOn(paymentIntegrationService.getState(), 'getLocale')
-            .mockReturnValue({ locale: 'en_US' } as any);
+        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue({
+            locale: 'en_US',
+        } as any);
         jest.useFakeTimers();
     });
 
@@ -77,6 +81,7 @@ describe('CBAMPGSPaymentStrategy', () => {
         it('should initialize the base strategy if 3ds is disabled', async () => {
             paymentMethod.config.is3dsEnabled = false;
             await strategy.initialize({ methodId: paymentMethod.id });
+
             expect(cbaMPGSScriptLoader.load).not.toHaveBeenCalled();
         });
 
@@ -100,29 +105,41 @@ describe('CBAMPGSPaymentStrategy', () => {
 
         it('should initialize in production mode if isTestModeFlagEnabled is false', async () => {
             await strategy.initialize({ methodId: paymentMethod.id });
+
             expect(cbaMPGSScriptLoader.load).toHaveBeenCalledWith(false);
         });
 
         it('should initialize in sandbox mode if isTestModeFlagEnabled is true', async () => {
             paymentMethod.initializationData.isTestModeFlagEnabled = true;
             await strategy.initialize({ methodId: paymentMethod.id });
+
             expect(cbaMPGSScriptLoader.load).toHaveBeenCalledWith(true);
         });
 
         it('should throw NotInitializedError if script fails to load', async () => {
             jest.spyOn(cbaMPGSScriptLoader, 'load').mockResolvedValue(undefined as any);
-            await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(NotInitializedError);
+
+            await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(
+                NotInitializedError,
+            );
         });
 
         it('should throw MissingDataError if clientToken missing', async () => {
             paymentMethod.clientToken = undefined;
-            await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(MissingDataError);
+
+            await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(
+                MissingDataError,
+            );
         });
 
         it('should throw PaymentMethodFailedError if configure fails', async () => {
             const badMock = getCBAMPGSScriptMock(false);
+
             jest.spyOn(cbaMPGSScriptLoader, 'load').mockResolvedValue(badMock);
-            await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(PaymentMethodFailedError);
+
+            await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(
+                PaymentMethodFailedError,
+            );
         });
     });
 
@@ -158,14 +175,15 @@ describe('CBAMPGSPaymentStrategy', () => {
             expect(threeDSjs.initiateAuthentication).not.toHaveBeenCalled();
         });
 
-
         it('should fail if payment data missing', async () => {
             payload.payment = undefined as any;
+
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentArgumentInvalidError);
         });
 
         it('should execute and trigger 3DS successfully', async () => {
             const threeDSMock = getCBAMPGSScriptMock();
+
             strategy['threeDSjs'] = threeDSMock;
 
             strategy['authenticatePayer'] = jest.fn().mockResolvedValue(undefined);
@@ -180,10 +198,7 @@ describe('CBAMPGSPaymentStrategy', () => {
                 expect.any(Function),
             );
 
-            expect(strategy['authenticatePayer']).toHaveBeenCalledWith(
-                orderId,
-                'session-id-uuid',
-            );
+            expect(strategy['authenticatePayer']).toHaveBeenCalledWith(orderId, 'session-id-uuid');
         });
 
         it('should reject with RequestError if 3ds result missing token', async () => {
@@ -197,6 +212,7 @@ describe('CBAMPGSPaymentStrategy', () => {
             );
 
             (paymentIntegrationService.submitPayment as jest.Mock).mockRejectedValue(error);
+
             await expect(strategy.execute(payload)).rejects.toThrow(RequestError);
         });
 
@@ -210,6 +226,7 @@ describe('CBAMPGSPaymentStrategy', () => {
             );
 
             (paymentIntegrationService.submitPayment as jest.Mock).mockRejectedValue(error);
+
             await expect(strategy.execute(payload)).rejects.toThrow(RequestError);
         });
 
@@ -240,6 +257,7 @@ describe('CBAMPGSPaymentStrategy', () => {
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
+            // eslint-disable-next-line jest/valid-expect
             expect(strategy.execute(payload)).rejects.toThrow(Error);
 
             const expectedTimes = 5;
@@ -256,8 +274,12 @@ describe('CBAMPGSPaymentStrategy', () => {
 
     describe('#finalize', () => {
         it('finalizes order if created and status is FINALIZE', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(getOrder());
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(PaymentStatusTypes.FINALIZE);
+            jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(
+                getOrder(),
+            );
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.FINALIZE,
+            );
 
             await strategy.finalize();
 
@@ -266,13 +288,17 @@ describe('CBAMPGSPaymentStrategy', () => {
 
         it('throws if not FINALIZE', async () => {
             const state = paymentIntegrationService.getState();
+
             jest.spyOn(state, 'getPaymentStatus').mockReturnValue(PaymentStatusTypes.INITIALIZE);
+
             await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         });
 
         it('throws if order missing', async () => {
             const state = paymentIntegrationService.getState();
+
             jest.spyOn(state, 'getOrder').mockReturnValue(null as any);
+
             await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         });
     });
@@ -280,6 +306,7 @@ describe('CBAMPGSPaymentStrategy', () => {
     describe('#deinitialize', () => {
         it('deinitializes correctly', async () => {
             await strategy.initialize({ methodId: paymentMethod.id });
+
             await expect(strategy.deinitialize()).resolves.toBeUndefined();
         });
     });

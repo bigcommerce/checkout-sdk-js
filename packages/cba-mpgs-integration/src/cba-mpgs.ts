@@ -1,4 +1,5 @@
-import { PaymentMethod } from "@bigcommerce/checkout-sdk/payment-integration-api";
+/* eslint-disable @typescript-eslint/naming-convention */
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export const THREE_D_SECURE_PROCEED = 'PROCEED';
 export const THREE_D_SECURE_BUSY = 'SERVER_BUSY';
@@ -71,6 +72,12 @@ export interface CBAMPGSPaymentMethod extends PaymentMethod {
 }
 
 export interface CBAMPGSInitializationData {
-        isTestModeFlagEnabled?: boolean;
-        merchantId: string;
+    isTestModeFlagEnabled?: boolean;
+    merchantId: string;
+}
+
+export interface ThreeDSErrorBody {
+    three_ds_result: {
+        token: string;
+    };
 }

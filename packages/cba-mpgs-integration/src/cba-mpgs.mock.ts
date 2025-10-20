@@ -1,4 +1,5 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     THREE_D_SECURE_AVAILABLE,
     THREE_D_SECURE_BUSY,
@@ -112,6 +113,7 @@ export function getCBAMPGSScriptMockRetryOnly(
     };
 }
 
+// eslint-disable-next-line no-underscore-dangle
 function _authenticationResponse(
     success: boolean,
     retryError?: boolean,
@@ -139,7 +141,6 @@ function _authenticationResponse(
 
     return response;
 }
-
 
 export function getCBAMPGS(): PaymentMethod {
     return {

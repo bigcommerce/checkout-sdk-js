@@ -1,8 +1,8 @@
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import createCBAMPGSPaymentStrategy from './create-cba-mpgs-payment-strategy';
 import CBAMPGSPaymentStrategy from './cba-mpgs-payment-strategy';
+import createCBAMPGSPaymentStrategy from './create-cba-mpgs-payment-strategy';
 
 describe('createCBAMPGSPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
