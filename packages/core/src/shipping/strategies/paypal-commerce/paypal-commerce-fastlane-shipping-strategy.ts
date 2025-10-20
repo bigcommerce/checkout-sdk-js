@@ -3,12 +3,12 @@ import {
     getFastlaneStyles,
     isPayPalCommerceAcceleratedCheckoutCustomer,
     isPayPalFastlaneCustomer,
-    PayPalCommerceFastlaneUtils,
-    PayPalCommerceInitializationData,
-    PayPalCommerceSdk,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneStylesOption,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    PayPalFastlaneUtils,
+    PayPalInitializationData,
+    PaypalSdk,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
@@ -27,8 +27,8 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
-        private _paypalCommerceSdk: PayPalCommerceSdk,
-        private _paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils,
+        private _paypalCommerceSdk: PaypalSdk,
+        private _paypalCommerceFastlaneUtils: PayPalFastlaneUtils,
     ) {}
 
     updateAddress(
@@ -91,7 +91,7 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
 
     private async _getPayPalPaymentMethodOrThrow(
         methodId: string,
-    ): Promise<PaymentMethod<PayPalCommerceInitializationData>> {
+    ): Promise<PaymentMethod<PayPalInitializationData>> {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 

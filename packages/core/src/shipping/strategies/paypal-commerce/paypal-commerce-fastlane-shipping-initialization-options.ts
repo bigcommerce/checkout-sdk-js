@@ -1,5 +1,5 @@
 import { CustomerAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 /**
  * A set of options that are required to initialize the shipping step of
