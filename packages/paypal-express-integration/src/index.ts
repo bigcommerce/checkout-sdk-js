@@ -3,3 +3,4 @@ export { default as PaypalExpressPaymentStrategy } from './paypal-express-paymen
 export { default as PaypalExpressScriptLoader } from './paypal-express-script-loader';
 export { default as createPaypalExpressButtonStrategy } from './create-paypal-express-button-strategy';
 export { default as createPaypalExpressPaymentStrategy } from './create-paypal-express-payment-strategy';
+export { WithPaypalExpressPaymentInitializeOptions } from './paypal-express-payment-initialize-options';

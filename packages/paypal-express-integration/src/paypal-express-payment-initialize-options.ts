@@ -20,6 +20,6 @@
  * });
  * ```
  */
-export default interface PaypalExpressPaymentInitializeOptions {
+export interface WithPaypalExpressPaymentInitializeOptions {
     paypalexpress?: { useRedirectFlow?: boolean };
 }
