@@ -9,7 +9,6 @@ import PaymentStrategyType from './payment-strategy-type';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
-import { PaypalExpressPaymentStrategy } from './strategies/paypal';
 import { PPSDKStrategy } from './strategies/ppsdk';
 import { WepayPaymentStrategy } from './strategies/wepay';
 
@@ -32,18 +31,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
 
         expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
-    });
-
-    it('can instantiate paypalexpress', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL_EXPRESS);
-
-        expect(paymentStrategy).toBeInstanceOf(PaypalExpressPaymentStrategy);
-    });
-
-    it('can instantiate paypalexpresscredit', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL_EXPRESS_CREDIT);
-
-        expect(paymentStrategy).toBeInstanceOf(PaypalExpressPaymentStrategy);
     });
 
     it('can instantiate wepay', () => {

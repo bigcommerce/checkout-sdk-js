@@ -18,7 +18,6 @@ import PaymentStrategyType from './payment-strategy-type';
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
-import { PaypalExpressPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
 import {
     createStepHandler,
     createSubStrategyRegistry,
@@ -97,26 +96,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 new MasterpassScriptLoader(scriptLoader),
                 locale,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.PAYPAL_EXPRESS,
-        () =>
-            new PaypalExpressPaymentStrategy(
-                store,
-                orderActionCreator,
-                new PaypalScriptLoader(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.PAYPAL_EXPRESS_CREDIT,
-        () =>
-            new PaypalExpressPaymentStrategy(
-                store,
-                orderActionCreator,
-                new PaypalScriptLoader(scriptLoader),
             ),
     );
 
