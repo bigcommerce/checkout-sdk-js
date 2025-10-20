@@ -1,3 +1,4 @@
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     THREE_D_SECURE_AVAILABLE,
     THREE_D_SECURE_BUSY,
@@ -137,4 +138,27 @@ function _authenticationResponse(
     }
 
     return response;
+}
+
+
+export function getCBAMPGS(): PaymentMethod {
+    return {
+        id: 'cba_mpgs',
+        gateway: '',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [],
+        clientToken: 'foo',
+        config: {
+            displayName: 'CBA MPGS',
+            is3dsEnabled: true,
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        initializationData: {
+            isTestModeFlagEnabled: false,
+            merchantId: 'ABC123',
+        },
+        skipRedirectConfirmationAlert: true,
+    };
 }

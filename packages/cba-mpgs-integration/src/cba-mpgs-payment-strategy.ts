@@ -1,59 +1,40 @@
 import { noop, some } from 'lodash';
 
-import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
-    MissingDataError,
-    MissingDataErrorType,
-    NotInitializedError,
-    NotInitializedErrorType,
-    RequestError,
-} from '../../../common/error/errors';
-import { HostedFormFactory } from '../../../hosted-form';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError, PaymentMethodDeclinedError } from '../../errors';
-import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
-import * as paymentStatusTypes from '../../payment-status-types';
-import { CreditCardPaymentStrategy } from '../credit-card';
-
-import {
-    RestApiResponse,
-    THREE_D_SECURE_AVAILABLE,
-    THREE_D_SECURE_BUSY,
-    THREE_D_SECURE_PROCEED,
-    ThreeDSjs,
-} from './cba-mpgs';
+    isRequestError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, OrderFinalizationNotRequiredError, OrderRequestBody, PaymentArgumentInvalidError, PaymentInitializeOptions, PaymentIntegrationService, PaymentMethodFailedError, PaymentRequestOptions, PaymentStatusTypes,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { RestApiResponse, THREE_D_SECURE_AVAILABLE, THREE_D_SECURE_BUSY, THREE_D_SECURE_PROCEED, ThreeDSjs } from './cba-mpgs';
 import CBAMPGSScriptLoader from './cba-mpgs-script-loader';
 
+import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import { isCBAMPGSPaymentMethodLike } from './is-cba-mpgs-payment-method-like';
+
+
 export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
-    private _threeDSjs?: ThreeDSjs;
-    private _sessionId = '';
+    private threeDSjs?: ThreeDSjs;
+    private sessionId = '';
+    private locale?: string;
 
     constructor(
-        store: CheckoutStore,
-        orderActionCreator: OrderActionCreator,
-        paymentActionCreator: PaymentActionCreator,
-        hostedFormFactory: HostedFormFactory,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _CBAMGPSScriptLoader: CBAMPGSScriptLoader,
-        private _locale: string,
+        private paymentIntegrationService: PaymentIntegrationService,
+        private CBAMGPSScriptLoader: CBAMPGSScriptLoader,
     ) {
-        super(store, orderActionCreator, paymentActionCreator, hostedFormFactory);
+        super(paymentIntegrationService);
     }
 
-    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options: PaymentInitializeOptions): Promise<void> {
         await super.initialize(options);
 
         const { methodId } = options;
 
-        const state = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(methodId),
-        );
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        const state = await this.paymentIntegrationService.getState();
+        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+
+        if (!isCBAMPGSPaymentMethodLike(paymentMethod)) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
         const {
             clientToken,
             initializationData: { isTestModeFlagEnabled = false, merchantId },
@@ -61,9 +42,9 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
         } = paymentMethod;
 
         if (is3dsEnabled) {
-            this._threeDSjs = await this._CBAMGPSScriptLoader.load(isTestModeFlagEnabled);
+            this.threeDSjs = await this.CBAMGPSScriptLoader.load(isTestModeFlagEnabled);
 
-            if (!this._threeDSjs) {
+            if (!this.threeDSjs) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
@@ -71,32 +52,36 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
-            this._sessionId = clientToken;
+            this.sessionId = clientToken;
+            this.locale = state.getLocale();
 
-            await this._threeDSjs.configure({
+            if (!this.locale) {
+                throw new MissingDataError(MissingDataErrorType.MissingCart);
+            }
+
+            await this.threeDSjs.configure({
                 merchantId,
-                sessionId: this._sessionId,
+                sessionId: this.sessionId,
                 callback: () => {
-                    if (this._threeDSjs?.isConfigured()) {
-                        return this._store.getState();
+                    if (this.threeDSjs?.isConfigured()) {
+                        return this.paymentIntegrationService.getState();
                     }
-
                     throw new PaymentMethodFailedError('Failed to configure 3DS API.');
                 },
                 configuration: {
-                    userLanguage: this._locale,
+                    userLanguage: this.locale,
                     wsVersion: 62,
                 },
             });
         }
 
-        return Promise.resolve(this._store.getState());
+        return Promise.resolve();
     }
 
     async execute(
         payload: OrderRequestBody,
         options?: PaymentRequestOptions,
-    ): Promise<InternalCheckoutSelectors> {
+    ): Promise<void> {
         const { payment } = payload;
         const paymentData = payment && payment.paymentData;
 
@@ -104,17 +89,15 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
 
-        const {
-            paymentMethods: { getPaymentMethodOrThrow },
-        } = this._store.getState();
-        const paymentMethod = getPaymentMethodOrThrow(payment.methodId);
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod = state.getPaymentMethodOrThrow(payment.methodId);
 
         const { is3dsEnabled } = paymentMethod.config;
 
         if (is3dsEnabled) {
             const newPaymentData = {
                 ...paymentData,
-                threeDSecure: { token: this._sessionId },
+                threeDSecure: { token: this.sessionId },
             };
 
             if (payload.payment) {
@@ -125,19 +108,20 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
         return super.execute(payload, options).catch((error) => {
             if (
                 !is3dsEnabled ||
-                !(error instanceof RequestError) ||
+                !isRequestError(error) ||
                 !some(error.body.errors, { code: 'three_d_secure_required' })
             ) {
                 return Promise.reject(error);
             }
 
-            const state = this._store.getState();
-            const order = state.order.getOrder();
+            const state = this.paymentIntegrationService.getState();
+            const order = state.getOrder();
+
             const {
                 storeProfile: { storeId },
-            } = state.config.getStoreConfigOrThrow();
+            } = state.getStoreConfigOrThrow();
 
-            if (!order || !this._sessionId) {
+            if (!order || !this.sessionId) {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
@@ -151,51 +135,50 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
                 return Promise.reject(error);
             }
 
-            return this._initiateAuthentication(orderId, transactionId);
+            return this.initiateAuthentication(orderId, transactionId);
         });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const state = this._store.getState();
-        const order = state.order.getOrder();
+    finalize(options?: PaymentRequestOptions): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
+        const order = state.getOrder();
 
-        if (order && state.payment.getPaymentStatus() === paymentStatusTypes.FINALIZE) {
-            return this._store.dispatch(
-                this._orderActionCreator.finalizeOrder(order.orderId, options),
-            );
+        if (order && state.getPaymentStatus() === PaymentStatusTypes.FINALIZE) {
+            this.paymentIntegrationService.finalizeOrder(options);
+            return Promise.resolve();
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._threeDSjs = undefined;
-        this._sessionId = '';
+    deinitialize(): Promise<void> {
+        this.threeDSjs = undefined;
+        this.sessionId = '';
 
         return super.deinitialize();
     }
 
-    private async _initiateAuthentication(
+    private async initiateAuthentication(
         orderId: string,
         transactionId: string,
-    ): Promise<InternalCheckoutSelectors> {
+    ): Promise<void> {
         const response: RestApiResponse = await new Promise((resolve, reject) => {
-            if (!this._threeDSjs) {
+            if (!this.threeDSjs) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            this._threeDSjs.initiateAuthentication(orderId, transactionId, (data) => {
+            this.threeDSjs.initiateAuthentication(orderId, transactionId, (data) => {
                 const error = data.error;
 
                 if (error) {
-                    return reject(new PaymentMethodDeclinedError(error.msg));
+                    return reject(new PaymentMethodFailedError(error.msg));
                 }
 
-                if (this._threeDSjs && data.gatewayRecommendation === THREE_D_SECURE_PROCEED) {
+                if (this.threeDSjs && data.gatewayRecommendation === THREE_D_SECURE_PROCEED) {
                     return resolve(data.restApiResponse);
                 }
 
-                return reject(new PaymentMethodDeclinedError());
+                return reject(new PaymentMethodFailedError());
             });
         });
 
@@ -203,25 +186,25 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
             response.transaction &&
             response.transaction.authenticationStatus === THREE_D_SECURE_AVAILABLE
         ) {
-            return this._authenticatePayer(orderId, transactionId);
+            return this.authenticatePayer(orderId, transactionId);
         }
 
-        throw new PaymentMethodDeclinedError();
+        throw new PaymentMethodFailedError();
     }
 
-    private async _authenticatePayer(
+    private async authenticatePayer(
         orderId: string,
         transactionId: string,
         attempt = 1,
-    ): Promise<InternalCheckoutSelectors | never> {
+    ): Promise<void> {
         return new Promise((_resolve, reject) => {
-            if (!this._threeDSjs) {
+            if (!this.threeDSjs) {
                 return reject(
                     new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
                 );
             }
 
-            this._threeDSjs.authenticatePayer(
+            this.threeDSjs.authenticatePayer(
                 orderId,
                 transactionId,
                 async (data) => {
@@ -234,10 +217,10 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
                             // https://ap-gateway.mastercard.com/api/documentation/integrationGuidelines/supportedFeatures/pickAdditionalFunctionality/authentication/3DS/integrationModelAPI.html?locale=en_US#x_3DSTest
                             await new Promise((resolve) => setTimeout(resolve, 3000));
 
-                            return this._authenticatePayer(orderId, transactionId, ++attempt);
+                            return this.authenticatePayer(orderId, transactionId, ++attempt);
                         }
 
-                        return reject(new PaymentMethodDeclinedError());
+                        return reject(new PaymentMethodFailedError());
                     }
 
                     // ThreeDSjs will handle the redirect so return a promise that doesn't really resolve

@@ -57,6 +57,9 @@
             "@bigcommerce/checkout-sdk/cardinal-integration": [
                 "packages/cardinal-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/cba-mpgs-integration": [
+                "packages/cba-mpgs-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/checkoutcom-custom-integration": [
                 "packages/checkoutcom-custom-integration/src/index.ts"
             ],

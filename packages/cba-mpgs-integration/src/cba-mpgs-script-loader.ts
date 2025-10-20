@@ -1,8 +1,7 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodClientUnavailableError } from '../../errors';
-
 import { CBAMPGSHostWindow, ThreeDSjs } from './cba-mpgs';
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class CBAMPGSScriptLoader {
     constructor(private _scriptLoader: ScriptLoader, private _window: CBAMPGSHostWindow = window) {}
