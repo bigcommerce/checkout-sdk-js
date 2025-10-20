@@ -15,7 +15,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import PaypalExpressPaymentInitializeOptions from './paypal-express-payment-initialize-options';
+import { WithPaypalExpressPaymentInitializeOptions } from './paypal-express-payment-initialize-options';
 import PaypalScriptLoader from './paypal-express-script-loader';
 import { PaymentStatusTypes, PaypalHostWindow, PaypalSDK } from './paypal-express-types';
 
@@ -32,7 +32,9 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
         this.window = window;
     }
 
-    async initialize(options: PaymentInitializeOptions & PaypalExpressPaymentInitializeOptions) {
+    async initialize(
+        options: PaymentInitializeOptions & WithPaypalExpressPaymentInitializeOptions,
+    ): Promise<void> {
         const state = this.paymentIntegrationService.getState();
 
         this.paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
