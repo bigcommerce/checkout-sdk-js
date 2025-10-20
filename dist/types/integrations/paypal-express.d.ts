@@ -161,34 +161,6 @@ declare interface PaypalExpressCheckoutOptions {
     environment: string;
 }
 
-/**
- * A set of options that are required to initialize the PayPal Express payment
- * method.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'paypalexpress',
- * });
- * ```
- *
- * An additional flag can be passed in to always start the payment flow through
- * a redirect rather than a popup.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'paypalexpress',
- *     paypalexpress: {
- *         useRedirectFlow: true,
- *     },
- * });
- * ```
- */
-declare interface PaypalExpressPaymentInitializeOptions {
-    paypalexpress?: {
-        useRedirectFlow?: boolean;
-    };
-}
-
 declare class PaypalExpressPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private scriptLoader;
@@ -197,7 +169,7 @@ declare class PaypalExpressPaymentStrategy implements PaymentStrategy {
     private useRedirectFlow;
     private window;
     constructor(paymentIntegrationService: PaymentIntegrationService, scriptLoader: PaypalScriptLoader);
-    initialize(options: PaymentInitializeOptions & PaypalExpressPaymentInitializeOptions): Promise<void>;
+    initialize(options: PaymentInitializeOptions & WithPaypalExpressPaymentInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<undefined>;
     finalize(options?: PaymentRequestOptions): Promise<void>;
@@ -293,6 +265,34 @@ declare interface PaypalTransaction {
 
 declare interface WithPaypalExpressButtonInitializeOptions {
     paypal: PaypalExpressButtonInitializeOptions;
+}
+
+/**
+ * A set of options that are required to initialize the PayPal Express payment
+ * method.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalexpress',
+ * });
+ * ```
+ *
+ * An additional flag can be passed in to always start the payment flow through
+ * a redirect rather than a popup.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalexpress',
+ *     paypalexpress: {
+ *         useRedirectFlow: true,
+ *     },
+ * });
+ * ```
+ */
+declare interface WithPaypalExpressPaymentInitializeOptions {
+    paypalexpress?: {
+        useRedirectFlow?: boolean;
+    };
 }
 
 export declare const createPaypalExpressButtonStrategy: import("../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<PaypalButtonStrategy>, {

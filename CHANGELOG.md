@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.813.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.813.1...v1.813.2) (2025-10-20)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2197 rename paypal-express payment initialization type ([b550975](https://github.com/bigcommerce/checkout-sdk-js/commit/b550975a25e0ee7af9cb589091c6a8691ed00f1e))
+
 ### [1.813.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.813.0...v1.813.1) (2025-10-20)
 
 
