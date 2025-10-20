@@ -1,6 +1,3 @@
-/* eslint-disable dot-notation */
-/* eslint-disable @typescript-eslint/dot-notation */
-
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 

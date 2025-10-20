@@ -22,9 +22,11 @@
                 "@typescript-eslint/no-unsafe-argument": "off",
                 "@typescript-eslint/no-unsafe-assignment": "off",
                 "@typescript-eslint/no-floating-promises": "off",
+                "@typescript-eslint/dot-notation": "off",
                 "no-plusplus": "off",
                 "no-await-in-loop": "off",
-                "no-loop-func": "off"
+                "no-loop-func": "off",
+                "dot-notation": "off"
             }
         }
     ]

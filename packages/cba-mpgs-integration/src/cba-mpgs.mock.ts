@@ -21,7 +21,7 @@ export function getCBAMPGSScriptMock(
         .fn()
         .mockImplementationOnce((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(
+                authenticationResponse(
                     authPayerSuccess,
                     retryErrorCode,
                     includeErrorStep2,
@@ -31,7 +31,7 @@ export function getCBAMPGSScriptMock(
         )
         .mockImplementationOnce((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(authPayerSuccess, false, includeErrorStep2, authAvailable),
+                authenticationResponse(authPayerSuccess, false, includeErrorStep2, authAvailable),
             ),
         );
 
@@ -40,7 +40,7 @@ export function getCBAMPGSScriptMock(
         isConfigured: jest.fn(() => configureSuccess),
         initiateAuthentication: jest.fn((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(
+                authenticationResponse(
                     initiateAuthSuccess,
                     retryErrorCode,
                     includeErrorStep1,
@@ -52,7 +52,7 @@ export function getCBAMPGSScriptMock(
             ? authenticatePayerRetry
             : jest.fn((_orderId, _transactionId, callback) =>
                   callback(
-                      _authenticationResponse(
+                      authenticationResponse(
                           authPayerSuccess,
                           retryErrorCode,
                           includeErrorStep2,
@@ -76,7 +76,7 @@ export function getCBAMPGSScriptMockRetryOnly(
         .fn()
         .mockImplementation((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(
+                authenticationResponse(
                     authPayerSuccess,
                     retryErrorCode,
                     includeErrorStep2,
@@ -90,7 +90,7 @@ export function getCBAMPGSScriptMockRetryOnly(
         isConfigured: jest.fn(() => configureSuccess),
         initiateAuthentication: jest.fn((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(
+                authenticationResponse(
                     initiateAuthSuccess,
                     retryErrorCode,
                     includeErrorStep1,
@@ -102,7 +102,7 @@ export function getCBAMPGSScriptMockRetryOnly(
             ? authenticatePayerRetry
             : jest.fn((_orderId, _transactionId, callback) =>
                   callback(
-                      _authenticationResponse(
+                      authenticationResponse(
                           authPayerSuccess,
                           retryErrorCode,
                           includeErrorStep2,
@@ -113,8 +113,7 @@ export function getCBAMPGSScriptMockRetryOnly(
     };
 }
 
-// eslint-disable-next-line no-underscore-dangle
-function _authenticationResponse(
+function authenticationResponse(
     success: boolean,
     retryError?: boolean,
     includeError?: boolean,
