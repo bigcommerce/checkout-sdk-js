@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 export const THREE_D_SECURE_PROCEED = 'PROCEED';
 export const THREE_D_SECURE_BUSY = 'SERVER_BUSY';
 export const THREE_D_SECURE_AVAILABLE = 'AUTHENTICATION_AVAILABLE';
@@ -62,4 +65,19 @@ export interface ThreeDSAPIConfiguration {
     userLanguage: string;
     // The Web Services API version that you submitted the request in. IE: 62
     wsVersion: number;
+}
+
+export interface CBAMPGSPaymentMethod extends PaymentMethod {
+    initializationData: CBAMPGSInitializationData;
+}
+
+export interface CBAMPGSInitializationData {
+    isTestModeFlagEnabled?: boolean;
+    merchantId: string;
+}
+
+export interface ThreeDSErrorBody {
+    three_ds_result: {
+        token: string;
+    };
 }

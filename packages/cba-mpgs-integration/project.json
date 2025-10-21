@@ -1,0 +1,23 @@
+{
+    "root": "packages/cba-mpgs-integration",
+    "sourceRoot": "packages/cba-mpgs-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/cba-mpgs-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/cba-mpgs-integration"],
+            "options": {
+                "jestConfig": "packages/cba-mpgs-integration/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}

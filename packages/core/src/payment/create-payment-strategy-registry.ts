@@ -9,13 +9,10 @@ import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import PaymentActionCreator from './payment-action-creator';
-import PaymentMethodActionCreator from './payment-method-action-creator';
-import PaymentMethodRequestSender from './payment-method-request-sender';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import {
@@ -54,26 +51,9 @@ export default function createPaymentStrategyRegistry(
         paymentRequestTransformer,
         paymentHumanVerificationHandler,
     );
-    const paymentMethodActionCreator = new PaymentMethodActionCreator(
-        new PaymentMethodRequestSender(requestSender),
-    );
     const formPoster = createFormPoster();
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
-
-    registry.register(
-        PaymentStrategyType.CBA_MPGS,
-        () =>
-            new CBAMPGSPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                paymentMethodActionCreator,
-                new CBAMPGSScriptLoader(scriptLoader),
-                locale,
-            ),
-    );
 
     registry.register(
         PaymentStrategyType.CONVERGE,

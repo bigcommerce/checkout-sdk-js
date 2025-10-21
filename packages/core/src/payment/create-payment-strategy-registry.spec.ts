@@ -6,7 +6,6 @@ import { createCheckoutStore } from '../checkout';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { PPSDKStrategy } from './strategies/ppsdk';
@@ -49,11 +48,5 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.PPSDK);
 
         expect(paymentStrategy).toBeInstanceOf(PPSDKStrategy);
-    });
-
-    it('can instantiate MPGS', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CBA_MPGS);
-
-        expect(paymentStrategy).toBeInstanceOf(CBAMPGSPaymentStrategy);
     });
 });

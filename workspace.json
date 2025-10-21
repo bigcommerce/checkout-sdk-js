@@ -16,6 +16,7 @@
         "braintree-integration": "packages/braintree-integration",
         "braintree-utils": "packages/braintree-utils",
         "cardinal-integration": "packages/cardinal-integration",
+        "cba-mpgs-integration": "packages/cba-mpgs-integration",
         "checkoutcom-custom-integration": "packages/checkoutcom-custom-integration",
         "clearpay-integration": "packages/clearpay-integration",
         "core": "packages/core",

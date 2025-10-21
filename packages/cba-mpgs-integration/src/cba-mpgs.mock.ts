@@ -1,3 +1,5 @@
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     THREE_D_SECURE_AVAILABLE,
     THREE_D_SECURE_BUSY,
@@ -19,7 +21,7 @@ export function getCBAMPGSScriptMock(
         .fn()
         .mockImplementationOnce((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(
+                authenticationResponse(
                     authPayerSuccess,
                     retryErrorCode,
                     includeErrorStep2,
@@ -29,7 +31,7 @@ export function getCBAMPGSScriptMock(
         )
         .mockImplementationOnce((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(authPayerSuccess, false, includeErrorStep2, authAvailable),
+                authenticationResponse(authPayerSuccess, false, includeErrorStep2, authAvailable),
             ),
         );
 
@@ -38,7 +40,7 @@ export function getCBAMPGSScriptMock(
         isConfigured: jest.fn(() => configureSuccess),
         initiateAuthentication: jest.fn((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(
+                authenticationResponse(
                     initiateAuthSuccess,
                     retryErrorCode,
                     includeErrorStep1,
@@ -50,7 +52,7 @@ export function getCBAMPGSScriptMock(
             ? authenticatePayerRetry
             : jest.fn((_orderId, _transactionId, callback) =>
                   callback(
-                      _authenticationResponse(
+                      authenticationResponse(
                           authPayerSuccess,
                           retryErrorCode,
                           includeErrorStep2,
@@ -74,7 +76,7 @@ export function getCBAMPGSScriptMockRetryOnly(
         .fn()
         .mockImplementation((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(
+                authenticationResponse(
                     authPayerSuccess,
                     retryErrorCode,
                     includeErrorStep2,
@@ -88,7 +90,7 @@ export function getCBAMPGSScriptMockRetryOnly(
         isConfigured: jest.fn(() => configureSuccess),
         initiateAuthentication: jest.fn((_orderId, _transactionId, callback) =>
             callback(
-                _authenticationResponse(
+                authenticationResponse(
                     initiateAuthSuccess,
                     retryErrorCode,
                     includeErrorStep1,
@@ -100,7 +102,7 @@ export function getCBAMPGSScriptMockRetryOnly(
             ? authenticatePayerRetry
             : jest.fn((_orderId, _transactionId, callback) =>
                   callback(
-                      _authenticationResponse(
+                      authenticationResponse(
                           authPayerSuccess,
                           retryErrorCode,
                           includeErrorStep2,
@@ -111,7 +113,7 @@ export function getCBAMPGSScriptMockRetryOnly(
     };
 }
 
-function _authenticationResponse(
+function authenticationResponse(
     success: boolean,
     retryError?: boolean,
     includeError?: boolean,
@@ -137,4 +139,26 @@ function _authenticationResponse(
     }
 
     return response;
+}
+
+export function getCBAMPGS(): PaymentMethod {
+    return {
+        id: 'cba_mpgs',
+        gateway: '',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [],
+        clientToken: 'foo',
+        config: {
+            displayName: 'CBA MPGS',
+            is3dsEnabled: true,
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        initializationData: {
+            isTestModeFlagEnabled: false,
+            merchantId: 'ABC123',
+        },
+        skipRedirectConfirmationAlert: true,
+    };
 }
