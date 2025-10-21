@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.814.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.813.2...v1.814.0) (2025-10-21)
+
+
+### Features
+
+* **payment:** PI-4352 Move cba-mpgs payment strategy to the separate… ([#3034](https://github.com/bigcommerce/checkout-sdk-js/issues/3034)) ([4adb3a4](https://github.com/bigcommerce/checkout-sdk-js/commit/4adb3a413fb667667fd09aeeabfb330bd6785e24))
+
 ### [1.813.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.813.1...v1.813.2) (2025-10-20)
 
 
