@@ -1026,6 +1026,10 @@ declare interface BigCommercePaymentsCreditCardsPaymentInitializeOptions {
      * The callback that gets called when there is an issue with rendering credit card fields
      */
     onCreditCardFieldsRenderingError?: (error: unknown) => void;
+    /**
+     * The callback that gets called when PayPal SDK load complete
+     */
+    onLoadComplete?: () => void;
 }
 
 /**
@@ -5302,17 +5306,6 @@ declare interface CustomizationConfig {
     languageData: any[];
 }
 
-declare interface DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions {
-    /**
-     * The form is data for Credit Card Form
-     */
-    form?: HostedFormOptions;
-    /**
-     * The callback that gets called when there is an issue with rendering credit card fields
-     */
-    onCreditCardFieldsRenderingError?: (error: unknown) => void;
-}
-
 declare class DetachmentObserver {
     private _mutationObserver;
     constructor(_mutationObserver: MutationObserverFactory);
@@ -7213,6 +7206,10 @@ declare interface PayPalCommerceCreditCardsPaymentInitializeOptions {
      * The callback that gets called when there is an issue with rendering credit card fields
      */
     onCreditCardFieldsRenderingError?: (error: unknown) => void;
+    /**
+     * The callback that gets called when PayPal SDK load complete
+     */
+    onLoadComplete?: () => void;
 }
 
 declare interface PayPalCommerceCreditCustomerInitializeOptions {
@@ -9246,7 +9243,7 @@ declare interface WithPayPalCommerceCreditButtonInitializeOptions {
 
 declare interface WithPayPalCommerceCreditCardsPaymentInitializeOptions {
     paypalcommercecreditcards?: PayPalCommerceCreditCardsPaymentInitializeOptions;
-    paypalcommerce?: DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions;
+    paypalcommerce?: PayPalCommerceCreditCardsPaymentInitializeOptions;
 }
 
 declare interface WithPayPalCommerceCreditCustomerInitializeOptions {

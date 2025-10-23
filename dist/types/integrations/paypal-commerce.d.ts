@@ -92,17 +92,6 @@ declare interface ConfirmOrderData {
     type: string;
 }
 
-declare interface DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions {
-    /**
-     * The form is data for Credit Card Form
-     */
-    form?: HostedFormOptions;
-    /**
-     * The callback that gets called when there is an issue with rendering credit card fields
-     */
-    onCreditCardFieldsRenderingError?: (error: unknown) => void;
-}
-
 /**
  *
  * PayPal Commerce Funding sources
@@ -661,6 +650,10 @@ declare interface PayPalCommerceCreditCardsPaymentInitializeOptions {
      * The callback that gets called when there is an issue with rendering credit card fields
      */
     onCreditCardFieldsRenderingError?: (error: unknown) => void;
+    /**
+     * The callback that gets called when PayPal SDK load complete
+     */
+    onLoadComplete?: () => void;
 }
 
 declare class PayPalCommerceCreditCardsPaymentStrategy implements PaymentStrategy {
@@ -2041,7 +2034,7 @@ declare interface WithPayPalCommerceCreditButtonInitializeOptions {
 
 declare interface WithPayPalCommerceCreditCardsPaymentInitializeOptions {
     paypalcommercecreditcards?: PayPalCommerceCreditCardsPaymentInitializeOptions;
-    paypalcommerce?: DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions;
+    paypalcommerce?: PayPalCommerceCreditCardsPaymentInitializeOptions;
 }
 
 declare interface WithPayPalCommerceCreditCustomerInitializeOptions {

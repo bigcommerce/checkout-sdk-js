@@ -235,7 +235,6 @@
 - [CustomerSelector](interfaces/CustomerSelector.md)
 - [CustomerStrategySelector](interfaces/CustomerStrategySelector.md)
 - [CustomizationConfig](interfaces/CustomizationConfig.md)
-- [DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions](interfaces/DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions.md)
 - [DigitalItem](interfaces/DigitalItem.md)
 - [Discount](interfaces/Discount.md)
 - [DisplaySettings](interfaces/DisplaySettings.md)

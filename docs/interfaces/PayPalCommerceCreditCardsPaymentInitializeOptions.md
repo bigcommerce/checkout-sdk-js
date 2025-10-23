@@ -86,6 +86,7 @@ service.initializePayment({
 ### Methods
 
 - [onCreditCardFieldsRenderingError](PayPalCommerceCreditCardsPaymentInitializeOptions.md#oncreditcardfieldsrenderingerror)
+- [onLoadComplete](PayPalCommerceCreditCardsPaymentInitializeOptions.md#onloadcomplete)
 
 ## Properties
 
@@ -108,6 +109,18 @@ The callback that gets called when there is an issue with rendering credit card 
 | Name | Type |
 | :------ | :------ |
 | `error` | `unknown` |
+
+#### Returns
+
+`void`
+
+___
+
+### onLoadComplete
+
+▸ `Optional` **onLoadComplete**(): `void`
+
+The callback that gets called when PayPal SDK load complete
 
 #### Returns
 

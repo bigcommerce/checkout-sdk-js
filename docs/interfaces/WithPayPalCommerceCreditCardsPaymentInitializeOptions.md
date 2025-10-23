@@ -13,7 +13,7 @@
 
 ### paypalcommerce
 
-• `Optional` **paypalcommerce**: [`DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions`](DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions.md)
+• `Optional` **paypalcommerce**: [`PayPalCommerceCreditCardsPaymentInitializeOptions`](PayPalCommerceCreditCardsPaymentInitializeOptions.md)
 
 ___
 
