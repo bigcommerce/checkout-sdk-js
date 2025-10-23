@@ -992,12 +992,12 @@ declare interface BigCommercePaymentsHostedFieldsSubmitOptions {
  */
 declare interface BigCommercePaymentsInitializationData {
     attributionId?: string;
-    availableAlternativePaymentMethods: FundingType;
+    availableAlternativePaymentMethods: FundingType[];
     buttonStyle?: PayPalButtonStyleOptions;
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
-    enabledAlternativePaymentMethods: FundingType;
+    enabledAlternativePaymentMethods: FundingType[];
     isDeveloperModeApplicable?: boolean;
     intent?: BigCommercePaymentsIntent;
     isAcceleratedCheckoutEnabled?: boolean;
@@ -1555,6 +1555,7 @@ declare class BigCommercePaymentsScriptLoader {
     getPayPalSDK(paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>, currencyCode: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean): Promise<PayPalSDK>;
     private loadPayPalSDK;
     private getPayPalSdkScriptConfigOrThrow;
+    private filterFundingOptions;
     private transformConfig;
 }
 
@@ -1760,7 +1761,7 @@ declare interface ConfirmOrderData {
  * BigCommerce Payments Funding sources
  *
  */
-declare type FundingType = string[];
+declare type FundingType = string;
 
 declare interface GooglePayConfig {
     allowedPaymentMethods: AllowedPaymentMethods[];
