@@ -82,10 +82,11 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     async initialize(
         options: PaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions,
     ): Promise<void> {
+        console.log('initialize');
         const { methodId, paypalcommercecreditcards, paypalcommerce } = options;
         const paypalCommerceInitializationOptions = paypalcommercecreditcards || paypalcommerce;
 
-        const { form, onCreditCardFieldsRenderingError } =
+        const { form, onCreditCardFieldsRenderingError, onLoadComplete } =
             paypalCommerceInitializationOptions || {};
 
         if (!methodId) {
@@ -108,6 +109,8 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, undefined, true, true);
+        console.log('ONLOAD', paypalCommerceInitializationOptions, paypalcommerce, paypalcommercecreditcards);
+        onLoadComplete?.();
 
         if (this.isCreditCardForm || this.isCreditCardVaultedForm) {
             await this.initializeFields(form, onCreditCardFieldsRenderingError);
