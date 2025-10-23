@@ -282,7 +282,9 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         it('calls onLoadComplete', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(initializationOptions.paypalcommercecreditcards?.onLoadComplete).toHaveBeenCalled();
+            expect(
+                initializationOptions.paypalcommercecreditcards?.onLoadComplete,
+            ).toHaveBeenCalled();
         });
 
         it('loads paypal fastlane sdk if paypal commerce fastlane analytic is enabled', async () => {

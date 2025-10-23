@@ -290,7 +290,9 @@ describe('BigCommercePaymentsCreditCardsPaymentStrategy', () => {
         it('calls onLoadComplete', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(initializationOptions.bigcommerce_payments_creditcards?.onLoadComplete).toHaveBeenCalled();
+            expect(
+                initializationOptions.bigcommerce_payments_creditcards?.onLoadComplete,
+            ).toHaveBeenCalled();
         });
 
         it('loads paypal fastlane sdk if bigcommerce payments fastlane analytic is enabled', async () => {
