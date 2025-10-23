@@ -112,18 +112,18 @@ export default class BigCommercePaymentsScriptLoader {
         const cardFieldsComponent: ComponentsScriptType = initializesOnCheckoutPage
             ? ['card-fields']
             : [];
-        const disableFunding: FundingType = [
+        const disableFunding: FundingType[] = this.filterFundingOptions([
             ...disableCardFunding,
             ...disableCreditFunding,
             ...disableVenmoFunding,
             ...disableAPMsFunding,
-        ];
-        const enableFunding: FundingType = [
+        ]);
+        const enableFunding: FundingType[] = this.filterFundingOptions([
             ...enableCardFunding,
             ...enableCreditFunding,
             ...enableVenmoFunding,
             ...enableAPMsFunding,
-        ];
+        ]);
 
         return {
             options: {
@@ -149,6 +149,18 @@ export default class BigCommercePaymentsScriptLoader {
                 'data-client-token': clientToken,
             },
         };
+    }
+
+    private filterFundingOptions(fundingOptions: FundingType[] | undefined): FundingType[] {
+        const fundingTypesToBeFiltered = ['klarna'];
+
+        if (!fundingOptions) {
+            return [];
+        }
+
+        return fundingOptions.filter(
+            (fundingOption: FundingType) => !fundingTypesToBeFiltered.includes(fundingOption),
+        );
     }
 
     private transformConfig<T extends Record<string, unknown>>(config: T): Record<string, string> {

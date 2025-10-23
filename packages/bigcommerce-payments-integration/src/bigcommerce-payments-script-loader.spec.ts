@@ -204,7 +204,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         });
     });
 
-    it('loads BigCommercePayments script with enabled several APMs', async () => {
+    it('loads BigCommercePayments script with enabled several APMs (Klarna should not be included)', async () => {
         const paymentMethodProp = {
             ...paymentMethod,
             initializationData: {
@@ -216,8 +216,9 @@ describe('BigCommercePaymentsScriptLoader', () => {
                     'mybank',
                     'sofort',
                     'sepa',
+                    'klarna',
                 ],
-                enabledAlternativePaymentMethods: ['bancontact', 'giropay', 'ideal'],
+                enabledAlternativePaymentMethods: ['bancontact', 'giropay', 'ideal', 'klarna'],
             },
         };
 
@@ -236,7 +237,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         });
     });
 
-    it('loads PayPalSDK script with disabled all APMs', async () => {
+    it('loads PayPalSDK script with disabled all APMs (Klarna should not be included)', async () => {
         const paymentMethodProp = {
             ...paymentMethod,
             initializationData: {
@@ -248,6 +249,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
                     'mybank',
                     'sofort',
                     'sepa',
+                    'klarna',
                 ],
                 enabledAlternativePaymentMethods: ['bancontact', 'giropay', 'ideal'],
                 isHostedCheckoutEnabled: true,
