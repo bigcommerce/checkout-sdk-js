@@ -37,24 +37,6 @@ export function getBraintree(): PaymentMethod {
     };
 }
 
-export function getBraintreeVenmo(): PaymentMethod {
-    return {
-        id: 'braintreevenmo',
-        logoUrl: '',
-        method: 'paypal',
-        supportedCards: [],
-        config: {
-            testMode: false,
-        },
-        type: 'PAYMENT_TYPE_API',
-        clientToken: 'foo',
-        initializationData: {
-            isBrainteeVenmoEnabled: false,
-        },
-        skipRedirectConfirmationAlert: false,
-    };
-}
-
 export function getBraintreePaypal(): PaymentMethod {
     return {
         id: 'braintreepaypal',

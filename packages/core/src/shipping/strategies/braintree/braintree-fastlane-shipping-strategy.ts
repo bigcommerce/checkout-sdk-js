@@ -6,6 +6,7 @@ import {
     BraintreeFastlaneProfileData,
     BraintreeFastlaneStylesOption,
     BraintreeFastlaneVaultedInstrument,
+    BraintreeInitializationData,
     BraintreeIntegrationService,
     getFastlaneStyles,
     isBraintreeAcceleratedCheckoutCustomer,
@@ -26,7 +27,6 @@ import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-customer';
 import { CardInstrument } from '../../../payment/instrument';
 import { UntrustedShippingCardVerificationType } from '../../../payment/instrument/instrument';
-import { BraintreeInitializationData } from '../../../payment/strategies/braintree';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
