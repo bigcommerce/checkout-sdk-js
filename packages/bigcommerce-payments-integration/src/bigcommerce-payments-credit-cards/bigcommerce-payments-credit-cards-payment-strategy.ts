@@ -86,7 +86,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
         const { methodId, bigcommerce_payments_creditcards } = options;
         const bigCommercePaymentsInitializationOptions = bigcommerce_payments_creditcards;
 
-        const { form, onCreditCardFieldsRenderingError } =
+        const { form, onCreditCardFieldsRenderingError, onLoadComplete } =
             bigCommercePaymentsInitializationOptions || {};
 
         if (!methodId) {
@@ -114,6 +114,8 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
             true,
             true,
         );
+
+        onLoadComplete?.();
 
         if (this.isCreditCardForm || this.isCreditCardVaultedForm) {
             await this.initializeFields(form, onCreditCardFieldsRenderingError);

@@ -86,6 +86,11 @@ export default interface BigCommercePaymentsCreditCardsPaymentInitializeOptions 
      * The callback that gets called when there is an issue with rendering credit card fields
      */
     onCreditCardFieldsRenderingError?: (error: unknown) => void;
+
+    /**
+     * The callback that gets called when PayPal SDK load complete
+     */
+    onLoadComplete?: () => void;
 }
 
 export interface WithBigCommercePaymentsCreditCardsPaymentInitializeOptions {

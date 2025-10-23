@@ -149,6 +149,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             fields: creditCardFormFields,
         },
         onCreditCardFieldsRenderingError: jest.fn(),
+        onLoadComplete: jest.fn(),
     };
 
     const initializationOptions: PaymentInitializeOptions &
@@ -276,6 +277,14 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 true,
                 true,
             );
+        });
+
+        it('calls onLoadComplete', async () => {
+            await strategy.initialize(initializationOptions);
+
+            expect(
+                initializationOptions.paypalcommercecreditcards?.onLoadComplete,
+            ).toHaveBeenCalled();
         });
 
         it('loads paypal fastlane sdk if paypal commerce fastlane analytic is enabled', async () => {
