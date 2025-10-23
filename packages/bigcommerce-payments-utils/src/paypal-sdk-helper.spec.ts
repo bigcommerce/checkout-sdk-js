@@ -308,6 +308,31 @@ describe('PayPalSdkHelper', () => {
             }
         });
 
+        it('loads APMs sdk script for Klarna method id', async () => {
+            const apmKlarnaPaymentMethodMock = {
+                ...paymentMethod,
+                id: 'klarna',
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    enabledAlternativePaymentMethods: ['klarna'],
+                    availableAlternativePaymentMethods: ['klarna'],
+                },
+            };
+
+            await subject.getPayPalApmsSdk(apmKlarnaPaymentMethodMock, 'USD');
+
+            expect(loader.loadScript).toHaveBeenCalledWith(
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=buttons%2Cpayment-fields&currency=USD&intent=capture',
+                {
+                    async: true,
+                    attributes: {
+                        'data-namespace': 'paypalApms',
+                        'data-partner-attribution-id': '1123JLKJASD12',
+                    },
+                },
+            );
+        });
+
         it('returns PayPal APMs Sdk', async () => {
             const result = await subject.getPayPalApmsSdk(paymentMethod, 'USD');
 

@@ -9,6 +9,7 @@ import {
 
 import {
     BigCommercePaymentsInitializationData,
+    FundingType,
     PayPalFastlaneSdk,
     PayPalGooglePaySdk,
     PayPalHostWindow,
@@ -223,9 +224,11 @@ export default class PayPalSdkHelper {
             enabledAlternativePaymentMethods = [],
         } = initializationData;
 
-        const enableAPMsFunding = enabledAlternativePaymentMethods;
-        const disableAPMsFunding = availableAlternativePaymentMethods.filter(
-            (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
+        const enableAPMsFunding = this.filterFundingOptions(enabledAlternativePaymentMethods);
+        const disableAPMsFunding = this.filterFundingOptions(
+            availableAlternativePaymentMethods.filter(
+                (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
+            ),
         );
 
         return {
@@ -280,6 +283,18 @@ export default class PayPalSdkHelper {
      * Utils methods
      *
      */
+    private filterFundingOptions(fundingOptions: FundingType[] | undefined): FundingType[] {
+        const fundingTypesToBeFiltered = ['klarna'];
+
+        if (!fundingOptions) {
+            return [];
+        }
+
+        return fundingOptions.filter(
+            (fundingOption: FundingType) => !fundingTypesToBeFiltered.includes(fundingOption),
+        );
+    }
+
     private transformConfig<T extends Record<string, unknown>>(config: T): Record<string, string> {
         let transformedConfig = {};
 

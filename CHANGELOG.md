@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.815.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.814.0...v1.815.0) (2025-10-23)
+
+
+### Features
+
+* **payment:** PAYPAL-5984 filtered Klarna id from the list of APMs before passing data to paypal sdk config ([#3031](https://github.com/bigcommerce/checkout-sdk-js/issues/3031)) ([8c91176](https://github.com/bigcommerce/checkout-sdk-js/commit/8c91176b1678ad878ae8258aa7581d030e313c92))
+
 ## [1.814.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.813.2...v1.814.0) (2025-10-21)
 
 

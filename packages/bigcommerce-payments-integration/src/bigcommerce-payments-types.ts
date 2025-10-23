@@ -10,8 +10,7 @@ import {
  * BigCommerce Payments Funding sources
  *
  */
-export type FundingType = string[];
-export type EnableFundingType = FundingType | string;
+export type FundingType = string;
 // TODO: rename BigCommercePaymentsSDKFunding to PayPalSDKFunding
 export interface BigCommercePaymentsSDKFunding {
     CARD: string;
@@ -203,8 +202,8 @@ export interface BigCommercePaymentsScriptParams {
         'client-id'?: string;
         'merchant-id'?: string;
         'buyer-country'?: string;
-        'disable-funding'?: FundingType;
-        'enable-funding'?: EnableFundingType;
+        'disable-funding'?: FundingType[];
+        'enable-funding'?: FundingType[];
         currency?: string;
         commit?: boolean;
         intent?: BigCommercePaymentsIntent;
@@ -246,12 +245,12 @@ export interface BigCommercePaymentsHostWindow extends Window {
  */
 export interface BigCommercePaymentsInitializationData {
     attributionId?: string;
-    availableAlternativePaymentMethods: FundingType;
+    availableAlternativePaymentMethods: FundingType[];
     buttonStyle?: PayPalButtonStyleOptions;
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
-    enabledAlternativePaymentMethods: FundingType;
+    enabledAlternativePaymentMethods: FundingType[];
     isDeveloperModeApplicable?: boolean;
     intent?: BigCommercePaymentsIntent;
     isAcceleratedCheckoutEnabled?: boolean;
