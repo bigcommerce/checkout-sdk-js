@@ -95,5 +95,5 @@ export default interface PayPalCommerceCreditCardsPaymentInitializeOptions {
 
 export interface WithPayPalCommerceCreditCardsPaymentInitializeOptions {
     paypalcommercecreditcards?: PayPalCommerceCreditCardsPaymentInitializeOptions;
-    paypalcommerce?: PayPalCommerceCreditCardsPaymentInitializeOptions;
+    paypalcommerce?: PayPalCommerceCreditCardsPaymentInitializeOptions; // This option is deprecated for current strategy
 }
