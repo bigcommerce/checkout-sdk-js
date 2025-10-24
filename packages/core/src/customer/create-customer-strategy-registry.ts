@@ -19,7 +19,6 @@ import CustomerRequestSender from './customer-request-sender';
 import { CustomerStrategy } from './strategies';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { MasterpassCustomerStrategy } from './strategies/masterpass';
-import { SquareCustomerStrategy } from './strategies/square';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
@@ -50,15 +49,6 @@ export default function createCustomerStrategyRegistry(
         new CustomerRequestSender(requestSender),
         checkoutActionCreator,
         spamProtectionActionCreator,
-    );
-
-    registry.register(
-        'squarev2',
-        () =>
-            new SquareCustomerStrategy(
-                store,
-                new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator),
-            ),
     );
 
     registry.register(
