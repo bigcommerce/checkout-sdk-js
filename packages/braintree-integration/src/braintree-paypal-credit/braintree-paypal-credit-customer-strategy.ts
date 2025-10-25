@@ -69,6 +69,10 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
 
         try {
             paymentMethod = state.getPaymentMethodOrThrow(methodId);
+
+            if (!paymentMethod.clientToken) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+            }
         } catch (_e) {
             state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
             paymentMethod = state.getPaymentMethodOrThrow(methodId);
