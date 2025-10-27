@@ -72,6 +72,7 @@ export default function getBigCommercePaymentsPaymentMethod(): PaymentMethod {
                     },
                 },
             ],
+            isAppSwitchEnabled: false,
         },
         skipRedirectConfirmationAlert: false,
         type: 'PAYMENT_TYPE_API',
