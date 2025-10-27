@@ -15,7 +15,6 @@ current checkout flow.
 
 ### Properties
 
-- [braintree](BasePaymentInitializeOptions.md#braintree)
 - [creditCard](BasePaymentInitializeOptions.md#creditcard)
 - [gatewayId](BasePaymentInitializeOptions.md#gatewayid)
 - [integrations](BasePaymentInitializeOptions.md#integrations)
@@ -25,15 +24,6 @@ current checkout flow.
 - [timeout](BasePaymentInitializeOptions.md#timeout)
 
 ## Properties
-
-### braintree
-
-• `Optional` **braintree**: [`BraintreePaymentInitializeOptions`](BraintreePaymentInitializeOptions.md)
-
-The options that are required to initialize the Braintree payment method.
-They can be omitted unless you need to support Braintree.
-
-___
 
 ### creditCard
 
