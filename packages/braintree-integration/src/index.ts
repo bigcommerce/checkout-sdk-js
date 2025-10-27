@@ -51,3 +51,4 @@ export { default as createBraintreeVenmoPaymentStrategy } from './braintree-venm
  * Braintree Credit Card Payment Strategies
  */
 export { default as createBraintreeCreditCardPaymentStrategy } from './braintree-credit-card/create-braintree-credit-card-payment-strategy';
+export { WithBraintreeCreditCardPaymentInitializeOptions } from './braintree-credit-card/braintree-credit-card-payment-initialize-options';
