@@ -8,7 +8,10 @@ import {
     BraintreeScriptLoader,
     BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { createPayPalFastlaneUtils, createPaypalSdk } from '@bigcommerce/checkout-sdk/paypal-utils';
+import {
+    createPayPalFastlaneUtils,
+    createPaypalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 import { StripeScriptLoader } from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
@@ -107,7 +110,7 @@ export default function createShippingStrategyRegistry(
                 consignmentActionCreator,
                 paymentMethodActionCreator,
                 new PaymentProviderCustomerActionCreator(),
-                createPaypalSdk(),
+                createPaypalSdkScriptLoader(),
                 createPayPalFastlaneUtils(),
             ),
     );
