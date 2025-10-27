@@ -225,6 +225,11 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
         });
 
         it('throws error if client token is missing', async () => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValueOnce({
+                ...paymentIntegrationService.getState(),
+                getPaymentMethodOrThrow: jest.fn().mockReturnValue(paymentMethodMock),
+            });
+
             paymentMethodMock.clientToken = undefined;
 
             try {
