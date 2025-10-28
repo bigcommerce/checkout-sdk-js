@@ -670,7 +670,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'possible',
+                            liabilityShift: 'POSSIBLE',
                             authenticationState: 'succeeded',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
@@ -735,7 +735,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'possible',
+                            liabilityShift: 'POSSIBLE',
                             authenticationState: 'errored',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),

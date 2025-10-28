@@ -455,7 +455,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 throw new PaymentMethodInvalidError();
             }
 
-            if (authenticationState === TDSecureAuthenticationState.Succeeded) {
+            if (
+                authenticationState === TDSecureAuthenticationState.Succeeded &&
+                [LiabilityShiftEnum.Yes, LiabilityShiftEnum.Possible].includes(liabilityShift)
+            ) {
                 await this.createOrder(nonce);
                 return nonce;
             }
