@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.819.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.818.0...v1.819.0) (2025-10-28)
+
+
+### Features
+
+* **payment:** PI-4354 Remove/move checkoutcom and checkoutcom-custom payment strategy files to the separate package ([#3038](https://github.com/bigcommerce/checkout-sdk-js/issues/3038)) ([bce0d02](https://github.com/bigcommerce/checkout-sdk-js/commit/bce0d024b0b2698b37d28ebc32a52f35e811a610))
+
 ## [1.818.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.817.0...v1.818.0) (2025-10-27)
 
 
