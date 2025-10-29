@@ -35,12 +35,12 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isPayPalCommerceAcceleratedCheckoutCustomer } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import {
-    isPayPalCommerceAcceleratedCheckoutCustomer,
-    PayPalCommerceFastlaneUtils,
-    PayPalCommerceInitializationData,
-    PayPalCommerceSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    PayPalFastlaneUtils,
+    PayPalInitializationData,
+    PaypalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
@@ -75,8 +75,8 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
-        private paypalCommerceSdk: PayPalCommerceSdk,
-        private paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils,
+        private paypalSdkScriptLoader: PaypalSdkScriptLoader,
+        private paypalFastlaneUtils: PayPalFastlaneUtils,
     ) {}
 
     async initialize(
@@ -713,8 +713,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     // TODO: remove this part when PPCP AXO A/B testing will be finished
     private shouldInitializePayPalFastlane(methodId: string) {
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const paymentProviderCustomer = state.getPaymentProviderCustomer();
         const paypalCommercePaymentProviderCustomer = isPayPalCommerceAcceleratedCheckoutCustomer(
             paymentProviderCustomer,
@@ -734,21 +733,20 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         try {
             const state = this.paymentIntegrationService.getState();
             const cart = state.getCartOrThrow();
-            const paymentMethod =
-                state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+            const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
             const { initializationData } = paymentMethod;
 
             if (!initializationData?.connectClientToken) {
                 return;
             }
 
-            const payPalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
+            const payPalFastlaneSdk = await this.paypalSdkScriptLoader.getPayPalFastlaneSdk(
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
             );
 
-            await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
+            await this.paypalFastlaneUtils.initializePayPalFastlane(
                 payPalFastlaneSdk,
                 !!initializationData?.isDeveloperModeApplicable,
             );

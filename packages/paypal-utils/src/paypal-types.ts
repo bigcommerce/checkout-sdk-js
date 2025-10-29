@@ -57,6 +57,7 @@ export interface PayPalInitializationData {
     isHostedCheckoutEnabled?: boolean;
     isPayPalAnalyticsV2Enabled?: boolean; // PayPal Fastlane related
     isPayPalCreditAvailable?: boolean;
+    isPayPalCommerceAnalyticsV2Enabled?: boolean; // PayPal Fastlane related
     isVenmoEnabled?: boolean;
     isGooglePayEnabled?: boolean;
     merchantId?: string;

@@ -10,7 +10,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
     createPayPalFastlaneUtils,
-    createPaypalSdk,
+    createPaypalSdkScriptLoader,
     getPayPalAcceleratedCheckoutPaymentMethod,
     getPayPalFastlane,
     getPayPalFastlaneAuthenticationResultMock,
@@ -18,7 +18,7 @@ import {
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneSdk,
     PayPalFastlaneUtils,
-    PaypalSdk,
+    PaypalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import { BillingAddress, BillingAddressActionCreator } from '../../../billing';
@@ -48,7 +48,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
     let paymentMethod: PaymentMethod;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
-    let paypalCommerceSdk: PaypalSdk;
+    let paypalCommerceSdkScriptLoader: PaypalSdkScriptLoader;
     let paypalCommerceFastlaneUtils: PayPalFastlaneUtils;
     let store: CheckoutStore;
     let storeConfig: StoreConfig;
@@ -114,7 +114,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             new PaymentMethodRequestSender(requestSender),
         );
         paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
-        paypalCommerceSdk = createPaypalSdk();
+        paypalCommerceSdkScriptLoader = createPaypalSdkScriptLoader();
         paypalCommerceFastlaneUtils = createPayPalFastlaneUtils();
 
         strategy = new PayPalCommerceFastlaneShippingStrategy(
@@ -123,7 +123,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             consignmentActionCreator,
             paymentMethodActionCreator,
             paymentProviderCustomerActionCreator,
-            paypalCommerceSdk,
+            paypalCommerceSdkScriptLoader,
             paypalCommerceFastlaneUtils,
         );
 
@@ -160,7 +160,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         // @ts-ignore
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(paymentMethod);
 
-        jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
+        jest.spyOn(paypalCommerceSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(
             // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -366,7 +366,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(methodId);
-            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
+            expect(paypalCommerceSdkScriptLoader.getPayPalFastlaneSdk).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
