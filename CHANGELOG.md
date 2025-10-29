@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.820.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.819.0...v1.820.0) (2025-10-29)
+
+
+### Features
+
+* **payment:** PI-4487 Research the reason of flaky Afterpay test ([#3040](https://github.com/bigcommerce/checkout-sdk-js/issues/3040)) ([f11d5d6](https://github.com/bigcommerce/checkout-sdk-js/commit/f11d5d6ef0135f7547872ebc5dfbbd1546f6775b))
+
 ## [1.819.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.818.0...v1.819.0) (2025-10-28)
 
 
