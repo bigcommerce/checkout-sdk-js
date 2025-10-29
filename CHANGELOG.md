@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.820.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.820.0...v1.820.1) (2025-10-29)
+
+
+### Bug Fixes
+
+* **payment:** check liability shift for order create ([b93d26c](https://github.com/bigcommerce/checkout-sdk-js/commit/b93d26c5a461264c74931ca38a66a9d060d0d9a9))
+
 ## [1.820.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.819.0...v1.820.0) (2025-10-29)
 
 
