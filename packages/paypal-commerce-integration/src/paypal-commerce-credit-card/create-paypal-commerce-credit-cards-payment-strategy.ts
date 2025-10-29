@@ -4,7 +4,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     createPayPalFastlaneUtils,
-    createPaypalSdkScriptLoader,
+    createPayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
@@ -17,7 +17,7 @@ const createPaypalCommerceCreditCardsPaymentStrategy: PaymentStrategyFactory<
     new PayPalCommerceCreditCardsPaymentStrategy(
         paymentIntegrationService,
         createPayPalCommerceIntegrationService(paymentIntegrationService),
-        createPaypalSdkScriptLoader(),
+        createPayPalSdkScriptLoader(),
         createPayPalFastlaneUtils(),
     );
 

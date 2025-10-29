@@ -5,9 +5,9 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    createPayPalCommerceFastlaneUtils,
-    createPayPalCommerceSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    createPayPalFastlaneUtils,
+    createPayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 
@@ -21,8 +21,8 @@ const createPayPalCommerceFastlanePaymentStrategy: PaymentStrategyFactory<
     return new PayPalCommerceFastlanePaymentStrategy(
         paymentIntegrationService,
         new PayPalCommerceRequestSender(createRequestSender({ host: getHost() })),
-        createPayPalCommerceSdk(),
-        createPayPalCommerceFastlaneUtils(),
+        createPayPalSdkScriptLoader(),
+        createPayPalFastlaneUtils(),
     );
 };
 

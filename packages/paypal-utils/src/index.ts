@@ -10,8 +10,8 @@ export { default as isPaypalProviderError } from './utils/is-paypal-provider-err
  * PayPal Sdk exports
  *
  * */
-export { default as createPaypalSdkScriptLoader } from './create-paypal-sdk-script-loader';
-export { default as PaypalSdkScriptLoader } from './paypal-sdk-script-loader';
+export { default as createPayPalSdkScriptLoader } from './create-paypal-sdk-script-loader';
+export { default as PayPalSdkScriptLoader } from './paypal-sdk-script-loader';
 
 /**
  *

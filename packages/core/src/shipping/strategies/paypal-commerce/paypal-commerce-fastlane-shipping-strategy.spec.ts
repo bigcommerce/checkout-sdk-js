@@ -10,7 +10,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
     createPayPalFastlaneUtils,
-    createPaypalSdkScriptLoader,
+    createPayPalSdkScriptLoader,
     getPayPalAcceleratedCheckoutPaymentMethod,
     getPayPalFastlane,
     getPayPalFastlaneAuthenticationResultMock,
@@ -18,7 +18,7 @@ import {
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneSdk,
     PayPalFastlaneUtils,
-    PaypalSdkScriptLoader,
+    PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import { BillingAddress, BillingAddressActionCreator } from '../../../billing';
@@ -48,7 +48,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
     let paymentMethod: PaymentMethod;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
-    let paypalCommerceSdkScriptLoader: PaypalSdkScriptLoader;
+    let paypalCommerceSdkScriptLoader: PayPalSdkScriptLoader;
     let paypalCommerceFastlaneUtils: PayPalFastlaneUtils;
     let store: CheckoutStore;
     let storeConfig: StoreConfig;
@@ -114,7 +114,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             new PaymentMethodRequestSender(requestSender),
         );
         paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
-        paypalCommerceSdkScriptLoader = createPaypalSdkScriptLoader();
+        paypalCommerceSdkScriptLoader = createPayPalSdkScriptLoader();
         paypalCommerceFastlaneUtils = createPayPalFastlaneUtils();
 
         strategy = new PayPalCommerceFastlaneShippingStrategy(

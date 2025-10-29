@@ -19,7 +19,7 @@ import {
     PayPalSdkConfig,
 } from './paypal-types';
 
-export default class PaypalSdkScriptLoader {
+export default class PayPalSdkScriptLoader {
     private window: PayPalHostWindow;
 
     constructor(private scriptLoader: ScriptLoader) {

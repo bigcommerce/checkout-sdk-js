@@ -1,10 +1,10 @@
-import createPaypalSdkScriptLoader from './create-paypal-sdk-script-loader';
-import PaypalSdkScriptLoader from './paypal-sdk-script-loader';
+import createPayPalSdkScriptLoader from './create-paypal-sdk-script-loader';
+import PayPalSdkScriptLoader from './paypal-sdk-script-loader';
 
-describe('createPaypalSdkScriptLoader', () => {
+describe('createPayPalSdkScriptLoader', () => {
     it('instantiates Paypal SDK Script Loader', () => {
-        const paypalSdkScriptLoaderInstance = createPaypalSdkScriptLoader();
+        const paypalSdkScriptLoaderInstance = createPayPalSdkScriptLoader();
 
-        expect(paypalSdkScriptLoaderInstance).toBeInstanceOf(PaypalSdkScriptLoader);
+        expect(paypalSdkScriptLoaderInstance).toBeInstanceOf(PayPalSdkScriptLoader);
     });
 });

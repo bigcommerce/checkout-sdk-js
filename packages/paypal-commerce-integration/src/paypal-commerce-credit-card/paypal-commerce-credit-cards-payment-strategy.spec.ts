@@ -21,11 +21,11 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
     createPayPalFastlaneUtils,
-    createPaypalSdkScriptLoader,
+    createPayPalSdkScriptLoader,
     getPayPalFastlaneSdk,
     PayPalFastlaneSdk,
     PayPalFastlaneUtils,
-    PaypalSdkScriptLoader,
+    PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
@@ -53,7 +53,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
-    let paypalSdkScriptLoader: PaypalSdkScriptLoader;
+    let paypalSdkScriptLoader: PayPalSdkScriptLoader;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let payPalFastlaneUtils: PayPalFastlaneUtils;
     let paypalSdk: PayPalSDK;
@@ -174,7 +174,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         paypalFastlaneSdk = getPayPalFastlaneSdk();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalSdkScriptLoader = createPaypalSdkScriptLoader();
+        paypalSdkScriptLoader = createPayPalSdkScriptLoader();
         payPalFastlaneUtils = createPayPalFastlaneUtils();
 
         strategy = new PayPalCommerceCreditCardsPaymentStrategy(

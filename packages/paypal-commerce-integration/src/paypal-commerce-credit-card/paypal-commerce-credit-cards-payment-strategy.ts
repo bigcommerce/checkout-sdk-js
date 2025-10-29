@@ -39,7 +39,7 @@ import { isPayPalCommerceAcceleratedCheckoutCustomer } from '@bigcommerce/checko
 import {
     PayPalFastlaneUtils,
     PayPalInitializationData,
-    PaypalSdkScriptLoader,
+    PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
@@ -75,7 +75,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
-        private paypalSdkScriptLoader: PaypalSdkScriptLoader,
+        private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private paypalFastlaneUtils: PayPalFastlaneUtils,
     ) {}
 

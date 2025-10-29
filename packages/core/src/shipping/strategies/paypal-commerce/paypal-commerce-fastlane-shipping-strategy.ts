@@ -7,7 +7,7 @@ import {
     PayPalFastlaneStylesOption,
     PayPalFastlaneUtils,
     PayPalInitializationData,
-    PaypalSdkScriptLoader,
+    PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import { AddressRequestBody } from '../../../address';
@@ -27,7 +27,7 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
-        private _paypalSdkScriptLoader: PaypalSdkScriptLoader,
+        private _paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private _paypalCommerceFastlaneUtils: PayPalFastlaneUtils,
     ) {}
 
