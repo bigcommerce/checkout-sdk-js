@@ -37,6 +37,27 @@ import BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions, {
 const POLLING_INTERVAL = 3000;
 const MAX_POLLING_TIME = 300000;
 
+export interface RedirectActionBody {
+    body: {
+        additional_action_required: {
+            type: 'offsite_redirect';
+            data: {
+                redirect_url: string;
+            };
+        };
+    };
+}
+
+export interface RedirectError {
+    body: {
+        additional_action_required: {
+            data: {
+                redirect_url: string;
+            };
+        };
+    };
+}
+
 export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     implements PaymentStrategy
 {
@@ -56,13 +77,19 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
         private loadingIndicator: LoadingIndicator,
         private pollingInterval: number = POLLING_INTERVAL,
         private maxPollingIntervalTime: number = MAX_POLLING_TIME,
-    ) {}
+    ) {
+        console.log('BigCommercePaymentsAlternativeMethodsPaymentStrategy constructor test');
+    }
 
     async initialize(
         options: PaymentInitializeOptions &
             WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
     ): Promise<void> {
         const { gatewayId, methodId, bigcommerce_payments_apms } = options;
+
+        if (methodId === 'klarna') {
+            return;
+        }
 
         this.bigCommercePaymentsAlternativeMethods = bigcommerce_payments_apms;
 
@@ -128,25 +155,61 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
 
         const { methodId, gatewayId } = payment;
 
-        if (!this.orderId) {
-            throw new PaymentMethodInvalidError();
-        }
+        if (methodId === 'klarna') {
+            try {
+                const paymentData = {
+                    formattedPayload: {
+                        vault_payment_instrument: null,
+                        set_as_default_stored_instrument: null,
+                        device_info: null,
+                        method_id: methodId,
+                    },
+                };
 
-        if (this.isPollingEnabled && methodId === 'ideal') {
-            await new Promise((resolve, reject) => {
-                void this.initializePollingMechanism(methodId, resolve, reject, gatewayId);
-            });
-        }
+                await this.paymentIntegrationService.submitOrder(order, options);
+                await this.paymentIntegrationService.submitPayment({
+                    methodId,
+                    gatewayId,
+                    paymentData,
+                });
+            } catch (error: unknown) {
+                if (this.isRedirectError(error)) {
+                    const redirectUrl = error.body.additional_action_required.data.redirect_url;
 
-        if (!this.isNonInstantPaymentMethod(methodId)) {
-            await this.paymentIntegrationService.submitOrder(order, options);
-        }
+                    return new Promise((_, reject) => {
+                        window.location.replace(redirectUrl);
 
-        await this.bigCommercePaymentsIntegrationService.submitPayment(
-            methodId,
-            this.orderId,
-            gatewayId,
-        );
+                        this.toggleLoadingIndicator(false);
+
+                        reject();
+                    });
+                }
+
+                this.handleError(error);
+
+                return Promise.reject(error);
+            }
+        } else {
+            if (!this.orderId) {
+                throw new PaymentMethodInvalidError();
+            }
+
+            if (this.isPollingEnabled && methodId === 'ideal') {
+                await new Promise((resolve, reject) => {
+                    void this.initializePollingMechanism(methodId, resolve, reject, gatewayId);
+                });
+            }
+
+            if (!this.isNonInstantPaymentMethod(methodId)) {
+                await this.paymentIntegrationService.submitOrder(order, options);
+            }
+
+            await this.bigCommercePaymentsIntegrationService.submitPayment(
+                methodId,
+                this.orderId,
+                gatewayId,
+            );
+        }
     }
 
     finalize(): Promise<void> {
@@ -444,5 +507,19 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
         }
 
         return this.paypalApms;
+    }
+
+    private isRedirectError(error: unknown): error is RedirectError {
+        if (typeof error !== 'object' || error === null) {
+            return false;
+        }
+
+        const { body }: Partial<RedirectActionBody> = error;
+
+        if (!body) {
+            return false;
+        }
+
+        return !!body.additional_action_required?.data.redirect_url;
     }
 }
