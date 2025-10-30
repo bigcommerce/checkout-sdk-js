@@ -115,11 +115,11 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
             true,
         );
 
-        onLoadComplete?.();
-
         if (this.isCreditCardForm || this.isCreditCardVaultedForm) {
             await this.initializeFields(form, onCreditCardFieldsRenderingError);
         }
+
+        onLoadComplete?.();
 
         if (this.shouldInitializePayPalFastlane(methodId)) {
             await this.initializePayPalFastlaneOrThrow(methodId);
