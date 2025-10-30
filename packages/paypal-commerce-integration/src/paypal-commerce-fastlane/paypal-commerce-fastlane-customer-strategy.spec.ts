@@ -14,23 +14,23 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalCommerceFastlaneUtils,
-    createPayPalCommerceSdk,
-    getPayPalCommerceAcceleratedCheckoutPaymentMethod,
+    createPayPalFastlaneUtils,
+    createPayPalSdkScriptLoader,
+    getPayPalAcceleratedCheckoutPaymentMethod,
     getPayPalFastlaneSdk,
-    PayPalCommerceFastlaneUtils,
-    PayPalCommerceSdk,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    PayPalFastlaneUtils,
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceFastlaneCustomerStrategy from './paypal-commerce-fastlane-customer-strategy';
 
 describe('PayPalCommerceFastlaneCustomerStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
-    let paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils;
-    let paypalCommerceSdk: PayPalCommerceSdk;
+    let paypalCommerceFastlaneUtils: PayPalFastlaneUtils;
+    let paypalSdkScriptLoader: PayPalSdkScriptLoader;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let strategy: PayPalCommerceFastlaneCustomerStrategy;
 
@@ -155,16 +155,16 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
     };
 
     beforeEach(() => {
-        paymentMethod = getPayPalCommerceAcceleratedCheckoutPaymentMethod();
+        paymentMethod = getPayPalAcceleratedCheckoutPaymentMethod();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalCommerceSdk = createPayPalCommerceSdk();
-        paypalCommerceFastlaneUtils = createPayPalCommerceFastlaneUtils();
+        paypalSdkScriptLoader = createPayPalSdkScriptLoader();
+        paypalCommerceFastlaneUtils = createPayPalFastlaneUtils();
 
         strategy = new PayPalCommerceFastlaneCustomerStrategy(
             paymentIntegrationService,
-            paypalCommerceSdk,
+            paypalSdkScriptLoader,
             paypalCommerceFastlaneUtils,
         );
 
@@ -183,7 +183,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
         jest.spyOn(state, 'getBillingAddress').mockReturnValue(getBillingAddress());
         jest.spyOn(state, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
 
-        jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+        jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
             Promise.resolve(paypalFastlaneSdk),
         );
         jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane');
@@ -297,7 +297,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
         it('loads paypal sdk and initialises paypal fastlane in production mode', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
+            expect(paypalSdkScriptLoader.getPayPalFastlaneSdk).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
@@ -320,7 +320,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
+            expect(paypalSdkScriptLoader.getPayPalFastlaneSdk).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
@@ -342,13 +342,13 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethod);
 
-            jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+            jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
                 Promise.reject(),
             );
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalled();
+            expect(paypalSdkScriptLoader.getPayPalFastlaneSdk).toHaveBeenCalled();
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).not.toHaveBeenCalled();
         });
     });

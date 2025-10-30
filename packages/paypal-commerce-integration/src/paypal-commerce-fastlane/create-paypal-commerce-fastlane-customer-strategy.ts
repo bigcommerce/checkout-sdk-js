@@ -3,9 +3,9 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    createPayPalCommerceFastlaneUtils,
-    createPayPalCommerceSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    createPayPalFastlaneUtils,
+    createPayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceFastlaneCustomerStrategy from './paypal-commerce-fastlane-customer-strategy';
 
@@ -14,8 +14,8 @@ const createPayPalCommerceFastlaneCustomerStrategy: CustomerStrategyFactory<
 > = (paymentIntegrationService) =>
     new PayPalCommerceFastlaneCustomerStrategy(
         paymentIntegrationService,
-        createPayPalCommerceSdk(),
-        createPayPalCommerceFastlaneUtils(),
+        createPayPalSdkScriptLoader(),
+        createPayPalFastlaneUtils(),
     );
 
 export default toResolvableModule(createPayPalCommerceFastlaneCustomerStrategy, [

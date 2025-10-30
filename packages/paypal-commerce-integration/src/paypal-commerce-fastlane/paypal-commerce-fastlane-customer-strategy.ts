@@ -9,13 +9,13 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getFastlaneStyles,
-    PayPalCommerceFastlaneUtils,
-    PayPalCommerceInitializationData,
-    PayPalCommerceSdk,
     PayPalFastlaneAuthenticationResult,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneStylesOption,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    PayPalFastlaneUtils,
+    PayPalInitializationData,
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceFastlaneCustomerInitializeOptions, {
     WithPayPalCommerceFastlaneCustomerInitializeOptions,
@@ -24,8 +24,8 @@ import PayPalCommerceFastlaneCustomerInitializeOptions, {
 export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceSdk: PayPalCommerceSdk,
-        private paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils,
+        private paypalSdkScriptLoader: PayPalSdkScriptLoader,
+        private paypalFastlaneUtils: PayPalFastlaneUtils,
     ) {}
 
     async initialize(
@@ -44,18 +44,17 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
 
             const state = this.paymentIntegrationService.getState();
             const cart = state.getCartOrThrow();
-            const paymentMethod =
-                state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+            const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
 
             const isTestModeEnabled = !!paymentMethod.initializationData?.isDeveloperModeApplicable;
 
-            const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
+            const paypalFastlaneSdk = await this.paypalSdkScriptLoader.getPayPalFastlaneSdk(
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
             );
 
-            await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
+            await this.paypalFastlaneUtils.initializePayPalFastlane(
                 paypalFastlaneSdk,
                 isTestModeEnabled,
                 this.getFastlaneStyles(methodId, paypalcommercefastlane),
@@ -132,14 +131,12 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         const billingAddress = state.getBillingAddress();
         const customerEmail = customer?.email || billingAddress?.email || '';
 
-        const { customerContextId } = await this.paypalCommerceFastlaneUtils.lookupCustomerOrThrow(
+        const { customerContextId } = await this.paypalFastlaneUtils.lookupCustomerOrThrow(
             customerEmail,
         );
 
         const authenticationResult =
-            await this.paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow(
-                customerContextId,
-            );
+            await this.paypalFastlaneUtils.triggerAuthenticationFlowOrThrow(customerContextId);
 
         const isAuthenticationFlowCanceled =
             authenticationResult.authenticationState === PayPalFastlaneAuthenticationState.CANCELED;
@@ -147,9 +144,9 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         await this.updateCustomerDataState(methodId, authenticationResult);
 
         if (isAuthenticationFlowCanceled) {
-            this.paypalCommerceFastlaneUtils.removeStorageSessionId();
+            this.paypalFastlaneUtils.removeStorageSessionId();
         } else {
-            this.paypalCommerceFastlaneUtils.updateStorageSessionId(cartId);
+            this.paypalFastlaneUtils.updateStorageSessionId(cartId);
         }
     }
 
@@ -161,7 +158,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         const cart = state.getCartOrThrow();
 
         const { authenticationState, addresses, billingAddress, shippingAddress, instruments } =
-            this.paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData(
+            this.paypalFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData(
                 methodId,
                 authenticationResult,
             );
@@ -182,7 +179,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
             );
 
             const paymentMethod =
-                updatedState.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+                updatedState.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
             const { isFastlaneShippingOptionAutoSelectEnabled } =
                 paymentMethod.initializationData || {};
             const consignments = updatedState.getConsignments() || [];
@@ -213,8 +210,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         paypalcommercefastlane: PayPalCommerceFastlaneCustomerInitializeOptions | undefined,
     ): PayPalFastlaneStylesOption | undefined {
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
 
         const { fastlaneStyles, isFastlaneStylingEnabled } = paymentMethod.initializationData || {};
 
