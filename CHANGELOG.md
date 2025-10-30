@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.821.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.821.0...v1.821.1) (2025-10-30)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-5990 moved loading callback to the place after PayPal hosted fields initialization ([#3051](https://github.com/bigcommerce/checkout-sdk-js/issues/3051)) ([9126a70](https://github.com/bigcommerce/checkout-sdk-js/commit/9126a70e2565f38ccddbcd5d45bbd780ae8f4b06))
+
 ## [1.821.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.820.1...v1.821.0) (2025-10-29)
 
 
