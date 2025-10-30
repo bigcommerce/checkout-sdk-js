@@ -144,7 +144,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         applePayButton.setAttribute('type', 'plain');
         applePayButton.setAttribute(
             'style',
-            '--apple-pay-button-width: 100%; --apple-pay-button-height: 36px; --apple-pay-button-border-radius: 4px;',
+            '--apple-pay-button-width: 100%; --apple-pay-button-height: 40px; --apple-pay-button-border-radius: 4px;',
         );
 
         return applePayButton;
