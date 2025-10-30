@@ -20,16 +20,16 @@ import {
     getFastlaneStyles,
     isPayPalFastlaneCustomer,
     isPaypalFastlaneRequestError,
-    PayPalCommerceFastlaneUtils,
-    PayPalCommerceInitializationData,
-    PayPalCommerceSdk,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneCardComponentMethods,
     PayPalFastlaneCardComponentOptions,
     PayPalFastlanePaymentFormattedPayload,
     PayPalFastlaneSdk,
+    PayPalFastlaneUtils,
+    PayPalInitializationData,
+    PayPalSdkScriptLoader,
     TDSecureAuthenticationState,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
@@ -50,8 +50,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceRequestSender: PayPalCommerceRequestSender,
-        private paypalCommerceSdk: PayPalCommerceSdk,
-        private paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils,
+        private paypalSdkScriptLoader: PayPalSdkScriptLoader,
+        private paypalFastlaneUtils: PayPalFastlaneUtils,
     ) {}
 
     /**
@@ -63,6 +63,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         options: PaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, paypalcommercefastlane } = options;
+
         this.methodId = methodId;
 
         this.paypalcommercefastlane = paypalcommercefastlane;
@@ -98,15 +99,14 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const { isDeveloperModeApplicable, isFastlaneStylingEnabled } =
             paymentMethod.initializationData || {};
 
         this.threeDSVerificationMethod =
             paymentMethod.initializationData?.threeDSVerificationMethod;
 
-        this.paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
+        this.paypalFastlaneSdk = await this.paypalSdkScriptLoader.getPayPalFastlaneSdk(
             paymentMethod,
             cart.currency.code,
             cart.id,
@@ -121,7 +121,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             paypalcommercefastlane?.styles,
         );
 
-        await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
+        await this.paypalFastlaneUtils.initializePayPalFastlane(
             this.paypalFastlaneSdk,
             !!isDeveloperModeApplicable,
             fastlaneStyles,
@@ -161,7 +161,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 paymentPayload,
             );
 
-            this.paypalCommerceFastlaneUtils.removeStorageSessionId();
+            this.paypalFastlaneUtils.removeStorageSessionId();
         } catch (error) {
             if (
                 isPaypalFastlaneRequestError(error) &&
@@ -206,7 +206,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             ? paymentProviderCustomer
             : {};
 
-        const paypalFastlaneSessionId = this.paypalCommerceFastlaneUtils.getStorageSessionId();
+        const paypalFastlaneSessionId = this.paypalFastlaneUtils.getStorageSessionId();
 
         if (
             !customer.isGuest ||
@@ -227,16 +227,15 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             const billingAddress = state.getBillingAddress();
             const customerEmail = customer?.email || billingAddress?.email || '';
 
-            const { customerContextId } =
-                await this.paypalCommerceFastlaneUtils.lookupCustomerOrThrow(customerEmail);
+            const { customerContextId } = await this.paypalFastlaneUtils.lookupCustomerOrThrow(
+                customerEmail,
+            );
 
             const authenticationResult =
-                await this.paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow(
-                    customerContextId,
-                );
+                await this.paypalFastlaneUtils.triggerAuthenticationFlowOrThrow(customerContextId);
 
             const { authenticationState, addresses, instruments } =
-                this.paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData(
+                this.paypalFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData(
                     methodId,
                     authenticationResult,
                 );
@@ -252,9 +251,9 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 PayPalFastlaneAuthenticationState.CANCELED;
 
             if (isAuthenticationFlowCanceled) {
-                this.paypalCommerceFastlaneUtils.removeStorageSessionId();
+                this.paypalFastlaneUtils.removeStorageSessionId();
             } else {
-                this.paypalCommerceFastlaneUtils.updateStorageSessionId(cart.id);
+                this.paypalFastlaneUtils.updateStorageSessionId(cart.id);
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
@@ -272,7 +271,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const phone = billingAddress.phone;
         const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
 
-        const paypalFastlane = this.paypalCommerceFastlaneUtils.getPayPalFastlaneOrThrow();
+        const paypalFastlane = this.paypalFastlaneUtils.getPayPalFastlaneOrThrow();
 
         const cardComponentOptions: PayPalFastlaneCardComponentOptions = {
             fields: {
@@ -324,8 +323,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const { instrumentId } = paymentData;
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const is3DSEnabled =
             this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled;
 
@@ -354,8 +352,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
 
         const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
 
@@ -363,7 +360,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const { id } = await getPaymentToken({
             name: { fullName },
-            billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
+            billingAddress: this.paypalFastlaneUtils.mapBcToPayPalAddress(billingAddress),
         });
 
         const is3DSEnabled =
@@ -397,6 +394,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     private async createOrder(id: string): Promise<void> {
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
+
         if (this.methodId) {
             const { orderId } = await this.paypalCommerceRequestSender.createOrder(this.methodId, {
                 cartId,
@@ -460,6 +458,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 [LiabilityShiftEnum.Yes, LiabilityShiftEnum.Possible].includes(liabilityShift)
             ) {
                 await this.createOrder(nonce);
+
                 return nonce;
             }
         }
@@ -475,7 +474,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     private async handlePayPalStoredInstrumentChange(
         methodId: string,
     ): Promise<CardInstrument | undefined> {
-        const paypalAxoSdk = this.paypalCommerceFastlaneUtils.getPayPalFastlaneOrThrow();
+        const paypalAxoSdk = this.paypalFastlaneUtils.getPayPalFastlaneOrThrow();
 
         const { selectionChanged, selectedCard } = await paypalAxoSdk.profile.showCardSelector();
 
@@ -486,7 +485,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 ? paymentProviderCustomer
                 : {};
 
-            const selectedInstrument = this.paypalCommerceFastlaneUtils.mapPayPalToBcInstrument(
+            const selectedInstrument = this.paypalFastlaneUtils.mapPayPalToBcInstrument(
                 methodId,
                 selectedCard,
             )[0];
