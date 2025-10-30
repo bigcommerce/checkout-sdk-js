@@ -16,5 +16,5 @@ const createBigCommercePaymentsAlternativeMethodsButtonStrategy: CheckoutButtonS
     );
 
 export default toResolvableModule(createBigCommercePaymentsAlternativeMethodsButtonStrategy, [
-    { id: 'bigcommerce_payments_apms' },
+    { gateway: 'bigcommerce_payments_apms' },
 ]);

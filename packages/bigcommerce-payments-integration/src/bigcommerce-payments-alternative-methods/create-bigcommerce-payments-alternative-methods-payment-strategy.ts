@@ -12,8 +12,10 @@ import BigCommercePaymentsAlternativeMethodsPaymentStrategy from './bigcommerce-
 
 const createBigCommercePaymentsAlternativeMethodsPaymentStrategy: PaymentStrategyFactory<
     BigCommercePaymentsAlternativeMethodsPaymentStrategy
-> = (paymentIntegrationService) =>
-    new BigCommercePaymentsAlternativeMethodsPaymentStrategy(
+> = (paymentIntegrationService) => {
+    console.log('createBigCommercePaymentsAlternativeMethodsPaymentStrategy');
+
+    return new BigCommercePaymentsAlternativeMethodsPaymentStrategy(
         paymentIntegrationService,
         createBigCommercePaymentsIntegrationService(paymentIntegrationService),
         createBigCommercePaymentsSdk(),
@@ -21,7 +23,10 @@ const createBigCommercePaymentsAlternativeMethodsPaymentStrategy: PaymentStrateg
             containerStyles: LOADING_INDICATOR_STYLES,
         }),
     );
+}
+
 
 export default toResolvableModule(createBigCommercePaymentsAlternativeMethodsPaymentStrategy, [
-    { gateway: 'bigcommerce_payments_apms' },
+    // { gateway: 'bigcommerce_payments_apms' },
+    { gateway: 'bigcommerce_payments_apms', id: 'klarna' },
 ]);
