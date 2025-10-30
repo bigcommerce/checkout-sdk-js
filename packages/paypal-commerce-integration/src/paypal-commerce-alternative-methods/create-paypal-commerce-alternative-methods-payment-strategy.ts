@@ -2,7 +2,7 @@ import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { createPayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { createPayPalSdkScriptLoader } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
@@ -16,7 +16,7 @@ const createPayPalCommerceAlternativeMethodsPaymentStrategy: PaymentStrategyFact
     new PayPalCommerceAlternativeMethodsPaymentStrategy(
         paymentIntegrationService,
         createPayPalCommerceIntegrationService(paymentIntegrationService),
-        createPayPalCommerceSdk(),
+        createPayPalSdkScriptLoader(),
         new LoadingIndicator({
             containerStyles: LOADING_INDICATOR_STYLES,
         }),
