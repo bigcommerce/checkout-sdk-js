@@ -441,6 +441,57 @@ describe('BigCommercePaymentsButtonStrategy', () => {
             expect(bigCommercePaymentsSdkRenderMock).toHaveBeenCalled();
         });
 
+        it('render button with appSwitch flag', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isAppSwitchEnabled: true,
+                },
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                appSwitchWhenAvailable: true,
+                fundingSource: paypalSdk.FUNDING.PAYPAL,
+                style: bigCommercePaymentsOptions.style,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
+        it('calls resume when appSwitch enabled and returned from app', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isAppSwitchEnabled: true,
+                },
+            });
+
+            const resumeMock = jest.fn();
+            const bigCommercePaymentsSdkRenderMock = jest.fn();
+
+            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
+                isEligible: jest.fn(() => true),
+                render: bigCommercePaymentsSdkRenderMock,
+                hasReturned: jest.fn(() => true),
+                resume: resumeMock,
+            }));
+
+            await strategy.initialize(initializationOptions);
+
+            expect(resumeMock).toHaveBeenCalled();
+        });
+
         it('does not render PayPal button if it is not eligible', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
