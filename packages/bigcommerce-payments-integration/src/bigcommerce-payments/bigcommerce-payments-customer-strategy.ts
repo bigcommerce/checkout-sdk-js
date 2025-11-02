@@ -119,11 +119,14 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, paymentButtonStyles } =
+        const { isHostedCheckoutEnabled, paymentButtonStyles, isAppSwitchEnabled } =
             paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
+            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+                appSwitchWhenAvailable: true,
+            }),
             createOrder: () =>
                 this.bigCommercePaymentsIntegrationService.createOrder('bigcommerce_payments'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
@@ -132,10 +135,12 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
         };
 
         const hostedCheckoutCallbacks = {
-            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                this.onShippingAddressChange(data),
-            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                this.onShippingOptionsChange(data),
+            ...(!isAppSwitchEnabled && {
+                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                    this.onShippingAddressChange(data),
+                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                    this.onShippingOptionsChange(data),
+            }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
@@ -153,7 +158,11 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            paypalButton.render(`#${container}`);
+            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
+                paypalButton.resume?.();
+            } else {
+                paypalButton.render(`#${container}`);
+            }
         } else {
             this.bigCommercePaymentsIntegrationService.removeElement(container);
         }
@@ -248,5 +257,18 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
         } else {
             throw error;
         }
+    }
+
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
+
+        return paymentMethod.initializationData?.isAppSwitchEnabled ?? false;
     }
 }
