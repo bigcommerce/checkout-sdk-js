@@ -14,7 +14,7 @@ describe('HostedInputValidator', () => {
     beforeEach(() => {
         validData = {
             cardCode: '123',
-            cardExpiry: '10 / 25',
+            cardExpiry: '10 / 35',
             cardName: 'BC',
             cardNumber: '4111 1111 1111 1111',
         };
