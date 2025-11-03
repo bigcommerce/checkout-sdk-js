@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.823.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.822.0...v1.823.0) (2025-11-03)
+
+
+### Features
+
+* **payment:** customer step buttons height 40px ([ea8c358](https://github.com/bigcommerce/checkout-sdk-js/commit/ea8c358096030102c24f5b39fcab4dc14e9eda69))
+* **payment:** hosted-input-validator tests fix ([8e5d189](https://github.com/bigcommerce/checkout-sdk-js/commit/8e5d1898fe5a2f0abee86044008f7a9a43d5ff9c))
+
 ## [1.822.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.821.1...v1.822.0) (2025-10-30)
 
 
