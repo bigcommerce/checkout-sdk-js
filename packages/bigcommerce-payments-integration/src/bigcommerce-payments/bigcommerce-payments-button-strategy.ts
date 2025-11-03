@@ -88,7 +88,7 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
             false,
         );
 
-        this.renderButton(containerId, methodId, bigcommerce_payments);
+        this.renderButton(containerId, methodId, bigcommerce_payments, isBuyNowFlow);
     }
 
     deinitialize(): Promise<void> {
