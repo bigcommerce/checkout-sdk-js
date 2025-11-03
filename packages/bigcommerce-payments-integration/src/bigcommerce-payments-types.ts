@@ -263,6 +263,7 @@ export interface BigCommercePaymentsInitializationData {
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
+    isAppSwitchEnabled?: boolean;
 }
 
 /**
@@ -357,6 +358,8 @@ export interface BigCommercePaymentsButtons {
     render(id: string): void;
     close(): void;
     isEligible(): boolean;
+    hasReturned?(): boolean;
+    resume?(): void;
 }
 
 export interface BigCommercePaymentsButtonsOptions {
