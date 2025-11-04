@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.824.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.823.0...v1.824.0) (2025-11-04)
+
+
+### Features
+
+* **payment:** PAYPAL-5723 add bcp button app switch ([c51d10e](https://github.com/bigcommerce/checkout-sdk-js/commit/c51d10e0cf1b2419c3c99e852a15a35a62bfd116))
+
 ## [1.823.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.822.0...v1.823.0) (2025-11-03)
 
 
