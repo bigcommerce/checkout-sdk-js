@@ -1,3 +1,6 @@
+import { CheckoutButtonInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CheckoutButtonStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CheckoutButtonStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerCredentials } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -18,6 +21,53 @@ import { StripeElementUpdateOptions } from '@bigcommerce/checkout-sdk/stripe-uti
 import { StripeIntegrationService } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { StripePaymentInitializeOptions } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { StripeScriptLoader } from '@bigcommerce/checkout-sdk/stripe-utils';
+
+declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
+    private paymentIntegrationService;
+    private scriptLoader;
+    private stripeIntegrationService;
+    private loadingIndicator;
+    private _stripeClient?;
+    private _stripeElements?;
+    private _linkV2Element?;
+    private _amountTransformer?;
+    private _onComplete?;
+    private _loadingIndicatorContainer?;
+    private _currencyCode?;
+    constructor(paymentIntegrationService: PaymentIntegrationService, scriptLoader: StripeScriptLoader, stripeIntegrationService: StripeIntegrationService, loadingIndicator: LoadingIndicator);
+    initialize(options: CheckoutButtonInitializeOptions & WithStripeOCSCustomerInitializeOptions): Promise<void>;
+    signIn(): Promise<void>;
+    signOut(): Promise<void>;
+    executePaymentMethodCheckout(): Promise<void>;
+    deinitialize(): Promise<void>;
+    private _mountExpressCheckoutElement;
+    /** Events * */
+    private _initializeEvents;
+    private _onShippingAddressChange;
+    private _onCancel;
+    private _onShippingRateChange;
+    /** Confirm methods * */
+    private _onConfirm;
+    private _updateShippingAndBillingAddress;
+    private _mapShippingAddress;
+    private _mapBillingAddress;
+    private _processAdditionalAction;
+    private _confirmStripePaymentOrThrow;
+    private _completeCheckoutFlow;
+    private _getPaymentPayload;
+    /** Utils * */
+    private _shouldRequireShippingAddress;
+    private _updateDisplayedPrice;
+    private _getCurrency;
+    private _getTotalPrice;
+    private _getAvailableCountries;
+    private _getAvailableShippingOptions;
+    private _getStripeShippingOption;
+    private _handleShippingOptionChange;
+    private _getAmountTransformer;
+    private _toCents;
+    private _toggleLoadingIndicator;
+}
 
 declare class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private paymentIntegrationService;
@@ -281,6 +331,10 @@ declare interface WithStripeUPECustomerInitializeOptions {
 declare interface WithStripeUPEPaymentInitializeOptions {
     stripeupe?: StripeUPEPaymentInitializeOptions;
 }
+
+export declare const createLinkV2ButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<StripeLinkV2ButtonStrategy>, {
+    id: string;
+}>;
 
 export declare const createStripeLinkV2CustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<StripeLinkV2CustomerStrategy>, {
     id: string;
