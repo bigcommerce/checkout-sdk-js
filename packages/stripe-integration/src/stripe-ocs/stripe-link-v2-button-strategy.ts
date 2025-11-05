@@ -48,6 +48,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
     private _onComplete?: (orderId?: number) => Promise<never>;
     private _loadingIndicatorContainer?: string;
     private _currencyCode?: string;
+    private _captureMethod?: 'automatic' | 'manual';
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -86,7 +87,9 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         }
 
         const { initializationData } = paymentMethod;
+        const { captureMethod } = initializationData;
 
+        this._captureMethod = captureMethod;
         this._stripeClient = await this.scriptLoader.getStripeClient(initializationData);
 
         await this.paymentIntegrationService.loadDefaultCheckout();
@@ -153,6 +156,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             mode: 'payment',
             amount: this._toCents(cartAmount),
             currency: this._getCurrency(),
+            ...(this._captureMethod ? { captureMethod: this._captureMethod } : {}),
         };
 
         this._stripeElements = stripeExpressCheckoutClient.elements(elementsOptions);
