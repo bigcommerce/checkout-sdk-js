@@ -15,7 +15,6 @@ import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration
 import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalCommerceFastlaneUtils } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneUtils } from '@bigcommerce/checkout-sdk/paypal-utils';
@@ -1032,9 +1031,9 @@ declare interface PayPalCommerceFastlaneCustomerInitializeOptions {
 
 declare class PayPalCommerceFastlaneCustomerStrategy implements CustomerStrategy {
     private paymentIntegrationService;
-    private paypalCommerceSdk;
-    private paypalCommerceFastlaneUtils;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceSdk: PayPalCommerceSdk, paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils);
+    private paypalSdkScriptLoader;
+    private paypalFastlaneUtils;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
     initialize(options: CustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void>;
