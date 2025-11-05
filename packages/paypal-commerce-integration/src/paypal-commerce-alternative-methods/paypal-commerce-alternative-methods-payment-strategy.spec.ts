@@ -16,9 +16,9 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalCommerceSdk,
-    PayPalCommerceSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    createPayPalSdkScriptLoader,
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import {
@@ -48,7 +48,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalSdk: PayPalSDK;
     let strategy: PayPalCommerceAlternativeMethodsPaymentStrategy;
-    let paypalCommerceSdk: PayPalCommerceSdk;
+    let paypalSdkScriptLoader: PayPalSdkScriptLoader;
 
     const paypalOrderId = 'paypal123';
 
@@ -84,12 +84,12 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
         loadingIndicator = new LoadingIndicator();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalCommerceSdk = createPayPalCommerceSdk();
+        paypalSdkScriptLoader = createPayPalSdkScriptLoader();
 
         strategy = new PayPalCommerceAlternativeMethodsPaymentStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
-            paypalCommerceSdk,
+            paypalSdkScriptLoader,
             loadingIndicator,
         );
 
@@ -101,7 +101,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
 
-        jest.spyOn(paypalCommerceSdk, 'getPayPalApmsSdk').mockResolvedValue(paypalSdk);
+        jest.spyOn(paypalSdkScriptLoader, 'getPayPalApmsSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue(
             paypalOrderId,
         );
@@ -230,13 +230,16 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceSdk.getPayPalApmsSdk).not.toHaveBeenCalled();
+            expect(paypalSdkScriptLoader.getPayPalApmsSdk).not.toHaveBeenCalled();
         });
 
         it('loads paypal sdk', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceSdk.getPayPalApmsSdk).toHaveBeenCalledWith(paymentMethod, 'USD');
+            expect(paypalSdkScriptLoader.getPayPalApmsSdk).toHaveBeenCalledWith(
+                paymentMethod,
+                'USD',
+            );
         });
     });
 
