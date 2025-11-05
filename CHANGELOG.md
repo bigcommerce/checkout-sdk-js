@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.826.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.825.0...v1.826.0) (2025-11-05)
+
+
+### Features
+
+* **payment:** PAYPAL-5768 Update PayPalCommerceAlternativeMethodsPaymentStrategy using paypal-utils package ([#3052](https://github.com/bigcommerce/checkout-sdk-js/issues/3052)) ([36398cb](https://github.com/bigcommerce/checkout-sdk-js/commit/36398cb16d93e7e2931b9fc418911faf05d3494a))
+
 ## [1.825.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.824.0...v1.825.0) (2025-11-05)
 
 

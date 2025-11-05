@@ -317,7 +317,7 @@ declare interface PayPalCommerceAlternativeMethodsPaymentOptions {
 declare class PayPalCommerceAlternativeMethodsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private paypalCommerceIntegrationService;
-    private paypalCommerceSdk;
+    private paypalSdkScriptLoader;
     private loadingIndicator;
     private pollingInterval;
     private maxPollingIntervalTime;
@@ -329,7 +329,7 @@ declare class PayPalCommerceAlternativeMethodsPaymentStrategy implements Payment
     private stopPolling;
     private isPollingEnabled;
     private paypalcommercealternativemethods?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalCommerceSdk: PayPalCommerceSdk, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
     initialize(options: PaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
