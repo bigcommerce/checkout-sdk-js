@@ -56,9 +56,7 @@ export default function createCheckoutButtonInitializer(
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const registryV2 = createCheckoutButtonRegistryV2(
         paymentIntegrationService,
-        defaultCheckoutButtonStrategyFactories,
-        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? {} : defaultCheckoutButtonStrategyFactories,
+        process.env.ESSENTIAL_BUILD ? {} : defaultCheckoutButtonStrategyFactories,
     );
 
     return new CheckoutButtonInitializer(
