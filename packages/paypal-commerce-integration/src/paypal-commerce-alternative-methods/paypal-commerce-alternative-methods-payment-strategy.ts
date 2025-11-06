@@ -13,7 +13,11 @@ import {
     PaymentStrategy,
     TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalApmSdk, PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import {
+    PayPalApmSdk,
+    PayPalInitializationData,
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
@@ -47,7 +51,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
-        private paypalCommerceSdk: PayPalCommerceSdk,
+        private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private loadingIndicator: LoadingIndicator,
         private pollingInterval: number = POLLING_INTERVAL,
         private maxPollingIntervalTime: number = MAX_POLLING_TIME,
@@ -86,7 +90,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         }
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(
             methodId,
             gatewayId,
         );
@@ -108,7 +112,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             return;
         }
 
-        this.paypalApms = await this.paypalCommerceSdk.getPayPalApmsSdk(
+        this.paypalApms = await this.paypalSdkScriptLoader.getPayPalApmsSdk(
             paymentMethod,
             state.getCartOrThrow().currency.code,
         );

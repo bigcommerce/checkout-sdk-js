@@ -11,7 +11,7 @@ import {
     getPayPalFastlaneSdk,
     getPayPalSDKMock,
 } from './mocks';
-import PaypalSdkScriptLoader from './paypal-sdk-script-loader';
+import PayPalSdkScriptLoader from './paypal-sdk-script-loader';
 import {
     PayPalApmSdk,
     PayPalFastlaneSdk,
@@ -26,7 +26,7 @@ describe('PayPalSdkLoader', () => {
     let paymentMethod: PaymentMethod;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let paypalSdk: PayPalSDK;
-    let subject: PaypalSdkScriptLoader;
+    let subject: PayPalSdkScriptLoader;
     let mockAPMPaymentMethod: PaymentMethod;
 
     const paypalMessagesSdk: PayPalMessagesSdk = {
@@ -59,7 +59,7 @@ describe('PayPalSdkLoader', () => {
         };
         paypalFastlaneSdk = getPayPalFastlaneSdk();
         paypalSdk = getPayPalSDKMock();
-        subject = new PaypalSdkScriptLoader(loader);
+        subject = new PayPalSdkScriptLoader(loader);
 
         jest.spyOn(loader, 'loadScript').mockImplementation(() => {
             (window as PayPalHostWindow).paypal = paypalSdk;

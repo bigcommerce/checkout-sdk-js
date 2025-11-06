@@ -2,6 +2,106 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.828.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.827.0...v1.828.0) (2025-11-06)
+
+
+### Features
+
+* **payment:** Stripe Link V2 cart page button tests ([d56d33a](https://github.com/bigcommerce/checkout-sdk-js/commit/d56d33a36ad54afa0633e122262a6eed8b6b9ad9))
+
+## [1.827.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.826.0...v1.827.0) (2025-11-05)
+
+
+### Features
+
+* **payment:** Stripe Link V2 cart page button ([bfe3a1a](https://github.com/bigcommerce/checkout-sdk-js/commit/bfe3a1a219cefa49171cd111a3657299c9b43551))
+
+## [1.826.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.825.0...v1.826.0) (2025-11-05)
+
+
+### Features
+
+* **payment:** PAYPAL-5768 Update PayPalCommerceAlternativeMethodsPaymentStrategy using paypal-utils package ([#3052](https://github.com/bigcommerce/checkout-sdk-js/issues/3052)) ([36398cb](https://github.com/bigcommerce/checkout-sdk-js/commit/36398cb16d93e7e2931b9fc418911faf05d3494a))
+
+## [1.825.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.824.0...v1.825.0) (2025-11-05)
+
+
+### Features
+
+* **payment:** PAYPAL-5760 Update PayPalCommerceFastlaneCustomerStrategy using paypal-utils package ([#3049](https://github.com/bigcommerce/checkout-sdk-js/issues/3049)) ([a9af957](https://github.com/bigcommerce/checkout-sdk-js/commit/a9af957c85d480e0516e9112e163163df803c9a7))
+
+## [1.824.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.823.0...v1.824.0) (2025-11-04)
+
+
+### Features
+
+* **payment:** PAYPAL-5723 add bcp button app switch ([c51d10e](https://github.com/bigcommerce/checkout-sdk-js/commit/c51d10e0cf1b2419c3c99e852a15a35a62bfd116))
+
+## [1.823.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.822.0...v1.823.0) (2025-11-03)
+
+
+### Features
+
+* **payment:** customer step buttons height 40px ([ea8c358](https://github.com/bigcommerce/checkout-sdk-js/commit/ea8c358096030102c24f5b39fcab4dc14e9eda69))
+* **payment:** hosted-input-validator tests fix ([8e5d189](https://github.com/bigcommerce/checkout-sdk-js/commit/8e5d1898fe5a2f0abee86044008f7a9a43d5ff9c))
+
+## [1.822.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.821.1...v1.822.0) (2025-10-30)
+
+
+### Features
+
+* **payment:** PAYPAL-5761 Update PaypalCommerceFastlanePaymentStrategy using paypal-utils package ([#3050](https://github.com/bigcommerce/checkout-sdk-js/issues/3050)) ([4473670](https://github.com/bigcommerce/checkout-sdk-js/commit/447367027724468f527534d7047f6ae18e10579f))
+
+### [1.821.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.821.0...v1.821.1) (2025-10-30)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-5990 moved loading callback to the place after PayPal hosted fields initialization ([#3051](https://github.com/bigcommerce/checkout-sdk-js/issues/3051)) ([9126a70](https://github.com/bigcommerce/checkout-sdk-js/commit/9126a70e2565f38ccddbcd5d45bbd780ae8f4b06))
+
+## [1.821.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.820.1...v1.821.0) (2025-10-29)
+
+
+### Features
+
+* **payment:** PAYPAL-5759 Update PayPalCommerceCreditCardsPaymentStrategy using paypal-utils package ([#3043](https://github.com/bigcommerce/checkout-sdk-js/issues/3043)) ([b1fe97b](https://github.com/bigcommerce/checkout-sdk-js/commit/b1fe97bf2e20a11b5b737aa61a003c5f8b450d40))
+
+### [1.820.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.820.0...v1.820.1) (2025-10-29)
+
+
+### Bug Fixes
+
+* **payment:** check liability shift for order create ([b93d26c](https://github.com/bigcommerce/checkout-sdk-js/commit/b93d26c5a461264c74931ca38a66a9d060d0d9a9))
+
+## [1.820.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.819.0...v1.820.0) (2025-10-29)
+
+
+### Features
+
+* **payment:** PI-4487 Research the reason of flaky Afterpay test ([#3040](https://github.com/bigcommerce/checkout-sdk-js/issues/3040)) ([f11d5d6](https://github.com/bigcommerce/checkout-sdk-js/commit/f11d5d6ef0135f7547872ebc5dfbbd1546f6775b))
+
+## [1.819.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.818.0...v1.819.0) (2025-10-28)
+
+
+### Features
+
+* **payment:** PI-4354 Remove/move checkoutcom and checkoutcom-custom payment strategy files to the separate package ([#3038](https://github.com/bigcommerce/checkout-sdk-js/issues/3038)) ([bce0d02](https://github.com/bigcommerce/checkout-sdk-js/commit/bce0d024b0b2698b37d28ebc32a52f35e811a610))
+
+## [1.818.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.817.0...v1.818.0) (2025-10-27)
+
+
+### Features
+
+* **payment:** PAYPAL-5995 braintree credit card options interface import ([#3044](https://github.com/bigcommerce/checkout-sdk-js/issues/3044)) ([f658e1c](https://github.com/bigcommerce/checkout-sdk-js/commit/f658e1c686443510adf958f7ad9b21bbf689c721))
+
+## [1.817.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.816.1...v1.817.0) (2025-10-27)
+
+
+### Features
+
+* **payment:** PAYPAL-5992 add check for clientToken ([#3037](https://github.com/bigcommerce/checkout-sdk-js/issues/3037)) ([7fb416a](https://github.com/bigcommerce/checkout-sdk-js/commit/7fb416a84827c70cefdd03f9a6fe80eba2ab4bf4))
+* **payment:** PAYPAL-5995 braintree removal ([#3036](https://github.com/bigcommerce/checkout-sdk-js/issues/3036)) ([515ea0b](https://github.com/bigcommerce/checkout-sdk-js/commit/515ea0b96c75dad0978051b4e855ab7c05f194cb))
+
 ### [1.816.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.816.0...v1.816.1) (2025-10-27)
 
 ## [1.816.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.815.0...v1.816.0) (2025-10-23)

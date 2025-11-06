@@ -61,6 +61,7 @@
 /packages/humm-integration @bigcommerce/team-integrations
 /packages/zip-integration @bigcommerce/team-integrations
 /packages/worldpayaccess-integration @bigcommerce/team-integrations
+/packages/cba-mpgs-integration @bigcommerce/team-integrations
 
 ## PayPal team
 

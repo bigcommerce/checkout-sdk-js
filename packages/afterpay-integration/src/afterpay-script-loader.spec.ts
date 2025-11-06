@@ -41,13 +41,13 @@ describe('AfterpayScriptLoader', () => {
         await afterpayScriptLoader.load(method, 'AU');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal-sandbox.afterpay.com/afterpay-async.js',
+            '//portal.sandbox.afterpay.com/afterpay.js',
         );
 
         await afterpayScriptLoader.load(method, 'NZ');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal-sandbox.afterpay.com/afterpay-async.js',
+            '//portal.sandbox.afterpay.com/afterpay.js',
         );
     });
 
@@ -67,7 +67,7 @@ describe('AfterpayScriptLoader', () => {
         await afterpayScriptLoader.load(method, 'US');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal.sandbox.afterpay.com/afterpay-async.js',
+            '//portal.sandbox.afterpay.com/afterpay.js',
         );
     });
 });

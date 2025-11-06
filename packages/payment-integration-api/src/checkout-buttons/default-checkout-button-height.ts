@@ -1,3 +1,3 @@
-const DefaultCheckoutButtonHeight = 36;
+const DefaultCheckoutButtonHeight = 40;
 
 export default DefaultCheckoutButtonHeight;

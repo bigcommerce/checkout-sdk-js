@@ -312,6 +312,12 @@ declare class BigCommercePaymentsButtonStrategy implements CheckoutButtonStrateg
     private onHostedCheckoutApprove;
     private onShippingAddressChange;
     private onShippingOptionsChange;
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled;
 }
 
 /**
@@ -323,6 +329,8 @@ declare interface BigCommercePaymentsButtons {
     render(id: string): void;
     close(): void;
     isEligible(): boolean;
+    hasReturned?(): boolean;
+    resume?(): void;
 }
 
 declare interface BigCommercePaymentsButtonsOptions {
@@ -1014,6 +1022,7 @@ declare interface BigCommercePaymentsInitializationData {
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
+    isAppSwitchEnabled?: boolean;
 }
 
 declare class BigCommercePaymentsIntegrationService {

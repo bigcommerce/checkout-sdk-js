@@ -6,7 +6,6 @@ import {
 
 import { RequestOptions } from '../common/http-request';
 
-import { BraintreePaymentInitializeOptions } from './strategies/braintree';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
@@ -46,12 +45,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Braintree payment method.
-     * They can be omitted unless you need to support Braintree.
-     */
-    braintree?: BraintreePaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Masterpass payment method.

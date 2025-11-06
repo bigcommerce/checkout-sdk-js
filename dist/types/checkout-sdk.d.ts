@@ -6,6 +6,8 @@ import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-ut
 import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { BraintreeError } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeFormOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeThreeDSecureOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CardInstrument as CardInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -759,11 +761,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Braintree payment method.
-     * They can be omitted unless you need to support Braintree.
-     */
-    braintree?: BraintreePaymentInitializeOptions;
     /**
      * The options that are required to initialize the Masterpass payment method.
      * They can be omitted unless you need to support Masterpass.
@@ -1882,6 +1879,67 @@ declare interface BraintreeAnalyticTrackerService {
     walletButtonClick(methodId: string): void;
 }
 
+declare interface BraintreeCreditCardPaymentInitializeOptions {
+    /**
+     * A list of card brands that are not supported by the merchant.
+     *
+     * List of supported brands by braintree can be found here: https://braintree.github.io/braintree-web/current/module-braintree-web_hosted-fields.html#~field
+     * search for `supportedCardBrands` property.
+     *
+     * List of credit cards brands:
+     * 'visa',
+     * 'mastercard',
+     * 'american-express',
+     * 'diners-club',
+     * 'discover',
+     * 'jcb',
+     * 'union-pay',
+     * 'maestro',
+     * 'elo',
+     * 'mir',
+     * 'hiper',
+     * 'hipercard'
+     *
+     * */
+    unsupportedCardBrands?: string[];
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    containerId?: string;
+    threeDSecure?: BraintreeThreeDSecureOptions;
+    /**
+     * @alpha
+     * Please note that this option is currently in an early stage of
+     * development. Therefore the API is unstable and not ready for public
+     * consumption.
+     */
+    form?: BraintreeFormOptions;
+    /**
+     * The location to insert the Pay Later Messages.
+     */
+    bannerContainerId?: string;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
+    submitForm?(): void;
+    /**
+     * A callback that gets called if unable to submit payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onPaymentError?(error: BraintreeError | StandardError_2): void;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
+}
+
 /**
  * A set of options that are optional to initialize the Braintree Fastlane customer strategy
  * that are responsible for Braintree Fastlane components styling and initialization
@@ -2022,92 +2080,6 @@ declare interface BraintreeFastlaneShippingInitializeOptions {
     onPayPalFastlaneAddressChange?: (showBraintreeFastlaneAddressSelector: () => Promise<CustomerAddress_2 | undefined>) => void;
 }
 
-declare type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
-
-declare type BraintreeFormErrorDataKeys = 'number' | 'expirationDate' | 'expirationMonth' | 'expirationYear' | 'cvv' | 'postalCode';
-
-declare type BraintreeFormErrorsData = Partial<Record<BraintreeFormErrorDataKeys, BraintreeFormErrorData>>;
-
-declare type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;
-
-declare interface BraintreeFormFieldCardTypeChangeEventData {
-    cardType?: string;
-}
-
-declare type BraintreeFormFieldEnterEventData = BraintreeFormFieldKeyboardEventData;
-
-declare type BraintreeFormFieldFocusEventData = BraintreeFormFieldKeyboardEventData;
-
-declare interface BraintreeFormFieldKeyboardEventData {
-    fieldType: string;
-    errors?: BraintreeFormErrorsData;
-}
-
-declare interface BraintreeFormFieldOptions {
-    accessibilityLabel?: string;
-    containerId: string;
-    placeholder?: string;
-}
-
-declare interface BraintreeFormFieldState {
-    isFocused: boolean;
-    isEmpty: boolean;
-    isPotentiallyValid: boolean;
-    isValid: boolean;
-}
-
-declare type BraintreeFormFieldStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
-
-declare interface BraintreeFormFieldStylesMap {
-    default?: BraintreeFormFieldStyles;
-    error?: BraintreeFormFieldStyles;
-    focus?: BraintreeFormFieldStyles;
-}
-
-declare enum BraintreeFormFieldType {
-    CardCode = "cardCode",
-    CardCodeVerification = "cardCodeVerification",
-    CardExpiry = "cardExpiry",
-    CardName = "cardName",
-    CardNumber = "cardNumber",
-    CardNumberVerification = "cardNumberVerification"
-}
-
-declare interface BraintreeFormFieldValidateErrorData {
-    fieldType: string;
-    message: string;
-    type: string;
-}
-
-declare interface BraintreeFormFieldValidateEventData {
-    errors: {
-        [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldValidateErrorData[];
-        [BraintreeFormFieldType.CardExpiry]?: BraintreeFormFieldValidateErrorData[];
-        [BraintreeFormFieldType.CardName]?: BraintreeFormFieldValidateErrorData[];
-        [BraintreeFormFieldType.CardNumber]?: BraintreeFormFieldValidateErrorData[];
-        [BraintreeFormFieldType.CardCodeVerification]?: BraintreeFormFieldValidateErrorData[];
-        [BraintreeFormFieldType.CardNumberVerification]?: BraintreeFormFieldValidateErrorData[];
-    };
-    isValid: boolean;
-}
-
-declare interface BraintreeFormFieldsMap {
-    [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldOptions;
-    [BraintreeFormFieldType.CardExpiry]: BraintreeFormFieldOptions;
-    [BraintreeFormFieldType.CardName]: BraintreeFormFieldOptions;
-    [BraintreeFormFieldType.CardNumber]: BraintreeFormFieldOptions;
-}
-
-declare interface BraintreeFormOptions {
-    fields: BraintreeFormFieldsMap | BraintreeStoredCardFieldsMap;
-    styles?: BraintreeFormFieldStylesMap;
-    onBlur?(data: BraintreeFormFieldBlurEventData): void;
-    onCardTypeChange?(data: BraintreeFormFieldCardTypeChangeEventData): void;
-    onFocus?(data: BraintreeFormFieldFocusEventData): void;
-    onValidate?(data: BraintreeFormFieldValidateEventData): void;
-    onEnter?(data: BraintreeFormFieldEnterEventData): void;
-}
-
 declare interface BraintreeLocalMethodsPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
@@ -2131,142 +2103,6 @@ declare interface BraintreeLocalMethodsPaymentInitializeOptions {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError(error: unknown): void;
-}
-
-/**
- * A set of options that are required to initialize the Braintree payment
- * method. You need to provide the options if you want to support 3D Secure
- * authentication flow.
- *
- * ```html
- * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
- * <div id="card-number"></div>
- * <div id="card-name"></div>
- * <div id="card-expiry"></div>
- * <div id="card-code"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'braintree',
- *     braintree: {
- *         form: {
- *             fields: {
- *                 cardNumber: { containerId: 'card-number' },
- *                 cardName: { containerId: 'card-name' },
- *                 cardExpiry: { containerId: 'card-expiry' },
- *                 cardCode: { containerId: 'card-code' },
- *             },
- *         },
- *     },
- * });
- * ```
- *
- * Additional options can be passed in to customize the fields and register
- * event callbacks.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'braintree',
- *     creditCard: {
- *         form: {
- *             fields: {
- *                 cardNumber: { containerId: 'card-number' },
- *                 cardName: { containerId: 'card-name' },
- *                 cardExpiry: { containerId: 'card-expiry' },
- *                 cardCode: { containerId: 'card-code' },
- *             },
- *             styles: {
- *                 default: {
- *                     color: '#000',
- *                 },
- *                 error: {
- *                     color: '#f00',
- *                 },
- *                 focus: {
- *                     color: '#0f0',
- *                 },
- *             },
- *             onBlur({ fieldType }) {
- *                 console.log(fieldType);
- *             },
- *             onFocus({ fieldType }) {
- *                 console.log(fieldType);
- *             },
- *             onEnter({ fieldType }) {
- *                 console.log(fieldType);
- *             },
- *             onCardTypeChange({ cardType }) {
- *                 console.log(cardType);
- *             },
- *             onValidate({ errors, isValid }) {
- *                 console.log(errors);
- *                 console.log(isValid);
- *             },
- *         },
- *     },
- * });
- * ```
- */
-declare interface BraintreePaymentInitializeOptions {
-    /**
-     * The CSS selector of a container where the payment widget should be inserted into.
-     */
-    containerId?: string;
-    threeDSecure?: BraintreeThreeDSecureOptions;
-    /**
-     * @alpha
-     * Please note that this option is currently in an early stage of
-     * development. Therefore the API is unstable and not ready for public
-     * consumption.
-     */
-    form?: BraintreeFormOptions;
-    /**
-     * The location to insert the Pay Later Messages.
-     */
-    bannerContainerId?: string;
-    /**
-     * A callback right before render Smart Payment Button that gets called when
-     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
-     */
-    onRenderButton?(): void;
-    /**
-     * A callback for submitting payment form that gets called
-     * when buyer approved PayPal account.
-     */
-    submitForm?(): void;
-    /**
-     * A callback that gets called if unable to submit payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onPaymentError?(error: BraintreeError | StandardError_2): void;
-    /**
-     * A callback for displaying error popup. This callback requires error object as parameter.
-     */
-    onError?(error: unknown): void;
-    /**
-     * A list of card brands that are not supported by the merchant.
-     *
-     * List of supported brands by braintree can be found here: https://braintree.github.io/braintree-web/current/module-braintree-web_hosted-fields.html#~field
-     * search for `supportedCardBrands` property.
-     *
-     * List of credit cards brands:
-     * 'visa',
-     * 'mastercard',
-     * 'american-express',
-     * 'diners-club',
-     * 'discover',
-     * 'jcb',
-     * 'union-pay',
-     * 'maestro',
-     * 'elo',
-     * 'mir',
-     * 'hiper',
-     * 'hipercard'
-     *
-     * */
-    unsupportedCardBrands?: string[];
 }
 
 declare interface BraintreePaypalButtonInitializeOptions {
@@ -2399,59 +2235,6 @@ declare interface BraintreePaypalCustomerInitializeOptions {
      * A callback that gets called when wallet button clicked
      */
     onClick?(): void;
-}
-
-declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
-    instrumentId: string;
-}
-
-declare interface BraintreeStoredCardFieldsMap {
-    [BraintreeFormFieldType.CardCodeVerification]?: BraintreeStoredCardFieldOptions;
-    [BraintreeFormFieldType.CardNumberVerification]?: BraintreeStoredCardFieldOptions;
-}
-
-/**
- * A set of options that are required to support 3D Secure authentication flow.
- *
- * If the customer uses a credit card that has 3D Secure enabled, they will be
- * asked to verify their identity when they pay. The verification is done
- * through a web page via an iframe provided by the card issuer.
- */
-declare interface BraintreeThreeDSecureOptions {
-    /**
-     * A callback that gets called when the iframe is ready to be added to the
-     * current page. It is responsible for determining where the iframe should
-     * be inserted in the DOM.
-     *
-     * @param error - Any error raised during the verification process;
-     * undefined if there is none.
-     * @param iframe - The iframe element containing the verification web page
-     * provided by the card issuer.
-     * @param cancel - A function, when called, will cancel the verification
-     * process and remove the iframe.
-     */
-    addFrame(error: Error | undefined, iframe: HTMLIFrameElement, cancel: () => Promise<BraintreeVerifyPayload> | undefined): void;
-    /**
-     * A callback that gets called when the iframe is about to be removed from
-     * the current page.
-     */
-    removeFrame(): void;
-    challengeRequested?: boolean;
-    additionalInformation?: {
-        acsWindowSize?: '01' | '02' | '03' | '04' | '05';
-    };
-}
-
-declare interface BraintreeVerifyPayload {
-    nonce: string;
-    details?: {
-        cardType: string;
-        lastFour: string;
-        lastTwo: string;
-    };
-    description?: string;
-    liabilityShiftPossible?: boolean;
-    liabilityShifted?: boolean;
 }
 
 declare interface BrowserInfo {
@@ -7734,7 +7517,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBlueSnapV2PaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithPaypalExpressPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBlueSnapV2PaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithPaypalExpressPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -9112,6 +8895,13 @@ declare interface WithBraintreeAchPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Apple Pay.
      */
     braintreeach?: BraintreeAchInitializeOptions;
+}
+
+declare interface WithBraintreeCreditCardPaymentInitializeOptions {
+    /**
+     * The options that are required to initialize Braintree PayPal wallet button on Product and Cart page.
+     */
+    braintree?: BraintreeCreditCardPaymentInitializeOptions;
 }
 
 declare interface WithBraintreeFastlaneCustomerInitializeOptions {

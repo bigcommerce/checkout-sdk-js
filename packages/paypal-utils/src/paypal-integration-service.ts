@@ -16,7 +16,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import PayPalRequestSender from './paypal-request-sender';
-import PaypalSdkScriptLoader from './paypal-sdk-script-loader';
+import PayPalSdkScriptLoader from './paypal-sdk-script-loader';
 import {
     PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
@@ -38,7 +38,7 @@ export default class PayPalIntegrationService {
         private formPoster: FormPoster,
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalRequestSender: PayPalRequestSender,
-        private paypalSdkLoader: PaypalSdkScriptLoader,
+        private paypalSdkLoader: PayPalSdkScriptLoader,
     ) {}
 
     /**

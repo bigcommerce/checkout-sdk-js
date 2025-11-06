@@ -10,12 +10,12 @@ import isAfterpayWindow from './is-afterpay-window';
 
 enum SCRIPTS_DEFAULT {
     PROD = '//portal.afterpay.com/afterpay-async.js',
-    SANDBOX = '//portal-sandbox.afterpay.com/afterpay-async.js',
+    SANDBOX = '//portal.sandbox.afterpay.com/afterpay.js',
 }
 
 enum SCRIPTS_US {
     PROD = '//portal.afterpay.com/afterpay-async.js',
-    SANDBOX = '//portal.sandbox.afterpay.com/afterpay-async.js',
+    SANDBOX = '//portal.sandbox.afterpay.com/afterpay.js',
 }
 
 /** Class responsible for loading the Afterpay SDK */

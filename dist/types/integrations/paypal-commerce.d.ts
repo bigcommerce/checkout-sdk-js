@@ -15,9 +15,10 @@ import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration
 import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalCommerceFastlaneUtils } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PayPalFastlaneUtils } from '@bigcommerce/checkout-sdk/paypal-utils';
+import { PayPalSdkScriptLoader } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -316,7 +317,7 @@ declare interface PayPalCommerceAlternativeMethodsPaymentOptions {
 declare class PayPalCommerceAlternativeMethodsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private paypalCommerceIntegrationService;
-    private paypalCommerceSdk;
+    private paypalSdkScriptLoader;
     private loadingIndicator;
     private pollingInterval;
     private maxPollingIntervalTime;
@@ -328,7 +329,7 @@ declare class PayPalCommerceAlternativeMethodsPaymentStrategy implements Payment
     private stopPolling;
     private isPollingEnabled;
     private paypalcommercealternativemethods?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalCommerceSdk: PayPalCommerceSdk, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
     initialize(options: PaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
@@ -659,8 +660,8 @@ declare interface PayPalCommerceCreditCardsPaymentInitializeOptions {
 declare class PayPalCommerceCreditCardsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private paypalCommerceIntegrationService;
-    private paypalCommerceSdk;
-    private paypalCommerceFastlaneUtils;
+    private paypalSdkScriptLoader;
+    private paypalFastlaneUtils;
     private executionPaymentData?;
     private isCreditCardForm?;
     private isCreditCardVaultedForm?;
@@ -672,7 +673,7 @@ declare class PayPalCommerceCreditCardsPaymentStrategy implements PaymentStrateg
     private hostedFormOptions?;
     private returnedOrderId?;
     private returnedVaultedToken?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalCommerceSdk: PayPalCommerceSdk, paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
     initialize(options: PaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
@@ -1030,9 +1031,9 @@ declare interface PayPalCommerceFastlaneCustomerInitializeOptions {
 
 declare class PayPalCommerceFastlaneCustomerStrategy implements CustomerStrategy {
     private paymentIntegrationService;
-    private paypalCommerceSdk;
-    private paypalCommerceFastlaneUtils;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceSdk: PayPalCommerceSdk, paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils);
+    private paypalSdkScriptLoader;
+    private paypalFastlaneUtils;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
     initialize(options: CustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void>;
@@ -1849,15 +1850,15 @@ declare interface PayPalUpdateOrderResponse {
 declare class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private paypalCommerceRequestSender;
-    private paypalCommerceSdk;
-    private paypalCommerceFastlaneUtils;
+    private paypalSdkScriptLoader;
+    private paypalFastlaneUtils;
     private paypalComponentMethods?;
     private paypalFastlaneSdk?;
     private threeDSVerificationMethod?;
     private paypalcommercefastlane?;
     private orderId?;
     private methodId?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceRequestSender: PayPalCommerceRequestSender, paypalCommerceSdk: PayPalCommerceSdk, paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceRequestSender: PayPalCommerceRequestSender, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
     /**
      *
      * Default methods
