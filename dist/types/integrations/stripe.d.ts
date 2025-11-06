@@ -34,6 +34,7 @@ declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
     private _onComplete?;
     private _loadingIndicatorContainer?;
     private _currencyCode?;
+    private _captureMethod?;
     constructor(paymentIntegrationService: PaymentIntegrationService, scriptLoader: StripeScriptLoader, stripeIntegrationService: StripeIntegrationService, loadingIndicator: LoadingIndicator);
     initialize(options: CheckoutButtonInitializeOptions & WithStripeOCSCustomerInitializeOptions): Promise<void>;
     signIn(): Promise<void>;

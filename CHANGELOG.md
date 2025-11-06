@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.828.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.827.0...v1.828.0) (2025-11-06)
+
+
+### Features
+
+* **payment:** Stripe Link V2 cart page button tests ([d56d33a](https://github.com/bigcommerce/checkout-sdk-js/commit/d56d33a36ad54afa0633e122262a6eed8b6b9ad9))
+
 ## [1.827.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.826.0...v1.827.0) (2025-11-05)
 
 
