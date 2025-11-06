@@ -105,8 +105,10 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const { isHostedCheckoutEnabled, isAppSwitchEnabled } =
             paymentMethod.initializationData || {};
 
+        console.log('IS BUY NOW FLOW', isBuyNowFlow);
+
         const defaultCallbacks = {
-            ...(!isBuyNowFlow &&
+            ...(
                 this.isPaypalCommerceAppSwitchEnabled(methodId) && {
                     appSwitchWhenAvailable: true,
                 }),
