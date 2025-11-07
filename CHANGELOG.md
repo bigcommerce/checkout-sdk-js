@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.828.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.828.0...v1.828.1) (2025-11-07)
+
+
+### Bug Fixes
+
+* **payment:** PI-4517 skip messages from wrong sources for the Access Worldpay ([#3065](https://github.com/bigcommerce/checkout-sdk-js/issues/3065)) ([b4a9a4a](https://github.com/bigcommerce/checkout-sdk-js/commit/b4a9a4a6aebfeae3517deb228c5dbf1926fdfbca))
+
 ## [1.828.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.827.0...v1.828.0) (2025-11-06)
 
 
