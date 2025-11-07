@@ -73,12 +73,7 @@ describe('WorldpayAccessPaymetStrategy', () => {
             merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
         );
 
-        HTMLFormElement.prototype.submit = () => {
-            window.parent.postMessage(
-                '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
-                '*',
-            );
-        };
+        HTMLFormElement.prototype.submit = jest.fn();
     });
 
     afterEach(() => {
@@ -297,14 +292,20 @@ describe('WorldpayAccessPaymetStrategy', () => {
             );
 
             jest.spyOn(paymentIntegrationService, 'submitPayment')
-                .mockImplementationOnce(() => {
-                    throw errorResponseAdditionalAction;
-                })
-                .mockImplementationOnce(() => {
-                    throw threeDSecureRequiredErrorResponse;
-                });
+                .mockImplementationOnce(() => Promise.reject(errorResponseAdditionalAction))
+                .mockImplementationOnce(() => Promise.reject(threeDSecureRequiredErrorResponse));
 
             await strategy.initialize(initializeOptions);
+
+            // Mock the message event that would be sent after iframe is created
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
+                    }),
+                );
+            }, 10);
 
             const promise = strategy.execute(payload);
 
@@ -327,6 +328,16 @@ describe('WorldpayAccessPaymetStrategy', () => {
             jest.spyOn(paymentIntegrationService, 'submitPayment')
                 .mockImplementationOnce(() => Promise.reject(errorResponseAdditionalAction))
                 .mockImplementationOnce(() => Promise.reject(threeDSecureRequiredErrorResponse));
+
+            // Mock the message event that would trigger the 3DS flow
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
+                    }),
+                );
+            }, 10);
 
             await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
         });
@@ -383,6 +394,16 @@ describe('WorldpayAccessPaymetStrategy', () => {
 
             await strategy.initialize(initializeOptions);
 
+            // Mock the message event that would trigger the 3DS flow
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
+                    }),
+                );
+            }, 10);
+
             await expect(strategy.execute(payload)).rejects.toThrow(Error);
             expect(onLoad).toHaveBeenCalledWith(iframe, expect.any(Function));
         });
@@ -402,6 +423,16 @@ describe('WorldpayAccessPaymetStrategy', () => {
                 .mockImplementationOnce(() => Promise.reject(threeDSecureRequiredErrorResponse));
 
             await strategy.initialize(initializeOptions);
+
+            // Mock the message event that would trigger the 3DS flow
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
+                    }),
+                );
+            }, 10);
 
             await expect(strategy.execute(payload)).rejects.toThrow(Error);
         });
@@ -423,6 +454,16 @@ describe('WorldpayAccessPaymetStrategy', () => {
                 .mockImplementationOnce(() => Promise.reject(threeDSecureRequiredErrorResponse));
 
             await strategy.initialize(initializeOptions);
+
+            // Mock the message event that would trigger the 3DS flow
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
+                    }),
+                );
+            }, 10);
 
             await expect(strategy.execute(payload)).rejects.toThrow(Error);
         });
@@ -446,12 +487,25 @@ describe('WorldpayAccessPaymetStrategy', () => {
         });
 
         it('submit with collection data required', async () => {
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
-                Promise.reject(errorResponseAdditionalAction),
-            );
+            jest.spyOn(paymentIntegrationService, 'submitPayment')
+                .mockImplementationOnce(() => Promise.reject(errorResponseAdditionalAction))
+                .mockImplementationOnce(() => Promise.resolve({} as any));
 
             await strategy.initialize(initializeOptions);
-            await strategy.execute(payload);
+
+            // Execute the strategy and mock the message event after a short delay
+            const promise = strategy.execute(payload);
+
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
+                    }),
+                );
+            }, 10);
+
+            await promise;
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -463,41 +517,131 @@ describe('WorldpayAccessPaymetStrategy', () => {
         });
 
         it("stop event execution when the event message string isn't a json", async () => {
-            HTMLFormElement.prototype.submit = () =>
-                window.parent.postMessage('invalid string', '*');
-
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
                 Promise.reject(errorResponseAdditionalAction),
             );
 
             await strategy.initialize(initializeOptions);
 
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+            // Execute the strategy and mock the invalid message event after a short delay
+            const promise = strategy.execute(payload);
+
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: 'invalid string',
+                    }),
+                );
+            }, 10);
+
+            await expect(promise).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
         });
 
         it("stop event execution when the event message string isn't a valid json with SessionId", async () => {
-            HTMLFormElement.prototype.submit = () =>
-                window.parent.postMessage('{"MessageType":"profile.completed","Status":true}', '*');
-
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
                 Promise.reject(errorResponseAdditionalAction),
             );
 
             await strategy.initialize(initializeOptions);
+
+            // Execute the strategy and mock the invalid message event without SessionId after a short delay
+            const promise = strategy.execute(payload);
+
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","Status":true}',
+                    }),
+                );
+            }, 10);
+
+            await expect(promise).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+        });
+
+        it("stop event execution when the event message string isn't a valid json with Status", async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
+                Promise.reject(errorResponseAdditionalAction),
+            );
+
+            await strategy.initialize(initializeOptions);
+
+            // Execute the strategy and mock the invalid message event without Status after a short delay
+            const promise = strategy.execute(payload);
+
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"token"}',
+                    }),
+                );
+            }, 10);
+
+            await expect(promise).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+        });
+
+        it("stop event execution when the event message isn't string", async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
+                Promise.reject(errorResponseAdditionalAction),
+            );
+
+            await strategy.initialize(initializeOptions);
+
+            // Mock the non-string message event
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: {},
+                    }),
+                );
+            }, 10);
 
             await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
         });
 
-        it("stop event execution when the event message isn't string", async () => {
-            HTMLFormElement.prototype.submit = () => window.parent.postMessage({}, '*');
-
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
-                Promise.reject(errorResponseAdditionalAction),
-            );
+        it('ignores message events from wrong origin', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment')
+                .mockImplementationOnce(() => Promise.reject(errorResponseAdditionalAction))
+                .mockImplementationOnce(() => Promise.resolve({} as any));
 
             await strategy.initialize(initializeOptions);
 
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+            // Execute the strategy and mock message events from wrong and correct origins
+            const promise = strategy.execute(payload);
+
+            // First send a message from wrong origin (should be ignored)
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://malicious-site.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"wrong_token","Status":true}',
+                    }),
+                );
+            }, 10);
+
+            // Then send a message from correct origin (should be processed)
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new MessageEvent('message', {
+                        origin: 'https://centinelapistag.cardinalcommerce.com',
+                        data: '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
+                    }),
+                );
+            }, 20);
+
+            await promise;
+
+            // Verify the payment was submitted with the token from the correct origin event
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: expect.objectContaining({
+                        threeDSecure: expect.objectContaining({ token: 'token' }),
+                    }),
+                }),
+            );
         });
 
         it("throws error when hidden iframe isn't created", async () => {
