@@ -70,16 +70,12 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
         }
 
         return new Promise((resolve, reject) => {
-            const messageEventListener = async (event: MessageEvent) => {
-                if (event.origin !== 'https://centinelapistag.cardinalcommerce.com') {
-                    return;
-                }
-
+            const messageEvent = async (event: MessageEvent) => {
                 if (typeof event.data !== 'string' || !this._isValidJsonWithSessionId(event.data)) {
                     return reject(new Error(PAYMENT_CANNOT_CONTINUE));
                 }
 
-                window.removeEventListener('message', messageEventListener);
+                window.removeEventListener('message', messageEvent);
                 // eslint-disable-next-line @typescript-eslint/no-use-before-define
                 iframeHidden.remove();
 
@@ -116,14 +112,14 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
                 }
             };
 
-            window.addEventListener('message', messageEventListener);
+            window.addEventListener('message', messageEvent);
 
             let iframeHidden: HTMLIFrameElement;
 
             try {
                 iframeHidden = this._createHiddenIframe(error.body);
             } catch (e) {
-                window.removeEventListener('message', messageEventListener);
+                window.removeEventListener('message', messageEvent);
                 throw new Error(PAYMENT_CANNOT_CONTINUE);
             }
         });
@@ -248,7 +244,7 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
         try {
             const data = JSON.parse(str);
 
-            if (data.SessionId && data.Status) {
+            if (data.SessionId) {
                 return true;
             }
 
