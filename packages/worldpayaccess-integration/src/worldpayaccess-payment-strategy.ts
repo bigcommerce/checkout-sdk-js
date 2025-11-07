@@ -71,7 +71,7 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
 
         return new Promise((resolve, reject) => {
             const messageEventListener = async (event: MessageEvent) => {
-                if (event.origin !== 'https://centinelapistag.cardinalcommerce.com') {
+                if (event.origin.indexOf('cardinalcommerce.com') === -1) {
                     return;
                 }
 
