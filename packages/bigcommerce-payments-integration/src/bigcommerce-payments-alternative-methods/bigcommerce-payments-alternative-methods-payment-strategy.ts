@@ -157,12 +157,23 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
 
         if (methodId === 'klarna') {
             try {
+                const orderId = await this.bigCommercePaymentsIntegrationService.createOrder(
+                    'bigcommerce_payments_apms',
+                    {
+                        gatewayId: 'bigcommerce_payments_apms',
+                        methodId: 'klarna',
+                    },
+                );
+
                 const paymentData = {
                     formattedPayload: {
                         vault_payment_instrument: null,
                         set_as_default_stored_instrument: null,
                         device_info: null,
                         method_id: methodId,
+                        paypal_account: {
+                            order_id: orderId,
+                        },
                     },
                 };
 
