@@ -97,6 +97,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         isBuyNowFlow?: boolean,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
+        this.handleClick(buyNowInitializeOptions);
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -108,21 +109,22 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         console.log('IS BUY NOW FLOW', isBuyNowFlow);
 
         const defaultCallbacks = {
-            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
-                appSwitchWhenAvailable: true,
-            }),
+            ...(
+                this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+                    appSwitchWhenAvailable: true,
+                }),
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };
 
         const buyNowFlowCallbacks = {
-            onClick: () => this.handleClick(buyNowInitializeOptions),
+            // onClick: () => this.handleClick(buyNowInitializeOptions),
             onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isBuyNowFlow && !isAppSwitchEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>

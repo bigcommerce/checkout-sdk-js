@@ -468,6 +468,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                     },
                 },
             });
+
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {

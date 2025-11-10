@@ -60,6 +60,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
     };
 
     const storeConfig = getConfig().storeConfig;
+
     beforeEach(() => {
         eventEmitter = new EventEmitter();
 
