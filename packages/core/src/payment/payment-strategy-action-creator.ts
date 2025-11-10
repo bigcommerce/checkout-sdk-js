@@ -6,10 +6,9 @@ import {
     PaymentIntegrationService,
     PaymentStrategy as PaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
-import { ErrorLogger, throwErrorAction } from '../common/error';
+import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import {
@@ -19,8 +18,7 @@ import {
     OrderRequestBody,
 } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
-import { matchExistingIntegrations, registerIntegrations } from '../payment-integration';
-import { StrategyFactory } from '../payment-integration/register-integrations';
+import { registerIntegrations } from '../payment-integration';
 import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
 
 import PaymentMethod from './payment-method';
@@ -52,7 +50,6 @@ export default class PaymentStrategyActionCreator {
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentIntegrationService: PaymentIntegrationService,
-        private _errorLogger: ErrorLogger,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -134,7 +131,12 @@ export default class PaymentStrategyActionCreator {
                         throw new OrderFinalizationNotRequiredError();
                     }
 
-                    const mismatchError = this._registerIntegrations(state, method, integrations);
+                    registerIntegrations(
+                        this._strategyRegistryV2,
+                        integrations ?? [],
+                        this._paymentIntegrationService,
+                    );
+
                     let strategy: PaymentStrategy | PaymentStrategyV2;
 
                     try {
@@ -148,10 +150,6 @@ export default class PaymentStrategyActionCreator {
                         methodId: method.id,
                         gatewayId: method.gateway,
                     });
-
-                    if (mismatchError) {
-                        this._errorLogger.log(mismatchError);
-                    }
 
                     return createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, {
                         methodId: method.id,
@@ -172,7 +170,7 @@ export default class PaymentStrategyActionCreator {
     initialize(
         options: PaymentInitializeOptions,
     ): ThunkAction<PaymentStrategyInitializeAction, InternalCheckoutSelectors> {
-        const { methodId, gatewayId, integrations } = options;
+        const { methodId, gatewayId } = options;
 
         return (store) =>
             defer(() => {
@@ -187,11 +185,11 @@ export default class PaymentStrategyActionCreator {
                     return empty();
                 }
 
-                const mismatchError = this._registerIntegrations(state, method, integrations);
-
-                if (mismatchError) {
-                    this._errorLogger.log(mismatchError);
-                }
+                registerIntegrations(
+                    this._strategyRegistryV2,
+                    options.integrations ?? [],
+                    this._paymentIntegrationService,
+                );
 
                 const strategy = this._getStrategy(method);
 
@@ -280,50 +278,6 @@ export default class PaymentStrategyActionCreator {
         options?: PaymentRequestOptions,
     ): Observable<PaymentStrategyWidgetAction> {
         return this._paymentStrategyWidgetActionCreator.widgetInteraction(method, options);
-    }
-
-    private _registerIntegrations(
-        state: InternalCheckoutSelectors,
-        method: PaymentMethod,
-        integrations?: Array<StrategyFactory<PaymentStrategyV2>>,
-    ): Error | undefined {
-        const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
-        const experimentEnabled = isExperimentEnabled(
-            features,
-            'CHECKOUT-9450.lazy_load_payment_strategies',
-            false,
-        );
-
-        let hasV1Strategy = true;
-
-        try {
-            this._strategyRegistry.getByMethod(method);
-        } catch {
-            hasV1Strategy = false;
-        }
-
-        if (experimentEnabled && !hasV1Strategy) {
-            const resolveId = {
-                id: method.id,
-                gateway: method.gateway,
-                type: method.type,
-            };
-
-            const error = matchExistingIntegrations(
-                this._strategyRegistryV2,
-                integrations ?? [],
-                resolveId,
-                this._paymentIntegrationService,
-            );
-
-            registerIntegrations(
-                this._strategyRegistryV2,
-                integrations ?? [],
-                this._paymentIntegrationService,
-            );
-
-            return error;
-        }
     }
 
     private _getStrategy(method: PaymentMethod): PaymentStrategy | PaymentStrategyV2 {
