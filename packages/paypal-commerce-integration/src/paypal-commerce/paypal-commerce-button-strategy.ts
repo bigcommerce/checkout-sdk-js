@@ -97,6 +97,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         isBuyNowFlow?: boolean,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
+
         this.handleClick(buyNowInitializeOptions);
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
@@ -109,10 +110,9 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         console.log('IS BUY NOW FLOW', isBuyNowFlow);
 
         const defaultCallbacks = {
-            ...(
-                this.isPaypalCommerceAppSwitchEnabled(methodId) && {
-                    appSwitchWhenAvailable: true,
-                }),
+            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+                appSwitchWhenAvailable: true,
+            }),
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
@@ -124,12 +124,13 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isBuyNowFlow && !isAppSwitchEnabled && {
-                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                    this.onShippingAddressChange(data),
-                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                    this.onShippingOptionsChange(data),
-            }),
+            ...(!isBuyNowFlow &&
+                !isAppSwitchEnabled && {
+                    onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                        this.onShippingAddressChange(data),
+                    onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                        this.onShippingOptionsChange(data),
+                }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
