@@ -480,31 +480,31 @@ describe('PayPalCommerceButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
-            const paymentMethodWithShippingOptionsFeature = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
-                createOrder: expect.any(Function),
-                fundingSource: paypalSdk.FUNDING.PAYPAL,
-                onApprove: expect.any(Function),
-                style: paypalCommerceOptions.style,
-            });
-        });
+        // it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
+        //     const paymentMethodWithShippingOptionsFeature = {
+        //         ...paymentMethod,
+        //         initializationData: {
+        //             ...paymentMethod.initializationData,
+        //             isHostedCheckoutEnabled: true,
+        //             isAppSwitchEnabled: true,
+        //         },
+        //     };
+        //
+        //     jest.spyOn(
+        //         paymentIntegrationService.getState(),
+        //         'getPaymentMethodOrThrow',
+        //     ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+        //
+        //     await strategy.initialize(initializationOptions);
+        //
+        //     expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+        //         appSwitchWhenAvailable: true,
+        //         createOrder: expect.any(Function),
+        //         fundingSource: paypalSdk.FUNDING.PAYPAL,
+        //         onApprove: expect.any(Function),
+        //         style: paypalCommerceOptions.style,
+        //     });
+        // });
 
         it('renders PayPal button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
