@@ -6,10 +6,9 @@ import {
     PaymentIntegrationService,
     PaymentStrategy as PaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
-import { ErrorLogger, throwErrorAction } from '../common/error';
+import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import {
@@ -19,7 +18,7 @@ import {
     OrderRequestBody,
 } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
-import { matchExistingIntegrations, registerIntegrations } from '../payment-integration';
+import { registerIntegrations } from '../payment-integration';
 import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
 
 import PaymentMethod from './payment-method';
@@ -47,7 +46,6 @@ export default class PaymentStrategyActionCreator {
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentIntegrationService: PaymentIntegrationService,
-        private _errorLogger: ErrorLogger,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -169,40 +167,11 @@ export default class PaymentStrategyActionCreator {
                     return empty();
                 }
 
-                const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
-                const experimentEnabled = isExperimentEnabled(
-                    features,
-                    'CHECKOUT-9450.lazy_load_payment_strategies',
-                    false,
+                registerIntegrations(
+                    this._strategyRegistryV2,
+                    options.integrations ?? [],
+                    this._paymentIntegrationService,
                 );
-
-                let hasV1Strategy = false;
-
-                try {
-                    this._strategyRegistry.getByMethod(method);
-                } catch {
-                    hasV1Strategy = true;
-                }
-
-                if (experimentEnabled && hasV1Strategy) {
-                    const resolveId = {
-                        id: method.id,
-                        gateway: method.gateway,
-                        type: method.type,
-                    };
-
-                    matchExistingIntegrations(
-                        this._strategyRegistryV2,
-                        options.integrations ?? [],
-                        resolveId,
-                        this._errorLogger,
-                    );
-                    registerIntegrations(
-                        this._strategyRegistryV2,
-                        options.integrations ?? [],
-                        this._paymentIntegrationService,
-                    );
-                }
 
                 const strategy = this._getStrategy(method);
 
