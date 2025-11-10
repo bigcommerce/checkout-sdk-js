@@ -70,12 +70,16 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
         }
 
         return new Promise((resolve, reject) => {
-            const messageEvent = async (event: MessageEvent) => {
+            const messageEventListener = async (event: MessageEvent) => {
+                if (event.origin.indexOf('cardinalcommerce.com') === -1) {
+                    return;
+                }
+
                 if (typeof event.data !== 'string' || !this._isValidJsonWithSessionId(event.data)) {
                     return reject(new Error(PAYMENT_CANNOT_CONTINUE));
                 }
 
-                window.removeEventListener('message', messageEvent);
+                window.removeEventListener('message', messageEventListener);
                 // eslint-disable-next-line @typescript-eslint/no-use-before-define
                 iframeHidden.remove();
 
@@ -112,14 +116,14 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
                 }
             };
 
-            window.addEventListener('message', messageEvent);
+            window.addEventListener('message', messageEventListener);
 
             let iframeHidden: HTMLIFrameElement;
 
             try {
                 iframeHidden = this._createHiddenIframe(error.body);
             } catch (e) {
-                window.removeEventListener('message', messageEvent);
+                window.removeEventListener('message', messageEventListener);
                 throw new Error(PAYMENT_CANNOT_CONTINUE);
             }
         });
@@ -244,7 +248,7 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
         try {
             const data = JSON.parse(str);
 
-            if (data.SessionId) {
+            if (data.SessionId && data.Status) {
                 return true;
             }
 
