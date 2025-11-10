@@ -104,8 +104,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled } =
-            paymentMethod.initializationData || {};
+        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         console.log('IS BUY NOW FLOW', isBuyNowFlow);
 
