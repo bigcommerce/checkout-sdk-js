@@ -626,13 +626,3 @@ export interface PayPalCreateOrderCardFieldsResponse {
     orderId: string;
     setupToken?: string;
 }
-
-export interface RedirectError {
-    body: {
-        additional_action_required: {
-            data: {
-                redirect_url: string;
-            };
-        };
-    };
-}

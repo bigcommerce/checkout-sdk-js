@@ -1,6 +1,6 @@
+import { isRedirectError } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     InvalidArgumentError,
-    isRequestError,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
@@ -11,7 +11,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
-import { RedirectError } from '../bigcommerce-payments-types';
 
 import BigCommercePaymentsKlarnaPaymentInitializeOptions, {
     WithBigCommercePaymentsKlarnaPaymentInitializeOptions,
@@ -84,7 +83,7 @@ export default class BigCommercePaymentsKlarnaPaymentStrategy implements Payment
                 paymentData,
             });
         } catch (error: unknown) {
-            if (this.isRedirectError(error)) {
+            if (isRedirectError(error)) {
                 const redirectUrl = error.body.additional_action_required.data.redirect_url;
 
                 return new Promise((_, reject) => {
@@ -114,9 +113,5 @@ export default class BigCommercePaymentsKlarnaPaymentStrategy implements Payment
         if (onError && typeof onError === 'function') {
             onError(error);
         }
-    }
-
-    private isRedirectError(error: unknown): error is RedirectError {
-        return isRequestError(error) && error.body.additional_action_required?.data.redirect_url;
     }
 }
