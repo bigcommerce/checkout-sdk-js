@@ -4,8 +4,8 @@ import {
     InvalidArgumentError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     ApproveCallbackPayload,
     PayPalBuyNowInitializeOptions,
@@ -21,7 +21,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
 {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
     ) {}
 
     async initialize(
@@ -89,7 +89,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
             ? providedCurrencyCode
             : this.paymentIntegrationService.getState().getCartOrThrow().currency.code;
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
         this.renderButton(containerId, methodId, paypalcommercealternativemethods);
     }
@@ -106,7 +106,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
         const { apm, buyNowInitializeOptions, style, onEligibilityFailure } =
             paypalcommercealternativemethods;
 
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const isAvailableFundingSource = Object.values(paypalSdk.FUNDING).includes(apm);
 
         if (!isAvailableFundingSource) {
@@ -117,11 +117,9 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
 
         const defaultCallbacks = {
             createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder(
-                    'paypalcommercealternativemethod',
-                ),
+                this.paypalIntegrationService.createOrder('paypalcommercealternativemethod'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+                this.paypalIntegrationService.tokenizePayment(methodId, orderID),
         };
 
         const buyNowFlowCallbacks = {
@@ -131,7 +129,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
             fundingSource: apm,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(style),
+            style: this.paypalIntegrationService.getValidButtonStyle(style),
             ...defaultCallbacks,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
         };
@@ -143,7 +141,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {
-            this.paypalCommerceIntegrationService.removeElement(containerId);
+            this.paypalIntegrationService.removeElement(containerId);
         }
     }
 
@@ -151,7 +149,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
         buyNowInitializeOptions?: PayPalBuyNowInitializeOptions,
     ): Promise<void> {
         if (buyNowInitializeOptions) {
-            const buyNowCart = await this.paypalCommerceIntegrationService.createBuyNowCartOrThrow(
+            const buyNowCart = await this.paypalIntegrationService.createBuyNowCartOrThrow(
                 buyNowInitializeOptions,
             );
 
