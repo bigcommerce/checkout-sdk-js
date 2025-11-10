@@ -454,6 +454,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     },
                 },
             });
+
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
@@ -830,6 +831,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     },
                 },
             });
+
             const address = {
                 firstName: '',
                 lastName: '',
@@ -898,6 +900,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     },
                 },
             });
+
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call

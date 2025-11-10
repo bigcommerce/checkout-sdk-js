@@ -96,6 +96,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
+
         console.log('RENDER');
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
@@ -107,8 +108,8 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         const defaultCallbacks = {
             ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
-                    appSwitchWhenAvailable: true,
-                }),
+                appSwitchWhenAvailable: true,
+            }),
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
