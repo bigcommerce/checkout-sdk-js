@@ -70,6 +70,14 @@ export { WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions } fro
 
 /**
  *
+ * BigCommercePayments Klarna methods strategies
+ *
+ */
+export { default as createBigCommercePaymentsKlarnaPaymentStrategy } from './bigcommerce-payments-klarna/create-bigcommerce-payments-klarna-payment-strategy';
+export { WithBigCommercePaymentsKlarnaPaymentInitializeOptions } from './bigcommerce-payments-klarna/bigcomemrce-payments-klarna-payment-initialize-options';
+
+/**
+ *
  * BigCommercePayments Venmo strategies
  *
  */

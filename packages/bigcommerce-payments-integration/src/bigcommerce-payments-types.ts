@@ -606,6 +606,8 @@ export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedI
     metadataId?: string;
     setupToken?: boolean;
     fastlaneToken?: string;
+    methodId?: string;
+    gatewayId?: string;
 }
 
 export enum PayPalOrderStatus {
@@ -623,4 +625,14 @@ export interface PayPalOrderStatusData {
 export interface PayPalCreateOrderCardFieldsResponse {
     orderId: string;
     setupToken?: string;
+}
+
+export interface RedirectError {
+    body: {
+        additional_action_required: {
+            data: {
+                redirect_url: string;
+            };
+        };
+    };
 }
