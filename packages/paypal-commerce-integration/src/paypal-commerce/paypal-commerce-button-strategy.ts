@@ -83,7 +83,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, paypalcommerce, isBuyNowFlow);
+        this.renderButton(containerId, methodId, paypalcommerce);
     }
 
     deinitialize(): Promise<void> {
