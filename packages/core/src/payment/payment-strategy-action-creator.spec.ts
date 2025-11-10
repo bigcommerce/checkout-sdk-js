@@ -32,7 +32,6 @@ import {
     getCheckoutStoreState,
     getCheckoutStoreStateWithOrder,
 } from '../checkout/checkouts.mock';
-import { ErrorLogger } from '../common/error';
 import { MissingDataError } from '../common/error/errors';
 import { ResolveIdRegistry } from '../common/registry';
 import { getCustomerState } from '../customer/customers.mock';
@@ -79,7 +78,6 @@ describe('PaymentStrategyActionCreator', () => {
     let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let actionCreator: PaymentStrategyActionCreator;
     let paymentIntegrationService: PaymentIntegrationService;
-    let errorLogger: ErrorLogger;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
@@ -90,9 +88,6 @@ describe('PaymentStrategyActionCreator', () => {
         paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
             createSpamProtection(createScriptLoader()),
         );
-        errorLogger = {
-            log: jest.fn(),
-        };
         registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
@@ -131,7 +126,6 @@ describe('PaymentStrategyActionCreator', () => {
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
-            errorLogger,
         );
 
         jest.spyOn(registry, 'getByMethod').mockReturnValue(strategy);
@@ -289,7 +283,6 @@ describe('PaymentStrategyActionCreator', () => {
                     orderActionCreator,
                     spamProtectionActionCreator,
                     paymentIntegrationService,
-                    errorLogger,
                 );
             });
 
@@ -365,53 +358,6 @@ describe('PaymentStrategyActionCreator', () => {
                     gatewayId: method.gateway,
                     integrations: [resolvableFactory],
                 });
-            });
-
-            it('logs message if provided integration strategy does not match with existing strategy', async () => {
-                const method = getPaymentMethod();
-
-                const existingFactory = toResolvableModule(mockStrategyFactory, [
-                    {
-                        id: method.id,
-                        gateway: method.gateway,
-                        type: method.type,
-                    },
-                ]);
-
-                const newFactory = toResolvableModule(jest.fn(), [
-                    {
-                        id: 'different-id',
-                        gateway: method.gateway,
-                        type: method.type,
-                    },
-                ]);
-
-                jest.spyOn(registryV2, 'getFactory').mockReturnValue(existingFactory as any);
-                jest.spyOn(registryV2, 'get').mockReturnValue(mockStrategy);
-                jest.spyOn(registry, 'getByMethod').mockImplementation(() => {
-                    throw new Error('Strategy not found in registry v1');
-                });
-
-                const captureMessageSpy = jest.fn();
-                const errorLoggerMock = { log: captureMessageSpy };
-                const actionCreatorWithLogger = new PaymentStrategyActionCreator(
-                    registry,
-                    registryV2,
-                    orderActionCreator,
-                    spamProtectionActionCreator,
-                    paymentIntegrationService,
-                    errorLoggerMock,
-                );
-
-                await from(
-                    actionCreatorWithLogger.initialize({
-                        methodId: method.id,
-                        gatewayId: method.gateway,
-                        integrations: [newFactory],
-                    })(store),
-                ).toPromise();
-
-                expect(captureMessageSpy).toHaveBeenCalled();
             });
         });
     });
@@ -646,7 +592,6 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
                 paymentIntegrationService,
-                errorLogger,
             );
 
             try {
@@ -676,7 +621,6 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
                 paymentIntegrationService,
-                errorLogger,
             );
             const payload = { ...getOrderRequestBody(), useStoreCredit: true };
 
@@ -787,7 +731,6 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
                 paymentIntegrationService,
-                errorLogger,
             );
             const strategyV2 = new CreditCardPaymentStrategyV2(
                 createPaymentIntegrationService(store),
@@ -821,7 +764,6 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
                 paymentIntegrationService,
-                errorLogger,
             );
 
             try {
