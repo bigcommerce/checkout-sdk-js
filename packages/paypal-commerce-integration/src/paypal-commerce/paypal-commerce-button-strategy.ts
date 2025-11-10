@@ -90,14 +90,15 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         return Promise.resolve();
     }
 
-    private renderButton(
+    private async renderButton(
         containerId: string,
         methodId: string,
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
-    ): void {
+    ): Promise<void> {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
 
         console.log('RENDER');
+        await this.handleClick(buyNowInitializeOptions);
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -116,7 +117,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         };
 
         const buyNowFlowCallbacks = {
-            onClick: () => this.handleClick(buyNowInitializeOptions),
+            // onClick: () => this.handleClick(buyNowInitializeOptions),
             onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
