@@ -90,11 +90,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         return Promise.resolve();
     }
 
-    private async renderButton(
+    private renderButton(
         containerId: string,
         methodId: string,
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
-    ): Promise<void> {
+    ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
 
         console.log('RENDER');
