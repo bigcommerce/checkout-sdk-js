@@ -104,7 +104,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, isAppSwitchEnabled } =
+        const { isHostedCheckoutEnabled } =
             paymentMethod.initializationData || {};
 
         console.log('IS BUY NOW FLOW', isBuyNowFlow);
@@ -124,13 +124,10 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isBuyNowFlow &&
-                !isAppSwitchEnabled && {
-                    onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                        this.onShippingAddressChange(data),
-                    onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                        this.onShippingOptionsChange(data),
-                }),
+            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                this.onShippingAddressChange(data),
+            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                this.onShippingOptionsChange(data),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
