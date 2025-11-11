@@ -18,7 +18,7 @@ import {
 } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { createDataStoreProjection, DataStoreProjection } from '../common/data-store';
-import { ErrorActionCreator } from '../common/error';
+import { ErrorActionCreator, ErrorLogger } from '../common/error';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ResolveIdRegistry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
@@ -377,10 +377,13 @@ describe('CheckoutService', () => {
             checkoutRequestSender,
         );
 
+        const errorLogger: ErrorLogger = { log: jest.fn() };
+
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
             createCustomerStrategyRegistry(store, requestSender, locale),
             customerRegistryV2,
             paymentIntegrationService,
+            errorLogger,
         );
 
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
@@ -400,6 +403,7 @@ describe('CheckoutService', () => {
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
+            errorLogger,
         );
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
