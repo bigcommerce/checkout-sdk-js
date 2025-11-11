@@ -140,12 +140,16 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
+        paymentStrategyFactories,
+        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
+        // process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(
         paymentIntegrationService,
-        process.env.ESSENTIAL_BUILD ? {} : customerStrategyFactories,
+        customerStrategyFactories,
+        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
+        // process.env.ESSENTIAL_BUILD ? {} : customerStrategyFactories,
     );
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(requestSender),
