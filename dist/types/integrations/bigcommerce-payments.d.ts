@@ -1096,6 +1096,50 @@ declare enum BigCommercePaymentsIntent {
 }
 
 /**
+ * A set of options that are required to initialize the BigCommercePayments payment
+ * method making payment with Klarna.
+ *
+ *
+ * Also, BCP (also known as BigCommercePayments) requires specific options to initialize the PayPal Klarna flow
+ *
+ * ```js
+ * service.initializePayment({
+ *     gatewayId: 'bigcommerce_payments_apms',
+ *     methodId: 'klarna',
+ *     bigcommerce_payments_apms: {
+ * // Callback for handling error that occurs when a buyer approves payment
+ *         onError: (error) => {
+ *         // Example function
+ *             this.handleError(
+ *                {
+ *                   payment: { methodId: 'bigcommerce_payments_apms', }
+ *               }
+ *            );
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsKlarnaPaymentInitializeOptions {
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error | unknown): void;
+}
+
+declare class BigCommercePaymentsKlarnaPaymentStrategy implements PaymentStrategy {
+    private paymentIntegrationService;
+    private bigCommercePaymentsIntegrationService;
+    private bigCommercePaymentsAlternativeMethods?;
+    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService);
+    initialize(options: PaymentInitializeOptions & WithBigCommercePaymentsKlarnaPaymentInitializeOptions): Promise<void>;
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
+    finalize(): Promise<void>;
+    deinitialize(): Promise<void>;
+    private handleError;
+}
+
+/**
  *
  * BigCommercePayments Messages
  */
@@ -1843,6 +1887,8 @@ declare interface PayPalCreateOrderRequestBody extends HostedInstrument, Vaulted
     metadataId?: string;
     setupToken?: boolean;
     fastlaneToken?: string;
+    methodId?: string;
+    gatewayId?: string;
 }
 
 declare type PayPalLegal = (params: {
@@ -2009,6 +2055,10 @@ declare interface WithBigCommercePaymentsFastlanePaymentInitializeOptions {
     bigcommerce_payments_fastlane?: BigCommercePaymentsFastlanePaymentInitializeOptions;
 }
 
+declare interface WithBigCommercePaymentsKlarnaPaymentInitializeOptions {
+    bigcommerce_payments_apms?: BigCommercePaymentsKlarnaPaymentInitializeOptions;
+}
+
 declare interface WithBigCommercePaymentsPayLaterButtonInitializeOptions {
     bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterButtonInitializeOptions;
 }
@@ -2066,6 +2116,11 @@ export declare const createBigCommercePaymentsFastlaneCustomerStrategy: import("
 }>;
 
 export declare const createBigCommercePaymentsFastlanePaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsFastlanePaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createBigCommercePaymentsKlarnaPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsKlarnaPaymentStrategy>, {
+    gateway: string;
     id: string;
 }>;
 

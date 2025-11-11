@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.830.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.829.3...v1.830.0) (2025-11-11)
+
+
+### Features
+
+* **payment:** PAYPAL-6033 add bcp klarna payment strategy ([eb677c9](https://github.com/bigcommerce/checkout-sdk-js/commit/eb677c91b92d9e42529f61c7a4dfbf42da42bdc4))
+
+
+### Code Refactoring
+
+* **payment:** move is redirect error to utils ([2f9c365](https://github.com/bigcommerce/checkout-sdk-js/commit/2f9c36546e61dad40fa65c8d81423e33515228a8))
+
 ### [1.829.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.829.2...v1.829.3) (2025-11-11)
 
 ### [1.829.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.829.1...v1.829.2) (2025-11-10)
