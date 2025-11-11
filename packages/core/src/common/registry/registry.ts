@@ -7,7 +7,11 @@ export default class Registry<T, K extends string = string> {
     private _instances: { [key: string]: T };
     private _defaultToken: string;
     private _useFallback: string | boolean;
-    private _tokenResolver: (token: string, registeredTokens: string[]) => string | undefined;
+    private _tokenResolver: (
+        token: string,
+        registeredTokens: string[],
+        exactMatch?: boolean,
+    ) => string | undefined;
 
     constructor(options?: RegistryOptions) {
         this._factories = {};
@@ -32,8 +36,8 @@ export default class Registry<T, K extends string = string> {
         }
     }
 
-    getFactory(token: string): Factory<T> | undefined {
-        const resolvedToken = this._tokenResolver(token, Object.keys(this._factories));
+    getFactory(token: string, exactMatch?: boolean): Factory<T> | undefined {
+        const resolvedToken = this._tokenResolver(token, Object.keys(this._factories), exactMatch);
         const factory = resolvedToken ? this._factories[resolvedToken] : undefined;
 
         return factory;

@@ -10,6 +10,7 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
     constructor(private _useFallback = false) {
         this._registry = new Registry({
             tokenResolver: this._resolveToken.bind(this),
+            defaultToken: this._encodeToken({ default: true } as unknown as TToken),
             useFallback: this._useFallback,
         });
     }
@@ -18,9 +19,9 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
         return this._registry.get(this._encodeToken(resolveId));
     }
 
-    getFactory(resolveId: TToken): Factory<TType> | undefined {
+    getFactory(resolveId: TToken, exactMatch?: boolean): Factory<TType> | undefined {
         try {
-            return this._registry.getFactory(this._encodeToken(resolveId));
+            return this._registry.getFactory(this._encodeToken(resolveId), exactMatch);
         } catch (error) {
             return undefined;
         }
@@ -38,7 +39,11 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
         return JSON.parse(atob(token));
     }
 
-    private _resolveToken(token: string, registeredTokens: string[]): string | undefined {
+    private _resolveToken(
+        token: string,
+        registeredTokens: string[],
+        exactMatch?: boolean,
+    ): string | undefined {
         const query = this._decodeToken(token);
 
         const results: Array<{ token: string; matches: number; default: boolean }> = [];
@@ -79,6 +84,10 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
         }
 
         const matched = matchedResults[0];
+
+        if (exactMatch && matched?.matches !== Object.keys(query).length) {
+            throw new Error('Unable to resolve to a registered token with the provided token.');
+        }
 
         if (matched && matched.token) {
             return matched.token;

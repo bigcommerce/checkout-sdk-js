@@ -196,6 +196,7 @@ export default class PaymentStrategyActionCreator {
                         options.integrations ?? [],
                         resolveId,
                         this._errorLogger,
+                        this._paymentIntegrationService,
                     );
                     registerIntegrations(
                         this._strategyRegistryV2,

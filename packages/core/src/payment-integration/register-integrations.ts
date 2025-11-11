@@ -24,7 +24,7 @@ export function registerIntegrations<TStrategy, TResolveId extends { [key: strin
         }
 
         factory.resolveIds.forEach((resolveId) => {
-            if (registry.getFactory(resolveId)) {
+            if (registry.getFactory(resolveId, true)) {
                 return;
             }
 
@@ -45,8 +45,14 @@ export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: 
     integrations: Array<StrategyFactory<TStrategy>>,
     resolveId: TResolveId,
     errorLogger: ErrorLogger,
+    paymentIntegrationService: PaymentIntegrationService,
 ): boolean {
     const existingFactory = registry.getFactory(resolveId);
+
+    if (!existingFactory) {
+        return false;
+    }
+
     const matchedExisting = integrations.some(
         (factory) =>
             isResolvableModule(existingFactory) &&
@@ -58,11 +64,23 @@ export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: 
     // and bundled together by default. This allows us to compare the passed-in strategies with the existing
     // ones to ensure they match. Once confirmed, we can remove the comparison logic and the existing strategies,
     // relying solely on the passed-in strategies.
-    if (existingFactory && !matchedExisting) {
+    if (!matchedExisting) {
         const message = `A different strategy is registered for ${JSON.stringify(resolveId)}.`;
 
         errorLogger.log(new Error(message));
     }
 
-    return matchedExisting;
+    const tempRegistry = new ResolveIdRegistry<TStrategy, TResolveId>();
+
+    registerIntegrations(tempRegistry, integrations, paymentIntegrationService);
+
+    const matchedResolved = tempRegistry.getFactory(resolveId) === existingFactory;
+
+    if (!matchedResolved) {
+        const message = `A different strategy is resolved for ${JSON.stringify(resolveId)}.`;
+
+        errorLogger.log(new Error(message));
+    }
+
+    return matchedExisting && matchedResolved;
 }
