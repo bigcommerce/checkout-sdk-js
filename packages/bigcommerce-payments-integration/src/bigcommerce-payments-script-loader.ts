@@ -99,15 +99,11 @@ export default class BigCommercePaymentsScriptLoader {
         const enableCreditFunding = isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
         const disableCreditFunding = !isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
 
-        const shouldEnableAPMs = initializesOnCheckoutPage || !commit;
         const enableVenmoFunding = isVenmoEnabled ? ['venmo'] : [];
         const disableVenmoFunding = !isVenmoEnabled ? ['venmo'] : [];
-        const enableAPMsFunding = shouldEnableAPMs ? enabledAlternativePaymentMethods : [];
-        const disableAPMsFunding = shouldEnableAPMs
-            ? availableAlternativePaymentMethods.filter(
-                  (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
-              )
-            : availableAlternativePaymentMethods;
+        const disableAPMsFunding = availableAlternativePaymentMethods.filter(
+            (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
+        );
         const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
         const cardFieldsComponent: ComponentsScriptType = initializesOnCheckoutPage
             ? ['card-fields']
@@ -122,7 +118,7 @@ export default class BigCommercePaymentsScriptLoader {
             ...enableCardFunding,
             ...enableCreditFunding,
             ...enableVenmoFunding,
-            ...enableAPMsFunding,
+            ...enabledAlternativePaymentMethods,
         ]);
 
         return {
