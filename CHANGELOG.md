@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.830.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.830.0...v1.830.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-9450 Do exact match when determining if certain strategy is already registered and warn if resolved value is different ([0ba2501](https://github.com/bigcommerce/checkout-sdk-js/commit/0ba25010befff10e1ea746764a2dab8bcd4a546f))
+* **checkout:** CHECKOUT-9450 Rename variable for clarity ([8f03932](https://github.com/bigcommerce/checkout-sdk-js/commit/8f039325ffcc92964e332ee9c5c16408b308ae12))
+
 ## [1.830.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.829.3...v1.830.0) (2025-11-11)
 
 
