@@ -24,7 +24,7 @@ export function registerIntegrations<TStrategy, TResolveId extends { [key: strin
         }
 
         factory.resolveIds.forEach((resolveId) => {
-            if (registry.getFactory(resolveId)) {
+            if (registry.getFactory(resolveId, true)) {
                 return;
             }
 
@@ -45,24 +45,51 @@ export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: 
     integrations: Array<StrategyFactory<TStrategy>>,
     resolveId: TResolveId,
     errorLogger: ErrorLogger,
+    paymentIntegrationService: PaymentIntegrationService,
 ): boolean {
     const existingFactory = registry.getFactory(resolveId);
-    const matchedExisting = integrations.some(
-        (factory) =>
-            isResolvableModule(existingFactory) &&
-            isResolvableModule(factory) &&
-            isEqual(existingFactory.resolveIds, factory.resolveIds),
+
+    if (!existingFactory) {
+        return false;
+    }
+
+    const matchedExisting = integrations.some((factory) =>
+        matchFactories(existingFactory, factory),
     );
 
     // During the initial rollout, all strategies will continue to be registered with `strategyRegistryV2`
     // and bundled together by default. This allows us to compare the passed-in strategies with the existing
     // ones to ensure they match. Once confirmed, we can remove the comparison logic and the existing strategies,
     // relying solely on the passed-in strategies.
-    if (existingFactory && !matchedExisting) {
+    if (!matchedExisting) {
         const message = `A different strategy is registered for ${JSON.stringify(resolveId)}.`;
 
         errorLogger.log(new Error(message));
     }
 
-    return matchedExisting;
+    const tempRegistry = new ResolveIdRegistry<TStrategy, TResolveId>(registry.getUseFallback());
+
+    registerIntegrations(tempRegistry, integrations, paymentIntegrationService);
+
+    const resolvedFactory = tempRegistry.getFactory(resolveId);
+    const matchedResolved = resolvedFactory === existingFactory;
+
+    if (!resolvedFactory || !matchFactories(resolvedFactory, existingFactory)) {
+        const message = `A different strategy is resolved for ${JSON.stringify(resolveId)}.`;
+
+        errorLogger.log(new Error(message));
+    }
+
+    return matchedExisting && matchedResolved;
+}
+
+function matchFactories<TStrategy>(
+    factoryA: StrategyFactory<TStrategy>,
+    factoryB: StrategyFactory<TStrategy>,
+): boolean {
+    return (
+        isResolvableModule(factoryA) &&
+        isResolvableModule(factoryB) &&
+        isEqual(factoryA.resolveIds, factoryB.resolveIds)
+    );
 }

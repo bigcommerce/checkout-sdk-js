@@ -14,22 +14,32 @@ class MockStrategy {
 }
 
 describe('registerIntegrations', () => {
-    let registry: ResolveIdRegistry<MockStrategy, { id: string }>;
+    let registry: ResolveIdRegistry<MockStrategy, { id: string; type?: string }>;
     let paymentIntegrationService: PaymentIntegrationService;
     let mockFactory: StrategyFactory<MockStrategy>;
     let anotherMockFactory: StrategyFactory<MockStrategy>;
+    let mockStrategy: MockStrategy;
+    let anotherMockStrategy: MockStrategy;
 
     beforeEach(() => {
-        registry = new ResolveIdRegistry<MockStrategy, { id: string }>();
+        registry = new ResolveIdRegistry(true);
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         mockFactory = Object.assign(
-            (service: PaymentIntegrationService) => new MockStrategy(service),
+            (service: PaymentIntegrationService) => {
+                mockStrategy = new MockStrategy(service);
+
+                return mockStrategy;
+            },
             { resolveIds: [{ id: 'mock-strategy' }] },
         );
 
         anotherMockFactory = Object.assign(
-            (service: PaymentIntegrationService) => new MockStrategy(service),
+            (service: PaymentIntegrationService) => {
+                anotherMockStrategy = new MockStrategy(service);
+
+                return anotherMockStrategy;
+            },
             { resolveIds: [{ id: 'another-strategy' }] },
         );
     });
@@ -43,8 +53,8 @@ describe('registerIntegrations', () => {
             const registeredStrategy = registry.get({ id: 'mock-strategy' });
             const anotherRegisteredStrategy = registry.get({ id: 'another-strategy' });
 
-            expect(registeredStrategy).toBeInstanceOf(MockStrategy);
-            expect(anotherRegisteredStrategy).toBeInstanceOf(MockStrategy);
+            expect(registeredStrategy).toBe(mockStrategy);
+            expect(anotherRegisteredStrategy).toBe(anotherMockStrategy);
         });
 
         it('should skip registration if a factory is already registered for the same resolve ID', () => {
@@ -59,7 +69,31 @@ describe('registerIntegrations', () => {
 
             const registeredStrategy = registry.get({ id: 'mock-strategy' });
 
-            expect(registeredStrategy).toBeInstanceOf(MockStrategy);
+            expect(registeredStrategy).toBe(mockStrategy);
+        });
+
+        it('should do exact match when determining if registration if needed', () => {
+            const defaultFactory = Object.assign(
+                (service: PaymentIntegrationService) => new MockStrategy(service),
+                { resolveIds: [{ default: true }] },
+            );
+            const anotherMockFactory = Object.assign(
+                (service: PaymentIntegrationService) => {
+                    anotherMockStrategy = new MockStrategy(service);
+
+                    return anotherMockStrategy;
+                },
+                { resolveIds: [{ id: 'mock-strategy', type: 'mock-type' }] },
+            );
+
+            registerIntegrations(registry, [defaultFactory], paymentIntegrationService);
+            registerIntegrations(registry, [mockFactory], paymentIntegrationService);
+            registerIntegrations(registry, [anotherMockFactory], paymentIntegrationService);
+
+            expect(registry.get({ id: 'mock-strategy' })).toBe(mockStrategy);
+            expect(registry.get({ id: 'mock-strategy', type: 'mock-type' })).toBe(
+                anotherMockStrategy,
+            );
         });
     });
 });

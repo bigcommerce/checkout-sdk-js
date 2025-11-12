@@ -158,4 +158,14 @@ describe('ResolveIdRegistry', () => {
 
         expect(logger.warn).toHaveBeenCalled();
     });
+
+    it('returns none if no exact match is found', () => {
+        subject = new ResolveIdRegistry(true);
+        subject.register({ default: true }, () => new DefaultStrategy());
+        subject.register({ id: 'foo' }, () => new FooStrategy());
+        subject.register({ type: 'bar' }, () => new BarStrategy());
+
+        expect(subject.getFactory({ type: 'bigbigpaypay' }, true)).toBeUndefined();
+        expect(subject.getFactory({ id: 'foo', type: 'bar' }, true)).toBeUndefined();
+    });
 });
