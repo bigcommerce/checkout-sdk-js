@@ -27,6 +27,10 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
         }
     }
 
+    getUseFallback(): boolean {
+        return this._useFallback;
+    }
+
     register(resolveId: TToken, factory: Factory<TType>): void {
         this._registry.register(this._encodeToken(resolveId), factory);
     }
