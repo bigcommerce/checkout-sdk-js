@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.831.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.830.1...v1.831.0) (2025-11-12)
+
+
+### Features
+
+* **payment:** PAYPAL-6035 skips the error when the strategy has already been deinitialized during braintree hosted filed error ([#3064](https://github.com/bigcommerce/checkout-sdk-js/issues/3064)) ([17695fe](https://github.com/bigcommerce/checkout-sdk-js/commit/17695fef3bb37a0abe727b2123ac05b743a678c9))
+
 ### [1.830.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.830.0...v1.830.1) (2025-11-12)
 
 
