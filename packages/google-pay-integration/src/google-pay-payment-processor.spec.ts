@@ -82,7 +82,12 @@ describe('GooglePayPaymentProcessor', () => {
         it('should initialize the gateway', async () => {
             await processor.initialize(getGeneric);
 
-            expect(gateway.initialize).toHaveBeenCalledWith(getGeneric, undefined, undefined);
+            expect(gateway.initialize).toHaveBeenCalledWith(
+                getGeneric,
+                undefined,
+                undefined,
+                undefined,
+            );
         });
 
         it('should build payloads', async () => {
