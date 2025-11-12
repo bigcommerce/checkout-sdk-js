@@ -2,6 +2,8 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 
 import {
+    BraintreeError,
+    BraintreeErrorType,
     BraintreeFastlane,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
@@ -526,6 +528,32 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
                     payload.payment,
                 );
+            });
+
+            it('throws an error if loadHostedFields finished with an error related to an invalid hosted field when the strategy is not deinitialized', async () => {
+                const braintreeError: BraintreeError = {
+                    code: 'HOSTED_FIELDS_INVALID_FIELD_SELECTOR',
+                    type: BraintreeErrorType.Merchant,
+                    name: 'BraintreeError',
+                    message: 'Selector does not reference a valid DOM node.',
+                };
+
+                jest.spyOn(braintreeScriptLoader, 'loadHostedFields').mockRejectedValue(
+                    braintreeError,
+                );
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'isPaymentMethodInitialized',
+                ).mockReturnValue(true);
+
+                try {
+                    await braintreeCreditCardPaymentStrategy.initialize({
+                        methodId: paymentMethod.id,
+                        braintree: initializeOptions,
+                    });
+                } catch (error: Error | any) {
+                    expect(error.message).toEqual(braintreeError.message);
+                }
             });
         });
     });

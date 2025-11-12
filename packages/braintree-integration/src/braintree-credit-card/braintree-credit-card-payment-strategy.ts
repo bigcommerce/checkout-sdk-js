@@ -85,7 +85,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 await this.initializeBraintreeFastlaneOrThrow(methodId);
             }
         } catch (error) {
-            return this.handleError(error);
+            return this.handleError(error, methodId);
         }
     }
 
@@ -135,8 +135,20 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         return Promise.resolve();
     }
 
-    private handleError(error: unknown): never {
+    private handleError(error: unknown, methodId?: string): void {
         if (isBraintreeError(error)) {
+            const isPaymentMethodInitialized = !!(
+                methodId &&
+                this.paymentIntegrationService.getState().isPaymentMethodInitialized({ methodId })
+            );
+
+            if (
+                !isPaymentMethodInitialized &&
+                error.code === 'HOSTED_FIELDS_INVALID_FIELD_SELECTOR'
+            ) {
+                return;
+            }
+
             throw new PaymentMethodFailedError(error.message);
         }
 
