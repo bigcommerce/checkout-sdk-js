@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.832.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.832.0...v1.832.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-6056 bcp venmo method id ([bd3a8a2](https://github.com/bigcommerce/checkout-sdk-js/commit/bd3a8a201df8caa01990e75815038cbc765bb632))
+
 ## [1.832.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.831.1...v1.832.0) (2025-11-13)
 
 
