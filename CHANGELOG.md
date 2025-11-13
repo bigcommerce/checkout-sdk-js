@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.832.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.831.1...v1.832.0) (2025-11-13)
+
+
+### Features
+
+* **payment:** STRIPE-1093 clean up google pay 3ds experiment ([1f45230](https://github.com/bigcommerce/checkout-sdk-js/commit/1f45230cada35f8ac701a0af4560001f99924d8c))
+
 ### [1.831.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.831.0...v1.831.1) (2025-11-13)
 
 
