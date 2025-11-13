@@ -52,3 +52,10 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      */
     masterpass?: MasterpassPaymentInitializeOptions;
 }
+
+export interface OrderFinalizeOptions extends RequestOptions {
+    /**
+     * @alpha
+     */
+    integrations?: Array<PaymentStrategyFactory<PaymentStrategy>>;
+}
