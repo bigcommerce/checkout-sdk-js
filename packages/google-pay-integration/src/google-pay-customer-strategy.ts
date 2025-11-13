@@ -66,6 +66,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             await this._googlePayPaymentProcessor.initialize(
                 () => paymentMethod,
                 this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
+                googlePayOptions.requireShippingAddress,
             );
         } catch {
             return;
