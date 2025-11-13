@@ -133,7 +133,7 @@ export default class BigCommercePaymentsVenmoPaymentStrategy implements PaymentS
             ),
             createOrder: () =>
                 this.bigCommercePaymentsIntegrationService.createOrder(
-                    'bigcommerce_payments_venmo_checkout',
+                    'bigcommerce_payments_venmocheckout',
                 ),
             onClick: (_, actions) => this.handleClick(actions, onValidate),
             onApprove: (data) => this.handleApprove(data, submitForm),

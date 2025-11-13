@@ -253,7 +253,7 @@ describe('BigCommercePaymentsVenmoPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(bigCommercePaymentsIntegrationService.createOrder).toHaveBeenCalledWith(
-                'bigcommerce_payments_venmo_checkout',
+                'bigcommerce_payments_venmocheckout',
             );
         });
     });
