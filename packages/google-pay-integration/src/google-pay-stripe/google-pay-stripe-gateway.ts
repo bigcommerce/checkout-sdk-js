@@ -80,14 +80,7 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
             throw error;
         }
 
-        const state = this.paymentIntegrationService.getState();
-        const isStripeGooglePay3dsExperimentIsOn =
-            state.getStoreConfig()?.checkoutSettings.features[
-                'STRIPE-476.enable_stripe_googlepay_3ds'
-            ];
-        const shouldTrigger3DS =
-            some(error.body.errors, { code: 'three_d_secure_required' }) &&
-            isStripeGooglePay3dsExperimentIsOn;
+        const shouldTrigger3DS = some(error.body.errors, { code: 'three_d_secure_required' });
 
         if (shouldTrigger3DS) {
             const data = this.getGooglePayInitializationData();

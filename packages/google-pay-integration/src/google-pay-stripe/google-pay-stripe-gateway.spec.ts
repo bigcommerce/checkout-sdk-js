@@ -13,10 +13,7 @@ import {
     PaymentMethodFailedError,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import {
-    getConfig,
-    PaymentIntegrationServiceMock,
-} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import createGooglePayScriptLoader from '../factories/create-google-pay-script-loader';
 import GooglePayGateway from '../gateways/google-pay-gateway';
@@ -37,7 +34,6 @@ describe('GooglePayStripeGateway', () => {
     let processor: GooglePayPaymentProcessor;
     let formPoster: FormPoster;
     let payload: OrderRequestBody;
-    const storeConfig = getConfig().storeConfig;
     const error3DS = {
         body: {
             errors: [{ code: 'three_d_secure_required' }],
@@ -74,15 +70,6 @@ describe('GooglePayStripeGateway', () => {
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
         jest.spyOn(processor, 'getNonce').mockResolvedValue('nonceValue');
         jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValue(getStripeUPEJsMock());
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
-            ...storeConfig,
-            checkoutSettings: {
-                ...storeConfig.checkoutSettings,
-                features: {
-                    'STRIPE-476.enable_stripe_googlepay_3ds': true,
-                },
-            },
-        });
     });
 
     afterEach(() => {
@@ -122,48 +109,6 @@ describe('GooglePayStripeGateway', () => {
 
             expect(confirmCardPayment).toHaveBeenCalledWith('token_3ds');
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
-        });
-
-        it('doesn"t execute 3DS challenge if experiment is off', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        'STRIPE-476.enable_stripe_googlepay_3ds': false,
-                    },
-                },
-            });
-
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce({
-                body: {
-                    errors: [
-                        {
-                            code: 'three_d_secure_required',
-                        },
-                    ],
-                    three_ds_result: {
-                        token: 'token_3ds',
-                    },
-                },
-            });
-            await gateway.initialize(getStripe);
-
-            const confirmCardPayment = jest.fn().mockReturnValue({
-                paymentIntent: 'paymentIntent',
-            });
-
-            jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValue({
-                ...getStripeUPEJsMock(),
-                confirmCardPayment,
-            });
-
-            try {
-                await strategy.execute(payload);
-            } catch (error) {
-                expect(confirmCardPayment).not.toHaveBeenCalled();
-                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
-            }
         });
 
         it('should process additional action', async () => {
