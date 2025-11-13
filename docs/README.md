@@ -333,6 +333,7 @@
 - [OrderBillingAddressSelector](interfaces/OrderBillingAddressSelector.md)
 - [OrderConsignment](interfaces/OrderConsignment.md)
 - [OrderFee](interfaces/OrderFee.md)
+- [OrderFinalizeOptions](interfaces/OrderFinalizeOptions.md)
 - [OrderMetaState](interfaces/OrderMetaState.md)
 - [OrderPayment](interfaces/OrderPayment.md)
 - [OrderPaymentRequestBody](interfaces/OrderPaymentRequestBody.md)

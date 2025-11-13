@@ -632,7 +632,7 @@ is not required for the current order at the time of execution.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options?` | [`RequestOptions`](../interfaces/RequestOptions.md)<`Object`\> | Options for finalizing the current order. |
+| `options?` | [`OrderFinalizeOptions`](../interfaces/OrderFinalizeOptions.md) | Options for finalizing the current order. |
 
 #### Returns
 

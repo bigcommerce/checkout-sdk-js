@@ -2942,7 +2942,7 @@ declare class CheckoutService {
      * @throws `OrderFinalizationNotRequiredError` error if order finalization
      * is not required for the current order at the time of execution.
      */
-    finalizeOrderIfNeeded(options?: RequestOptions): Promise<CheckoutSelectors>;
+    finalizeOrderIfNeeded(options?: OrderFinalizeOptions): Promise<CheckoutSelectors>;
     /**
      * Loads a list of payment methods available for checkout.
      *
@@ -6573,6 +6573,13 @@ declare interface OrderFee {
     customerDisplayName: string;
     cost: number;
     source: string;
+}
+
+declare interface OrderFinalizeOptions extends RequestOptions {
+    /**
+     * @alpha
+     */
+    integrations?: Array<PaymentStrategyFactory<PaymentStrategy>>;
 }
 
 declare type OrderMeta = OrderMetaState;
