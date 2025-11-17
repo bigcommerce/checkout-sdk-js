@@ -1,10 +1,5 @@
-interface ApplePayWindow extends Window {
-    ApplePaySession: ApplePaySession;
-}
-
-function isApplePayWindow(window: Window): window is ApplePayWindow {
-    return 'ApplePaySession' in window;
-}
+import ApplePayWindow from './apple-pay-window';
+import isApplePayWindow from './is-apple-pay-window';
 
 export function assertApplePayWindow(window: Window): asserts window is ApplePayWindow {
     if (!isApplePayWindow(window)) {
