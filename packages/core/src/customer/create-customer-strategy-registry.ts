@@ -5,9 +5,6 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
-import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import {
     createSpamProtection,
     SpamProtectionActionCreator,
@@ -18,12 +15,10 @@ import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
 import { CustomerStrategy } from './strategies';
 import { DefaultCustomerStrategy } from './strategies/default';
-import { MasterpassCustomerStrategy } from './strategies/masterpass';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
     requestSender: RequestSender,
-    locale: string,
 ): Registry<CustomerStrategy> {
     const registry = new Registry<CustomerStrategy>();
     const scriptLoader = getScriptLoader();
@@ -33,14 +28,6 @@ export default function createCustomerStrategyRegistry(
         new ConfigActionCreator(new ConfigRequestSender(requestSender)),
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
     );
-    const paymentMethodActionCreator = new PaymentMethodActionCreator(
-        new PaymentMethodRequestSender(requestSender),
-    );
-    const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
-    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-        remoteCheckoutRequestSender,
-        checkoutActionCreator,
-    );
     const spamProtectionActionCreator = new SpamProtectionActionCreator(
         createSpamProtection(scriptLoader),
         new SpamProtectionRequestSender(requestSender),
@@ -49,18 +36,6 @@ export default function createCustomerStrategyRegistry(
         new CustomerRequestSender(requestSender),
         checkoutActionCreator,
         spamProtectionActionCreator,
-    );
-
-    registry.register(
-        'masterpass',
-        () =>
-            new MasterpassCustomerStrategy(
-                store,
-                paymentMethodActionCreator,
-                remoteCheckoutActionCreator,
-                new MasterpassScriptLoader(scriptLoader),
-                locale,
-            ),
     );
 
     registry.register('default', () => new DefaultCustomerStrategy(store, customerActionCreator));

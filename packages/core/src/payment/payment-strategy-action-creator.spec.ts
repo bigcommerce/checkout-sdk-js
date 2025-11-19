@@ -93,7 +93,7 @@ describe('PaymentStrategyActionCreator', () => {
         errorLogger = {
             log: jest.fn(),
         };
-        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
+        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
@@ -638,7 +638,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 paymentMethods: { ...state.paymentMethods, data: [] },
             });
-            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
 
             const actionCreator = new PaymentStrategyActionCreator(
                 registry,
@@ -666,7 +666,7 @@ describe('PaymentStrategyActionCreator', () => {
                 }),
             });
 
-            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
 
             jest.spyOn(registryV2, 'get').mockReturnValue(noPaymentDataStrategy);
 
@@ -779,7 +779,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 order: getOrderState(),
             });
-            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
 
             const actionCreator = new PaymentStrategyActionCreator(
                 registry,
@@ -813,7 +813,7 @@ describe('PaymentStrategyActionCreator', () => {
                     data: [],
                 },
             });
-            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
 
             const actionCreator = new PaymentStrategyActionCreator(
                 registry,

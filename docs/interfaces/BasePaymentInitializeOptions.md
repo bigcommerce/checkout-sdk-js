@@ -18,7 +18,6 @@ current checkout flow.
 - [creditCard](BasePaymentInitializeOptions.md#creditcard)
 - [gatewayId](BasePaymentInitializeOptions.md#gatewayid)
 - [integrations](BasePaymentInitializeOptions.md#integrations)
-- [masterpass](BasePaymentInitializeOptions.md#masterpass)
 - [methodId](BasePaymentInitializeOptions.md#methodid)
 - [params](BasePaymentInitializeOptions.md#params)
 - [timeout](BasePaymentInitializeOptions.md#timeout)
@@ -55,15 +54,6 @@ ___
 • `Optional` **integrations**: `PaymentStrategyFactory`<`default`\>[]
 
 **`alpha`**
-
-___
-
-### masterpass
-
-• `Optional` **masterpass**: [`MasterpassPaymentInitializeOptions`](MasterpassPaymentInitializeOptions.md)
-
-The options that are required to initialize the Masterpass payment method.
-They can be omitted unless you need to support Masterpass.
 
 ___
 

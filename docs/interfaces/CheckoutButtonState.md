@@ -36,7 +36,6 @@
 | `googlepaystripe` | `undefined` \| [`CheckoutButtonDataState`](CheckoutButtonDataState.md) |
 | `googlepaystripeupe` | `undefined` \| [`CheckoutButtonDataState`](CheckoutButtonDataState.md) |
 | `googlepayworldpayaccess` | `undefined` \| [`CheckoutButtonDataState`](CheckoutButtonDataState.md) |
-| `masterpass` | `undefined` \| [`CheckoutButtonDataState`](CheckoutButtonDataState.md) |
 | `paypalexpress` | `undefined` \| [`CheckoutButtonDataState`](CheckoutButtonDataState.md) |
 
 ___
@@ -65,7 +64,6 @@ ___
 | `googlepaystripe` | `undefined` \| [`CheckoutButtonErrorsState`](CheckoutButtonErrorsState.md) |
 | `googlepaystripeupe` | `undefined` \| [`CheckoutButtonErrorsState`](CheckoutButtonErrorsState.md) |
 | `googlepayworldpayaccess` | `undefined` \| [`CheckoutButtonErrorsState`](CheckoutButtonErrorsState.md) |
-| `masterpass` | `undefined` \| [`CheckoutButtonErrorsState`](CheckoutButtonErrorsState.md) |
 | `paypalexpress` | `undefined` \| [`CheckoutButtonErrorsState`](CheckoutButtonErrorsState.md) |
 
 ___
@@ -94,5 +92,4 @@ ___
 | `googlepaystripe` | `undefined` \| [`CheckoutButtonStatusesState`](CheckoutButtonStatusesState.md) |
 | `googlepaystripeupe` | `undefined` \| [`CheckoutButtonStatusesState`](CheckoutButtonStatusesState.md) |
 | `googlepayworldpayaccess` | `undefined` \| [`CheckoutButtonStatusesState`](CheckoutButtonStatusesState.md) |
-| `masterpass` | `undefined` \| [`CheckoutButtonStatusesState`](CheckoutButtonStatusesState.md) |
 | `paypalexpress` | `undefined` \| [`CheckoutButtonStatusesState`](CheckoutButtonStatusesState.md) |

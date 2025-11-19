@@ -7,7 +7,6 @@ import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { PPSDKStrategy } from './strategies/ppsdk';
 import { WepayPaymentStrategy } from './strategies/wepay';
 
@@ -19,7 +18,7 @@ describe('CreatePaymentStrategyRegistry', () => {
         const requestSender = createRequestSender();
         const paymentClient = createPaymentClient();
 
-        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, 'en_US');
+        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
     });
 
     it('can create a payment strategy registry', () => {
@@ -36,12 +35,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.WE_PAY);
 
         expect(paymentStrategy).toBeInstanceOf(WepayPaymentStrategy);
-    });
-
-    it('can instantiate masterpass', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.MASTERPASS);
-
-        expect(paymentStrategy).toBeInstanceOf(MasterpassPaymentStrategy);
     });
 
     it('can instantiate ppsdk', () => {

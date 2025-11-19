@@ -25,7 +25,6 @@ information in order to initialize the customer step of checkout.
 ### Properties
 
 - [integrations](BaseCustomerInitializeOptions.md#integrations)
-- [masterpass](BaseCustomerInitializeOptions.md#masterpass)
 - [methodId](BaseCustomerInitializeOptions.md#methodid)
 - [params](BaseCustomerInitializeOptions.md#params)
 - [timeout](BaseCustomerInitializeOptions.md#timeout)
@@ -37,15 +36,6 @@ information in order to initialize the customer step of checkout.
 • `Optional` **integrations**: `CustomerStrategyFactory`<`default`\>[]
 
 **`alpha`**
-
-___
-
-### masterpass
-
-• `Optional` **masterpass**: [`MasterpassCustomerInitializeOptions`](MasterpassCustomerInitializeOptions.md)
-
-The options that are required to initialize the Masterpass payment method.
-They can be omitted unless you need to support Masterpass.
 
 ___
 

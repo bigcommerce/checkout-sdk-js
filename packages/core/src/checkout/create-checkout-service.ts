@@ -185,7 +185,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store, requestSender, locale),
+            createCustomerStrategyRegistry(store, requestSender),
             customerRegistryV2,
             paymentIntegrationService,
             errorLogger,
@@ -196,7 +196,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         orderActionCreator,
         new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, paymentClient, requestSender, locale),
+            createPaymentStrategyRegistry(store, paymentClient, requestSender),
             registryV2,
             orderActionCreator,
             spamProtectionActionCreator,

@@ -14,7 +14,6 @@ import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import {
     createStepHandler,
     createSubStrategyRegistry,
@@ -27,7 +26,6 @@ export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
     paymentClient: any,
     requestSender: RequestSender,
-    locale: string,
 ) {
     const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
@@ -64,18 +62,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 hostedFormFactory,
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.MASTERPASS,
-        () =>
-            new MasterpassPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                new MasterpassScriptLoader(scriptLoader),
-                locale,
             ),
     );
 

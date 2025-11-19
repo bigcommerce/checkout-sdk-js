@@ -380,7 +380,7 @@ describe('CheckoutService', () => {
         const errorLogger: ErrorLogger = { log: jest.fn() };
 
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store, requestSender, locale),
+            createCustomerStrategyRegistry(store, requestSender),
             customerRegistryV2,
             paymentIntegrationService,
             errorLogger,
