@@ -6,7 +6,6 @@ import { Registry } from '../common/registry';
 
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
-import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
 
 describe('createCheckoutButtonRegistry', () => {
@@ -15,19 +14,10 @@ describe('createCheckoutButtonRegistry', () => {
     beforeEach(() => {
         const store = createCheckoutStore();
 
-        registry = createCheckoutButtonRegistry(
-            store,
-            createRequestSender(),
-            createFormPoster(),
-            'en',
-        );
+        registry = createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster());
     });
 
     it('returns registry with PayPal Express registered', () => {
         expect(registry.get('paypalexpress')).toEqual(expect.any(PaypalButtonStrategy));
-    });
-
-    it('returns registry with Masterpass registered', () => {
-        expect(registry.get('masterpass')).toEqual(expect.any(MasterpassButtonStrategy));
     });
 });

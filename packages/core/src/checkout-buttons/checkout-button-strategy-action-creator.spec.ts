@@ -49,7 +49,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         strategy = new MockButtonStrategy();
         store = createCheckoutStore();
         registryV2 = createCheckoutButtonRegistryV2(createPaymentIntegrationService(store), {});
-        registry.register(CheckoutButtonMethodType.MASTERPASS, () => strategy);
+        registry.register(CheckoutButtonMethodType.PAYPALEXPRESS, () => strategy);
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(() =>
             // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
@@ -64,7 +64,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         );
 
         options = {
-            methodId: CheckoutButtonMethodType.MASTERPASS,
+            methodId: CheckoutButtonMethodType.PAYPALEXPRESS,
             containerId: 'checkout-button',
         };
 
@@ -79,14 +79,14 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         await from(strategyActionCreator.initialize(options)(store)).pipe(toArray()).toPromise();
 
         expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(
-            CheckoutButtonMethodType.MASTERPASS,
+            CheckoutButtonMethodType.PAYPALEXPRESS,
             { useCache: true },
         );
     });
 
     it('loads required payment method for provided currency', async () => {
         const optionsMock = {
-            methodId: CheckoutButtonMethodType.MASTERPASS,
+            methodId: CheckoutButtonMethodType.PAYPALEXPRESS,
             containerId: 'checkout-button',
             currencyCode: 'USD',
         };
@@ -103,7 +103,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         };
 
         expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(
-            CheckoutButtonMethodType.MASTERPASS,
+            CheckoutButtonMethodType.PAYPALEXPRESS,
             expectedPaymentMethodOptions,
         );
     });
@@ -114,7 +114,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
         await from(strategyActionCreator.initialize(options)(store)).pipe(toArray()).toPromise();
 
-        expect(registry.get).toHaveBeenCalledWith(CheckoutButtonMethodType.MASTERPASS);
+        expect(registry.get).toHaveBeenCalledWith(CheckoutButtonMethodType.PAYPALEXPRESS);
         expect(strategy.initialize).toHaveBeenCalledWith(options);
     });
 
@@ -138,12 +138,12 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
         await from(strategyActionCreator.initialize(options)(store)).pipe(toArray()).toPromise();
 
-        expect(registry.get).not.toHaveBeenCalledWith(CheckoutButtonMethodType.MASTERPASS);
+        expect(registry.get).not.toHaveBeenCalledWith(CheckoutButtonMethodType.PAYPALEXPRESS);
         expect(strategy.initialize).not.toHaveBeenCalledWith(options);
     });
 
     it('emits actions indicating initialization progress', async () => {
-        const methodId = CheckoutButtonMethodType.MASTERPASS;
+        const methodId = CheckoutButtonMethodType.PAYPALEXPRESS;
         const containerId = 'checkout-button';
         const actions = await from(
             strategyActionCreator.initialize({ methodId, containerId })(store),
@@ -169,7 +169,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     });
 
     it('throws error if unable to load required payment method', async () => {
-        const methodId = CheckoutButtonMethodType.MASTERPASS;
+        const methodId = CheckoutButtonMethodType.PAYPALEXPRESS;
         const containerId = 'checkout-button';
         const expectedError = new Error('Unable to load payment method');
 
@@ -207,7 +207,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     });
 
     it('throws error if unable to initialize strategy', async () => {
-        const methodId = CheckoutButtonMethodType.MASTERPASS;
+        const methodId = CheckoutButtonMethodType.PAYPALEXPRESS;
         const containerId = 'checkout-button';
         const expectedError = new Error('Unable to initialize strategy');
 
@@ -260,7 +260,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
         await from(strategyActionCreator.deinitialize(options)(store)).pipe(toArray()).toPromise();
 
-        expect(registry.get).toHaveBeenCalledWith(CheckoutButtonMethodType.MASTERPASS);
+        expect(registry.get).toHaveBeenCalledWith(CheckoutButtonMethodType.PAYPALEXPRESS);
         expect(strategy.deinitialize).toHaveBeenCalled();
     });
 
