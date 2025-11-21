@@ -8,6 +8,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCart,
     getConfig,
     getConsignment,
     getShippingOption,
@@ -33,6 +34,8 @@ describe('GooglePayGateway', () => {
             features: {
                 ...storeConfig.checkoutSettings.features,
                 'PI-2875.googlepay_coupons_handling': true,
+                // experiment name will be added after code freeze
+                experiment_shouldRequestShipping: true,
             },
         },
     };
@@ -163,6 +166,31 @@ describe('GooglePayGateway', () => {
                     expect(error).toBeInstanceOf(InvalidArgumentError);
                 }
             });
+        });
+    });
+
+    describe('#setShouldRequestShipping', () => {
+        beforeEach(() => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                getCart(),
+            );
+        });
+
+        it('_isShippingAddressRequired should return false', async () => {
+            await gateway.initialize(getGeneric);
+            gateway.setShouldRequestShipping(false);
+
+            expect(gateway.getCallbackIntents()).toStrictEqual([CallbackIntentsType.OFFER]);
+        });
+
+        it('_isShippingAddressRequired should be true by default', async () => {
+            await gateway.initialize(getGeneric);
+
+            expect(gateway.getCallbackIntents()).toStrictEqual([
+                CallbackIntentsType.OFFER,
+                CallbackIntentsType.SHIPPING_ADDRESS,
+                CallbackIntentsType.SHIPPING_OPTION,
+            ]);
         });
     });
 
