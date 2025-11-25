@@ -18,6 +18,7 @@ export default class StripeScriptLoader {
 
     async getStripeClient(
         initializationData: StripeInitializationData,
+        locale?: string,
         betas?: string[],
         apiVersion?: string,
     ): Promise<StripeClient> {
@@ -29,6 +30,7 @@ export default class StripeScriptLoader {
         const { stripePublishableKey, stripeConnectedAccount } = initializationData;
         const options = {
             ...(stripeConnectedAccount ? { stripeAccount: stripeConnectedAccount } : {}),
+            ...(locale ? { locale } : {}),
             ...(betas ? { betas } : {}),
             ...(apiVersion ? { apiVersion } : {}),
         };

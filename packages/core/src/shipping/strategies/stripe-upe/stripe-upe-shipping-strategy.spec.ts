@@ -4,6 +4,8 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
 import {
+    STRIPE_UPE_CLIENT_API_VERSION,
+    STRIPE_UPE_CLIENT_BETAS,
     StripeClient,
     StripeDisplayName,
     StripeElement,
@@ -139,6 +141,8 @@ describe('StripeUPEShippingStrategy', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
                 getStripeUPE(),
             );
+
+            jest.spyOn(store.getState().config, 'getLocale').mockReturnValue('en');
         });
 
         afterEach(() => {
@@ -152,6 +156,12 @@ describe('StripeUPEShippingStrategy', () => {
             );
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
+                paymentMethodMock.initializationData,
+                'en',
+                STRIPE_UPE_CLIENT_BETAS,
+                STRIPE_UPE_CLIENT_API_VERSION,
+            );
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 

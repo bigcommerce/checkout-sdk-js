@@ -106,6 +106,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
             stripeUPEClient = await this.scriptLoader.getStripeClient(
                 paymentMethod.initializationData,
+                state.getLocale(),
                 STRIPE_UPE_CLIENT_BETAS,
                 STRIPE_UPE_CLIENT_API_VERSION,
             );

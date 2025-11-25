@@ -30,6 +30,8 @@ import {
     getRetrievePaymentIntentResponseWithError,
     getStripeIntegrationServiceMock,
     getStripeJsMock,
+    STRIPE_UPE_CLIENT_API_VERSION,
+    STRIPE_UPE_CLIENT_BETAS,
     StripeClient,
     StripeElementsOptions,
     StripeElementType,
@@ -80,6 +82,7 @@ describe('StripeUPEPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
             checkoutMock,
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en');
 
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(jest.fn());
 
@@ -192,6 +195,12 @@ describe('StripeUPEPaymentStrategy', () => {
             await strategy.initialize(options);
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
+                getStripeUPEMock().initializationData,
+                'en',
+                STRIPE_UPE_CLIENT_BETAS,
+                STRIPE_UPE_CLIENT_API_VERSION,
+            );
 
             expect(stripeUPEJsMock.elements).toHaveBeenNthCalledWith(1, {
                 locale: 'en',

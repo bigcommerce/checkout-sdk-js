@@ -72,6 +72,7 @@ describe('StripeOCSPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getStripeOCSMock(),
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en');
         jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
             Promise.resolve(stripeUPEJsMock.elements({})),
         );
@@ -386,6 +387,10 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
+                getStripeOCSMock().initializationData,
+                'en',
+            );
         });
 
         it('should enable Link by initialization data option', async () => {

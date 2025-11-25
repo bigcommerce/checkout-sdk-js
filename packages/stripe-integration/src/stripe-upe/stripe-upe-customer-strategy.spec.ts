@@ -14,6 +14,8 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
+    STRIPE_UPE_CLIENT_API_VERSION,
+    STRIPE_UPE_CLIENT_BETAS,
     StripeClient,
     StripeCustomerEvent,
     StripeElement,
@@ -58,6 +60,7 @@ describe('StripeUpeCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue(
             paymentMethodMock,
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en');
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
@@ -112,6 +115,12 @@ describe('StripeUpeCustomerStrategy', () => {
             await strategy.initialize(customerInitialization);
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
+                paymentMethodMock.initializationData,
+                'en',
+                STRIPE_UPE_CLIENT_BETAS,
+                STRIPE_UPE_CLIENT_API_VERSION,
+            );
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 
