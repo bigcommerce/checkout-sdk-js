@@ -16,6 +16,7 @@ import {
     PaymentMethod,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import isGooglePayCardNetworkKey from '../guards/is-google-pay-card-network-key';
 import {
@@ -44,6 +45,7 @@ import {
 export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;
     private _isBuyNowFlow = false;
+    private _shouldRequestShipping = true;
     private _currencyCode?: string;
     private _currencyService?: CurrencyService;
 
@@ -423,6 +425,10 @@ export default class GooglePayGateway {
         }
     }
 
+    setShouldRequestShipping(isRequired: boolean): void {
+        this._shouldRequestShipping = isRequired;
+    }
+
     protected getGooglePayInitializationData(): GooglePayInitializationData {
         return guard(
             this.getPaymentMethod().initializationData,
@@ -446,13 +452,26 @@ export default class GooglePayGateway {
     }
 
     private _isShippingAddressRequired(): boolean {
-        const { getCartOrThrow, getStoreConfig, getShippingAddress } =
+        const { getCartOrThrow, getStoreConfigOrThrow, getShippingAddress } =
             this._paymentIntegrationService.getState();
+        const storeConfig = getStoreConfigOrThrow();
+        const features = storeConfig.checkoutSettings.features;
 
-        return (
-            getShippingAddress() === undefined &&
-            itemsRequireShipping(getCartOrThrow(), getStoreConfig())
+        const checkWithExperiment = isExperimentEnabled(
+            features,
+            // experiment name will be added after code freeze
+            'experiment_shouldRequestShipping',
         );
+
+        let shippingContextRequiresCheck: boolean;
+
+        if (checkWithExperiment) {
+            shippingContextRequiresCheck = this._shouldRequestShipping;
+        } else {
+            shippingContextRequiresCheck = getShippingAddress() === undefined;
+        }
+
+        return shippingContextRequiresCheck && itemsRequireShipping(getCartOrThrow(), storeConfig);
     }
 
     private _mapToAddressRequestBody(
