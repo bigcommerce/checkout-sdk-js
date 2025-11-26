@@ -8,7 +8,7 @@ import PayPalIntegrationService from '../paypal-integration-service';
 import PayPalRequestSender from '../paypal-request-sender';
 import PayPalSdkLoader from '../paypal-sdk-script-loader';
 
-export default function getPayPalCommerceIntegrationServiceMock(): PayPalIntegrationService {
+export default function getPayPalIntegrationServiceMock(): PayPalIntegrationService {
     const formPoster = createFormPoster();
     const requestSender = createRequestSender();
     const paymentIntegrationService = new PaymentIntegrationServiceMock();

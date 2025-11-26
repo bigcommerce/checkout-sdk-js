@@ -13,18 +13,15 @@ import {
     getCart,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
 import {
-    getPayPalCommerceIntegrationServiceMock,
-    getPayPalCommercePaymentMethod,
+    getPayPalIntegrationServiceMock,
+    getPayPalPaymentMethod,
     getPayPalSDKMock,
-} from '../mocks';
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceHostWindow,
+    PayPalButtonsOptions,
+    PayPalHostWindow,
+    PayPalIntegrationService,
     PayPalSDK,
-} from '../paypal-commerce-types';
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceAlternativeMethodsButtonOptions from './paypal-commerce-alternative-methods-button-initialize-options';
 import PayPalCommerceAlternativeMethodsButtonStrategy from './paypal-commerce-alternative-methods-button-strategy';
@@ -37,7 +34,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
-    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
+    let paypalIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
 
     const defaultMethodId = 'paypalcommercealternativemethods';
@@ -85,15 +82,15 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
 
         eventEmitter = new EventEmitter();
 
-        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
-        paymentMethod = { ...getPayPalCommercePaymentMethod(), id: defaultMethodId };
+        paypalIntegrationService = getPayPalIntegrationServiceMock();
+        paymentMethod = { ...getPayPalPaymentMethod(), id: defaultMethodId };
         paypalSdk = getPayPalSDKMock();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceAlternativeMethodsButtonStrategy(
             paymentIntegrationService,
-            paypalCommerceIntegrationService,
+            paypalIntegrationService,
         );
 
         paypalButtonElement = document.createElement('div');
@@ -105,93 +102,87 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
             paymentMethod,
         );
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(
+        jest.spyOn(paypalIntegrationService, 'loadPayPalSdk').mockReturnValue(
             Promise.resolve(paypalSdk),
         );
-        jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
-            paypalSdk,
-        );
-        jest.spyOn(paypalCommerceIntegrationService, 'createBuyNowCartOrThrow').mockReturnValue(
+        jest.spyOn(paypalIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalIntegrationService, 'createBuyNowCartOrThrow').mockReturnValue(
             Promise.resolve(buyNowCart),
         );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder');
-        jest.spyOn(paypalCommerceIntegrationService, 'tokenizePayment').mockImplementation(
-            jest.fn(),
-        );
-        jest.spyOn(paypalCommerceIntegrationService, 'removeElement').mockImplementation(jest.fn());
+        jest.spyOn(paypalIntegrationService, 'createOrder');
+        jest.spyOn(paypalIntegrationService, 'tokenizePayment').mockImplementation(jest.fn());
+        jest.spyOn(paypalIntegrationService, 'removeElement').mockImplementation(jest.fn());
 
-        jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-            (options: PayPalCommerceButtonsOptions) => {
-                eventEmitter.on('createOrder', () => {
-                    if (options.createOrder) {
-                        options.createOrder();
-                    }
-                });
+        jest.spyOn(paypalSdk, 'Buttons').mockImplementation((options: PayPalButtonsOptions) => {
+            eventEmitter.on('createOrder', () => {
+                if (options.createOrder) {
+                    options.createOrder();
+                }
+            });
 
-                eventEmitter.on(
-                    'onClick',
-                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                    async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
-                        try {
-                            if (options.onClick) {
-                                await options.onClick(
-                                    { fundingSource: apmProviderId },
-                                    {
-                                        reject: jest.fn(),
-                                        resolve: jest.fn(),
-                                    },
-                                );
+            eventEmitter.on(
+                'onClick',
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
+                    try {
+                        if (options.onClick) {
+                            await options.onClick(
+                                { fundingSource: apmProviderId },
+                                {
+                                    reject: jest.fn(),
+                                    resolve: jest.fn(),
+                                },
+                            );
 
-                                if (
-                                    jestSuccessExpectationsCallback &&
-                                    typeof jestSuccessExpectationsCallback === 'function'
-                                ) {
-                                    jestSuccessExpectationsCallback();
-                                }
-                            }
-                        } catch (error) {
                             if (
-                                jestFailureExpectationsCallback &&
-                                typeof jestFailureExpectationsCallback === 'function'
+                                jestSuccessExpectationsCallback &&
+                                typeof jestSuccessExpectationsCallback === 'function'
                             ) {
-                                jestFailureExpectationsCallback(error);
+                                jestSuccessExpectationsCallback();
                             }
                         }
-                    },
-                );
+                    } catch (error) {
+                        if (
+                            jestFailureExpectationsCallback &&
+                            typeof jestFailureExpectationsCallback === 'function'
+                        ) {
+                            jestFailureExpectationsCallback(error);
+                        }
+                    }
+                },
+            );
 
-                eventEmitter.on('onApprove', () => {
-                    if (options.onApprove) {
-                        options.onApprove(
-                            { orderID: paypalOrderId },
-                            {
-                                order: {
-                                    get: jest.fn(),
-                                },
+            eventEmitter.on('onApprove', () => {
+                if (options.onApprove) {
+                    options.onApprove(
+                        { orderID: paypalOrderId },
+                        {
+                            order: {
+                                get: jest.fn(),
                             },
-                        );
-                    }
-                });
+                        },
+                    );
+                }
+            });
 
-                eventEmitter.on('onCancel', () => {
-                    if (options.onCancel) {
-                        options.onCancel();
-                    }
-                });
+            eventEmitter.on('onCancel', () => {
+                if (options.onCancel) {
+                    options.onCancel();
+                }
+            });
 
-                return {
-                    isEligible: jest.fn(() => true),
-                    render: jest.fn(),
-                    close: jest.fn(),
-                };
-            },
-        );
+            return {
+                isEligible: jest.fn(() => true),
+                render: jest.fn(),
+                close: jest.fn(),
+            };
+        });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
 
-        delete (window as PayPalCommerceHostWindow).paypal;
+        delete (window as PayPalHostWindow).paypal;
 
         if (document.getElementById(defaultButtonContainerId)) {
             document.body.removeChild(paypalButtonElement);
@@ -308,7 +299,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
         it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
                 defaultMethodId,
                 cart.currency.code,
                 false,
@@ -318,7 +309,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
         it('loads paypal commerce sdk script with provided currency code (Buy Now flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
                 defaultMethodId,
                 buyNowPayPalCommerceAlternativeMethodsOptions.currencyCode,
                 false,
@@ -416,7 +407,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
                 },
             });
 
-            expect(paypalCommerceIntegrationService.removeElement).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.removeElement).toHaveBeenCalledWith(
                 defaultButtonContainerId,
             );
         });
@@ -430,7 +421,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommercealternativemethod',
             );
         });
@@ -449,7 +440,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
             eventEmitter.emit('onClick');
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceIntegrationService.createBuyNowCartOrThrow).toHaveBeenCalled();
+            expect(paypalIntegrationService.createBuyNowCartOrThrow).toHaveBeenCalled();
         });
 
         it('loads checkout related to buy now cart on button click', async () => {
@@ -469,7 +460,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceIntegrationService.tokenizePayment).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.tokenizePayment).toHaveBeenCalledWith(
                 defaultMethodId,
                 paypalOrderId,
             );
