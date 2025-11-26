@@ -87,6 +87,7 @@ describe('StripePayScriptLoader', () => {
         it('get stripe client with all initialization data', async () => {
             await stripeUPEScriptLoader.getStripeClient(
                 defaultInitializationData,
+                'en',
                 defaultBetas,
                 defaultApiVersion,
             );
@@ -95,6 +96,7 @@ describe('StripePayScriptLoader', () => {
                 betas: defaultBetas,
                 stripeAccount: 'STRIPE_CONNECTED_ACCOUNT',
                 apiVersion: defaultApiVersion,
+                locale: 'en',
             });
         });
 

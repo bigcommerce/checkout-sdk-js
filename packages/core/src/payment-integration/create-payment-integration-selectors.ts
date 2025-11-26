@@ -5,7 +5,7 @@ import { cloneResult as clone } from '../common/utility';
 
 export default function createPaymentIntegrationSelectors({
     billingAddress: { getBillingAddress, getBillingAddressOrThrow },
-    cart: { getCart, getCartOrThrow },
+    cart: { getCart, getCartOrThrow, getLocale: getCartLocale },
     checkout: { getCheckout, getCheckoutOrThrow, getOutstandingBalance },
     config: {
         getContextConfig,
@@ -50,6 +50,7 @@ export default function createPaymentIntegrationSelectors({
     return {
         getHost: clone(getHost),
         getLocale: clone(getLocale),
+        getCartLocale: clone(getCartLocale),
         getBillingAddress: clone(getBillingAddress),
         getBillingAddressOrThrow: clone(getBillingAddressOrThrow),
         getCart: clone(getCart),

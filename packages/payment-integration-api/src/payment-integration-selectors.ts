@@ -17,6 +17,7 @@ import { Consignment, ShippingAddress } from './shipping';
 export default interface PaymentIntegrationSelectors {
     getHost(): string | undefined;
     getLocale(): string | undefined;
+    getCartLocale(): string | undefined;
 
     getBillingAddress(): BillingAddress | undefined;
     getBillingAddressOrThrow(): BillingAddress;

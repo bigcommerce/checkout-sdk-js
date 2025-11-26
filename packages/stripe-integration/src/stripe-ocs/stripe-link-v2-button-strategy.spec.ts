@@ -135,6 +135,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             stripePaymentMethod,
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartLocale').mockReturnValue('en');
         jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
             Promise.resolve(false),
         );
@@ -194,10 +195,13 @@ describe('StripeLinkV2ButtonStrategy', () => {
             stripePaymentMethod.initializationData.captureMethod = 'automatic';
             await strategy.initialize(initialiseOptions);
 
-            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith({
-                ...stripePaymentMethod.initializationData,
-                captureMethod: 'automatic',
-            });
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
+                {
+                    ...stripePaymentMethod.initializationData,
+                    captureMethod: 'automatic',
+                },
+                'en',
+            );
             expect(elements.create).toHaveBeenCalledWith(
                 'expressCheckout',
                 expressCheckoutOptionsMock,
@@ -215,10 +219,13 @@ describe('StripeLinkV2ButtonStrategy', () => {
             stripePaymentMethod.initializationData.captureMethod = 'manual';
             await strategy.initialize(initialiseOptions);
 
-            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith({
-                ...stripePaymentMethod.initializationData,
-                captureMethod: 'manual',
-            });
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
+                {
+                    ...stripePaymentMethod.initializationData,
+                    captureMethod: 'manual',
+                },
+                'en',
+            );
             expect(elements.create).toHaveBeenCalledWith(
                 'expressCheckout',
                 expressCheckoutOptionsMock,

@@ -12,6 +12,7 @@ export default interface CartSelector {
     getCartOrThrow(): Cart;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
+    getLocale(): string | undefined;
 }
 
 export type CartSelectorFactory = (state: CartState) => CartSelector;
@@ -36,12 +37,18 @@ export function createCartSelectorFactory() {
         (status) => () => status,
     );
 
+    const getLocale = createSelector(
+        (state: CartState) => state.data?.locale,
+        (data) => () => data,
+    );
+
     return memoizeOne((state: CartState = DEFAULT_STATE): CartSelector => {
         return {
             getCart: getCart(state),
             getCartOrThrow: getCartOrThrow(state),
             getLoadError: getLoadError(state),
             isLoading: isLoading(state),
+            getLocale: getLocale(state),
         };
     });
 }
