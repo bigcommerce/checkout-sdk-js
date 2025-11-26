@@ -95,7 +95,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         this._captureMethod = captureMethod;
         this._stripeClient = await this.scriptLoader.getStripeClient(
             initializationData,
-            state.getLocale(),
+            state.getCartLocale(),
         );
 
         await this._mountExpressCheckoutElement(

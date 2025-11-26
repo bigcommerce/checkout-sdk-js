@@ -244,7 +244,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         const state = this.paymentIntegrationService.getState();
 
-        return this.scriptLoader.getStripeClient(initializationData, state.getLocale());
+        return this.scriptLoader.getStripeClient(initializationData, state.getCartLocale());
     }
 
     private _collapseStripeElement() {

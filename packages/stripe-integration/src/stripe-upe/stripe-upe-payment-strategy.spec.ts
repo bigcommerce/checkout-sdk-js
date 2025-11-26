@@ -82,7 +82,7 @@ describe('StripeUPEPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
             checkoutMock,
         );
-        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en');
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartLocale').mockReturnValue('en');
 
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(jest.fn());
 

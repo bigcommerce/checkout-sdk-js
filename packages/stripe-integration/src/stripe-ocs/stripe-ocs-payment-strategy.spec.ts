@@ -72,7 +72,7 @@ describe('StripeOCSPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getStripeOCSMock(),
         );
-        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en');
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartLocale').mockReturnValue('en');
         jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
             Promise.resolve(stripeUPEJsMock.elements({})),
         );

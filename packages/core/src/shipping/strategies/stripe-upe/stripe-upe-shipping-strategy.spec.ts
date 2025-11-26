@@ -142,7 +142,7 @@ describe('StripeUPEShippingStrategy', () => {
                 getStripeUPE(),
             );
 
-            jest.spyOn(store.getState().config, 'getLocale').mockReturnValue('en');
+            jest.spyOn(store.getState().cart, 'getLocale').mockReturnValue('en');
         });
 
         afterEach(() => {

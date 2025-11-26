@@ -453,7 +453,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         return this.scriptLoader.getStripeClient(
             initializationData,
-            state.getLocale(),
+            state.getCartLocale(),
             STRIPE_UPE_CLIENT_BETAS,
             STRIPE_UPE_CLIENT_API_VERSION,
         );

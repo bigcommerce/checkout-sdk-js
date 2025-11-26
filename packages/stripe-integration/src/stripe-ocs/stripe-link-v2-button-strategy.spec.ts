@@ -135,7 +135,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             stripePaymentMethod,
         );
-        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en');
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartLocale').mockReturnValue('en');
         jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
             Promise.resolve(false),
         );
