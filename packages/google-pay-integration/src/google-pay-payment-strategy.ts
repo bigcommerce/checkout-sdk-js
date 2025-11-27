@@ -42,6 +42,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _paymentButton?: HTMLElement;
     private _clickListener?: (event: MouseEvent) => unknown;
     private _methodId?: keyof WithGooglePayPaymentInitializeOptions;
+    private _isDeinitializationBlocked = false;
 
     constructor(
         protected _paymentIntegrationService: PaymentIntegrationService,
@@ -112,6 +113,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<void> {
+        if (this._isDeinitializationBlocked) {
+            return Promise.resolve();
+        }
+
         if (this._clickListener) {
             this._paymentButton?.removeEventListener('click', this._clickListener);
         }
@@ -174,6 +179,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 );
 
                 throw err;
+            } finally {
+                this._toggleBlockDeinitialization(false);
             }
 
             onPaymentSelect?.();
@@ -183,6 +190,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     protected async _interactWithPaymentSheet(): Promise<void> {
         const response = await this._googlePayPaymentProcessor.showPaymentSheet();
 
+        this._toggleBlockDeinitialization(true);
         this._toggleLoadingIndicator(true);
 
         const billingAddress =
@@ -197,6 +205,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.loadCheckout();
         await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
         this._toggleLoadingIndicator(false);
+        this._toggleBlockDeinitialization(false);
     }
 
     protected _getMethodId(): keyof WithGooglePayPaymentInitializeOptions {
@@ -313,6 +322,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 },
             },
         };
+    }
+
+    private _toggleBlockDeinitialization(isBlocked: boolean) {
+        this._isDeinitializationBlocked = isBlocked;
     }
 
     private _toggleLoadingIndicator(isLoading: boolean): void {
