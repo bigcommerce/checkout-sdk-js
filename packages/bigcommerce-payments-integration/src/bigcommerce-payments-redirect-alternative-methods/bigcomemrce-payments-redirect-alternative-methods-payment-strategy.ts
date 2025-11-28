@@ -12,12 +12,14 @@ import {
 
 import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
 
-import BigCommercePaymentsKlarnaPaymentInitializeOptions, {
-    WithBigCommercePaymentsKlarnaPaymentInitializeOptions,
-} from './bigcomemrce-payments-klarna-payment-initialize-options';
+import BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions, {
+    WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions,
+} from './bigcomemrce-payments-redirect-alternative-methods-payment-initialize-options';
 
-export default class BigCommercePaymentsKlarnaPaymentStrategy implements PaymentStrategy {
-    private bigCommercePaymentsAlternativeMethods?: BigCommercePaymentsKlarnaPaymentInitializeOptions;
+export default class BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy
+    implements PaymentStrategy
+{
+    private bigCommercePaymentsAlternativeMethods?: BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -25,7 +27,8 @@ export default class BigCommercePaymentsKlarnaPaymentStrategy implements Payment
     ) {}
 
     initialize(
-        options: PaymentInitializeOptions & WithBigCommercePaymentsKlarnaPaymentInitializeOptions,
+        options: PaymentInitializeOptions &
+            WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions,
     ): Promise<void> {
         const { gatewayId, methodId, bigcommerce_payments_apms } = options;
 
@@ -60,7 +63,7 @@ export default class BigCommercePaymentsKlarnaPaymentStrategy implements Payment
                 'bigcommerce_payments_apms',
                 {
                     gatewayId: 'bigcommerce_payments_apms',
-                    methodId: 'klarna',
+                    methodId,
                 },
             );
 

@@ -23,13 +23,13 @@
  * });
  * ```
  */
-export default interface BigCommercePaymentsKlarnaPaymentInitializeOptions {
+export default interface BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions {
     /**
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError?(error: Error | unknown): void;
 }
 
-export interface WithBigCommercePaymentsKlarnaPaymentInitializeOptions {
-    bigcommerce_payments_apms?: BigCommercePaymentsKlarnaPaymentInitializeOptions;
+export interface WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions {
+    bigcommerce_payments_apms?: BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions;
 }
