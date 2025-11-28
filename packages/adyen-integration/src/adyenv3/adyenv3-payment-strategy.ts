@@ -197,6 +197,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                     error,
                     shouldSaveInstrument,
                     shouldSetAsDefaultInstrument,
+                    paymentData.instrumentId,
+                    bigpayToken,
                 );
 
                 return;
@@ -461,6 +463,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         error: unknown,
         shouldSaveInstrument?: boolean,
         shouldSetAsDefaultInstrument?: boolean,
+        paymentToken?: string,
+        bigpayToken?: Record<string, unknown>,
     ): Promise<PaymentIntegrationSelectors | void> {
         if (
             !isRequestError(error) ||
@@ -472,6 +476,26 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         const payment = await this._handleAction(error.body.provider_data);
 
         try {
+            if (shouldSetAsDefaultInstrument && !shouldSaveInstrument) {
+                await this._paymentIntegrationService.submitPayment({
+                    ...payment,
+                    paymentData: {
+                        ...payment.paymentData,
+                        shouldSaveInstrument,
+                        shouldSetAsDefaultInstrument,
+                        instrumentId: paymentToken,
+                        formattedPayload: {
+                            bigpay_token: {
+                                ...bigpayToken,
+                                token: paymentToken,
+                            },
+                        },
+                    },
+                });
+
+                return;
+            }
+
             await this._paymentIntegrationService.submitPayment({
                 ...payment,
                 paymentData: {
@@ -485,6 +509,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 paymentError,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
+                paymentToken,
+                bigpayToken,
             );
         }
     }
