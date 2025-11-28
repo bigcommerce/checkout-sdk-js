@@ -35,7 +35,10 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         const { getPaymentMethodOrThrow } = this._paymentIntegrationService.getState();
         const paymentMethod = getPaymentMethodOrThrow(options.methodId, options.gatewayId);
 
-        this._clearpaySdk = await this._clearpayScriptLoader.load(paymentMethod);
+        const features = this._paymentIntegrationService.getState().getStoreConfigOrThrow()
+            .checkoutSettings.features;
+
+        this._clearpaySdk = await this._clearpayScriptLoader.load(paymentMethod, features);
     }
 
     deinitialize(): Promise<void> {

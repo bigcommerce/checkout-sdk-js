@@ -63,11 +63,27 @@ describe('ClearpayPaymentStrategy', () => {
             paymentMethod,
         );
 
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue({
+            checkoutSettings: {},
+        } as any);
+
         jest.spyOn(scriptLoader, 'load').mockReturnValue(Promise.resolve(clearpaySdk));
 
         jest.spyOn(clearpaySdk, 'initialize').mockImplementation(noop);
 
         jest.spyOn(clearpaySdk, 'redirect').mockImplementation(noop);
+
+        const storeConfigMock = {
+            checkoutSettings: {
+                features: {
+                    'PI-4555.clearpay_add_https_to_prod_script': true,
+                },
+            },
+        };
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigMock as any,
+        );
     });
 
     describe('#initialize()', () => {
@@ -77,7 +93,9 @@ describe('ClearpayPaymentStrategy', () => {
                 gatewayId: paymentMethod.gateway,
             });
 
-            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod);
+            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, {
+                'PI-4555.clearpay_add_https_to_prod_script': true,
+            });
         });
     });
 

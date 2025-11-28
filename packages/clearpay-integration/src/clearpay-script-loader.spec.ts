@@ -29,6 +29,15 @@ describe('ClearpayScriptLoader', () => {
         );
     });
 
+    it('loads https PROD widget script when experiment is enabled', () => {
+        const method = getClearpay();
+        const features = { 'PI-4555.clearpay_add_https_to_prod_script': true } as any;
+
+        clearpayScriptLoader.load(method, features);
+
+        expect(loadScript).toHaveBeenCalledWith('https://portal.clearpay.co.uk/afterpay-async.js');
+    });
+
     it('throws an error when window is not set', async () => {
         const scriptLoader = {} as ScriptLoader;
 
