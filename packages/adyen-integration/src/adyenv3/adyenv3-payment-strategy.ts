@@ -476,32 +476,30 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         const payment = await this._handleAction(error.body.provider_data);
 
         try {
-            if (shouldSetAsDefaultInstrument && !shouldSaveInstrument) {
-                await this._paymentIntegrationService.submitPayment({
-                    ...payment,
-                    paymentData: {
-                        ...payment.paymentData,
-                        shouldSaveInstrument,
-                        shouldSetAsDefaultInstrument,
-                        instrumentId: paymentToken,
-                        formattedPayload: {
-                            bigpay_token: {
-                                ...bigpayToken,
-                                token: paymentToken,
-                            },
-                        },
-                    },
-                });
+            const basePaymentData = {
+                ...payment.paymentData,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            };
 
-                return;
-            }
+            const tokenData =
+                shouldSetAsDefaultInstrument && !shouldSaveInstrument
+                    ? {
+                          instrumentId: paymentToken,
+                          formattedPayload: {
+                              bigpay_token: {
+                                  ...bigpayToken,
+                                  token: paymentToken,
+                              },
+                          },
+                      }
+                    : {};
 
             await this._paymentIntegrationService.submitPayment({
                 ...payment,
                 paymentData: {
-                    ...payment.paymentData,
-                    shouldSaveInstrument,
-                    shouldSetAsDefaultInstrument,
+                    ...basePaymentData,
+                    ...tokenData,
                 },
             });
         } catch (paymentError) {
