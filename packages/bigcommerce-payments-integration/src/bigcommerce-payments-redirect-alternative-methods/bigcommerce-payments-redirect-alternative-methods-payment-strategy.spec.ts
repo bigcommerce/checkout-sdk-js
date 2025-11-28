@@ -10,11 +10,11 @@ import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment
 import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
 import { getBigCommercePaymentsIntegrationServiceMock } from '../mocks';
 
-import BigCommercePaymentsKlarnaPaymentInitializeOptions from './bigcomemrce-payments-klarna-payment-initialize-options';
-import BigCommercePaymentsKlarnaPaymentStrategy from './bigcomemrce-payments-klarna-payment-strategy';
+import BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions from './bigcomemrce-payments-redirect-alternative-methods-payment-initialize-options';
+import BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy from './bigcomemrce-payments-redirect-alternative-methods-payment-strategy';
 
-describe('BigCommercePaymentsKlarnaPaymentStrategy', () => {
-    let strategy: BigCommercePaymentsKlarnaPaymentStrategy;
+describe('BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy', () => {
+    let strategy: BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let originalLocation: Location;
     let bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService;
@@ -23,9 +23,10 @@ describe('BigCommercePaymentsKlarnaPaymentStrategy', () => {
     const defaultGatewayId = 'bigcommerce_payments';
     const klarnaOrderId = 'orderId123';
 
-    const bigCommercePaymentsKlarnaOptions: BigCommercePaymentsKlarnaPaymentInitializeOptions = {
-        onError: jest.fn(),
-    };
+    const bigCommercePaymentsKlarnaOptions: BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions =
+        {
+            onError: jest.fn(),
+        };
 
     const initializationOptions: PaymentInitializeOptions = {
         methodId: defaultMethodId,
@@ -38,7 +39,7 @@ describe('BigCommercePaymentsKlarnaPaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
 
-        strategy = new BigCommercePaymentsKlarnaPaymentStrategy(
+        strategy = new BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
         );
@@ -66,8 +67,10 @@ describe('BigCommercePaymentsKlarnaPaymentStrategy', () => {
         jest.clearAllMocks();
     });
 
-    it('creates an instance of the BigCommercePayments Klarna payment strategy', () => {
-        expect(strategy).toBeInstanceOf(BigCommercePaymentsKlarnaPaymentStrategy);
+    it('creates an instance of the BigCommercePayments Redirect Alternative Methods payment strategy', () => {
+        expect(strategy).toBeInstanceOf(
+            BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy,
+        );
     });
 
     describe('#initialize()', () => {
