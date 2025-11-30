@@ -236,6 +236,9 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
         const { container, onError, onRenderButton, onValidate, submitForm } = bigcommerce_payments;
 
         const buttonOptions: BigCommercePaymentsButtonsOptions = {
+            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+                appSwitchWhenAvailable: true,
+            }),
             fundingSource: paypalSdk.FUNDING.PAYPAL,
             style: this.bigCommercePaymentsIntegrationService.getValidButtonStyle(
                 checkoutPaymentButtonStyles,
@@ -257,7 +260,11 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
             onRenderButton();
         }
 
-        this.paypalButton.render(container);
+        if (this.paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
+            this.paypalButton.resume?.();
+        } else {
+            this.paypalButton.render(container);
+        }
     }
 
     private async handleClick(
@@ -372,5 +379,18 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
         }
 
         return false;
+    }
+
+    /**
+     *
+     * PayPal AppSwitch enabling handling
+     *
+     */
+    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
+
+        return paymentMethod.initializationData?.isAppSwitchEnabled ?? false;
     }
 }
