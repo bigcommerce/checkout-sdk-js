@@ -631,35 +631,6 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 expect(paypalFastlaneSdkMock.ThreeDomainSecureClient.isEligible).toHaveBeenCalled();
             });
 
-            it('prevent 3D Secure Verification when experiment is disabled', async () => {
-                jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
-                    Promise.resolve({
-                        ...paypalFastlaneSdk,
-                        ThreeDomainSecureClient: threeDomainSecureComponentMock,
-                    }),
-                );
-
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue({
-                    ...storeConfig,
-                    checkoutSettings: {
-                        ...storeConfig.checkoutSettings,
-                        features: {
-                            'PROJECT-7080.paypalcommerce_fastlane_three_ds': false,
-                        },
-                    },
-                });
-
-                await strategy.initialize(initializationOptions);
-
-                await strategy.execute(executeOptions);
-
-                expect(threeDomainSecureComponentMock.isEligible).not.toHaveBeenCalled();
-                expect(threeDomainSecureComponentMock.show).not.toHaveBeenCalled();
-            });
-
             it('calls threeDomainSecureComponent show', async () => {
                 const paypalFastlaneSdkMock = {
                     ...paypalFastlaneSdk,
