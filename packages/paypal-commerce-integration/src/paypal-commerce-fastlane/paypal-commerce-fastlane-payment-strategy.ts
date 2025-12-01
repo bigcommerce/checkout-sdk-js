@@ -30,7 +30,6 @@ import {
     PayPalSdkScriptLoader,
     TDSecureAuthenticationState,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import { LiabilityShiftEnum } from '../paypal-commerce-types';
@@ -324,8 +323,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const { instrumentId } = paymentData;
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-        const is3DSEnabled =
-            this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled;
+        const is3DSEnabled = paymentMethod.config.is3dsEnabled;
 
         if (!is3DSEnabled) {
             await this.createOrder(instrumentId);
@@ -363,8 +361,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             billingAddress: this.paypalFastlaneUtils.mapBcToPayPalAddress(billingAddress),
         });
 
-        const is3DSEnabled =
-            this.isPaypalCommerceFastlaneThreeDSAvailable() && paymentMethod.config.is3dsEnabled;
+        const is3DSEnabled = paymentMethod.config.is3dsEnabled;
 
         if (!is3DSEnabled) {
             await this.createOrder(id);
@@ -499,18 +496,6 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         }
 
         return undefined;
-    }
-
-    /**
-     *
-     * PayPal Fastlane experiments handling
-     *
-     */
-    private isPaypalCommerceFastlaneThreeDSAvailable(): boolean {
-        const state = this.paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-
-        return isExperimentEnabled(features, 'PROJECT-7080.paypalcommerce_fastlane_three_ds');
     }
 
     private handleError(error: unknown): void {
