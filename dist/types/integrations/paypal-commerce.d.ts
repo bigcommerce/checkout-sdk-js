@@ -1903,12 +1903,6 @@ declare class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
      *
      */
     private handlePayPalStoredInstrumentChange;
-    /**
-     *
-     * PayPal Fastlane experiments handling
-     *
-     */
-    private isPaypalCommerceFastlaneThreeDSAvailable;
     private handleError;
 }
 

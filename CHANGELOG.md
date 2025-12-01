@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.833.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.832.1...v1.833.0) (2025-12-01)
+
+
+### Features
+
+* **payment:** PAYPAL-6079 remove fastlane ppcp 3ds experiment ([42e8b50](https://github.com/bigcommerce/checkout-sdk-js/commit/42e8b50761e2d395cc399ae8fbdc12f2c5cd730f))
+
 ### [1.832.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.832.0...v1.832.1) (2025-11-13)
 
 
