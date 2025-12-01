@@ -33,7 +33,7 @@ declare class ClearpayScriptLoader {
     private _scriptLoader;
     _window: ClearpayWindow;
     constructor(_scriptLoader: ScriptLoader, _window?: ClearpayWindow);
-    load(method: PaymentMethod): Promise<ClearpaySdk>;
+    load(method: PaymentMethod, features?: {}): Promise<ClearpaySdk>;
     private _getScriptUrl;
 }
 

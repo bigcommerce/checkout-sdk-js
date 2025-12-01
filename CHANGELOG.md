@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.834.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.833.0...v1.834.0) (2025-12-01)
+
+
+### Features
+
+* **payment:** PI-4555 Changed path for afterpay-async.js on Prod under experiment PI-4555.clearpay_add_https_to_prod_script ([e763d14](https://github.com/bigcommerce/checkout-sdk-js/commit/e763d143c80d1d96187121fd52617efc406b7bfb))
+
 ## [1.833.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.832.1...v1.833.0) (2025-12-01)
 
 
