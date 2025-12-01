@@ -51,6 +51,7 @@ export default class GooglePayPaymentProcessor {
     async initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
         googlePayPaymentOptions?: GooglePayPaymentOptions,
+        requireShippingAddress?: boolean,
         isBuyNowFlow?: boolean,
         currencyCode?: string,
     ): Promise<void> {
@@ -59,7 +60,12 @@ export default class GooglePayPaymentProcessor {
             googlePayPaymentOptions,
         );
 
-        await this._gateway.initialize(getPaymentMethod, isBuyNowFlow, currencyCode);
+        await this._gateway.initialize(
+            getPaymentMethod,
+            requireShippingAddress,
+            isBuyNowFlow,
+            currencyCode,
+        );
 
         this._buildButtonPayloads();
     }
