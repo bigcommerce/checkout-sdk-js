@@ -227,7 +227,8 @@ export default class StripeIntegrationService {
         const { clientToken } = state.getPaymentMethodOrThrow(methodId);
 
         if (!clientToken) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            // INFO: no need to update Stripe Element if client token is not present
+            return;
         }
 
         this.scriptLoader.updateStripeElements({ clientSecret: clientToken });

@@ -751,7 +751,7 @@ describe('StripeIntegrationService', () => {
             expect(stripeScriptLoader.updateStripeElements).toHaveBeenCalled();
         });
 
-        it('should throw error if no client token provided in payment provider', async () => {
+        it('should not update Stripe Payment Element if no client token provided', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -760,9 +760,7 @@ describe('StripeIntegrationService', () => {
                 clientToken: undefined,
             });
 
-            await expect(
-                stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId),
-            ).rejects.toThrow(MissingDataError);
+            await stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
             expect(stripeScriptLoader.updateStripeElements).not.toHaveBeenCalled();
