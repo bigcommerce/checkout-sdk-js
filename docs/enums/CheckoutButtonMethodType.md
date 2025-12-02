@@ -22,7 +22,6 @@
 - [GOOGLEPAY_STRIPE](CheckoutButtonMethodType.md#googlepay_stripe)
 - [GOOGLEPAY_STRIPEUPE](CheckoutButtonMethodType.md#googlepay_stripeupe)
 - [GOOGLEPAY_WORLDPAYACCESS](CheckoutButtonMethodType.md#googlepay_worldpayaccess)
-- [MASTERPASS](CheckoutButtonMethodType.md#masterpass)
 - [PAYPALEXPRESS](CheckoutButtonMethodType.md#paypalexpress)
 
 ## Enumeration Members
@@ -120,12 +119,6 @@ ___
 ### GOOGLEPAY\_WORLDPAYACCESS
 
 • **GOOGLEPAY\_WORLDPAYACCESS**
-
-___
-
-### MASTERPASS
-
-• **MASTERPASS**
 
 ___
 

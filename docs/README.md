@@ -321,8 +321,6 @@
 - [LineItemSocialData](interfaces/LineItemSocialData.md)
 - [LinkStyles](interfaces/LinkStyles.md)
 - [Locales](interfaces/Locales.md)
-- [MasterpassCustomerInitializeOptions](interfaces/MasterpassCustomerInitializeOptions.md)
-- [MasterpassPaymentInitializeOptions](interfaces/MasterpassPaymentInitializeOptions.md)
 - [MolliePaymentInitializeOptions](interfaces/MolliePaymentInitializeOptions.md)
 - [MutationObeserverCreator](interfaces/MutationObeserverCreator.md)
 - [MutationObserverWindow](interfaces/MutationObserverWindow.md)

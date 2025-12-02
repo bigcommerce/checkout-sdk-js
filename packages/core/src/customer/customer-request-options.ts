@@ -5,8 +5,6 @@ import {
 
 import { RequestOptions } from '../common/http-request';
 
-import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
-
 export { CustomerInitializeOptions } from '../generated/customer-initialize-options';
 
 /**
@@ -37,12 +35,6 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * @alpha
      */
     integrations?: Array<CustomerStrategyFactory<CustomerStrategy>>;
-
-    /**
-     * The options that are required to initialize the Masterpass payment method.
-     * They can be omitted unless you need to support Masterpass.
-     */
-    masterpass?: MasterpassCustomerInitializeOptions;
 }
 
 /**
