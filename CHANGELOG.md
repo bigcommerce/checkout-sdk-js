@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.835.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.834.0...v1.835.0) (2025-12-02)
+
+
+### Features
+
+* **payment:** PAYPAL-5948 update bcp klarna to work with afterpay ([0a86d16](https://github.com/bigcommerce/checkout-sdk-js/commit/0a86d168e324f913de9833ac68e49561bb30067d))
+
 ## [1.834.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.833.0...v1.834.0) (2025-12-01)
 
 

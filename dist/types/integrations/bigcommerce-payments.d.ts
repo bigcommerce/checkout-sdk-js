@@ -1096,50 +1096,6 @@ declare enum BigCommercePaymentsIntent {
 }
 
 /**
- * A set of options that are required to initialize the BigCommercePayments payment
- * method making payment with Klarna.
- *
- *
- * Also, BCP (also known as BigCommercePayments) requires specific options to initialize the PayPal Klarna flow
- *
- * ```js
- * service.initializePayment({
- *     gatewayId: 'bigcommerce_payments_apms',
- *     methodId: 'klarna',
- *     bigcommerce_payments_apms: {
- * // Callback for handling error that occurs when a buyer approves payment
- *         onError: (error) => {
- *         // Example function
- *             this.handleError(
- *                {
- *                   payment: { methodId: 'bigcommerce_payments_apms', }
- *               }
- *            );
- *         },
- *     },
- * });
- * ```
- */
-declare interface BigCommercePaymentsKlarnaPaymentInitializeOptions {
-    /**
-     * A callback for displaying error popup. This callback requires error object as parameter.
-     */
-    onError?(error: Error | unknown): void;
-}
-
-declare class BigCommercePaymentsKlarnaPaymentStrategy implements PaymentStrategy {
-    private paymentIntegrationService;
-    private bigCommercePaymentsIntegrationService;
-    private bigCommercePaymentsAlternativeMethods?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService);
-    initialize(options: PaymentInitializeOptions & WithBigCommercePaymentsKlarnaPaymentInitializeOptions): Promise<void>;
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
-    finalize(): Promise<void>;
-    deinitialize(): Promise<void>;
-    private handleError;
-}
-
-/**
  *
  * BigCommercePayments Messages
  */
@@ -1585,6 +1541,50 @@ declare class BigCommercePaymentsRatePayPaymentStrategy implements PaymentStrate
      *
      * */
     private toggleLoadingIndicator;
+}
+
+/**
+ * A set of options that are required to initialize the BigCommercePayments payment
+ * method making payment with Klarna.
+ *
+ *
+ * Also, BCP (also known as BigCommercePayments) requires specific options to initialize the PayPal Klarna flow
+ *
+ * ```js
+ * service.initializePayment({
+ *     gatewayId: 'bigcommerce_payments_apms',
+ *     methodId: 'klarna',
+ *     bigcommerce_payments_apms: {
+ * // Callback for handling error that occurs when a buyer approves payment
+ *         onError: (error) => {
+ *         // Example function
+ *             this.handleError(
+ *                {
+ *                   payment: { methodId: 'bigcommerce_payments_apms', }
+ *               }
+ *            );
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions {
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error | unknown): void;
+}
+
+declare class BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy implements PaymentStrategy {
+    private paymentIntegrationService;
+    private bigCommercePaymentsIntegrationService;
+    private bigCommercePaymentsAlternativeMethods?;
+    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService);
+    initialize(options: PaymentInitializeOptions & WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions): Promise<void>;
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
+    finalize(): Promise<void>;
+    deinitialize(): Promise<void>;
+    private handleError;
 }
 
 declare class BigCommercePaymentsRequestSender {
@@ -2055,10 +2055,6 @@ declare interface WithBigCommercePaymentsFastlanePaymentInitializeOptions {
     bigcommerce_payments_fastlane?: BigCommercePaymentsFastlanePaymentInitializeOptions;
 }
 
-declare interface WithBigCommercePaymentsKlarnaPaymentInitializeOptions {
-    bigcommerce_payments_apms?: BigCommercePaymentsKlarnaPaymentInitializeOptions;
-}
-
 declare interface WithBigCommercePaymentsPayLaterButtonInitializeOptions {
     bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterButtonInitializeOptions;
 }
@@ -2077,6 +2073,10 @@ declare interface WithBigCommercePaymentsPaymentInitializeOptions {
 
 declare interface WithBigCommercePaymentsRatePayPaymentInitializeOptions {
     bigcommerce_payments_ratepay?: BigCommercePaymentsRatePayPaymentInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions {
+    bigcommerce_payments_apms?: BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsVenmoButtonInitializeOptions {
@@ -2119,11 +2119,6 @@ export declare const createBigCommercePaymentsFastlanePaymentStrategy: import(".
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsKlarnaPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsKlarnaPaymentStrategy>, {
-    gateway: string;
-    id: string;
-}>;
-
 export declare const createBigCommercePaymentsPayLaterButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BigCommercePaymentsPayLaterButtonStrategy>, {
     id: string;
 }>;
@@ -2141,6 +2136,11 @@ export declare const createBigCommercePaymentsPaymentStrategy: import("../../../
 }>;
 
 export declare const createBigCommercePaymentsRatePayPayPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsRatePayPaymentStrategy>, {
+    gateway: string;
+    id: string;
+}>;
+
+export declare const createBigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy>, {
     gateway: string;
     id: string;
 }>;
