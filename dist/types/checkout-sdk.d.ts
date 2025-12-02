@@ -709,11 +709,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * @alpha
      */
     integrations?: Array<CustomerStrategyFactory<CustomerStrategy>>;
-    /**
-     * The options that are required to initialize the Masterpass payment method.
-     * They can be omitted unless you need to support Masterpass.
-     */
-    masterpass?: MasterpassCustomerInitializeOptions;
 }
 
 declare interface BaseElementOptions {
@@ -761,11 +756,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Masterpass payment method.
-     * They can be omitted unless you need to support Masterpass.
-     */
-    masterpass?: MasterpassPaymentInitializeOptions;
 }
 
 declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
@@ -2600,7 +2590,6 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_STRIPE = "googlepaystripe",
     GOOGLEPAY_STRIPEUPE = "googlepaystripeupe",
     GOOGLEPAY_WORLDPAYACCESS = "googlepayworldpayaccess",
-    MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress"
 }
 
@@ -6399,39 +6388,6 @@ declare interface LinkStyles extends InlineElementStyles {
 
 declare interface Locales {
     [key: string]: string;
-}
-
-declare interface MasterpassCustomerInitializeOptions {
-    /**
-     * The ID of a container which the checkout button should be inserted into.
-     */
-    container: string;
-}
-
-/**
- * A set of options that are required to initialize the Masterpass payment method.
- *
- * ```html
- * <!-- This is where the Masterpass button will be inserted -->
- * <div id="wallet-button"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'masterpass',
- *     masterpass: {
- *         walletButton: 'wallet-button'
- *     },
- * });
- * ```
- */
-declare interface MasterpassPaymentInitializeOptions {
-    /**
-     * This walletButton is used to set an event listener, provide an element ID if you want
-     * users to be able to launch the Masterpass wallet modal by clicking on a button.
-     * It should be an HTML element.
-     */
-    walletButton?: string;
 }
 
 /**
