@@ -197,6 +197,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                     error,
                     shouldSaveInstrument,
                     shouldSetAsDefaultInstrument,
+                    paymentData.instrumentId,
+                    bigpayToken,
                 );
 
                 return;
@@ -461,6 +463,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         error: unknown,
         shouldSaveInstrument?: boolean,
         shouldSetAsDefaultInstrument?: boolean,
+        paymentToken?: string,
+        bigpayToken?: Record<string, unknown>,
     ): Promise<PaymentIntegrationSelectors | void> {
         if (
             !isRequestError(error) ||
@@ -472,12 +476,30 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         const payment = await this._handleAction(error.body.provider_data);
 
         try {
+            const basePaymentData = {
+                ...payment.paymentData,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            };
+
+            const tokenData =
+                shouldSetAsDefaultInstrument && !shouldSaveInstrument
+                    ? {
+                          instrumentId: paymentToken,
+                          formattedPayload: {
+                              bigpay_token: {
+                                  ...bigpayToken,
+                                  token: paymentToken,
+                              },
+                          },
+                      }
+                    : {};
+
             await this._paymentIntegrationService.submitPayment({
                 ...payment,
                 paymentData: {
-                    ...payment.paymentData,
-                    shouldSaveInstrument,
-                    shouldSetAsDefaultInstrument,
+                    ...basePaymentData,
+                    ...tokenData,
                 },
             });
         } catch (paymentError) {
@@ -485,6 +507,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 paymentError,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
+                paymentToken,
+                bigpayToken,
             );
         }
     }
