@@ -32,6 +32,7 @@ const state = {
     getCustomerOrThrow: jest.fn(() => getCustomer()),
     getHost: jest.fn(),
     getLocale: jest.fn(),
+    getCartLocale: jest.fn(),
     getOrder: jest.fn(() => getOrder()),
     getOrderOrThrow: jest.fn(() => getOrder()),
     getOrderMeta: jest.fn(() => getOrderMeta()),

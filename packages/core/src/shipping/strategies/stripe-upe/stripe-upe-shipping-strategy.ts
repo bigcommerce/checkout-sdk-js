@@ -96,6 +96,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
 
         this._stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
             initializationData,
+            state.cart.getLocale(),
             STRIPE_UPE_CLIENT_BETAS,
             STRIPE_UPE_CLIENT_API_VERSION,
         );
