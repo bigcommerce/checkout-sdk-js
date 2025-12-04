@@ -2386,6 +2386,7 @@ declare interface Cart {
     createdTime: string;
     updatedTime: string;
     source?: CartSource;
+    locale: string;
 }
 
 declare class CartChangedError extends StandardError {
@@ -2415,6 +2416,7 @@ declare interface CartSelector {
     getCartOrThrow(): Cart;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
+    getLocale(): string | undefined;
 }
 
 declare interface CheckableInputStyles extends InputStyles {

@@ -78,6 +78,7 @@ declare interface Cart {
     createdTime: string;
     updatedTime: string;
     source?: CartSource;
+    locale: string;
 }
 
 declare interface Checkout {

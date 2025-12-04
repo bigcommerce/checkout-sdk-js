@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.837.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.836.0...v1.837.0) (2025-12-04)
+
+
+### Features
+
+* **payment:** add checkout locale to Stripe elements ([#3088](https://github.com/bigcommerce/checkout-sdk-js/issues/3088)) ([01b4fbb](https://github.com/bigcommerce/checkout-sdk-js/commit/01b4fbb1e56b6c9fbac8be280adc9a4119531984))
+
 ## [1.836.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.835.0...v1.836.0) (2025-12-02)
 
 
