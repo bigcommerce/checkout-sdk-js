@@ -237,7 +237,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             params: { method: methodId },
         });
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const { checkoutSettings } = state.getStoreConfigOrThrow();
 
         if (!isStripePaymentMethodLike(paymentMethod)) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -253,9 +252,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         this._stripeUPEClient = await this._loadStripeJs(initializationData);
-        this._isStripeElementUpdateEnabled =
-            !!checkoutSettings.features['PI-1679.trigger_update_stripe_payment_element'] &&
-            typeof initStripeElementUpdateTrigger === 'function';
+        this._isStripeElementUpdateEnabled = typeof initStripeElementUpdateTrigger === 'function';
 
         let appearance: StripeAppearanceOptions | undefined;
 

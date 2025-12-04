@@ -399,51 +399,13 @@ describe('StripeUPEPaymentStrategy', () => {
         describe('Update stripe payment element', () => {
             let updateTriggerFn: (payload: StripeElementUpdateOptions) => void = jest.fn();
 
-            const setUpdateElementExperiment = (enabled?: boolean) => {
-                const storeConfig: StoreConfig = {
-                    ...getConfig().storeConfig,
-                    checkoutSettings: {
-                        ...getConfig().storeConfig.checkoutSettings,
-                        features: {
-                            'PI-1679.trigger_update_stripe_payment_element': !!enabled,
-                        },
-                    },
-                };
-
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfig);
-            };
-
             beforeEach(() => {
-                setUpdateElementExperiment(true);
-
                 options.stripeupe!.initStripeElementUpdateTrigger = (stripeElementUpdateFn) => {
                     updateTriggerFn = stripeElementUpdateFn;
                 };
             });
 
-            it('should show terms text by default if experiment disabled', async () => {
-                setUpdateElementExperiment(false);
-
-                const { createElementMock } = getPaymentElementActionsMock(false);
-
-                await strategy.initialize(options);
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(createElementMock).toHaveBeenCalledWith(
-                    'payment',
-                    expect.objectContaining({
-                        terms: {
-                            card: StripeStringConstants.AUTO,
-                        },
-                    }),
-                );
-            });
-
             it('should show terms text by default if update trigger does not set', async () => {
-                setUpdateElementExperiment();
                 options.stripeupe!.initStripeElementUpdateTrigger = undefined;
 
                 const { createElementMock } = getPaymentElementActionsMock(false);
@@ -456,22 +418,6 @@ describe('StripeUPEPaymentStrategy', () => {
                     expect.objectContaining({
                         terms: {
                             card: StripeStringConstants.AUTO,
-                        },
-                    }),
-                );
-            });
-
-            it('should not show terms text by default if experiment enabled', async () => {
-                const { createElementMock } = getPaymentElementActionsMock(false);
-
-                await strategy.initialize(options);
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(createElementMock).toHaveBeenCalledWith(
-                    'payment',
-                    expect.objectContaining({
-                        terms: {
-                            card: StripeStringConstants.NEVER,
                         },
                     }),
                 );
@@ -507,18 +453,6 @@ describe('StripeUPEPaymentStrategy', () => {
                         },
                     }),
                 );
-            });
-
-            it('should not update element when experiment disabled', async () => {
-                setUpdateElementExperiment(false);
-
-                const { updateMock } = getPaymentElementActionsMock();
-
-                await strategy.initialize(options);
-                await new Promise((resolve) => process.nextTick(resolve));
-                updateTriggerFn({ shouldShowTerms: false });
-
-                expect(updateMock).not.toHaveBeenCalled();
             });
 
             it('should not update element without trigger function initialization', async () => {
