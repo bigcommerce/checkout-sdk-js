@@ -11,13 +11,11 @@ import {
     PaymentIntegrationService,
     PaymentMethodFailedError,
     RequestError,
-    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
     getCart,
     getCheckout,
-    getConfig,
     getCustomer,
     getErrorPaymentResponseBody,
     getResponse,
