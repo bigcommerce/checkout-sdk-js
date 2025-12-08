@@ -244,7 +244,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         const { clientToken, initializationData } = paymentMethod;
-        const { shopperLanguage, allowRedisplayForStoredInstruments = false } = initializationData;
+        const {
+            shopperLanguage,
+            allowRedisplayForStoredInstruments = false,
+            enableLink,
+        } = initializationData;
 
         this._allowRedisplayForStoredInstruments = allowRedisplayForStoredInstruments;
 
@@ -297,6 +301,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 wallets: {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
+                    link: enableLink ? StripeStringConstants.AUTO : StripeStringConstants.NEVER,
                 },
                 ...this._getStripeElementTerms(),
             });
