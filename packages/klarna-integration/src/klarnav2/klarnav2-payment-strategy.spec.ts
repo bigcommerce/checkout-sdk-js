@@ -96,7 +96,6 @@ describe('KlarnaV2PaymentStrategy', () => {
         checkoutMock = getCheckout();
         storeConfigMock = getConfig().storeConfig;
         storeConfigMock.checkoutSettings.features = {
-            'PI-4025.klarna_single_radio_button': false,
             'PI-3915.b2b_payment_session_for_klarna': false,
         };
 
@@ -207,21 +206,22 @@ describe('KlarnaV2PaymentStrategy', () => {
         it('loads payments widget', () => {
             expect(klarnaPayments.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaPayments.load).toHaveBeenCalledWith(
-                { container: '#container', payment_method_category: paymentMethod.id },
+                { container: '#container', payment_method_category: paymentMethod.gateway },
                 expect.any(Function),
             );
             expect(klarnaPayments.load).toHaveBeenCalledTimes(1);
         });
 
-        it('loads payments widget when PI-4025.klarna_single_radio_button experiment is enabled', async () => {
-            storeConfigMock.checkoutSettings.features = {
-                'PI-4025.klarna_single_radio_button': true,
-            };
-
+        it('loads payments widget when klarnaMultipleRadioButton is enabled', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigMock);
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethodMock,
+                initializationData: {
+                    klarnaMultipleRadioButton: true,
+                },
+            });
 
             await strategy.initialize({
                 methodId: paymentMethod.id,
@@ -231,7 +231,7 @@ describe('KlarnaV2PaymentStrategy', () => {
 
             expect(klarnaPayments.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaPayments.load).toHaveBeenCalledWith(
-                { container: '#container', payment_method_category: paymentMethod.gateway },
+                { container: '#container', payment_method_category: paymentMethod.id },
                 expect.any(Function),
             );
         });
@@ -287,7 +287,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
             );
@@ -297,15 +297,16 @@ describe('KlarnaV2PaymentStrategy', () => {
             );
         });
 
-        it('authorizes against klarnav2 when PI-4025.klarna_single_radio_button experiment is enabled', async () => {
-            storeConfigMock.checkoutSettings.features = {
-                'PI-4025.klarna_single_radio_button': true,
-            };
-
+        it('authorizes against klarnav2 when klarnaMultipleRadioButton is enabled', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigMock);
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethodMock,
+                initializationData: {
+                    klarnaMultipleRadioButton: true,
+                },
+            });
 
             const loadCheckoutMock = jest.spyOn(paymentIntegrationService, 'loadCheckout');
 
@@ -314,7 +315,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.gateway },
+                { payment_method_category: paymentMethod.id },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
             );
@@ -360,7 +361,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsWithOrganizationName(),
                 expect.any(Function),
             );
@@ -402,7 +403,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
             );
@@ -469,7 +470,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
             );
@@ -505,7 +506,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsForOC(),
                 expect.any(Function),
             );
@@ -547,7 +548,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParams(),
                 expect.any(Function),
             );
@@ -599,7 +600,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 await strategy.execute(payload);
 
                 expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                    { payment_method_category: paymentMethod.id },
+                    { payment_method_category: paymentMethod.gateway },
                     {},
                     expect.any(Function),
                 );
