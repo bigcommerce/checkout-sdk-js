@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.838.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.837.2...v1.838.0) (2025-12-11)
+
+
+### Features
+
+* **payment:** Rollout Experiment: PI-1679.trigger_update_stripe_payment_element ([#3096](https://github.com/bigcommerce/checkout-sdk-js/issues/3096)) ([23f45cc](https://github.com/bigcommerce/checkout-sdk-js/commit/23f45ccf1d4814744a4379831972de83b63b3ac6))
+
 ### [1.837.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.837.1...v1.837.2) (2025-12-11)
 
 
