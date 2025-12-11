@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.837.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.837.1...v1.837.2) (2025-12-11)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-1135 pass enableLink to stripe upe ([0119e2c](https://github.com/bigcommerce/checkout-sdk-js/commit/0119e2c43ac9cc03dbb0ac3366ed6c948612704f))
+
 ### [1.837.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.837.0...v1.837.1) (2025-12-04)
 
 
