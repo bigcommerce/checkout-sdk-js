@@ -11,6 +11,7 @@ import {
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -579,6 +580,30 @@ describe('GooglePayPaymentStrategy', () => {
             const deinitialize = strategy.deinitialize();
 
             await expect(deinitialize).resolves.toBeUndefined();
+        });
+
+        it('should NOT deinitialize the strategy if deinitialization is blocked', async () => {
+            const delayedPromise = new Promise((r) => {
+                setTimeout(r, 100);
+            });
+
+            jest.spyOn(processor, 'showPaymentSheet').mockResolvedValue(
+                Promise.resolve(getCardDataResponse()),
+            );
+
+            jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockReturnValue(
+                delayedPromise as Promise<PaymentIntegrationSelectors>,
+            );
+
+            jest.spyOn(button, 'removeEventListener');
+
+            await strategy.initialize(options);
+
+            button.click();
+            await new Promise((resolve) => process.nextTick(resolve));
+            await strategy.deinitialize();
+
+            expect(button.removeEventListener).not.toHaveBeenCalled();
         });
 
         it('should unbind payment button', async () => {
