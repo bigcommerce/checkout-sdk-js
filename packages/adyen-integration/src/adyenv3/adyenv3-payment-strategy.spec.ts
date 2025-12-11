@@ -529,6 +529,46 @@ describe('AdyenV3PaymentStrategy', () => {
                 expect(adyenCheckout.createFromAction).toHaveBeenCalledTimes(1);
             });
 
+            it('should call submitPayment with payment instrument data when setting a vaulted card as default and additional action is completed', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment')
+                    .mockReturnValueOnce(Promise.reject(challengeShopperError))
+                    .mockImplementationOnce(jest.fn());
+
+                options = getInitializeOptionsWithUndefinedWidgetSize();
+
+                await strategy.initialize(options);
+                await strategy.execute({
+                    useStoreCredit: false,
+                    payment: {
+                        methodId: 'scheme',
+                        paymentData: { instrumentId: '123', shouldSetAsDefaultInstrument: true },
+                    },
+                });
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    2,
+                    expect.objectContaining({
+                        methodId: 'scheme',
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                bigpay_token: {
+                                    credit_card_number_confirmation: 'ENCRYPTED_CARD_NUMBER',
+                                    expiry_month: 'ENCRYPTED_EXPIRY_MONTH',
+                                    expiry_year: 'ENCRYPTED_EXPIRY_YEAR',
+                                    token: '123',
+                                    verification_value: 'ENCRYPTED_CVV',
+                                },
+                            }),
+                            instrumentId: '123',
+                            nonce: '{"resultCode":"ChallengeShopper","action":"adyenAction"}',
+                            shouldSaveInstrument: undefined,
+                            shouldSetAsDefaultInstrument: true,
+                        }),
+                    }),
+                );
+            });
+
             it('returns 3DS2 ChallengeShopper flow with default widget size', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment')
                     .mockReturnValueOnce(Promise.reject(challengeShopperError))
