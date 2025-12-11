@@ -578,6 +578,7 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     private _paymentButton?;
     private _clickListener?;
     private _methodId?;
+    private _isDeinitializationBlocked;
     constructor(_paymentIntegrationService: PaymentIntegrationService, _googlePayPaymentProcessor: GooglePayPaymentProcessor);
     initialize(options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions): Promise<void>;
     execute({ payment }: OrderRequestBody): Promise<void>;
@@ -590,6 +591,7 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     protected _getIsSignedInOrThrow(): Promise<boolean>;
     protected _handleOfferTrigger(offerData: IntermediatePaymentData['offerData']): Promise<Partial<HandleCouponsOut>>;
     protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions;
+    private _toggleBlockDeinitialization;
     private _toggleLoadingIndicator;
 }
 

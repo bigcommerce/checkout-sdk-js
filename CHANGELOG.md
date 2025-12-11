@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.839.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.838.1...v1.839.0) (2025-12-11)
+
+
+### Features
+
+* **payment:** PI-4492 google pay deinitialize block during paying ([53676a7](https://github.com/bigcommerce/checkout-sdk-js/commit/53676a72162614e18114b377676176106953f7a6))
+
 ### [1.838.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.838.0...v1.838.1) (2025-12-11)
 
 
