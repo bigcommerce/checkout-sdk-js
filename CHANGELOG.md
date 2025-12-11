@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.838.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.838.0...v1.838.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* **checkout:** PI-4524 fix default instrument setup on additional action for Adyen v3 ([#3091](https://github.com/bigcommerce/checkout-sdk-js/issues/3091)) ([519e615](https://github.com/bigcommerce/checkout-sdk-js/commit/519e6150f3f5661fb4615cf3d3f13d2fabfb46f5))
+
 ## [1.838.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.837.2...v1.838.0) (2025-12-11)
 
 
