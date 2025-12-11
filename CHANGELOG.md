@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.839.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.839.0...v1.839.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* **checkout:** PI-4547 fix `apple-spinner` error when selecting Apple Pay ([#3082](https://github.com/bigcommerce/checkout-sdk-js/issues/3082)) ([1dbe162](https://github.com/bigcommerce/checkout-sdk-js/commit/1dbe1623e6af3ec33f0a22ee2a463b47884ad62d))
+
 ## [1.839.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.838.1...v1.839.0) (2025-12-11)
 
 
