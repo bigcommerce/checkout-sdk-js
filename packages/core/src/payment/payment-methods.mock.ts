@@ -260,23 +260,6 @@ export function getCybersource(): PaymentMethod {
     };
 }
 
-export function getBarclays(): PaymentMethod {
-    return {
-        id: 'barclays',
-        logoUrl: '',
-        method: 'credit-card',
-        supportedCards: [],
-        config: {
-            displayName: 'Barclaycard Smartpay',
-            is3dsEnabled: true,
-            testMode: true,
-        },
-        type: 'PAYMENT_TYPE_API',
-        clientToken: 'barclaysToken',
-        skipRedirectConfirmationAlert: false,
-    };
-}
-
 export function getBankDeposit(): PaymentMethod {
     return {
         id: 'bankdeposit',
