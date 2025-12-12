@@ -157,6 +157,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
             // TODO: Dispatch Widget Actions
             try {
+                this._googlePayPaymentProcessor.setShouldRequestShipping(false);
                 await this._googlePayPaymentProcessor.initializeWidget();
                 await this._interactWithPaymentSheet();
             } catch (error) {
