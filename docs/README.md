@@ -243,6 +243,7 @@
 - [ExtensionCommandMap](interfaces/ExtensionCommandMap.md)
 - [ExtensionQueryMap](interfaces/ExtensionQueryMap.md)
 - [ExtensionSelector](interfaces/ExtensionSelector.md)
+- [FastlaneShippingInitializeOptions](interfaces/FastlaneShippingInitializeOptions.md)
 - [Fee](interfaces/Fee.md)
 - [FlashMessage](interfaces/FlashMessage.md)
 - [FormField](interfaces/FormField.md)
@@ -533,6 +534,7 @@
 - [CustomerInitializeOptions](README.md#customerinitializeoptions)
 - [ExtensionEvent](README.md#extensionevent)
 - [ExtensionMessage](README.md#extensionmessage)
+- [FastlaneStylesOption](README.md#fastlanestylesoption)
 - [FlashMessageType](README.md#flashmessagetype)
 - [FormFieldFieldType](README.md#formfieldfieldtype)
 - [FormFieldType](README.md#formfieldtype)
@@ -674,6 +676,14 @@ ___
 ### ExtensionMessage
 
 Ƭ **ExtensionMessage**: [`ExtensionEvent`](README.md#extensionevent) \| [`GetConsignmentsMessage`](interfaces/GetConsignmentsMessage.md)
+
+___
+
+### FastlaneStylesOption
+
+Ƭ **FastlaneStylesOption**: `PayPalFastlaneStylesOption` \| `BraintreeFastlaneStylesOption`
+
+A union type that covers all possible Fastlane styling options from different providers
 
 ___
 

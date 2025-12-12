@@ -5340,6 +5340,34 @@ declare const enum ExtensionType {
     Worker = "worker"
 }
 
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support Fastlane (PayPal Commerce, BigCommerce Payments, or Braintree).
+ *
+ * This is a unified interface that can be used across all Fastlane implementations
+ * to simplify initialization and avoid provider-specific checks.
+ */
+declare interface FastlaneShippingInitializeOptions {
+    /**
+     * Styling options for customizing Fastlane components
+     *
+     * Note: the styles for all Fastlane strategies should be the same,
+     * because they will be provided to the Fastlane library only for the first strategy initialization
+     * no matter what strategy was initialized first
+     */
+    styles?: FastlaneStylesOption;
+    /**
+     * A callback that shows the Fastlane popup with customer addresses
+     * when triggered
+     */
+    onPayPalFastlaneAddressChange?: (showFastlaneAddressSelector: () => Promise<CustomerAddress_2 | undefined>) => void;
+}
+
+/**
+ * A union type that covers all possible Fastlane styling options from different providers
+ */
+declare type FastlaneStylesOption = PayPalFastlaneStylesOption | BraintreeFastlaneStylesOption;
+
 declare interface Fee {
     id: string;
     type: string;
@@ -7927,6 +7955,14 @@ declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptio
      * when using BigCommercePayments Fastlane.
      */
     bigcommerce_payments_fastlane?: BigCommercePaymentsFastlaneShippingInitializeOptions;
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using Fastlane (PayPal Commerce, BigCommerce Payments, or Braintree).
+     *
+     * This is a unified option that works across all Fastlane implementations,
+     * simplifying integration and avoiding provider-specific checks.
+     */
+    fastlane?: FastlaneShippingInitializeOptions;
 }
 
 declare interface ShippingOption {

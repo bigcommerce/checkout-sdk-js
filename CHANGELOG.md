@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.840.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.839.1...v1.840.0) (2025-12-12)
+
+
+### Features
+
+* **payment:** PAYPAL-6090 unified fastlane key ([bb9c478](https://github.com/bigcommerce/checkout-sdk-js/commit/bb9c478cae109a7e330530122de363e7169e59f1))
+
 ### [1.839.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.839.0...v1.839.1) (2025-12-11)
 
 
