@@ -33,7 +33,7 @@ describe('CardinalScriptLoader', () => {
         cardinalScriptLoader.load('provider', testMode);
 
         expect(loadScript).toHaveBeenCalledWith(
-            'https://songbird.cardinalcommerce.com/edge/v1/songbird.js?v=provider',
+            'https://static.client.cardinaltrusted.com/songbird/v2.0.0/songbird.js?v=provider',
         );
     });
 
