@@ -436,6 +436,13 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             const { prefillCardHolderName } = paymentMethod.initializationData;
 
             paymentComponent = adyenClient.create(paymentMethod.method, {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                visibility: {
+                    personalDetails: 'hidden',
+                    billingAddress: 'hidden',
+                    deliveryAddress: 'hidden',
+                },
                 ...adyenv3.options,
                 showBrandsUnderCardNumber: false,
                 billingAddressRequired: false,
