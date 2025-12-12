@@ -1,6 +1,11 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
-import { Cart, Customer, StoreConfig } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    Cart,
+    Customer,
+    StoreConfig,
+    UntrustedShippingCardVerificationType,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
     getCart,
@@ -64,11 +69,12 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
     const requestSender = createRequestSender();
 
     const bcAddressMock = {
-        id: 'asd333',
+        id: 1,
         address1: 'addressLine1',
         address2: 'addressLine2',
         city: 'addressCity',
         company: 'BigCommerce',
+        country: 'US',
         countryCode: 'US',
         customFields: [],
         firstName: 'John',
@@ -77,6 +83,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         postalCode: '03004',
         stateOrProvince: 'addressState',
         stateOrProvinceCode: 'addressState',
+        type: 'residential',
     };
 
     const bcInstrumentMock = {
@@ -90,7 +97,8 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         method: 'paypalcommerceacceleratedcheckout',
         provider: 'paypalcommerceacceleratedcheckout',
         trustedShippingAddress: false,
-        type: 'card',
+        type: 'card' as const,
+        untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.CVV,
     };
 
     beforeEach(() => {
@@ -395,7 +403,10 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
                 cart.id,
             );
-            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);
+            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith({
+                ...bcAddressMock,
+                id: String(bcAddressMock.id),
+            });
         });
 
         it('does not authenticate user if the authentication was canceled before', async () => {
@@ -548,6 +559,107 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 addresses: [bcAddressMock],
             });
             expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);
+        });
+
+        it('supports unified "fastlane" key with styles', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
+                ...paymentMethod,
+                clientToken: '123',
+                initializationData: {
+                    isFastlaneEnabled: true,
+                    isFastlaneStylingEnabled: true,
+                    isAcceleratedCheckoutEnabled: true,
+                    fastlaneStyles: {
+                        fastlaneRootSettingsBackgroundColor: 'orange',
+                        fastlaneTextCaptionSettingsColor: 'blue',
+                    },
+                },
+            });
+
+            const initOptions = {
+                methodId: 'paypalcommerceacceleratedcheckout',
+                fastlane: {
+                    styles: {
+                        root: {
+                            backgroundColorPrimary: 'red',
+                        },
+                        input: {
+                            borderRadius: '10px',
+                        },
+                    },
+                },
+            };
+
+            await strategy.initialize(initOptions);
+
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
+                paypalFastlaneSdk,
+                false,
+                {
+                    root: {
+                        backgroundColorPrimary: 'orange',
+                    },
+                    input: {
+                        borderRadius: '10px',
+                    },
+                    text: {
+                        caption: {
+                            color: 'blue',
+                        },
+                    },
+                },
+            );
+        });
+
+        it('supports unified "fastlane" key with onPayPalFastlaneAddressChange callback', async () => {
+            const onPayPalFastlaneAddressChange = jest.fn();
+
+            jest.spyOn(
+                store.getState().paymentProviderCustomer,
+                'getPaymentProviderCustomerOrThrow',
+            ).mockReturnValue({
+                authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [bcAddressMock],
+                instruments: [bcInstrumentMock],
+            });
+
+            await strategy.initialize({
+                ...initializationOptions,
+                fastlane: {
+                    onPayPalFastlaneAddressChange,
+                },
+            });
+
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalled();
+            expect(onPayPalFastlaneAddressChange).toHaveBeenCalled();
+        });
+
+        it('prioritizes unified "fastlane" key over provider-specific key', async () => {
+            const providerSpecificCallback = jest.fn();
+            const unifiedCallback = jest.fn();
+
+            jest.spyOn(
+                store.getState().paymentProviderCustomer,
+                'getPaymentProviderCustomerOrThrow',
+            ).mockReturnValue({
+                authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [bcAddressMock],
+                instruments: [bcInstrumentMock],
+            });
+
+            await strategy.initialize({
+                ...initializationOptions,
+                paypalcommercefastlane: {
+                    onPayPalFastlaneAddressChange: providerSpecificCallback,
+                },
+                fastlane: {
+                    onPayPalFastlaneAddressChange: unifiedCallback,
+                },
+            });
+
+            expect(unifiedCallback).toHaveBeenCalled();
+            expect(providerSpecificCallback).not.toHaveBeenCalled();
         });
     });
 });

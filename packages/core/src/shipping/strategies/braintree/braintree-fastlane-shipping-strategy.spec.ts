@@ -495,6 +495,60 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             expect(updateBillingAddressMock).toHaveBeenCalledWith(mappedBillingAddress);
             expect(updateShippingAddressMock).not.toHaveBeenCalled();
         });
+
+        it('supports unified "fastlane" key with styles', async () => {
+            const strategy = createStrategy();
+            const paymentMethod = getPaymentMethod();
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isAcceleratedCheckoutEnabled: true,
+                    isFastlaneEnabled: true,
+                    isFastlaneStylingEnabled: true,
+                    fastlaneStyles: {
+                        fastlaneRootSettingsBackgroundColor: 'orange',
+                        fastlaneTextCaptionSettingsColor: 'blue',
+                    },
+                },
+            });
+
+            const initOptions = {
+                methodId: paymentMethod.id,
+                fastlane: {
+                    styles: {
+                        root: {
+                            backgroundColorPrimary: 'red',
+                        },
+                        input: {
+                            borderRadius: '10px',
+                        },
+                    },
+                },
+            };
+
+            await strategy.initialize(initOptions);
+            braintreeIntegrationServiceMock.initialize();
+
+            expect(braintreeIntegrationServiceMock.getBraintreeFastlane).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                undefined,
+                {
+                    root: {
+                        backgroundColorPrimary: 'orange',
+                    },
+                    input: {
+                        borderRadius: '10px',
+                    },
+                    text: {
+                        caption: {
+                            color: 'blue',
+                        },
+                    },
+                },
+            );
+        });
     });
 
     it('update billing and shipping address for physical items', async () => {
@@ -712,6 +766,39 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             });
 
             expect(consignmentActionCreator.updateAddress).toHaveBeenCalled();
+        });
+
+        it('supports unified "fastlane" key with onPayPalFastlaneAddressChange callback', async () => {
+            const strategy = createStrategy();
+            const onPayPalFastlaneAddressChange = jest.fn();
+
+            await strategy.initialize({
+                ...defaultOptions,
+                fastlane: {
+                    onPayPalFastlaneAddressChange,
+                },
+            });
+
+            expect(onPayPalFastlaneAddressChange).toHaveBeenCalled();
+        });
+
+        it('prioritizes unified "fastlane" key over provider-specific key for callbacks', async () => {
+            const strategy = createStrategy();
+            const providerSpecificCallback = jest.fn();
+            const unifiedCallback = jest.fn();
+
+            await strategy.initialize({
+                ...defaultOptions,
+                braintreefastlane: {
+                    onPayPalFastlaneAddressChange: providerSpecificCallback,
+                },
+                fastlane: {
+                    onPayPalFastlaneAddressChange: unifiedCallback,
+                },
+            });
+
+            expect(unifiedCallback).toHaveBeenCalled();
+            expect(providerSpecificCallback).not.toHaveBeenCalled();
         });
     });
 });
