@@ -19,7 +19,6 @@
 /packages/core/src/payment/strategies/adyenv3 @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/affirm @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/amazon-pay-v2 @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/barclays @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/bluesnapv2 @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/bnz @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/cardinal @bigcommerce/team-integrations
