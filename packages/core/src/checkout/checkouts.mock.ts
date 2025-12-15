@@ -27,6 +27,10 @@ import CheckoutStoreState from './checkout-store-state';
 export function getCheckout(): Checkout {
     return {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+        comparisonShippingCost: 20,
+        displayDiscountTotal: 0,
+        manualDiscountTotal: 0,
+        orderBasedAutoDiscountTotal: 0,
         cart: getCart(),
         customer: getCustomer(),
         customerMessage: 'comment',

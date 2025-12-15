@@ -9,6 +9,11 @@ import { getGiftCertificate } from './gift-certificates.mock';
 export default function getCheckout(): Checkout {
     return {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+        channelId: 1,
+        comparisonShippingCost: 20,
+        displayDiscountTotal: 0,
+        manualDiscountTotal: 0,
+        orderBasedAutoDiscountTotal: 0,
         cart: getCart(),
         customer: getCustomer(),
         customerMessage: 'comment',
@@ -22,6 +27,7 @@ export default function getCheckout(): Checkout {
         ],
         discounts: [],
         coupons: [],
+        fees: [],
         isStoreCreditApplied: false,
         shouldExecuteSpamCheck: false,
         orderId: 295,
