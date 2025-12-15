@@ -98,7 +98,6 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             currency: currencyCode,
             intent: initializationData.intent,
             isCreditEnabled: initializationData.isCreditEnabled,
-            commit: false,
         };
 
         // TODO: remove banner rendering implementation in this file when PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk will be rolled out to 100%

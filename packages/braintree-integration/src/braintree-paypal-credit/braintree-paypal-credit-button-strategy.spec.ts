@@ -360,7 +360,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                 isCreditEnabled: true,
                 currency: 'USD',
                 intent: undefined,
-                commit: false,
             };
 
             await strategy.initialize(initializationOptions);
@@ -373,7 +372,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                     currency: 'USD',
                     isCreditEnabled: true,
                     intent: undefined,
-                    commit: false,
                 },
                 expect.any(Function),
                 expect.any(Function),
