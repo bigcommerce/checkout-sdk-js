@@ -90,10 +90,12 @@ declare interface Checkout {
     consignments: Consignment[];
     taxes: Tax[];
     discounts: Discount[];
+    displayDiscountTotal: number;
     isStoreCreditApplied: boolean;
     coupons: Coupon[];
     orderId?: number;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     /**
@@ -108,6 +110,8 @@ declare interface Checkout {
     subtotal: number;
     grandTotal: number;
     outstandingBalance: number;
+    orderBasedAutoDiscountTotal: number;
+    manualDiscountTotal: number;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;
