@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.844.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.843.0...v1.844.0) (2025-12-16)
+
+
+### Features
+
+* **payment:** PI-4519 Cybersource endpoint migration ([#3089](https://github.com/bigcommerce/checkout-sdk-js/issues/3089)) ([e9f5c77](https://github.com/bigcommerce/checkout-sdk-js/commit/e9f5c7724545690d97aa47c2198ade00732f8a43))
+
 ## [1.843.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.842.0...v1.843.0) (2025-12-16)
 
 
