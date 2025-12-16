@@ -47,6 +47,7 @@ export default interface Checkout {
     payments?: CheckoutPayment[];
     channelId: number;
     fees: Fee[];
+    totalDiscount: number;
 }
 
 export interface CheckoutRequestBody {
