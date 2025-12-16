@@ -37,6 +37,7 @@
 - [subtotal](Checkout.md#subtotal)
 - [taxTotal](Checkout.md#taxtotal)
 - [taxes](Checkout.md#taxes)
+- [totalDiscount](Checkout.md#totaldiscount)
 - [updatedTime](Checkout.md#updatedtime)
 
 ## Properties
@@ -229,6 +230,12 @@ ___
 ### taxes
 
 • **taxes**: [`Tax`](Tax.md)[]
+
+___
+
+### totalDiscount
+
+• **totalDiscount**: `number`
 
 ___
 

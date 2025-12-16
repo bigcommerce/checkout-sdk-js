@@ -120,6 +120,7 @@ declare interface Checkout {
     payments?: CheckoutPayment[];
     channelId: number;
     fees: Fee[];
+    totalDiscount: number;
 }
 
 declare interface CheckoutPayment {
