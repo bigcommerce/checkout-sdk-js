@@ -29,6 +29,7 @@ export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
 
     async initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayPayPalCommerceInitializationData>,
+        requireShippingAddress?: boolean,
         isBuyNowFlow?: boolean,
         currencyCode?: string,
     ): Promise<void> {
@@ -38,7 +39,7 @@ export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        await super.initialize(getPaymentMethod, isBuyNowFlow, currency);
+        await super.initialize(getPaymentMethod, requireShippingAddress, isBuyNowFlow, currency);
 
         const paymentMethod = super.getPaymentMethod();
 

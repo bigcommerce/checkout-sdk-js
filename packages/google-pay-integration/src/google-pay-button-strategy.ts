@@ -95,6 +95,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             await this._googlePayPaymentProcessor.initialize(
                 () => paymentMethod,
                 this._getGooglePayClientOptions(),
+                false,
                 !!buyNowInitializeOptions,
                 currencyCode,
             );

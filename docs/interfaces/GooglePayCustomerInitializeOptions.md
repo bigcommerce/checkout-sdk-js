@@ -9,6 +9,7 @@
 - [buttonColor](GooglePayCustomerInitializeOptions.md#buttoncolor)
 - [buttonType](GooglePayCustomerInitializeOptions.md#buttontype)
 - [container](GooglePayCustomerInitializeOptions.md#container)
+- [requireShippingAddress](GooglePayCustomerInitializeOptions.md#requireshippingaddress)
 
 ### Methods
 

@@ -43,6 +43,7 @@ import {
 
 export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;
+    private _requireShippingAddress?: boolean;
     private _isBuyNowFlow = false;
     private _currencyCode?: string;
     private _currencyService?: CurrencyService;
@@ -258,10 +259,12 @@ export default class GooglePayGateway {
 
     initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
+        requireShippingAddress?: boolean,
         isBuyNowFlow?: boolean,
         currencyCode?: string,
     ): Promise<void> {
         this._getPaymentMethodFn = getPaymentMethod;
+        this._requireShippingAddress = requireShippingAddress;
         this._isBuyNowFlow = Boolean(isBuyNowFlow);
         this._currencyCode = currencyCode;
 
@@ -446,6 +449,10 @@ export default class GooglePayGateway {
     }
 
     private _isShippingAddressRequired(): boolean {
+        if (this._requireShippingAddress) {
+            return true;
+        }
+
         const { getCartOrThrow, getStoreConfig, getShippingAddress } =
             this._paymentIntegrationService.getState();
 
