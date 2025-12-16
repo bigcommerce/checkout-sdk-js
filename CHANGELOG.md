@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.845.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.844.0...v1.845.0) (2025-12-16)
+
+
+### Features
+
+* **payment:** PI-4705 [Barclays] [Phase 4][FE] Remove the code ([#3099](https://github.com/bigcommerce/checkout-sdk-js/issues/3099)) ([ddc31be](https://github.com/bigcommerce/checkout-sdk-js/commit/ddc31be41ada42402fb91f40b057c70e2bb1341e))
+
 ## [1.844.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.843.0...v1.844.0) (2025-12-16)
 
 
