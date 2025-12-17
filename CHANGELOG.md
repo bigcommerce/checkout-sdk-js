@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.845.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.845.0...v1.845.1) (2025-12-17)
+
+
+### Bug Fixes
+
+* **payment:** PI-4290 google pay shipping address required fix ([bdcc61f](https://github.com/bigcommerce/checkout-sdk-js/commit/bdcc61fa34e41b0f3bddb2de359c858dc3acc393))
+
 ## [1.845.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.844.0...v1.845.0) (2025-12-16)
 
 
