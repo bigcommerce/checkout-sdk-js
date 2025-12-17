@@ -145,6 +145,10 @@ export default class GooglePayPaymentProcessor {
         return this._gateway.getCallbackTriggers();
     }
 
+    setShouldRequestShipping(isRequired: boolean): void {
+        return this._gateway.setShouldRequestShipping(isRequired);
+    }
+
     async handleShippingAddressChange(
         shippingAddress: GooglePayFullBillingAddress,
     ): Promise<ShippingOptionParameters | undefined> {
