@@ -1,7 +1,7 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { assertApplePayWindow } from './apple-pay-session-factory';
-import isApplePayWindow from './is-apple-pay-window';
+import isApplePaySdkWindow from './is-apple-pay-sdk-window';
 
 export default class ApplePayScriptLoader {
     private sdkVersion = '1.latest';
@@ -9,7 +9,7 @@ export default class ApplePayScriptLoader {
     constructor(private scriptLoader: ScriptLoader) {}
 
     async loadSdk() {
-        if (isApplePayWindow(window)) {
+        if (isApplePaySdkWindow(window)) {
             return;
         }
 
