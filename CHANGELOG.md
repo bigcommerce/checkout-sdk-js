@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.846.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.845.1...v1.846.0) (2025-12-18)
+
+
+### Features
+
+* **payment:** PAYPAL-6140 apple pay script loader related changes ([bec8637](https://github.com/bigcommerce/checkout-sdk-js/commit/bec8637f03d2ad7f8f8615ee164aa050e81981a4))
+
 ### [1.845.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.845.0...v1.845.1) (2025-12-17)
 
 
