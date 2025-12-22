@@ -1,5 +1,6 @@
 import { createRequestSender, RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { EmptyCartError } from '../cart/errors';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -144,6 +145,26 @@ describe('CheckoutRequestSender', () => {
                     timeout: undefined,
                 },
             );
+        });
+
+        it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 422,
+                    title: 'The request could not process',
+                    type: 'empty_cart',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'put').mockRejectedValue(error);
+
+            await expect(
+                checkoutRequestSender.updateCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+                    customerMessage: 'foo',
+                }),
+            ).rejects.toThrow(EmptyCartError);
         });
     });
 });
