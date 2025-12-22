@@ -1,5 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { EmptyCartError } from '../cart/errors';
 import {
     ContentType,
     joinOrMergeIncludes,
@@ -53,13 +54,21 @@ export default class CheckoutRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.put(url, {
-            params: {
-                include: joinOrMergeIncludes(CHECKOUT_DEFAULT_INCLUDES, include),
-            },
-            body,
-            headers,
-            timeout,
-        });
+        return this._requestSender
+            .put<Checkout>(url, {
+                params: {
+                    include: joinOrMergeIncludes(CHECKOUT_DEFAULT_INCLUDES, include),
+                },
+                body,
+                headers,
+                timeout,
+            })
+            .catch((err) => {
+                if (err.body.type === 'empty_cart') {
+                    throw new EmptyCartError();
+                }
+
+                throw err;
+            });
     }
 }
