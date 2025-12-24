@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.847.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.846.0...v1.847.0) (2025-12-24)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9646 Catch empty_cart on update checkout endpoint ([cb7bb03](https://github.com/bigcommerce/checkout-sdk-js/commit/cb7bb03643283c0ca6fd1453e18718265e5570f6))
+* **payment:** PI-4451 migrated the experiment PI-4025.klarna_single_radio_button to FF ([3036a96](https://github.com/bigcommerce/checkout-sdk-js/commit/3036a96ce56924cbd204e91dfc82799389839248))
+
 ## [1.846.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.845.1...v1.846.0) (2025-12-18)
 
 
