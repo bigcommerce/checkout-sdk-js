@@ -29,6 +29,7 @@ import {
     PayPalInitializationData,
     PayPalSdkScriptLoader,
     TDSecureAuthenticationState,
+    TDSecureVerificationMethod,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
@@ -325,11 +326,9 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const is3DSEnabled = paymentMethod.config.is3dsEnabled;
 
-        if (!is3DSEnabled) {
-            await this.createOrder(instrumentId);
-        }
+        const nonce = is3DSEnabled ? await this.get3DSNonce(instrumentId) : instrumentId;
 
-        const fastlaneToken = is3DSEnabled ? await this.get3DSNonce(instrumentId) : instrumentId;
+        await this.createOrder(nonce);
 
         return {
             methodId,
@@ -337,7 +336,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 formattedPayload: {
                     paypal_fastlane_token: {
                         order_id: this.orderId,
-                        token: fastlaneToken,
+                        token: nonce,
                     },
                 },
             },
@@ -363,11 +362,9 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const is3DSEnabled = paymentMethod.config.is3dsEnabled;
 
-        if (!is3DSEnabled) {
-            await this.createOrder(id);
-        }
+        const nonce = is3DSEnabled ? await this.get3DSNonce(id) : id;
 
-        const fastlaneToken = is3DSEnabled ? await this.get3DSNonce(id) : id;
+        await this.createOrder(nonce);
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
@@ -381,7 +378,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 formattedPayload: {
                     paypal_fastlane_token: {
                         order_id: this.orderId,
-                        token: fastlaneToken,
+                        token: nonce,
                     },
                 },
             },
@@ -407,7 +404,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
      * 3DSecure methods
      *
      * */
-    private async get3DSNonce(paypalNonce: string): Promise<string> {
+    private async get3DSNonce(nonce: string): Promise<string> {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const order = state.getOrderOrThrow();
@@ -422,8 +419,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const threeDomainSecureParameters = {
             amount: order.orderAmount.toFixed(2),
             currency: cart.currency.code,
-            nonce: paypalNonce,
-            threeDSRequested: this.threeDSVerificationMethod === 'SCA_ALWAYS',
+            nonce,
+            threeDSRequested: this.threeDSVerificationMethod === TDSecureVerificationMethod.Always,
             transactionContext: {
                 experience_context: {
                     locale: 'en-US',
@@ -437,9 +434,19 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             threeDomainSecureParameters,
         );
 
+        if (
+            this.threeDSVerificationMethod === TDSecureVerificationMethod.Always &&
+            !isThreeDomainSecureEligible
+        ) {
+            throw new PaymentMethodInvalidError();
+        }
+
         if (isThreeDomainSecureEligible) {
-            const { liabilityShift, authenticationState, nonce } =
-                await threeDomainSecureComponent.show();
+            const {
+                liabilityShift,
+                authenticationState,
+                nonce: threeDSNonce,
+            } = await threeDomainSecureComponent.show();
 
             if (
                 liabilityShift === LiabilityShiftEnum.No ||
@@ -454,13 +461,11 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 authenticationState === TDSecureAuthenticationState.Succeeded &&
                 [LiabilityShiftEnum.Yes, LiabilityShiftEnum.Possible].includes(liabilityShift)
             ) {
-                await this.createOrder(nonce);
-
-                return nonce;
+                return threeDSNonce;
             }
         }
 
-        return paypalNonce;
+        return nonce;
     }
 
     /**
