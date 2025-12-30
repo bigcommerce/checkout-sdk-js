@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.848.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.847.0...v1.848.0) (2025-12-30)
+
+
+### Features
+
+* **payment:** PAYPAL-5948 filtered Afterpay id from the list of APMs before passing data to paypal sdk config ([df9918e](https://github.com/bigcommerce/checkout-sdk-js/commit/df9918e4a9066cef319e6092855599562fd17158))
+
 ## [1.847.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.846.0...v1.847.0) (2025-12-24)
 
 
