@@ -284,7 +284,7 @@ export default class PayPalSdkHelper {
      *
      */
     private filterFundingOptions(fundingOptions: FundingType[] | undefined): FundingType[] {
-        const fundingTypesToBeFiltered = ['klarna'];
+        const fundingTypesToBeFiltered = ['klarna', 'afterpay'];
 
         if (!fundingOptions) {
             return [];
