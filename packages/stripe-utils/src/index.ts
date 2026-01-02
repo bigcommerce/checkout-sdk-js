@@ -30,6 +30,9 @@ export {
     StripeHostWindow,
     StripeCustomerEvent,
     StripeJsVersion,
+    StripeCheckoutElements,
+    StripeCheckoutSessionClient,
+    StripeCheckoutSessionHostWindow,
 } from './stripe';
 export {
     getStripeJsMock,

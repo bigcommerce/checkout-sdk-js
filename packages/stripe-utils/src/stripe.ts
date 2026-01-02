@@ -460,6 +460,13 @@ export interface StripeElements {
     fetchUpdates(): Promise<void>;
 }
 
+export interface StripeCheckoutElements extends StripeElements {
+    session(): any;
+    updateEmail(email: string): Promise<any>;
+    getPaymentElement(): StripeElement | null;
+    createPaymentElement(options?: StripeElementsCreateOptions): StripeElement;
+}
+
 /**
  * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
  */
@@ -514,6 +521,14 @@ export interface StripeElementsOptions {
     paymentMethodTypes?: string[];
 }
 
+export interface StripeCheckoutElementsOptions extends StripeElementsOptions {
+    elementsOptions?: StripeElementsOptions;
+    adaptivePricing?: {
+        allowed: boolean;
+    },
+    fetchClientSecret?: any;
+}
+
 export interface StripeUpdateElementsOptions {
     /**
      * A [locale](https://stripe.com/docs/js/appendix/supported_locales) to display placeholders and
@@ -557,6 +572,11 @@ export interface StripeClient {
     elements(options: StripeElementsOptions): StripeElements;
 }
 
+export interface StripeCheckoutSessionClient extends StripeClient {
+    initCheckout(options: StripeElementsOptions): StripeCheckoutElements;
+    loadActions: any;
+}
+
 export interface StripeResult {
     paymentIntent?: PaymentIntent;
     error?: StripeError;
@@ -569,6 +589,11 @@ export interface StripeHostWindow extends Window {
         stripePublishableKey: string,
         options?: StripeConfigurationOptions,
     ): T;
+}
+
+export interface StripeCheckoutSessionHostWindow extends StripeHostWindow {
+    bcStripeCheckoutClient?: StripeCheckoutSessionClient;
+    bcStripeCheckoutElements?: StripeCheckoutElements;
 }
 
 export enum StripePaymentMethodType {
