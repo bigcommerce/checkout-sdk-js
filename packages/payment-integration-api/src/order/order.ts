@@ -18,6 +18,7 @@ export default interface Order {
     customerId: number;
     customerMessage: string;
     discountAmount: number;
+    displayDiscountTotal: number;
     handlingCostTotal: number;
     hasDigitalItems: boolean;
     isComplete: boolean;
@@ -26,14 +27,27 @@ export default interface Order {
     lineItems: LineItemMap;
     orderAmount: number;
     orderAmountAsInteger: number;
+    orderBasedAutoDiscountTotal: number;
     orderId: number;
+    manualDiscountTotal: number;
     payments?: OrderPayments;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    totalDiscount: number;
+    fees: OrderFee[];
+}
+
+export interface OrderFee {
+    id: number;
+    type: string;
+    customerDisplayName: string;
+    cost: number;
+    source: string;
 }
 
 export type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
