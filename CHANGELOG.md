@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.849.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.848.0...v1.849.0) (2026-01-07)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9744 Update Order Interface ([#3112](https://github.com/bigcommerce/checkout-sdk-js/issues/3112)) ([5d0b38d](https://github.com/bigcommerce/checkout-sdk-js/commit/5d0b38d999f78e797ce5c02729f18dae307c9701))
+
 ## [1.848.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.847.0...v1.848.0) (2025-12-30)
 
 

@@ -627,6 +627,7 @@ declare interface Order {
     customerId: number;
     customerMessage: string;
     discountAmount: number;
+    displayDiscountTotal: number;
     handlingCostTotal: number;
     hasDigitalItems: boolean;
     isComplete: boolean;
@@ -635,14 +636,18 @@ declare interface Order {
     lineItems: LineItemMap;
     orderAmount: number;
     orderAmountAsInteger: number;
+    orderBasedAutoDiscountTotal: number;
     orderId: number;
+    manualDiscountTotal: number;
     payments?: OrderPayments;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    totalDiscount: number;
     channelId: number;
     fees: OrderFee[];
 }

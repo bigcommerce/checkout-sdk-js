@@ -10,6 +10,7 @@
 - [billingAddress](Order.md#billingaddress)
 - [cartId](Order.md#cartid)
 - [channelId](Order.md#channelid)
+- [comparisonShippingCost](Order.md#comparisonshippingcost)
 - [consignments](Order.md#consignments)
 - [coupons](Order.md#coupons)
 - [currency](Order.md#currency)
@@ -17,6 +18,7 @@
 - [customerId](Order.md#customerid)
 - [customerMessage](Order.md#customermessage)
 - [discountAmount](Order.md#discountamount)
+- [displayDiscountTotal](Order.md#displaydiscounttotal)
 - [fees](Order.md#fees)
 - [giftWrappingCostTotal](Order.md#giftwrappingcosttotal)
 - [handlingCostTotal](Order.md#handlingcosttotal)
@@ -25,8 +27,10 @@
 - [isDownloadable](Order.md#isdownloadable)
 - [isTaxIncluded](Order.md#istaxincluded)
 - [lineItems](Order.md#lineitems)
+- [manualDiscountTotal](Order.md#manualdiscounttotal)
 - [orderAmount](Order.md#orderamount)
 - [orderAmountAsInteger](Order.md#orderamountasinteger)
+- [orderBasedAutoDiscountTotal](Order.md#orderbasedautodiscounttotal)
 - [orderId](Order.md#orderid)
 - [payments](Order.md#payments)
 - [shippingCostBeforeDiscount](Order.md#shippingcostbeforediscount)
@@ -34,6 +38,7 @@
 - [status](Order.md#status)
 - [taxTotal](Order.md#taxtotal)
 - [taxes](Order.md#taxes)
+- [totalDiscount](Order.md#totaldiscount)
 
 ## Properties
 
@@ -58,6 +63,12 @@ ___
 ### channelId
 
 • **channelId**: `number`
+
+___
+
+### comparisonShippingCost
+
+• **comparisonShippingCost**: `number`
 
 ___
 
@@ -100,6 +111,12 @@ ___
 ### discountAmount
 
 • **discountAmount**: `number`
+
+___
+
+### displayDiscountTotal
+
+• **displayDiscountTotal**: `number`
 
 ___
 
@@ -151,6 +168,12 @@ ___
 
 ___
 
+### manualDiscountTotal
+
+• **manualDiscountTotal**: `number`
+
+___
+
 ### orderAmount
 
 • **orderAmount**: `number`
@@ -160,6 +183,12 @@ ___
 ### orderAmountAsInteger
 
 • **orderAmountAsInteger**: `number`
+
+___
+
+### orderBasedAutoDiscountTotal
+
+• **orderBasedAutoDiscountTotal**: `number`
 
 ___
 
@@ -202,3 +231,9 @@ ___
 ### taxes
 
 • **taxes**: [`Tax`](Tax.md)[]
+
+___
+
+### totalDiscount
+
+• **totalDiscount**: `number`
