@@ -44,16 +44,6 @@ describe('GooglePayCustomerStrategy', () => {
     let options: CustomerInitializeOptions & WithGooglePayCustomerInitializeOptions;
     let eventEmitter: EventEmitter;
     const storeConfig = getConfig().storeConfig;
-    const storeConfigWithFeaturesOn = {
-        ...storeConfig,
-        checkoutSettings: {
-            ...storeConfig.checkoutSettings,
-            features: {
-                ...storeConfig.checkoutSettings.features,
-                'PI-2875.googlepay_coupons_handling': true,
-            },
-        },
-    };
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
@@ -64,7 +54,7 @@ describe('GooglePayCustomerStrategy', () => {
             getGeneric(),
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
-            storeConfigWithFeaturesOn,
+            storeConfig,
         );
         button = document.createElement('button');
         jest.spyOn(button, 'remove');

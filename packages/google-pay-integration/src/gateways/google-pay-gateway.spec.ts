@@ -33,7 +33,6 @@ describe('GooglePayGateway', () => {
             ...storeConfig.checkoutSettings,
             features: {
                 ...storeConfig.checkoutSettings.features,
-                'PI-2875.googlepay_coupons_handling': true,
                 'PI-4290.google_pay_require_shipping_address': true,
             },
         },

@@ -146,18 +146,11 @@ export default class GooglePayGateway {
     }
 
     getCallbackTriggers(): { [key: string]: CallbackTriggerType[] } {
-        const state = this._paymentIntegrationService.getState();
-        // TODO remove this experiment usage after we make sure that coupons handling works fine
-        const isGooglePayCouponsExperimentOn =
-            state.getStoreConfigOrThrow().checkoutSettings.features[
-                'PI-2875.googlepay_coupons_handling'
-            ] || false;
-
         const availableTriggers = [
             CallbackTriggerType.INITIALIZE,
             CallbackTriggerType.SHIPPING_ADDRESS,
             CallbackTriggerType.SHIPPING_OPTION,
-            ...(isGooglePayCouponsExperimentOn ? [CallbackTriggerType.OFFER] : []),
+            CallbackTriggerType.OFFER,
         ];
 
         const initializationTrigger = [CallbackTriggerType.INITIALIZE];
@@ -166,9 +159,7 @@ export default class GooglePayGateway {
             CallbackTriggerType.SHIPPING_ADDRESS,
         ];
         const shippingOptionsChangeTriggers = [CallbackTriggerType.SHIPPING_OPTION];
-        const offerChangeTriggers = isGooglePayCouponsExperimentOn
-            ? [CallbackTriggerType.OFFER]
-            : [];
+        const offerChangeTriggers = [CallbackTriggerType.OFFER];
 
         return {
             availableTriggers,
