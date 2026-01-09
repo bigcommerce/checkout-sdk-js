@@ -1,6 +1,5 @@
 import {
     InvalidArgumentError,
-    isRequestError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -16,7 +15,6 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    // formatStripeLocale,
     isStripePaymentEvent,
     isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
@@ -41,6 +39,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     private stripeClient?: StripeCheckoutSessionClient;
     private stripeElements?: StripeCheckoutElements;
     private selectedMethodId?: string;
+    private readonly clientTokenMock: string = 'cs_test_b1MLGOneOQSxxfTNAiYdbQ7GLknR9ssbkKierRvQdpS7KkYXjqCbwsf1Qu_secret_fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdwbEhqYWAnPydmcHZxamgneCUl';
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -106,12 +105,17 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+        // const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+        const { clientToken } = this.getPaymentMethodOrThrowMock(methodId);
+        // const paymentPayload = this._getPaymentPayload(methodId, clientToken || '');
         const paymentPayload = this._getPaymentPayload(methodId, clientToken || '');
 
         try {
+            console.log('*** before submit payment');
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
+            console.log('*** error', error);
+            console.log('*** before process additional action');
             await this._processAdditionalAction(error, methodId);
         }
     }
@@ -137,14 +141,16 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         gatewayId: string,
         methodId: string,
     ) {
-        let paymentMethod = this.paymentIntegrationService.getState().getPaymentMethodOrThrow(methodId);
+        // let paymentMethod = this.paymentIntegrationService.getState().getPaymentMethodOrThrow(methodId);
+        let paymentMethod = this.getPaymentMethodOrThrowMock(methodId);
 
         if (!paymentMethod?.clientToken) {
             await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
                 params: { method: methodId },
             });
 
-            paymentMethod = this.paymentIntegrationService.getState().getPaymentMethodOrThrow(methodId);
+            // paymentMethod = this.paymentIntegrationService.getState().getPaymentMethodOrThrow(methodId);
+            paymentMethod = this.getPaymentMethodOrThrowMock(methodId);
         }
 
         if (!isStripePaymentMethodLike(paymentMethod)) {
@@ -152,7 +158,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
 
         const { clientToken, initializationData } = paymentMethod;
-        const {  /*shopperLanguage, customerSessionToken, */ enableLink } = initializationData;
+        // const {  shopperLanguage, customerSessionToken, enableLink } = initializationData;
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -193,8 +199,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const { postalCode } = getShippingAddress() || billingAddress || {};
         console.log(postalCode);
 
-        // const stripeEmailUpdateResult = await this.stripeElements.updateEmail(billingAddress?.email || '');
-        // console.log('*** stripeEmailUpdateResult', stripeEmailUpdateResult);
+        const stripeEmailUpdateResult = await this.stripeElements.updateEmail(billingAddress?.email || '');
+        console.log('*** stripeEmailUpdateResult', stripeEmailUpdateResult);
 
         const stripeCheckoutSessionData = this.stripeElements.session();
         console.log('*** stripeCheckoutSessionData', stripeCheckoutSessionData);
@@ -214,11 +220,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                         },
                     },
                 },
-                wallets: {
-                    applePay: StripeStringConstants.NEVER,
-                    googlePay: StripeStringConstants.NEVER,
-                    link: enableLink ? StripeStringConstants.AUTO : StripeStringConstants.NEVER,
-                },
+                // wallets: {
+                //     applePay: StripeStringConstants.NEVER,
+                //     googlePay: StripeStringConstants.NEVER,
+                //     link: enableLink ? StripeStringConstants.AUTO : StripeStringConstants.NEVER,
+                // },
                 layout,
                 // savePaymentMethod: {
                 //     maxVisiblePaymentMethods: 20,
@@ -256,11 +262,14 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         const state = this.paymentIntegrationService.getState();
 
+        console.log('*** getStripeClient 1');
+
         return this.scriptLoader.getStripeClient(
             initializationData,
             state.getCartLocale(),
             [
                 'custom_checkout_adaptive_pricing_2',
+                // 'custom_checkout_beta_6',
             ],
         );
     }
@@ -302,19 +311,21 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         error: unknown,
         methodId: string,
     ): Promise<PaymentIntegrationSelectors | undefined> {
-        if (
-            !isRequestError(error) ||
-            !this.stripeIntegrationService.isAdditionalActionError(error.body.errors)
-        ) {
-            throw error;
-        }
+        // if (
+        //     !isRequestError(error) ||
+        //     !this.stripeIntegrationService.isAdditionalActionError(error.body.errors)
+        // ) {
+        //     throw error;
+        // }
+
+        console.log('*** additional action error', error);
 
         if (!this.stripeClient || !this.stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { data: additionalActionData } = error.body.additional_action_required;
-        const { token } = additionalActionData;
+        const { data: additionalActionData } = (error as any).body?.additional_action_required || {};
+        const { token } = additionalActionData || {};
 
         const { paymentIntent } = await this._confirmStripePaymentOrThrow(
             methodId,
@@ -342,26 +353,58 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         methodId: string,
         additionalActionData: StripeAdditionalActionRequired['data'],
     ): Promise<StripeResult | never> {
-        const { token, redirect_url } = additionalActionData;
-        const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
-            this.stripeElements,
-            redirect_url,
-        );
+        console.log(methodId, additionalActionData);
+        // const { /* token, */ redirect_url } = additionalActionData || {};
+        // const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
+        //     this.stripeElements,
+        //     redirect_url,
+        // );
         let stripeError: StripeError | undefined;
 
         try {
-            const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
-                methodId,
-                this.stripeClient,
-            );
+            // const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
+            //     methodId,
+            //     this.stripeClient,
+            // );
 
-            const confirmationResult = !isPaymentCompleted
-                ? await this.stripeClient?.confirmPayment(stripePaymentData)
-                : await this.stripeClient?.retrievePaymentIntent(token || '');
+            // const confirmationResult = !isPaymentCompleted
+            //     ? await this.stripeClient?.confirmPayment(stripePaymentData)
+            //     : await this.stripeClient?.retrievePaymentIntent(token || '');
+
+            console.log('*** confirm payment');
+
+            let confirmationResult;
+
+            try {
+                const { total } = await this.stripeElements?.session();
+                console.log('*** total', total.total.amount);
+                confirmationResult = await this.stripeElements?.confirm({
+                    shippingAddress: {
+                        name: 'John Doe',
+                        address: {
+                            line1: '123 Main St',
+                            city: 'Anytown',
+                            state: 'CA',
+                            postal_code: '12345',
+                            country: 'US',
+                        },
+                    }
+                });
+            } catch (error) {
+                console.log('*** confirm payment error', error);
+                throw error;
+            }
+
+            console.log('*** confirmationResult', confirmationResult);
 
             stripeError = confirmationResult?.error;
 
-            if (stripeError || !confirmationResult?.paymentIntent) {
+            // if (stripeError || !confirmationResult?.paymentIntent) {
+            //     throw new PaymentMethodFailedError();
+            // }
+
+            if (stripeError || !confirmationResult) {
+                console.log('*** stripe confirmation error', confirmationResult);
                 throw new PaymentMethodFailedError();
             }
 
@@ -403,5 +446,17 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
 
         return { credit_card_token: { token } };
+    }
+
+    private getPaymentMethodOrThrowMock(methodId: string) {
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        if (!!paymentMethod) {
+            // paymentMethod.clientToken = this.clientTokenMock;
+        }
+
+        console.log('*** paymentMethod mocked', paymentMethod, this.clientTokenMock);
+
+        return paymentMethod;
     }
 }
