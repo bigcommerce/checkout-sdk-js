@@ -40,7 +40,6 @@ export function getStripeOCSMock(method = methodId): PaymentMethod {
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
         returnUrl: 'http://www.example.com',
-        skipRedirectConfirmationAlert: true,
     };
 }
 

@@ -1159,6 +1159,67 @@ describe('StripeOCSPaymentStrategy', () => {
                 stripeIntegrationService.throwPaymentConfirmationProceedMessage,
             ).toHaveBeenCalled();
         });
+
+        it('submit second payment request after client token was changed on BE side after get config request', async () => {
+            mockFirstPaymentRequest(errorResponse);
+            confirmPaymentMock = jest.fn().mockResolvedValue({
+                paymentIntent: {
+                    id: 'paymentIntentId',
+                    client_secret: 'token_2',
+                },
+            });
+
+            stripeUPEJsMock = {
+                ...getStripeJsMock(),
+                confirmPayment: confirmPaymentMock,
+                retrievePaymentIntent: jest.fn(),
+            };
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
+                jest.fn(() => Promise.resolve(stripeUPEJsMock)),
+            );
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...getStripeOCSMock(),
+                clientToken: 'token_2',
+            });
+
+            await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'token_2',
+                        },
+                        confirm: false,
+                        method: undefined,
+                        vault_payment_instrument: false,
+                    },
+                },
+            });
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        cart_id: '',
+                        credit_card_token: {
+                            token: 'token_2',
+                        },
+                        confirm: false,
+                        method: undefined,
+                        vault_payment_instrument: false,
+                    },
+                },
+            });
+        });
     });
 
     describe('#vaulted instruments', () => {
