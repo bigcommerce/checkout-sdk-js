@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.850.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.849.0...v1.850.0) (2026-01-12)
+
+
+### Features
+
+* **payment:** PAYPAL-6141 update failed 3DS error message ([5655809](https://github.com/bigcommerce/checkout-sdk-js/commit/5655809813a6045a780cffece419f6c192f3c272))
+
 ## [1.849.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.848.0...v1.849.0) (2026-01-07)
 
 
