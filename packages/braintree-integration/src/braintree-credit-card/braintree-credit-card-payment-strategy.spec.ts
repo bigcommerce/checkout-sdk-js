@@ -429,6 +429,47 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expected);
                 });
+
+                it('calls onPaymentError callback and rejects when verifyCard fails with 3DS validation error', async () => {
+                    const braintree3DSError: BraintreeError = {
+                        code: 'THREEDS_LOOKUP_VALIDATION_ERROR',
+                        type: BraintreeErrorType.Customer,
+                        name: 'BraintreeError',
+                        message:
+                            "The data passed in 'verifyCard' did not pass validation checks. See details for more info.",
+                    };
+
+                    const onPaymentError = jest.fn();
+
+                    jest.spyOn(braintreeIntegrationService, 'verifyCard').mockRejectedValue(
+                        braintree3DSError,
+                    );
+                    jest.spyOn(braintreeIntegrationService, 'get3DS').mockResolvedValue({
+                        ...getThreeDSecureMock(),
+                    });
+
+                    const options3ds = {
+                        methodId: paymentMethod.id,
+                        braintree: {
+                            threeDSecure: getThreeDSecureOptionsMock(),
+                            onPaymentError,
+                        },
+                    };
+
+                    paymentMethod.config.is3dsEnabled = true;
+
+                    await braintreeCreditCardPaymentStrategy.initialize(options3ds);
+
+                    await expect(
+                        braintreeCreditCardPaymentStrategy.execute(getOrderRequestBody()),
+                    ).rejects.toBeUndefined();
+
+                    expect(onPaymentError).toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            message: 'THREEDS_VERIFICATION_FAILED',
+                        }),
+                    );
+                });
             });
         });
 
