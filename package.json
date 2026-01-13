@@ -21,11 +21,13 @@
       "types": "./dist/types/integrations/*.d.ts",
       "import": "./dist/esm/integrations/*.js",
       "require": "./dist/cjs/integrations/*.js"
-    }
+    },
+    "./workspace-tools/package.json": "./packages/workspace-tools/package.json"
   },
   "files": [
     "dist/",
-    "docs/"
+    "docs/",
+    "packages/workspace-tools/"
   ],
   "sideEffects": false,
   "repository": {
