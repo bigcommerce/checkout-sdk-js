@@ -12,6 +12,7 @@ import {
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { WithGooglePayButtonInitializeOptions } from './google-pay-button-initialize-option';
 import GooglePayCustomerInitializeOptions from './google-pay-customer-initialize-options';
@@ -113,6 +114,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                 buttonType: buttonType ?? 'plain',
                 onClick: this._handleClick(onError),
             });
+
+        if (this._isButtonInitializationExperimentEnabled()) {
+            await this._googlePayPaymentProcessor.initializeWidget();
+        }
     }
 
     deinitialize(): Promise<void> {
@@ -136,7 +141,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     await this._paymentIntegrationService.loadDefaultCheckout();
                 }
 
-                await this._googlePayPaymentProcessor.initializeWidget();
+                if (!this._isButtonInitializationExperimentEnabled()) {
+                    await this._googlePayPaymentProcessor.initializeWidget();
+                }
+
                 await this._interactWithPaymentSheet();
             } catch (error) {
                 let err: unknown = error;
@@ -340,5 +348,12 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     'Unable to initialize payment because "options.currencyCode" argument is not provided.',
                 ),
         );
+    }
+
+    private _isButtonInitializationExperimentEnabled(): boolean {
+        const { getStoreConfigOrThrow } = this._paymentIntegrationService.getState();
+        const features = getStoreConfigOrThrow().checkoutSettings.features;
+
+        return isExperimentEnabled(features, 'PAYMENTS-11297.fix_google_pay_initialization');
     }
 }

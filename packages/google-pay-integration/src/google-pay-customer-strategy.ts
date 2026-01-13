@@ -12,6 +12,7 @@ import {
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import GooglePayCustomerInitializeOptions, {
     WithGooglePayCustomerInitializeOptions,
@@ -72,6 +73,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         }
 
         this._addPaymentButton(googlePayOptions);
+
+        if (this._isButtonInitializationExperimentEnabled()) {
+            await this._googlePayPaymentProcessor.initializeWidget();
+        }
     }
 
     signIn(): Promise<void> {
@@ -202,7 +207,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
 
             // TODO: Dispatch Widget Actions
             try {
-                await this._googlePayPaymentProcessor.initializeWidget();
+                if (!this._isButtonInitializationExperimentEnabled()) {
+                    await this._googlePayPaymentProcessor.initializeWidget();
+                }
+
                 await this._interactWithPaymentSheet();
             } catch (error) {
                 let err: unknown = error;
@@ -258,5 +266,12 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             this._methodId,
             () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
         );
+    }
+
+    private _isButtonInitializationExperimentEnabled(): boolean {
+        const { getStoreConfigOrThrow } = this._paymentIntegrationService.getState();
+        const features = getStoreConfigOrThrow().checkoutSettings.features;
+
+        return isExperimentEnabled(features, 'PAYMENTS-11297.fix_google_pay_initialization');
     }
 }

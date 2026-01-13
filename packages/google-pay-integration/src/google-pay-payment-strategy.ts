@@ -18,6 +18,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { DEFAULT_CONTAINER_STYLES, LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import GooglePayPaymentInitializeOptions, {
     WithGooglePayPaymentInitializeOptions,
@@ -86,6 +87,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         );
 
         this._addPaymentButton(walletButton, callbacks);
+
+        if (this._isButtonInitializationExperimentEnabled()) {
+            await this._googlePayPaymentProcessor.initializeWidget();
+        }
     }
 
     async execute({ payment }: OrderRequestBody): Promise<void> {
@@ -158,7 +163,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             // TODO: Dispatch Widget Actions
             try {
                 this._googlePayPaymentProcessor.setShouldRequestShipping(false);
-                await this._googlePayPaymentProcessor.initializeWidget();
+
+                if (!this._isButtonInitializationExperimentEnabled()) {
+                    await this._googlePayPaymentProcessor.initializeWidget();
+                }
+
                 await this._interactWithPaymentSheet();
             } catch (error) {
                 let err: unknown = error;
@@ -335,5 +344,12 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         } else {
             this._loadingIndicator.hide();
         }
+    }
+
+    private _isButtonInitializationExperimentEnabled(): boolean {
+        const { getStoreConfigOrThrow } = this._paymentIntegrationService.getState();
+        const features = getStoreConfigOrThrow().checkoutSettings.features;
+
+        return isExperimentEnabled(features, 'PAYMENTS-11297.fix_google_pay_initialization');
     }
 }
