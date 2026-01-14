@@ -270,17 +270,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({ callbackTrigger, offerData }) => {
-                    const state = this._paymentIntegrationService.getState();
-                    // TODO remove this experiment usage after we make sure that coupons handling works fine
-                    const isGooglePayCouponsExperimentOn =
-                        state.getStoreConfigOrThrow().checkoutSettings.features[
-                            'PI-2875.googlepay_coupons_handling'
-                        ] || false;
-
                     if (
                         callbackTrigger !== CallbackTriggerType.INITIALIZE &&
-                        (!isGooglePayCouponsExperimentOn ||
-                            callbackTrigger !== CallbackTriggerType.OFFER)
+                        callbackTrigger !== CallbackTriggerType.OFFER
                     ) {
                         return;
                     }
