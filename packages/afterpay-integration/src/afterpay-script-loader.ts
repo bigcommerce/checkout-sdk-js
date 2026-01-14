@@ -60,7 +60,7 @@ export default class AfterpayScriptLoader {
         if (withHttps) {
             return testMode ? SCRIPTS_DEFAULT.HTTPS_SANDBOX : SCRIPTS_DEFAULT.HTTPS_PROD;
         }
-
+        console.log('test');
         return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
     }
 }
