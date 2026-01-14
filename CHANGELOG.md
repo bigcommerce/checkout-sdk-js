@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.850.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.850.0...v1.850.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* **payment:** PI-4789 added https to afterpay script loading ([6fc186d](https://github.com/bigcommerce/checkout-sdk-js/commit/6fc186dae105baf8645f37c34426fb3aa5f9ecf8))
+
 ## [1.850.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.849.0...v1.850.0) (2026-01-12)
 
 
