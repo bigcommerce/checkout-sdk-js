@@ -339,7 +339,9 @@ describe('StripeLinkV2ButtonStrategy', () => {
             expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalled();
         });
 
-        it('resolve onShippingAddressChange with empty shippingRates', async () => {
+        it('reject onShippingAddressChange with empty shippingRates', async () => {
+            const stripeEventRejectMock = jest.fn();
+
             jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
                 ...paymentIntegrationService.getState(),
                 getConsignments: jest.fn().mockReturnValue(undefined),
@@ -355,13 +357,17 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     state: 'CA',
                 },
                 resolve: stripeEvent,
+                reject: stripeEventRejectMock,
             });
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(stripeEvent).toHaveBeenCalledWith({ shippingRates: undefined });
+            expect(stripeEvent).not.toHaveBeenCalled();
+            expect(stripeEventRejectMock).toHaveBeenCalled();
         });
 
-        it('resolve onShippingAddressChange with empty shippingRates if there is no availableShippingOptions', async () => {
+        it('reject onShippingAddressChange with empty shippingRates if there is no availableShippingOptions', async () => {
+            const stripeEventRejectMock = jest.fn();
+
             jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
                 ...paymentIntegrationService.getState(),
                 getConsignments: jest
@@ -379,10 +385,12 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     state: 'CA',
                 },
                 resolve: stripeEvent,
+                reject: stripeEventRejectMock,
             });
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(stripeEvent).toHaveBeenCalledWith({ shippingRates: [] });
+            expect(stripeEvent).not.toHaveBeenCalled();
+            expect(stripeEventRejectMock).toHaveBeenCalled();
         });
 
         it('resolve onShippingAddressChange with selectedId', async () => {
