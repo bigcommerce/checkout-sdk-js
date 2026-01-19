@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.851.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.850.4...v1.851.0) (2026-01-19)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9450 Remove fallback strategies from essential build ([43e0f17](https://github.com/bigcommerce/checkout-sdk-js/commit/43e0f1760b9aa983f136e440f2c6d97ec72bf5ec))
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-9450 Remove more code around lazy_strategy experiment ([f7dac31](https://github.com/bigcommerce/checkout-sdk-js/commit/f7dac3166b718b953902cb730b286c2bec4ee87b))
+
 ### [1.850.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.850.3...v1.850.4) (2026-01-19)
 
 
