@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.850.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.850.3...v1.850.4) (2026-01-19)
+
+
+### Bug Fixes
+
+* **payment:** Fix Stripe Link available shipping options error ([#3120](https://github.com/bigcommerce/checkout-sdk-js/issues/3120)) ([d9f2899](https://github.com/bigcommerce/checkout-sdk-js/commit/d9f28991ab13660df57545f8984ccc1b49d5309b))
+
 ### [1.850.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.850.2...v1.850.3) (2026-01-15)
 
 
