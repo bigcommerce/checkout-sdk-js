@@ -703,6 +703,7 @@ export interface StripeLinkV2Event {
     elementType: string;
     expressPaymentType: string;
     resolve(data: StripeLinkV2EventResolveData): void;
+    reject(): void;
 }
 
 export interface StripeLinkV2EventResolveData {
