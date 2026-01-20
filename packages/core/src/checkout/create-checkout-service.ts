@@ -3,7 +3,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { createDataStoreProjection } from '../common/data-store';
-import { ErrorActionCreator, ErrorLogger } from '../common/error';
+import { DefaultErrorLogger, ErrorActionCreator, ErrorLogger } from '../common/error';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
@@ -108,7 +108,11 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         errors: {},
         statuses: {},
     };
-    const { locale = '', shouldWarnMutation = true } = options || {};
+    const {
+        locale = '',
+        shouldWarnMutation = true,
+        errorLogger = new DefaultErrorLogger(),
+    } = options || {};
     const requestSender = createRequestSender({ host: options && options.host });
     const store = createCheckoutStore({ config }, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
@@ -140,12 +144,16 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
+        paymentStrategyFactories,
+        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
+        // process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(
         paymentIntegrationService,
-        process.env.ESSENTIAL_BUILD ? {} : customerStrategyFactories,
+        customerStrategyFactories,
+        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
+        // process.env.ESSENTIAL_BUILD ? {} : customerStrategyFactories,
     );
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(requestSender),
@@ -180,6 +188,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             createCustomerStrategyRegistry(store, requestSender),
             customerRegistryV2,
             paymentIntegrationService,
+            errorLogger,
         ),
         new ErrorActionCreator(),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
@@ -192,6 +201,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
+            errorLogger,
         ),
         new PickupOptionActionCreator(new PickupOptionRequestSender(requestSender)),
         new ShippingCountryActionCreator(
