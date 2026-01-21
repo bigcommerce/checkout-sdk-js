@@ -1,5 +1,10 @@
 export { Address, AddressRequestBody, LegacyAddress } from './address';
-export { BillingAddress, BillingAddressRequestBody, isBillingAddressLike } from './billing';
+export {
+    BillingAddress,
+    BillingAddressRequestBody,
+    BillingAddressUpdateRequestBody,
+    isBillingAddressLike,
+} from './billing';
 export {
     CheckoutButtonStrategy,
     CheckoutButtonStrategyFactory,
