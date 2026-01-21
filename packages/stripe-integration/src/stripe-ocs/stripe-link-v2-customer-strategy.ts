@@ -260,10 +260,10 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             await this._updateShippingAndBillingAddress(event);
             await this.paymentIntegrationService.submitOrder();
 
-            const paymentMethod = this._getPaymentPayload(methodId);
+            const paymentPayload = this._getPaymentPayload(methodId);
 
             try {
-                await this.paymentIntegrationService.submitPayment(paymentMethod);
+                await this.paymentIntegrationService.submitPayment(paymentPayload);
             } catch (error) {
                 await this._processAdditionalAction(error, methodId);
             }
@@ -439,7 +439,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             cart_id: cartId,
             ...(token ? { credit_card_token: { token } } : {}),
             confirm: false,
-            payment_method_id: StripePaymentMethodType.Link,
+            method: StripePaymentMethodType.Link,
         };
 
         return {

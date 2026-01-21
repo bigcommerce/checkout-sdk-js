@@ -684,7 +684,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                         formattedPayload: {
                             cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                             confirm: false,
-                            payment_method_id: 'link',
+                            method: 'link',
                         },
                     },
                 });
@@ -697,7 +697,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                                 token: 'paymentIntentId',
                             },
                             confirm: false,
-                            payment_method_id: 'link',
+                            method: 'link',
                         },
                     },
                 });
