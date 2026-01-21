@@ -71,8 +71,11 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         const paymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        if (paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
-            await this._initializeBraintreeSdk();
+        if (
+            paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE &&
+            paymentMethod.clientToken
+        ) {
+            this._braintreeSdk.initialize(paymentMethod.clientToken);
         }
     }
 
@@ -278,28 +281,5 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         } catch (_) {
             // Don't throw an error to avoid breaking checkout flow
         }
-    }
-
-    private async _initializeBraintreeSdk(): Promise<void> {
-        // TODO: This is a temporary solution when we load braintree to get client token (should be fixed after PAYPAL-4122)
-        const state = this._paymentIntegrationService.getState();
-        let braintreePaymentMethod =
-            state.getPaymentMethod(ApplePayGatewayType.BRAINTREE_FASTLANE) ||
-            state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
-
-        if (!braintreePaymentMethod) {
-            await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
-            braintreePaymentMethod = state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
-        }
-
-        if (
-            !braintreePaymentMethod ||
-            !braintreePaymentMethod.clientToken ||
-            !braintreePaymentMethod.initializationData
-        ) {
-            return;
-        }
-
-        this._braintreeSdk.initialize(braintreePaymentMethod.clientToken);
     }
 }
