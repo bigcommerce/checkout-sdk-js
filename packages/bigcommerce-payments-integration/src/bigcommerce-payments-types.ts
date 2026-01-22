@@ -1,3 +1,4 @@
+import { PayPalBNPLConfigurationItem } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     BuyNowCartRequestBody,
     HostedInstrument,
@@ -264,6 +265,7 @@ export interface BigCommercePaymentsInitializationData {
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     isAppSwitchEnabled?: boolean;
+    paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
 }
 
 /**
