@@ -1,3 +1,4 @@
+import { createBigCommercePaymentsSdk } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     PaymentStrategyFactory,
     toResolvableModule,
@@ -15,6 +16,7 @@ const createBigCommercePaymentsPaymentStrategy: PaymentStrategyFactory<
     new BigCommercePaymentsPaymentStrategy(
         paymentIntegrationService,
         createBigCommercePaymentsIntegrationService(paymentIntegrationService),
+        createBigCommercePaymentsSdk(),
         new LoadingIndicator({
             containerStyles: LOADING_INDICATOR_STYLES,
         }),

@@ -1,4 +1,11 @@
-import { isBigCommercePaymentsProviderError } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import {
+    getPaypalMessagesStylesFromBNPLConfig,
+    isBigCommercePaymentsProviderError,
+    MessagingOptions,
+    PayPalBNPLConfigurationItem,
+    PayPalMessagesSdk,
+    PayPalSdkHelper,
+} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     HostedInstrument,
     InvalidArgumentError,
@@ -42,6 +49,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
+        private paypalSdkHelper: PayPalSdkHelper,
         private loadingIndicator: LoadingIndicator,
     ) {}
 
@@ -70,17 +78,57 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
 
-        this.loadingIndicatorContainer = bigcommerce_payments.container.split('#')[1];
+        const { container, bannerContainerId } = bigcommerce_payments;
+
+        const {
+            orderId,
+            paypalBNPLConfiguration = [],
+            isPayPalCreditAvailable,
+        } = paymentMethod.initializationData || {};
+
+        if (bannerContainerId !== undefined) {
+            if (!document.getElementById(bannerContainerId)) {
+                // eslint-disable-next-line no-console
+                console.error('Unable to create banner without valid banner container ID.');
+
+                return;
+            }
+
+            const bannerConfiguration = paypalBNPLConfiguration?.find(
+                ({ id }) => id === 'checkout',
+            );
+
+            if (isPayPalCreditAvailable || !bannerConfiguration?.status) {
+                return;
+            }
+
+            const paypalMessages = await this.paypalSdkHelper.getPayPalMessages(
+                paymentMethod,
+                state.getCartOrThrow().currency.code,
+            );
+
+            if (!paypalMessages || typeof paypalMessages?.Messages !== 'function') {
+                console.error(
+                    '[BC PayPalCommerce PayLater]: banner could not be rendered, due to issues with loading PayPal SDK',
+                );
+
+                return;
+            }
+
+            return this.renderMessages(paypalMessages, bannerContainerId, bannerConfiguration);
+        }
 
         // Info:
         // The PayPal button and fields should not be rendered when shopper was redirected to Checkout page
         // after using smart payment button on PDP or Cart page. In this case backend returns order id if
         // it is available in checkout session. Therefore, it is not necessary to render PayPal button.
-        if (paymentMethod.initializationData?.orderId) {
-            this.orderId = paymentMethod.initializationData?.orderId;
+        if (orderId) {
+            this.orderId = orderId;
 
             return;
         }
+
+        this.loadingIndicatorContainer = container?.split('#')[1];
 
         await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(methodId);
 
@@ -235,6 +283,12 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
         const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
         const { container, onError, onRenderButton, onValidate, submitForm } = bigcommerce_payments;
 
+        if (!container) {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "container" argument is not provided.',
+            );
+        }
+
         const buttonOptions: BigCommercePaymentsButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
             style: this.bigCommercePaymentsIntegrationService.getValidButtonStyle(
@@ -272,7 +326,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
             return resolve();
         };
 
-        await onValidate(onValidationPassed, reject);
+        await onValidate?.(onValidationPassed, reject);
     }
 
     private handleApprove(
@@ -281,7 +335,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
     ): void {
         this.orderId = orderID;
 
-        submitForm();
+        submitForm?.();
     }
 
     private handleError(
@@ -362,6 +416,27 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
         return (
             !!paymentData && isVaultedInstrument(paymentData) && isHostedInstrumentLike(paymentData)
         );
+    }
+
+    /**
+     *
+     * Render Pay Later Messages
+     *
+     * */
+    private renderMessages(
+        paypalMessages: PayPalMessagesSdk,
+        bannerContainerId: string,
+        bannerConfiguration: PayPalBNPLConfigurationItem,
+    ): void {
+        const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
+
+        const paypalMessagesOptions: MessagingOptions = {
+            amount: checkout.outstandingBalance,
+            placement: 'payment',
+            style: getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration),
+        };
+
+        paypalMessages.Messages(paypalMessagesOptions).render(`#${bannerContainerId}`);
     }
 
     private isProviderError(error: unknown): boolean {
