@@ -20,6 +20,7 @@ import {
     StripeElementType,
     StripeEventType,
     StripeFormMode,
+    StripeJsVersion,
     StripeScriptLoader,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 
@@ -107,6 +108,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             stripeUPEClient = await this.scriptLoader.getStripeClient(
                 paymentMethod.initializationData,
                 state.getCartLocale(),
+                StripeJsVersion.V3,
                 STRIPE_UPE_CLIENT_BETAS,
                 STRIPE_UPE_CLIENT_API_VERSION,
             );

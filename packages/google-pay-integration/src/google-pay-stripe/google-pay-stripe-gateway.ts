@@ -10,6 +10,12 @@ import {
     PaymentMethodFailedError,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    STRIPE_UPE_CLIENT_API_VERSION,
+    STRIPE_UPE_CLIENT_BETAS,
+    StripeJsVersion,
+    StripeScriptLoader,
+} from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import GooglePayGateway from '../gateways/google-pay-gateway';
 import assertsIsGooglePayStripeInitializationData from '../guards/is-google-pay-stripe-initialization-data';
@@ -19,9 +25,9 @@ import {
     GooglePayCardDataResponse,
     GooglePaySetExternalCheckoutData,
     GooglePayStripeGatewayParameters,
+    GooglePayStripeInitializationData,
 } from '../types';
 
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import { StripeError, StripeUPEClient } from './types';
 
 export default class GooglePayStripeGateway extends GooglePayGateway {
@@ -29,7 +35,7 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private scriptLoader: StripeUPEScriptLoader,
+        private scriptLoader: StripeScriptLoader,
     ) {
         super('stripe', paymentIntegrationService);
     }
@@ -83,16 +89,11 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
         const shouldTrigger3DS = some(error.body.errors, { code: 'three_d_secure_required' });
 
         if (shouldTrigger3DS) {
-            const data = this.getGooglePayInitializationData();
+            const initialization = this.getGooglePayInitializationData();
 
-            assertsIsGooglePayStripeInitializationData(data);
+            assertsIsGooglePayStripeInitializationData(initialization);
 
-            const { stripePublishableKey, stripeConnectedAccount } = data;
-
-            this.stripeUPEClient = await this.loadStripeJs(
-                stripePublishableKey,
-                stripeConnectedAccount,
-            );
+            this.stripeUPEClient = await this.loadStripeJs(initialization, methodId);
 
             const clientSecret = error.body.three_ds_result.token;
             let result;
@@ -132,14 +133,30 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
     }
 
     private async loadStripeJs(
-        stripePublishableKey: string,
-        stripeConnectedAccount: string,
+        initializationData: GooglePayStripeInitializationData,
+        methodId: string,
     ): Promise<StripeUPEClient> {
         if (this.stripeUPEClient) {
             return this.stripeUPEClient;
         }
 
-        return this.scriptLoader.getStripeClient(stripePublishableKey, stripeConnectedAccount);
+        const locale = this.paymentIntegrationService.getState().getCartLocale();
+
+        if (methodId === 'googlepaystripeocs' && !!initializationData.useNewStripeJsVersion) {
+            return this.scriptLoader.getStripeClient(
+                initializationData,
+                locale,
+                StripeJsVersion.CLOVER,
+            );
+        }
+
+        return this.scriptLoader.getStripeClient(
+            initializationData,
+            locale,
+            StripeJsVersion.V3,
+            STRIPE_UPE_CLIENT_BETAS,
+            STRIPE_UPE_CLIENT_API_VERSION,
+        );
     }
 
     private _isCancellationError(stripeError: StripeError | undefined) {

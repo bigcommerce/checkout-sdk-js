@@ -88,11 +88,14 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
 
         const { initializationData } = paymentMethod;
         const { captureMethod } = initializationData;
+        const stripeJsVersion =
+            this.stripeIntegrationService.getStripeJsVersion(initializationData);
 
         this._captureMethod = captureMethod;
         this._stripeClient = await this.scriptLoader.getStripeClient(
             initializationData,
             state.getCartLocale(),
+            stripeJsVersion,
         );
 
         await this.paymentIntegrationService.loadDefaultCheckout();

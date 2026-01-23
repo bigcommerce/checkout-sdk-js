@@ -41,6 +41,7 @@ import {
     StripeEventType,
     StripeInitializationData,
     StripeIntegrationService,
+    StripeJsVersion,
     StripePaymentMethodType,
     StripeResult,
     StripeScriptLoader,
@@ -456,6 +457,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         return this.scriptLoader.getStripeClient(
             initializationData,
             state.getCartLocale(),
+            StripeJsVersion.V3,
             STRIPE_UPE_CLIENT_BETAS,
             STRIPE_UPE_CLIENT_API_VERSION,
         );

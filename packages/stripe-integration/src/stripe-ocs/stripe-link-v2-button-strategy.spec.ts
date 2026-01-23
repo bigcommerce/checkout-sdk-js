@@ -20,6 +20,7 @@ import {
     StripeElementEvent,
     StripeElements,
     StripeIntegrationService,
+    StripeJsVersion,
     StripeScriptLoader,
     StripeStringConstants,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -201,6 +202,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     captureMethod: 'automatic',
                 },
                 'en',
+                StripeJsVersion.V3,
             );
             expect(elements.create).toHaveBeenCalledWith(
                 'expressCheckout',
@@ -225,6 +227,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     captureMethod: 'manual',
                 },
                 'en',
+                StripeJsVersion.V3,
             );
             expect(elements.create).toHaveBeenCalledWith(
                 'expressCheckout',
@@ -237,6 +240,20 @@ describe('StripeLinkV2ButtonStrategy', () => {
                 mode: 'payment',
             });
             expect(element.mount).toHaveBeenCalledWith('#checkout-button');
+        });
+
+        it('loads Stripe client with new Stripe JS version', async () => {
+            jest.spyOn(stripeIntegrationService, 'getStripeJsVersion').mockReturnValue(
+                StripeJsVersion.CLOVER,
+            );
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
+                stripePaymentMethod.initializationData,
+                'en',
+                StripeJsVersion.CLOVER,
+            );
         });
     });
 

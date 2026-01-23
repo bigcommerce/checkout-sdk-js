@@ -29,6 +29,7 @@ export {
     StripeDisplayName,
     StripeHostWindow,
     StripeCustomerEvent,
+    StripeJsVersion,
 } from './stripe';
 export {
     getStripeJsMock,

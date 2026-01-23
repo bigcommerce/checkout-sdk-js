@@ -20,6 +20,7 @@ import {
     StripeCustomerEvent,
     StripeElement,
     StripeHostWindow,
+    StripeJsVersion,
     StripeScriptLoader,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 
@@ -118,6 +119,7 @@ describe('StripeUpeCustomerStrategy', () => {
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
                 paymentMethodMock.initializationData,
                 'en',
+                StripeJsVersion.V3,
                 STRIPE_UPE_CLIENT_BETAS,
                 STRIPE_UPE_CLIENT_API_VERSION,
             );
