@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.854.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.853.0...v1.854.0) (2026-01-23)
+
+
+### Features
+
+* **payment:** PAYPAL-6142 3DS not required create order ([8e2b717](https://github.com/bigcommerce/checkout-sdk-js/commit/8e2b717bf582fabcb9d02078553b67c27b8f6e8d))
+* **payment:** PAYPAL-6182 render logic for PayPal banner ([f835ed2](https://github.com/bigcommerce/checkout-sdk-js/commit/f835ed2bff88d31cc4347ab73c9a5ea9d7ec2474))
+
 ## [1.853.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.852.0...v1.853.0) (2026-01-21)
 
 

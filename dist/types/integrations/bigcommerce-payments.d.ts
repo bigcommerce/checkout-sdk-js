@@ -16,6 +16,7 @@ import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration
 import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalBNPLConfigurationItem } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { PayPalSdkHelper } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -1023,6 +1024,7 @@ declare interface BigCommercePaymentsInitializationData {
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     isAppSwitchEnabled?: boolean;
+    paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
 }
 
 declare class BigCommercePaymentsIntegrationService {
@@ -1381,7 +1383,11 @@ declare interface BigCommercePaymentsPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
-    container: string;
+    container?: string;
+    /**
+     * The location to insert the Pay Later Messages.
+     */
+    bannerContainerId?: string;
     /**
      * If there is no need to initialize the Smart Payment Button, simply pass false as the option value.
      * The default value is true
@@ -1415,23 +1421,24 @@ declare interface BigCommercePaymentsPaymentInitializeOptions {
      *
      * @returns reject() or resolve()
      */
-    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    onValidate?(resolve: () => void, reject: () => void): Promise<void>;
     /**
      * A callback for submitting payment form that gets called
      * when buyer approves PayPal payment.
      */
-    submitForm(): void;
+    submitForm?(): void;
 }
 
 declare class BigCommercePaymentsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private bigCommercePaymentsIntegrationService;
+    private paypalSdkHelper;
     private loadingIndicator;
     private loadingIndicatorContainer?;
     private orderId?;
     private paypalButton?;
     private bigcommerce_payments?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService, loadingIndicator: LoadingIndicator);
+    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService, paypalSdkHelper: PayPalSdkHelper, loadingIndicator: LoadingIndicator);
     initialize(options?: PaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
@@ -1467,6 +1474,12 @@ declare class BigCommercePaymentsPaymentStrategy implements PaymentStrategy {
      *
      */
     private isPayPalVaultedInstrumentPaymentData;
+    /**
+     *
+     * Render Pay Later Messages
+     *
+     * */
+    private renderMessages;
     private isProviderError;
 }
 
