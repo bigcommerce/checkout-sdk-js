@@ -12,6 +12,7 @@ export enum SpamProtectionActionType {
     ExecuteRequested = 'SPAM_PROTECTION_EXECUTE_REQUESTED',
     ExecuteSucceeded = 'SPAM_PROTECTION_EXECUTE_SUCCEEDED',
     ExecuteFailed = 'SPAM_PROTECTION_EXECUTE_FAILED',
+    ExecuteActionNotNeeded = 'EXECUTE_ACTION_NOT_NEEDED',
 }
 
 export type SpamProtectionAction =
@@ -23,7 +24,8 @@ export type SpamProtectionAction =
     | ExecuteFailedAction
     | CheckoutVerifyRequestedAction
     | CheckoutVerifyFailedAction
-    | CheckoutVerifySucceededAction;
+    | CheckoutVerifySucceededAction
+    | ExecuteActionNotNeededAction;
 
 export interface InitializeRequestedAction extends Action {
     type: SpamProtectionActionType.InitializeRequested;
@@ -59,4 +61,8 @@ export interface CheckoutVerifyFailedAction extends Action<Error> {
 
 export interface CheckoutVerifySucceededAction extends Action<Checkout> {
     type: SpamProtectionActionType.VerifyCheckoutSucceeded;
+}
+
+export interface ExecuteActionNotNeededAction extends Action {
+    type: SpamProtectionActionType.ExecuteActionNotNeeded;
 }
