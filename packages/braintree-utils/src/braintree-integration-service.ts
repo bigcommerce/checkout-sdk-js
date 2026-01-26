@@ -1,4 +1,5 @@
 import { supportsPopups } from '@braintree/browser-detection';
+import { isEmpty } from 'lodash';
 
 import {
     Address,
@@ -18,6 +19,7 @@ import {
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import BraintreeScriptLoader from './braintree-script-loader';
+import loadPayPalSDKOnce from './load-paypal-sdk-once';
 import {
     BraintreeClient,
     BraintreeDataCollector,
@@ -45,7 +47,6 @@ import {
     TokenizationPayload,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
-import { isEmpty } from 'lodash';
 import isCreditCardInstrumentLike from './utils/is-credit-card-instrument-like';
 
 export interface PaypalConfig {
@@ -194,7 +195,9 @@ export default class BraintreeIntegrationService {
             };
 
             if (!this.braintreeHostWindow.paypal) {
-                braintreePaypalCheckout.loadPayPalSDK(paypalSdkLoadConfig, paypalSdkLoadCallback);
+                void loadPayPalSDKOnce(braintreePaypalCheckout, paypalSdkLoadConfig).then(
+                    paypalSdkLoadCallback,
+                );
             } else {
                 onSuccess(braintreePaypalCheckout);
             }
@@ -512,6 +515,7 @@ export default class BraintreeIntegrationService {
         } = this.threeDSecureOptions;
         const cancelVerifyCard = async () => {
             const response = await threeDSecure.cancelVerifyCard();
+
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             verification.cancel(new PaymentMethodCancelledError());
 

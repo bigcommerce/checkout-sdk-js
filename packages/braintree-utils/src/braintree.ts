@@ -440,7 +440,7 @@ export type BraintreePaypalCheckoutCreator = BraintreeModuleCreator<BraintreePay
 export interface BraintreePaypalCheckout {
     loadPayPalSDK(
         config: BraintreePaypalSdkCreatorConfig,
-        callback: (instance: BraintreePaypalCheckout) => void,
+        callback: (err: null | undefined | BraintreeError) => void,
     ): void;
     createPayment(options: BraintreePaypalRequest): Promise<string>;
     teardown(): Promise<void>;
