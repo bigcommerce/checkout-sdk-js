@@ -18,6 +18,8 @@ import {
     StripeElement,
     StripeElements,
     StripeError,
+    StripeInitializationData,
+    StripeJsVersion,
     StripePaymentMethodType,
 } from './stripe';
 import StripePaymentInitializeOptions from './stripe-initialize-options';
@@ -764,6 +766,28 @@ describe('StripeIntegrationService', () => {
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
             expect(stripeScriptLoader.updateStripeElements).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#getStripeJsVersion', () => {
+        it('should return Clover if experiment is true', () => {
+            const initializationData = {
+                useNewStripeJsVersion: true,
+            } as StripeInitializationData;
+
+            expect(stripeIntegrationService.getStripeJsVersion(initializationData)).toBe(
+                StripeJsVersion.CLOVER,
+            );
+        });
+
+        it('should return V3 if experiment is false', () => {
+            const initializationData = {
+                useNewStripeJsVersion: false,
+            } as StripeInitializationData;
+
+            expect(stripeIntegrationService.getStripeJsVersion(initializationData)).toBe(
+                StripeJsVersion.V3,
+            );
         });
     });
 });

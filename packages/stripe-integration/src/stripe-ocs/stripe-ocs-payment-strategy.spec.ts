@@ -24,6 +24,7 @@ import {
     StripeEventMock,
     StripeInstrumentSetupFutureUsage,
     StripeIntegrationService,
+    StripeJsVersion,
     StripePIPaymentMethodOptions,
     StripeScriptLoader,
     StripeStringConstants,
@@ -390,6 +391,22 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
                 getStripeOCSMock().initializationData,
                 'en',
+                StripeJsVersion.V3,
+            );
+        });
+
+        it('loads stripe js with new Stripe JS version', async () => {
+            jest.spyOn(stripeIntegrationService, 'getStripeJsVersion').mockReturnValue(
+                StripeJsVersion.CLOVER,
+            );
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
+                getStripeOCSMock().initializationData,
+                'en',
+                StripeJsVersion.CLOVER,
             );
         });
 

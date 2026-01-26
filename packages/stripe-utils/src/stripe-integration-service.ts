@@ -21,6 +21,8 @@ import {
     StripeElements,
     StripeElementType,
     StripeError,
+    StripeInitializationData,
+    StripeJsVersion,
     StripePaymentIntentStatus,
     StripeStringConstants,
 } from './stripe';
@@ -232,6 +234,12 @@ export default class StripeIntegrationService {
         }
 
         this.scriptLoader.updateStripeElements({ clientSecret: clientToken });
+    }
+
+    getStripeJsVersion(initializationData: StripeInitializationData): StripeJsVersion {
+        return initializationData.useNewStripeJsVersion
+            ? StripeJsVersion.CLOVER
+            : StripeJsVersion.V3;
     }
 
     private _mapStripeAddress(address?: Address): AddressOptions {

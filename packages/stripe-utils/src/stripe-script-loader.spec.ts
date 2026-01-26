@@ -7,6 +7,7 @@ import {
     StripeElementsOptions,
     StripeHostWindow,
     StripeInitializationData,
+    StripeJsVersion,
 } from './stripe';
 import StripeScriptLoader from './stripe-script-loader';
 import { getStripeJsMock } from './stripe.mock';
@@ -49,6 +50,20 @@ describe('StripePayScriptLoader', () => {
             expect(scriptLoader.loadScript).toHaveBeenNthCalledWith(1, 'https://js.stripe.com/v3/');
         });
 
+        it('loads a custom stripe js version', async () => {
+            const stripeJsVersion = 'custom_stripe-js-version';
+
+            await stripeUPEScriptLoader.getStripeClient(
+                defaultInitializationData,
+                'en',
+                stripeJsVersion,
+            );
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `https://js.stripe.com/${stripeJsVersion}/stripe.js`,
+            );
+        });
+
         it('loads a single instance of StripeElements', async () => {
             const getStripeClient = await stripeUPEScriptLoader.getStripeClient(
                 defaultInitializationData,
@@ -88,6 +103,7 @@ describe('StripePayScriptLoader', () => {
             await stripeUPEScriptLoader.getStripeClient(
                 defaultInitializationData,
                 'en',
+                StripeJsVersion.V3,
                 defaultBetas,
                 defaultApiVersion,
             );

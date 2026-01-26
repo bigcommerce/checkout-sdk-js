@@ -14,6 +14,7 @@ import {
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { getStripeJsMock, StripeScriptLoader } from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import createGooglePayScriptLoader from '../factories/create-google-pay-script-loader';
 import GooglePayGateway from '../gateways/google-pay-gateway';
@@ -23,13 +24,11 @@ import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { getGeneric, getStripe } from '../mocks/google-pay-payment-method.mock';
 
 import GooglePayStripeGateway from './google-pay-stripe-gateway';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
-import { getStripeUPEJsMock } from './stripe.mock';
 
 describe('GooglePayStripeGateway', () => {
     let gateway: GooglePayStripeGateway;
     let paymentIntegrationService: PaymentIntegrationService;
-    let scriptLoader: StripeUPEScriptLoader;
+    let scriptLoader: StripeScriptLoader;
     let strategy: GooglePayPaymentStrategy;
     let processor: GooglePayPaymentProcessor;
     let formPoster: FormPoster;
@@ -48,7 +47,7 @@ describe('GooglePayStripeGateway', () => {
             postForm: jest.fn(),
         } as unknown as FormPoster;
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        scriptLoader = new StripeUPEScriptLoader(getScriptLoader());
+        scriptLoader = new StripeScriptLoader(getScriptLoader());
         gateway = new GooglePayStripeGateway(paymentIntegrationService, scriptLoader);
         processor = new GooglePayPaymentProcessor(
             createGooglePayScriptLoader(),
@@ -69,7 +68,7 @@ describe('GooglePayStripeGateway', () => {
         );
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
         jest.spyOn(processor, 'getNonce').mockResolvedValue('nonceValue');
-        jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValue(getStripeUPEJsMock());
+        jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValue(getStripeJsMock());
     });
 
     afterEach(() => {
@@ -101,7 +100,7 @@ describe('GooglePayStripeGateway', () => {
                 },
             });
             jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValue({
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmCardPayment,
             });
 
@@ -144,7 +143,7 @@ describe('GooglePayStripeGateway', () => {
                 },
             });
             jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValue({
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmCardPayment,
             });
 
@@ -195,7 +194,7 @@ describe('GooglePayStripeGateway', () => {
             const retrievePaymentIntent = jest.fn().mockRejectedValue('error');
 
             jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValueOnce({
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmCardPayment,
                 retrievePaymentIntent,
             });
@@ -223,7 +222,7 @@ describe('GooglePayStripeGateway', () => {
             const retrievePaymentIntent = jest.fn().mockReturnValue(stripeError);
 
             jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValueOnce({
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmCardPayment,
                 retrievePaymentIntent,
             });
@@ -251,7 +250,7 @@ describe('GooglePayStripeGateway', () => {
             const retrievePaymentIntent = jest.fn().mockReturnValue(stripeError);
 
             jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValueOnce({
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmCardPayment,
                 retrievePaymentIntent,
             });
@@ -271,7 +270,7 @@ describe('GooglePayStripeGateway', () => {
             const retrievePaymentIntent = jest.fn().mockReturnValue(stripeError);
 
             jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValueOnce({
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmCardPayment,
                 retrievePaymentIntent,
             });

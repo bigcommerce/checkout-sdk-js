@@ -36,6 +36,7 @@ import {
     StripeElementUpdateOptions,
     StripeEventType,
     StripeIntegrationService,
+    StripeJsVersion,
     StripePaymentMethodType,
     StripeScriptLoader,
     StripeStringConstants,
@@ -197,6 +198,7 @@ describe('StripeUPEPaymentStrategy', () => {
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
                 getStripeUPEMock().initializationData,
                 'en',
+                StripeJsVersion.V3,
                 STRIPE_UPE_CLIENT_BETAS,
                 STRIPE_UPE_CLIENT_API_VERSION,
             );
