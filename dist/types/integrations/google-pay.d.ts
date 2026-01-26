@@ -632,6 +632,8 @@ declare interface GooglePayStripeInitializationData extends GooglePayBaseInitial
     stripeConnectedAccount: string;
     stripePublishableKey: string;
     stripeVersion: string;
+    shopperLanguage: string;
+    useNewStripeJsVersion?: boolean;
 }
 
 declare interface GooglePayTransactionInfo {
