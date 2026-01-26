@@ -597,5 +597,129 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                 }
             });
         });
+
+        describe('3DS additional action with stored cards', () => {
+            beforeEach(() => {
+                jest.spyOn(paymentIntegrationService, 'submitOrder').mockResolvedValue({} as any);
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCardInstrumentOrThrow',
+                ).mockReturnValue({
+                    bigpayToken: 'my_instrument_id',
+                    brand: 'visa',
+                    defaultInstrument: false,
+                    expiryMonth: '12',
+                    expiryYear: '2025',
+                    iin: '411111',
+                    last4: '1111',
+                    provider: 'braintree',
+                    trustedShippingAddress: false,
+                    method: 'braintree',
+                    type: 'card',
+                    untrustedShippingCardVerificationMode: 'pan' as any,
+                });
+                jest.spyOn(
+                    braintreeIntegrationService,
+                    'challenge3DSVerification',
+                ).mockResolvedValue({
+                    nonce: '3ds_verified_nonce',
+                    details: {},
+                    description: 'verified',
+                    liabilityShiftPossible: true,
+                    liabilityShifted: true,
+                } as any);
+            });
+
+            it('preserves shouldSetAsDefaultInstrument flag when stored card requires 3DS and user wants to set as default', async () => {
+                const threeDSecureError = {
+                    name: 'BraintreePaymentRequest3DSError',
+                    body: {
+                        status: 'error',
+                        errors: [{ code: 'three_d_secure_required' }],
+                        three_ds_result: {
+                            payer_auth_request: 'stored_card_nonce',
+                        },
+                    },
+                };
+
+                const payload = {
+                    ...orderRequestBody,
+                    payment: {
+                        methodId: paymentMethod.id,
+                        paymentData: {
+                            instrumentId: 'my_instrument_id',
+                            shouldSaveInstrument: false,
+                            shouldSetAsDefaultInstrument: true,
+                        },
+                    },
+                };
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment')
+                    .mockRejectedValueOnce(threeDSecureError)
+                    .mockResolvedValueOnce({} as any);
+
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethod.id,
+                });
+
+                await braintreeCreditCardPaymentStrategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(2, {
+                    ...payload.payment,
+                    paymentData: {
+                        instrumentId: 'my_instrument_id',
+                        shouldSaveInstrument: false,
+                        shouldSetAsDefaultInstrument: true,
+                        deviceSessionId: 'sessionId',
+                        nonce: '3ds_verified_nonce',
+                    },
+                });
+            });
+
+            it('does not include save flags when both are false during 3DS verification with stored card', async () => {
+                const threeDSecureError = {
+                    name: 'BraintreePaymentRequest3DSError',
+                    body: {
+                        status: 'error',
+                        errors: [{ code: 'three_d_secure_required' }],
+                        three_ds_result: {
+                            payer_auth_request: 'stored_card_nonce',
+                        },
+                    },
+                };
+
+                const payload = {
+                    ...orderRequestBody,
+                    payment: {
+                        methodId: paymentMethod.id,
+                        paymentData: {
+                            instrumentId: 'my_instrument_id',
+                            shouldSaveInstrument: false,
+                            shouldSetAsDefaultInstrument: false,
+                        },
+                    },
+                };
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment')
+                    .mockRejectedValueOnce(threeDSecureError)
+                    .mockResolvedValueOnce({} as any);
+
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethod.id,
+                });
+
+                await braintreeCreditCardPaymentStrategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(2, {
+                    ...payload.payment,
+                    paymentData: {
+                        deviceSessionId: 'sessionId',
+                        nonce: '3ds_verified_nonce',
+                    },
+                });
+            });
+        });
     });
 });
