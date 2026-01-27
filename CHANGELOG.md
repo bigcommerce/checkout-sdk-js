@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.856.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.855.0...v1.856.0) (2026-01-27)
+
+
+### Features
+
+* **payment:** PAYPAL-6162 Fixed double call of loadPayPalSDK to avoid ZOID issues and button display problems ([77b25d0](https://github.com/bigcommerce/checkout-sdk-js/commit/77b25d08096cfc64b1817b15ac2637f71f7dec2b))
+
 ## [1.855.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.854.0...v1.855.0) (2026-01-26)
 
 
