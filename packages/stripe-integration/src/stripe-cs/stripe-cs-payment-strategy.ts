@@ -199,8 +199,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const { postalCode } = getShippingAddress() || billingAddress || {};
         console.log(postalCode);
 
-        const stripeEmailUpdateResult = await this.stripeElements.updateEmail(billingAddress?.email || '');
-        console.log('*** stripeEmailUpdateResult', stripeEmailUpdateResult);
+        // const stripeEmailUpdateResult = await this.stripeElements.updateEmail(billingAddress?.email || '');
+        // console.log('*** stripeEmailUpdateResult', stripeEmailUpdateResult);
 
         const stripeCheckoutSessionData = this.stripeElements.session();
         console.log('*** stripeCheckoutSessionData', stripeCheckoutSessionData);
