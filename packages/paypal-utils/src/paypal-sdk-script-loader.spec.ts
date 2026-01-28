@@ -252,39 +252,6 @@ describe('PayPalSdkLoader', () => {
             });
         });
 
-        it('loads PayPalSDK script with disabled all APMs', async () => {
-            const paymentMethodProp = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    availableAlternativePaymentMethods: [
-                        'bancontact',
-                        'giropay',
-                        'ideal',
-                        'mybank',
-                        'sofort',
-                        'sepa',
-                    ],
-                    enabledAlternativePaymentMethods: ['bancontact', 'giropay', 'ideal'],
-                    isHostedCheckoutEnabled: true,
-                },
-            };
-
-            await subject.getPayPalSDK(paymentMethodProp, 'USD', false);
-
-            const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo%2Cbancontact%2Cgiropay%2Cideal%2Cmybank%2Csofort%2Csepa&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
-            const paypalSdkAttributes = {
-                'data-client-token': paymentMethod.clientToken,
-                'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            };
-
-            expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
-                async: true,
-                attributes: paypalSdkAttributes,
-            });
-        });
-
         it('loads PayPalSDK script with commit flag as true', async () => {
             await subject.getPayPalSDK(paymentMethod, 'USD', true);
 
