@@ -39,7 +39,7 @@ import createCheckoutButtonRegistryV2 from './create-checkout-button-registry-v2
 export default function createCheckoutButtonInitializer(
     options?: CheckoutButtonInitializerOptions,
 ): CheckoutButtonInitializer {
-    const { host, locale = 'en' } = options ?? {};
+    const { host } = options ?? {};
 
     const config: ConfigState = {
         meta: {
@@ -64,7 +64,7 @@ export default function createCheckoutButtonInitializer(
     return new CheckoutButtonInitializer(
         store,
         new CheckoutButtonStrategyActionCreator(
-            createCheckoutButtonRegistry(store, requestSender, formPoster, locale, host),
+            createCheckoutButtonRegistry(store, requestSender, formPoster, host),
             registryV2,
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         ),

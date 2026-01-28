@@ -10,6 +10,7 @@ import {
     StripeElementType,
     StripeEventType,
     StripeFormMode,
+    StripeJsVersion,
     StripeScriptLoader,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 
@@ -32,7 +33,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
 
     constructor(
         private _store: CheckoutStore,
-        private _stripeUPEScriptLoader: StripeScriptLoader,
+        private _stripeScriptLoader: StripeScriptLoader,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
     ) {}
@@ -94,8 +95,10 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
+        this._stripeUPEClient = await this._stripeScriptLoader.getStripeClient(
             initializationData,
+            state.cart.getLocale(),
+            StripeJsVersion.V3,
             STRIPE_UPE_CLIENT_BETAS,
             STRIPE_UPE_CLIENT_API_VERSION,
         );
@@ -139,13 +142,10 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             };
         }
 
-        this._stripeElements = await this._stripeUPEScriptLoader.getElements(
-            this._stripeUPEClient,
-            {
-                clientSecret: paymentMethod.clientToken,
-                appearance,
-            },
-        );
+        this._stripeElements = await this._stripeScriptLoader.getElements(this._stripeUPEClient, {
+            clientSecret: paymentMethod.clientToken,
+            appearance,
+        });
 
         const shipping = getShippingAddress();
         const shippingPhoneField = shippingFields.find((field) => field.name === 'phone');

@@ -6,8 +6,6 @@ import {
 
 import { RequestOptions } from '../common/http-request';
 
-import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
-
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
 
 /**
@@ -45,10 +43,11 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
+}
 
+export interface OrderFinalizeOptions extends RequestOptions {
     /**
-     * The options that are required to initialize the Masterpass payment method.
-     * They can be omitted unless you need to support Masterpass.
+     * @alpha
      */
-    masterpass?: MasterpassPaymentInitializeOptions;
+    integrations?: Array<PaymentStrategyFactory<PaymentStrategy>>;
 }

@@ -8,6 +8,7 @@ import {
     StripeElementsOptions,
     StripeHostWindow,
     StripeInitializationData,
+    StripeJsVersion,
 } from './stripe';
 
 export default class StripeScriptLoader {
@@ -18,6 +19,8 @@ export default class StripeScriptLoader {
 
     async getStripeClient(
         initializationData: StripeInitializationData,
+        locale?: string,
+        stripeJsVersion?: string,
         betas?: string[],
         apiVersion?: string,
     ): Promise<StripeClient> {
@@ -25,10 +28,11 @@ export default class StripeScriptLoader {
             return this.stripeWindow.bcStripeClient;
         }
 
-        const stripe = await this.load();
+        const stripe = await this.load(stripeJsVersion);
         const { stripePublishableKey, stripeConnectedAccount } = initializationData;
         const options = {
             ...(stripeConnectedAccount ? { stripeAccount: stripeConnectedAccount } : {}),
+            ...(locale ? { locale } : {}),
             ...(betas ? { betas } : {}),
             ...(apiVersion ? { apiVersion } : {}),
         };
@@ -68,9 +72,9 @@ export default class StripeScriptLoader {
         await stripeElements.fetchUpdates();
     }
 
-    private async load() {
+    private async load(stripeJsVersion?: string) {
         if (!this.stripeWindow.Stripe) {
-            await this.scriptLoader.loadScript('https://js.stripe.com/v3/');
+            await this.scriptLoader.loadScript(this.getScriptUrl(stripeJsVersion));
 
             if (!this.stripeWindow.Stripe) {
                 throw new PaymentMethodClientUnavailableError();
@@ -78,5 +82,13 @@ export default class StripeScriptLoader {
         }
 
         return this.stripeWindow.Stripe;
+    }
+
+    private getScriptUrl(stripeJsVersion?: string) {
+        if (!stripeJsVersion || stripeJsVersion === StripeJsVersion.V3) {
+            return 'https://js.stripe.com/v3/';
+        }
+
+        return `https://js.stripe.com/${stripeJsVersion}/stripe.js`;
     }
 }

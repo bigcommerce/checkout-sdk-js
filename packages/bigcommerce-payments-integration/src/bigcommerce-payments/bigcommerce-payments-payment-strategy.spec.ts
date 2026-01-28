@@ -1,6 +1,11 @@
 import { EventEmitter } from 'events';
 
 import {
+    createBigCommercePaymentsSdk,
+    PayPalMessagesSdk,
+    PayPalSdkHelper,
+} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import {
     AccountInstrument,
     InvalidArgumentError,
     OrderFinalizationNotRequiredError,
@@ -40,12 +45,15 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
     let paymentMethod: PaymentMethod;
     let bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService;
     let paypalSdk: PayPalSDK;
+    let paypalSdkHelper: PayPalSdkHelper;
+    let payPalMessagesSdk: PayPalMessagesSdk;
     let strategy: BigCommercePaymentsPaymentStrategy;
 
     const paypalOrderId = 'paypal123';
 
     const defaultMethodId = 'bigcommerce_payments';
     const defaultContainerId = '#container';
+    const defaultMessageContainerId = 'bigcommerce-payments-message-mock-id';
 
     const bigCommercePaymentsOptions: BigCommercePaymentsPaymentInitializeOptions = {
         container: defaultContainerId,
@@ -71,6 +79,10 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
     beforeEach(() => {
         eventEmitter = new EventEmitter();
 
+        payPalMessagesSdk = {
+            Messages: jest.fn(),
+        };
+
         paypalSdk = getPayPalSDKMock();
         paymentMethod = getBigCommercePaymentsPaymentMethod();
         paymentMethod.id = defaultMethodId;
@@ -79,10 +91,12 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
         loadingIndicator = new LoadingIndicator();
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        paypalSdkHelper = createBigCommercePaymentsSdk();
 
         strategy = new BigCommercePaymentsPaymentStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
+            paypalSdkHelper,
             loadingIndicator,
         );
 
@@ -845,6 +859,148 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
             const result = await strategy.deinitialize();
 
             expect(result).toBeUndefined();
+        });
+    });
+
+    describe('BigCommercePayments Credit messages logic', () => {
+        const bigCommercePaymentsSdkRenderMock = jest.fn();
+
+        const options: PaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions =
+            {
+                methodId: defaultMethodId,
+                bigcommerce_payments: {
+                    bannerContainerId: defaultMessageContainerId,
+                },
+            };
+
+        beforeEach(() => {
+            const div = document.createElement('div');
+
+            div.setAttribute('id', defaultMessageContainerId);
+            document.body.appendChild(div);
+
+            jest.spyOn(paypalSdkHelper, 'getPayPalMessages').mockImplementation(() =>
+                Promise.resolve(payPalMessagesSdk),
+            );
+            jest.spyOn(payPalMessagesSdk, 'Messages').mockImplementation(() => ({
+                render: bigCommercePaymentsSdkRenderMock,
+            }));
+        });
+
+        afterEach(() => {
+            document.getElementById(defaultMessageContainerId)?.remove();
+        });
+
+        it('does not render PayPal message when paypalBNPLConfiguration is not provided', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    paypalBNPLConfiguration: undefined,
+                },
+            });
+
+            await strategy.initialize(options);
+
+            expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
+        });
+
+        it('does not render PayPal message when isPayPalCreditAvailable is true', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isPayPalCreditAvailable: true,
+                },
+            });
+
+            await strategy.initialize(options);
+
+            expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
+        });
+
+        it('does not render PayPal message if banner is disabled in paypalBNPLConfiguration', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    paypalBNPLConfiguration: [
+                        {
+                            id: 'checkout',
+                            status: false,
+                        },
+                    ],
+                },
+            });
+
+            await strategy.initialize(options);
+
+            expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
+        });
+
+        it('initializes PayPal Messages component', async () => {
+            await strategy.initialize(options);
+
+            expect(payPalMessagesSdk.Messages).toHaveBeenCalledWith({
+                amount: 190,
+                placement: 'payment',
+                style: {
+                    layout: 'text',
+                    logo: {
+                        type: 'alternative',
+                    },
+                    text: {
+                        color: 'white',
+                        size: 10,
+                    },
+                },
+            });
+        });
+
+        it('does not execute PayPal button initialization logic if bannerContainerId is provided', async () => {
+            await strategy.initialize(options);
+
+            expect(bigCommercePaymentsIntegrationService.loadPayPalSdk).not.toHaveBeenCalledWith(
+                defaultMethodId,
+            );
+        });
+
+        it('show an error if bannerContainerId is provided but does not exist as DOM element', async () => {
+            Object.defineProperty(window, 'console', {
+                value: {
+                    error: jest.fn(),
+                },
+            });
+
+            await strategy.initialize({
+                ...options,
+                bigcommerce_payments: {
+                    ...options.bigcommerce_payments,
+                    bannerContainerId: '',
+                },
+            });
+
+            expect(payPalMessagesSdk.Messages).not.toHaveBeenCalled();
+            expect(window.console.error).toHaveBeenCalledWith(
+                'Unable to create banner without valid banner container ID.',
+            );
+        });
+
+        it('renders PayPal message', async () => {
+            await strategy.initialize(options);
+
+            expect(bigCommercePaymentsSdkRenderMock).toHaveBeenCalledWith(
+                `#${defaultMessageContainerId}`,
+            );
         });
     });
 

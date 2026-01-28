@@ -18,6 +18,7 @@
 - [id](Cart.md#id)
 - [isTaxIncluded](Cart.md#istaxincluded)
 - [lineItems](Cart.md#lineitems)
+- [locale](Cart.md#locale)
 - [source](Cart.md#source)
 - [updatedTime](Cart.md#updatedtime)
 
@@ -98,6 +99,12 @@ ___
 ### lineItems
 
 • **lineItems**: [`LineItemMap`](LineItemMap.md)
+
+___
+
+### locale
+
+• **locale**: `string`
 
 ___
 

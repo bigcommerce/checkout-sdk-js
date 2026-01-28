@@ -20,6 +20,7 @@ import {
     StripeElementEvent,
     StripeElements,
     StripeIntegrationService,
+    StripeJsVersion,
     StripeScriptLoader,
     StripeStringConstants,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -135,6 +136,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             stripePaymentMethod,
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartLocale').mockReturnValue('en');
         jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
             Promise.resolve(false),
         );
@@ -194,10 +196,14 @@ describe('StripeLinkV2ButtonStrategy', () => {
             stripePaymentMethod.initializationData.captureMethod = 'automatic';
             await strategy.initialize(initialiseOptions);
 
-            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith({
-                ...stripePaymentMethod.initializationData,
-                captureMethod: 'automatic',
-            });
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
+                {
+                    ...stripePaymentMethod.initializationData,
+                    captureMethod: 'automatic',
+                },
+                'en',
+                StripeJsVersion.V3,
+            );
             expect(elements.create).toHaveBeenCalledWith(
                 'expressCheckout',
                 expressCheckoutOptionsMock,
@@ -215,10 +221,14 @@ describe('StripeLinkV2ButtonStrategy', () => {
             stripePaymentMethod.initializationData.captureMethod = 'manual';
             await strategy.initialize(initialiseOptions);
 
-            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith({
-                ...stripePaymentMethod.initializationData,
-                captureMethod: 'manual',
-            });
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
+                {
+                    ...stripePaymentMethod.initializationData,
+                    captureMethod: 'manual',
+                },
+                'en',
+                StripeJsVersion.V3,
+            );
             expect(elements.create).toHaveBeenCalledWith(
                 'expressCheckout',
                 expressCheckoutOptionsMock,
@@ -230,6 +240,20 @@ describe('StripeLinkV2ButtonStrategy', () => {
                 mode: 'payment',
             });
             expect(element.mount).toHaveBeenCalledWith('#checkout-button');
+        });
+
+        it('loads Stripe client with new Stripe JS version', async () => {
+            jest.spyOn(stripeIntegrationService, 'getStripeJsVersion').mockReturnValue(
+                StripeJsVersion.CLOVER,
+            );
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(scriptLoader.getStripeClient).toHaveBeenCalledWith(
+                stripePaymentMethod.initializationData,
+                'en',
+                StripeJsVersion.CLOVER,
+            );
         });
     });
 
@@ -332,7 +356,9 @@ describe('StripeLinkV2ButtonStrategy', () => {
             expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalled();
         });
 
-        it('resolve onShippingAddressChange with empty shippingRates', async () => {
+        it('reject onShippingAddressChange with empty shippingRates', async () => {
+            const stripeEventRejectMock = jest.fn();
+
             jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
                 ...paymentIntegrationService.getState(),
                 getConsignments: jest.fn().mockReturnValue(undefined),
@@ -348,13 +374,17 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     state: 'CA',
                 },
                 resolve: stripeEvent,
+                reject: stripeEventRejectMock,
             });
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(stripeEvent).toHaveBeenCalledWith({ shippingRates: undefined });
+            expect(stripeEvent).not.toHaveBeenCalled();
+            expect(stripeEventRejectMock).toHaveBeenCalled();
         });
 
-        it('resolve onShippingAddressChange with empty shippingRates if there is no availableShippingOptions', async () => {
+        it('reject onShippingAddressChange with empty shippingRates if there is no availableShippingOptions', async () => {
+            const stripeEventRejectMock = jest.fn();
+
             jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
                 ...paymentIntegrationService.getState(),
                 getConsignments: jest
@@ -372,10 +402,12 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     state: 'CA',
                 },
                 resolve: stripeEvent,
+                reject: stripeEventRejectMock,
             });
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(stripeEvent).toHaveBeenCalledWith({ shippingRates: [] });
+            expect(stripeEvent).not.toHaveBeenCalled();
+            expect(stripeEventRejectMock).toHaveBeenCalled();
         });
 
         it('resolve onShippingAddressChange with selectedId', async () => {
@@ -663,7 +695,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
                         formattedPayload: {
                             cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                             confirm: false,
-                            payment_method_id: 'link',
+                            method: 'link',
                         },
                     },
                 });
@@ -676,7 +708,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
                                 token: 'paymentIntentId',
                             },
                             confirm: false,
-                            payment_method_id: 'link',
+                            method: 'link',
                         },
                     },
                 });

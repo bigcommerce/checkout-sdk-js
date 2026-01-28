@@ -3,6 +3,7 @@ import { Cart } from '../cart';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
 import { Discount } from '../discount';
+import { Fee } from '../fee';
 import { Promotion } from '../promotion';
 import { Consignment } from '../shipping';
 import { Tax } from '../tax';
@@ -16,10 +17,12 @@ export default interface Checkout {
     consignments: Consignment[];
     taxes: Tax[];
     discounts: Discount[];
+    displayDiscountTotal: number;
     isStoreCreditApplied: boolean;
     coupons: Coupon[];
     orderId?: number;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     /**
@@ -34,12 +37,17 @@ export default interface Checkout {
     subtotal: number;
     grandTotal: number;
     outstandingBalance: number;
+    orderBasedAutoDiscountTotal: number;
+    manualDiscountTotal: number;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;
     createdTime: string;
     updatedTime: string;
     payments?: CheckoutPayment[];
+    channelId: number;
+    fees: Fee[];
+    totalDiscount: number;
 }
 
 export interface CheckoutRequestBody {

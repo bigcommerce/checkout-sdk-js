@@ -1,6 +1,6 @@
-[@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsKlarnaPaymentInitializeOptions
+[@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions
 
-# Interface: BigCommercePaymentsKlarnaPaymentInitializeOptions
+# Interface: BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions
 
 A set of options that are required to initialize the BigCommercePayments payment
 method making payment with Klarna.
@@ -29,7 +29,7 @@ service.initializePayment({
 
 ### Methods
 
-- [onError](BigCommercePaymentsKlarnaPaymentInitializeOptions.md#onerror)
+- [onError](BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions.md#onerror)
 
 ## Methods
 

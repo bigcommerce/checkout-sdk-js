@@ -255,9 +255,9 @@ declare class KlarnaV2PaymentStrategy {
     private loadPaymentsWidget;
     private getUpdateSessionData;
     private needsStateCode;
+    private isKlarnaMultipleRadioButtonEnabled;
     private mapToKlarnaAddress;
     private authorizeOrThrow;
-    private isKlarnaSingleRadioButtonEnabled;
 }
 
 declare class KlarnaV2ScriptLoader {

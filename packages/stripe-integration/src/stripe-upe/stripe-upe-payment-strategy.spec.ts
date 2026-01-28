@@ -11,13 +11,11 @@ import {
     PaymentIntegrationService,
     PaymentMethodFailedError,
     RequestError,
-    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
     getCart,
     getCheckout,
-    getConfig,
     getCustomer,
     getErrorPaymentResponseBody,
     getResponse,
@@ -30,12 +28,15 @@ import {
     getRetrievePaymentIntentResponseWithError,
     getStripeIntegrationServiceMock,
     getStripeJsMock,
+    STRIPE_UPE_CLIENT_API_VERSION,
+    STRIPE_UPE_CLIENT_BETAS,
     StripeClient,
     StripeElementsOptions,
     StripeElementType,
     StripeElementUpdateOptions,
     StripeEventType,
     StripeIntegrationService,
+    StripeJsVersion,
     StripePaymentMethodType,
     StripeScriptLoader,
     StripeStringConstants,
@@ -56,6 +57,7 @@ describe('StripeUPEPaymentStrategy', () => {
     let stripeScriptLoader: StripeScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
     let stripeUPEIntegrationService: StripeIntegrationService;
+    const stripePaymentMethod = getStripeUPEMock();
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -80,6 +82,7 @@ describe('StripeUPEPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
             checkoutMock,
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartLocale').mockReturnValue('en');
 
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(jest.fn());
 
@@ -192,6 +195,13 @@ describe('StripeUPEPaymentStrategy', () => {
             await strategy.initialize(options);
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledWith(
+                getStripeUPEMock().initializationData,
+                'en',
+                StripeJsVersion.V3,
+                STRIPE_UPE_CLIENT_BETAS,
+                STRIPE_UPE_CLIENT_API_VERSION,
+            );
 
             expect(stripeUPEJsMock.elements).toHaveBeenNthCalledWith(1, {
                 locale: 'en',
@@ -249,6 +259,96 @@ describe('StripeUPEPaymentStrategy', () => {
             const promise = strategy.initialize(options);
 
             await expect(promise).rejects.toThrow(InvalidArgumentError);
+        });
+
+        it('should enable Link by initialization data option', async () => {
+            const callbackPayload = {
+                value: {
+                    type: StripePaymentMethodType.CreditCard,
+                },
+            } as StripeEventType;
+
+            const { createElementMock } = getPaymentElementActionsMock(false, callbackPayload);
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...stripePaymentMethod,
+                initializationData: {
+                    ...stripePaymentMethod.initializationData,
+                    enableLink: true,
+                },
+            });
+
+            await strategy.initialize(options);
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(createElementMock).toHaveBeenCalledWith(StripeElementType.PAYMENT, {
+                fields: {
+                    billingDetails: {
+                        address: {
+                            city: 'never',
+                            country: 'never',
+                            postalCode: 'never',
+                        },
+                        email: 'never',
+                    },
+                },
+                terms: {
+                    card: 'auto',
+                },
+                wallets: {
+                    applePay: 'never',
+                    googlePay: 'never',
+                    link: 'auto',
+                },
+            });
+        });
+
+        it('should disable Link by initialization data option', async () => {
+            const callbackPayload = {
+                value: {
+                    type: StripePaymentMethodType.CreditCard,
+                },
+            } as StripeEventType;
+
+            const { createElementMock } = getPaymentElementActionsMock(false, callbackPayload);
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...stripePaymentMethod,
+                initializationData: {
+                    ...stripePaymentMethod.initializationData,
+                    enableLink: false,
+                },
+            });
+
+            await strategy.initialize(options);
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(createElementMock).toHaveBeenCalledWith(StripeElementType.PAYMENT, {
+                fields: {
+                    billingDetails: {
+                        address: {
+                            city: 'never',
+                            country: 'never',
+                            postalCode: 'never',
+                        },
+                        email: 'never',
+                    },
+                },
+                terms: {
+                    card: 'auto',
+                },
+                wallets: {
+                    applePay: 'never',
+                    googlePay: 'never',
+                    link: 'never',
+                },
+            });
         });
 
         describe('mounts single payment element', () => {
@@ -399,51 +499,13 @@ describe('StripeUPEPaymentStrategy', () => {
         describe('Update stripe payment element', () => {
             let updateTriggerFn: (payload: StripeElementUpdateOptions) => void = jest.fn();
 
-            const setUpdateElementExperiment = (enabled?: boolean) => {
-                const storeConfig: StoreConfig = {
-                    ...getConfig().storeConfig,
-                    checkoutSettings: {
-                        ...getConfig().storeConfig.checkoutSettings,
-                        features: {
-                            'PI-1679.trigger_update_stripe_payment_element': !!enabled,
-                        },
-                    },
-                };
-
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfig);
-            };
-
             beforeEach(() => {
-                setUpdateElementExperiment(true);
-
                 options.stripeupe!.initStripeElementUpdateTrigger = (stripeElementUpdateFn) => {
                     updateTriggerFn = stripeElementUpdateFn;
                 };
             });
 
-            it('should show terms text by default if experiment disabled', async () => {
-                setUpdateElementExperiment(false);
-
-                const { createElementMock } = getPaymentElementActionsMock(false);
-
-                await strategy.initialize(options);
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(createElementMock).toHaveBeenCalledWith(
-                    'payment',
-                    expect.objectContaining({
-                        terms: {
-                            card: StripeStringConstants.AUTO,
-                        },
-                    }),
-                );
-            });
-
             it('should show terms text by default if update trigger does not set', async () => {
-                setUpdateElementExperiment();
                 options.stripeupe!.initStripeElementUpdateTrigger = undefined;
 
                 const { createElementMock } = getPaymentElementActionsMock(false);
@@ -456,22 +518,6 @@ describe('StripeUPEPaymentStrategy', () => {
                     expect.objectContaining({
                         terms: {
                             card: StripeStringConstants.AUTO,
-                        },
-                    }),
-                );
-            });
-
-            it('should not show terms text by default if experiment enabled', async () => {
-                const { createElementMock } = getPaymentElementActionsMock(false);
-
-                await strategy.initialize(options);
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(createElementMock).toHaveBeenCalledWith(
-                    'payment',
-                    expect.objectContaining({
-                        terms: {
-                            card: StripeStringConstants.NEVER,
                         },
                     }),
                 );
@@ -507,18 +553,6 @@ describe('StripeUPEPaymentStrategy', () => {
                         },
                     }),
                 );
-            });
-
-            it('should not update element when experiment disabled', async () => {
-                setUpdateElementExperiment(false);
-
-                const { updateMock } = getPaymentElementActionsMock();
-
-                await strategy.initialize(options);
-                await new Promise((resolve) => process.nextTick(resolve));
-                updateTriggerFn({ shouldShowTerms: false });
-
-                expect(updateMock).not.toHaveBeenCalled();
             });
 
             it('should not update element without trigger function initialization', async () => {
@@ -1064,13 +1098,11 @@ describe('StripeUPEPaymentStrategy', () => {
             });
 
             it('successfully payed on first payments request without client token', async () => {
-                const defaultStripeConfigMock = getStripeUPEMock();
-
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
                 ).mockReturnValue({
-                    ...defaultStripeConfigMock,
+                    ...stripePaymentMethod,
                     clientToken: undefined,
                 });
 

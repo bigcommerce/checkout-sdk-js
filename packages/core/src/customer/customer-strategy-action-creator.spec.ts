@@ -76,7 +76,7 @@ describe('CustomerStrategyActionCreator', () => {
         };
 
         customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService, {});
-        registry = createCustomerStrategyRegistry(store, createRequestSender(), 'en');
+        registry = createCustomerStrategyRegistry(store, createRequestSender());
         strategy = new DefaultCustomerStrategy(
             store,
             new CustomerActionCreator(

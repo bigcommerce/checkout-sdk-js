@@ -91,9 +91,15 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         const { initializationData } = paymentMethod;
         const { captureMethod } = initializationData;
+        const stripeJsVersion =
+            this.stripeIntegrationService.getStripeJsVersion(initializationData);
 
         this._captureMethod = captureMethod;
-        this._stripeClient = await this.scriptLoader.getStripeClient(initializationData);
+        this._stripeClient = await this.scriptLoader.getStripeClient(
+            initializationData,
+            state.getCartLocale(),
+            stripeJsVersion,
+        );
 
         await this._mountExpressCheckoutElement(
             methodId,
@@ -191,33 +197,39 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         expressCheckoutElement.on(StripeElementEvent.CANCEL, this._onCancel);
     }
 
-    private async _onShippingAddressChange(event: StripeEventType) {
-        if ('address' in event) {
-            const shippingAddress = event.address;
-            // Depending on the country, some fields can be missing or partially redacted.
-            // For example, the shipping address in the US can only contain a city, state, and ZIP code.
-            // The full shipping address appears in the confirm event object after the purchase is confirmed in the browser’s payment interface.
-            const result = {
-                firstName: '',
-                lastName: '',
-                phone: '',
-                company: '',
-                address1: '',
-                address2: '',
-                city: shippingAddress?.city || '',
-                countryCode: shippingAddress?.country || '',
-                postalCode: shippingAddress?.postal_code || '',
-                stateOrProvince: shippingAddress?.state || '',
-                stateOrProvinceCode: '',
-                customFields: [],
-            };
+    private async _onShippingAddressChange(event: StripeEventType): Promise<void> {
+        if (!('address' in event)) {
+            return;
+        }
 
-            await this.paymentIntegrationService.updateShippingAddress(result);
+        const shippingAddress = event.address;
+        // Depending on the country, some fields can be missing or partially redacted.
+        // For example, the shipping address in the US can only contain a city, state, and ZIP code.
+        // The full shipping address appears in the confirm event object after the purchase is confirmed in the browser’s payment interface.
+        const result = {
+            firstName: '',
+            lastName: '',
+            phone: '',
+            company: '',
+            address1: '',
+            address2: '',
+            city: shippingAddress?.city || '',
+            countryCode: shippingAddress?.country || '',
+            postalCode: shippingAddress?.postal_code || '',
+            stateOrProvince: shippingAddress?.state || '',
+            stateOrProvinceCode: shippingAddress?.state || '',
+            customFields: [],
+        };
 
-            const shippingRates = await this._getAvailableShippingOptions();
+        await this.paymentIntegrationService.updateShippingAddress(result);
 
-            await this._updateDisplayedPrice();
+        const shippingRates = await this._getAvailableShippingOptions();
 
+        await this._updateDisplayedPrice();
+
+        if (!shippingRates?.length) {
+            event.reject();
+        } else {
             event.resolve({
                 shippingRates,
             });
@@ -251,10 +263,10 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             await this._updateShippingAndBillingAddress(event);
             await this.paymentIntegrationService.submitOrder();
 
-            const paymentMethod = this._getPaymentPayload(methodId);
+            const paymentPayload = this._getPaymentPayload(methodId);
 
             try {
-                await this.paymentIntegrationService.submitPayment(paymentMethod);
+                await this.paymentIntegrationService.submitPayment(paymentPayload);
             } catch (error) {
                 await this._processAdditionalAction(error, methodId);
             }
@@ -430,7 +442,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             cart_id: cartId,
             ...(token ? { credit_card_token: { token } } : {}),
             confirm: false,
-            payment_method_id: StripePaymentMethodType.Link,
+            method: StripePaymentMethodType.Link,
         };
 
         return {

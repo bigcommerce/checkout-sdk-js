@@ -593,6 +593,13 @@ export enum StripeStringConstants {
     IF_REQUIRED = 'if_required',
 }
 
+export enum StripeJsVersion {
+    V3 = 'v3',
+    ACACIA = 'acacia',
+    BASIL = 'basil',
+    CLOVER = 'clover',
+}
+
 export enum StripeElementType {
     PAYMENT = 'payment',
     AUTHENTICATION = 'linkAuthentication',
@@ -621,6 +628,7 @@ export interface StripeInitializationData {
     enableLink?: boolean;
     allowRedisplayForStoredInstruments?: boolean;
     captureMethod?: 'automatic' | 'manual';
+    useNewStripeJsVersion?: boolean;
 }
 
 export interface StripeElementUpdateOptions {
@@ -703,6 +711,7 @@ export interface StripeLinkV2Event {
     elementType: string;
     expressPaymentType: string;
     resolve(data: StripeLinkV2EventResolveData): void;
+    reject(): void;
 }
 
 export interface StripeLinkV2EventResolveData {

@@ -18,6 +18,8 @@ A set of options for configuring an asynchronous request.
 
   ↳ [`CustomerRequestOptions`](CustomerRequestOptions.md)
 
+  ↳ [`OrderFinalizeOptions`](OrderFinalizeOptions.md)
+
   ↳ [`PaymentRequestOptions`](PaymentRequestOptions.md)
 
   ↳ [`ShippingRequestOptions`](ShippingRequestOptions.md)

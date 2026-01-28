@@ -148,7 +148,7 @@ export default class BigCommercePaymentsScriptLoader {
     }
 
     private filterFundingOptions(fundingOptions: FundingType[] | undefined): FundingType[] {
-        const fundingTypesToBeFiltered = ['klarna'];
+        const fundingTypesToBeFiltered = ['klarna', 'afterpay'];
 
         if (!fundingOptions) {
             return [];

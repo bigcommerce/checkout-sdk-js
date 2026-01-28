@@ -310,6 +310,7 @@ declare class GooglePayGateway {
     private _paymentIntegrationService;
     private _getPaymentMethodFn?;
     private _isBuyNowFlow;
+    private _shouldRequestShipping;
     private _currencyCode?;
     private _currencyService?;
     constructor(_gatewayIdentifier: string, _paymentIntegrationService: PaymentIntegrationService);
@@ -334,6 +335,7 @@ declare class GooglePayGateway {
     handleCoupons(offerData: IntermediatePaymentData['offerData']): Promise<HandleCouponsOut>;
     getAppliedCoupons(): GooglePayPaymentDataRequest['offerInfo'];
     applyCoupon(code: string): Promise<GooglePayError | void>;
+    setShouldRequestShipping(isRequired: boolean): void;
     protected getGooglePayInitializationData(): GooglePayInitializationData;
     protected getPaymentMethod(): PaymentMethod<GooglePayInitializationData>;
     protected getGatewayIdentifier(): string;
@@ -554,6 +556,7 @@ declare class GooglePayPaymentProcessor {
     getCallbackTriggers(): {
         [key: string]: import("./types").CallbackTriggerType[];
     };
+    setShouldRequestShipping(isRequired: boolean): void;
     handleShippingAddressChange(shippingAddress: GooglePayFullBillingAddress): Promise<ShippingOptionParameters | undefined>;
     handleShippingOptionChange(optionId: string): Promise<void>;
     handleCoupons(offerData: IntermediatePaymentData['offerData']): Promise<HandleCouponsOut>;
@@ -578,6 +581,7 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     private _paymentButton?;
     private _clickListener?;
     private _methodId?;
+    private _isDeinitializationBlocked;
     constructor(_paymentIntegrationService: PaymentIntegrationService, _googlePayPaymentProcessor: GooglePayPaymentProcessor);
     initialize(options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions): Promise<void>;
     execute({ payment }: OrderRequestBody): Promise<void>;
@@ -590,6 +594,7 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     protected _getIsSignedInOrThrow(): Promise<boolean>;
     protected _handleOfferTrigger(offerData: IntermediatePaymentData['offerData']): Promise<Partial<HandleCouponsOut>>;
     protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions;
+    private _toggleBlockDeinitialization;
     private _toggleLoadingIndicator;
 }
 
@@ -627,6 +632,8 @@ declare interface GooglePayStripeInitializationData extends GooglePayBaseInitial
     stripeConnectedAccount: string;
     stripePublishableKey: string;
     stripeVersion: string;
+    shopperLanguage: string;
+    useNewStripeJsVersion?: boolean;
 }
 
 declare interface GooglePayTransactionInfo {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 export default interface KlarnaPayments {
     authorize(
         options: KlarnaAuthorizeOptions,
@@ -61,5 +60,6 @@ export interface KlarnaAddress {
     organization_name?: string;
 }
 export interface KlarnaInitializationData {
-    enableBillie?: string;
+    enableBillie?: boolean;
+    klarnaMultipleRadioButton?: boolean;
 }

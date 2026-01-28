@@ -111,8 +111,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             await this._paymentIntegrationService.verifyCheckoutSpamProtection();
         }
 
-        if (this._paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
-            await this._initializeBraintreeSdk();
+        if (
+            this._paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE &&
+            this._paymentMethod.clientToken
+        ) {
+            this._braintreeSdk.initialize(this._paymentMethod.clientToken);
         }
 
         this._applePayButton = this._createButton(
@@ -660,23 +663,5 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         } catch (_) {
             // Don't throw an error to avoid breaking checkout flow
         }
-    }
-
-    private async _initializeBraintreeSdk(): Promise<void> {
-        // TODO: This is a temporary solution when we load braintree to get client token (should be fixed after PAYPAL-4122)
-        await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
-
-        const state = this._paymentIntegrationService.getState();
-        const braintreePaymentMethod = state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
-
-        if (
-            !braintreePaymentMethod ||
-            !braintreePaymentMethod.clientToken ||
-            !braintreePaymentMethod.initializationData
-        ) {
-            return;
-        }
-
-        this._braintreeSdk.initialize(braintreePaymentMethod.clientToken);
     }
 }

@@ -16,6 +16,7 @@ import {
     PaymentMethod,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import isGooglePayCardNetworkKey from '../guards/is-google-pay-card-network-key';
 import {
@@ -44,6 +45,7 @@ import {
 export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;
     private _isBuyNowFlow = false;
+    private _shouldRequestShipping = true;
     private _currencyCode?: string;
     private _currencyService?: CurrencyService;
 
@@ -144,18 +146,11 @@ export default class GooglePayGateway {
     }
 
     getCallbackTriggers(): { [key: string]: CallbackTriggerType[] } {
-        const state = this._paymentIntegrationService.getState();
-        // TODO remove this experiment usage after we make sure that coupons handling works fine
-        const isGooglePayCouponsExperimentOn =
-            state.getStoreConfigOrThrow().checkoutSettings.features[
-                'PI-2875.googlepay_coupons_handling'
-            ] || false;
-
         const availableTriggers = [
             CallbackTriggerType.INITIALIZE,
             CallbackTriggerType.SHIPPING_ADDRESS,
             CallbackTriggerType.SHIPPING_OPTION,
-            ...(isGooglePayCouponsExperimentOn ? [CallbackTriggerType.OFFER] : []),
+            CallbackTriggerType.OFFER,
         ];
 
         const initializationTrigger = [CallbackTriggerType.INITIALIZE];
@@ -164,9 +159,7 @@ export default class GooglePayGateway {
             CallbackTriggerType.SHIPPING_ADDRESS,
         ];
         const shippingOptionsChangeTriggers = [CallbackTriggerType.SHIPPING_OPTION];
-        const offerChangeTriggers = isGooglePayCouponsExperimentOn
-            ? [CallbackTriggerType.OFFER]
-            : [];
+        const offerChangeTriggers = [CallbackTriggerType.OFFER];
 
         return {
             availableTriggers,
@@ -423,6 +416,10 @@ export default class GooglePayGateway {
         }
     }
 
+    setShouldRequestShipping(isRequired: boolean): void {
+        this._shouldRequestShipping = isRequired;
+    }
+
     protected getGooglePayInitializationData(): GooglePayInitializationData {
         return guard(
             this.getPaymentMethod().initializationData,
@@ -446,13 +443,24 @@ export default class GooglePayGateway {
     }
 
     private _isShippingAddressRequired(): boolean {
-        const { getCartOrThrow, getStoreConfig, getShippingAddress } =
+        const { getCartOrThrow, getStoreConfigOrThrow, getShippingAddress } =
             this._paymentIntegrationService.getState();
-
-        return (
-            getShippingAddress() === undefined &&
-            itemsRequireShipping(getCartOrThrow(), getStoreConfig())
+        const storeConfig = getStoreConfigOrThrow();
+        const features = storeConfig.checkoutSettings.features;
+        const checkWithExperiment = isExperimentEnabled(
+            features,
+            'PI-4290.google_pay_require_shipping_address',
         );
+
+        let shippingContextRequiresCheck: boolean;
+
+        if (checkWithExperiment) {
+            shippingContextRequiresCheck = this._shouldRequestShipping;
+        } else {
+            shippingContextRequiresCheck = getShippingAddress() === undefined;
+        }
+
+        return shippingContextRequiresCheck && itemsRequireShipping(getCartOrThrow(), storeConfig);
     }
 
     private _mapToAddressRequestBody(

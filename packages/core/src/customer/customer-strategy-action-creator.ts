@@ -157,14 +157,17 @@ export default class CustomerStrategyActionCreator {
 
                 if (experimentEnabled) {
                     const resolveId = { id: methodId || '' };
-
-                    matchExistingIntegrations(
+                    const mismatchError = matchExistingIntegrations(
                         this._strategyRegistryV2,
                         options?.integrations ?? [],
                         resolveId,
-                        this._errorLogger,
                         this._paymentIntegrationService,
                     );
+
+                    if (mismatchError) {
+                        this._errorLogger.log(mismatchError);
+                    }
+
                     registerIntegrations(
                         this._strategyRegistryV2,
                         options?.integrations ?? [],

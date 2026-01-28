@@ -107,15 +107,12 @@ describe('ApplePayPaymentStrategy', () => {
             const applePayPaymentMethod = getApplePay();
 
             applePayPaymentMethod.initializationData.gateway = 'braintree';
+            applePayPaymentMethod.clientToken = 'braintree-client-token';
 
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockImplementation(() => applePayPaymentMethod);
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockImplementation(
-                () => getBraintree(),
-            );
 
             jest.spyOn(braintreeSdk, 'initialize').mockImplementation(jest.fn());
             jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockImplementation(() =>

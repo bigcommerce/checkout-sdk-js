@@ -17,6 +17,7 @@ import {
     RequestError,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import AfterpayScriptLoader from './afterpay-script-loader';
 import AfterpaySdk from './afterpay-sdk';
@@ -34,12 +35,19 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         const paymentMethod = state.getPaymentMethod(options.methodId, options.gatewayId);
         const currencyCode = state.getCart()?.currency.code || '';
         const countryCode = this._mapCurrencyToISO2(currencyCode);
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const withHttpsExperimentName = 'PI-4789.afterpay_script_use_https';
+        const withHttps = isExperimentEnabled(features, withHttpsExperimentName, false);
 
         if (!paymentMethod) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._afterpaySdk = await this._afterpayScriptLoader.load(paymentMethod, countryCode);
+        this._afterpaySdk = await this._afterpayScriptLoader.load(
+            paymentMethod,
+            countryCode,
+            withHttps,
+        );
     }
 
     deinitialize(): Promise<void> {

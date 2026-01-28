@@ -8,6 +8,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCart,
     getConfig,
     getConsignment,
     getShippingOption,
@@ -32,7 +33,7 @@ describe('GooglePayGateway', () => {
             ...storeConfig.checkoutSettings,
             features: {
                 ...storeConfig.checkoutSettings.features,
-                'PI-2875.googlepay_coupons_handling': true,
+                'PI-4290.google_pay_require_shipping_address': true,
             },
         },
     };
@@ -166,6 +167,31 @@ describe('GooglePayGateway', () => {
         });
     });
 
+    describe('#setShouldRequestShipping', () => {
+        beforeEach(() => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                getCart(),
+            );
+        });
+
+        it('_isShippingAddressRequired should return false', async () => {
+            await gateway.initialize(getGeneric);
+            gateway.setShouldRequestShipping(false);
+
+            expect(gateway.getCallbackIntents()).toStrictEqual([CallbackIntentsType.OFFER]);
+        });
+
+        it('_isShippingAddressRequired should be true by default', async () => {
+            await gateway.initialize(getGeneric);
+
+            expect(gateway.getCallbackIntents()).toStrictEqual([
+                CallbackIntentsType.OFFER,
+                CallbackIntentsType.SHIPPING_ADDRESS,
+                CallbackIntentsType.SHIPPING_OPTION,
+            ]);
+        });
+    });
+
     describe('#getMerchantInfo', () => {
         it('should get merchant info', async () => {
             const expectedInfo = {
@@ -181,7 +207,9 @@ describe('GooglePayGateway', () => {
     });
 
     describe('#getRequiredData', () => {
-        it('should only require email', async () => {
+        it('should only require email is we setShouldRequestShipping to false', async () => {
+            gateway.setShouldRequestShipping(false);
+
             const expectedRequiredData = {
                 emailRequired: true,
             };
@@ -236,6 +264,8 @@ describe('GooglePayGateway', () => {
 
     describe('#getCallbackIntents', () => {
         it('should return only offer callback intent for disabled shipping options experiment', async () => {
+            gateway.setShouldRequestShipping(false);
+
             const expectedCallbackIntents = [CallbackIntentsType.OFFER];
 
             await gateway.initialize(getGeneric);
@@ -244,6 +274,8 @@ describe('GooglePayGateway', () => {
         });
 
         it('should return only offer callback intent when shipping not required', async () => {
+            gateway.setShouldRequestShipping(false);
+
             const expectedCallbackIntents = [CallbackIntentsType.OFFER];
 
             await gateway.initialize(getGeneric);
@@ -540,6 +572,16 @@ describe('GooglePayGateway', () => {
                 phone: '555-555-5555',
                 customFields: [],
             };
+
+            jest.spyOn(paymentIntegrationService, 'getState').mockReturnValueOnce({
+                ...paymentIntegrationService.getState(),
+                getShippingAddress: () => ({
+                    ...mappedAddressMock,
+                    country: 'US',
+                    company: 'Bigcommerce',
+                    phone: '555-555-5555',
+                }),
+            });
 
             const updateShippingAddressMock = jest.spyOn(
                 paymentIntegrationService,

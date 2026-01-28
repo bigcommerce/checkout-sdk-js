@@ -35,6 +35,7 @@ import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import {
+    OrderFinalizeOptions,
     PaymentInitializeOptions,
     PaymentMethodActionCreator,
     PaymentRequestOptions,
@@ -361,7 +362,7 @@ export default class CheckoutService {
      * @throws `OrderFinalizationNotRequiredError` error if order finalization
      * is not required for the current order at the time of execution.
      */
-    finalizeOrderIfNeeded(options?: RequestOptions): Promise<CheckoutSelectors> {
+    finalizeOrderIfNeeded(options?: OrderFinalizeOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.finalize(options);
 
         return this._dispatch(action, { queueId: 'paymentStrategy' });

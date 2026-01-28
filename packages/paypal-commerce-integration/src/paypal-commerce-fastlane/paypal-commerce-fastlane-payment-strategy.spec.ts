@@ -32,6 +32,7 @@ import {
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
+import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
 import PayPalCommerceFastlanePaymentStrategy from './paypal-commerce-fastlane-payment-strategy';
 
@@ -565,7 +566,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'YES',
+                            liabilityShift: LiabilityShiftEnum.Yes,
                             authenticationState: 'succeeded',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
@@ -591,7 +592,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'UNKNOWN',
+                            liabilityShift: LiabilityShiftEnum.Unknown,
                             authenticationState: 'succeeded',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
@@ -631,42 +632,13 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 expect(paypalFastlaneSdkMock.ThreeDomainSecureClient.isEligible).toHaveBeenCalled();
             });
 
-            it('prevent 3D Secure Verification when experiment is disabled', async () => {
-                jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
-                    Promise.resolve({
-                        ...paypalFastlaneSdk,
-                        ThreeDomainSecureClient: threeDomainSecureComponentMock,
-                    }),
-                );
-
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue({
-                    ...storeConfig,
-                    checkoutSettings: {
-                        ...storeConfig.checkoutSettings,
-                        features: {
-                            'PROJECT-7080.paypalcommerce_fastlane_three_ds': false,
-                        },
-                    },
-                });
-
-                await strategy.initialize(initializationOptions);
-
-                await strategy.execute(executeOptions);
-
-                expect(threeDomainSecureComponentMock.isEligible).not.toHaveBeenCalled();
-                expect(threeDomainSecureComponentMock.show).not.toHaveBeenCalled();
-            });
-
             it('calls threeDomainSecureComponent show', async () => {
                 const paypalFastlaneSdkMock = {
                     ...paypalFastlaneSdk,
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'POSSIBLE',
+                            liabilityShift: LiabilityShiftEnum.Possible,
                             authenticationState: 'succeeded',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
@@ -705,7 +677,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'NO',
+                            liabilityShift: LiabilityShiftEnum.No,
                             authenticationState: 'success',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
@@ -731,7 +703,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'POSSIBLE',
+                            liabilityShift: LiabilityShiftEnum.Possible,
                             authenticationState: 'errored',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
@@ -748,6 +720,28 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 } catch (error) {
                     expect(error).toBeInstanceOf(Error);
                 }
+            });
+
+            it('creates order with payment token when 3ds is on and isEligible false', async () => {
+                const paypalFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        isEligible: jest.fn().mockReturnValue(Promise.resolve(false)),
+                    },
+                };
+
+                jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(paypalFastlaneSdkMock),
+                );
+                await strategy.initialize(initializationOptions);
+
+                await strategy.execute(executeOptions);
+
+                expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
+                    cartId: cart.id,
+                    fastlaneToken: 'paypal_fastlane_instrument_id_nonce',
+                });
             });
         });
     });

@@ -20,12 +20,16 @@ export function getOrder(): Order {
         billingAddress: getBillingAddress(),
         cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         consignments: getOrderConsignment(),
+        comparisonShippingCost: 20,
         coupons: [getCoupon(), getShippingCoupon()],
         currency: getCurrency(),
         customerMessage: '',
         customerCanBeCreated: true,
         customerId: 0,
         discountAmount: 10,
+        displayDiscountTotal: 0,
+        manualDiscountTotal: 0,
+        orderBasedAutoDiscountTotal: 0,
         handlingCostTotal: 8,
         hasDigitalItems: false,
         isComplete: true,
@@ -54,6 +58,7 @@ export function getOrder(): Order {
         taxTotal: 3,
         channelId: 1,
         fees: [],
+        totalDiscount: 0,
     };
 }
 

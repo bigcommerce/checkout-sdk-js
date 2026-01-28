@@ -254,6 +254,10 @@ interface ThreeDomainSecureClientShowResponse {
     nonce: string; // Enriched nonce or the original nonce
 }
 
+export enum TDSecureVerificationMethod {
+    Always = 'SCA_ALWAYS',
+}
+
 export enum TDSecureAuthenticationState {
     Succeeded = 'succeeded',
     Cancelled = 'cancelled',

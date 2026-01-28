@@ -17,10 +17,12 @@ export default interface Checkout {
     consignments: Consignment[];
     taxes: Tax[];
     discounts: Discount[];
+    displayDiscountTotal: number;
     isStoreCreditApplied: boolean;
     coupons: Coupon[];
     orderId?: number;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     /**
@@ -35,6 +37,8 @@ export default interface Checkout {
     subtotal: number;
     grandTotal: number;
     outstandingBalance: number;
+    orderBasedAutoDiscountTotal: number;
+    manualDiscountTotal: number;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;
@@ -43,6 +47,7 @@ export default interface Checkout {
     payments?: CheckoutPayment[];
     channelId: number;
     fees: Fee[];
+    totalDiscount: number;
 }
 
 export interface CheckoutRequestBody {

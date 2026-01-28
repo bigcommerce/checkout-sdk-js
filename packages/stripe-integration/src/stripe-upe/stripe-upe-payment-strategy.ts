@@ -41,6 +41,7 @@ import {
     StripeEventType,
     StripeInitializationData,
     StripeIntegrationService,
+    StripeJsVersion,
     StripePaymentMethodType,
     StripeResult,
     StripeScriptLoader,
@@ -237,14 +238,17 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             params: { method: methodId },
         });
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const { checkoutSettings } = state.getStoreConfigOrThrow();
 
         if (!isStripePaymentMethodLike(paymentMethod)) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const { clientToken, initializationData } = paymentMethod;
-        const { shopperLanguage, allowRedisplayForStoredInstruments = false } = initializationData;
+        const {
+            shopperLanguage,
+            allowRedisplayForStoredInstruments = false,
+            enableLink,
+        } = initializationData;
 
         this._allowRedisplayForStoredInstruments = allowRedisplayForStoredInstruments;
 
@@ -253,9 +257,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         this._stripeUPEClient = await this._loadStripeJs(initializationData);
-        this._isStripeElementUpdateEnabled =
-            !!checkoutSettings.features['PI-1679.trigger_update_stripe_payment_element'] &&
-            typeof initStripeElementUpdateTrigger === 'function';
+        this._isStripeElementUpdateEnabled = typeof initStripeElementUpdateTrigger === 'function';
 
         let appearance: StripeAppearanceOptions | undefined;
 
@@ -297,6 +299,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 wallets: {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
+                    link: enableLink ? StripeStringConstants.AUTO : StripeStringConstants.NEVER,
                 },
                 ...this._getStripeElementTerms(),
             });
@@ -449,8 +452,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             return this._stripeUPEClient;
         }
 
+        const state = this.paymentIntegrationService.getState();
+
         return this.scriptLoader.getStripeClient(
             initializationData,
+            state.getCartLocale(),
+            StripeJsVersion.V3,
             STRIPE_UPE_CLIENT_BETAS,
             STRIPE_UPE_CLIENT_API_VERSION,
         );

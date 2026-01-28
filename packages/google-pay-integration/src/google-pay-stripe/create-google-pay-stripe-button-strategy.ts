@@ -6,13 +6,13 @@ import {
     CheckoutButtonStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { StripeScriptLoader } from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import createGooglePayScriptLoader from '../factories/create-google-pay-script-loader';
 import GooglePayButtonStrategy from '../google-pay-button-strategy';
 import GooglePayPaymentProcessor from '../google-pay-payment-processor';
 
 import GooglePayStripeGateway from './google-pay-stripe-gateway';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 const createGooglePayStripeButtonStrategy: CheckoutButtonStrategyFactory<
     GooglePayButtonStrategy
@@ -23,7 +23,7 @@ const createGooglePayStripeButtonStrategy: CheckoutButtonStrategyFactory<
             createGooglePayScriptLoader(),
             new GooglePayStripeGateway(
                 paymentIntegrationService,
-                new StripeUPEScriptLoader(getScriptLoader()),
+                new StripeScriptLoader(getScriptLoader()),
             ),
             createRequestSender(),
             createFormPoster(),

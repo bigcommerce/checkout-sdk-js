@@ -135,6 +135,7 @@ declare class BraintreeCreditCardPaymentStrategy implements PaymentStrategy {
     private deviceSessionId?;
     private paymentMethod?;
     private threeDSecure?;
+    private onPaymentError?;
     constructor(paymentIntegrationService: PaymentIntegrationService, braintreeIntegrationService: BraintreeIntegrationService, braintreeHostedForm: BraintreeHostedForm);
     initialize(options: PaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions): Promise<void>;
     execute(orderRequest: OrderRequestBody): Promise<void>;

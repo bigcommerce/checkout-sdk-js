@@ -6,7 +6,6 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { ErrorLogger } from '../common/error';
 import { ResolveIdRegistry } from '../common/registry';
 
 export type StrategyFactory<TStrategy> = (
@@ -44,13 +43,12 @@ export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: 
     registry: ResolveIdRegistry<TStrategy, TResolveId>,
     integrations: Array<StrategyFactory<TStrategy>>,
     resolveId: TResolveId,
-    errorLogger: ErrorLogger,
     paymentIntegrationService: PaymentIntegrationService,
-): boolean {
+): Error | undefined {
     const existingFactory = registry.getFactory(resolveId);
 
     if (!existingFactory) {
-        return false;
+        return;
     }
 
     const matchedExisting = integrations.some((factory) =>
@@ -64,7 +62,7 @@ export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: 
     if (!matchedExisting) {
         const message = `A different strategy is registered for ${JSON.stringify(resolveId)}.`;
 
-        errorLogger.log(new Error(message));
+        return new Error(message);
     }
 
     const tempRegistry = new ResolveIdRegistry<TStrategy, TResolveId>(registry.getUseFallback());
@@ -72,15 +70,12 @@ export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: 
     registerIntegrations(tempRegistry, integrations, paymentIntegrationService);
 
     const resolvedFactory = tempRegistry.getFactory(resolveId);
-    const matchedResolved = resolvedFactory === existingFactory;
 
     if (!resolvedFactory || !matchFactories(resolvedFactory, existingFactory)) {
         const message = `A different strategy is resolved for ${JSON.stringify(resolveId)}.`;
 
-        errorLogger.log(new Error(message));
+        return new Error(message);
     }
-
-    return matchedExisting && matchedResolved;
 }
 
 function matchFactories<TStrategy>(

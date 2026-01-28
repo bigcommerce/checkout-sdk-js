@@ -49,6 +49,7 @@ service.initializePayment({
 
 ### Properties
 
+- [bannerContainerId](BigCommercePaymentsPaymentInitializeOptions.md#bannercontainerid)
 - [container](BigCommercePaymentsPaymentInitializeOptions.md#container)
 - [shouldRenderPayPalButtonOnInitialization](BigCommercePaymentsPaymentInitializeOptions.md#shouldrenderpaypalbuttononinitialization)
 
@@ -63,9 +64,17 @@ service.initializePayment({
 
 ## Properties
 
+### bannerContainerId
+
+• `Optional` **bannerContainerId**: `string`
+
+The location to insert the Pay Later Messages.
+
+___
+
 ### container
 
-• **container**: `string`
+• `Optional` **container**: `string`
 
 The CSS selector of a container where the payment widget should be inserted into.
 
@@ -143,7 +152,7 @@ ___
 
 ### onValidate
 
-▸ **onValidate**(`resolve`, `reject`): `Promise`<`void`\>
+▸ `Optional` **onValidate**(`resolve`, `reject`): `Promise`<`void`\>
 
 A callback that gets called when a buyer click on Smart Payment Button
 and should validate payment form.
@@ -165,7 +174,7 @@ ___
 
 ### submitForm
 
-▸ **submitForm**(): `void`
+▸ `Optional` **submitForm**(): `void`
 
 A callback for submitting payment form that gets called
 when buyer approves PayPal payment.

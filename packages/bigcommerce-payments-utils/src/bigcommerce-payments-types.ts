@@ -147,6 +147,10 @@ export interface PayPalGooglePaySdk {
     Googlepay(): GooglePay;
 }
 
+export enum TDSecureVerificationMethod {
+    Always = 'SCA_ALWAYS',
+}
+
 export enum TDSecureAuthenticationState {
     Succeeded = 'succeeded',
     Cancelled = 'cancelled',

@@ -333,6 +333,31 @@ describe('PayPalSdkHelper', () => {
             );
         });
 
+        it('loads APMs sdk script for Afterpay method id', async () => {
+            const apmAfterpayPaymentMethodMock = {
+                ...paymentMethod,
+                id: 'afterpay',
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    enabledAlternativePaymentMethods: ['afterpay'],
+                    availableAlternativePaymentMethods: ['afterpay'],
+                },
+            };
+
+            await subject.getPayPalApmsSdk(apmAfterpayPaymentMethodMock, 'USD');
+
+            expect(loader.loadScript).toHaveBeenCalledWith(
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=buttons%2Cpayment-fields&currency=USD&intent=capture',
+                {
+                    async: true,
+                    attributes: {
+                        'data-namespace': 'paypalApms',
+                        'data-partner-attribution-id': '1123JLKJASD12',
+                    },
+                },
+            );
+        });
+
         it('returns PayPal APMs Sdk', async () => {
             const result = await subject.getPayPalApmsSdk(paymentMethod, 'USD');
 

@@ -8,6 +8,7 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getConfig,
     getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -33,6 +34,17 @@ describe('GooglePayPaymentProcessor', () => {
     let requestSender: RequestSender;
     let formPoster: FormPoster;
     let processor: GooglePayPaymentProcessor;
+    const storeConfig = getConfig().storeConfig;
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PI-4290.google_pay_require_shipping_address': true,
+            },
+        },
+    };
 
     beforeEach(() => {
         clientMocks = getGooglePaymentsClientMocks();
@@ -52,6 +64,10 @@ describe('GooglePayPaymentProcessor', () => {
         jest.spyOn(gateway, 'mapToExternalCheckoutData');
         jest.spyOn(gateway, 'mapToBillingAddressRequestBody');
         jest.spyOn(gateway, 'mapToShippingAddressRequestBody');
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigWithFeaturesOn,
+        );
 
         requestSender = createRequestSender();
         jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse(undefined));
@@ -163,7 +179,13 @@ describe('GooglePayPaymentProcessor', () => {
                 offerInfo: {
                     offers: [],
                 },
-                callbackIntents: ['OFFER'],
+                shippingAddressRequired: true,
+                shippingOptionRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                    allowedCountryCodes: ['AU', 'US', 'JP'],
+                },
+                callbackIntents: ['OFFER', 'SHIPPING_ADDRESS', 'SHIPPING_OPTION'],
             };
 
             await processor.initialize(getGeneric);
@@ -344,7 +366,13 @@ describe('GooglePayPaymentProcessor', () => {
                     totalPrice: '0',
                     totalPriceStatus: 'ESTIMATED',
                 },
-                callbackIntents: ['OFFER'],
+                shippingAddressRequired: true,
+                shippingOptionRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                    allowedCountryCodes: ['AU', 'US', 'JP'],
+                },
+                callbackIntents: ['OFFER', 'SHIPPING_ADDRESS', 'SHIPPING_OPTION'],
             };
 
             await processor.initialize(getGeneric);

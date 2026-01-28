@@ -28,7 +28,7 @@ describe('AfterpayScriptLoader', () => {
             '//portal.afterpay.com/afterpay-async.js',
         );
 
-        await afterpayScriptLoader.load(method, 'NZ');
+        await afterpayScriptLoader.load(method, 'NZ', false);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
             '//portal.afterpay.com/afterpay-async.js',
@@ -38,7 +38,7 @@ describe('AfterpayScriptLoader', () => {
     it('loads sandbox widget script if in test mode for AU & NZ', async () => {
         const method = merge({}, getAfterpay(), { config: { testMode: true } });
 
-        await afterpayScriptLoader.load(method, 'AU');
+        await afterpayScriptLoader.load(method, 'AU', false);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
             '//portal.sandbox.afterpay.com/afterpay.js',
@@ -54,7 +54,7 @@ describe('AfterpayScriptLoader', () => {
     it('loads widget script for US', async () => {
         const method = getAfterpay();
 
-        await afterpayScriptLoader.load(method, 'US');
+        await afterpayScriptLoader.load(method, 'US', false);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
             '//portal.afterpay.com/afterpay-async.js',
@@ -64,10 +64,62 @@ describe('AfterpayScriptLoader', () => {
     it('loads sandbox widget script if in test mode for US', async () => {
         const method = merge({}, getAfterpay(), { config: { testMode: true } });
 
-        await afterpayScriptLoader.load(method, 'US');
+        await afterpayScriptLoader.load(method, 'US', false);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
             '//portal.sandbox.afterpay.com/afterpay.js',
+        );
+    });
+
+    it('loads widget script with HTTPS for AU & NZ', async () => {
+        const method = getAfterpay();
+
+        await afterpayScriptLoader.load(method, 'AU', true);
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            'https://portal.afterpay.com/afterpay-async.js',
+        );
+
+        await afterpayScriptLoader.load(method, 'NZ');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            'https://portal.afterpay.com/afterpay-async.js',
+        );
+    });
+
+    it('loads sandbox widget script with HTTPS if in test mode for AU & NZ', async () => {
+        const method = merge({}, getAfterpay(), { config: { testMode: true } });
+
+        await afterpayScriptLoader.load(method, 'AU', true);
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            'https://portal.sandbox.afterpay.com/afterpay.js',
+        );
+
+        await afterpayScriptLoader.load(method, 'NZ');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            'https://portal.sandbox.afterpay.com/afterpay.js',
+        );
+    });
+
+    it('loads widget script with HTTPS for US', async () => {
+        const method = getAfterpay();
+
+        await afterpayScriptLoader.load(method, 'US', true);
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            'https://portal.afterpay.com/afterpay-async.js',
+        );
+    });
+
+    it('loads sandbox widget script with HTTPS if in test mode for US', async () => {
+        const method = merge({}, getAfterpay(), { config: { testMode: true } });
+
+        await afterpayScriptLoader.load(method, 'US', true);
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            'https://portal.sandbox.afterpay.com/afterpay.js',
         );
     });
 });

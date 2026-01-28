@@ -204,7 +204,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         });
     });
 
-    it('loads BigCommercePayments script with enabled several APMs (Klarna should not be included)', async () => {
+    it('loads BigCommercePayments script with enabled several APMs (Klarna, Afterpay should not be included)', async () => {
         const paymentMethodProp = {
             ...paymentMethod,
             initializationData: {
@@ -217,8 +217,15 @@ describe('BigCommercePaymentsScriptLoader', () => {
                     'sofort',
                     'sepa',
                     'klarna',
+                    'afterpay',
                 ],
-                enabledAlternativePaymentMethods: ['bancontact', 'giropay', 'ideal', 'klarna'],
+                enabledAlternativePaymentMethods: [
+                    'bancontact',
+                    'giropay',
+                    'ideal',
+                    'klarna',
+                    'afterpay',
+                ],
             },
         };
 
@@ -226,6 +233,41 @@ describe('BigCommercePaymentsScriptLoader', () => {
 
         const paypalSdkScriptSrc =
             'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=bancontact%2Cgiropay%2Cideal&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo%2Cmybank%2Csofort%2Csepa&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
+            'data-client-token': paymentMethod.clientToken,
+            'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+        };
+
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
+    });
+
+    it('loads PayPalSDK script with disabled all APMs (Klarna, Afterpay should not be included)', async () => {
+        const paymentMethodProp = {
+            ...paymentMethod,
+            initializationData: {
+                ...paymentMethod.initializationData,
+                availableAlternativePaymentMethods: [
+                    'bancontact',
+                    'giropay',
+                    'ideal',
+                    'mybank',
+                    'sofort',
+                    'sepa',
+                    'klarna',
+                    'afterpay',
+                ],
+                enabledAlternativePaymentMethods: ['bancontact', 'giropay', 'ideal'],
+                isHostedCheckoutEnabled: true,
+            },
+        };
+
+        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD', false);
+
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo%2Cbancontact%2Cgiropay%2Cideal%2Cmybank%2Csofort%2Csepa&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,

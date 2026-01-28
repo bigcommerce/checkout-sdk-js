@@ -18,6 +18,8 @@ import {
     StripeElement,
     StripeElements,
     StripeError,
+    StripeInitializationData,
+    StripeJsVersion,
     StripePaymentMethodType,
 } from './stripe';
 import StripePaymentInitializeOptions from './stripe-initialize-options';
@@ -751,7 +753,7 @@ describe('StripeIntegrationService', () => {
             expect(stripeScriptLoader.updateStripeElements).toHaveBeenCalled();
         });
 
-        it('should throw error if no client token provided in payment provider', async () => {
+        it('should not update Stripe Payment Element if no client token provided', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -760,12 +762,32 @@ describe('StripeIntegrationService', () => {
                 clientToken: undefined,
             });
 
-            await expect(
-                stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId),
-            ).rejects.toThrow(MissingDataError);
+            await stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
             expect(stripeScriptLoader.updateStripeElements).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#getStripeJsVersion', () => {
+        it('should return Clover if experiment is true', () => {
+            const initializationData = {
+                useNewStripeJsVersion: true,
+            } as StripeInitializationData;
+
+            expect(stripeIntegrationService.getStripeJsVersion(initializationData)).toBe(
+                StripeJsVersion.CLOVER,
+            );
+        });
+
+        it('should return V3 if experiment is false', () => {
+            const initializationData = {
+                useNewStripeJsVersion: false,
+            } as StripeInitializationData;
+
+            expect(stripeIntegrationService.getStripeJsVersion(initializationData)).toBe(
+                StripeJsVersion.V3,
+            );
         });
     });
 });

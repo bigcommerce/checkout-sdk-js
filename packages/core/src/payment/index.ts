@@ -1,5 +1,6 @@
 export {
     BasePaymentInitializeOptions,
+    OrderFinalizeOptions,
     PaymentInitializeOptions,
     PaymentRequestOptions,
 } from './payment-request-options';

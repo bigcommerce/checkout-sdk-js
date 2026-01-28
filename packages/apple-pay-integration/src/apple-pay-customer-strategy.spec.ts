@@ -5,7 +5,6 @@ import {
     BraintreeScriptLoader,
     BraintreeSdk,
     BraintreeSDKVersionManager,
-    getBraintree,
     getDataCollectorMock,
     getDeviceDataMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -660,20 +659,15 @@ describe('ApplePayCustomerStrategy', () => {
             const initializeOptions = getApplePayCustomerInitializationOptions();
 
             const applePayPaymentMethod = getApplePay();
-            const braintreePaymentMethod = getBraintree();
 
             applePayPaymentMethod.initializationData.gateway = 'braintree';
+            applePayPaymentMethod.clientToken = 'braintree-client-token';
 
             beforeEach(() => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
                 ).mockImplementation(() => applePayPaymentMethod);
-
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getPaymentMethod',
-                ).mockImplementation(() => braintreePaymentMethod);
 
                 jest.spyOn(braintreeSdk, 'initialize').mockImplementation(jest.fn());
                 jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockImplementation(() =>

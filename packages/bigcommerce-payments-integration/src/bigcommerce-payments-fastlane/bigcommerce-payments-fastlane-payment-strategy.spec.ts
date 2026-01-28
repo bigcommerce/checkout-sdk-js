@@ -8,6 +8,7 @@ import {
     getBigCommercePaymentsFastlanePaymentMethod,
     getPayPalFastlaneAuthenticationResultMock,
     getPayPalFastlaneSdk,
+    LiabilityShiftEnum,
     PayPalFastlane,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneSdk,
@@ -551,7 +552,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                         ...threeDomainSecureComponentMock,
                         isEligible: jest.fn().mockReturnValue(Promise.resolve(true)),
                         show: jest.fn().mockResolvedValue({
-                            liabilityShift: 'YES',
+                            liabilityShift: LiabilityShiftEnum.Yes,
                         }),
                     },
                 };
@@ -580,7 +581,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                         ...threeDomainSecureComponentMock,
                         isEligible: jest.fn().mockReturnValue(Promise.resolve(true)),
                         show: jest.fn().mockResolvedValue({
-                            liabilityShift: 'UNKNOWN',
+                            liabilityShift: LiabilityShiftEnum.Unknown,
                         }),
                     },
                 };
@@ -656,7 +657,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'possible',
+                            liabilityShift: LiabilityShiftEnum.Possible,
                             authenticationState: 'succeeded',
                             nonce: 'bigcommerce_payments_fastlane_instrument_id_nonce',
                         }),
@@ -695,7 +696,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'NO',
+                            liabilityShift: LiabilityShiftEnum.No,
                             authenticationState: 'success',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
@@ -721,7 +722,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                     ThreeDomainSecureClient: {
                         ...threeDomainSecureComponentMock,
                         show: jest.fn().mockReturnValue({
-                            liabilityShift: 'possible',
+                            liabilityShift: LiabilityShiftEnum.Possible,
                             authenticationState: 'errored',
                             nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
                         }),
@@ -738,6 +739,32 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                 } catch (error) {
                     expect(error).toBeInstanceOf(Error);
                 }
+            });
+
+            it('creates order with payment token when 3ds is on and isEligible false', async () => {
+                const bigCommerceFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        isEligible: jest.fn().mockReturnValue(Promise.resolve(false)),
+                    },
+                };
+
+                jest.spyOn(bigCommercePaymentsSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(bigCommerceFastlaneSdkMock),
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                await strategy.execute(executeOptions);
+
+                expect(bigCommercePaymentsRequestSender.createOrder).toHaveBeenCalledWith(
+                    methodId,
+                    {
+                        cartId: cart.id,
+                        fastlaneToken: 'paypal_fastlane_instrument_id_nonce',
+                    },
+                );
             });
         });
 

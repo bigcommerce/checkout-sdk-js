@@ -62,8 +62,9 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
     }
 
     async initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { methodId, braintreefastlane } = options || {};
-        const { onPayPalFastlaneAddressChange } = braintreefastlane || {};
+        const { methodId, braintreefastlane, fastlane } = options || {};
+        const fastlaneOptions = fastlane || braintreefastlane;
+        const { onPayPalFastlaneAddressChange } = fastlaneOptions || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -96,7 +97,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
 
                 const fastlaneStyles = getFastlaneStyles(
                     paypalFastlaneStylesSettings,
-                    braintreefastlane?.styles,
+                    fastlaneOptions?.styles,
                 );
 
                 await this._runAuthenticationFlowOrThrow(methodId, fastlaneStyles);

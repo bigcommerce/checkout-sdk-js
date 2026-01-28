@@ -78,6 +78,7 @@ declare interface Cart {
     createdTime: string;
     updatedTime: string;
     source?: CartSource;
+    locale: string;
 }
 
 declare interface Checkout {
@@ -89,10 +90,12 @@ declare interface Checkout {
     consignments: Consignment[];
     taxes: Tax[];
     discounts: Discount[];
+    displayDiscountTotal: number;
     isStoreCreditApplied: boolean;
     coupons: Coupon[];
     orderId?: number;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     /**
@@ -107,6 +110,8 @@ declare interface Checkout {
     subtotal: number;
     grandTotal: number;
     outstandingBalance: number;
+    orderBasedAutoDiscountTotal: number;
+    manualDiscountTotal: number;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;
@@ -115,6 +120,7 @@ declare interface Checkout {
     payments?: CheckoutPayment[];
     channelId: number;
     fees: Fee[];
+    totalDiscount: number;
 }
 
 declare interface CheckoutPayment {
@@ -621,6 +627,7 @@ declare interface Order {
     customerId: number;
     customerMessage: string;
     discountAmount: number;
+    displayDiscountTotal: number;
     handlingCostTotal: number;
     hasDigitalItems: boolean;
     isComplete: boolean;
@@ -629,14 +636,18 @@ declare interface Order {
     lineItems: LineItemMap;
     orderAmount: number;
     orderAmountAsInteger: number;
+    orderBasedAutoDiscountTotal: number;
     orderId: number;
+    manualDiscountTotal: number;
     payments?: OrderPayments;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    totalDiscount: number;
     channelId: number;
     fees: OrderFee[];
 }

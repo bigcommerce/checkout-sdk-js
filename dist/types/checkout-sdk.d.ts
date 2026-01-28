@@ -709,11 +709,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * @alpha
      */
     integrations?: Array<CustomerStrategyFactory<CustomerStrategy>>;
-    /**
-     * The options that are required to initialize the Masterpass payment method.
-     * They can be omitted unless you need to support Masterpass.
-     */
-    masterpass?: MasterpassCustomerInitializeOptions;
 }
 
 declare interface BaseElementOptions {
@@ -761,11 +756,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Masterpass payment method.
-     * They can be omitted unless you need to support Masterpass.
-     */
-    masterpass?: MasterpassPaymentInitializeOptions;
 }
 
 declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
@@ -1220,38 +1210,6 @@ declare interface BigCommercePaymentsFieldsStyleOptions {
     };
 }
 
-/**
- * A set of options that are required to initialize the BigCommercePayments payment
- * method making payment with Klarna.
- *
- *
- * Also, BCP (also known as BigCommercePayments) requires specific options to initialize the PayPal Klarna flow
- *
- * ```js
- * service.initializePayment({
- *     gatewayId: 'bigcommerce_payments_apms',
- *     methodId: 'klarna',
- *     bigcommerce_payments_apms: {
- * // Callback for handling error that occurs when a buyer approves payment
- *         onError: (error) => {
- *         // Example function
- *             this.handleError(
- *                {
- *                   payment: { methodId: 'bigcommerce_payments_apms', }
- *               }
- *            );
- *         },
- *     },
- * });
- * ```
- */
-declare interface BigCommercePaymentsKlarnaPaymentInitializeOptions {
-    /**
-     * A callback for displaying error popup. This callback requires error object as parameter.
-     */
-    onError?(error: Error | unknown): void;
-}
-
 declare interface BigCommercePaymentsPayLaterButtonInitializeOptions {
     /**
      * The ID of a container which the messaging should be inserted.
@@ -1429,7 +1387,11 @@ declare interface BigCommercePaymentsPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
-    container: string;
+    container?: string;
+    /**
+     * The location to insert the Pay Later Messages.
+     */
+    bannerContainerId?: string;
     /**
      * If there is no need to initialize the Smart Payment Button, simply pass false as the option value.
      * The default value is true
@@ -1463,12 +1425,12 @@ declare interface BigCommercePaymentsPaymentInitializeOptions {
      *
      * @returns reject() or resolve()
      */
-    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    onValidate?(resolve: () => void, reject: () => void): Promise<void>;
     /**
      * A callback for submitting payment form that gets called
      * when buyer approves PayPal payment.
      */
-    submitForm(): void;
+    submitForm?(): void;
 }
 
 declare interface BigCommercePaymentsRatePayPaymentInitializeOptions {
@@ -1501,6 +1463,38 @@ declare interface BigCommercePaymentsRatePayPaymentInitializeOptions {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError?(error: unknown): void;
+}
+
+/**
+ * A set of options that are required to initialize the BigCommercePayments payment
+ * method making payment with Klarna.
+ *
+ *
+ * Also, BCP (also known as BigCommercePayments) requires specific options to initialize the PayPal Klarna flow
+ *
+ * ```js
+ * service.initializePayment({
+ *     gatewayId: 'bigcommerce_payments_apms',
+ *     methodId: 'klarna',
+ *     bigcommerce_payments_apms: {
+ * // Callback for handling error that occurs when a buyer approves payment
+ *         onError: (error) => {
+ *         // Example function
+ *             this.handleError(
+ *                {
+ *                   payment: { methodId: 'bigcommerce_payments_apms', }
+ *               }
+ *            );
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions {
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error | unknown): void;
 }
 
 declare interface BigCommercePaymentsVenmoButtonInitializeOptions {
@@ -2396,6 +2390,7 @@ declare interface Cart {
     createdTime: string;
     updatedTime: string;
     source?: CartSource;
+    locale: string;
 }
 
 declare class CartChangedError extends StandardError {
@@ -2425,6 +2420,7 @@ declare interface CartSelector {
     getCartOrThrow(): Cart;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
+    getLocale(): string | undefined;
 }
 
 declare interface CheckableInputStyles extends InputStyles {
@@ -2446,10 +2442,12 @@ declare interface Checkout {
     consignments: Consignment[];
     taxes: Tax[];
     discounts: Discount[];
+    displayDiscountTotal: number;
     isStoreCreditApplied: boolean;
     coupons: Coupon[];
     orderId?: number;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     /**
@@ -2464,6 +2462,8 @@ declare interface Checkout {
     subtotal: number;
     grandTotal: number;
     outstandingBalance: number;
+    orderBasedAutoDiscountTotal: number;
+    manualDiscountTotal: number;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;
@@ -2472,6 +2472,7 @@ declare interface Checkout {
     payments?: CheckoutPayment[];
     channelId: number;
     fees: Fee[];
+    totalDiscount: number;
 }
 
 declare interface CheckoutButtonDataState {
@@ -2600,7 +2601,6 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_STRIPE = "googlepaystripe",
     GOOGLEPAY_STRIPEUPE = "googlepaystripeupe",
     GOOGLEPAY_WORLDPAYACCESS = "googlepayworldpayaccess",
-    MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress"
 }
 
@@ -2942,7 +2942,7 @@ declare class CheckoutService {
      * @throws `OrderFinalizationNotRequiredError` error if order finalization
      * is not required for the current order at the time of execution.
      */
-    finalizeOrderIfNeeded(options?: RequestOptions): Promise<CheckoutSelectors>;
+    finalizeOrderIfNeeded(options?: OrderFinalizeOptions): Promise<CheckoutSelectors>;
     /**
      * Loads a list of payment methods available for checkout.
      *
@@ -5349,6 +5349,34 @@ declare const enum ExtensionType {
     Worker = "worker"
 }
 
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support Fastlane (PayPal Commerce, BigCommerce Payments, or Braintree).
+ *
+ * This is a unified interface that can be used across all Fastlane implementations
+ * to simplify initialization and avoid provider-specific checks.
+ */
+declare interface FastlaneShippingInitializeOptions {
+    /**
+     * Styling options for customizing Fastlane components
+     *
+     * Note: the styles for all Fastlane strategies should be the same,
+     * because they will be provided to the Fastlane library only for the first strategy initialization
+     * no matter what strategy was initialized first
+     */
+    styles?: FastlaneStylesOption;
+    /**
+     * A callback that shows the Fastlane popup with customer addresses
+     * when triggered
+     */
+    onPayPalFastlaneAddressChange?: (showFastlaneAddressSelector: () => Promise<CustomerAddress_2 | undefined>) => void;
+}
+
+/**
+ * A union type that covers all possible Fastlane styling options from different providers
+ */
+declare type FastlaneStylesOption = PayPalFastlaneStylesOption | BraintreeFastlaneStylesOption;
+
 declare interface Fee {
     id: string;
     type: string;
@@ -6401,39 +6429,6 @@ declare interface Locales {
     [key: string]: string;
 }
 
-declare interface MasterpassCustomerInitializeOptions {
-    /**
-     * The ID of a container which the checkout button should be inserted into.
-     */
-    container: string;
-}
-
-/**
- * A set of options that are required to initialize the Masterpass payment method.
- *
- * ```html
- * <!-- This is where the Masterpass button will be inserted -->
- * <div id="wallet-button"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'masterpass',
- *     masterpass: {
- *         walletButton: 'wallet-button'
- *     },
- * });
- * ```
- */
-declare interface MasterpassPaymentInitializeOptions {
-    /**
-     * This walletButton is used to set an event listener, provide an element ID if you want
-     * users to be able to launch the Masterpass wallet modal by clicking on a button.
-     * It should be an HTML element.
-     */
-    walletButton?: string;
-}
-
 /**
  * A set of options that are required to initialize the Mollie payment method.
  *
@@ -6535,6 +6530,7 @@ declare interface Order {
     customerId: number;
     customerMessage: string;
     discountAmount: number;
+    displayDiscountTotal: number;
     handlingCostTotal: number;
     hasDigitalItems: boolean;
     isComplete: boolean;
@@ -6543,14 +6539,18 @@ declare interface Order {
     lineItems: LineItemMap;
     orderAmount: number;
     orderAmountAsInteger: number;
+    orderBasedAutoDiscountTotal: number;
     orderId: number;
+    manualDiscountTotal: number;
     payments?: OrderPayments;
     giftWrappingCostTotal: number;
+    comparisonShippingCost: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    totalDiscount: number;
     channelId: number;
     fees: OrderFee[];
 }
@@ -6573,6 +6573,13 @@ declare interface OrderFee {
     customerDisplayName: string;
     cost: number;
     source: string;
+}
+
+declare interface OrderFinalizeOptions extends RequestOptions {
+    /**
+     * @alpha
+     */
+    integrations?: Array<PaymentStrategyFactory<PaymentStrategy>>;
 }
 
 declare type OrderMeta = OrderMetaState;
@@ -7549,7 +7556,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsKlarnaPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBlueSnapV2PaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithPaypalExpressPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBlueSnapV2PaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithPaypalExpressPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7962,6 +7969,14 @@ declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptio
      * when using BigCommercePayments Fastlane.
      */
     bigcommerce_payments_fastlane?: BigCommercePaymentsFastlaneShippingInitializeOptions;
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using Fastlane (PayPal Commerce, BigCommerce Payments, or Braintree).
+     *
+     * This is a unified option that works across all Fastlane implementations,
+     * simplifying integration and avoiding provider-specific checks.
+     */
+    fastlane?: FastlaneShippingInitializeOptions;
 }
 
 declare interface ShippingOption {
@@ -8857,10 +8872,6 @@ declare interface WithBigCommercePaymentsFastlanePaymentInitializeOptions {
     bigcommerce_payments_fastlane?: BigCommercePaymentsFastlanePaymentInitializeOptions;
 }
 
-declare interface WithBigCommercePaymentsKlarnaPaymentInitializeOptions {
-    bigcommerce_payments_apms?: BigCommercePaymentsKlarnaPaymentInitializeOptions;
-}
-
 declare interface WithBigCommercePaymentsPayLaterButtonInitializeOptions {
     bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterButtonInitializeOptions;
 }
@@ -8879,6 +8890,10 @@ declare interface WithBigCommercePaymentsPaymentInitializeOptions {
 
 declare interface WithBigCommercePaymentsRatePayPaymentInitializeOptions {
     bigcommerce_payments_ratepay?: BigCommercePaymentsRatePayPaymentInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions {
+    bigcommerce_payments_apms?: BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsVenmoButtonInitializeOptions {

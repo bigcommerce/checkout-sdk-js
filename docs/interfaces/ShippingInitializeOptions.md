@@ -30,6 +30,7 @@ step of checkout.
 - [amazonpay](ShippingInitializeOptions.md#amazonpay)
 - [bigcommerce_payments_fastlane](ShippingInitializeOptions.md#bigcommerce_payments_fastlane)
 - [braintreefastlane](ShippingInitializeOptions.md#braintreefastlane)
+- [fastlane](ShippingInitializeOptions.md#fastlane)
 - [methodId](ShippingInitializeOptions.md#methodid)
 - [params](ShippingInitializeOptions.md#params)
 - [paypalcommercefastlane](ShippingInitializeOptions.md#paypalcommercefastlane)
@@ -62,6 +63,18 @@ ___
 
 The options that are required to initialize the shipping step of checkout
 when using Braintree Fastlane.
+
+___
+
+### fastlane
+
+• `Optional` **fastlane**: [`FastlaneShippingInitializeOptions`](FastlaneShippingInitializeOptions.md)
+
+The options that are required to initialize the shipping step of checkout
+when using Fastlane (PayPal Commerce, BigCommerce Payments, or Braintree).
+
+This is a unified option that works across all Fastlane implementations,
+simplifying integration and avoiding provider-specific checks.
 
 ___
 

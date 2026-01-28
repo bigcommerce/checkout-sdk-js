@@ -30,7 +30,10 @@ import {
 import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
 import isBraintreeError from '../is-braintree-error';
 
-import { WithBraintreeCreditCardPaymentInitializeOptions } from './braintree-credit-card-payment-initialize-options';
+import {
+    BraintreeCreditCardPaymentInitializeOptions,
+    WithBraintreeCreditCardPaymentInitializeOptions,
+} from './braintree-credit-card-payment-initialize-options';
 
 export default class BraintreeCreditCardPaymentStrategy implements PaymentStrategy {
     private is3dsEnabled?: boolean;
@@ -38,6 +41,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     private deviceSessionId?: string;
     private paymentMethod?: PaymentMethod;
     private threeDSecure?: BraintreeThreeDSecureOptions;
+    private onPaymentError?: BraintreeCreditCardPaymentInitializeOptions['onPaymentError'];
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -63,6 +67,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         }
 
         this.threeDSecure = braintree?.threeDSecure;
+        this.onPaymentError = braintree?.onPaymentError;
 
         try {
             this.braintreeIntegrationService.initialize(clientToken, this.threeDSecure);
@@ -135,7 +140,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         return Promise.resolve();
     }
 
-    private handleError(error: unknown, methodId?: string): void {
+    private handleError(error: unknown, methodId?: string): void | Promise<void> {
         if (isBraintreeError(error)) {
             const isPaymentMethodInitialized = !!(
                 methodId &&
@@ -147,6 +152,12 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 error.code === 'HOSTED_FIELDS_INVALID_FIELD_SELECTOR'
             ) {
                 return;
+            }
+
+            if (error.code.startsWith('THREEDS_')) {
+                this.onPaymentError?.(new PaymentMethodFailedError('THREEDS_VERIFICATION_FAILED'));
+
+                return Promise.reject();
             }
 
             throw new PaymentMethodFailedError(error.message);

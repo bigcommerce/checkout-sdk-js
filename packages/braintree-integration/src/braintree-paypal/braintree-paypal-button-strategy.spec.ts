@@ -350,6 +350,7 @@ describe('BraintreePaypalButtonStrategy', () => {
                     currency: 'USD',
                     isCreditEnabled: false,
                     intent: undefined,
+                    commit: false,
                 },
                 expect.any(Function),
                 expect.any(Function),

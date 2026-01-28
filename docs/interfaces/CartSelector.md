@@ -9,6 +9,7 @@
 - [getCart](CartSelector.md#getcart)
 - [getCartOrThrow](CartSelector.md#getcartorthrow)
 - [getLoadError](CartSelector.md#getloaderror)
+- [getLocale](CartSelector.md#getlocale)
 - [isLoading](CartSelector.md#isloading)
 
 ## Methods
@@ -40,6 +41,16 @@ ___
 #### Returns
 
 `undefined` \| `Error`
+
+___
+
+### getLocale
+
+▸ **getLocale**(): `undefined` \| `string`
+
+#### Returns
+
+`undefined` \| `string`
 
 ___
 

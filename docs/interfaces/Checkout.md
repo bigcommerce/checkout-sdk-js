@@ -10,12 +10,14 @@
 - [billingAddress](Checkout.md#billingaddress)
 - [cart](Checkout.md#cart)
 - [channelId](Checkout.md#channelid)
+- [comparisonShippingCost](Checkout.md#comparisonshippingcost)
 - [consignments](Checkout.md#consignments)
 - [coupons](Checkout.md#coupons)
 - [createdTime](Checkout.md#createdtime)
 - [customer](Checkout.md#customer)
 - [customerMessage](Checkout.md#customermessage)
 - [discounts](Checkout.md#discounts)
+- [displayDiscountTotal](Checkout.md#displaydiscounttotal)
 - [fees](Checkout.md#fees)
 - [giftCertificates](Checkout.md#giftcertificates)
 - [giftWrappingCostTotal](Checkout.md#giftwrappingcosttotal)
@@ -23,6 +25,8 @@
 - [handlingCostTotal](Checkout.md#handlingcosttotal)
 - [id](Checkout.md#id)
 - [isStoreCreditApplied](Checkout.md#isstorecreditapplied)
+- [manualDiscountTotal](Checkout.md#manualdiscounttotal)
+- [orderBasedAutoDiscountTotal](Checkout.md#orderbasedautodiscounttotal)
 - [orderId](Checkout.md#orderid)
 - [outstandingBalance](Checkout.md#outstandingbalance)
 - [payments](Checkout.md#payments)
@@ -33,6 +37,7 @@
 - [subtotal](Checkout.md#subtotal)
 - [taxTotal](Checkout.md#taxtotal)
 - [taxes](Checkout.md#taxes)
+- [totalDiscount](Checkout.md#totaldiscount)
 - [updatedTime](Checkout.md#updatedtime)
 
 ## Properties
@@ -58,6 +63,12 @@ ___
 ### channelId
 
 • **channelId**: `number`
+
+___
+
+### comparisonShippingCost
+
+• **comparisonShippingCost**: `number`
 
 ___
 
@@ -94,6 +105,12 @@ ___
 ### discounts
 
 • **discounts**: [`Discount`](Discount.md)[]
+
+___
+
+### displayDiscountTotal
+
+• **displayDiscountTotal**: `number`
 
 ___
 
@@ -136,6 +153,18 @@ ___
 ### isStoreCreditApplied
 
 • **isStoreCreditApplied**: `boolean`
+
+___
+
+### manualDiscountTotal
+
+• **manualDiscountTotal**: `number`
+
+___
+
+### orderBasedAutoDiscountTotal
+
+• **orderBasedAutoDiscountTotal**: `number`
 
 ___
 
@@ -201,6 +230,12 @@ ___
 ### taxes
 
 • **taxes**: [`Tax`](Tax.md)[]
+
+___
+
+### totalDiscount
+
+• **totalDiscount**: `number`
 
 ___
 

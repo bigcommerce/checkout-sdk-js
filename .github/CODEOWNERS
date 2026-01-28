@@ -10,10 +10,8 @@
 ## Integrations team
 
 /packages/core/src/checkout-buttons/strategies/amazon-pay-v2 @bigcommerce/team-integrations
-/packages/core/src/checkout-buttons/strategies/masterpass @bigcommerce/team-integrations
 /packages/core/src/customer/strategies/amazon-pay-v2 @bigcommerce/team-integrations
 /packages/core/src/customer/strategies/chasepay @bigcommerce/team-integrations
-/packages/core/src/customer/strategies/masterpass @bigcommerce/team-integrations
 /packages/core/src/customer/strategies/square @bigcommerce/team-integrations
 /packages/core/src/shipping/strategies/amazon-pay-v2 @bigcommerce/team-integrations
 /packages/core/src/shipping/strategies/stripe-upe @bigcommerce/team-integrations
@@ -21,7 +19,6 @@
 /packages/core/src/payment/strategies/adyenv3 @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/affirm @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/amazon-pay-v2 @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/barclays @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/bluesnapv2 @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/bnz @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/cardinal @bigcommerce/team-integrations
@@ -33,7 +30,6 @@
 /packages/core/src/payment/strategies/humm @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/klarna @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/klarnav2 @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/masterpass @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/moneris @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/ppsdk @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/quadpay @bigcommerce/team-integrations

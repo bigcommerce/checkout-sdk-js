@@ -52,8 +52,9 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
     }
 
     async initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { methodId, paypalcommercefastlane } = options || {};
-        const { onPayPalFastlaneAddressChange, styles } = paypalcommercefastlane || {};
+        const { methodId, paypalcommercefastlane, fastlane } = options || {};
+        const fastlaneOptions = fastlane || paypalcommercefastlane;
+        const { onPayPalFastlaneAddressChange, styles } = fastlaneOptions || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { includes } from 'lodash';
 
 import {
@@ -103,13 +102,17 @@ export default class KlarnaV2PaymentStrategy {
 
         const state = this.paymentIntegrationService.getState();
         const { id: cartId } = state.getCartOrThrow();
-        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+        const { clientToken, initializationData } =
+            state.getPaymentMethodOrThrow<KlarnaInitializationData>(methodId);
+        const { klarnaMultipleRadioButton } = initializationData || {};
 
         await this.klarnav2TokenUpdater.klarnaOrderInitialization(cartId, clientToken);
 
-        const paymentMethodСategory = this.isKlarnaSingleRadioButtonEnabled()
-            ? gatewayId
-            : methodId;
+        const paymentMethodСategory = this.isKlarnaMultipleRadioButtonEnabled(
+            klarnaMultipleRadioButton,
+            gatewayId,
+            methodId,
+        );
         const { authorization_token: authorizationToken } = await this.authorizeOrThrow(
             paymentMethodСategory,
             methodId,
@@ -163,7 +166,8 @@ export default class KlarnaV2PaymentStrategy {
         });
 
         return new Promise<KlarnaLoadResponse>((resolve) => {
-            const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+            const paymentMethod = state.getPaymentMethodOrThrow<KlarnaInitializationData>(methodId);
+            const { klarnaMultipleRadioButton } = paymentMethod.initializationData || {};
 
             if (!this.klarnaPayments || !paymentMethod.clientToken) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -173,9 +177,11 @@ export default class KlarnaV2PaymentStrategy {
             this.klarnaPayments.load(
                 {
                     container,
-                    payment_method_category: this.isKlarnaSingleRadioButtonEnabled()
-                        ? paymentMethod.gateway
-                        : methodId,
+                    payment_method_category: this.isKlarnaMultipleRadioButtonEnabled(
+                        klarnaMultipleRadioButton,
+                        gatewayId,
+                        methodId,
+                    ),
                 },
                 (response) => {
                     if (onLoad) {
@@ -223,6 +229,14 @@ export default class KlarnaV2PaymentStrategy {
 
     private needsStateCode(countryCode: string) {
         return includes(supportedCountriesRequiringStates, countryCode);
+    }
+
+    private isKlarnaMultipleRadioButtonEnabled(
+        klarnaMultipleRadioButton: boolean | undefined,
+        gatewayId: string,
+        methodId: string,
+    ): string {
+        return klarnaMultipleRadioButton ? methodId : gatewayId;
     }
 
     private mapToKlarnaAddress(methodId: string, address: Address, email?: string): KlarnaAddress {
@@ -304,13 +318,5 @@ export default class KlarnaV2PaymentStrategy {
                 },
             );
         });
-    }
-
-    private isKlarnaSingleRadioButtonEnabled(): boolean {
-        const { features } = this.paymentIntegrationService
-            .getState()
-            .getStoreConfigOrThrow().checkoutSettings;
-
-        return features['PI-4025.klarna_single_radio_button'];
     }
 }

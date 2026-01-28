@@ -11,6 +11,7 @@ import {
     PayPalFastlaneSdk,
     PayPalSdkHelper,
     TDSecureAuthenticationState,
+    TDSecureVerificationMethod,
 } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     CardInstrument,
@@ -337,11 +338,9 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             this.isBigcommercePaymentsFastlaneThreeDSAvailable() &&
             paymentMethod.config.is3dsEnabled;
 
-        if (!is3DSEnabled) {
-            await this.createOrder(instrumentId);
-        }
+        const nonce = is3DSEnabled ? await this.get3DSNonce(instrumentId) : instrumentId;
 
-        const fastlaneToken = is3DSEnabled ? await this.get3DSNonce(instrumentId) : instrumentId;
+        await this.createOrder(nonce);
 
         return {
             methodId,
@@ -349,7 +348,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 formattedPayload: {
                     paypal_fastlane_token: {
                         order_id: this.orderId,
-                        token: fastlaneToken,
+                        token: nonce,
                     },
                 },
             },
@@ -379,14 +378,12 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             this.isBigcommercePaymentsFastlaneThreeDSAvailable() &&
             paymentMethod.config.is3dsEnabled;
 
-        if (!is3DSEnabled) {
-            await this.createOrder(id);
-        }
-
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
-        const fastlaneToken = is3DSEnabled ? await this.get3DSNonce(id) : id;
+        const nonce = is3DSEnabled ? await this.get3DSNonce(id) : id;
+
+        await this.createOrder(nonce);
 
         return {
             methodId,
@@ -397,7 +394,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
                 formattedPayload: {
                     paypal_fastlane_token: {
                         order_id: this.orderId,
-                        token: fastlaneToken,
+                        token: nonce,
                     },
                 },
             },
@@ -426,7 +423,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
      * 3DSecure methods
      *
      * */
-    private async get3DSNonce(paypalNonce: string): Promise<string> {
+    private async get3DSNonce(nonce: string): Promise<string> {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const order = state.getOrderOrThrow();
@@ -441,8 +438,8 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
         const threeDomainSecureParameters = {
             amount: order.orderAmount.toFixed(2),
             currency: cart.currency.code,
-            nonce: paypalNonce,
-            threeDSRequested: this.threeDSVerificationMethod === 'SCA_ALWAYS',
+            nonce,
+            threeDSRequested: this.threeDSVerificationMethod === TDSecureVerificationMethod.Always,
             transactionContext: {
                 experience_context: {
                     locale: 'en-US',
@@ -456,35 +453,38 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             threeDomainSecureParameters,
         );
 
+        if (
+            this.threeDSVerificationMethod === TDSecureVerificationMethod.Always &&
+            !isThreeDomainSecureEligible
+        ) {
+            throw new PaymentMethodInvalidError();
+        }
+
         if (isThreeDomainSecureEligible) {
-            const { liabilityShift, authenticationState, nonce } =
-                await threeDomainSecureComponent.show();
+            const {
+                liabilityShift,
+                authenticationState,
+                nonce: threeDSNonce,
+            } = await threeDomainSecureComponent.show();
 
             if (
                 liabilityShift === LiabilityShiftEnum.No ||
-                liabilityShift === LiabilityShiftEnum.Unknown
+                liabilityShift === LiabilityShiftEnum.Unknown ||
+                authenticationState === TDSecureAuthenticationState.Errored ||
+                authenticationState === TDSecureAuthenticationState.Cancelled
             ) {
                 throw new PaymentMethodInvalidError();
             }
 
-            await this.createOrder(paypalNonce);
-
-            if (authenticationState === TDSecureAuthenticationState.Succeeded) {
-                return nonce;
-            }
-
-            // Cancelled or errored, merchant can choose to send the customer back to 3D Secure or submit a payment and or vault the payment token.
-            if (authenticationState === TDSecureAuthenticationState.Errored) {
-                throw new PaymentMethodInvalidError();
-            }
-
-            if (authenticationState === TDSecureAuthenticationState.Cancelled) {
-                console.error('3DS check was canceled');
-                throw new PaymentMethodInvalidError();
+            if (
+                authenticationState === TDSecureAuthenticationState.Succeeded &&
+                [LiabilityShiftEnum.Yes, LiabilityShiftEnum.Possible].includes(liabilityShift)
+            ) {
+                return threeDSNonce;
             }
         }
 
-        return paypalNonce;
+        return nonce;
     }
 
     /**

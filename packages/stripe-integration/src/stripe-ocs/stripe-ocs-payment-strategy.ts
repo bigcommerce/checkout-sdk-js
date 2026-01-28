@@ -97,8 +97,9 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             );
         }
 
-        const state = this.paymentIntegrationService.getState();
-        const { isStoreCreditApplied } = state.getCheckoutOrThrow();
+        const { isStoreCreditApplied } = this.paymentIntegrationService
+            .getState()
+            .getCheckoutOrThrow();
 
         if (isStoreCreditApplied) {
             await this.paymentIntegrationService.applyStoreCredit(isStoreCreditApplied);
@@ -108,7 +109,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+        const { clientToken } = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow(methodId, gatewayId);
+
         const paymentPayload = this._getPaymentPayload(methodId, clientToken || '');
 
         try {
@@ -141,14 +145,14 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     ) {
         let paymentMethod = this.paymentIntegrationService
             .getState()
-            .getPaymentMethodOrThrow(methodId);
+            .getPaymentMethodOrThrow(methodId, gatewayId);
 
         if (!paymentMethod?.clientToken) {
             const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
                 params: { method: methodId },
             });
 
-            paymentMethod = state.getPaymentMethodOrThrow(methodId);
+            paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
         }
 
         if (!isStripePaymentMethodLike(paymentMethod)) {
@@ -242,7 +246,15 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             return this.stripeClient;
         }
 
-        return this.scriptLoader.getStripeClient(initializationData);
+        const state = this.paymentIntegrationService.getState();
+        const stripeJsVersion =
+            this.stripeIntegrationService.getStripeJsVersion(initializationData);
+
+        return this.scriptLoader.getStripeClient(
+            initializationData,
+            state.getCartLocale(),
+            stripeJsVersion,
+        );
     }
 
     private _collapseStripeElement() {

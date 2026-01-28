@@ -72,7 +72,6 @@ declare class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _onPaymentAuthorized;
     private _transformContactToAddress;
     private _getBraintreeDeviceData;
-    private _initializeBraintreeSdk;
 }
 
 /**
@@ -145,7 +144,6 @@ declare class ApplePayCustomerStrategy implements CustomerStrategy {
     private _onPaymentAuthorized;
     private _transformContactToAddress;
     private _getBraintreeDeviceData;
-    private _initializeBraintreeSdk;
 }
 
 /**
@@ -197,7 +195,6 @@ declare class ApplePayPaymentStrategy implements PaymentStrategy {
     private _onValidateMerchant;
     private _onPaymentAuthorized;
     private _getBraintreeDeviceData;
-    private _initializeBraintreeSdk;
 }
 
 declare class ApplePayScriptLoader {
