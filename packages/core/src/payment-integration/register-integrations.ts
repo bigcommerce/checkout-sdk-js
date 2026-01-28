@@ -1,9 +1,6 @@
-import { isEqual } from 'lodash';
-
 import {
     isResolvableModule,
     PaymentIntegrationService,
-    toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { ResolveIdRegistry } from '../common/registry';
@@ -27,64 +24,7 @@ export function registerIntegrations<TStrategy, TResolveId extends { [key: strin
                 return;
             }
 
-            // TODO: Remove toResolvableModule once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-            const createStrategy = toResolvableModule(
-                () => factory(paymentIntegrationService),
-                factory.resolveIds,
-            );
-
-            registry.register(resolveId, createStrategy);
+            registry.register(resolveId, () => factory(paymentIntegrationService));
         });
     });
-}
-
-// TODO: Remove this function once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-export function matchExistingIntegrations<TStrategy, TResolveId extends { [key: string]: unknown }>(
-    registry: ResolveIdRegistry<TStrategy, TResolveId>,
-    integrations: Array<StrategyFactory<TStrategy>>,
-    resolveId: TResolveId,
-    paymentIntegrationService: PaymentIntegrationService,
-): Error | undefined {
-    const existingFactory = registry.getFactory(resolveId);
-
-    if (!existingFactory) {
-        return;
-    }
-
-    const matchedExisting = integrations.some((factory) =>
-        matchFactories(existingFactory, factory),
-    );
-
-    // During the initial rollout, all strategies will continue to be registered with `strategyRegistryV2`
-    // and bundled together by default. This allows us to compare the passed-in strategies with the existing
-    // ones to ensure they match. Once confirmed, we can remove the comparison logic and the existing strategies,
-    // relying solely on the passed-in strategies.
-    if (!matchedExisting) {
-        const message = `A different strategy is registered for ${JSON.stringify(resolveId)}.`;
-
-        return new Error(message);
-    }
-
-    const tempRegistry = new ResolveIdRegistry<TStrategy, TResolveId>(registry.getUseFallback());
-
-    registerIntegrations(tempRegistry, integrations, paymentIntegrationService);
-
-    const resolvedFactory = tempRegistry.getFactory(resolveId);
-
-    if (!resolvedFactory || !matchFactories(resolvedFactory, existingFactory)) {
-        const message = `A different strategy is resolved for ${JSON.stringify(resolveId)}.`;
-
-        return new Error(message);
-    }
-}
-
-function matchFactories<TStrategy>(
-    factoryA: StrategyFactory<TStrategy>,
-    factoryB: StrategyFactory<TStrategy>,
-): boolean {
-    return (
-        isResolvableModule(factoryA) &&
-        isResolvableModule(factoryB) &&
-        isEqual(factoryA.resolveIds, factoryB.resolveIds)
-    );
 }
