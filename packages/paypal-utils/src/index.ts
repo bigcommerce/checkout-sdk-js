@@ -20,3 +20,12 @@ export { default as PayPalSdkScriptLoader } from './paypal-sdk-script-loader';
  */
 export { default as createPayPalFastlaneUtils } from './create-paypal-fastlane-utils';
 export { default as PayPalFastlaneUtils } from './paypal-fastlane-utils';
+
+/**
+ *
+ * PayPal Integration Service exports
+ *
+ */
+
+export { default as PayPalIntegrationService } from './paypal-integration-service';
+export { default as createPayPalIntegrationService } from './create-paypal-integration-service';

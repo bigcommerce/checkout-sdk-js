@@ -3,7 +3,7 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
+import { createPayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceAlternativeMethodsButtonStrategy from './paypal-commerce-alternative-methods-button-strategy';
 
@@ -12,7 +12,7 @@ const createPayPalCommerceAlternativeMethodsButtonStrategy: CheckoutButtonStrate
 > = (paymentIntegrationService) =>
     new PayPalCommerceAlternativeMethodsButtonStrategy(
         paymentIntegrationService,
-        createPayPalCommerceIntegrationService(paymentIntegrationService),
+        createPayPalIntegrationService(paymentIntegrationService),
     );
 
 export default toResolvableModule(createPayPalCommerceAlternativeMethodsButtonStrategy, [
