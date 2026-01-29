@@ -101,7 +101,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.applyStoreCredit(isStoreCreditApplied);
         }
 
-        await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+        // await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
@@ -181,8 +181,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         console.log('*** clientToken', clientToken);
 
         this.stripeElements = await this.scriptLoader.getElements(this.stripeClient, {
-            // clientSecret: clientToken,
-            fetchClientSecret: async () => clientToken,
+            clientSecret: clientToken,
+            // fetchClientSecret: async () => clientToken,
             // customerSessionClientSecret: customerSessionToken,
             // locale: formatStripeLocale(shopperLanguage),
             elementsOptions: {
@@ -202,7 +202,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         // const stripeEmailUpdateResult = await this.stripeElements.updateEmail(billingAddress?.email || '');
         // console.log('*** stripeEmailUpdateResult', stripeEmailUpdateResult);
 
-        const stripeCheckoutSessionData = this.stripeElements.session();
+        console.log('*** stripeElements', this.stripeElements);
+        const { actions: stripeActions } = await this.stripeElements.loadActions();
+        // TODO: add error handling
+        console.log('*** stripeActions', stripeActions);
+        const stripeCheckoutSessionData = await stripeActions.getSession();
         console.log('*** stripeCheckoutSessionData', stripeCheckoutSessionData);
 
         const stripeElement =
@@ -268,7 +272,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             initializationData,
             state.getCartLocale(),
             [
-                'custom_checkout_adaptive_pricing_2',
+                // 'custom_checkout_adaptive_pricing_2',
                 // 'custom_checkout_beta_6',
             ],
         );
@@ -354,7 +358,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         additionalActionData: StripeAdditionalActionRequired['data'],
     ): Promise<StripeResult | never> {
         console.log(methodId, additionalActionData);
-        // const { /* token, */ redirect_url } = additionalActionData || {};
+        const { /* token, */ redirect_url } = additionalActionData || {};
         // const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
         //     this.stripeElements,
         //     redirect_url,
@@ -376,9 +380,15 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             let confirmationResult;
 
             try {
-                const { total } = await this.stripeElements?.session();
-                console.log('*** total', total.total.amount);
-                confirmationResult = await this.stripeElements?.confirm({
+                // const { total } = await this.stripeElements?.session();
+                // console.log('*** total', total.total.amount);
+                const { actions: stripeActions } = await this.stripeElements?.loadActions();
+                // TODO: add error handling
+                console.log('*** stripeActions', stripeActions);
+                console.log('*** redirect_url', redirect_url);
+                confirmationResult = await stripeActions.confirm({
+                    redirect: StripeStringConstants.IF_REQUIRED,
+                    returnUrl: redirect_url,
                     shippingAddress: {
                         name: 'John Doe',
                         address: {

@@ -463,6 +463,8 @@ export interface StripeElements {
 export interface StripeCheckoutElements extends StripeElements {
     confirm(data?: any): Promise<StripeResult>;
     session(): any;
+    // getSession(): any;
+    loadActions(): Promise<any>;
     updateEmail(email: string): Promise<any>;
     getPaymentElement(): StripeElement | null;
     createPaymentElement(options?: StripeElementsCreateOptions): StripeElement;

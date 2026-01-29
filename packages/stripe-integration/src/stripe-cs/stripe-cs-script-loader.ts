@@ -6,10 +6,9 @@ import {
     StripeCheckoutSessionClient,
     StripeCheckoutElements,
     StripeCheckoutSessionHostWindow,
+    StripeJsVersion,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { StripeCheckoutElementsOptions } from 'packages/stripe-utils/src/stripe';
-
-
 
 export default class StripeCSScriptLoader {
     constructor(
@@ -77,7 +76,9 @@ export default class StripeCSScriptLoader {
     private async load() {
         console.log('loading stripe');
         if (!this.stripeWindow.Stripe) {
-            await this.scriptLoader.loadScript('https://js.stripe.com/basil/stripe.js');
+            await this.scriptLoader.loadScript(
+                `https://js.stripe.com/${StripeJsVersion.CLOVER}/stripe.js`,
+            );
 
             if (!this.stripeWindow.Stripe) {
                 throw new PaymentMethodClientUnavailableError();
