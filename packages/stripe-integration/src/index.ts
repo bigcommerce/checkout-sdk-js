@@ -4,11 +4,13 @@ export { default as createStripeUPECustomerStrategy } from './stripe-upe/create-
 export { default as createStripeOCSPaymentStrategy } from './stripe-ocs/create-stripe-ocs-payment-strategy';
 export { default as createStripeLinkV2CustomerStrategy } from './stripe-ocs/create-stripe-link-v2-customer-strategy';
 export { default as createLinkV2ButtonStrategy } from './stripe-ocs/create-stripe-link-v2-button-strategy';
+export { default as createStripeCSPaymentStrategy } from './stripe-cs/create-stripe-cs-payment-strategy';
 
 export { default as StripeV3PaymentStrategy } from './stripev3/stripev3-payment-strategy';
 export { default as StripeUPEPaymentStrategy } from './stripe-upe/stripe-upe-payment-strategy';
 export { default as StripeUPECustomerStrategy } from './stripe-upe/stripe-upe-customer-strategy';
 export { default as StripeOCSPaymentStrategy } from './stripe-ocs/stripe-ocs-payment-strategy';
+export { default as StripeCSPaymentStrategy } from './stripe-cs/stripe-cs-payment-strategy';
 
 export {
     default as StripeV3PaymentInitializeOption,
