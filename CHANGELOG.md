@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.857.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.856.0...v1.857.0) (2026-01-29)
+
+
+### Features
+
+* **payment:** PAYPAL-6055 test removal ([69e17e4](https://github.com/bigcommerce/checkout-sdk-js/commit/69e17e421b710469a8230a50acf1b9ce0ea2d3ba))
+* **payment:** PAYPAL-6055 update paypal sdk config ([8480236](https://github.com/bigcommerce/checkout-sdk-js/commit/8480236498e5cfb3daa9b7ae1c6fde66b8387c1f))
+
 ## [1.856.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.855.0...v1.856.0) (2026-01-27)
 
 
