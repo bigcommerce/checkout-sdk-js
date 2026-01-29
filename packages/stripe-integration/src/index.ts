@@ -9,6 +9,7 @@ export { default as StripeV3PaymentStrategy } from './stripev3/stripev3-payment-
 export { default as StripeUPEPaymentStrategy } from './stripe-upe/stripe-upe-payment-strategy';
 export { default as StripeUPECustomerStrategy } from './stripe-upe/stripe-upe-customer-strategy';
 export { default as StripeOCSPaymentStrategy } from './stripe-ocs/stripe-ocs-payment-strategy';
+export { default as StripeCSPaymentStrategy } from './stripe-cs/stripe-cs-payment-strategy';
 
 export {
     default as StripeV3PaymentInitializeOption,
@@ -22,8 +23,11 @@ export {
     default as StripeUPECustomerInitializeOption,
     WithStripeUPECustomerInitializeOptions,
 } from './stripe-upe/stripeupe-customer-initialize-options';
-
 export {
     default as StripeOCSPaymentInitializeOption,
     WithStripeOCSPaymentInitializeOptions,
 } from './stripe-ocs/stripe-ocs-initialize-options';
+export {
+    default as StripeCSPaymentInitializeOption,
+    WithStripeCSPaymentInitializeOptions,
+} from './stripe-cs/stripe-cs-initialize-options';
