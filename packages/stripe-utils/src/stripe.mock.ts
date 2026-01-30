@@ -4,7 +4,12 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeClient, StripePaymentMethodType } from './stripe';
+import {
+    StripeCheckoutSession,
+    StripeClient,
+    StripeLoadActionsResultType,
+    StripePaymentMethodType,
+} from './stripe';
 import StripePaymentInitializeOptions from './stripe-initialize-options';
 
 const gatewayId = 'stripeupe';
@@ -66,6 +71,7 @@ export function getStripeJsMock(): StripeClient {
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
+        initCheckout: jest.fn(),
     };
 }
 
@@ -89,6 +95,7 @@ export function getFailingStripeJsMock(): StripeClient {
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
+        initCheckout: jest.fn(),
     };
 }
 
@@ -162,5 +169,17 @@ export function getRetrievePaymentIntentResponseWithError() {
             id: 'pi_1234',
         },
         error: new Error('retrieve_payment_intent_response_with_error'),
+    };
+}
+
+export function getStripeCheckoutSessionMock(): StripeCheckoutSession {
+    return {
+        loadActions: () =>
+            Promise.resolve({
+                type: StripeLoadActionsResultType.SUCCESS,
+                actions: {
+                    updateEmail: jest.fn(),
+                },
+            }),
     };
 }
