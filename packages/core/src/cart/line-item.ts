@@ -17,6 +17,7 @@ export interface CustomItem {
     id: string;
     listPrice: number;
     extendedListPrice: number;
+    originalPrice: number
     name: string;
     quantity: number;
     sku: string;
@@ -56,6 +57,7 @@ export interface LineItem {
     discountAmount: number;
     couponAmount: number;
     listPrice: number;
+    originalPrice: number
     salePrice: number;
     retailPrice: number;
     comparisonPrice: number;

@@ -16,6 +16,7 @@ export interface DigitalItem extends LineItem {
 export interface CustomItem {
     id: string;
     listPrice: number;
+    originalPrice: number
     extendedListPrice: number;
     name: string;
     quantity: number;
@@ -56,6 +57,7 @@ export interface LineItem {
     discountAmount: number;
     couponAmount: number;
     listPrice: number;
+    originalPrice: number
     salePrice: number;
     retailPrice: number;
     comparisonPrice: number;
