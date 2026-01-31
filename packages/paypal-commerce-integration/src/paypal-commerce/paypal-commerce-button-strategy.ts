@@ -83,7 +83,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, paypalcommerce, isBuyNowFlow);
+        this.renderButton(containerId, methodId, paypalcommerce);
     }
 
     deinitialize(): Promise<void> {
@@ -94,9 +94,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         containerId: string,
         methodId: string,
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
-        isBuyNowFlow?: boolean,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
+
+        console.log('RENDER');
+        // await this.handleClick(buyNowInitializeOptions);
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -106,10 +108,9 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
-            ...(!isBuyNowFlow &&
-                this.isPaypalCommerceAppSwitchEnabled(methodId) && {
-                    appSwitchWhenAvailable: true,
-                }),
+            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
+                appSwitchWhenAvailable: true,
+            }),
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
