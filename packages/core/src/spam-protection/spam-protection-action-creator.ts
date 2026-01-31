@@ -1,5 +1,5 @@
-import { createAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, from, of } from 'rxjs';
+import { createAction, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
+import { concat, defer, from, Observable, of } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors } from '../checkout';
@@ -106,32 +106,53 @@ export default class SpamProtectionActionCreator {
     }
 
     execute(): ThunkAction<SpamProtectionAction, InternalCheckoutSelectors> {
-        return (store) =>
-            concat(
-                of(createAction(SpamProtectionActionType.ExecuteRequested)),
-                this.initialize()(store),
-                this._googleRecaptcha
-                    .execute()
-                    .pipe(take(1))
-                    .pipe(
-                        switchMap(async ({ error, token }) => {
-                            if (error instanceof SpamProtectionChallengeNotCompletedError) {
-                                throw error;
-                            }
+        return (store) => {
+            const { config, checkout } = store.getState();
+            const {
+                checkoutSettings: { features },
+            } = config.getStoreConfigOrThrow();
+            const { shouldExecuteSpamCheck } = checkout.getCheckoutOrThrow();
 
-                            if (error || !token) {
-                                throw new SpamProtectionFailedError();
-                            }
+            const recaptchaExperiment = features['CHECKOUT-8264.recaptcha_error_fix'];
 
-                            return createAction(SpamProtectionActionType.ExecuteSucceeded, {
-                                token,
-                            });
-                        }),
-                    ),
-            ).pipe(
-                catchError((error) =>
-                    throwErrorAction(SpamProtectionActionType.ExecuteFailed, error),
+            if (recaptchaExperiment) {
+                if (shouldExecuteSpamCheck) {
+                    return this._executeRecaptcha(store);
+                }
+            } else {
+                return of(createAction(SpamProtectionActionType.ExecuteActionNotNeeded, undefined));
+            }
+
+            return this._executeRecaptcha(store);
+        };
+    }
+
+    _executeRecaptcha(
+        store: ReadableDataStore<InternalCheckoutSelectors>,
+    ): Observable<SpamProtectionAction> {
+        return concat(
+            of(createAction(SpamProtectionActionType.ExecuteRequested)),
+            this.initialize()(store),
+            this._googleRecaptcha
+                .execute()
+                .pipe(take(1))
+                .pipe(
+                    switchMap(async ({ error, token }) => {
+                        if (error instanceof SpamProtectionChallengeNotCompletedError) {
+                            throw error;
+                        }
+
+                        if (error || !token) {
+                            throw new SpamProtectionFailedError();
+                        }
+
+                        return createAction(SpamProtectionActionType.ExecuteSucceeded, {
+                            token,
+                        });
+                    }),
                 ),
-            );
+        ).pipe(
+            catchError((error) => throwErrorAction(SpamProtectionActionType.ExecuteFailed, error)),
+        );
     }
 }
