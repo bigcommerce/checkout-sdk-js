@@ -8,6 +8,9 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    CreatePaymentOrderIntentOptions,
+    CreatePaymentOrderIntentResponse,
+    CreateRedirectToCheckoutResponse,
     PayPalCreateOrderRequestBody,
     PayPalOrderData,
     PayPalOrderStatusData,
@@ -68,5 +71,68 @@ export default class PayPalCommerceRequestSender {
         });
 
         return res.body;
+    }
+
+    async createPaymentOrderIntent(
+        walletEntityId: string,
+        cartId: string,
+        options?: CreatePaymentOrderIntentOptions,
+    ): Promise<PayPalOrderData> {
+        const url = `${window.location.origin}/api/wallet-buttons/create-payment-wallet-intent`;
+
+        const requestOptions: CreatePaymentOrderIntentOptions = {
+            body: {
+                ...options?.body,
+                walletEntityId,
+                cartId,
+            },
+        };
+
+        const res = await this.requestSender.post<CreatePaymentOrderIntentResponse>(
+            url,
+            requestOptions,
+        );
+
+        const {
+            data: {
+                payment: {
+                    paymentWallet: {
+                        createPaymentWalletIntent: { paymentWalletIntentData, errors },
+                    },
+                },
+            },
+        } = res.body;
+
+        const errorMessage = errors[0]?.message;
+
+        if (errorMessage) {
+            throw new Error(errorMessage);
+        }
+
+        return {
+            orderId: paymentWalletIntentData.orderId,
+            approveUrl: paymentWalletIntentData.approvalUrl,
+        };
+    }
+
+    async getRedirectToCheckoutUrl(
+        url: string,
+        options?: CreatePaymentOrderIntentOptions,
+    ): Promise<string> {
+        const res = await this.requestSender.get<CreateRedirectToCheckoutResponse>(url, options);
+
+        const {
+            data: {
+                cart: {
+                    createCartRedirectUrls: { redirectUrls },
+                },
+            },
+        } = res.body;
+
+        if (!redirectUrls?.redirectedCheckoutUrl) {
+            throw new Error('Failed to redirection to checkout page');
+        }
+
+        return redirectUrls.redirectedCheckoutUrl;
     }
 }
