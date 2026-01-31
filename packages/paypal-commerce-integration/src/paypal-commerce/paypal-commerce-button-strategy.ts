@@ -97,6 +97,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         isBuyNowFlow?: boolean,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
+        console.log('RENDER');
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
