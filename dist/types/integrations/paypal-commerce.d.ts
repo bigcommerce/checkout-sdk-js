@@ -18,6 +18,7 @@ import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-
 import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneUtils } from '@bigcommerce/checkout-sdk/paypal-utils';
+import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PayPalSdkScriptLoader } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -191,8 +192,8 @@ declare interface PayPalCommerceAlternativeMethodsButtonOptions {
 
 declare class PayPalCommerceAlternativeMethodsButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService);
+    private paypalIntegrationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService);
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
