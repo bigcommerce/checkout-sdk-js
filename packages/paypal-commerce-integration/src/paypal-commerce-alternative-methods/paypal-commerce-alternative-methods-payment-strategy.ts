@@ -16,12 +16,12 @@ import {
 import {
     PayPalApmSdk,
     PayPalInitializationData,
+    PayPalIntegrationService,
     PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     ApproveCallbackPayload,
     NonInstantAlternativePaymentMethods,
@@ -50,7 +50,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalCommerceIntegrationService: PayPalIntegrationService,
         private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private loadingIndicator: LoadingIndicator,
         private pollingInterval: number = POLLING_INTERVAL,
@@ -199,7 +199,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             this.pollingTimer += this.pollingInterval;
 
             const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(
-                gatewayId,
+                gatewayId ?? 'paypalcommerce',
             );
 
             const isOrderApproved = orderStatus === PayPalOrderStatus.Approved;
