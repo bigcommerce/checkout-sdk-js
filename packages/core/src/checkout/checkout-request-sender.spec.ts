@@ -17,7 +17,9 @@ describe('CheckoutRequestSender', () => {
 
     const defaultIncludes = [
         'cart.lineItems.physicalItems.options',
+        'cart.lineItems.physicalItems.stockPosition',
         'cart.lineItems.digitalItems.options',
+        'cart.lineItems.digitalItems.stockPosition',
         'customer',
         'customer.customerGroup',
         'payments',

@@ -1,4 +1,13 @@
-import { DigitalItem, GiftCertificateItem, PhysicalItem } from '../cart';
+import { DigitalItem, GiftCertificateItem, PhysicalItem, StockPosition } from '../cart';
+
+export function getStockPosition(): StockPosition {
+    return {
+        quantityOnHand: 10,
+        quantityBackordered: 0,
+        quantityOutOfStock: 0,
+        backorderMessage: null,
+    };
+}
 
 export function getPhysicalItem(): PhysicalItem {
     return {
@@ -34,6 +43,7 @@ export function getPhysicalItem(): PhysicalItem {
         ],
         categories: [[{ name: 'Cat 1' }], [{ name: 'Furniture' }, { name: 'Bed' }]],
         categoryNames: ['Cat 1'],
+        stockPosition: getStockPosition(),
     };
 }
 
@@ -73,6 +83,7 @@ export function getDigitalItem(): DigitalItem {
         ],
         categories: [[{ name: 'Cat 1' }], [{ name: 'Cat 2' }], [{ name: 'Cat 3' }]],
         categoryNames: ['Ebooks', 'Audio Books'],
+        stockPosition: getStockPosition(),
     };
 }
 
