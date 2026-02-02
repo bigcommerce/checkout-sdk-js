@@ -233,6 +233,31 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         };
     }
 
+    private prepareAdditionalActionPaymentData(
+        payment: OrderPaymentRequestBody,
+        nonce: string,
+    ): PaymentInstrument & PaymentInstrumentMeta {
+        const { paymentData } = payment;
+        const commonPaymentData = { deviceSessionId: this.deviceSessionId, nonce };
+
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
+            isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        if (
+            this.isSubmittingWithStoredCard(payment) &&
+            (shouldSaveInstrument || shouldSetAsDefaultInstrument)
+        ) {
+            return {
+                ...paymentData,
+                ...commonPaymentData,
+            };
+        }
+
+        return {
+            ...commonPaymentData,
+        };
+    }
+
     private async verifyCardWithHostedForm(
         billingAddress: Address,
         orderAmount: number,
@@ -276,12 +301,11 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 orderAmount,
             );
 
+            const newPaymentData = this.prepareAdditionalActionPaymentData(payment, nonce);
+
             await this.paymentIntegrationService.submitPayment({
                 ...payment,
-                paymentData: {
-                    deviceSessionId: this.deviceSessionId,
-                    nonce,
-                },
+                paymentData: newPaymentData,
             });
         } catch (error) {
             return this.handleError(error);
