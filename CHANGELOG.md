@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.860.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.860.0...v1.860.1) (2026-02-02)
+
+
+### Bug Fixes
+
+* **checkout:** PAYPAL-6134 [Stored Cards][Braintree] - Unable to change the default saved card from the checkout ([2c8c0e8](https://github.com/bigcommerce/checkout-sdk-js/commit/2c8c0e8642323ecfdeaf1d5b0e2e652b9f78ce5d))
+
 ## [1.860.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.859.0...v1.860.0) (2026-02-02)
 
 

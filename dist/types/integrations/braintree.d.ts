@@ -144,6 +144,7 @@ declare class BraintreeCreditCardPaymentStrategy implements PaymentStrategy {
     private handleError;
     private preparePaymentData;
     private prepareHostedPaymentData;
+    private prepareAdditionalActionPaymentData;
     private verifyCardWithHostedForm;
     private processAdditionalAction;
     private isHostedPaymentFormEnabled;
