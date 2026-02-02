@@ -8,6 +8,7 @@ export {
     LineItem,
     LineItemCategory,
     PhysicalItem,
+    StockPosition,
 } from './line-item';
 export { default as LineItemMap } from './line-item-map';
 

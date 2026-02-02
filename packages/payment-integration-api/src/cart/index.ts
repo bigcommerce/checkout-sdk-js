@@ -9,5 +9,6 @@ export {
     CustomItem,
     LineItemCategory,
     LineItem,
+    StockPosition,
 } from './line-item';
 export { default as LineItemMap } from './line-item-map';
