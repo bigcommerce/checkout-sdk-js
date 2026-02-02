@@ -247,6 +247,11 @@ export type StripeEventType =
  */
 export type AddressOptions = Partial<Address>;
 
+export interface StripeAddressValues {
+    name?: string;
+    address?: AddressOptions & { country: string };
+}
+
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
  * https://stripe.com/docs/js/elements_object/create_payment_element
@@ -460,6 +465,25 @@ export interface StripeElements {
     fetchUpdates(): Promise<void>;
 }
 
+export interface StripeCheckoutSession {
+    loadActions(): Promise<StripeLoadActionsResult>;
+}
+
+export enum StripeLoadActionsResultType {
+    SUCCESS = 'success',
+    ERROR = 'error',
+}
+
+export interface StripeLoadActionsResult {
+    type: StripeLoadActionsResultType;
+    error?: { message: string };
+    actions?: StripeCheckoutSessionActions;
+}
+
+export interface StripeCheckoutSessionActions {
+    updateEmail(email: string): Promise<void>;
+}
+
 /**
  * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
  */
@@ -514,6 +538,33 @@ export interface StripeElementsOptions {
     paymentMethodTypes?: string[];
 }
 
+export interface StripeInitCheckoutOptions {
+    clientSecret: string;
+    elementsOptions?: StripeCheckoutSessionElementOptions;
+    adaptivePricing?: {
+        allowed: boolean;
+    };
+    defaultValues?: StripeCheckoutSessionDefaultValues;
+    wallets?: any;
+}
+
+export interface StripeCheckoutSessionElementOptions {
+    appearance?: StripeAppearanceOptions;
+    loader?: StripeStringConstants;
+    fonts?: StripeCustomFont[];
+    savedPaymentMethod?: {
+        enableRedisplay?: StripeStringConstants;
+        enableSave?: StripeStringConstants;
+    };
+}
+
+export interface StripeCheckoutSessionDefaultValues {
+    billingAddress?: StripeAddressValues;
+    shippingAddress?: StripeAddressValues;
+    email?: string;
+    phoneNumber?: string;
+}
+
 export interface StripeUpdateElementsOptions {
     /**
      * A [locale](https://stripe.com/docs/js/appendix/supported_locales) to display placeholders and
@@ -555,6 +606,8 @@ export interface StripeClient {
      * Create an `Elements` instance, which manages a group of elements.
      */
     elements(options: StripeElementsOptions): StripeElements;
+
+    initCheckout(options: StripeInitCheckoutOptions): Promise<StripeCheckoutSession>;
 }
 
 export interface StripeResult {
@@ -565,6 +618,7 @@ export interface StripeResult {
 export interface StripeHostWindow extends Window {
     bcStripeClient?: StripeClient;
     bcStripeElements?: StripeElements;
+    bcStripeCheckoutSession?: StripeCheckoutSession;
     Stripe?<T = StripeClient>(
         stripePublishableKey: string,
         options?: StripeConfigurationOptions,

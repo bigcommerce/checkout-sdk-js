@@ -6,14 +6,15 @@ import {
     StripeClient,
     StripeElementsOptions,
     StripeHostWindow,
+    StripeInitCheckoutOptions,
     StripeInitializationData,
     StripeJsVersion,
 } from './stripe';
 import StripeScriptLoader from './stripe-script-loader';
-import { getStripeJsMock } from './stripe.mock';
+import { getStripeCheckoutSessionMock, getStripeJsMock } from './stripe.mock';
 
 describe('StripePayScriptLoader', () => {
-    let stripeUPEScriptLoader: StripeScriptLoader;
+    let stripeScriptLoader: StripeScriptLoader;
     let scriptLoader: ScriptLoader;
     let mockWindow: StripeHostWindow;
 
@@ -28,7 +29,7 @@ describe('StripePayScriptLoader', () => {
     beforeEach(() => {
         mockWindow = {} as StripeHostWindow;
         scriptLoader = {} as ScriptLoader;
-        stripeUPEScriptLoader = new StripeScriptLoader(scriptLoader, mockWindow);
+        stripeScriptLoader = new StripeScriptLoader(scriptLoader, mockWindow);
     });
 
     describe('#load()', () => {
@@ -44,8 +45,8 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('loads a single instance of StripeUPEClient', async () => {
-            await stripeUPEScriptLoader.getStripeClient(defaultInitializationData);
-            await stripeUPEScriptLoader.getStripeClient(defaultInitializationData);
+            await stripeScriptLoader.getStripeClient(defaultInitializationData);
+            await stripeScriptLoader.getStripeClient(defaultInitializationData);
 
             expect(scriptLoader.loadScript).toHaveBeenNthCalledWith(1, 'https://js.stripe.com/v3/');
         });
@@ -53,7 +54,7 @@ describe('StripePayScriptLoader', () => {
         it('loads a custom stripe js version', async () => {
             const stripeJsVersion = 'custom_stripe-js-version';
 
-            await stripeUPEScriptLoader.getStripeClient(
+            await stripeScriptLoader.getStripeClient(
                 defaultInitializationData,
                 'en',
                 stripeJsVersion,
@@ -65,12 +66,12 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('loads a single instance of StripeElements', async () => {
-            const getStripeClient = await stripeUPEScriptLoader.getStripeClient(
+            const getStripeClient = await stripeScriptLoader.getStripeClient(
                 defaultInitializationData,
             );
 
-            stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
-            stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
+            stripeScriptLoader.getElements(getStripeClient, elementsOptions);
+            stripeScriptLoader.getElements(getStripeClient, elementsOptions);
 
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
@@ -82,7 +83,7 @@ describe('StripePayScriptLoader', () => {
                 return Promise.resolve();
             });
 
-            const result = stripeUPEScriptLoader.getStripeClient(defaultInitializationData);
+            const result = stripeScriptLoader.getStripeClient(defaultInitializationData);
 
             await expect(result).rejects.toBeInstanceOf(StandardError);
         });
@@ -100,7 +101,7 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('get stripe client with all initialization data', async () => {
-            await stripeUPEScriptLoader.getStripeClient(
+            await stripeScriptLoader.getStripeClient(
                 defaultInitializationData,
                 'en',
                 StripeJsVersion.V3,
@@ -117,7 +118,7 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('get stripe client without optional parameters in initialization data', async () => {
-            await stripeUPEScriptLoader.getStripeClient({
+            await stripeScriptLoader.getStripeClient({
                 stripePublishableKey: defaultInitializationData.stripePublishableKey,
             } as StripeInitializationData);
 
@@ -160,12 +161,12 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('updates stripe elements', async () => {
-            const getStripeClient = await stripeUPEScriptLoader.getStripeClient(
+            const getStripeClient = await stripeScriptLoader.getStripeClient(
                 defaultInitializationData,
             );
 
-            await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
-            await stripeUPEScriptLoader.updateStripeElements(elementsOptions);
+            await stripeScriptLoader.getElements(getStripeClient, elementsOptions);
+            await stripeScriptLoader.updateStripeElements(elementsOptions);
 
             expect(updateMock).toHaveBeenCalledTimes(1);
             expect(updateMock).toHaveBeenCalledWith({ clientSecret: 'myToken' });
@@ -173,10 +174,35 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('does not update stripe elements if elements does not exist', async () => {
-            await stripeUPEScriptLoader.updateStripeElements(elementsOptions);
+            await stripeScriptLoader.updateStripeElements(elementsOptions);
 
             expect(updateMock).not.toHaveBeenCalled();
             expect(fetchUpdatesMock).not.toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('#getCheckoutSession', () => {
+        const stripeUPEJsDefaultMock = getStripeJsMock();
+        let initCheckoutMock: jest.Mock;
+        let stripeJsMock: StripeClient;
+        const checkoutSessionOptions: StripeInitCheckoutOptions = { clientSecret: 'myToken' };
+
+        beforeEach(() => {
+            const checkoutSessionMock = getStripeCheckoutSessionMock();
+
+            initCheckoutMock = jest.fn(() => Promise.resolve(checkoutSessionMock));
+            stripeJsMock = {
+                ...stripeUPEJsDefaultMock,
+                initCheckout: initCheckoutMock,
+            };
+        });
+
+        it('initializes a checkout session', async () => {
+            await stripeScriptLoader.getCheckoutSession(stripeJsMock, checkoutSessionOptions);
+            await stripeScriptLoader.getCheckoutSession(stripeJsMock, checkoutSessionOptions);
+
+            expect(initCheckoutMock).toHaveBeenCalledTimes(1);
+            expect(initCheckoutMock).toHaveBeenCalledWith({ clientSecret: 'myToken' });
         });
     });
 });

@@ -3,10 +3,12 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    StripeCheckoutSession,
     StripeClient,
     StripeElements,
     StripeElementsOptions,
     StripeHostWindow,
+    StripeInitCheckoutOptions,
     StripeInitializationData,
     StripeJsVersion,
 } from './stripe';
@@ -70,6 +72,21 @@ export default class StripeScriptLoader {
 
         stripeElements.update(options);
         await stripeElements.fetchUpdates();
+    }
+
+    async getCheckoutSession(
+        stripeClient: StripeClient,
+        options: StripeInitCheckoutOptions,
+    ): Promise<StripeCheckoutSession> {
+        let stripeCheckoutSession = this.stripeWindow.bcStripeCheckoutSession;
+
+        if (!stripeCheckoutSession) {
+            stripeCheckoutSession = await stripeClient.initCheckout(options);
+
+            Object.assign(this.stripeWindow, { bcStripeCheckoutSession: stripeCheckoutSession });
+        }
+
+        return stripeCheckoutSession;
     }
 
     private async load(stripeJsVersion?: string) {
