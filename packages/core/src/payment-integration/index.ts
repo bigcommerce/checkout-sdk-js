@@ -1,2 +1,2 @@
 export { default as createPaymentIntegrationService } from './create-payment-integration-service';
-export { registerIntegrations } from './register-integrations';
+export { registerIntegrations, matchExistingIntegrations } from './register-integrations';
