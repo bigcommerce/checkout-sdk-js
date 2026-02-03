@@ -5,10 +5,12 @@ import {
     CustomerStrategy as CustomerStrategyV2,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { InternalCheckoutSelectors } from '../checkout';
+import { ErrorLogger } from '../common/error';
 import { Registry } from '../common/registry';
-import { registerIntegrations } from '../payment-integration';
+import { matchExistingIntegrations, registerIntegrations } from '../payment-integration';
 
 import CustomerCredentials from './customer-credentials';
 import {
@@ -33,6 +35,7 @@ export default class CustomerStrategyActionCreator {
         private _strategyRegistry: Registry<CustomerStrategy>,
         private _strategyRegistryV2: CustomerStrategyRegistryV2,
         private _paymentIntegrationService: PaymentIntegrationService,
+        private _errorLogger: ErrorLogger,
     ) {}
 
     signIn(
@@ -145,11 +148,32 @@ export default class CustomerStrategyActionCreator {
                 const methodId = options && options.methodId;
                 const meta = { methodId };
 
-                registerIntegrations(
-                    this._strategyRegistryV2,
-                    options?.integrations ?? [],
-                    this._paymentIntegrationService,
+                const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
+                const experimentEnabled = isExperimentEnabled(
+                    features,
+                    'CHECKOUT-9450.lazy_load_payment_strategies',
+                    false,
                 );
+
+                if (experimentEnabled) {
+                    const resolveId = { id: methodId || '' };
+                    const mismatchError = matchExistingIntegrations(
+                        this._strategyRegistryV2,
+                        options?.integrations ?? [],
+                        resolveId,
+                        this._paymentIntegrationService,
+                    );
+
+                    if (mismatchError) {
+                        this._errorLogger.log(mismatchError);
+                    }
+
+                    registerIntegrations(
+                        this._strategyRegistryV2,
+                        options?.integrations ?? [],
+                        this._paymentIntegrationService,
+                    );
+                }
 
                 if (methodId && state.customerStrategies.isInitialized(methodId)) {
                     return observer.complete();
