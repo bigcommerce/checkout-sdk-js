@@ -413,6 +413,7 @@
 - [StepStyles](interfaces/StepStyles.md)
 - [StepTracker](interfaces/StepTracker.md)
 - [StepTrackerConfig](interfaces/StepTrackerConfig.md)
+- [StockPosition](interfaces/StockPosition.md)
 - [StoreConfig](interfaces/StoreConfig.md)
 - [StoreCreditSelector](interfaces/StoreCreditSelector.md)
 - [StoreCurrency](interfaces/StoreCurrency.md)

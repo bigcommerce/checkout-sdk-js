@@ -38,6 +38,7 @@
 - [salePrice](PhysicalItem.md#saleprice)
 - [sku](PhysicalItem.md#sku)
 - [socialMedia](PhysicalItem.md#socialmedia)
+- [stockPosition](PhysicalItem.md#stockposition)
 - [url](PhysicalItem.md#url)
 - [variantId](PhysicalItem.md#variantid)
 
@@ -300,6 +301,16 @@ ___
 #### Inherited from
 
 [LineItem](LineItem.md).[socialMedia](LineItem.md#socialmedia)
+
+___
+
+### stockPosition
+
+• `Optional` **stockPosition**: [`StockPosition`](StockPosition.md)
+
+#### Inherited from
+
+[LineItem](LineItem.md).[stockPosition](LineItem.md#stockposition)
 
 ___
 

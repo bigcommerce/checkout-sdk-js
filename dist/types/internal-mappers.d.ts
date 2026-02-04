@@ -589,6 +589,7 @@ declare interface LineItem {
     options?: LineItemOption[];
     addedByPromotion: boolean;
     parentId?: string | null;
+    stockPosition?: StockPosition;
 }
 
 declare interface LineItemCategory {
@@ -753,6 +754,13 @@ declare interface ShippingOption {
     cost: number;
     transitTime: string;
     type: string;
+}
+
+declare interface StockPosition {
+    quantityOnHand: number;
+    quantityBackordered: number;
+    quantityOutOfStock: number;
+    backorderMessage: string | null;
 }
 
 declare interface Tax {

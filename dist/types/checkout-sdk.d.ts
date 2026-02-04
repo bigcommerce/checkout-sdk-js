@@ -6392,6 +6392,7 @@ declare interface LineItem {
     options?: LineItemOption[];
     addedByPromotion: boolean;
     parentId?: string | null;
+    stockPosition?: StockPosition;
 }
 
 declare interface LineItemCategory {
@@ -8140,6 +8141,13 @@ declare interface StepTracker {
 
 declare interface StepTrackerConfig {
     checkoutSteps?: AnalyticStepType[];
+}
+
+declare interface StockPosition {
+    quantityOnHand: number;
+    quantityBackordered: number;
+    quantityOutOfStock: number;
+    backorderMessage: string | null;
 }
 
 declare interface StoreConfig {

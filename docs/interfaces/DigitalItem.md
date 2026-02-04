@@ -39,6 +39,7 @@
 - [salePrice](DigitalItem.md#saleprice)
 - [sku](DigitalItem.md#sku)
 - [socialMedia](DigitalItem.md#socialmedia)
+- [stockPosition](DigitalItem.md#stockposition)
 - [url](DigitalItem.md#url)
 - [variantId](DigitalItem.md#variantid)
 
@@ -299,6 +300,16 @@ ___
 #### Inherited from
 
 [LineItem](LineItem.md).[socialMedia](LineItem.md#socialmedia)
+
+___
+
+### stockPosition
+
+• `Optional` **stockPosition**: [`StockPosition`](StockPosition.md)
+
+#### Inherited from
+
+[LineItem](LineItem.md).[stockPosition](LineItem.md#stockposition)
 
 ___
 

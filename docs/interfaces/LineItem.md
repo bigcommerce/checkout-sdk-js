@@ -38,6 +38,7 @@
 - [salePrice](LineItem.md#saleprice)
 - [sku](LineItem.md#sku)
 - [socialMedia](LineItem.md#socialmedia)
+- [stockPosition](LineItem.md#stockposition)
 - [url](LineItem.md#url)
 - [variantId](LineItem.md#variantid)
 
@@ -184,6 +185,12 @@ ___
 ### socialMedia
 
 • `Optional` **socialMedia**: [`LineItemSocialData`](LineItemSocialData.md)[]
+
+___
+
+### stockPosition
+
+• `Optional` **stockPosition**: [`StockPosition`](StockPosition.md)
 
 ___
 
