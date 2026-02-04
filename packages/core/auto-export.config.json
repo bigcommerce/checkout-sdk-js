@@ -17,6 +17,11 @@
             "outputPath": "packages/core/src/generated/checkout-button-strategies.ts",
             "packageOutputPath": "packages/core/src/generated/integrations/<moduleName>/index.ts",
             "memberPattern": "^create.+ButtonStrategy$"
+        },
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/wallet-button-strategies.ts",
+            "memberPattern": "^create.+WalletStrategy$"
         }
     ],
     "apiExtractorConfig": {

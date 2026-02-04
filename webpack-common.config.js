@@ -15,6 +15,7 @@ const hostedFormV2SrcPath = path.join(__dirname, 'packages/hosted-form-v2/src');
 const libraryEntries = {
     'checkout-sdk': path.join(coreSrcPath, 'bundles', 'checkout-sdk.ts'),
     'checkout-button': path.join(coreSrcPath, 'bundles', 'checkout-button.ts'),
+    'wallet-button': path.join(coreSrcPath, 'bundles', 'wallet-button.ts'),
     'embedded-checkout': path.join(coreSrcPath, 'bundles', 'embedded-checkout.ts'),
     extension: path.join(coreSrcPath, 'bundles', 'extension.ts'),
     'hosted-form': path.join(coreSrcPath, 'bundles', 'hosted-form.ts'),
