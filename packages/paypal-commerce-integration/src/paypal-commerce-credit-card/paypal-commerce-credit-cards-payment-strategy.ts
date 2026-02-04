@@ -39,10 +39,10 @@ import { isPayPalCommerceAcceleratedCheckoutCustomer } from '@bigcommerce/checko
 import {
     PayPalFastlaneUtils,
     PayPalInitializationData,
+    PayPalIntegrationService,
     PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     LiabilityShiftEnum,
     PayPalCommerceCardFields,
@@ -74,7 +74,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
         private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private paypalFastlaneUtils: PayPalFastlaneUtils,
     ) {}
@@ -107,7 +107,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             isCreditCardVaultedFormFields(form.fields) && !this.hasUndefinedValues();
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, undefined, true, true);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId, undefined, true, true);
 
         if (this.isCreditCardForm || this.isCreditCardVaultedForm) {
             await this.initializeFields(form, onCreditCardFieldsRenderingError);
@@ -135,7 +135,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             await this.submitHostedForm();
         } else {
             // This condition is triggered when we pay with vaulted instrument and shipping address is truste
-            const { orderId } = await this.paypalCommerceIntegrationService.createOrderCardFields(
+            const { orderId } = await this.paypalIntegrationService.createOrderCardFields(
                 'paypalcommercecreditcardscheckout',
                 this.getInstrumentParams(),
             );
@@ -220,7 +220,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     ): Promise<void> {
         const { fields, styles } = formOptions;
 
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const executeCallback = this.getExecuteCallback(fields);
 
         const cardFieldsConfig: PayPalCommerceCardFieldsConfig = {
@@ -294,7 +294,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         return {
             createVaultSetupToken: async () => {
                 const { setupToken } =
-                    (await this.paypalCommerceIntegrationService.createOrderCardFields(
+                    (await this.paypalIntegrationService.createOrderCardFields(
                         'paypalcommercecreditcardscheckout',
                         {
                             ...this.getInstrumentParams(),
@@ -311,7 +311,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         return {
             createOrder: async () => {
                 const { orderId } =
-                    (await this.paypalCommerceIntegrationService.createOrderCardFields(
+                    (await this.paypalIntegrationService.createOrderCardFields(
                         'paypalcommercecreditcardscheckout',
                         this.getInstrumentParams(),
                     )) || {};

@@ -23,23 +23,18 @@ import {
     createPayPalFastlaneUtils,
     createPayPalSdkScriptLoader,
     getPayPalFastlaneSdk,
+    getPayPalIntegrationServiceMock,
+    getPayPalPaymentMethod,
+    getPayPalSDKMock,
+    LiabilityShiftEnum,
+    PaypalCardFieldsConfig,
     PayPalFastlaneSdk,
     PayPalFastlaneUtils,
+    PayPalHostWindow,
+    PayPalIntegrationService,
+    PayPalSDK,
     PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
-
-import {
-    getPayPalCommerceIntegrationServiceMock,
-    getPayPalCommercePaymentMethod,
-    getPayPalSDKMock,
-} from '../mocks';
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    LiabilityShiftEnum,
-    PayPalCommerceCardFieldsConfig,
-    PayPalCommerceHostWindow,
-    PayPalSDK,
-} from '../paypal-commerce-types';
 
 import PayPalCommerceCreditCardsPaymentInitializeOptions, {
     WithPayPalCommerceCreditCardsPaymentInitializeOptions,
@@ -52,7 +47,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     let strategy: PayPalCommerceCreditCardsPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
-    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
+    let paypalCommerceIntegrationService: PayPalIntegrationService;
     let paypalSdkScriptLoader: PayPalSdkScriptLoader;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let payPalFastlaneUtils: PayPalFastlaneUtils;
@@ -169,10 +164,10 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         cart = getCart();
         billingAddress = getBillingAddress();
         eventEmitter = new EventEmitter();
-        paymentMethod = { ...getPayPalCommercePaymentMethod(), id: methodId };
+        paymentMethod = { ...getPayPalPaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
-        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
+        paypalCommerceIntegrationService = getPayPalIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         paypalSdkScriptLoader = createPayPalSdkScriptLoader();
         payPalFastlaneUtils = createPayPalFastlaneUtils();
@@ -208,7 +203,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         });
 
         jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
-            (options: PayPalCommerceCardFieldsConfig) => {
+            (options: PaypalCardFieldsConfig) => {
                 eventEmitter.on('onApprove', () => {
                     if (options.onApprove) {
                         options.onApprove({ orderID: hostedFormOrderId });
@@ -228,7 +223,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     afterEach(() => {
         jest.clearAllMocks();
 
-        delete (window as PayPalCommerceHostWindow).paypal;
+        delete (window as PayPalHostWindow).paypal;
 
         if (document.getElementById(paypalCardNameFieldContainerId)) {
             document.body.removeChild(paypalCardNameFieldElement);
@@ -477,7 +472,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
         it('does not submit order and payment if 3ds failed', async () => {
             jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
-                (options: PayPalCommerceCardFieldsConfig) => {
+                (options: PaypalCardFieldsConfig) => {
                     eventEmitter.on('onApprove', () => {
                         if (options.onApprove) {
                             options.onApprove({
@@ -502,7 +497,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
         it('submits payment with vaulted(stored) instrument', async () => {
             jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
-                (options: PayPalCommerceCardFieldsConfig) => {
+                (options: PaypalCardFieldsConfig) => {
                     eventEmitter.on('onApprove', () => {
                         if (options.onApprove) {
                             options.onApprove({
