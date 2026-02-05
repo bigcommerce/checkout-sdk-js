@@ -162,6 +162,6 @@ export interface InventorySettings {
     showBackorderMessage: boolean;
     showQuantityOnHand: boolean;
     showBackorderAvailabilityPrompt: boolean;
-    backorderAvailabilityPrompt: string;
+    backorderAvailabilityPrompt: string | null;
     shouldDisplayBackorderMessagesOnStorefront: boolean;
 }
