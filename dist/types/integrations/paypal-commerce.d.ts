@@ -660,7 +660,7 @@ declare interface PayPalCommerceCreditCardsPaymentInitializeOptions {
 
 declare class PayPalCommerceCreditCardsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
+    private paypalIntegrationService;
     private paypalSdkScriptLoader;
     private paypalFastlaneUtils;
     private executionPaymentData?;
@@ -674,7 +674,7 @@ declare class PayPalCommerceCreditCardsPaymentStrategy implements PaymentStrateg
     private hostedFormOptions?;
     private returnedOrderId?;
     private returnedVaultedToken?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
     initialize(options: PaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
