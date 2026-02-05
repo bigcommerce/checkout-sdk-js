@@ -17,25 +17,20 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalCommerceSdk,
-    PayPalCommerceSdk,
-    PayPalMessagesSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
-
-import {
+    createPayPalSdkScriptLoader,
     getBillingAddressFromOrderDetails,
-    getPayPalCommerceIntegrationServiceMock,
-    getPayPalCommerceOrderDetails,
-    getPayPalCommercePaymentMethod,
+    getPayPalIntegrationServiceMock,
+    getPayPalOrderDetails,
+    getPayPalPaymentMethod,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
-} from '../mocks';
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceHostWindow,
+    PayPalButtonsOptions,
+    PayPalHostWindow,
+    PayPalIntegrationService,
+    PayPalMessagesSdk,
     PayPalSDK,
-} from '../paypal-commerce-types';
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceCreditButtonInitializeOptions from './paypal-commerce-credit-button-initialize-options';
 import PayPalCommerceCreditButtonStrategy from './paypal-commerce-credit-button-strategy';
@@ -49,9 +44,9 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
     let paypalMessageElement: HTMLDivElement;
-    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
+    let paypalCommerceIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
-    let paypalCommerceSdk: PayPalCommerceSdk;
+    let paypalCommerceSdk: PayPalSdkScriptLoader;
     let payPalMessagesSdk: PayPalMessagesSdk;
 
     const defaultMethodId = 'paypalcommercecredit';
@@ -125,11 +120,11 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             Messages: jest.fn(),
         };
 
-        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
-        paymentMethod = getPayPalCommercePaymentMethod();
+        paypalCommerceIntegrationService = getPayPalIntegrationServiceMock();
+        paymentMethod = getPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalCommerceSdk = createPayPalCommerceSdk();
+        paypalCommerceSdk = createPayPalSdkScriptLoader();
 
         strategy = new PayPalCommerceCreditButtonStrategy(
             paymentIntegrationService,
@@ -200,96 +195,94 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             },
         });
 
-        jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-            (options: PayPalCommerceButtonsOptions) => {
-                eventEmitter.on('createOrder', () => {
-                    if (options.createOrder) {
-                        options.createOrder();
-                    }
-                });
+        jest.spyOn(paypalSdk, 'Buttons').mockImplementation((options: PayPalButtonsOptions) => {
+            eventEmitter.on('createOrder', () => {
+                if (options.createOrder) {
+                    options.createOrder();
+                }
+            });
 
-                eventEmitter.on(
-                    'onClick',
-                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                    async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
-                        try {
-                            if (options.onClick) {
-                                await options.onClick(
-                                    { fundingSource: 'paypal' },
-                                    {
-                                        reject: jest.fn(),
-                                        resolve: jest.fn(),
-                                    },
-                                );
+            eventEmitter.on(
+                'onClick',
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
+                    try {
+                        if (options.onClick) {
+                            await options.onClick(
+                                { fundingSource: 'paypal' },
+                                {
+                                    reject: jest.fn(),
+                                    resolve: jest.fn(),
+                                },
+                            );
 
-                                if (
-                                    jestSuccessExpectationsCallback &&
-                                    typeof jestSuccessExpectationsCallback === 'function'
-                                ) {
-                                    jestSuccessExpectationsCallback();
-                                }
-                            }
-                        } catch (error) {
                             if (
-                                jestFailureExpectationsCallback &&
-                                typeof jestFailureExpectationsCallback === 'function'
+                                jestSuccessExpectationsCallback &&
+                                typeof jestSuccessExpectationsCallback === 'function'
                             ) {
-                                jestFailureExpectationsCallback(error);
+                                jestSuccessExpectationsCallback();
                             }
                         }
-                    },
-                );
+                    } catch (error) {
+                        if (
+                            jestFailureExpectationsCallback &&
+                            typeof jestFailureExpectationsCallback === 'function'
+                        ) {
+                            jestFailureExpectationsCallback(error);
+                        }
+                    }
+                },
+            );
 
-                eventEmitter.on('onApprove', () => {
-                    if (options.onApprove) {
-                        options.onApprove(
-                            { orderID: paypalOrderId },
-                            {
-                                order: {
-                                    get: jest.fn(),
-                                },
+            eventEmitter.on('onApprove', () => {
+                if (options.onApprove) {
+                    options.onApprove(
+                        { orderID: paypalOrderId },
+                        {
+                            order: {
+                                get: jest.fn(),
                             },
-                        );
-                    }
-                });
+                        },
+                    );
+                }
+            });
 
-                eventEmitter.on('onCancel', () => {
-                    if (options.onCancel) {
-                        options.onCancel();
-                    }
-                });
+            eventEmitter.on('onCancel', () => {
+                if (options.onCancel) {
+                    options.onCancel();
+                }
+            });
 
-                eventEmitter.on('onShippingAddressChange', () => {
-                    if (options.onShippingAddressChange) {
-                        options.onShippingAddressChange({
-                            orderId: paypalOrderId,
-                            shippingAddress: paypalShippingAddressPayloadMock,
-                        });
-                    }
-                });
+            eventEmitter.on('onShippingAddressChange', () => {
+                if (options.onShippingAddressChange) {
+                    options.onShippingAddressChange({
+                        orderId: paypalOrderId,
+                        shippingAddress: paypalShippingAddressPayloadMock,
+                    });
+                }
+            });
 
-                eventEmitter.on('onShippingOptionsChange', () => {
-                    if (options.onShippingOptionsChange) {
-                        options.onShippingOptionsChange({
-                            orderId: paypalOrderId,
-                            selectedShippingOption: paypalSelectedShippingOptionPayloadMock,
-                        });
-                    }
-                });
+            eventEmitter.on('onShippingOptionsChange', () => {
+                if (options.onShippingOptionsChange) {
+                    options.onShippingOptionsChange({
+                        orderId: paypalOrderId,
+                        selectedShippingOption: paypalSelectedShippingOptionPayloadMock,
+                    });
+                }
+            });
 
-                return {
-                    isEligible: jest.fn(() => true),
-                    render: jest.fn(),
-                    close: jest.fn(),
-                };
-            },
-        );
+            return {
+                isEligible: jest.fn(() => true),
+                render: jest.fn(),
+                close: jest.fn(),
+            };
+        });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
 
-        delete (window as PayPalCommerceHostWindow).paypal;
+        delete (window as PayPalHostWindow).paypal;
 
         if (document.getElementById(defaultButtonContainerId)) {
             document.body.removeChild(paypalButtonElement);
@@ -419,17 +412,15 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         });
 
         it('initializes PayPal Credit button to render if PayPal PayLater is not eligible', async () => {
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                (options: PayPalCommerceButtonsOptions) => {
-                    return {
-                        render: jest.fn(),
-                        isEligible: jest.fn(() => {
-                            return options.fundingSource === paypalSdk.FUNDING.CREDIT;
-                        }),
-                        close: jest.fn(),
-                    };
-                },
-            );
+            jest.spyOn(paypalSdk, 'Buttons').mockImplementation((options: PayPalButtonsOptions) => {
+                return {
+                    render: jest.fn(),
+                    isEligible: jest.fn(() => {
+                        return options.fundingSource === paypalSdk.FUNDING.CREDIT;
+                    }),
+                    close: jest.fn(),
+                };
+            });
 
             await strategy.initialize(initializationOptions);
 
@@ -468,6 +459,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                     },
                 },
             });
+
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
@@ -620,11 +612,11 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         });
 
         describe('shipping options feature flow', () => {
-            const paypalOrderDetails = getPayPalCommerceOrderDetails();
+            const paypalOrderDetails = getPayPalOrderDetails();
 
             beforeEach(() => {
                 jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                    (options: PayPalCommerceButtonsOptions) => {
+                    (options: PayPalButtonsOptions) => {
                         eventEmitter.on('onApprove', () => {
                             if (options.onApprove) {
                                 options.onApprove(
@@ -664,7 +656,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                 const getOrderActionMock = jest.fn();
 
                 jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                    (options: PayPalCommerceButtonsOptions) => {
+                    (options: PayPalButtonsOptions) => {
                         eventEmitter.on('onApprove', () => {
                             if (options.onApprove) {
                                 options.onApprove(
@@ -704,7 +696,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
 
                 expect(
                     paypalCommerceIntegrationService.getBillingAddressFromOrderDetails,
-                ).toHaveBeenCalledWith(getPayPalCommerceOrderDetails());
+                ).toHaveBeenCalledWith(getPayPalOrderDetails());
                 expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
                     getBillingAddressFromOrderDetails(),
                 );
@@ -719,7 +711,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
 
                 expect(
                     paypalCommerceIntegrationService.getShippingAddressFromOrderDetails,
-                ).toHaveBeenCalledWith(getPayPalCommerceOrderDetails());
+                ).toHaveBeenCalledWith(getPayPalOrderDetails());
                 expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
                     getShippingAddressFromOrderDetails(),
                 );
