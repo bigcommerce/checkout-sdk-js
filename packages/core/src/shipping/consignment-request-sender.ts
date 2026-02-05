@@ -15,7 +15,9 @@ import { ConsignmentsRequestBody, ConsignmentUpdateRequestBody } from './consign
 const DEFAULT_INCLUDES = [
     'consignments.availableShippingOptions',
     'cart.lineItems.physicalItems.options',
+    'cart.lineItems.physicalItems.stockPosition',
     'cart.lineItems.digitalItems.options',
+    'cart.lineItems.digitalItems.stockPosition',
     'customer',
     'promotions.banners',
 ];
