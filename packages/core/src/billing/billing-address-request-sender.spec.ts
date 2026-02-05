@@ -20,7 +20,9 @@ describe('BillingAddressRequestSender', () => {
     let response: Response<Checkout>;
     const include = [
         'cart.lineItems.physicalItems.options',
+        'cart.lineItems.physicalItems.stockPosition',
         'cart.lineItems.digitalItems.options',
+        'cart.lineItems.digitalItems.stockPosition',
         'customer',
         'promotions.banners',
     ].join(',');

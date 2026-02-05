@@ -10,7 +10,9 @@ import { BillingAddressUpdateRequestBody } from './billing-address';
 const DEFAULT_PARAMS = {
     include: [
         'cart.lineItems.physicalItems.options',
+        'cart.lineItems.physicalItems.stockPosition',
         'cart.lineItems.digitalItems.options',
+        'cart.lineItems.digitalItems.stockPosition',
         'customer',
         'promotions.banners',
     ].join(','),
