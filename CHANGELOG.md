@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.862.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.861.1...v1.862.0) (2026-02-05)
+
+
+### Features
+
+* **checkout:** add stock position in includes of requests of some missing endpoints ([#3138](https://github.com/bigcommerce/checkout-sdk-js/issues/3138)) ([2b38b35](https://github.com/bigcommerce/checkout-sdk-js/commit/2b38b3587177ddbb4f8095c7eacd4fd3e43a4aa4))
+
 ### [1.861.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.861.0...v1.861.1) (2026-02-04)
 
 ## [1.861.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.860.1...v1.861.0) (2026-02-03)
