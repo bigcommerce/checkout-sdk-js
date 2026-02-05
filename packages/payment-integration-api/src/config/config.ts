@@ -33,7 +33,7 @@ export interface StoreConfig {
     imageDirectory: string;
     isAngularDebuggingEnabled: boolean;
     shopperCurrency: ShopperCurrency;
-    inventorySettings: InventorySettings;
+    inventorySettings?: InventorySettings;
 }
 
 export interface ShopperCurrency extends StoreCurrency {
