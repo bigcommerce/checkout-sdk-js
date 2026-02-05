@@ -141,6 +141,14 @@ export default function getConfig(): Config {
                 exchangeRate: 1,
                 isTransactional: true,
             },
+            inventorySettings: {
+                showQuantityOnBackorder: false,
+                showBackorderMessage: false,
+                showQuantityOnHand: false,
+                showBackorderAvailabilityPrompt: false,
+                backorderAvailabilityPrompt: '',
+                shouldDisplayBackorderMessagesOnStorefront: false,
+            },
         },
     };
 }

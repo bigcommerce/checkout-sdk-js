@@ -33,6 +33,7 @@ export interface StoreConfig {
     imageDirectory: string;
     isAngularDebuggingEnabled: boolean;
     shopperCurrency: ShopperCurrency;
+    inventorySettings?: InventorySettings;
 }
 
 export interface ShopperCurrency extends StoreCurrency {
@@ -154,4 +155,13 @@ export interface ContextConfig {
 
 export interface DisplaySettings {
     hidePriceFromGuests: boolean;
+}
+
+export interface InventorySettings {
+    showQuantityOnBackorder: boolean;
+    showBackorderMessage: boolean;
+    showQuantityOnHand: boolean;
+    showBackorderAvailabilityPrompt: boolean;
+    backorderAvailabilityPrompt: string | null;
+    shouldDisplayBackorderMessagesOnStorefront: boolean;
 }
