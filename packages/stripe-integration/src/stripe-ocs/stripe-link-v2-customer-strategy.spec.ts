@@ -471,6 +471,58 @@ describe('StripeLinkV2CustomerStrategy', () => {
             });
         });
 
+        it('resolve onShippingAddressChange with recommended shipping option', async () => {
+            jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+                ...paymentIntegrationService.getState(),
+                getConsignments: jest.fn().mockReturnValue([
+                    {
+                        availableShippingOptions: [
+                            {
+                                id: 1,
+                                description: 'description',
+                                cost: 1000,
+                            },
+                            {
+                                id: 2,
+                                description: 'description2',
+                                cost: 2000,
+                                isRecommended: true,
+                            },
+                        ],
+                        selectedShippingOption: undefined,
+                    },
+                ]),
+            });
+
+            await strategy.initialize(initialiseOptions);
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: 'London',
+                    country: 'UK',
+                    postal_code: '091-22',
+                    state: 'CA',
+                },
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(stripeEvent).toHaveBeenCalledWith({
+                shippingRates: [
+                    {
+                        amount: 200000,
+                        displayName: 'description2',
+                        id: 2,
+                    },
+                    {
+                        amount: 100000,
+                        displayName: 'description',
+                        id: 1,
+                    },
+                ],
+            });
+        });
+
         it('calls onShippingRateChange callback if event was triggered', async () => {
             await strategy.initialize(initialiseOptions);
 
