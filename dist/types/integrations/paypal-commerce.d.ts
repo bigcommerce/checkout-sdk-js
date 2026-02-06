@@ -554,9 +554,9 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
 
 declare class PayPalCommerceCreditButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
+    private paypalIntegrationService;
     private paypalCommerceSdk;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalCommerceSdk: PayPalCommerceSdk);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalCommerceSdk: PayPalSdkScriptLoader);
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
