@@ -7,6 +7,7 @@ import {
 import {
     StripeCheckoutSession,
     StripeClient,
+    StripeElement,
     StripeLoadActionsResultType,
     StripePaymentMethodType,
 } from './stripe';
@@ -53,17 +54,21 @@ export function getStripeMock(method = 'card'): PaymentMethod {
     };
 }
 
+export function getStripeElementMock(): StripeElement {
+    return {
+        mount: jest.fn(),
+        unmount: jest.fn(),
+        on: jest.fn((_, callback) => callback(StripeEventMock)),
+        update: jest.fn(),
+        destroy: jest.fn(),
+        collapse: jest.fn(),
+    };
+}
+
 export function getStripeJsMock(): StripeClient {
     return {
         elements: jest.fn(() => ({
-            create: jest.fn(() => ({
-                mount: jest.fn(),
-                unmount: jest.fn(),
-                on: jest.fn((_, callback) => callback(StripeEventMock)),
-                update: jest.fn(),
-                destroy: jest.fn(),
-                collapse: jest.fn(),
-            })),
+            create: jest.fn(() => getStripeElementMock()),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
@@ -71,23 +76,14 @@ export function getStripeJsMock(): StripeClient {
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
-        initCheckout: jest.fn(),
+        initCheckout: jest.fn(() => Promise.resolve(getStripeCheckoutSessionMock())),
     };
 }
 
 export function getFailingStripeJsMock(): StripeClient {
     return {
         elements: jest.fn(() => ({
-            create: jest.fn(() => ({
-                mount: jest.fn(() => {
-                    throw new Error();
-                }),
-                unmount: jest.fn(),
-                on: jest.fn((_, callback) => callback(StripeEventMock)),
-                update: jest.fn(),
-                destroy: jest.fn(),
-                collapse: jest.fn(),
-            })),
+            create: jest.fn(() => getStripeElementMock()),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
@@ -95,7 +91,7 @@ export function getFailingStripeJsMock(): StripeClient {
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
-        initCheckout: jest.fn(),
+        initCheckout: jest.fn(() => Promise.resolve(getStripeCheckoutSessionMock())),
     };
 }
 
@@ -181,5 +177,7 @@ export function getStripeCheckoutSessionMock(): StripeCheckoutSession {
                     updateEmail: jest.fn(),
                 },
             }),
+        createPaymentElement: jest.fn(() => getStripeElementMock()),
+        getPaymentElement: jest.fn().mockReturnValue(null),
     };
 }
