@@ -467,6 +467,8 @@ export interface StripeElements {
 
 export interface StripeCheckoutSession {
     loadActions(): Promise<StripeLoadActionsResult>;
+    createPaymentElement(options?: StripeElementsCreateOptions): StripeElement;
+    getPaymentElement(): StripeElement | null;
 }
 
 export enum StripeLoadActionsResultType {
