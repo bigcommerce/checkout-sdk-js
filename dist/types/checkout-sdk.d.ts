@@ -6253,6 +6253,15 @@ declare interface InternalOrderPayment {
     helpText?: string;
 }
 
+declare interface InventorySettings {
+    showQuantityOnBackorder: boolean;
+    showBackorderMessage: boolean;
+    showQuantityOnHand: boolean;
+    showBackorderAvailabilityPrompt: boolean;
+    backorderAvailabilityPrompt: string | null;
+    shouldDisplayBackorderMessagesOnStorefront: boolean;
+}
+
 declare interface Item {
     variantId: number;
     quantity: number;
@@ -8175,6 +8184,7 @@ declare interface StoreConfig {
     imageDirectory: string;
     isAngularDebuggingEnabled: boolean;
     shopperCurrency: ShopperCurrency;
+    inventorySettings?: InventorySettings;
 }
 
 declare interface StoreCreditSelector {

@@ -14,6 +14,7 @@
 - [formFields](StoreConfig.md#formfields)
 - [imageDirectory](StoreConfig.md#imagedirectory)
 - [inputDateFormat](StoreConfig.md#inputdateformat)
+- [inventorySettings](StoreConfig.md#inventorysettings)
 - [isAngularDebuggingEnabled](StoreConfig.md#isangulardebuggingenabled)
 - [links](StoreConfig.md#links)
 - [paymentSettings](StoreConfig.md#paymentsettings)
@@ -78,6 +79,12 @@ ___
 ### inputDateFormat
 
 • **inputDateFormat**: `string`
+
+___
+
+### inventorySettings
+
+• `Optional` **inventorySettings**: [`InventorySettings`](InventorySettings.md)
 
 ___
 

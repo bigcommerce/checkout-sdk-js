@@ -310,6 +310,7 @@
 - [InternalCheckoutSelectors](interfaces/InternalCheckoutSelectors.md)
 - [InternalOrderMeta](interfaces/InternalOrderMeta.md)
 - [InternalOrderPayment](interfaces/InternalOrderPayment.md)
+- [InventorySettings](interfaces/InventorySettings.md)
 - [Item](interfaces/Item.md)
 - [Item_2](interfaces/Item_2.md)
 - [LabelStyles](interfaces/LabelStyles.md)

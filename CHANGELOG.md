@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.864.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.863.0...v1.864.0) (2026-02-06)
+
+
+### Features
+
+* **checkout:** add inventory settings to store config ([#3139](https://github.com/bigcommerce/checkout-sdk-js/issues/3139)) ([5774c13](https://github.com/bigcommerce/checkout-sdk-js/commit/5774c139e6a37efed95dd8fb32268ee6e3e8292c))
+
 ## [1.863.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.862.0...v1.863.0) (2026-02-05)
 
 
