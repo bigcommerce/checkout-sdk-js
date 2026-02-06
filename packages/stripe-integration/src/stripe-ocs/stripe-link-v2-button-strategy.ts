@@ -100,14 +100,9 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
 
         await this.paymentIntegrationService.loadDefaultCheckout();
 
-        await this._mountExpressCheckoutElement(
-            methodId,
-            containerId,
-            this._stripeClient,
-            buttonHeight,
-        );
+        await this._mountExpressCheckoutElement(containerId, this._stripeClient, buttonHeight);
 
-        return Promise.resolve();
+        this._initializeEvents(methodId);
     }
 
     signIn() {
@@ -127,7 +122,6 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
     }
 
     private async _mountExpressCheckoutElement(
-        methodId: string,
         container: string,
         stripeExpressCheckoutClient: StripeClient,
         buttonHeight = 40,
@@ -172,28 +166,31 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             expressCheckoutOptions,
         );
         this._linkV2Element.mount(`#${container}`);
-        this._initializeEvents(this._linkV2Element, methodId);
     }
 
     /** Events * */
 
-    private _initializeEvents(expressCheckoutElement: StripeElement, methodId: string): void {
+    private _initializeEvents(methodId: string): void {
+        if (!this._linkV2Element) {
+            return;
+        }
+
         const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
 
         if (shouldRequireShippingAddress) {
-            expressCheckoutElement.on(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, async (event) =>
+            this._linkV2Element.on(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, async (event) =>
                 this._onShippingAddressChange(event),
             );
-            expressCheckoutElement.on(StripeElementEvent.SHIPPING_RATE_CHANGE, async (event) =>
+            this._linkV2Element.on(StripeElementEvent.SHIPPING_RATE_CHANGE, async (event) =>
                 this._onShippingRateChange(event),
             );
         }
 
-        expressCheckoutElement.on(StripeElementEvent.CONFIRM, async (event) =>
+        this._linkV2Element.on(StripeElementEvent.CONFIRM, async (event) =>
             this._onConfirm(event, methodId),
         );
 
-        expressCheckoutElement.on(StripeElementEvent.CANCEL, this._onCancel);
+        this._linkV2Element.on(StripeElementEvent.CANCEL, this._onCancel);
     }
 
     private async _onShippingAddressChange(event: StripeEventType) {
@@ -518,14 +515,21 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         const options = (consignment.availableShippingOptions || []).map(
             this._getStripeShippingOption.bind(this),
         );
-
+        const recommendedShippingOption = consignment.availableShippingOptions?.find(
+            (shippingOption) => shippingOption.isRecommended,
+        );
         const selectedId = consignment.selectedShippingOption?.id;
+        const recommendedId = recommendedShippingOption?.id;
 
-        if (!selectedId) {
-            await this._handleShippingOptionChange(options[0]?.id);
-        } else {
+        if (selectedId) {
             // Set selected shipping option first in the array, as it will be selected by default
             options.sort((option) => (option.id === selectedId ? -1 : 0));
+        } else if (recommendedId) {
+            // Set recommended shipping option first in the array, as it will be selected by default
+            options.sort((option) => (option.id === recommendedId ? -1 : 0));
+            await this._handleShippingOptionChange(recommendedId);
+        } else {
+            await this._handleShippingOptionChange(options[0]?.id);
         }
 
         return options;
