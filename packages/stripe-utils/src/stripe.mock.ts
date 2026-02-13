@@ -5,6 +5,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    StripeCheckoutInstance,
     StripeCheckoutSession,
     StripeClient,
     StripeElement,
@@ -168,13 +169,14 @@ export function getRetrievePaymentIntentResponseWithError() {
     };
 }
 
-export function getStripeCheckoutSessionMock(): StripeCheckoutSession {
+export function getStripeCheckoutSessionMock(): StripeCheckoutInstance {
     return {
         loadActions: () =>
             Promise.resolve({
                 type: StripeLoadActionsResultType.SUCCESS,
                 actions: {
                     updateEmail: jest.fn(),
+                    confirm: jest.fn(),
                 },
             }),
         createPaymentElement: jest.fn(() => getStripeElementMock()),

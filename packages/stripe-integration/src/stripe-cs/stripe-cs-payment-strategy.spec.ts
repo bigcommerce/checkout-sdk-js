@@ -21,7 +21,7 @@ import {
 
 import { getStripeOCSInitializeOptionsMock, getStripeOCSMock } from '../stripe-ocs/stripe-ocs.mock';
 
-import { WithStripeCSPaymentInitializeOptions } from './stripe-cs-initialize-options';
+import { WithStripeOCSPaymentInitializeOptions } from '../stripe-ocs/stripe-ocs-initialize-options';
 import StripeCSPaymentStrategy from './stripe-cs-payment-strategy';
 
 describe('StripeOCSPaymentStrategy', () => {
@@ -29,7 +29,7 @@ describe('StripeOCSPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let stripeScriptLoader: StripeScriptLoader;
     let stripeIntegrationService: StripeIntegrationService;
-    let stripeOptions: PaymentInitializeOptions & WithStripeCSPaymentInitializeOptions;
+    let stripeOptions: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions;
     let stripeJsMock: StripeClient;
 
     beforeEach(() => {

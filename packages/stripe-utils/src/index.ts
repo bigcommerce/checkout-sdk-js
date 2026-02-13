@@ -30,7 +30,7 @@ export {
     StripeHostWindow,
     StripeCustomerEvent,
     StripeJsVersion,
-    StripeCheckoutSession,
+    StripeCheckoutInstance,
     StripeInitCheckoutOptions,
     StripeLoadActionsResultType,
 } from './stripe';

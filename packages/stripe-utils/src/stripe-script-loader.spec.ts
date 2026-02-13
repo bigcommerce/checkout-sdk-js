@@ -198,8 +198,8 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('initializes a checkout session', async () => {
-            await stripeScriptLoader.getCheckoutSession(stripeJsMock, checkoutSessionOptions);
-            await stripeScriptLoader.getCheckoutSession(stripeJsMock, checkoutSessionOptions);
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
 
             expect(initCheckoutMock).toHaveBeenCalledTimes(1);
             expect(initCheckoutMock).toHaveBeenCalledWith({ clientSecret: 'myToken' });

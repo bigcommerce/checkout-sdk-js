@@ -28,7 +28,3 @@ export {
     default as StripeOCSPaymentInitializeOption,
     WithStripeOCSPaymentInitializeOptions,
 } from './stripe-ocs/stripe-ocs-initialize-options';
-export {
-    default as StripeCSPaymentInitializeOption,
-    WithStripeCSPaymentInitializeOptions,
-} from './stripe-cs/stripe-cs-initialize-options';

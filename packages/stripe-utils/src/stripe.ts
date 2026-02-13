@@ -331,6 +331,11 @@ export interface StripeConfirmPaymentData {
     clientSecret?: string;
 }
 
+export interface StripeCheckoutSessionConfirmPaymentData {
+    redirect?: StripeStringConstants.ALWAYS | StripeStringConstants.IF_REQUIRED;
+    returnUrl?: string;
+}
+
 export interface FieldsOptions {
     billingDetails?: AutoOrNever | BillingDetailsProperties;
     phone?: string;
@@ -465,7 +470,41 @@ export interface StripeElements {
     fetchUpdates(): Promise<void>;
 }
 
+export enum StripeCheckoutSessionStatusType {
+    Open = 'open',
+    Expired = 'expired',
+    Complete = 'complete',
+}
+
+export enum StripeCheckoutSessionPaymentStatus {
+    Paid = 'paid',
+    UnPaid = 'unpaid',
+    NoPaymentRequired = 'no_payment_required',
+}
+
+export interface StripeCheckoutSessionStatus {
+    type: StripeCheckoutSessionStatusType;
+    paymentStatus: StripeCheckoutSessionPaymentStatus;
+}
+
 export interface StripeCheckoutSession {
+    id: string;
+    billingAddress: StripeAddressValues;
+    businessName: string;
+    canConfirm: boolean;
+    currency: string;
+    email: string;
+    phoneNumber: string;
+    shipping: unknown;
+    shippingAddress: StripeAddressValues;
+    shippingOptions: unknown;
+    status: StripeCheckoutSessionStatus;
+    tax: unknown;
+    taxAmounts: unknown;
+    total: unknown;
+}
+
+export interface StripeCheckoutInstance {
     loadActions(): Promise<StripeLoadActionsResult>;
     createPaymentElement(options?: StripeElementsCreateOptions): StripeElement;
     getPaymentElement(): StripeElement | null;
@@ -482,8 +521,15 @@ export interface StripeLoadActionsResult {
     actions?: StripeCheckoutSessionActions;
 }
 
+export interface StripeCheckoutSessionConfirmationResult {
+    type: StripeLoadActionsResultType;
+    error?: StripeError;
+    session?: StripeCheckoutSession;
+}
+
 export interface StripeCheckoutSessionActions {
     updateEmail(email: string): Promise<void>;
+    confirm(options: StripeCheckoutSessionConfirmPaymentData): Promise<StripeCheckoutSessionConfirmationResult>;
 }
 
 /**
@@ -609,7 +655,7 @@ export interface StripeClient {
      */
     elements(options: StripeElementsOptions): StripeElements;
 
-    initCheckout(options: StripeInitCheckoutOptions): Promise<StripeCheckoutSession>;
+    initCheckout(options: StripeInitCheckoutOptions): Promise<StripeCheckoutInstance>;
 }
 
 export interface StripeResult {
@@ -620,7 +666,7 @@ export interface StripeResult {
 export interface StripeHostWindow extends Window {
     bcStripeClient?: StripeClient;
     bcStripeElements?: StripeElements;
-    bcStripeCheckoutSession?: StripeCheckoutSession;
+    bcStripeCheckout?: StripeCheckoutInstance;
     Stripe?<T = StripeClient>(
         stripePublishableKey: string,
         options?: StripeConfigurationOptions,
