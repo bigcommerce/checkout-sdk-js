@@ -35,6 +35,7 @@ import {
     IntermediatePaymentData,
     TotalPriceStatusType,
 } from './types';
+import { isWebView } from './utils';
 
 export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _loadingIndicator: LoadingIndicator;
@@ -267,6 +268,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     }
 
     protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions {
+        if (isWebView()) {
+            return {};
+        }
+
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({ callbackTrigger, offerData }) => {

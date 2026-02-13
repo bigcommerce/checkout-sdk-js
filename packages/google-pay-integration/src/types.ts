@@ -131,6 +131,7 @@ export interface GooglePayTransactionInfo {
     currencyCode: string;
     totalPriceStatus: TotalPriceStatusType;
     totalPrice: string;
+    totalPriceLabel?: string;
 }
 
 export interface GooglePayMerchantInfo {
@@ -156,7 +157,7 @@ export interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
-    offerInfo: Offers;
+    offerInfo?: Offers;
     shippingOptionRequired?: boolean;
     callbackIntents?: CallbackIntentsType[];
 }

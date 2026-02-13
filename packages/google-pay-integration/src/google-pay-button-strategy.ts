@@ -28,6 +28,7 @@ import {
     ShippingOptionParameters,
     TotalPriceStatusType,
 } from './types';
+import { isWebView } from './utils';
 
 export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentButton?: HTMLElement;
@@ -187,6 +188,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     private _getGooglePayClientOptions(): GooglePayPaymentOptions | undefined {
+        if (isWebView()) {
+            return {};
+        }
+
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({

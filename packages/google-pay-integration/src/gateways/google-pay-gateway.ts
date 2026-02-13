@@ -41,6 +41,7 @@ import {
     ShippingOptionParameters,
     TotalPriceStatusType,
 } from '../types';
+import { isWebView } from '../utils';
 
 export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;
@@ -199,16 +200,34 @@ export default class GooglePayGateway {
 
     getTransactionInfo(): GooglePayTransactionInfo {
         let currencyCode: string;
+        const { getCartOrThrow } = this._paymentIntegrationService.getState();
 
         if (this._isBuyNowFlow) {
             currencyCode = this._getCurrencyCodeOrThrow();
         } else {
-            const { getCartOrThrow } = this._paymentIntegrationService.getState();
-
             currencyCode = getCartOrThrow().currency.code;
         }
 
         const countryCode = this.getGooglePayInitializationData().storeCountry;
+
+        if (isWebView()) {
+            const { decimalPlaces } = getCartOrThrow().currency;
+
+            const { getCheckoutOrThrow } = this._paymentIntegrationService.getState();
+
+            const totalPrice = round(
+                getCheckoutOrThrow().outstandingBalance,
+                decimalPlaces,
+            ).toFixed(decimalPlaces);
+
+            return {
+                ...(countryCode && { countryCode }),
+                currencyCode,
+                totalPrice,
+                totalPriceStatus: TotalPriceStatusType.ESTIMATED,
+                totalPriceLabel: 'Subtotal (Shipping calculated next)',
+            };
+        }
 
         return {
             ...(countryCode && { countryCode }),
@@ -345,13 +364,15 @@ export default class GooglePayGateway {
         offerData: IntermediatePaymentData['offerData'],
     ): Promise<HandleCouponsOut> {
         const { redemptionCodes: newCouponsState = [] } = offerData;
-        const { offers: appliedCoupons } = this.getAppliedCoupons();
+        const { offers: appliedCoupons } = this.getAppliedCoupons() || {};
         let error;
 
         await newCouponsState.reduce(async (promise, code) => {
             await promise;
 
-            const exists = appliedCoupons.some(({ redemptionCode }) => redemptionCode === code);
+            const exists = (appliedCoupons || []).some(
+                ({ redemptionCode }) => redemptionCode === code,
+            );
 
             if (exists) {
                 return;
@@ -364,7 +385,7 @@ export default class GooglePayGateway {
             }
         }, Promise.resolve());
 
-        await appliedCoupons.reduce(async (promise, coupon) => {
+        await (appliedCoupons || []).reduce(async (promise, coupon) => {
             await promise;
 
             const stillExists = newCouponsState.includes(coupon.redemptionCode);
