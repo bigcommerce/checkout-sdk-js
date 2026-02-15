@@ -1,4 +1,5 @@
 # @bigcommerce/checkout-sdk
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/bigcommerce/checkout-sdk-js)
 
 Checkout JS SDK provides you with the tools you need to build your own checkout solution for a BigCommerce store.
 
