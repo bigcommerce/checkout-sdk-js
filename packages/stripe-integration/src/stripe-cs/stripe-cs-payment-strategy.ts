@@ -341,26 +341,21 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     ): Promise<StripeCheckoutSession | never> {
         const { redirect_url } = additionalActionData || {};
 
-        try {
-            if (!this.stripeCheckout) {
-                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-            }
-
-            const stripeActions = await this._getStripeActionsOrThrow();
-
-            const { session: stripeCheckoutSession, error: stripeError } =
-                await stripeActions.confirm({
-                    redirect: StripeStringConstants.IF_REQUIRED,
-                    returnUrl: redirect_url,
-                });
-
-            if (stripeError || !stripeCheckoutSession) {
-                throw new PaymentMethodFailedError(stripeError?.message);
-            }
-
-            return stripeCheckoutSession;
-        } catch (error) {
-            throw error;
+        if (!this.stripeCheckout) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
+
+        const stripeActions = await this._getStripeActionsOrThrow();
+
+        const { session: stripeCheckoutSession, error: stripeError } = await stripeActions.confirm({
+            redirect: StripeStringConstants.IF_REQUIRED,
+            returnUrl: redirect_url,
+        });
+
+        if (stripeError || !stripeCheckoutSession) {
+            throw new PaymentMethodFailedError(stripeError?.message);
+        }
+
+        return stripeCheckoutSession;
     }
 }

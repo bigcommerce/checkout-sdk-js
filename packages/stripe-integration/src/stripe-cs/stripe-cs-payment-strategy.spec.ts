@@ -9,7 +9,13 @@ import {
     PaymentMethodFailedError,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getCart, getCheckout, getErrorPaymentResponseBody, getResponse, PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getCart,
+    getCheckout,
+    getErrorPaymentResponseBody,
+    getResponse,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
     getStripeCheckoutInstanceMock,
     getStripeIntegrationServiceMock,
@@ -24,9 +30,13 @@ import {
     StripeStringConstants,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 
-import { getStripeOCSInitializeOptionsMock, getStripeOCSMock, getStripeOCSOrderRequestBodyMock } from '../stripe-ocs/stripe-ocs.mock';
-
 import { WithStripeOCSPaymentInitializeOptions } from '../stripe-ocs/stripe-ocs-initialize-options';
+import {
+    getStripeOCSInitializeOptionsMock,
+    getStripeOCSMock,
+    getStripeOCSOrderRequestBodyMock,
+} from '../stripe-ocs/stripe-ocs.mock';
+
 import StripeCSPaymentStrategy from './stripe-cs-payment-strategy';
 
 describe('StripeOCSPaymentStrategy', () => {
@@ -617,8 +627,8 @@ describe('StripeOCSPaymentStrategy', () => {
             await expect(
                 stripeCSPaymentStrategy.execute({
                     payment: {
+                        gatewayId,
                         methodId: '',
-                        gatewayId: gatewayId,
                     },
                 }),
             ).rejects.toThrow(InvalidArgumentError);
@@ -644,12 +654,9 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
 
             expect(paymentIntegrationService.applyStoreCredit).not.toHaveBeenCalled();
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
-                gatewayId,
-                {
-                    params: { method: methodId },
-                },
-            );
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(gatewayId, {
+                params: { method: methodId },
+            });
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId,
@@ -1185,7 +1192,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     id: 'paymentIntentId',
                     status: {
                         paymentStatus: StripeCheckoutSessionPaymentStatus.UnPaid,
-                    }
+                    },
                 },
             });
 
@@ -1220,7 +1227,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     id: 'paymentIntentId',
                     status: {
                         paymentStatus: StripeCheckoutSessionPaymentStatus.Paid,
-                    }
+                    },
                 },
             });
 
