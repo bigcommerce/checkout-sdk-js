@@ -504,7 +504,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     }
 
     private getSmartButtonContainerId(container: string) {
-        const containerStringSplit = container.split('#');
-        return containerStringSplit.length > 1 ? containerStringSplit[1] : container;
+        return container.split('#')[1] ?? container;
     }
 }

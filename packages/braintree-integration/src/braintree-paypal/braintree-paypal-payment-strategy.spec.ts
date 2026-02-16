@@ -304,6 +304,12 @@ describe('BraintreePaypalPaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
+        afterEach(() => {
+            const buttonContainer = document.getElementById('checkout-button-container');
+            if (buttonContainer) {
+                buttonContainer.remove();
+            }
+        });
         let orderRequestBody: OrderRequestBody;
         let options: PaymentInitializeOptions;
 

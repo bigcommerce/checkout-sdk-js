@@ -183,6 +183,13 @@ describe('PayPalCommercePaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
+        afterEach(() => {
+            const buttonContainer = document.getElementById('container');
+            if (buttonContainer) {
+                buttonContainer.remove();
+            }
+        });
+
         it('throws error if methodId is not provided', async () => {
             const options = {} as PaymentInitializeOptions;
 
