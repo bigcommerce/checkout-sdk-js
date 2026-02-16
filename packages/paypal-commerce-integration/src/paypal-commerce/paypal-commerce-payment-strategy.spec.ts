@@ -94,6 +94,11 @@ describe('PayPalCommercePaymentStrategy', () => {
             loadingIndicator,
         );
 
+        const div = document.createElement('div');
+
+        div.setAttribute('id', 'container');
+        document.body.appendChild(div);
+
         payPalMessagesSdk = {
             Messages: jest.fn(),
         };
@@ -174,6 +179,12 @@ describe('PayPalCommercePaymentStrategy', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
+        afterEach(() => {
+            const buttonContainer = document.getElementById('container');
+            if (buttonContainer) {
+                buttonContainer.remove();
+            }
+        });
 
         delete (window as PayPalCommerceHostWindow).paypal;
     });
@@ -183,13 +194,6 @@ describe('PayPalCommercePaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
-        afterEach(() => {
-            const buttonContainer = document.getElementById('container');
-            if (buttonContainer) {
-                buttonContainer.remove();
-            }
-        });
-
         it('throws error if methodId is not provided', async () => {
             const options = {} as PaymentInitializeOptions;
 
@@ -221,10 +225,6 @@ describe('PayPalCommercePaymentStrategy', () => {
         });
 
         it('loads paypal sdk', async () => {
-            const div = document.createElement('div');
-
-            div.setAttribute('id', 'container');
-            document.body.appendChild(div);
             await strategy.initialize(initializationOptions);
 
             expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(

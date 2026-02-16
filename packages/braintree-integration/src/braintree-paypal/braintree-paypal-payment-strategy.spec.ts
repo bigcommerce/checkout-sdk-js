@@ -107,6 +107,11 @@ describe('BraintreePaypalPaymentStrategy', () => {
             new LoadingIndicator(),
         );
 
+        const div = document.createElement('div');
+
+        div.setAttribute('id', 'checkout-button-container');
+        document.body.appendChild(div);
+
         const state = paymentIntegrationService.getState();
 
         jest.spyOn(state, 'getPaymentMethodOrThrow').mockImplementation(() => paymentMethodMock);
@@ -187,6 +192,15 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 render: jest.fn(),
                 close: jest.fn(),
             };
+        });
+    });
+
+    afterEach(() => {
+        afterEach(() => {
+            const buttonContainer = document.getElementById('checkout-button-container');
+            if (buttonContainer) {
+                buttonContainer.remove();
+            }
         });
     });
 
@@ -304,12 +318,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
-        afterEach(() => {
-            const buttonContainer = document.getElementById('checkout-button-container');
-            if (buttonContainer) {
-                buttonContainer.remove();
-            }
-        });
         let orderRequestBody: OrderRequestBody;
         let options: PaymentInitializeOptions;
 
@@ -532,11 +540,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
-
-            const div = document.createElement('div');
-
-            div.setAttribute('id', 'checkout-button-container');
-            document.body.appendChild(div);
 
             const braintreeOptions = {
                 ...options,
