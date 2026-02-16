@@ -196,12 +196,10 @@ describe('BraintreePaypalPaymentStrategy', () => {
     });
 
     afterEach(() => {
-        afterEach(() => {
-            const buttonContainer = document.getElementById('checkout-button-container');
-            if (buttonContainer) {
-                buttonContainer.remove();
-            }
-        });
+        const buttonContainer = document.getElementById('checkout-button-container');
+        if (buttonContainer) {
+            buttonContainer.remove();
+        }
     });
 
     it('creates an instance of the braintree payment strategy', () => {

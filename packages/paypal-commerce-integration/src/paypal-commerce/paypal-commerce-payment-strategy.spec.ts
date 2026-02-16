@@ -179,12 +179,10 @@ describe('PayPalCommercePaymentStrategy', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
-        afterEach(() => {
-            const buttonContainer = document.getElementById('container');
-            if (buttonContainer) {
-                buttonContainer.remove();
-            }
-        });
+        const buttonContainer = document.getElementById('container');
+        if (buttonContainer) {
+            buttonContainer.remove();
+        }
 
         delete (window as PayPalCommerceHostWindow).paypal;
     });
