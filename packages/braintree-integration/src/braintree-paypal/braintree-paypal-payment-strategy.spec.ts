@@ -527,6 +527,11 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 throw providerError;
             });
 
+            const div = document.createElement('div');
+
+            div.setAttribute('id', 'checkout-button-container');
+            document.body.appendChild(div);
+
             const braintreeOptions = {
                 ...options,
                 braintree: {

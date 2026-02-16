@@ -363,6 +363,15 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 },
             });
 
+            const container = this.getSmartButtonContainerId(containerId);
+            const smartButtonContainer = document.getElementById(container);
+
+            if (!smartButtonContainer) {
+                throw new InvalidArgumentError(
+                    `Unable to initialize payment because element with id ${containerId} does not exist.`,
+                );
+            }
+
             if (onRenderButton && typeof onRenderButton === 'function') {
                 onRenderButton();
             }
@@ -492,5 +501,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         } else {
             this.loadingIndicator.hide();
         }
+    }
+
+    private getSmartButtonContainerId(container: string) {
+        const containerStringSplit = container.split('#');
+        return containerStringSplit.length > 1 ? containerStringSplit[1] : container;
     }
 }

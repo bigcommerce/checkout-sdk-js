@@ -214,6 +214,10 @@ describe('PayPalCommercePaymentStrategy', () => {
         });
 
         it('loads paypal sdk', async () => {
+            const div = document.createElement('div');
+
+            div.setAttribute('id', 'container');
+            document.body.appendChild(div);
             await strategy.initialize(initializationOptions);
 
             expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
