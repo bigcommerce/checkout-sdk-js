@@ -83,7 +83,7 @@ export default class StripeScriptLoader {
         if (!stripeCheckout) {
             stripeCheckout = await stripeClient.initCheckout(options);
 
-            Object.assign(this.stripeWindow, { bcStripeCheckoutSession: stripeCheckout });
+            Object.assign(this.stripeWindow, { bcStripeCheckout: stripeCheckout });
         }
 
         return stripeCheckout;

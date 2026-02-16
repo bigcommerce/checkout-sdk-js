@@ -197,7 +197,7 @@ describe('StripePayScriptLoader', () => {
             };
         });
 
-        it('initializes a checkout session', async () => {
+        it('initializes stripe checkout', async () => {
             await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
             await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
 

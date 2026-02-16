@@ -20,18 +20,17 @@ import {
     isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
     StripeCheckoutInstance,
+    StripeCheckoutSession,
+    StripeCheckoutSessionActions,
+    StripeCheckoutSessionPaymentStatus,
     StripeClient,
     StripeElement,
     StripeElementEvent,
     StripeElementsCreateOptions,
     StripeEventType,
     StripeInitializationData,
-    StripeInstrumentSetupFutureUsage,
     StripeIntegrationService,
     StripeJsVersion,
-    StripePIPaymentMethodOptions,
-    StripePIPaymentMethodSavingOptions,
-    StripeResult,
     StripeScriptLoader,
     StripeStringConstants,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -39,12 +38,10 @@ import {
 import StripeOCSPaymentInitializeOptions, {
     WithStripeOCSPaymentInitializeOptions,
 } from '../stripe-ocs/stripe-ocs-initialize-options';
-import { StripeError } from '../stripev3/stripev3';
-import { StripeCheckoutSessionConfirmationResult } from 'packages/stripe-utils/src/stripe';
 
 export default class StripeCSPaymentStrategy implements PaymentStrategy {
     private stripeClient?: StripeClient;
-    private stripeCheckoutSession?: StripeCheckoutInstance;
+    private stripeCheckout?: StripeCheckoutInstance;
     private selectedMethodId?: string;
 
     constructor(
@@ -56,7 +53,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     async initialize(
         options: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions,
     ): Promise<void> {
-        console.log('*** initialize stripe cs payment strategy ***');
         const { stripeocs, methodId, gatewayId } = options;
 
         if (!stripeocs?.containerId || !gatewayId) {
@@ -112,12 +108,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<void> {
-        const paymentElement = this.stripeCheckoutSession?.getPaymentElement();
+        const paymentElement = this.stripeCheckout?.getPaymentElement();
 
         paymentElement?.unmount();
         paymentElement?.destroy();
-        this.stripeIntegrationService.deinitialize();
-        this.stripeCheckoutSession = undefined;
+        this.stripeCheckout = undefined;
         this.stripeClient = undefined;
 
         return Promise.resolve();
@@ -171,7 +166,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const billingAddress = getBillingAddress();
         const { postalCode } = getShippingAddress() || billingAddress || {};
 
-        this.stripeCheckoutSession = await this.scriptLoader.getStripeCheckout(this.stripeClient, {
+        this.stripeCheckout = await this.scriptLoader.getStripeCheckout(this.stripeClient, {
             clientSecret: clientToken,
             elementsOptions: {
                 appearance,
@@ -180,12 +175,13 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             adaptivePricing: {
                 allowed: false,
             },
-            defaultValues: {
-                email: billingAddress?.email || '',
-            },
         });
 
-        const stripeElement = this._createStripeElement({
+        const stripeActions = await this._getStripeActionsOrThrow();
+
+        await stripeActions.updateEmail(billingAddress?.email || '');
+
+        const stripeElement = this._getStripeElement({
             fields: {
                 billingDetails: {
                     email: StripeStringConstants.NEVER,
@@ -243,10 +239,24 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         );
     }
 
-    private _createStripeElement(options?: StripeElementsCreateOptions): StripeElement | undefined {
+    private async _getStripeActionsOrThrow(): Promise<StripeCheckoutSessionActions> {
+        if (!this.stripeCheckout) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const { actions, error } = await this.stripeCheckout.loadActions();
+
+        if (!actions || error) {
+            throw new PaymentMethodFailedError(error?.message);
+        }
+
+        return actions;
+    }
+
+    private _getStripeElement(options?: StripeElementsCreateOptions): StripeElement | undefined {
         return (
-            this.stripeCheckoutSession?.getPaymentElement() ||
-            this.stripeCheckoutSession?.createPaymentElement(options)
+            this.stripeCheckout?.getPaymentElement() ||
+            this.stripeCheckout?.createPaymentElement(options)
         );
     }
 
@@ -265,35 +275,26 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     }
 
     private _collapseStripeElement() {
-        const stripeElement = this.stripeCheckoutSession?.getPaymentElement();
+        const stripeElement = this.stripeCheckout?.getPaymentElement();
 
         stripeElement?.collapse();
     }
 
-    async _updateCheckoutSessionData(gatewayId: string, methodId: string): Promise<void> {
+    private async _updateCheckoutSessionData(gatewayId: string, methodId: string): Promise<void> {
         // INFO: to trigger checkout session data update on the BE side we need to make stripe config request
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
     }
 
-    private _getPaymentPayload(
-        methodId: string,
-        token: string,
-        paymentMethodOptions?: StripePIPaymentMethodOptions,
-    ): Payment {
+    private _getPaymentPayload(methodId: string, token: string): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
-        const { card, us_bank_account } = paymentMethodOptions || {};
-        const shouldSaveInstrument =
-            this._shouldSaveInstrument(card) || this._shouldSaveInstrument(us_bank_account);
-        const tokenizedOptions = this._getTokenizedOptions(token, paymentMethodOptions);
 
         const formattedPayload = {
             cart_id: cartId,
             confirm: false,
             method: this.selectedMethodId,
-            vault_payment_instrument: shouldSaveInstrument,
-            ...tokenizedOptions,
+            credit_card_token: { token },
         };
 
         return {
@@ -302,26 +303,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 formattedPayload,
             },
         };
-    }
-
-    private _getTokenizedOptions(
-        token: string,
-        paymentMethodOptions?: StripePIPaymentMethodOptions,
-    ) {
-        if (this._shouldSaveInstrument(paymentMethodOptions?.us_bank_account)) {
-            return { tokenized_ach: { token } };
-        }
-
-        return { credit_card_token: { token } };
-    }
-
-    private _shouldSaveInstrument(paymentMethodOptions?: StripePIPaymentMethodSavingOptions) {
-        const setupFutureUsage = paymentMethodOptions?.setup_future_usage;
-
-        return (
-            setupFutureUsage === StripeInstrumentSetupFutureUsage.ON_SESSION ||
-            setupFutureUsage === StripeInstrumentSetupFutureUsage.OFF_SESSION
-        );
     }
 
     private async _processAdditionalAction(
@@ -338,80 +319,47 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const { data: additionalActionData } = error.body?.additional_action_required || {};
         const { token } = additionalActionData || {};
 
-        const { paymentIntent } = await this._confirmStripePaymentOrThrow(
-            methodId,
-            additionalActionData,
-        );
-        const {
-            client_secret: paymentIntentClientSecret,
-            payment_method_options: paymentMethodOptions,
-        } = paymentIntent || {};
+        const { id: checkoutSessionId, status: checkoutSessionStatus } =
+            await this._confirmStripePaymentOrThrow(additionalActionData);
 
-        const paymentPayload = this._getPaymentPayload(
-            methodId,
-            paymentIntentClientSecret || token,
-            paymentMethodOptions,
-        );
+        const paymentPayload = this._getPaymentPayload(methodId, checkoutSessionId || token);
 
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
+            if (checkoutSessionStatus.paymentStatus === StripeCheckoutSessionPaymentStatus.Paid) {
+                this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
+            }
+
+            throw error;
         }
     }
 
     private async _confirmStripePaymentOrThrow(
-        methodId: string,
         additionalActionData: StripeAdditionalActionRequired['data'],
-    ): Promise<StripeResult | never> {
-        console.log(methodId, additionalActionData);
-        const { /* token, */ redirect_url } = additionalActionData || {};
-        // const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
-        //     this.stripeElements,
-        //     redirect_url,
-        // );
-        let stripeError: StripeError | undefined;
-        let confirmationResult: StripeCheckoutSessionConfirmationResult | undefined;
+    ): Promise<StripeCheckoutSession | never> {
+        const { redirect_url } = additionalActionData || {};
 
         try {
-
-            if (!this.stripeClient || !this.stripeCheckoutSession) {
+            if (!this.stripeCheckout) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            try {
-                // const { total } = await this.stripeElements?.session();
-                // console.log('*** total', total.total.amount);
-                const { actions: stripeActions, error: stripeActionsError } = await this.stripeCheckoutSession.loadActions();
+            const stripeActions = await this._getStripeActionsOrThrow();
 
-                if (stripeActionsError || !stripeActions) {
-                    throw new PaymentMethodFailedError(stripeActionsError?.message);
-                }
-
-                confirmationResult = await stripeActions.confirm({
+            const { session: stripeCheckoutSession, error: stripeError } =
+                await stripeActions.confirm({
                     redirect: StripeStringConstants.IF_REQUIRED,
+                    returnUrl: redirect_url,
                 });
-            } catch (error) {
-                console.log('*** confirm payment error', error);
-                throw error;
+
+            if (stripeError || !stripeCheckoutSession) {
+                throw new PaymentMethodFailedError(stripeError?.message);
             }
 
-            console.log('*** confirmationResult', confirmationResult);
-
-            stripeError = confirmationResult?.error;
-
-            // if (stripeError || !confirmationResult?.paymentIntent) {
-            //     throw new PaymentMethodFailedError();
-            // }
-
-            if (stripeError || !confirmationResult) {
-                console.log('*** stripe confirmation error', confirmationResult);
-                throw new PaymentMethodFailedError();
-            }
-
-            return confirmationResult;
-        } catch (error: unknown) {
-            return this.stripeIntegrationService.throwStripeError(stripeError);
+            return stripeCheckoutSession;
+        } catch (error) {
+            throw error;
         }
     }
 }
