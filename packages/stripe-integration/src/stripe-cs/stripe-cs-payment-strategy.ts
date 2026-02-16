@@ -114,6 +114,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         paymentElement?.destroy();
         this.stripeCheckout = undefined;
         this.stripeClient = undefined;
+        this.selectedMethodId = undefined;
 
         return Promise.resolve();
     }
