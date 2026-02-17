@@ -970,6 +970,8 @@ export interface PayPalUpdateOrderRequestBody {
     availableShippingOptions?: ShippingOption[];
     cartId: string;
     selectedShippingOption?: ShippingOption;
+    methodId?: string;
+    orderId?: number;
 }
 
 export interface PayPalUpdateOrderResponse {
