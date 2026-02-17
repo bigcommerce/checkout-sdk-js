@@ -29,6 +29,7 @@ export function getOrder(): Order {
         discountAmount: 10,
         displayDiscountTotal: 0,
         manualDiscountTotal: 0,
+        productAutoDiscountedSubtotal: 200,
         orderBasedAutoDiscountTotal: 0,
         handlingCostTotal: 8,
         hasDigitalItems: false,
