@@ -41,7 +41,12 @@ export default interface CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to submit, otherwise undefined.
      */
-    getSubmitOrderError(): Error | CartChangedError | CartConsistencyError | CartStockPositionsChangedError | undefined;
+    getSubmitOrderError():
+        | Error
+        | CartChangedError
+        | CartConsistencyError
+        | CartStockPositionsChangedError
+        | undefined;
 
     /**
      * Returns an error if unable to finalize the current order.

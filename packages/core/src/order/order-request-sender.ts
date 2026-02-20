@@ -82,8 +82,8 @@ export default class OrderRequestSender {
 
                 if (error.body.type === 'cart_stock_positions_changed') {
                     const changedItemIds =
-                        (error.body.errors as { changedItemIds?: string[] })
-                            ?.changedItemIds ?? [];
+                        (error.body.errors as { changedItemIds?: string[] })?.changedItemIds ?? [];
+
                     throw new CartStockPositionsChangedError(changedItemIds);
                 }
 
