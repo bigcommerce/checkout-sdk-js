@@ -1,6 +1,10 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
-import { CartConsistencyError, EmptyCartError } from '../cart/errors';
+import {
+    CartConsistencyError,
+    CartStockPositionsChangedError,
+    EmptyCartError,
+} from '../cart/errors';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -153,6 +157,37 @@ describe('OrderRequestSender', () => {
                 await orderRequestSender.submitOrder(payload);
             } catch (error) {
                 expect(error).toBeInstanceOf(CartConsistencyError);
+            }
+        });
+
+        it('throws `CartStockPositionsChangedError` with changedItemIds if error type is `cart_stock_positions_changed`', async () => {
+            const changedItemIds = ['496b4d99-5fd4-445f-b50c-95aee0a0e6e0'];
+            const error = getErrorResponse(
+                {
+                    status: 409,
+                    title: 'At least one item changed stock position',
+                    type: 'cart_stock_positions_changed',
+                    detail: 'changed items are 496b4d99-5fd4-445f-b50c-95aee0a0e6e0',
+                    errors: { changedItemIds },
+                } as any,
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            try {
+                const payload = {
+                    cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    useStoreCredit: false,
+                };
+
+                await orderRequestSender.submitOrder(payload);
+            } catch (err) {
+                expect(err).toBeInstanceOf(CartStockPositionsChangedError);
+                expect((err as CartStockPositionsChangedError).changedItemIds).toEqual(
+                    changedItemIds,
+                );
             }
         });
 

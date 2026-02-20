@@ -1,7 +1,11 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { isNil, omitBy } from 'lodash';
 
-import { CartConsistencyError, EmptyCartError } from '../cart/errors';
+import {
+    CartConsistencyError,
+    CartStockPositionsChangedError,
+    EmptyCartError,
+} from '../cart/errors';
 import {
     ContentType,
     joinIncludes,
@@ -74,6 +78,13 @@ export default class OrderRequestSender {
 
                 if (error.body.type === 'cart_has_changed') {
                     throw new CartConsistencyError();
+                }
+
+                if (error.body.type === 'cart_stock_positions_changed') {
+                    const changedItemIds =
+                        (error.body.errors as { changedItemIds?: string[] })
+                            ?.changedItemIds ?? [];
+                    throw new CartStockPositionsChangedError(changedItemIds);
                 }
 
                 if (error.body.type === 'missing_shipping_method') {
