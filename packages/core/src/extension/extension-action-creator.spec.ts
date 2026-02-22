@@ -40,10 +40,6 @@ describe('ExtensionActionCreator', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         storeConfig = getConfig().storeConfig;
 
-        storeConfig.checkoutSettings.features = {
-            'PROJECT-5029.checkout_extension': true,
-        };
-
         extensionRequestSender = new ExtensionRequestSender(createRequestSender());
         extensionActionCreator = new ExtensionActionCreator(extensionRequestSender);
         workerExtensionMessenger = new WorkerExtensionMessenger();
@@ -180,25 +176,6 @@ describe('ExtensionActionCreator', () => {
                     error: true,
                 },
             ]);
-        });
-
-        it('does nothing if the experiment is off', async () => {
-            storeConfig.checkoutSettings.features = {};
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
-                storeConfig,
-            );
-
-            const actions = await from(
-                extensionActionCreator.renderExtension(
-                    'foo',
-                    ExtensionRegion.ShippingShippingAddressFormBefore,
-                    workerExtensionMessenger,
-                )(store),
-            )
-                .pipe(toArray())
-                .toPromise();
-
-            expect(actions).toEqual([]);
         });
     });
 
