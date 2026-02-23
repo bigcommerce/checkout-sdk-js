@@ -586,6 +586,7 @@ export interface PayPalCommerceMessagesStyleOptions {
  */
 export enum NonInstantAlternativePaymentMethods {
     OXXO = 'oxxo',
+    IDEAL = 'ideal',
 }
 
 export interface PayPalOrderData {

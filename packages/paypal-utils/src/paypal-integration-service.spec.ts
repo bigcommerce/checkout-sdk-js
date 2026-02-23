@@ -217,12 +217,14 @@ describe('PayPalIntegrationService', () => {
                 statusCode: 200,
             });
 
-            await subject.updateOrder('paypalcommerce');
+            await subject.updateOrder('paypalcommerce', 'paypalcommerce', 123);
 
             expect(paypalRequestSender.updateOrder).toHaveBeenCalledWith('paypalcommerce', {
                 availableShippingOptions: consignments[0].availableShippingOptions,
                 cartId: cart.id,
                 selectedShippingOption: consignments[0].selectedShippingOption,
+                methodId: 'paypalcommerce',
+                orderId: 123,
             });
         });
 

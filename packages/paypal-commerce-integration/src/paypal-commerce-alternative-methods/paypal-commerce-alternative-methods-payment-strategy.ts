@@ -45,7 +45,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     private paypalApms?: PayPalApmSdk;
     private pollingTimer = 0;
     private stopPolling = noop;
-    private isPollingEnabled = false;
+    private isOrderApprovedProcessing = false;
     private paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsPaymentOptions;
 
     constructor(
@@ -97,9 +97,10 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         const { orderId, shouldRenderFields } = paymentMethod.initializationData || {};
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
-        this.isPollingEnabled = isExperimentEnabled(
+        this.isOrderApprovedProcessing = isExperimentEnabled(
             features,
-            'PAYPAL-5192.paypal_commerce_ideal_polling',
+            'PAYPAL-5431.order_approved_processing',
+            false,
         );
 
         // Info:
@@ -139,13 +140,17 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             throw new PaymentMethodInvalidError();
         }
 
-        if (this.isPollingEnabled && methodId === 'ideal') {
+        if (!this.isOrderApprovedProcessing && methodId === 'ideal') {
             await new Promise((resolve, reject) => {
                 void this.initializePollingMechanism(methodId, resolve, reject, gatewayId);
             });
         }
 
-        if (!this.isNonInstantPaymentMethod(methodId)) {
+        if (
+            !this.isNonInstantPaymentMethod(methodId) ||
+            (methodId === NonInstantAlternativePaymentMethods.IDEAL &&
+                !this.isOrderApprovedProcessing)
+        ) {
             await this.paymentIntegrationService.submitOrder(order, options);
         }
 
@@ -163,7 +168,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     deinitialize(): Promise<void> {
         this.orderId = undefined;
 
-        if (this.isPollingEnabled) {
+        if (!this.isOrderApprovedProcessing) {
             this.resetPollingMechanism();
         }
 
@@ -256,7 +261,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     private handleError(error: unknown) {
         const { onError } = this.paypalcommercealternativemethods || {};
 
-        if (this.isPollingEnabled) {
+        if (!this.isOrderApprovedProcessing) {
             this.resetPollingMechanism();
         }
 
@@ -338,7 +343,12 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             'paypalcommercealternativemethodscheckout',
         );
 
-        if (this.isNonInstantPaymentMethod(methodId)) {
+        if (
+            this.isNonInstantPaymentMethod(methodId) &&
+            ((methodId === NonInstantAlternativePaymentMethods.IDEAL &&
+                this.isOrderApprovedProcessing) ||
+                methodId === NonInstantAlternativePaymentMethods.OXXO)
+        ) {
             const order = { useStoreCredit: false };
             const options = {
                 params: {
@@ -348,6 +358,18 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             };
 
             await this.paymentIntegrationService.submitOrder(order, options);
+
+            if (methodId === NonInstantAlternativePaymentMethods.IDEAL) {
+                const state = this.paymentIntegrationService.getState();
+                const bcOrderId = state.getOrder()?.orderId;
+
+                await this.paypalCommerceIntegrationService.updateOrder(
+                    'paypalcommercealternativemethods',
+                    methodId,
+                    bcOrderId,
+                );
+            }
+
             await this.paypalCommerceIntegrationService.submitPayment(methodId, orderId, gatewayId);
         }
 

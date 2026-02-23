@@ -13,6 +13,7 @@ import {
 import {
     getBillingAddress,
     getConfig,
+    getOrder,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
@@ -95,6 +96,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             paymentIntegrationService.getState(),
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
+        jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(getOrder());
 
         jest.spyOn(paypalSdkScriptLoader, 'getPayPalApmsSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalIntegrationService, 'createOrder').mockResolvedValue(paypalOrderId);
@@ -102,6 +104,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
         jest.spyOn(paypalIntegrationService, 'getOrderStatus').mockResolvedValue(
             PayPalOrderStatus.Approved,
         );
+        jest.spyOn(paypalIntegrationService, 'updateOrder').mockImplementation(jest.fn());
 
         jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
         jest.spyOn(loadingIndicator, 'hide').mockReturnValue(undefined);
@@ -331,7 +334,52 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
                 'paypalcommercealternativemethodscheckout',
             );
 
+            expect(paypalIntegrationService.updateOrder).not.toHaveBeenCalled();
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(paypalIntegrationService.submitPayment).toHaveBeenCalledWith(
+                nonInstantMethodId,
+                paypalOrderId,
+                defaultGatewayId,
+            );
+        });
+
+        it('initiate an order update request if the polling is disabled and the payment method is IDEAL', async () => {
+            const storeConfigMock = {
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5431.order_approved_processing': true,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            const nonInstantMethodId = 'ideal';
+
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: nonInstantMethodId,
+            });
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith(
+                'paypalcommercealternativemethodscheckout',
+            );
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(paypalIntegrationService.updateOrder).toHaveBeenCalledWith(
+                'paypalcommercealternativemethods',
+                nonInstantMethodId,
+                295,
+            );
             expect(paypalIntegrationService.submitPayment).toHaveBeenCalledWith(
                 nonInstantMethodId,
                 paypalOrderId,
@@ -577,6 +625,40 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
         });
 
+        it('do not submit order for IDEAL when exp is enabled', async () => {
+            const storeConfigMock = {
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5431.order_approved_processing': true,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            const payload = {
+                payment: {
+                    methodId: 'ideal',
+                    gatewayId: defaultGatewayId,
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+        });
+
         it('submits payment with provided data', async () => {
             const payload = {
                 payment: {
@@ -637,7 +719,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
                 checkoutSettings: {
                     ...getConfig().storeConfig.checkoutSettings,
                     features: {
-                        'PAYPAL-5192.paypal_commerce_ideal_polling': true,
+                        'PAYPAL-5431.order_approved_processing': false,
                     },
                 },
             };
