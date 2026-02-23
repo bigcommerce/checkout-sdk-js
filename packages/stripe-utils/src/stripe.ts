@@ -501,13 +501,20 @@ export interface StripeCheckoutSession {
     status: StripeCheckoutSessionStatus;
     tax: unknown;
     taxAmounts: unknown;
-    total: unknown;
+    total: {
+        total: {
+            amount: number;
+            currency: string;
+        };
+    };
 }
 
 export interface StripeCheckoutInstance {
     loadActions(): Promise<StripeLoadActionsResult>;
     createPaymentElement(options?: StripeElementsCreateOptions): StripeElement;
     getPaymentElement(): StripeElement | null;
+    createCurrencySelectorElement(): StripeElement;
+    getCurrencySelectorElement(): StripeElement | null;
 }
 
 export enum StripeLoadActionsResultType {
@@ -529,6 +536,7 @@ export interface StripeCheckoutSessionConfirmationResult {
 
 export interface StripeCheckoutSessionActions {
     updateEmail(email: string): Promise<void>;
+    getSession?(): Promise<StripeCheckoutSession | undefined>;
     confirm(
         options: StripeCheckoutSessionConfirmPaymentData,
     ): Promise<StripeCheckoutSessionConfirmationResult>;

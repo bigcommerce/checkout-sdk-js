@@ -180,5 +180,7 @@ export function getStripeCheckoutInstanceMock(): StripeCheckoutInstance {
             }),
         createPaymentElement: jest.fn(() => getStripeElementMock()),
         getPaymentElement: jest.fn().mockReturnValue(null),
+        createCurrencySelectorElement: jest.fn(() => getStripeElementMock()),
+        getCurrencySelectorElement: jest.fn().mockReturnValue(null),
     };
 }

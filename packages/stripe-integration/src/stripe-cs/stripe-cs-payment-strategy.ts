@@ -61,6 +61,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         try {
             await this._initializeStripeElement(stripeocs, gatewayId, methodId);
+
+            await this._initAdaptivePricing();
         } catch (error) {
             if (error instanceof Error) {
                 stripeocs.onError?.(error);
@@ -174,7 +176,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 fonts,
             },
             adaptivePricing: {
-                allowed: false,
+                allowed: true,
             },
         });
 
@@ -219,6 +221,13 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         stripeElement.on(StripeElementEvent.CHANGE, (event: StripeEventType) => {
             this._onStripeElementChange(event, gatewayId, methodId, paymentMethodSelect);
+
+            (async () => {
+                const stripeActions = await this._getStripeActionsOrThrow();
+                const stripeCheckoutSession: StripeCheckoutSession | undefined = await stripeActions.getSession?.();
+
+                console.log('*** stripeCheckoutSession', stripeCheckoutSession);
+            })();
         });
 
         handleClosePaymentMethod?.(this._collapseStripeElement.bind(this));
@@ -357,5 +366,41 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
 
         return stripeCheckoutSession;
+    }
+
+    private async _initAdaptivePricing(): Promise<void> {
+        if (!this.stripeCheckout) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        try {
+            const stripeActions = await this._getStripeActionsOrThrow();
+            const stripeCheckoutSession: StripeCheckoutSession | undefined = await stripeActions.getSession?.();
+            const totalElement: HTMLElement | null = document.getElementById('stripe-total');
+            const currencySelectorHTMLElement: HTMLElement | null = document.getElementById('stripe-currency-selector');
+            console.log('*** totalElement', totalElement);
+            console.log('*** currencySelectorHTMLElement', currencySelectorHTMLElement);
+
+            console.log('*** stripeCheckoutSession', stripeCheckoutSession);
+
+            if (totalElement) {
+                totalElement.textContent = stripeCheckoutSession?.total.total.amount.toString() || '';
+            }
+
+            const currencySelectorElement = this._getCurrencySelectorElement();
+
+            console.log('*** currencySelectorElement', currencySelectorElement);
+
+            if (currencySelectorElement) {
+                currencySelectorElement.mount('#stripe-currency-selector');
+            }
+        } catch (error) {
+            console.error('*** error', error);
+        }
+
+    }
+
+    private _getCurrencySelectorElement(): StripeElement | undefined {
+        return this.stripeCheckout?.getCurrencySelectorElement() || this.stripeCheckout?.createCurrencySelectorElement();
     }
 }
