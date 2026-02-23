@@ -15,6 +15,8 @@ all custom errors thrown in this library.
 
   ↳↳ [`CartConsistencyError`](CartConsistencyError.md)
 
+  ↳↳ [`CartStockPositionsChangedError`](CartStockPositionsChangedError.md)
+
   ↳↳ [`RequestError`](RequestError.md)
 
 ## Implements

@@ -2423,6 +2423,15 @@ declare interface CartSelector {
     getLocale(): string | undefined;
 }
 
+/**
+ * This error is thrown when at least one cart item changed stock position (e.g. moved to a different warehouse)
+ * and the server returns type `cart_stock_positions_changed`.
+ */
+declare class CartStockPositionsChangedError extends StandardError {
+    changedItemIds: string[];
+    constructor(changedItemIds: string[], message?: string);
+}
+
 declare interface CheckableInputStyles extends InputStyles {
     error?: InputStyles;
     checked?: BlockElementStyles;
@@ -3865,7 +3874,7 @@ declare interface CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to submit, otherwise undefined.
      */
-    getSubmitOrderError(): Error | CartChangedError | CartConsistencyError | undefined;
+    getSubmitOrderError(): Error | CartChangedError | CartConsistencyError | CartStockPositionsChangedError | undefined;
     /**
      * Returns an error if unable to finalize the current order.
      *

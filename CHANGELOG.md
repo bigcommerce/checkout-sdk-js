@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.872.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.871.0...v1.872.0) (2026-02-23)
+
+
+### Features
+
+* **checkout:** introduce new error CartStockPositionsChangedError for the order request error ([#3152](https://github.com/bigcommerce/checkout-sdk-js/issues/3152)) ([afdbb02](https://github.com/bigcommerce/checkout-sdk-js/commit/afdbb0233ee2d029c02faf7336a8ed13299f37e3))
+
 ## [1.871.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.870.0...v1.871.0) (2026-02-19)
 
 
