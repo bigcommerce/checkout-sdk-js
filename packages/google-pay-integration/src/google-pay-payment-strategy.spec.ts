@@ -4,6 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
+    BillingAddressRequestBody,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
@@ -394,6 +395,70 @@ describe('GooglePayPaymentStrategy', () => {
                 });
             });
 
+            it('should update billing address if the "do not override address" experiment is OFF', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue({
+                    ...storeConfig,
+                    checkoutSettings: {
+                        ...storeConfig.checkoutSettings,
+                        features: {
+                            ...storeConfig.checkoutSettings.features,
+                            'PI-5031.google_pay_dont_override_address': false,
+                        },
+                    },
+                });
+
+                const billingAddress = { city: 'New York', address1: '5th Ave' };
+
+                jest.spyOn(processor, 'showPaymentSheet').mockResolvedValue(getCardDataResponse());
+                jest.spyOn(processor, 'mapToBillingAddressRequestBody').mockReturnValue(
+                    billingAddress as BillingAddressRequestBody,
+                );
+
+                const updateAddressSpy = jest
+                    .spyOn(paymentIntegrationService, 'updateBillingAddress')
+                    .mockResolvedValue(paymentIntegrationService.getState());
+
+                await strategy.initialize(options);
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(updateAddressSpy).toHaveBeenCalledWith(billingAddress);
+            });
+
+            it('should NOT update billing address if the "do not override address" experiment is ON', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue({
+                    ...storeConfig,
+                    checkoutSettings: {
+                        ...storeConfig.checkoutSettings,
+                        features: {
+                            ...storeConfig.checkoutSettings.features,
+                            'PI-5031.google_pay_dont_override_address': true,
+                        },
+                    },
+                });
+
+                jest.spyOn(processor, 'showPaymentSheet').mockResolvedValue(getCardDataResponse());
+
+                const updateAddressSpy = jest.spyOn(
+                    paymentIntegrationService,
+                    'updateBillingAddress',
+                );
+
+                await strategy.initialize(options);
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(updateAddressSpy).not.toHaveBeenCalled();
+            });
+
             describe('Coupons', () => {
                 it('should call handleCoupons on initialize', async () => {
                     const initializeMock = createInitializeImplementationMock(
@@ -577,10 +642,23 @@ describe('GooglePayPaymentStrategy', () => {
                 setTimeout(r, 100);
             });
 
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PI-5031.google_pay_dont_override_address': false,
+                    },
+                },
+            });
+
             jest.spyOn(processor, 'showPaymentSheet').mockResolvedValue(
                 Promise.resolve(getCardDataResponse()),
             );
-
             jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockReturnValue(
                 delayedPromise as Promise<PaymentIntegrationSelectors>,
             );
