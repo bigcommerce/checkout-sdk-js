@@ -328,7 +328,7 @@ declare class PayPalCommerceAlternativeMethodsPaymentStrategy implements Payment
     private paypalApms?;
     private pollingTimer;
     private stopPolling;
-    private isPollingEnabled;
+    private isOrderApprovedProcessing;
     private paypalcommercealternativemethods?;
     constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
     initialize(options: PaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions): Promise<void>;

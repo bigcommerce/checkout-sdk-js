@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.873.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.872.0...v1.873.0) (2026-02-23)
+
+
+### Features
+
+* **payment:** PAYPAL-6228 Updates regarding IDEAL flow when polling mechanism is disabled ([851720a](https://github.com/bigcommerce/checkout-sdk-js/commit/851720a567a59558525ed4dd29908a04b087f633))
+
 ## [1.872.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.871.0...v1.872.0) (2026-02-23)
 
 
