@@ -44,6 +44,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _getPaymentPayload;
     private _processAdditionalAction;
     private _confirmStripePaymentOrThrow;
+    private _updateStripeEmail;
 }
 
 declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
