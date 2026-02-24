@@ -3,12 +3,14 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    StripeCheckoutSession,
     StripeClient,
     StripeElementsOptions,
     StripeHostWindow,
     StripeInitCheckoutOptions,
     StripeInitializationData,
     StripeJsVersion,
+    StripeLoadActionsResultType,
 } from './stripe';
 import StripeScriptLoader from './stripe-script-loader';
 import { getStripeCheckoutInstanceMock, getStripeJsMock } from './stripe.mock';
@@ -185,10 +187,27 @@ describe('StripePayScriptLoader', () => {
         const stripeUPEJsDefaultMock = getStripeJsMock();
         let initCheckoutMock: jest.Mock;
         let stripeJsMock: StripeClient;
-        const checkoutSessionOptions: StripeInitCheckoutOptions = { clientSecret: 'myToken' };
+        let checkoutSessionOptions: StripeInitCheckoutOptions;
+        let getSessionMock: jest.Mock;
 
         beforeEach(() => {
-            const checkoutSessionMock = getStripeCheckoutInstanceMock();
+            checkoutSessionOptions = { clientSecret: 'session_id_secret_id' };
+            getSessionMock = jest.fn(() =>
+                Promise.resolve({ id: 'session_id' } as StripeCheckoutSession),
+            );
+
+            const checkoutSessionMock = {
+                ...getStripeCheckoutInstanceMock(),
+                loadActions: () =>
+                    Promise.resolve({
+                        type: StripeLoadActionsResultType.SUCCESS,
+                        actions: {
+                            updateEmail: jest.fn(),
+                            getSession: getSessionMock,
+                            confirm: jest.fn(),
+                        },
+                    }),
+            };
 
             initCheckoutMock = jest.fn(() => Promise.resolve(checkoutSessionMock));
             stripeJsMock = {
@@ -197,12 +216,153 @@ describe('StripePayScriptLoader', () => {
             };
         });
 
-        it('initializes stripe checkout', async () => {
+        it('initializes stripe checkout once', async () => {
             await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
             await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
 
             expect(initCheckoutMock).toHaveBeenCalledTimes(1);
-            expect(initCheckoutMock).toHaveBeenCalledWith({ clientSecret: 'myToken' });
+            expect(initCheckoutMock).toHaveBeenCalledWith({ clientSecret: 'session_id_secret_id' });
+        });
+
+        it('reinitializes stripe checkout if checkout session id is different', async () => {
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, {
+                ...checkoutSessionOptions,
+                clientSecret: 'session_id_new_secret_id',
+            });
+
+            expect(initCheckoutMock).toHaveBeenCalledTimes(2);
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(1, {
+                clientSecret: 'session_id_secret_id',
+            });
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(2, {
+                clientSecret: 'session_id_new_secret_id',
+            });
+        });
+
+        it('reinitializes stripe checkout if checkout actions returns error', async () => {
+            const checkoutSessionMock = {
+                ...getStripeCheckoutInstanceMock(),
+                loadActions: () =>
+                    Promise.resolve({
+                        type: StripeLoadActionsResultType.ERROR,
+                        error: { message: 'checkout actions error' },
+                    }),
+            };
+
+            initCheckoutMock = jest.fn(() => Promise.resolve(checkoutSessionMock));
+            stripeJsMock = {
+                ...stripeUPEJsDefaultMock,
+                initCheckout: initCheckoutMock,
+            };
+
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+
+            expect(initCheckoutMock).toHaveBeenCalledTimes(2);
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(1, {
+                clientSecret: 'session_id_secret_id',
+            });
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(2, {
+                clientSecret: 'session_id_secret_id',
+            });
+        });
+
+        it('reinitializes stripe checkout if checkout actions not exists', async () => {
+            const checkoutSessionMock = {
+                ...getStripeCheckoutInstanceMock(),
+                loadActions: () =>
+                    Promise.resolve({
+                        type: StripeLoadActionsResultType.SUCCESS,
+                    }),
+            };
+
+            initCheckoutMock = jest.fn(() => Promise.resolve(checkoutSessionMock));
+            stripeJsMock = {
+                ...stripeUPEJsDefaultMock,
+                initCheckout: initCheckoutMock,
+            };
+
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+
+            expect(initCheckoutMock).toHaveBeenCalledTimes(2);
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(1, {
+                clientSecret: 'session_id_secret_id',
+            });
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(2, {
+                clientSecret: 'session_id_secret_id',
+            });
+        });
+
+        it('reinitializes stripe checkout if checkout session is not different', async () => {
+            getSessionMock = jest.fn(() => Promise.resolve(undefined));
+
+            const checkoutSessionMock = {
+                ...getStripeCheckoutInstanceMock(),
+                loadActions: () =>
+                    Promise.resolve({
+                        type: StripeLoadActionsResultType.SUCCESS,
+                        actions: {
+                            updateEmail: jest.fn(),
+                            getSession: getSessionMock,
+                            confirm: jest.fn(),
+                        },
+                    }),
+            };
+
+            initCheckoutMock = jest.fn(() => Promise.resolve(checkoutSessionMock));
+            stripeJsMock = {
+                ...stripeUPEJsDefaultMock,
+                initCheckout: initCheckoutMock,
+            };
+
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, {
+                ...checkoutSessionOptions,
+                clientSecret: 'session_id_new_secret_id',
+            });
+
+            expect(initCheckoutMock).toHaveBeenCalledTimes(2);
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(1, {
+                clientSecret: 'session_id_secret_id',
+            });
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(2, {
+                clientSecret: 'session_id_new_secret_id',
+            });
+        });
+
+        it('reinitializes stripe checkout if stripe throw an unexpected error', async () => {
+            getSessionMock = jest.fn(() => Promise.resolve(undefined));
+
+            const checkoutSessionMock = {
+                ...getStripeCheckoutInstanceMock(),
+                loadActions: () =>
+                    Promise.reject({
+                        type: StripeLoadActionsResultType.ERROR,
+                        message: 'unexpected error',
+                    }),
+            };
+
+            initCheckoutMock = jest.fn(() => Promise.resolve(checkoutSessionMock));
+            stripeJsMock = {
+                ...stripeUPEJsDefaultMock,
+                initCheckout: initCheckoutMock,
+            };
+
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, {
+                ...checkoutSessionOptions,
+                clientSecret: 'session_id_new_secret_id',
+            });
+
+            expect(initCheckoutMock).toHaveBeenCalledTimes(2);
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(1, {
+                clientSecret: 'session_id_secret_id',
+            });
+            expect(initCheckoutMock).toHaveBeenNthCalledWith(2, {
+                clientSecret: 'session_id_new_secret_id',
+            });
         });
     });
 });

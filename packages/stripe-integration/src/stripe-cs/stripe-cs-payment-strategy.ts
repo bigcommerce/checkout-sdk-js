@@ -17,7 +17,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     isStripePaymentEvent,
-    isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
     StripeCheckoutInstance,
     StripeCheckoutSession,
@@ -59,8 +58,19 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
+        const { clientToken } = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
+
+        if (!clientToken) {
+            await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+                params: { method: methodId },
+            });
+        }
+
         try {
             await this._initializeStripeElement(stripeocs, gatewayId, methodId);
+            await this._updateStripeEmail();
         } catch (error) {
             if (error instanceof Error) {
                 stripeocs.onError?.(error);
@@ -124,28 +134,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         gatewayId: string,
         methodId: string,
     ) {
-        let paymentMethod = this.paymentIntegrationService
+        const { clientToken, initializationData } = this.paymentIntegrationService
             .getState()
             .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
 
-        if (!paymentMethod?.clientToken) {
-            const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-                params: { method: methodId },
-            });
-
-            paymentMethod = state.getPaymentMethodOrThrow<StripeInitializationData>(
-                methodId,
-                gatewayId,
-            );
-        }
-
-        if (!isStripePaymentMethodLike(paymentMethod)) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const { clientToken, initializationData } = paymentMethod;
-
-        if (!clientToken) {
+        if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -177,10 +170,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 allowed: false,
             },
         });
-
-        const stripeActions = await this._getStripeActionsOrThrow();
-
-        await stripeActions.updateEmail(billingAddress?.email || '');
 
         const stripeElement = this._getStripeElement({
             fields: {
@@ -357,5 +346,19 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
 
         return stripeCheckoutSession;
+    }
+
+    private async _updateStripeEmail(): Promise<void> {
+        const stripeActions = await this._getStripeActionsOrThrow();
+        const stripeCheckoutSession = await stripeActions.getSession();
+
+        if (stripeCheckoutSession?.email) {
+            return;
+        }
+
+        const { getBillingAddress } = this.paymentIntegrationService.getState();
+        const billingAddress = getBillingAddress();
+
+        await stripeActions.updateEmail(billingAddress?.email || '');
     }
 }

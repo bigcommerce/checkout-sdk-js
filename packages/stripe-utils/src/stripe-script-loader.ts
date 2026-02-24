@@ -78,7 +78,7 @@ export default class StripeScriptLoader {
         stripeClient: StripeClient,
         options: StripeInitCheckoutOptions,
     ): Promise<StripeCheckoutInstance> {
-        let stripeCheckout = this.stripeWindow.bcStripeCheckout;
+        let stripeCheckout = await this.getStoredStripeCheckout(options);
 
         if (!stripeCheckout) {
             stripeCheckout = await stripeClient.initCheckout(options);
@@ -107,5 +107,45 @@ export default class StripeScriptLoader {
         }
 
         return `https://js.stripe.com/${stripeJsVersion}/stripe.js`;
+    }
+
+    private async getStoredStripeCheckout(
+        options: StripeInitCheckoutOptions,
+    ): Promise<StripeCheckoutInstance | undefined> {
+        const stripeCheckout = this.stripeWindow.bcStripeCheckout;
+
+        if (!stripeCheckout) {
+            return undefined;
+        }
+
+        try {
+            const { actions, error } = await stripeCheckout.loadActions();
+
+            if (error || !actions) {
+                this.logErrorToConsole(error);
+
+                return undefined;
+            }
+
+            const stripeCheckoutSession = await actions.getSession();
+            const stripeSessionIdFromOptions = options.clientSecret.split('_secret_')[0];
+
+            if (stripeCheckoutSession?.id === stripeSessionIdFromOptions) {
+                return stripeCheckout;
+            }
+        } catch (error) {
+            this.logErrorToConsole(error);
+
+            return undefined;
+        }
+
+        return undefined;
+    }
+
+    private logErrorToConsole(error?: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        error
+            ? console.error(error)
+            : console.error('No stripe checkout actions available on loadActions().');
     }
 }

@@ -529,6 +529,7 @@ export interface StripeCheckoutSessionConfirmationResult {
 
 export interface StripeCheckoutSessionActions {
     updateEmail(email: string): Promise<void>;
+    getSession(): Promise<StripeCheckoutSession | null>;
     confirm(
         options: StripeCheckoutSessionConfirmPaymentData,
     ): Promise<StripeCheckoutSessionConfirmationResult>;

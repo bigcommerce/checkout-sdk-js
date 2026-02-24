@@ -1,6 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import {
+    BillingAddress,
     InvalidArgumentError,
     NotInitializedError,
     OrderFinalizationNotRequiredError,
@@ -20,6 +21,7 @@ import {
     getStripeCheckoutInstanceMock,
     getStripeIntegrationServiceMock,
     getStripeJsMock,
+    StripeCheckoutSession,
     StripeCheckoutSessionPaymentStatus,
     StripeClient,
     StripeEventMock,
@@ -197,21 +199,6 @@ describe('StripeOCSPaymentStrategy', () => {
             const onErrorMock = jest.fn();
             const renderMock = jest.fn();
             const togglePreloaderMock = jest.fn();
-            const updateEmailMock = jest.fn();
-
-            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
-                Promise.resolve({
-                    ...getStripeCheckoutInstanceMock(),
-                    loadActions: () =>
-                        Promise.resolve({
-                            type: StripeLoadActionsResultType.SUCCESS,
-                            actions: {
-                                updateEmail: updateEmailMock,
-                                confirm: jest.fn(),
-                            },
-                        }),
-                }),
-            );
 
             await stripeCSPaymentStrategy.initialize({
                 ...stripeOptions,
@@ -228,7 +215,6 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(togglePreloaderMock).toHaveBeenCalled();
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
             expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
-            expect(updateEmailMock).toHaveBeenCalledWith('test@bigcommerce.com');
         });
 
         it('Throws error if no stripe actions loaded', async () => {
@@ -258,7 +244,6 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             expect(onErrorMock).toHaveBeenCalled();
-            expect(stripeIntegrationService.mountElement).not.toHaveBeenCalled();
         });
 
         it('should initialize and get postal code when shipping address unavailable', async () => {
@@ -559,6 +544,85 @@ describe('StripeOCSPaymentStrategy', () => {
                 },
             });
         });
+
+        describe('stripe email updating', () => {
+            let updateEmailMock: jest.Mock;
+            let getSessionMock: jest.Mock;
+
+            beforeEach(() => {
+                paymentIntegrationService = new PaymentIntegrationServiceMock();
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getBillingAddress',
+                ).mockReturnValue({ email: 'test@bigcommerce.com' } as BillingAddress);
+            });
+
+            const mockStripeCheckout = (stripeCheckoutSession?: StripeCheckoutSession) => {
+                updateEmailMock = jest.fn();
+                getSessionMock = jest.fn(() => Promise.resolve(stripeCheckoutSession));
+
+                jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                    Promise.resolve({
+                        ...getStripeCheckoutInstanceMock(),
+                        loadActions: () =>
+                            Promise.resolve({
+                                type: StripeLoadActionsResultType.SUCCESS,
+                                actions: {
+                                    updateEmail: updateEmailMock,
+                                    getSession: getSessionMock,
+                                    confirm: jest.fn(),
+                                },
+                            }),
+                    }),
+                );
+            };
+
+            it('should update email if checkout session is not set', async () => {
+                mockStripeCheckout();
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
+                expect(getSessionMock).toHaveBeenCalled();
+                expect(updateEmailMock).toHaveBeenCalledWith('test@bigcommerce.com');
+            });
+
+            it('should update email if checkout session email is not set and billing address is not set', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getBillingAddress',
+                ).mockReturnValue(undefined);
+                mockStripeCheckout({ email: '' } as StripeCheckoutSession);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
+                expect(getSessionMock).toHaveBeenCalled();
+                expect(updateEmailMock).toHaveBeenCalledWith('');
+            });
+
+            it('should update email if checkout session email is not set and billing address email is not set', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getBillingAddress',
+                ).mockReturnValue({ email: '' } as BillingAddress);
+                mockStripeCheckout({ email: '' } as StripeCheckoutSession);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
+                expect(getSessionMock).toHaveBeenCalled();
+                expect(updateEmailMock).toHaveBeenCalledWith('');
+            });
+
+            it('should not update email if checkout session email is set', async () => {
+                mockStripeCheckout({ email: 'test@stripe.com' } as StripeCheckoutSession);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(updateEmailMock).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('#finalize()', () => {
@@ -813,16 +877,18 @@ describe('StripeOCSPaymentStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValueOnce(getStripeOCSMock());
+            ).mockReturnValue(getStripeOCSMock());
+
+            await stripeCSPaymentStrategy.initialize(stripeOptions);
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValueOnce({
+            ).mockReturnValue({
                 ...getStripeOCSMock(),
                 clientToken: undefined,
             });
 
-            await stripeCSPaymentStrategy.initialize(stripeOptions);
             await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
@@ -927,6 +993,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -972,6 +1039,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1011,6 +1079,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1038,6 +1107,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1063,6 +1133,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1092,6 +1163,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1146,6 +1218,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1204,6 +1277,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1239,6 +1313,7 @@ describe('StripeOCSPaymentStrategy', () => {
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
                                 updateEmail: jest.fn(),
+                                getSession: jest.fn(),
                                 confirm: confirmPaymentMock,
                             },
                         }),

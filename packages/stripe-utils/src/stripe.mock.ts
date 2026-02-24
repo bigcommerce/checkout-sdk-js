@@ -175,6 +175,7 @@ export function getStripeCheckoutInstanceMock(): StripeCheckoutInstance {
                 type: StripeLoadActionsResultType.SUCCESS,
                 actions: {
                     updateEmail: jest.fn(),
+                    getSession: jest.fn(),
                     confirm: jest.fn(),
                 },
             }),
