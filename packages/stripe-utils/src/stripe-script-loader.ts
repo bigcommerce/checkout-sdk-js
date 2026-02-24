@@ -122,6 +122,8 @@ export default class StripeScriptLoader {
             const { actions, error } = await stripeCheckout.loadActions();
 
             if (error || !actions) {
+                this.logErrorToConsole(error);
+
                 return undefined;
             }
 
@@ -131,10 +133,19 @@ export default class StripeScriptLoader {
             if (stripeCheckoutSession?.id === stripeSessionIdFromOptions) {
                 return stripeCheckout;
             }
-        } catch {
+        } catch (error) {
+            this.logErrorToConsole(error);
+
             return undefined;
         }
 
         return undefined;
+    }
+
+    private logErrorToConsole(error?: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        error
+            ? console.error(error)
+            : console.error('No stripe checkout actions available on loadActions().');
     }
 }
