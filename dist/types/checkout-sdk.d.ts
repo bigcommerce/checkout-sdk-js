@@ -8846,6 +8846,7 @@ declare enum UntrustedShippingCardVerificationType {
 }
 
 declare interface UserExperienceSettings {
+    checkoutV2Theme: boolean;
     walletButtonsOnTop: boolean;
     floatingLabelEnabled: boolean;
 }
