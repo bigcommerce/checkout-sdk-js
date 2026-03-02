@@ -18,6 +18,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { DEFAULT_CONTAINER_STYLES, LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import GooglePayPaymentInitializeOptions, {
     WithGooglePayPaymentInitializeOptions,
@@ -190,6 +191,12 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
     protected async _interactWithPaymentSheet(): Promise<void> {
         const response = await this._googlePayPaymentProcessor.showPaymentSheet();
+        const state = this._paymentIntegrationService.getState();
+        const { features } = state.getStoreConfigOrThrow().checkoutSettings;
+        const isGooglePayDontOverrideAddresssExperimentOn = isExperimentEnabled(
+            features,
+            'PI-5031.google_pay_dont_override_address',
+        );
 
         this._toggleBlockDeinitialization(true);
         this._toggleLoadingIndicator(true);
@@ -197,7 +204,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         const billingAddress =
             this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);
 
-        if (billingAddress) {
+        if (billingAddress && !isGooglePayDontOverrideAddresssExperimentOn) {
             await this._paymentIntegrationService.updateBillingAddress(billingAddress);
         }
 
