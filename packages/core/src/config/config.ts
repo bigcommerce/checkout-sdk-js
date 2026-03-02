@@ -1,5 +1,7 @@
 import { FormFields } from '../form';
 
+import { type Capabilities } from './capabilities';
+
 export default interface Config {
     context: ContextConfig;
     customization: CustomizationConfig;
@@ -98,6 +100,7 @@ export interface UserExperienceSettings {
 }
 
 export interface CheckoutSettings {
+    capabilities?: Capabilities;
     features: { [featureName: string]: boolean };
     checkoutBillingSameAsShippingEnabled: boolean;
     checkoutUserExperienceSettings: UserExperienceSettings;
