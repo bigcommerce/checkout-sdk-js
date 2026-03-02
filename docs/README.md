@@ -150,6 +150,7 @@
 - [BraintreePaypalCustomerInitializeOptions](interfaces/BraintreePaypalCustomerInitializeOptions.md)
 - [BrowserInfo](interfaces/BrowserInfo.md)
 - [ButtonStyles](interfaces/ButtonStyles.md)
+- [Capabilities](interfaces/Capabilities.md)
 - [CardCvcElementOptions](interfaces/CardCvcElementOptions.md)
 - [CardDataPaymentMethodState](interfaces/CardDataPaymentMethodState.md)
 - [CardElementOptions](interfaces/CardElementOptions.md)

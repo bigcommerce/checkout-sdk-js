@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [capabilities](CheckoutSettings.md#capabilities)
 - [checkoutBillingSameAsShippingEnabled](CheckoutSettings.md#checkoutbillingsameasshippingenabled)
 - [checkoutUserExperienceSettings](CheckoutSettings.md#checkoutuserexperiencesettings)
 - [enableOrderComments](CheckoutSettings.md#enableordercomments)
@@ -39,6 +40,12 @@
 - [shouldRedirectToStorefrontForAuth](CheckoutSettings.md#shouldredirecttostorefrontforauth)
 
 ## Properties
+
+### capabilities
+
+• `Optional` **capabilities**: [`Capabilities`](Capabilities.md)
+
+___
 
 ### checkoutBillingSameAsShippingEnabled
 

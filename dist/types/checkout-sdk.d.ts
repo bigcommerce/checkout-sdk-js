@@ -2279,6 +2279,53 @@ declare interface ButtonStyles extends BlockElementStyles {
     disabled?: BlockElementStyles;
 }
 
+declare interface Capabilities {
+    userJourney: {
+        quoteCheckout: boolean;
+        invoiceCheckout: boolean;
+        disableEditCartForQuote: boolean;
+        disableEditCartForInvoice: boolean;
+    };
+    customer: {
+        inlineSignIn: boolean;
+        verifyPurchasability: boolean;
+        superAdminCompanySelector: boolean;
+        guestAccountCreation: boolean;
+        b2bCompanySignupRedirect: boolean;
+    };
+    shipping: {
+        manualAddressEntry: boolean;
+        companyAddressBook: boolean;
+        prefillCompanyAddress: boolean;
+        saveToCompanyAddressBook: boolean;
+        saveToCustomerAddressBook: boolean;
+        lockQuoteShipping: boolean;
+        extraShippingFields: boolean;
+    };
+    billing: {
+        manualAddressEntry: boolean;
+        extraBillingFields: boolean;
+        companyAddressBook: boolean;
+        billingSameAsShippingAdmin: boolean;
+        lockQuoteBilling: boolean;
+    };
+    payment: {
+        paymentMethodFiltering: boolean;
+        b2bPaymentMethodFilter: boolean;
+        poPaymentMethod: boolean;
+        additionalPaymentNotes: boolean;
+        excludeOfflineForInvoice: boolean;
+        excludePPSDK: boolean;
+    };
+    orderConfirmation: {
+        orderSummary: boolean;
+        persistB2BMetadata: boolean;
+        storeQuoteId: boolean;
+        storeInvoiceReference: boolean;
+        invoiceRedirect: boolean;
+    };
+}
+
 declare interface CardCvcElementOptions extends BaseIndividualElementOptions {
     placeholder?: string;
 }
@@ -3812,6 +3859,7 @@ declare interface CheckoutServiceOptions {
 }
 
 declare interface CheckoutSettings {
+    capabilities?: Capabilities;
     features: {
         [featureName: string]: boolean;
     };
