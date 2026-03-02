@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.876.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.875.0...v1.876.0) (2026-03-02)
+
+
+### Features
+
+* **payment:** PI-5017 [Google pay] Do not override billing address on the payment strategy ([fc4e3fe](https://github.com/bigcommerce/checkout-sdk-js/commit/fc4e3fe0a221ea45e769da9ba981ee26bb2e3200))
+
 ## [1.875.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.874.0...v1.875.0) (2026-03-02)
 
 
