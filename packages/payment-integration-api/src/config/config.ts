@@ -95,6 +95,7 @@ export interface StoreCurrency {
 }
 
 export interface UserExperienceSettings {
+    checkoutV2Theme: boolean;
     walletButtonsOnTop: boolean;
     floatingLabelEnabled: boolean;
 }
