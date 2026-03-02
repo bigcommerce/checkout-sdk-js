@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.877.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.876.0...v1.877.0) (2026-03-02)
+
+
+### Features
+
+* **payment:** PI-5028 isWebView util added ([3e11ae6](https://github.com/bigcommerce/checkout-sdk-js/commit/3e11ae6e7f3bf7805332cd6c5794c138382e4338))
+
 ## [1.876.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.875.0...v1.876.0) (2026-03-02)
 
 
