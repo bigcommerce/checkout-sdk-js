@@ -12,3 +12,4 @@
 .idea
 .vscode
 junit.xml
+/build-analysis
