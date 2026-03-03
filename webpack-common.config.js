@@ -33,7 +33,16 @@ const libraryEntries = {
 };
 
 async function getBaseConfig(_options, argv = {}) {
+    const libraryVersion = await getNextVersion();
+
     return {
+        cache: {
+            type: 'filesystem',
+            buildDependencies: {
+                config: [__filename],
+            },
+            version: libraryVersion,
+        },
         stats: {
             errorDetails: true,
             logging: 'verbose',
@@ -61,7 +70,7 @@ async function getBaseConfig(_options, argv = {}) {
         },
         plugins: [
             new DefinePlugin({
-                LIBRARY_VERSION: JSON.stringify(await getNextVersion()),
+                LIBRARY_VERSION: JSON.stringify(libraryVersion),
                 'process.env.NODE_ENV': JSON.stringify(
                     process.env.NODE_ENV || argv.mode || 'production',
                 ),
