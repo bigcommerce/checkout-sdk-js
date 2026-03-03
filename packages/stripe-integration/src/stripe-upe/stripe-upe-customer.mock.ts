@@ -30,6 +30,7 @@ export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): Strip
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
+        initCheckout: jest.fn(),
     };
 }
 
