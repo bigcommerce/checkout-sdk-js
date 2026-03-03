@@ -32,6 +32,7 @@ import {
     IntermediatePaymentData,
     ShippingOptionParameters,
 } from './types';
+import { isWebView } from './utils';
 
 export default class GooglePayPaymentProcessor {
     private _paymentsClient?: GooglePaymentsClient;
@@ -250,14 +251,23 @@ export default class GooglePayPaymentProcessor {
                 parameters: await this._gateway.getPaymentGatewayParameters(),
             },
         };
+
+        const isWebViewLogic = isWebView()
+            ? {
+                  shippingOptionRequired: false,
+              }
+            : {
+                  callbackIntents: this._gateway.getCallbackIntents(),
+                  offerInfo: this._gateway.getAppliedCoupons(),
+              };
+
         this._paymentDataRequest = {
             ...this._baseRequest,
             allowedPaymentMethods: [this._cardPaymentMethod],
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
-            callbackIntents: this._gateway.getCallbackIntents(),
-            offerInfo: this._gateway.getAppliedCoupons(),
+            ...isWebViewLogic,
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,

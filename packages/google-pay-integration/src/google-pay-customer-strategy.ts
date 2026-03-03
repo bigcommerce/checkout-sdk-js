@@ -25,6 +25,7 @@ import {
     GooglePayPaymentOptions,
     TotalPriceStatusType,
 } from './types';
+import { isWebView } from './utils';
 
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _paymentButton?: HTMLElement;
@@ -105,6 +106,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     }
 
     private _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions {
+        if (isWebView()) {
+            return {};
+        }
+
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({
