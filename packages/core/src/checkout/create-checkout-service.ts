@@ -142,11 +142,14 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     );
     const paymentIntegrationService = createPaymentIntegrationService(store);
 
+    // NO_PAYMENT_DATA_REQUIRED must always be available regardless of build mode — it handles
+    // free orders / full store credit checkouts and cannot be lazily loaded via integrations.
+    const essentialPaymentStrategyFactories = {
+        createNoPaymentStrategy: paymentStrategyFactories.createNoPaymentStrategy,
+    };
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        paymentStrategyFactories,
-        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
+        process.env.ESSENTIAL_BUILD ? essentialPaymentStrategyFactories : paymentStrategyFactories,
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(

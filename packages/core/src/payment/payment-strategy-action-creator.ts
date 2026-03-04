@@ -90,9 +90,22 @@ export default class PaymentStrategyActionCreator {
 
                         strategy = this._getStrategy(method);
                     } else {
-                        strategy = this._strategyRegistryV2.get({
+                        const noPaymentResolveId = {
                             id: PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED,
-                        });
+                        };
+
+                        // TODO: Remove once CHECKOUT-9450.lazy_load_payment_strategies is confirmed stable
+                        if (process.env.ESSENTIAL_BUILD) {
+                            this._errorLogger.log(
+                                new Error(
+                                    `[CHECKOUT-9450] No payment path reached in essential build. Strategy registered: ${String(
+                                        !!this._strategyRegistryV2.getFactory(noPaymentResolveId),
+                                    )}`,
+                                ),
+                            );
+                        }
+
+                        strategy = this._strategyRegistryV2.get(noPaymentResolveId);
                     }
 
                     const promise: Promise<InternalCheckoutSelectors | void> = strategy.execute(
