@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.877.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.877.2...v1.877.3) (2026-03-04)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-9796 Pass createNoPaymentStrategy as fallback ([#3161](https://github.com/bigcommerce/checkout-sdk-js/issues/3161)) ([8bdf9dd](https://github.com/bigcommerce/checkout-sdk-js/commit/8bdf9dde6a1a6971ed009f755403f7369422632b))
+
 ### [1.877.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.877.1...v1.877.2) (2026-03-03)
 
 ### [1.877.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.877.0...v1.877.1) (2026-03-02)
