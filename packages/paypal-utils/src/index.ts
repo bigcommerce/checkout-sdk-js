@@ -1,6 +1,7 @@
 export * from './paypal-types';
 export * from './mocks';
 export * from './utils';
+export * from './paypal-commerce-constants';
 
 // TODO: this export should be moved to ./utils/index.ts file
 export { default as isPaypalProviderError } from './utils/is-paypal-provider-error';

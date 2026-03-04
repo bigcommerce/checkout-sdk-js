@@ -12,23 +12,18 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalCommerceSdk,
-    PayPalCommerceSdk,
-    PayPalMessagesSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import {
-    getPayPalCommerceIntegrationServiceMock,
-    getPayPalCommercePaymentMethod,
+    createPayPalSdkScriptLoader,
+    getPayPalIntegrationServiceMock,
+    getPayPalPaymentMethod,
     getPayPalSDKMock,
-} from '../mocks';
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceHostWindow,
+    PayPalButtonsOptions,
+    PayPalHostWindow,
+    PayPalIntegrationService,
+    PayPalMessagesSdk,
     PayPalSDK,
-} from '../paypal-commerce-types';
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceCreditPaymentInitializeOptions from './paypal-commerce-credit-payment-initialize-options';
 import PayPalCommerceCreditPaymentStrategy from './paypal-commerce-credit-payment-strategy';
@@ -38,10 +33,10 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
     let loadingIndicator: LoadingIndicator;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
-    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
+    let paypalIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
     let strategy: PayPalCommerceCreditPaymentStrategy;
-    let paypalCommerceSdk: PayPalCommerceSdk;
+    let payPalSdkScriptLoader: PayPalSdkScriptLoader;
     let payPalMessagesSdk: PayPalMessagesSdk;
 
     const paypalOrderId = 'paypal123';
@@ -69,94 +64,90 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
         };
 
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getPayPalCommercePaymentMethod();
+        paymentMethod = getPayPalPaymentMethod();
         paymentMethod.id = defaultMethodId;
         paymentMethod.initializationData.orderId = undefined;
 
         loadingIndicator = new LoadingIndicator();
-        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
+        paypalIntegrationService = getPayPalIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalCommerceSdk = createPayPalCommerceSdk();
+        payPalSdkScriptLoader = createPayPalSdkScriptLoader();
 
         strategy = new PayPalCommerceCreditPaymentStrategy(
             paymentIntegrationService,
-            paypalCommerceIntegrationService,
+            paypalIntegrationService,
             loadingIndicator,
-            paypalCommerceSdk,
+            payPalSdkScriptLoader,
         );
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
         );
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
-        jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
-            paypalSdk,
-        );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue('');
-        jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockResolvedValue();
+        jest.spyOn(paypalIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
+        jest.spyOn(paypalIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalIntegrationService, 'createOrder').mockResolvedValue('');
+        jest.spyOn(paypalIntegrationService, 'submitPayment').mockResolvedValue();
 
         jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
         jest.spyOn(loadingIndicator, 'hide').mockReturnValue(undefined);
 
-        jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-            (options: PayPalCommerceButtonsOptions) => {
-                eventEmitter.on('createOrder', () => {
-                    if (options.createOrder) {
-                        options.createOrder();
-                    }
-                });
+        jest.spyOn(paypalSdk, 'Buttons').mockImplementation((options: PayPalButtonsOptions) => {
+            eventEmitter.on('createOrder', () => {
+                if (options.createOrder) {
+                    options.createOrder();
+                }
+            });
 
-                eventEmitter.on('onClick', () => {
-                    if (options.onClick) {
-                        options.onClick(
-                            { fundingSource: defaultMethodId },
-                            {
-                                reject: jest.fn(),
-                                resolve: jest.fn(),
+            eventEmitter.on('onClick', () => {
+                if (options.onClick) {
+                    options.onClick(
+                        { fundingSource: defaultMethodId },
+                        {
+                            reject: jest.fn(),
+                            resolve: jest.fn(),
+                        },
+                    );
+                }
+            });
+
+            eventEmitter.on('onApprove', () => {
+                if (options.onApprove) {
+                    options.onApprove(
+                        { orderID: paypalOrderId },
+                        {
+                            order: {
+                                get: jest.fn(),
                             },
-                        );
-                    }
-                });
+                        },
+                    );
+                }
+            });
 
-                eventEmitter.on('onApprove', () => {
-                    if (options.onApprove) {
-                        options.onApprove(
-                            { orderID: paypalOrderId },
-                            {
-                                order: {
-                                    get: jest.fn(),
-                                },
-                            },
-                        );
-                    }
-                });
+            eventEmitter.on('onCancel', () => {
+                if (options.onCancel) {
+                    options.onCancel();
+                }
+            });
 
-                eventEmitter.on('onCancel', () => {
-                    if (options.onCancel) {
-                        options.onCancel();
-                    }
-                });
+            eventEmitter.on('onError', () => {
+                if (options.onError) {
+                    options.onError(new Error());
+                }
+            });
 
-                eventEmitter.on('onError', () => {
-                    if (options.onError) {
-                        options.onError(new Error());
-                    }
-                });
-
-                return {
-                    isEligible: jest.fn(() => true),
-                    render: jest.fn(),
-                    close: jest.fn(),
-                };
-            },
-        );
+            return {
+                isEligible: jest.fn(() => true),
+                render: jest.fn(),
+                close: jest.fn(),
+            };
+        });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
 
-        delete (window as PayPalCommerceHostWindow).paypal;
+        delete (window as PayPalHostWindow).paypal;
     });
 
     it('creates an instance of the PayPal Commerce payment strategy', () => {
@@ -191,15 +182,13 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).not.toHaveBeenCalled();
+            expect(paypalIntegrationService.loadPayPalSdk).not.toHaveBeenCalled();
         });
 
         it('loads paypal sdk', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
-                defaultMethodId,
-            );
+            expect(paypalIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(defaultMethodId);
         });
     });
 
@@ -235,17 +224,15 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
         it('renders PayPal Credit button if PayPal PayLater button is not eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                (options: PayPalCommerceButtonsOptions) => {
-                    return {
-                        close: jest.fn(),
-                        render: paypalCommerceSdkRenderMock,
-                        isEligible: jest.fn(() => {
-                            return options.fundingSource === paypalSdk.FUNDING.CREDIT;
-                        }),
-                    };
-                },
-            );
+            jest.spyOn(paypalSdk, 'Buttons').mockImplementation((options: PayPalButtonsOptions) => {
+                return {
+                    close: jest.fn(),
+                    render: paypalCommerceSdkRenderMock,
+                    isEligible: jest.fn(() => {
+                        return options.fundingSource === paypalSdk.FUNDING.CREDIT;
+                    }),
+                };
+            });
 
             await strategy.initialize(initializationOptions);
 
@@ -319,7 +306,7 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommercecreditcheckout',
             );
         });
@@ -482,7 +469,7 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(paypalCommerceIntegrationService.submitPayment).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.submitPayment).toHaveBeenCalledWith(
                 payload.payment.methodId,
                 paypalOrderId,
             );
@@ -534,7 +521,7 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
             div.setAttribute('id', defaultMessageContainerId);
             document.body.appendChild(div);
 
-            jest.spyOn(paypalCommerceSdk, 'getPayPalMessages').mockImplementation(() =>
+            jest.spyOn(payPalSdkScriptLoader, 'getPayPalMessages').mockImplementation(() =>
                 Promise.resolve(payPalMessagesSdk),
             );
             jest.spyOn(payPalMessagesSdk, 'Messages').mockImplementation(() => ({
@@ -607,7 +594,7 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
         it('does not execute PayPal button initialization logic if bannerContainerId is provided', async () => {
             await strategy.initialize(options);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).not.toHaveBeenCalledWith(
+            expect(paypalIntegrationService.loadPayPalSdk).not.toHaveBeenCalledWith(
                 defaultMethodId,
             );
         });

@@ -11,22 +11,19 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    ApproveCallbackPayload,
+    ClickCallbackActions,
     getPaypalMessagesStylesFromBNPLConfig,
     MessagingOptions,
     PayPalBNPLConfigurationItem,
-    PayPalCommerceInitializationData,
-    PayPalCommerceSdk,
+    PayPalButtons,
+    PayPalButtonsOptions,
+    PayPalInitializationData,
+    PayPalIntegrationService,
     PayPalMessagesSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    ApproveCallbackPayload,
-    ClickCallbackActions,
-    PayPalCommerceButtons,
-    PayPalCommerceButtonsOptions,
-} from '../paypal-commerce-types';
 
 import PayPalCommerceCreditPaymentInitializeOptions, {
     WithPayPalCommerceCreditPaymentInitializeOptions,
@@ -35,13 +32,13 @@ import PayPalCommerceCreditPaymentInitializeOptions, {
 export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
-    private paypalButton?: PayPalCommerceButtons;
+    private paypalButton?: PayPalButtons;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
         private loadingIndicator: LoadingIndicator,
-        private paypalCommerceSdk: PayPalCommerceSdk,
+        private payPalSdkScriptLoader: PayPalSdkScriptLoader,
     ) {}
 
     async initialize(
@@ -66,8 +63,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
 
         const { paypalBNPLConfiguration = [], orderId } = paymentMethod.initializationData || {};
         const { bannerContainerId, container } = paypalOptions;
@@ -88,7 +84,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
                 return;
             }
 
-            const paypalMessages = await this.paypalCommerceSdk.getPayPalMessages(
+            const paypalMessages = await this.payPalSdkScriptLoader.getPayPalMessages(
                 paymentMethod,
                 state.getCartOrThrow().currency.code,
             );
@@ -106,7 +102,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
             return;
         }
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId);
 
         this.loadingIndicatorContainer = container?.split('#')[1];
 
@@ -125,7 +121,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         }
 
         await this.paymentIntegrationService.submitOrder(order, options);
-        await this.paypalCommerceIntegrationService.submitPayment(payment.methodId, this.orderId);
+        await this.paypalIntegrationService.submitPayment(payment.methodId, this.orderId);
     }
 
     finalize(): Promise<void> {
@@ -155,11 +151,10 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
             );
         }
 
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const { paymentButtonStyles } = paymentMethod.initializationData || {};
         const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
 
@@ -173,15 +168,13 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
                 return;
             }
 
-            const buttonOptions: PayPalCommerceButtonsOptions = {
+            const buttonOptions: PayPalButtonsOptions = {
                 fundingSource,
-                style: this.paypalCommerceIntegrationService.getValidButtonStyle(
+                style: this.paypalIntegrationService.getValidButtonStyle(
                     checkoutPaymentButtonStyles,
                 ),
                 createOrder: () =>
-                    this.paypalCommerceIntegrationService.createOrder(
-                        'paypalcommercecreditcheckout',
-                    ),
+                    this.paypalIntegrationService.createOrder('paypalcommercecreditcheckout'),
                 onClick: (_, actions) => this.handleClick(actions, onValidate),
                 onApprove: (data) => this.handleApprove(data, submitForm),
                 onCancel: () => this.toggleLoadingIndicator(false),
