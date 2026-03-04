@@ -8,6 +8,7 @@
 
 - [address](Consignment.md#address)
 - [availableShippingOptions](Consignment.md#availableshippingoptions)
+- [comparisonShippingCost](Consignment.md#comparisonshippingcost)
 - [discounts](Consignment.md#discounts)
 - [handlingCost](Consignment.md#handlingcost)
 - [id](Consignment.md#id)
@@ -16,6 +17,7 @@
 - [selectedShippingOption](Consignment.md#selectedshippingoption)
 - [shippingAddress](Consignment.md#shippingaddress)
 - [shippingCost](Consignment.md#shippingcost)
+- [shippingCostBeforeDiscount](Consignment.md#shippingcostbeforediscount)
 
 ## Properties
 
@@ -28,6 +30,12 @@ ___
 ### availableShippingOptions
 
 • `Optional` **availableShippingOptions**: [`ShippingOption`](ShippingOption.md)[]
+
+___
+
+### comparisonShippingCost
+
+• **comparisonShippingCost**: `number`
 
 ___
 
@@ -76,3 +84,9 @@ ___
 ### shippingCost
 
 • **shippingCost**: `number`
+
+___
+
+### shippingCostBeforeDiscount
+
+• **shippingCostBeforeDiscount**: `number`

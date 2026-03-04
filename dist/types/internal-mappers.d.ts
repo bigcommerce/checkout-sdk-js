@@ -143,6 +143,8 @@ declare interface Consignment {
     selectedShippingOption?: ShippingOption;
     selectedPickupOption?: ConsignmentPickupOption;
     lineItemIds: string[];
+    comparisonShippingCost: number;
+    shippingCostBeforeDiscount: number;
 }
 
 declare interface ConsignmentAutomaticDiscount extends ConsignmentDiscountBase<'AUTOMATIC'> {
