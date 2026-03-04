@@ -10,6 +10,7 @@ function getNextVersion() {
         // version because there is no new commit ahead of it.
         if (
             process.env.WATCH ||
+            process.env.NODE_ENV !== 'production' ||
             execSync('git describe').toString().trim() === `v${packageJson.version}`
         ) {
             return resolve(packageJson.version);
