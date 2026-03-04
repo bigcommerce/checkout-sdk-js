@@ -15,6 +15,8 @@ export default interface Consignment {
     selectedShippingOption?: ShippingOption;
     selectedPickupOption?: ConsignmentPickupOption;
     lineItemIds: string[];
+    comparisonShippingCost: number;
+    shippingCostBeforeDiscount: number;
 }
 
 export type ConsignmentRequestBody =

@@ -18,6 +18,8 @@ export function getConsignment(): Consignment {
         shippingAddress: omit(getShippingAddress(), 'id') as Address,
         availableShippingOptions: [getShippingOption()],
         discounts: [],
+        shippingCostBeforeDiscount: 0,
+        comparisonShippingCost: 0,
     };
 }
 
