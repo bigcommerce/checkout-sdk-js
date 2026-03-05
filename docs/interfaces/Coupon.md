@@ -10,6 +10,7 @@
 - [couponType](Coupon.md#coupontype)
 - [discountedAmount](Coupon.md#discountedamount)
 - [displayName](Coupon.md#displayname)
+- [hasMaxLimitReached](Coupon.md#hasmaxlimitreached)
 - [id](Coupon.md#id)
 
 ## Properties
@@ -35,6 +36,12 @@ ___
 ### displayName
 
 • **displayName**: `string`
+
+___
+
+### hasMaxLimitReached
+
+• `Optional` **hasMaxLimitReached**: `boolean`
 
 ___
 

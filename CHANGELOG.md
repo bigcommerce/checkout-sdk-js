@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.878.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.877.5...v1.878.0) (2026-03-05)
+
+
+### Features
+
+* **checkout:** CHECKOUT-98034 update checkout interface to support the maximum limit fields ([#3168](https://github.com/bigcommerce/checkout-sdk-js/issues/3168)) ([63c4ddf](https://github.com/bigcommerce/checkout-sdk-js/commit/63c4ddfe577a9d0b091faa2f2730fe61352c64d0))
+
 ### [1.877.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.877.4...v1.877.5) (2026-03-04)
 
 ### [1.877.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.877.3...v1.877.4) (2026-03-04)

@@ -112,6 +112,7 @@ declare interface Checkout {
     outstandingBalance: number;
     orderBasedAutoDiscountTotal: number;
     manualDiscountTotal: number;
+    hasOrderLevelAutoDiscountMaxLimitReached?: boolean;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;
@@ -173,6 +174,7 @@ declare interface Coupon {
     code: string;
     couponType: string;
     discountedAmount: number;
+    hasMaxLimitReached?: boolean;
 }
 
 declare interface Currency {

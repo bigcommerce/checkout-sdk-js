@@ -23,6 +23,7 @@
 - [giftWrappingCostTotal](Checkout.md#giftwrappingcosttotal)
 - [grandTotal](Checkout.md#grandtotal)
 - [handlingCostTotal](Checkout.md#handlingcosttotal)
+- [hasOrderLevelAutoDiscountMaxLimitReached](Checkout.md#hasorderlevelautodiscountmaxlimitreached)
 - [id](Checkout.md#id)
 - [isStoreCreditApplied](Checkout.md#isstorecreditapplied)
 - [manualDiscountTotal](Checkout.md#manualdiscounttotal)
@@ -141,6 +142,12 @@ ___
 ### handlingCostTotal
 
 • **handlingCostTotal**: `number`
+
+___
+
+### hasOrderLevelAutoDiscountMaxLimitReached
+
+• `Optional` **hasOrderLevelAutoDiscountMaxLimitReached**: `boolean`
 
 ___
 
