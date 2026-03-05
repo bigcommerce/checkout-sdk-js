@@ -172,7 +172,7 @@ export default class StripeIntegrationService {
     ): StripeConfirmPaymentData {
         const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
         const { firstName = '', lastName = '', email = '' } = billingAddress || {};
-        const address = this._mapStripeAddress(billingAddress);
+        const address = this.mapStripeAddress(billingAddress);
 
         if (!stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -191,7 +191,7 @@ export default class StripeIntegrationService {
                     billing_details: {
                         email,
                         address,
-                        name: `${firstName} ${lastName}`,
+                        name: this.getShopperFullName(billingAddress),
                     },
                 },
                 ...(returnUrl && { return_url: returnUrl }),
@@ -242,7 +242,7 @@ export default class StripeIntegrationService {
             : StripeJsVersion.V3;
     }
 
-    private _mapStripeAddress(address?: Address): AddressOptions {
+    mapStripeAddress(address?: Address): AddressOptions {
         if (address) {
             const {
                 city,
@@ -264,5 +264,11 @@ export default class StripeIntegrationService {
         }
 
         throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+    }
+
+    getShopperFullName(address?: Address): string {
+        const { firstName = '', lastName = '' } = address || {};
+
+        return `${firstName} ${lastName}`.trim();
     }
 }

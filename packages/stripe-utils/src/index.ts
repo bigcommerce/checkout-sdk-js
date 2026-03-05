@@ -45,6 +45,7 @@ export {
     getRetrievePaymentIntentResponseSucceeded,
     getRetrievePaymentIntentResponseWithError,
     getStripeCheckoutInstanceMock,
+    getStripeCheckoutSessionActionsMock,
 } from './stripe.mock';
 export { default as StripePaymentInitializeOptions } from './stripe-initialize-options';
 export { default as StripeIntegrationService } from './stripe-integration-service';
