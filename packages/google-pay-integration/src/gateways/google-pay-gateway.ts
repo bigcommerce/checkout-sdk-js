@@ -237,7 +237,8 @@ export default class GooglePayGateway {
     }
 
     isWebViewWithRestrictions(): boolean {
-        console.log('this._isWebViewExperimentOn', this._isWebViewExperimentOn)
+        console.log('this._isWebViewExperimentOn', this._isWebViewExperimentOn);
+
         if (this._isWebViewExperimentOn !== null) {
             return this._isWebViewExperimentOn && isWebView();
         }
@@ -246,7 +247,7 @@ export default class GooglePayGateway {
     }
 
     setIsWebViewExperimentOn(isWebViewExperimentOn: boolean): void {
-        console.log('setIsWebViewExperimentOn', isWebViewExperimentOn)
+        console.log('setIsWebViewExperimentOn', isWebViewExperimentOn);
 
         this._isWebViewExperimentOn = isWebViewExperimentOn;
     }
