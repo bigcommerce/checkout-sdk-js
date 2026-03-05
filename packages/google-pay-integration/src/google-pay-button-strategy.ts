@@ -81,6 +81,9 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         this._countryCode = paymentMethod.initializationData?.storeCountry;
+        this._googlePayPaymentProcessor.setIsWebViewExperimentOn(
+            !!paymentMethod.initializationData?.isWebViewExperimentOn,
+        );
 
         if (buyNowInitializeOptions) {
             if (!currencyCode) {
@@ -187,6 +190,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     private _getGooglePayClientOptions(): GooglePayPaymentOptions | undefined {
+        if (this._googlePayPaymentProcessor.isWebViewWithRestrictions()) {
+            return {};
+        }
+
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({

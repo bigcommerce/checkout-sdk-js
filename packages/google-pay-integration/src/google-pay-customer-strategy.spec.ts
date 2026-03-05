@@ -196,6 +196,111 @@ describe('GooglePayCustomerStrategy', () => {
         });
     });
 
+    describe('#initialize with WebView', () => {
+        it('should call setIsWebViewExperimentOn with true when initializationData has it enabled', async () => {
+            const paymentMethod = getGeneric();
+
+            paymentMethod.initializationData = {
+                ...paymentMethod.initializationData!,
+                isWebViewExperimentOn: true,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethod);
+
+            jest.spyOn(processor, 'setIsWebViewExperimentOn');
+
+            await strategy.initialize(options);
+
+            expect(processor.setIsWebViewExperimentOn).toHaveBeenCalledWith(true);
+        });
+
+        it('should call setIsWebViewExperimentOn with false when initializationData has it disabled', async () => {
+            const paymentMethod = getGeneric();
+
+            paymentMethod.initializationData = {
+                ...paymentMethod.initializationData!,
+                isWebViewExperimentOn: false,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethod);
+
+            jest.spyOn(processor, 'setIsWebViewExperimentOn');
+
+            await strategy.initialize(options);
+
+            expect(processor.setIsWebViewExperimentOn).toHaveBeenCalledWith(false);
+        });
+
+        it('should call setIsWebViewExperimentOn with false when isWebViewExperimentOn is undefined', async () => {
+            const paymentMethod = getGeneric();
+
+            paymentMethod.initializationData = {
+                ...paymentMethod.initializationData!,
+                isWebViewExperimentOn: undefined,
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethod);
+
+            jest.spyOn(processor, 'setIsWebViewExperimentOn');
+
+            await strategy.initialize(options);
+
+            expect(processor.setIsWebViewExperimentOn).toHaveBeenCalledWith(false);
+        });
+
+        it('should call setIsWebViewExperimentOn before initialize', async () => {
+            const callOrder: string[] = [];
+
+            jest.spyOn(processor, 'setIsWebViewExperimentOn').mockImplementation(() => {
+                callOrder.push('setIsWebViewExperimentOn');
+            });
+
+            jest.spyOn(processor, 'initialize').mockImplementation(() => {
+                callOrder.push('initialize');
+
+                return Promise.resolve();
+            });
+
+            await strategy.initialize(options);
+
+            expect(callOrder).toStrictEqual(['setIsWebViewExperimentOn', 'initialize']);
+        });
+    });
+
+    describe('#getGooglePayClientOptions with WebView', () => {
+        it('should initialize processor without paymentDataCallbacks when in webview', async () => {
+            jest.spyOn(processor, 'isWebViewWithRestrictions').mockReturnValue(true);
+
+            await strategy.initialize(options);
+
+            expect(processor.initialize).toHaveBeenCalledWith(expect.any(Function), {});
+        });
+
+        it('should initialize processor with paymentDataCallbacks when not in webview', async () => {
+            jest.spyOn(processor, 'isWebViewWithRestrictions').mockReturnValue(false);
+
+            await strategy.initialize(options);
+
+            expect(processor.initialize).toHaveBeenCalledWith(
+                expect.any(Function),
+                expect.objectContaining({
+                    paymentDataCallbacks: expect.objectContaining({
+                        onPaymentDataChanged: expect.any(Function),
+                    }),
+                }),
+            );
+        });
+    });
+
     describe('#signIn', () => {
         it('should not signIn programmatically', async () => {
             const signIn = strategy.signIn();

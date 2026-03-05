@@ -728,6 +728,155 @@ describe('GooglePayButtonStrategy', () => {
         });
     });
 
+    describe('#initialize with WebView', () => {
+        describe('Buy Now flow', () => {
+            it('should call setIsWebViewExperimentOn with true when initializationData has it enabled', async () => {
+                const paymentMethod = getGeneric();
+
+                paymentMethod.initializationData = {
+                    ...paymentMethod.initializationData!,
+                    isWebViewExperimentOn: true,
+                };
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(paymentMethod);
+
+                jest.spyOn(processor, 'setIsWebViewExperimentOn');
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                expect(processor.setIsWebViewExperimentOn).toHaveBeenCalledWith(true);
+            });
+
+            it('should call setIsWebViewExperimentOn with false when initializationData has it disabled', async () => {
+                const paymentMethod = getGeneric();
+
+                paymentMethod.initializationData = {
+                    ...paymentMethod.initializationData!,
+                    isWebViewExperimentOn: false,
+                };
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(paymentMethod);
+
+                jest.spyOn(processor, 'setIsWebViewExperimentOn');
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                expect(processor.setIsWebViewExperimentOn).toHaveBeenCalledWith(false);
+            });
+
+            it('should call setIsWebViewExperimentOn with false when isWebViewExperimentOn is undefined', async () => {
+                const paymentMethod = getGeneric();
+
+                paymentMethod.initializationData = {
+                    ...paymentMethod.initializationData!,
+                    isWebViewExperimentOn: undefined,
+                };
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(paymentMethod);
+
+                jest.spyOn(processor, 'setIsWebViewExperimentOn');
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                expect(processor.setIsWebViewExperimentOn).toHaveBeenCalledWith(false);
+            });
+
+            it('should call setIsWebViewExperimentOn before processor.initialize', async () => {
+                const callOrder: string[] = [];
+
+                jest.spyOn(processor, 'setIsWebViewExperimentOn').mockImplementation(() => {
+                    callOrder.push('setIsWebViewExperimentOn');
+                });
+
+                jest.spyOn(processor, 'initialize').mockImplementation(() => {
+                    callOrder.push('initialize');
+                });
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                expect(callOrder).toStrictEqual(['setIsWebViewExperimentOn', 'initialize']);
+            });
+        });
+
+        describe('non-Buy Now flow', () => {
+            it('should call setIsWebViewExperimentOn', async () => {
+                jest.spyOn(processor, 'setIsWebViewExperimentOn');
+
+                await buttonStrategy.initialize(options);
+
+                expect(processor.setIsWebViewExperimentOn).toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('#getGooglePayClientOptions with WebView', () => {
+        describe('Buy Now flow', () => {
+            it('should initialize processor without paymentDataCallbacks when in webview', async () => {
+                jest.spyOn(processor, 'isWebViewWithRestrictions').mockReturnValue(true);
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                expect(processor.initialize).toHaveBeenCalledWith(
+                    expect.any(Function),
+                    {},
+                    true,
+                    'USD',
+                );
+            });
+
+            it('should initialize processor with paymentDataCallbacks when not in webview', async () => {
+                jest.spyOn(processor, 'isWebViewWithRestrictions').mockReturnValue(false);
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                expect(processor.initialize).toHaveBeenCalledWith(
+                    expect.any(Function),
+                    expect.objectContaining({
+                        paymentDataCallbacks: expect.objectContaining({
+                            onPaymentDataChanged: expect.any(Function),
+                        }),
+                    }),
+                    true,
+                    'USD',
+                );
+            });
+        });
+
+        describe('non-Buy Now flow', () => {
+            it('should initialize processor without paymentDataCallbacks when in webview', async () => {
+                jest.spyOn(processor, 'isWebViewWithRestrictions').mockReturnValue(true);
+
+                await buttonStrategy.initialize(options);
+
+                expect(processor.initialize).toHaveBeenCalledWith(expect.any(Function), {});
+            });
+
+            it('should initialize processor with paymentDataCallbacks when not in webview', async () => {
+                jest.spyOn(processor, 'isWebViewWithRestrictions').mockReturnValue(false);
+
+                await buttonStrategy.initialize(options);
+
+                expect(processor.initialize).toHaveBeenCalledWith(
+                    expect.any(Function),
+                    expect.objectContaining({
+                        paymentDataCallbacks: expect.objectContaining({
+                            onPaymentDataChanged: expect.any(Function),
+                        }),
+                    }),
+                );
+            });
+        });
+    });
+
     describe('#deinitialize', () => {
         it('should deinitialize the strategy', async () => {
             const deinitialize = buttonStrategy.deinitialize();

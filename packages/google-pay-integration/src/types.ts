@@ -156,7 +156,7 @@ export interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
-    offerInfo: Offers;
+    offerInfo?: Offers;
     shippingOptionRequired?: boolean;
     callbackIntents?: CallbackIntentsType[];
 }
@@ -343,6 +343,7 @@ interface GooglePayBaseInitializationData {
     nonce?: string;
     platformToken: string;
     storeCountry?: string;
+    isWebViewExperimentOn?: boolean;
 }
 
 export interface GooglePayPayPalCommerceInitializationData extends GooglePayBaseInitializationData {
