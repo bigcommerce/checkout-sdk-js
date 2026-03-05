@@ -31,6 +31,7 @@ export function getCheckout(): Checkout {
         displayDiscountTotal: 0,
         manualDiscountTotal: 0,
         orderBasedAutoDiscountTotal: 0,
+        hasOrderLevelAutoDiscountMaxLimitReached: false,
         cart: getCart(),
         customer: getCustomer(),
         customerMessage: 'comment',

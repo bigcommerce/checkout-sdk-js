@@ -4,4 +4,5 @@ export default interface Coupon {
     code: string;
     couponType: string;
     discountedAmount: number;
+    hasMaxLimitReached?: boolean;
 }

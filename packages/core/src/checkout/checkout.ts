@@ -39,6 +39,7 @@ export default interface Checkout {
     outstandingBalance: number;
     orderBasedAutoDiscountTotal: number;
     manualDiscountTotal: number;
+    hasOrderLevelAutoDiscountMaxLimitReached?: boolean;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;
