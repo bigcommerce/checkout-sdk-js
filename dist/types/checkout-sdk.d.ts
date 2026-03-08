@@ -3857,6 +3857,7 @@ declare interface CheckoutServiceOptions {
     shouldWarnMutation?: boolean;
     externalSource?: string;
     errorLogger?: ErrorLogger;
+    rollOutLazyPaymentStrategies?: boolean;
 }
 
 declare interface CheckoutSettings {

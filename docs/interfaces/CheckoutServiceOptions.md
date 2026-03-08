@@ -10,6 +10,7 @@
 - [externalSource](CheckoutServiceOptions.md#externalsource)
 - [host](CheckoutServiceOptions.md#host)
 - [locale](CheckoutServiceOptions.md#locale)
+- [rollOutLazyPaymentStrategies](CheckoutServiceOptions.md#rolloutlazypaymentstrategies)
 - [shouldWarnMutation](CheckoutServiceOptions.md#shouldwarnmutation)
 
 ## Properties
@@ -35,6 +36,12 @@ ___
 ### locale
 
 • `Optional` **locale**: `string`
+
+___
+
+### rollOutLazyPaymentStrategies
+
+• `Optional` **rollOutLazyPaymentStrategies**: `boolean`
 
 ___
 
