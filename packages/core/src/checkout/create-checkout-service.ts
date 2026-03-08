@@ -3,7 +3,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { createDataStoreProjection } from '../common/data-store';
-import { DefaultErrorLogger, ErrorActionCreator, ErrorLogger } from '../common/error';
+import { ErrorActionCreator, ErrorLogger } from '../common/error';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
@@ -92,6 +92,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         );
     }
 
+    const rollOutLazyPaymentStrategies = options?.rollOutLazyPaymentStrategies ?? false;
+
     if (getEnvironment() !== 'production') {
         getDefaultLogger().warn(
             'Note that the development build is not optimized. To create a production build, set process\u200b.env.NODE_ENV to `production`.',
@@ -108,11 +110,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         errors: {},
         statuses: {},
     };
-    const {
-        locale = '',
-        shouldWarnMutation = true,
-        errorLogger = new DefaultErrorLogger(),
-    } = options || {};
+    const { locale = '', shouldWarnMutation = true } = options || {};
     const requestSender = createRequestSender({ host: options && options.host });
     const store = createCheckoutStore({ config }, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
@@ -142,18 +140,21 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     );
     const paymentIntegrationService = createPaymentIntegrationService(store);
 
+    // NO_PAYMENT_DATA_REQUIRED must always be available regardless of build mode — it handles
+    // free orders / full store credit checkouts and cannot be lazily loaded via integrations.
+    const essentialPaymentStrategyFactories = {
+        createNoPaymentStrategy: paymentStrategyFactories.createNoPaymentStrategy,
+    };
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        paymentStrategyFactories,
         // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? {} : paymentStrategyFactories,
+        // process.env.ESSENTIAL_BUILD ? essentialPaymentStrategyFactories : paymentStrategyFactories,
+        rollOutLazyPaymentStrategies ? essentialPaymentStrategyFactories : paymentStrategyFactories,
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(
         paymentIntegrationService,
-        customerStrategyFactories,
-        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? {} : customerStrategyFactories,
+        rollOutLazyPaymentStrategies ? {} : customerStrategyFactories,
     );
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(requestSender),
@@ -188,7 +189,6 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             createCustomerStrategyRegistry(store, requestSender),
             customerRegistryV2,
             paymentIntegrationService,
-            errorLogger,
         ),
         new ErrorActionCreator(),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
@@ -201,7 +201,6 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
-            errorLogger,
         ),
         new PickupOptionActionCreator(new PickupOptionRequestSender(requestSender)),
         new ShippingCountryActionCreator(
@@ -225,4 +224,5 @@ export interface CheckoutServiceOptions {
     shouldWarnMutation?: boolean;
     externalSource?: string;
     errorLogger?: ErrorLogger;
+    rollOutLazyPaymentStrategies?: boolean;
 }

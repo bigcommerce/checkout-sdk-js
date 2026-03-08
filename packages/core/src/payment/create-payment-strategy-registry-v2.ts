@@ -4,7 +4,6 @@ import {
     PaymentStrategy,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
-    toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { ResolveIdRegistry } from '../common/registry';
@@ -31,13 +30,7 @@ export default function createPaymentStrategyRegistry(
         }
 
         for (const resolverId of createPaymentStrategy.resolveIds) {
-            // TODO: Remove toResolvableModule once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-            const factory = toResolvableModule(
-                () => createPaymentStrategy(paymentIntegrationService),
-                createPaymentStrategy.resolveIds,
-            );
-
-            registry.register(resolverId, factory);
+            registry.register(resolverId, () => createPaymentStrategy(paymentIntegrationService));
         }
     }
 
