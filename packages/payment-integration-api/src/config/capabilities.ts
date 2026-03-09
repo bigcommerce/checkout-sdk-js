@@ -22,6 +22,7 @@ export interface Capabilities {
         saveToCustomerAddressBook: boolean;
         lockQuoteShipping: boolean;
         extraShippingFields: boolean;
+        allowBillingSameAsShipping: boolean;
     };
     billing: {
         manualAddressEntry: boolean;
@@ -29,6 +30,7 @@ export interface Capabilities {
         companyAddressBook: boolean;
         billingSameAsShippingAdmin: boolean;
         lockQuoteBilling: boolean;
+        saveToCustomerAddressBook: boolean;
     };
     payment: {
         paymentMethodFiltering: boolean;
