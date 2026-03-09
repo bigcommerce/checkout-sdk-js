@@ -106,7 +106,6 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `disableEditCartForInvoice` | `boolean` |
-| `disableEditCartForQuote` | `boolean` |
+| `disableEditCart` | `boolean` |
 | `invoiceCheckout` | `boolean` |
 | `quoteCheckout` | `boolean` |

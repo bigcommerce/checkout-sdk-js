@@ -2283,8 +2283,7 @@ declare interface Capabilities {
     userJourney: {
         quoteCheckout: boolean;
         invoiceCheckout: boolean;
-        disableEditCartForQuote: boolean;
-        disableEditCartForInvoice: boolean;
+        disableEditCart: boolean;
     };
     customer: {
         inlineSignIn: boolean;
