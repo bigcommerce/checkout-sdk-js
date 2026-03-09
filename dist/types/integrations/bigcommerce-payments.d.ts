@@ -1481,6 +1481,12 @@ declare class BigCommercePaymentsPaymentStrategy implements PaymentStrategy {
      * */
     private renderMessages;
     private isProviderError;
+    /**
+     *
+     * AppSwitch enabling handling
+     *
+     */
+    private isAppSwitchEnabled;
 }
 
 declare interface BigCommercePaymentsRatePayPaymentInitializeOptions {
