@@ -896,13 +896,13 @@ declare interface PayPalCommerceCreditPaymentInitializeOptions {
 
 declare class PayPalCommerceCreditPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
+    private paypalIntegrationService;
     private loadingIndicator;
-    private paypalCommerceSdk;
+    private payPalSdkScriptLoader;
     private loadingIndicatorContainer?;
     private orderId?;
     private paypalButton?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, loadingIndicator: LoadingIndicator, paypalCommerceSdk: PayPalCommerceSdk);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, loadingIndicator: LoadingIndicator, payPalSdkScriptLoader: PayPalSdkScriptLoader);
     initialize(options?: PaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
