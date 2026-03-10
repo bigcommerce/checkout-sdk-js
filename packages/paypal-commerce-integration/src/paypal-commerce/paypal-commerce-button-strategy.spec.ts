@@ -16,21 +16,18 @@ import {
     getShippingOption,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
 import {
     getBillingAddressFromOrderDetails,
-    getPayPalCommerceIntegrationServiceMock,
-    getPayPalCommerceOrderDetails,
-    getPayPalCommercePaymentMethod,
+    getPayPalIntegrationServiceMock,
+    getPayPalOrderDetails,
+    getPayPalPaymentMethod,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
-} from '../mocks';
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceHostWindow,
+    PayPalButtonsOptions,
+    PayPalHostWindow,
+    PayPalIntegrationService,
     PayPalSDK,
-} from '../paypal-commerce-types';
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceButtonInitializeOptions from './paypal-commerce-button-initialize-options';
 import PayPalCommerceButtonStrategy from './paypal-commerce-button-strategy';
@@ -43,7 +40,7 @@ describe('PayPalCommerceButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
-    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
+    let paypalCommerceIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
 
     const defaultMethodId = 'paypalcommerce';
@@ -111,8 +108,8 @@ describe('PayPalCommerceButtonStrategy', () => {
 
         eventEmitter = new EventEmitter();
 
-        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
-        paymentMethod = getPayPalCommercePaymentMethod();
+        paypalCommerceIntegrationService = getPayPalIntegrationServiceMock();
+        paymentMethod = getPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -164,98 +161,96 @@ describe('PayPalCommerceButtonStrategy', () => {
             getShippingOption(),
         );
 
-        jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-            (options: PayPalCommerceButtonsOptions) => {
-                eventEmitter.on('createOrder', () => {
-                    if (options.createOrder) {
-                        options.createOrder();
-                    }
-                });
+        jest.spyOn(paypalSdk, 'Buttons').mockImplementation((options: PayPalButtonsOptions) => {
+            eventEmitter.on('createOrder', () => {
+                if (options.createOrder) {
+                    options.createOrder();
+                }
+            });
 
-                eventEmitter.on(
-                    'onClick',
-                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                    async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
-                        try {
-                            if (options.onClick) {
-                                await options.onClick(
-                                    { fundingSource: 'paypal' },
-                                    {
-                                        reject: jest.fn(),
-                                        resolve: jest.fn(),
-                                    },
-                                );
+            eventEmitter.on(
+                'onClick',
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
+                    try {
+                        if (options.onClick) {
+                            await options.onClick(
+                                { fundingSource: 'paypal' },
+                                {
+                                    reject: jest.fn(),
+                                    resolve: jest.fn(),
+                                },
+                            );
 
-                                if (
-                                    jestSuccessExpectationsCallback &&
-                                    typeof jestSuccessExpectationsCallback === 'function'
-                                ) {
-                                    jestSuccessExpectationsCallback();
-                                }
-                            }
-                        } catch (error) {
                             if (
-                                jestFailureExpectationsCallback &&
-                                typeof jestFailureExpectationsCallback === 'function'
+                                jestSuccessExpectationsCallback &&
+                                typeof jestSuccessExpectationsCallback === 'function'
                             ) {
-                                jestFailureExpectationsCallback(error);
+                                jestSuccessExpectationsCallback();
                             }
                         }
-                    },
-                );
+                    } catch (error) {
+                        if (
+                            jestFailureExpectationsCallback &&
+                            typeof jestFailureExpectationsCallback === 'function'
+                        ) {
+                            jestFailureExpectationsCallback(error);
+                        }
+                    }
+                },
+            );
 
-                eventEmitter.on('onApprove', () => {
-                    if (options.onApprove) {
-                        options.onApprove(
-                            { orderID: paypalOrderId },
-                            {
-                                order: {
-                                    get: jest.fn(),
-                                },
+            eventEmitter.on('onApprove', () => {
+                if (options.onApprove) {
+                    options.onApprove(
+                        { orderID: paypalOrderId },
+                        {
+                            order: {
+                                get: jest.fn(),
                             },
-                        );
-                    }
-                });
+                        },
+                    );
+                }
+            });
 
-                eventEmitter.on('onCancel', () => {
-                    if (options.onCancel) {
-                        options.onCancel();
-                    }
-                });
+            eventEmitter.on('onCancel', () => {
+                if (options.onCancel) {
+                    options.onCancel();
+                }
+            });
 
-                eventEmitter.on('onShippingAddressChange', () => {
-                    if (options.onShippingAddressChange) {
-                        options.onShippingAddressChange({
-                            orderId: paypalOrderId,
-                            shippingAddress: paypalShippingAddressPayloadMock,
-                        });
-                    }
-                });
+            eventEmitter.on('onShippingAddressChange', () => {
+                if (options.onShippingAddressChange) {
+                    options.onShippingAddressChange({
+                        orderId: paypalOrderId,
+                        shippingAddress: paypalShippingAddressPayloadMock,
+                    });
+                }
+            });
 
-                eventEmitter.on('onShippingOptionsChange', () => {
-                    if (options.onShippingOptionsChange) {
-                        options.onShippingOptionsChange({
-                            orderId: paypalOrderId,
-                            selectedShippingOption: paypalSelectedShippingOptionPayloadMock,
-                        });
-                    }
-                });
+            eventEmitter.on('onShippingOptionsChange', () => {
+                if (options.onShippingOptionsChange) {
+                    options.onShippingOptionsChange({
+                        orderId: paypalOrderId,
+                        selectedShippingOption: paypalSelectedShippingOptionPayloadMock,
+                    });
+                }
+            });
 
-                return {
-                    isEligible: jest.fn(() => true),
-                    render: jest.fn(),
-                    close: jest.fn(),
-                    hasReturned: jest.fn().mockReturnValue(true),
-                    resume: resumeMock,
-                };
-            },
-        );
+            return {
+                isEligible: jest.fn(() => true),
+                render: jest.fn(),
+                close: jest.fn(),
+                hasReturned: jest.fn().mockReturnValue(true),
+                resume: resumeMock,
+            };
+        });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
 
-        delete (window as PayPalCommerceHostWindow).paypal;
+        delete (window as PayPalHostWindow).paypal;
 
         if (document.getElementById(defaultButtonContainerId)) {
             document.body.removeChild(paypalButtonElement);
@@ -654,11 +649,11 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         describe('shipping options feature flow', () => {
-            const paypalOrderDetails = getPayPalCommerceOrderDetails();
+            const paypalOrderDetails = getPayPalOrderDetails();
 
             beforeEach(() => {
                 jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                    (options: PayPalCommerceButtonsOptions) => {
+                    (options: PayPalButtonsOptions) => {
                         eventEmitter.on('onApprove', () => {
                             if (options.onApprove) {
                                 options.onApprove(
@@ -698,7 +693,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 const getOrderActionMock = jest.fn();
 
                 jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                    (options: PayPalCommerceButtonsOptions) => {
+                    (options: PayPalButtonsOptions) => {
                         eventEmitter.on('onApprove', () => {
                             if (options.onApprove) {
                                 options.onApprove(
@@ -738,7 +733,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
                 expect(
                     paypalCommerceIntegrationService.getBillingAddressFromOrderDetails,
-                ).toHaveBeenCalledWith(getPayPalCommerceOrderDetails());
+                ).toHaveBeenCalledWith(getPayPalOrderDetails());
                 expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
                     getBillingAddressFromOrderDetails(),
                 );
@@ -753,7 +748,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
                 expect(
                     paypalCommerceIntegrationService.getShippingAddressFromOrderDetails,
-                ).toHaveBeenCalledWith(getPayPalCommerceOrderDetails());
+                ).toHaveBeenCalledWith(getPayPalOrderDetails());
                 expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
                     getShippingAddressFromOrderDetails(),
                 );
