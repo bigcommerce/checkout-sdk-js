@@ -556,4 +556,99 @@ describe('GooglePayPaymentProcessor', () => {
             await expect(processError).rejects.toBe('error');
         });
     });
+
+    describe('#isWebViewWithRestrictions', () => {
+        it('should delegate to the gateway', async () => {
+            jest.spyOn(gateway, 'isWebViewWithRestrictions').mockReturnValue(true);
+
+            await processor.initialize(getGeneric);
+
+            expect(processor.isWebViewWithRestrictions()).toBe(true);
+            expect(gateway.isWebViewWithRestrictions).toHaveBeenCalled();
+        });
+
+        it('should return false when gateway returns false', async () => {
+            jest.spyOn(gateway, 'isWebViewWithRestrictions').mockReturnValue(false);
+
+            await processor.initialize(getGeneric);
+
+            expect(processor.isWebViewWithRestrictions()).toBe(false);
+        });
+    });
+
+    describe('#setIsWebViewExperimentOn', () => {
+        it('should delegate to the gateway', async () => {
+            jest.spyOn(gateway, 'setIsWebViewExperimentOn');
+
+            await processor.initialize(getGeneric);
+
+            processor.setIsWebViewExperimentOn(true);
+
+            expect(gateway.setIsWebViewExperimentOn).toHaveBeenCalledWith(true);
+        });
+
+        it('should delegate false value to the gateway', async () => {
+            jest.spyOn(gateway, 'setIsWebViewExperimentOn');
+
+            await processor.initialize(getGeneric);
+
+            processor.setIsWebViewExperimentOn(false);
+
+            expect(gateway.setIsWebViewExperimentOn).toHaveBeenCalledWith(false);
+        });
+    });
+
+    describe('#initializeWidget in WebView', () => {
+        it('should build payment data request with shippingOptionRequired false when in webview', async () => {
+            jest.spyOn(gateway, 'isWebViewWithRestrictions').mockReturnValue(true);
+
+            await processor.initialize(getGeneric);
+            await processor.initializeWidget();
+
+            const prefetchCall = (paymentsClient.prefetchPaymentData as jest.Mock).mock.calls[0][0];
+
+            expect(prefetchCall).toEqual(
+                expect.objectContaining({
+                    shippingOptionRequired: false,
+                }),
+            );
+            expect(prefetchCall).not.toHaveProperty('callbackIntents');
+            expect(prefetchCall).not.toHaveProperty('offerInfo');
+        });
+
+        it('should build payment data request with callbackIntents and offerInfo when not in webview', async () => {
+            jest.spyOn(gateway, 'isWebViewWithRestrictions').mockReturnValue(false);
+
+            await processor.initialize(getGeneric);
+            await processor.initializeWidget();
+
+            const prefetchCall = (paymentsClient.prefetchPaymentData as jest.Mock).mock.calls[0][0];
+
+            expect(prefetchCall).toEqual(
+                expect.objectContaining({
+                    callbackIntents: expect.any(Array),
+                    offerInfo: expect.any(Object),
+                    shippingOptionRequired: true,
+                }),
+            );
+        });
+
+        it('should load payment data with shippingOptionRequired false in webview on showPaymentSheet', async () => {
+            jest.spyOn(gateway, 'isWebViewWithRestrictions').mockReturnValue(true);
+
+            await processor.initialize(getGeneric);
+            await processor.initializeWidget();
+            await processor.showPaymentSheet();
+
+            const loadCall = (paymentsClient.loadPaymentData as jest.Mock).mock.calls[0][0];
+
+            expect(loadCall).toEqual(
+                expect.objectContaining({
+                    shippingOptionRequired: false,
+                }),
+            );
+            expect(loadCall).not.toHaveProperty('callbackIntents');
+            expect(loadCall).not.toHaveProperty('offerInfo');
+        });
+    });
 });

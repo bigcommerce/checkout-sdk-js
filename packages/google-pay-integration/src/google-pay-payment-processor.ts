@@ -205,6 +205,14 @@ export default class GooglePayPaymentProcessor {
         });
     }
 
+    isWebViewWithRestrictions(): boolean {
+        return this._gateway.isWebViewWithRestrictions();
+    }
+
+    setIsWebViewExperimentOn(isWebViewExperimentOn: boolean): void {
+        return this._gateway.setIsWebViewExperimentOn(isWebViewExperimentOn);
+    }
+
     private _prefetchGooglePaymentData(): void {
         const paymentDataRequest = this._getPaymentDataRequest();
 
@@ -250,14 +258,23 @@ export default class GooglePayPaymentProcessor {
                 parameters: await this._gateway.getPaymentGatewayParameters(),
             },
         };
+
+        const isWebViewLogic = this._gateway.isWebViewWithRestrictions()
+            ? {
+                  shippingOptionRequired: false,
+              }
+            : {
+                  callbackIntents: this._gateway.getCallbackIntents(),
+                  offerInfo: this._gateway.getAppliedCoupons(),
+              };
+
         this._paymentDataRequest = {
             ...this._baseRequest,
             allowedPaymentMethods: [this._cardPaymentMethod],
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
-            callbackIntents: this._gateway.getCallbackIntents(),
-            offerInfo: this._gateway.getAppliedCoupons(),
+            ...isWebViewLogic,
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,

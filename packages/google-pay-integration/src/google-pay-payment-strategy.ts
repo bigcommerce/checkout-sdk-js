@@ -81,6 +81,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             .getState()
             .getPaymentMethodOrThrow<GooglePayInitializationData>(this._getMethodId());
 
+        this._googlePayPaymentProcessor.setIsWebViewExperimentOn(
+            !!paymentMethod.initializationData?.isWebViewExperimentOn,
+        );
         await this._googlePayPaymentProcessor.initialize(
             () => paymentMethod,
             this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
@@ -274,6 +277,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     }
 
     protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions {
+        if (this._googlePayPaymentProcessor.isWebViewWithRestrictions()) {
+            return {};
+        }
+
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({ callbackTrigger, offerData }) => {

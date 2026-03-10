@@ -63,6 +63,9 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         }
 
         try {
+            this._googlePayPaymentProcessor.setIsWebViewExperimentOn(
+                !!paymentMethod.initializationData?.isWebViewExperimentOn,
+            );
             await this._googlePayPaymentProcessor.initialize(
                 () => paymentMethod,
                 this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
@@ -105,6 +108,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     }
 
     private _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions {
+        if (this._googlePayPaymentProcessor.isWebViewWithRestrictions()) {
+            return {};
+        }
+
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({

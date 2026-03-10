@@ -14,6 +14,7 @@ import {
     getShippingOption,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { isWebView } from '@bigcommerce/checkout-sdk/utility';
 
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { getAuthorizeNet, getGeneric } from '../mocks/google-pay-payment-method.mock';
@@ -22,6 +23,11 @@ import { CallbackIntentsType, CallbackTriggerType, GooglePayFullBillingAddress }
 import GooglePayGateway from './google-pay-gateway';
 
 import SpyInstance = jest.SpyInstance;
+
+jest.mock('@bigcommerce/checkout-sdk/utility', () => ({
+    ...jest.requireActual('@bigcommerce/checkout-sdk/utility'),
+    isWebView: jest.fn(),
+}));
 
 describe('GooglePayGateway', () => {
     let gateway: GooglePayGateway;
@@ -999,6 +1005,141 @@ describe('GooglePayGateway', () => {
             const mapAddress = gateway.mapToShippingAddressRequestBody(response);
 
             expect(mapAddress).toBeUndefined();
+        });
+    });
+
+    describe('#isWebViewWithRestrictions', () => {
+        beforeEach(async () => {
+            await gateway.initialize(getGeneric);
+        });
+
+        it('should return true when isWebView returns true and experiment flag is not set', () => {
+            (isWebView as jest.Mock).mockReturnValue(true);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(true);
+        });
+
+        it('should return false when isWebView returns false and experiment flag is not set', () => {
+            (isWebView as jest.Mock).mockReturnValue(false);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(false);
+        });
+
+        it('should return true when experiment is on and isWebView returns true', () => {
+            (isWebView as jest.Mock).mockReturnValue(true);
+            gateway.setIsWebViewExperimentOn(true);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(true);
+        });
+
+        it('should return false when experiment is on and isWebView returns false', () => {
+            (isWebView as jest.Mock).mockReturnValue(false);
+            gateway.setIsWebViewExperimentOn(true);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(false);
+        });
+
+        it('should return false when experiment is off regardless of isWebView', () => {
+            (isWebView as jest.Mock).mockReturnValue(true);
+            gateway.setIsWebViewExperimentOn(false);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(false);
+        });
+
+        it('should return false when experiment is off and isWebView is false', () => {
+            (isWebView as jest.Mock).mockReturnValue(false);
+            gateway.setIsWebViewExperimentOn(false);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(false);
+        });
+    });
+
+    describe('#setIsWebViewExperimentOn', () => {
+        it('should set the experiment flag', async () => {
+            (isWebView as jest.Mock).mockReturnValue(true);
+
+            await gateway.initialize(getGeneric);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(true);
+
+            gateway.setIsWebViewExperimentOn(false);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(false);
+
+            gateway.setIsWebViewExperimentOn(true);
+
+            expect(gateway.isWebViewWithRestrictions()).toBe(true);
+        });
+    });
+
+    describe('#getTransactionInfo in WebView', () => {
+        beforeEach(async () => {
+            await gateway.initialize(getGeneric);
+        });
+
+        it('should return totalPrice with actual balance when in webview with restrictions', () => {
+            (isWebView as jest.Mock).mockReturnValue(true);
+
+            const expectedInfo = {
+                countryCode: 'US',
+                currencyCode: 'USD',
+                totalPriceStatus: 'ESTIMATED',
+                totalPrice: '190.00',
+            };
+
+            expect(gateway.getTransactionInfo()).toStrictEqual(expectedInfo);
+        });
+
+        it('should return totalPrice as 0 when not in webview', () => {
+            (isWebView as jest.Mock).mockReturnValue(false);
+
+            const expectedInfo = {
+                countryCode: 'US',
+                currencyCode: 'USD',
+                totalPriceStatus: 'ESTIMATED',
+                totalPrice: '0',
+            };
+
+            expect(gateway.getTransactionInfo()).toStrictEqual(expectedInfo);
+        });
+
+        it('should return totalPrice as 0 when experiment is explicitly off even in webview', () => {
+            (isWebView as jest.Mock).mockReturnValue(true);
+            gateway.setIsWebViewExperimentOn(false);
+
+            const expectedInfo = {
+                countryCode: 'US',
+                currencyCode: 'USD',
+                totalPriceStatus: 'ESTIMATED',
+                totalPrice: '0',
+            };
+
+            expect(gateway.getTransactionInfo()).toStrictEqual(expectedInfo);
+        });
+
+        it('should return totalPrice with actual balance when experiment is on and in webview', () => {
+            (isWebView as jest.Mock).mockReturnValue(true);
+            gateway.setIsWebViewExperimentOn(true);
+
+            const expectedInfo = {
+                countryCode: 'US',
+                currencyCode: 'USD',
+                totalPriceStatus: 'ESTIMATED',
+                totalPrice: '190.00',
+            };
+
+            expect(gateway.getTransactionInfo()).toStrictEqual(expectedInfo);
+        });
+
+        it('should return totalPrice with actual balance in Buy Now flow when in webview', async () => {
+            (isWebView as jest.Mock).mockReturnValue(true);
+
+            await gateway.initialize(getGeneric, true, 'USD');
+
+            const result = gateway.getTransactionInfo();
+
+            expect(result.totalPrice).toBe('190.00');
+            expect(result.currencyCode).toBe('USD');
         });
     });
 });
