@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.882.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.881.0...v1.882.0) (2026-03-10)
+
+
+### Features
+
+* **payment:** Stripe CS update shipping and billing address from FE side ([#3170](https://github.com/bigcommerce/checkout-sdk-js/issues/3170)) ([8a69a45](https://github.com/bigcommerce/checkout-sdk-js/commit/8a69a454cf498cdfcb2cdab8153542d7a87e2467))
+
 ## [1.881.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.880.0...v1.881.0) (2026-03-10)
 
 
