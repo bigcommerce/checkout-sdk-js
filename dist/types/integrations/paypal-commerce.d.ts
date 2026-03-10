@@ -409,8 +409,8 @@ declare interface PayPalCommerceButtonInitializeOptions {
 
 declare class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService);
+    private paypalIntegrationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService);
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
