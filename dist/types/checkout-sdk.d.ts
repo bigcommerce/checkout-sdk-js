@@ -2293,20 +2293,22 @@ declare interface Capabilities {
         b2bCompanySignupRedirect: boolean;
     };
     shipping: {
-        manualAddressEntry: boolean;
+        restrictManualAddressEntry: boolean;
         companyAddressBook: boolean;
         prefillCompanyAddress: boolean;
         saveToCompanyAddressBook: boolean;
-        saveToCustomerAddressBook: boolean;
+        hideSaveToAddressBookCheck: boolean;
         lockQuoteShipping: boolean;
         extraShippingFields: boolean;
+        hideBillingSameAsShippingCheck: boolean;
     };
     billing: {
-        manualAddressEntry: boolean;
+        restrictManualAddressEntry: boolean;
         extraBillingFields: boolean;
         companyAddressBook: boolean;
         billingSameAsShippingAdmin: boolean;
         lockQuoteBilling: boolean;
+        hideSaveToAddressBookCheck: boolean;
     };
     payment: {
         paymentMethodFiltering: boolean;

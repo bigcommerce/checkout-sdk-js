@@ -26,8 +26,9 @@
 | `billingSameAsShippingAdmin` | `boolean` |
 | `companyAddressBook` | `boolean` |
 | `extraBillingFields` | `boolean` |
+| `hideSaveToAddressBookCheck` | `boolean` |
 | `lockQuoteBilling` | `boolean` |
-| `manualAddressEntry` | `boolean` |
+| `restrictManualAddressEntry` | `boolean` |
 
 ___
 
@@ -90,11 +91,12 @@ ___
 | :------ | :------ |
 | `companyAddressBook` | `boolean` |
 | `extraShippingFields` | `boolean` |
+| `hideBillingSameAsShippingCheck` | `boolean` |
+| `hideSaveToAddressBookCheck` | `boolean` |
 | `lockQuoteShipping` | `boolean` |
-| `manualAddressEntry` | `boolean` |
 | `prefillCompanyAddress` | `boolean` |
+| `restrictManualAddressEntry` | `boolean` |
 | `saveToCompanyAddressBook` | `boolean` |
-| `saveToCustomerAddressBook` | `boolean` |
 
 ___
 
