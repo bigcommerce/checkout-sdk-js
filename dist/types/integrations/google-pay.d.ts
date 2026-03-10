@@ -92,6 +92,7 @@ declare interface GooglePayBaseInitializationData {
     nonce?: string;
     platformToken: string;
     storeCountry?: string;
+    isWebViewExperimentOn?: boolean;
 }
 
 declare interface GooglePayBigCommercePaymentsInitializationData extends GooglePayBaseInitializationData {
@@ -313,6 +314,7 @@ declare class GooglePayGateway {
     private _shouldRequestShipping;
     private _currencyCode?;
     private _currencyService?;
+    private _isWebViewExperimentOn;
     constructor(_gatewayIdentifier: string, _paymentIntegrationService: PaymentIntegrationService);
     mapToShippingAddressRequestBody({ shippingAddress, }: GooglePayCardDataResponse): AddressRequestBody | undefined;
     mapToBillingAddressRequestBody(response: GooglePayCardDataResponse): BillingAddressRequestBody | undefined;
@@ -326,6 +328,8 @@ declare class GooglePayGateway {
     extraPaymentData(): Promise<undefined | ExtraPaymentData>;
     getMerchantInfo(): GooglePayMerchantInfo;
     getTransactionInfo(): GooglePayTransactionInfo;
+    isWebViewWithRestrictions(): boolean;
+    setIsWebViewExperimentOn(isWebViewExperimentOn: boolean): void;
     getPaymentGatewayParameters(): Promise<GooglePayGatewayParameters> | GooglePayGatewayParameters;
     getCardParameters(): GooglePayCardParameters;
     initialize(getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>, isBuyNowFlow?: boolean, currencyCode?: string): Promise<void>;
@@ -434,7 +438,7 @@ declare interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseReques
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
-    offerInfo: Offers;
+    offerInfo?: Offers;
     shippingOptionRequired?: boolean;
     callbackIntents?: CallbackIntentsType[];
 }
@@ -562,6 +566,8 @@ declare class GooglePayPaymentProcessor {
     handleCoupons(offerData: IntermediatePaymentData['offerData']): Promise<HandleCouponsOut>;
     getTotalPrice(): string;
     _setExternalCheckout(provider: string, response: GooglePayCardDataResponse, useFormPoster?: boolean, siteLink?: string): Promise<void>;
+    isWebViewWithRestrictions(): boolean;
+    setIsWebViewExperimentOn(isWebViewExperimentOn: boolean): void;
     private _prefetchGooglePaymentData;
     private _determineReadinessToPay;
     private _buildButtonPayloads;

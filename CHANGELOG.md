@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.883.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.882.0...v1.883.0) (2026-03-10)
+
+
+### Features
+
+* **payment:** PI-5030 Google Pay in WebView support ([c6d31e6](https://github.com/bigcommerce/checkout-sdk-js/commit/c6d31e653a5c2b2efe8073af6427977ccd9e11f0))
+
 ## [1.882.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.881.0...v1.882.0) (2026-03-10)
 
 
