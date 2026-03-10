@@ -93,6 +93,7 @@ declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
     private _getAmountTransformer;
     private _toCents;
     private _toggleLoadingIndicator;
+    private _getMethodId;
 }
 
 declare class StripeLinkV2CustomerStrategy implements CustomerStrategy {
@@ -141,6 +142,7 @@ declare class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _getAmountTransformer;
     private _toCents;
     private _toggleLoadingIndicator;
+    private _getMethodId;
 }
 
 declare interface StripeOCSCustomerInitializeOptions {
