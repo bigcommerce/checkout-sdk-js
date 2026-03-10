@@ -170,7 +170,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValueOnce({
+            ).mockReturnValue({
                 ...getStripeOCSMock(),
                 initializationData: {
                     ...getStripeOCSMock().initializationData,
@@ -753,6 +753,57 @@ describe('StripeLinkV2ButtonStrategy', () => {
                 });
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                     methodId: 'optimized_checkout',
+                    paymentData: {
+                        formattedPayload: {
+                            cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                            credit_card_token: {
+                                token: 'paymentIntentId',
+                            },
+                            confirm: false,
+                            method: 'link',
+                        },
+                    },
+                });
+            });
+
+            it('submit second payment request after stripe confirmation with enabled checkout session module', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...getStripeOCSMock(),
+                    initializationData: {
+                        ...getStripeOCSMock().initializationData,
+                        checkoutSessionEnabled: true,
+                    },
+                });
+
+                mockFirstPaymentRequest(errorResponse);
+                await strategy.initialize(initialiseOptions);
+
+                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                    'stripeocs',
+                    {
+                        params: { method: 'checkout_session' },
+                    },
+                );
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                    methodId: 'checkout_session',
+                    paymentData: {
+                        formattedPayload: {
+                            cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                            confirm: false,
+                            method: 'link',
+                        },
+                    },
+                });
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                    methodId: 'checkout_session',
                     paymentData: {
                         formattedPayload: {
                             cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',

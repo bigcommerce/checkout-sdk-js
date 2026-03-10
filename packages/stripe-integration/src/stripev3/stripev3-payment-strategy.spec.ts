@@ -372,7 +372,7 @@ describe('StripeV3PaymentStrategy', () => {
                             paymentIntegrationService.getState(),
                             'getPaymentMethodOrThrow',
                         ).mockReturnValueOnce({
-                            paymentMethodMock,
+                            ...paymentMethodMock,
                             initializationData: {
                                 ...paymentMethodMock.initializationData,
                                 allowRedisplayForStoredInstruments: true,

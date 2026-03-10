@@ -686,6 +686,7 @@ export enum StripePaymentMethodType {
     ALIPAY = 'alipay',
     KLARNA = 'klarna',
     OCS = 'optimized_checkout',
+    CHECKOUT_SESSION = 'checkout_session',
 }
 
 type AutoOrNever = StripeStringConstants.AUTO | StripeStringConstants.NEVER;
@@ -734,6 +735,7 @@ export interface StripeInitializationData {
     allowRedisplayForStoredInstruments?: boolean;
     captureMethod?: 'automatic' | 'manual';
     useNewStripeJsVersion?: boolean;
+    checkoutSessionEnabled?: boolean;
 }
 
 export interface StripeElementUpdateOptions {

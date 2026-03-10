@@ -27,6 +27,7 @@ import {
     StripeElementType,
     StripeError,
     StripeEventType,
+    StripeInitializationData,
     StripeIntegrationService,
     StripeLinkV2Event,
     StripeLinkV2Options,
@@ -69,12 +70,13 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             );
         }
 
-        const { methodId, gatewayId, container } = stripeocs;
+        const { gatewayId, container } = stripeocs;
 
-        if (!container || !methodId || !gatewayId) {
+        if (!container || !gatewayId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
+        const methodId = this._getMethodId(gatewayId);
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
@@ -585,5 +587,16 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         } else {
             this.loadingIndicator.hide();
         }
+    }
+
+    private _getMethodId(gatewayId: string): string {
+        const { initializationData: { checkoutSessionEnabled } = {} } =
+            this.paymentIntegrationService
+                .getState()
+                .getPaymentMethodOrThrow<StripeInitializationData>(gatewayId);
+
+        return checkoutSessionEnabled
+            ? StripePaymentMethodType.CHECKOUT_SESSION
+            : StripePaymentMethodType.OCS;
     }
 }
