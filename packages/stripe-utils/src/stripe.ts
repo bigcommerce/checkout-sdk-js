@@ -245,11 +245,11 @@ export type StripeEventType =
  * Object definition for part of the data sent to confirm the PaymentIntent.
  * https://stripe.com/docs/api/payment_intents/confirm#confirm_payment_intent-shipping
  */
-export type AddressOptions = Partial<Address>;
+export type AddressOptions = Partial<Address> & { country: string };
 
 export interface StripeAddressValues {
     name?: string;
-    address?: AddressOptions & { country: string };
+    address?: AddressOptions;
 }
 
 /**
@@ -521,18 +521,24 @@ export interface StripeLoadActionsResult {
     actions?: StripeCheckoutSessionActions;
 }
 
-export interface StripeCheckoutSessionConfirmationResult {
+export interface StripeCheckoutSessionActionResult {
     type: StripeLoadActionsResultType;
     error?: StripeError;
     session?: StripeCheckoutSession;
 }
 
 export interface StripeCheckoutSessionActions {
-    updateEmail(email: string): Promise<void>;
+    updateEmail(email: string): Promise<StripeCheckoutSessionActionResult>;
+    updateShippingAddress(
+        shippingAddress: StripeAddressValues,
+    ): Promise<StripeCheckoutSessionActionResult>;
+    updateBillingAddress(
+        billingAddress: StripeAddressValues,
+    ): Promise<StripeCheckoutSessionActionResult>;
     getSession(): Promise<StripeCheckoutSession | null>;
     confirm(
         options: StripeCheckoutSessionConfirmPaymentData,
-    ): Promise<StripeCheckoutSessionConfirmationResult>;
+    ): Promise<StripeCheckoutSessionActionResult>;
 }
 
 /**

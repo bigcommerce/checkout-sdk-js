@@ -1,4 +1,7 @@
-import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    Address,
+    PaymentMethodFailedError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { StripeJsVersion, StripeStringConstants } from './stripe';
 import StripeIntegrationService from './stripe-integration-service';
@@ -41,4 +44,15 @@ export const getStripeIntegrationServiceMock = () =>
             throw new Error('throw stripe error');
         }),
         getStripeJsVersion: jest.fn(() => StripeJsVersion.V3),
+        mapStripeAddress: jest.fn((address) => ({
+            city: address?.city,
+            country: address?.countryCode,
+            postal_code: address?.postalCode,
+            line1: address?.address1,
+            line2: address?.address2,
+            ...(address?.stateOrProvinceCode ? { state: address.stateOrProvinceCode } : {}),
+        })),
+        getShopperFullName: jest.fn((address: Address) =>
+            `${address?.firstName || ''} ${address?.lastName || ''}`.trim(),
+        ),
     } as unknown as StripeIntegrationService);

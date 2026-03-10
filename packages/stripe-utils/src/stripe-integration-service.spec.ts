@@ -10,6 +10,7 @@ import {
 import {
     getBillingAddress,
     getConfig,
+    getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -788,6 +789,62 @@ describe('StripeIntegrationService', () => {
             expect(stripeIntegrationService.getStripeJsVersion(initializationData)).toBe(
                 StripeJsVersion.V3,
             );
+        });
+    });
+
+    describe('#mapStripeAddress', () => {
+        it('should map address fields to Stripe format', () => {
+            const address = getShippingAddress();
+
+            expect(stripeIntegrationService.mapStripeAddress(address)).toEqual({
+                city: 'Some City',
+                country: 'US',
+                postal_code: '95555',
+                line1: '12345 Testing Way',
+                line2: '',
+                state: 'CA',
+            });
+        });
+
+        it('should omit state if stateOrProvinceCode is empty', () => {
+            const address = {
+                ...getShippingAddress(),
+                stateOrProvinceCode: '',
+            };
+
+            const result = stripeIntegrationService.mapStripeAddress(address);
+
+            expect(result).not.toHaveProperty('state');
+        });
+
+        it('should throw MissingDataError if address is undefined', () => {
+            expect(() => stripeIntegrationService.mapStripeAddress(undefined)).toThrow(
+                MissingDataError,
+            );
+        });
+    });
+
+    describe('#getShopperFullName', () => {
+        it('should return full name from address', () => {
+            const address = getShippingAddress();
+
+            expect(stripeIntegrationService.getShopperFullName(address)).toBe('Test Tester');
+        });
+
+        it('should return first name only if last name is empty', () => {
+            const address = { ...getShippingAddress(), lastName: '' };
+
+            expect(stripeIntegrationService.getShopperFullName(address)).toBe('Test');
+        });
+
+        it('should return last name only if first name is empty', () => {
+            const address = { ...getShippingAddress(), firstName: '' };
+
+            expect(stripeIntegrationService.getShopperFullName(address)).toBe('Tester');
+        });
+
+        it('should return empty string if address is undefined', () => {
+            expect(stripeIntegrationService.getShopperFullName(undefined)).toBe('');
         });
     });
 });

@@ -11,14 +11,17 @@ import {
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getBillingAddress,
     getCart,
     getCheckout,
     getErrorPaymentResponseBody,
     getResponse,
+    getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
     getStripeCheckoutInstanceMock,
+    getStripeCheckoutSessionActionsMock,
     getStripeIntegrationServiceMock,
     getStripeJsMock,
     StripeCheckoutSession,
@@ -246,126 +249,6 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(onErrorMock).toHaveBeenCalled();
         });
 
-        it('should initialize and get postal code when shipping address unavailable', async () => {
-            const onErrorMock = jest.fn();
-            const renderMock = jest.fn();
-            const createMock = jest.fn().mockImplementation(() => ({
-                mount: jest.fn(),
-                unmount: jest.fn(),
-                on: jest.fn((_, callback) => callback(StripeEventMock)),
-                update: jest.fn(),
-                destroy: jest.fn(),
-            }));
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
-                undefined,
-            );
-            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
-                Promise.resolve({
-                    ...getStripeCheckoutInstanceMock(),
-                    createPaymentElement: createMock,
-                }),
-            );
-
-            await stripeCSPaymentStrategy.initialize({
-                ...stripeOptions,
-                stripeocs: {
-                    ...stripeOptions.stripeocs,
-                    containerId: 'containerId',
-                    render: renderMock,
-                    onError: onErrorMock,
-                },
-            });
-
-            expect(createMock).toHaveBeenCalledWith({
-                fields: {
-                    billingDetails: {
-                        email: StripeStringConstants.NEVER,
-                        address: {
-                            country: StripeStringConstants.NEVER,
-                            city: StripeStringConstants.NEVER,
-                            postalCode: StripeStringConstants.NEVER,
-                        },
-                    },
-                },
-                wallets: {
-                    applePay: StripeStringConstants.NEVER,
-                    googlePay: StripeStringConstants.NEVER,
-                    link: StripeStringConstants.NEVER,
-                },
-                layout: {
-                    type: 'accordion',
-                    defaultCollapsed: false,
-                    radios: true,
-                    spacedAccordionItems: false,
-                    visibleAccordionItemsCount: 0,
-                },
-            });
-            expect(onErrorMock).not.toHaveBeenCalled();
-            expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
-        });
-
-        it('should initialize if address information unavailable', async () => {
-            const onErrorMock = jest.fn();
-            const renderMock = jest.fn();
-            const createMock = jest.fn().mockImplementation(() => ({
-                mount: jest.fn(),
-                unmount: jest.fn(),
-                on: jest.fn((_, callback) => callback(StripeEventMock)),
-                update: jest.fn(),
-                destroy: jest.fn(),
-            }));
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
-                undefined,
-            );
-            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
-                undefined,
-            );
-            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
-                Promise.resolve({
-                    ...getStripeCheckoutInstanceMock(),
-                    createPaymentElement: createMock,
-                }),
-            );
-
-            await stripeCSPaymentStrategy.initialize({
-                ...stripeOptions,
-                stripeocs: {
-                    ...stripeOptions.stripeocs,
-                    containerId: 'containerId',
-                    render: renderMock,
-                    onError: onErrorMock,
-                },
-            });
-
-            expect(createMock).toHaveBeenCalledWith({
-                fields: {
-                    billingDetails: {
-                        email: StripeStringConstants.NEVER,
-                        address: {
-                            country: StripeStringConstants.NEVER,
-                            city: StripeStringConstants.NEVER,
-                            postalCode: StripeStringConstants.AUTO,
-                        },
-                    },
-                },
-                wallets: {
-                    applePay: StripeStringConstants.NEVER,
-                    googlePay: StripeStringConstants.NEVER,
-                    link: StripeStringConstants.NEVER,
-                },
-                layout: {
-                    type: 'accordion',
-                    defaultCollapsed: false,
-                    radios: true,
-                    spacedAccordionItems: false,
-                    visibleAccordionItemsCount: 0,
-                },
-            });
-            expect(onErrorMock).not.toHaveBeenCalled();
-        });
-
         it('initialize accordion close handled', async () => {
             const onErrorMock = jest.fn();
             const collapseMock = jest.fn();
@@ -467,11 +350,8 @@ describe('StripeOCSPaymentStrategy', () => {
                 fields: {
                     billingDetails: {
                         email: StripeStringConstants.NEVER,
-                        address: {
-                            country: StripeStringConstants.NEVER,
-                            city: StripeStringConstants.NEVER,
-                            postalCode: StripeStringConstants.AUTO,
-                        },
+                        name: StripeStringConstants.NEVER,
+                        address: StripeStringConstants.NEVER,
                     },
                 },
                 wallets: {
@@ -523,11 +403,8 @@ describe('StripeOCSPaymentStrategy', () => {
                 fields: {
                     billingDetails: {
                         email: StripeStringConstants.NEVER,
-                        address: {
-                            country: StripeStringConstants.NEVER,
-                            city: StripeStringConstants.NEVER,
-                            postalCode: StripeStringConstants.AUTO,
-                        },
+                        name: StripeStringConstants.NEVER,
+                        address: StripeStringConstants.NEVER,
                     },
                 },
                 wallets: {
@@ -568,9 +445,9 @@ describe('StripeOCSPaymentStrategy', () => {
                             Promise.resolve({
                                 type: StripeLoadActionsResultType.SUCCESS,
                                 actions: {
+                                    ...getStripeCheckoutSessionActionsMock(),
                                     updateEmail: updateEmailMock,
                                     getSession: getSessionMock,
-                                    confirm: jest.fn(),
                                 },
                             }),
                     }),
@@ -621,6 +498,124 @@ describe('StripeOCSPaymentStrategy', () => {
                 await stripeCSPaymentStrategy.initialize(stripeOptions);
 
                 expect(updateEmailMock).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('stripe shipping address updating', () => {
+            let updateShippingAddressMock: jest.Mock;
+
+            const mockStripeCheckoutWithShipping = () => {
+                updateShippingAddressMock = jest.fn();
+
+                jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                    Promise.resolve({
+                        ...getStripeCheckoutInstanceMock(),
+                        loadActions: () =>
+                            Promise.resolve({
+                                type: StripeLoadActionsResultType.SUCCESS,
+                                actions: {
+                                    ...getStripeCheckoutSessionActionsMock(),
+                                    updateShippingAddress: updateShippingAddressMock,
+                                    getSession: jest.fn(() => Promise.resolve(null)),
+                                },
+                            }),
+                    }),
+                );
+            };
+
+            it('should update shipping address on Stripe side from checkout state', async () => {
+                const shippingAddress = getShippingAddress();
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getShippingAddress',
+                ).mockReturnValue(shippingAddress);
+                mockStripeCheckoutWithShipping();
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(updateShippingAddressMock).toHaveBeenCalledWith({
+                    name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
+                    address: {
+                        city: shippingAddress.city,
+                        country: shippingAddress.countryCode,
+                        postal_code: shippingAddress.postalCode,
+                        line1: shippingAddress.address1,
+                        line2: shippingAddress.address2,
+                        state: shippingAddress.stateOrProvinceCode,
+                    },
+                });
+            });
+
+            it('should not update shipping address if shipping address is not available', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getShippingAddress',
+                ).mockReturnValue(undefined);
+                mockStripeCheckoutWithShipping();
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(updateShippingAddressMock).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('stripe billing address updating', () => {
+            let updateBillingAddressMock: jest.Mock;
+
+            const mockStripeCheckoutWithBilling = () => {
+                updateBillingAddressMock = jest.fn();
+
+                jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                    Promise.resolve({
+                        ...getStripeCheckoutInstanceMock(),
+                        loadActions: () =>
+                            Promise.resolve({
+                                type: StripeLoadActionsResultType.SUCCESS,
+                                actions: {
+                                    ...getStripeCheckoutSessionActionsMock(),
+                                    updateBillingAddress: updateBillingAddressMock,
+                                    getSession: jest.fn(() => Promise.resolve(null)),
+                                },
+                            }),
+                    }),
+                );
+            };
+
+            it('should update billing address on Stripe side from checkout state', async () => {
+                const billingAddress = getBillingAddress();
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getBillingAddress',
+                ).mockReturnValue(billingAddress);
+                mockStripeCheckoutWithBilling();
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(updateBillingAddressMock).toHaveBeenCalledWith({
+                    name: `${billingAddress.firstName} ${billingAddress.lastName}`,
+                    address: {
+                        city: billingAddress.city,
+                        country: billingAddress.countryCode,
+                        postal_code: billingAddress.postalCode,
+                        line1: billingAddress.address1,
+                        line2: billingAddress.address2,
+                        state: billingAddress.stateOrProvinceCode,
+                    },
+                });
+            });
+
+            it('should not update billing address if billing address is not available', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getBillingAddress',
+                ).mockReturnValue(undefined);
+                mockStripeCheckoutWithBilling();
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(updateBillingAddressMock).not.toHaveBeenCalled();
             });
         });
     });
@@ -992,8 +987,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1038,8 +1032,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1078,8 +1071,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1106,8 +1098,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1132,8 +1123,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1162,8 +1152,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1217,8 +1206,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1276,8 +1264,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),
@@ -1312,8 +1299,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         Promise.resolve({
                             type: StripeLoadActionsResultType.SUCCESS,
                             actions: {
-                                updateEmail: jest.fn(),
-                                getSession: jest.fn(),
+                                ...getStripeCheckoutSessionActionsMock(),
                                 confirm: confirmPaymentMock,
                             },
                         }),

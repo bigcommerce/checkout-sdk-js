@@ -6,6 +6,7 @@ import {
 
 import {
     StripeCheckoutInstance,
+    StripeCheckoutSessionActions,
     StripeClient,
     StripeElement,
     StripeLoadActionsResultType,
@@ -168,16 +169,22 @@ export function getRetrievePaymentIntentResponseWithError() {
     };
 }
 
+export function getStripeCheckoutSessionActionsMock(): StripeCheckoutSessionActions {
+    return {
+        updateEmail: jest.fn(),
+        getSession: jest.fn(),
+        confirm: jest.fn(),
+        updateShippingAddress: jest.fn(),
+        updateBillingAddress: jest.fn(),
+    };
+}
+
 export function getStripeCheckoutInstanceMock(): StripeCheckoutInstance {
     return {
         loadActions: () =>
             Promise.resolve({
                 type: StripeLoadActionsResultType.SUCCESS,
-                actions: {
-                    updateEmail: jest.fn(),
-                    getSession: jest.fn(),
-                    confirm: jest.fn(),
-                },
+                actions: getStripeCheckoutSessionActionsMock(),
             }),
         createPaymentElement: jest.fn(() => getStripeElementMock()),
         getPaymentElement: jest.fn().mockReturnValue(null),

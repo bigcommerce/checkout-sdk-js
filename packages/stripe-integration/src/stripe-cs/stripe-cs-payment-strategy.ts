@@ -70,7 +70,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         try {
             await this._initializeStripeElement(stripeocs, gatewayId, methodId);
-            await this._updateStripeEmail();
+            await this._updateStripeShopperData();
         } catch (error) {
             if (error instanceof Error) {
                 stripeocs.onError?.(error);
@@ -103,7 +103,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+        const { clientToken } = state.getPaymentMethodOrThrow(methodId, gatewayId);
         const paymentPayload = this._getPaymentPayload(methodId, clientToken || '');
 
         try {
@@ -156,10 +156,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             togglePreloader,
         } = stripe;
 
-        const { getBillingAddress, getShippingAddress } = this.paymentIntegrationService.getState();
-        const billingAddress = getBillingAddress();
-        const { postalCode } = getShippingAddress() || billingAddress || {};
-
         this.stripeCheckout = await this.scriptLoader.getStripeCheckout(this.stripeClient, {
             clientSecret: clientToken,
             elementsOptions: {
@@ -175,13 +171,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             fields: {
                 billingDetails: {
                     email: StripeStringConstants.NEVER,
-                    address: {
-                        country: StripeStringConstants.NEVER,
-                        city: StripeStringConstants.NEVER,
-                        postalCode: postalCode
-                            ? StripeStringConstants.NEVER
-                            : StripeStringConstants.AUTO,
-                    },
+                    name: StripeStringConstants.NEVER,
+                    address: StripeStringConstants.NEVER,
                 },
             },
             wallets: {
@@ -271,6 +262,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     }
 
     private async _updateCheckoutSessionData(gatewayId: string, methodId: string): Promise<void> {
+        await this._updateStripeShopperData();
+
         // INFO: to trigger checkout session data update on the BE side we need to make stripe config request
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
@@ -348,8 +341,15 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         return stripeCheckoutSession;
     }
 
-    private async _updateStripeEmail(): Promise<void> {
+    private async _updateStripeShopperData(): Promise<void> {
         const stripeActions = await this._getStripeActionsOrThrow();
+
+        await this._updateStripeEmail(stripeActions);
+        await this._updateStripeShippingAddress(stripeActions);
+        await this._updateStripeBillingAddress(stripeActions);
+    }
+
+    private async _updateStripeEmail(stripeActions: StripeCheckoutSessionActions): Promise<void> {
         const stripeCheckoutSession = await stripeActions.getSession();
 
         if (stripeCheckoutSession?.email) {
@@ -360,5 +360,35 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const billingAddress = getBillingAddress();
 
         await stripeActions.updateEmail(billingAddress?.email || '');
+    }
+
+    private async _updateStripeShippingAddress(
+        stripeActions: StripeCheckoutSessionActions,
+    ): Promise<void> {
+        const shippingAddress = this.paymentIntegrationService.getState().getShippingAddress();
+
+        if (!shippingAddress) {
+            return;
+        }
+
+        await stripeActions.updateShippingAddress({
+            name: this.stripeIntegrationService.getShopperFullName(shippingAddress),
+            address: this.stripeIntegrationService.mapStripeAddress(shippingAddress),
+        });
+    }
+
+    private async _updateStripeBillingAddress(
+        stripeActions: StripeCheckoutSessionActions,
+    ): Promise<void> {
+        const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
+
+        if (!billingAddress) {
+            return;
+        }
+
+        await stripeActions.updateBillingAddress({
+            name: this.stripeIntegrationService.getShopperFullName(billingAddress),
+            address: this.stripeIntegrationService.mapStripeAddress(billingAddress),
+        });
     }
 }
