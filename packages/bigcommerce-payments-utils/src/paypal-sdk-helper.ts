@@ -29,7 +29,7 @@ export default class PayPalSdkHelper {
         currencyCode: string,
         sessionId: string,
     ): Promise<PayPalFastlaneSdk> {
-        if (!this.window.paypalFastlaneSdk) {
+        if (!this.window.bigCommercePaymentsFastlaneSdk) {
             const config = this.getPayPalFastlaneSdkConfiguration(
                 paymentMethod,
                 currencyCode,
@@ -38,12 +38,12 @@ export default class PayPalSdkHelper {
 
             await this.loadPayPalSdk(config);
 
-            if (!this.window.paypalFastlaneSdk) {
+            if (!this.window.bigCommercePaymentsFastlaneSdk) {
                 throw new PaymentMethodClientUnavailableError();
             }
         }
 
-        return this.window.paypalFastlaneSdk;
+        return this.window.bigCommercePaymentsFastlaneSdk;
     }
 
     async getPayPalGooglePaySdk(
@@ -52,7 +52,7 @@ export default class PayPalSdkHelper {
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
     ): Promise<PayPalGooglePaySdk> {
-        if (!this.window.paypalGooglePay || forceLoad) {
+        if (!this.window.bigCommercePaymentsGooglePay || forceLoad) {
             const paypalSdkScriptConfig = this.getPayPalGooglePaySdkScriptConfigOrThrow(
                 paymentMethod,
                 currencyCode,
@@ -62,35 +62,35 @@ export default class PayPalSdkHelper {
             await this.loadPayPalSdk(paypalSdkScriptConfig);
         }
 
-        if (!this.window.paypalGooglePay) {
+        if (!this.window.bigCommercePaymentsGooglePay) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.window.paypalGooglePay;
+        return this.window.bigCommercePaymentsGooglePay;
     }
 
     async getPayPalApmsSdk(
         paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
         currencyCode: string,
     ) {
-        if (!this.window.paypalApms) {
+        if (!this.window.bigCommercePaymentsApms) {
             const config = this.getPayPalApmSdkConfiguration(paymentMethod, currencyCode);
 
             await this.loadPayPalSdk(config);
 
-            if (!this.window.paypalApms) {
+            if (!this.window.bigCommercePaymentsApms) {
                 throw new PaymentMethodClientUnavailableError();
             }
         }
 
-        return this.window.paypalApms;
+        return this.window.bigCommercePaymentsApms;
     }
 
     async getPayPalMessages(
         paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
         currencyCode: string,
     ): Promise<PayPalMessagesSdk> {
-        if (!this.window.paypalMessages) {
+        if (!this.window.bigCommercePaymentsMessages) {
             const paypalSdkMessagesConfig = this.getPayPalSdkMessagesConfiguration(
                 paymentMethod,
                 currencyCode,
@@ -99,11 +99,11 @@ export default class PayPalSdkHelper {
             await this.loadPayPalSdk(paypalSdkMessagesConfig);
         }
 
-        if (!this.window.paypalMessages) {
+        if (!this.window.bigCommercePaymentsMessages) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.window.paypalMessages;
+        return this.window.bigCommercePaymentsMessages;
     }
 
     /**
@@ -155,7 +155,7 @@ export default class PayPalSdkHelper {
             },
             attributes: {
                 'data-client-metadata-id': sessionId.replace(/-/g, ''),
-                'data-namespace': 'paypalFastlaneSdk',
+                'data-namespace': 'bigCommercePaymentsFastlaneSdk',
                 'data-partner-attribution-id': attributionId,
                 'data-sdk-client-token': clientToken,
             },
@@ -198,7 +198,7 @@ export default class PayPalSdkHelper {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
-                'data-namespace': 'paypalGooglePay',
+                'data-namespace': 'bigCommercePaymentsGooglePay',
             },
         };
     }
@@ -245,7 +245,7 @@ export default class PayPalSdkHelper {
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
-                'data-namespace': 'paypalApms',
+                'data-namespace': 'bigCommercePaymentsApms',
             },
         };
     }
@@ -272,7 +272,7 @@ export default class PayPalSdkHelper {
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
             },
             attributes: {
-                'data-namespace': 'paypalMessages',
+                'data-namespace': 'bigCommercePaymentsMessages',
                 'data-partner-attribution-id': attributionId,
             },
         };

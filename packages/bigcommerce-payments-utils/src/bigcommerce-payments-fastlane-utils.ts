@@ -41,27 +41,27 @@ export default class BigCommercePaymentsFastlaneUtils {
             window.localStorage.setItem('axoEnv', 'sandbox'); // TODO: remove if this key does not use on PayPal side
         }
 
-        if (!this.window.paypalFastlane) {
+        if (!this.window.bigCommercePaymentsFastlane) {
             const defaultStyles = {
                 root: {
                     backgroundColorPrimary: 'transparent',
                 },
             };
 
-            this.window.paypalFastlane = await paypalFastlaneSdk.Fastlane({
+            this.window.bigCommercePaymentsFastlane = await paypalFastlaneSdk.Fastlane({
                 styles: styles || defaultStyles,
             });
         }
 
-        return this.window.paypalFastlane;
+        return this.window.bigCommercePaymentsFastlane;
     }
 
     getPayPalFastlaneOrThrow(): PayPalFastlane {
-        if (!this.window.paypalFastlane) {
+        if (!this.window.bigCommercePaymentsFastlane) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.window.paypalFastlane;
+        return this.window.bigCommercePaymentsFastlane;
     }
 
     /**

@@ -66,7 +66,7 @@ describe('BigCommercePaymentsFastlaneUtils', () => {
     });
 
     afterEach(() => {
-        (window as PayPalHostWindow).paypalFastlane = undefined;
+        (window as PayPalHostWindow).bigCommercePaymentsFastlane = undefined;
 
         jest.resetAllMocks();
         jest.restoreAllMocks();

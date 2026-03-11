@@ -48,11 +48,11 @@ export interface BigCommercePaymentsInitializationData {
  *
  */
 export interface PayPalHostWindow extends Window {
-    paypalFastlane?: PayPalFastlane;
-    paypalFastlaneSdk?: PayPalFastlaneSdk;
-    paypalMessages?: PayPalMessagesSdk;
-    paypalApms?: PayPalApmSdk;
-    paypalGooglePay?: PayPalGooglePaySdk;
+    bigCommercePaymentsFastlane?: PayPalFastlane;
+    bigCommercePaymentsFastlaneSdk?: PayPalFastlaneSdk;
+    bigCommercePaymentsMessages?: PayPalMessagesSdk;
+    bigCommercePaymentsApms?: PayPalApmSdk;
+    bigCommercePaymentsGooglePay?: PayPalGooglePaySdk;
 }
 
 /**

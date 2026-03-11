@@ -22,7 +22,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         paypalSdk = getPayPalSDKMock();
 
         jest.spyOn(loader, 'loadScript').mockImplementation(() => {
-            (window as BigCommercePaymentsHostWindow).paypal = paypalSdk;
+            (window as BigCommercePaymentsHostWindow).bigCommercePaymentsPayPalSDK = paypalSdk;
 
             return Promise.resolve();
         });
@@ -31,7 +31,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
     });
 
     afterEach(() => {
-        (window as BigCommercePaymentsHostWindow).paypal = undefined;
+        (window as BigCommercePaymentsHostWindow).bigCommercePaymentsPayPalSDK = undefined;
     });
 
     it('throws an error if initializationData is missing', async () => {
@@ -55,6 +55,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -84,6 +85,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -100,6 +102,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -124,6 +127,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -148,6 +152,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -172,6 +177,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -196,6 +202,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -236,6 +243,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -252,6 +260,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -268,6 +277,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -292,6 +302,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -321,6 +332,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -347,6 +359,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'data-namespace': 'bigCommercePaymentsPayPalSDK',
         };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -371,7 +384,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
 
         const paypalSdkScriptSrc =
             'https://www.paypal.com/sdk/js?client-id=abc&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
-        const paypalSdkAttributes = {};
+        const paypalSdkAttributes = { 'data-namespace': 'bigCommercePaymentsPayPalSDK' };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
             async: true,

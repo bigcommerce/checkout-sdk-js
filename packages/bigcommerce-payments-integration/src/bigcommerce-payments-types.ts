@@ -215,6 +215,7 @@ export interface BigCommercePaymentsScriptParams {
         'data-client-metadata-id'?: string;
         'data-partner-attribution-id'?: string;
         'data-user-id-token'?: string;
+        'data-namespace'?: string;
     };
 }
 
@@ -236,7 +237,7 @@ export type ComponentsScriptType = Array<
 >;
 
 export interface BigCommercePaymentsHostWindow extends Window {
-    paypal?: PayPalSDK;
+    bigCommercePaymentsPayPalSDK?: PayPalSDK;
 }
 
 /**
