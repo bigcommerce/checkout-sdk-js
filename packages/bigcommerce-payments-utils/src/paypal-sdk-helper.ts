@@ -155,7 +155,7 @@ export default class PayPalSdkHelper {
             },
             attributes: {
                 'data-client-metadata-id': sessionId.replace(/-/g, ''),
-                'data-namespace': 'paypalFastlaneSdk',
+                'data-namespace': 'bigCommercePaymentsFastlaneSdk',
                 'data-partner-attribution-id': attributionId,
                 'data-sdk-client-token': clientToken,
             },
@@ -198,7 +198,7 @@ export default class PayPalSdkHelper {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
-                'data-namespace': 'paypalGooglePay',
+                'data-namespace': 'bigCommercePaymentsGooglePay',
             },
         };
     }
@@ -245,7 +245,7 @@ export default class PayPalSdkHelper {
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
-                'data-namespace': 'paypalApms',
+                'data-namespace': 'bigCommercePaymentsApms',
             },
         };
     }
@@ -272,7 +272,7 @@ export default class PayPalSdkHelper {
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
             },
             attributes: {
-                'data-namespace': 'paypalMessages',
+                'data-namespace': 'bigCommercePaymentsMessages',
                 'data-partner-attribution-id': attributionId,
             },
         };

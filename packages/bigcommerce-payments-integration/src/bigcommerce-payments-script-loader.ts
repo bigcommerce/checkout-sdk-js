@@ -143,6 +143,7 @@ export default class BigCommercePaymentsScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
+                'data-namespace': 'bigCommercePaymentsPayPalSDK',
             },
         };
     }

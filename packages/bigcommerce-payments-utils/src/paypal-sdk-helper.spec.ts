@@ -99,7 +99,7 @@ describe('PayPalSdkHelper', () => {
                     async: true,
                     attributes: {
                         'data-client-metadata-id': expectedSessionId,
-                        'data-namespace': 'paypalFastlaneSdk',
+                        'data-namespace': 'bigCommercePaymentsFastlaneSdk',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-sdk-client-token': 'asdcvY7XFSQasd',
                     },
@@ -127,7 +127,7 @@ describe('PayPalSdkHelper', () => {
                     async: true,
                     attributes: {
                         'data-client-metadata-id': expectedSessionId,
-                        'data-namespace': 'paypalFastlaneSdk',
+                        'data-namespace': 'bigCommercePaymentsFastlaneSdk',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-sdk-client-token': 'asdcvY7XFSQasd',
                     },
@@ -177,7 +177,7 @@ describe('PayPalSdkHelper', () => {
                 {
                     async: true,
                     attributes: {
-                        'data-namespace': 'paypalMessages',
+                        'data-namespace': 'bigCommercePaymentsMessages',
                         'data-partner-attribution-id': '1123JLKJASD12',
                     },
                 },
@@ -226,7 +226,7 @@ describe('PayPalSdkHelper', () => {
                 {
                     async: true,
                     attributes: {
-                        'data-namespace': 'paypalGooglePay',
+                        'data-namespace': 'bigCommercePaymentsGooglePay',
                         'data-client-token': 'asdcvY7XFSQasd',
                         'data-partner-attribution-id': '1123JLKJASD12',
                     },
@@ -291,7 +291,7 @@ describe('PayPalSdkHelper', () => {
                 {
                     async: true,
                     attributes: {
-                        'data-namespace': 'paypalApms',
+                        'data-namespace': 'bigCommercePaymentsApms',
                         'data-partner-attribution-id': '1123JLKJASD12',
                     },
                 },
@@ -326,7 +326,7 @@ describe('PayPalSdkHelper', () => {
                 {
                     async: true,
                     attributes: {
-                        'data-namespace': 'paypalApms',
+                        'data-namespace': 'bigCommercePaymentsApms',
                         'data-partner-attribution-id': '1123JLKJASD12',
                     },
                 },
@@ -351,7 +351,7 @@ describe('PayPalSdkHelper', () => {
                 {
                     async: true,
                     attributes: {
-                        'data-namespace': 'paypalApms',
+                        'data-namespace': 'bigCommercePaymentsApms',
                         'data-partner-attribution-id': '1123JLKJASD12',
                     },
                 },
