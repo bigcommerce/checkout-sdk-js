@@ -42,7 +42,7 @@ export default class BigCommercePaymentsScriptLoader {
         paypalSdkScriptConfig: BigCommercePaymentsScriptParams,
         forceLoad = false,
     ): Promise<PayPalSDK> {
-        if (!this.window.paypal || forceLoad) {
+        if (!this.window.bigCommercePaymentsPayPalSDK || forceLoad) {
             const options = this.transformConfig<BigCommercePaymentsScriptParams['options']>(
                 paypalSdkScriptConfig.options,
             );
@@ -57,11 +57,11 @@ export default class BigCommercePaymentsScriptLoader {
             await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
         }
 
-        if (!this.window.paypal) {
+        if (!this.window.bigCommercePaymentsPayPalSDK) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.window.paypal;
+        return this.window.bigCommercePaymentsPayPalSDK;
     }
 
     private getPayPalSdkScriptConfigOrThrow(
@@ -143,6 +143,7 @@ export default class BigCommercePaymentsScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
+                'data-namespace': 'bigCommercePaymentsPayPalSDK',
             },
         };
     }
