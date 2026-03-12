@@ -3,33 +3,21 @@
 // Please update both files if you want to make changes to the Capabilities interface
 export interface Capabilities {
     userJourney: {
-        quoteCheckout: boolean;
-        invoiceCheckout: boolean;
         disableEditCart: boolean;
+        hasCompanyAddressBook: boolean;
+        hasExtraAddressFields: boolean;
     };
     customer: {
-        inlineSignIn: boolean;
-        verifyPurchasability: boolean;
         superAdminCompanySelector: boolean;
-        guestAccountCreation: boolean;
-        b2bCompanySignupRedirect: boolean;
     };
     shipping: {
         restrictManualAddressEntry: boolean;
-        companyAddressBook: boolean;
         prefillCompanyAddress: boolean;
-        saveToCompanyAddressBook: boolean;
         hideSaveToAddressBookCheck: boolean;
-        lockQuoteShipping: boolean;
-        extraShippingFields: boolean;
         hideBillingSameAsShippingCheck: boolean;
     };
     billing: {
         restrictManualAddressEntry: boolean;
-        extraBillingFields: boolean;
-        companyAddressBook: boolean;
-        billingSameAsShippingAdmin: boolean;
-        lockQuoteBilling: boolean;
         hideSaveToAddressBookCheck: boolean;
     };
     payment: {
