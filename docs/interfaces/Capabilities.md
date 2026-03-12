@@ -23,11 +23,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `billingSameAsShippingAdmin` | `boolean` |
-| `companyAddressBook` | `boolean` |
-| `extraBillingFields` | `boolean` |
 | `hideSaveToAddressBookCheck` | `boolean` |
-| `lockQuoteBilling` | `boolean` |
 | `restrictManualAddressEntry` | `boolean` |
 
 ___
@@ -40,11 +36,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `b2bCompanySignupRedirect` | `boolean` |
-| `guestAccountCreation` | `boolean` |
-| `inlineSignIn` | `boolean` |
 | `superAdminCompanySelector` | `boolean` |
-| `verifyPurchasability` | `boolean` |
 
 ___
 
@@ -89,14 +81,10 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `companyAddressBook` | `boolean` |
-| `extraShippingFields` | `boolean` |
 | `hideBillingSameAsShippingCheck` | `boolean` |
 | `hideSaveToAddressBookCheck` | `boolean` |
-| `lockQuoteShipping` | `boolean` |
 | `prefillCompanyAddress` | `boolean` |
 | `restrictManualAddressEntry` | `boolean` |
-| `saveToCompanyAddressBook` | `boolean` |
 
 ___
 
@@ -109,5 +97,5 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `disableEditCart` | `boolean` |
-| `invoiceCheckout` | `boolean` |
-| `quoteCheckout` | `boolean` |
+| `hasCompanyAddressBook` | `boolean` |
+| `hasExtraAddressFields` | `boolean` |
