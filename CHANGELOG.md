@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.885.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.884.1...v1.885.0) (2026-03-12)
+
+
+### Features
+
+* **payment:** PAYPAL-6318 Update paypal sdk namespace for BCP paypal sdk config with bigcommerce-payments naming ([#3174](https://github.com/bigcommerce/checkout-sdk-js/issues/3174)) ([2b0feb0](https://github.com/bigcommerce/checkout-sdk-js/commit/2b0feb0d1f9c0e812660c812c05bfe8afeb0b370))
+
 ### [1.884.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.884.0...v1.884.1) (2026-03-10)
 
 ## [1.884.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.883.0...v1.884.0) (2026-03-10)
