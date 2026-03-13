@@ -304,13 +304,20 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
                     await this._paymentIntegrationService.loadCheckout();
 
-                    const { getCheckoutOrThrow, getCartOrThrow } =
+                    const { getCheckoutOrThrow, getCartOrThrow, getStoreConfigOrThrow } =
                         this._paymentIntegrationService.getState();
                     const { code: currencyCode, decimalPlaces } = getCartOrThrow().currency;
+                    const isRoundingExperimentOn = isExperimentEnabled(
+                        getStoreConfigOrThrow().checkoutSettings.features,
+                        'PI-5075.google_pay_round_total_price_to_max_2_decimal_places',
+                    );
+                    const maxDecimalPlaces = isRoundingExperimentOn
+                        ? Math.min(decimalPlaces, 2)
+                        : decimalPlaces;
                     const totalPrice = round(
                         getCheckoutOrThrow().outstandingBalance,
-                        decimalPlaces,
-                    ).toFixed(decimalPlaces);
+                        maxDecimalPlaces,
+                    ).toFixed(maxDecimalPlaces);
 
                     return {
                         newTransactionInfo: {
