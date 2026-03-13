@@ -9,8 +9,10 @@ import {
 import {
     getBillingAddress,
     getCart,
+    getCheckout,
     getConfig,
     getConsignment,
+    getCurrency,
     getShippingOption,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -795,6 +797,78 @@ describe('GooglePayGateway', () => {
             await gateway.initialize(getGeneric);
 
             expect(gateway.getTotalPrice()).toBe(expectedPrice);
+        });
+
+        describe('when experiment PI-5075.google_pay_round_total_price_to_max_2_decimal_places is on', () => {
+            const storeConfigWithRoundingExp = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PI-5075.google_pay_round_total_price_to_max_2_decimal_places': true,
+                    },
+                },
+            };
+
+            it('should return total price capped to 2 decimal places when total price has 3 decimal places originally', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue(storeConfigWithRoundingExp);
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue({
+                    ...getCart(),
+                    currency: { ...getCurrency(), decimalPlaces: 3 },
+                });
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCheckoutOrThrow',
+                ).mockReturnValue({
+                    ...getCheckout(),
+                    outstandingBalance: 10.125,
+                });
+
+                await gateway.initialize(getGeneric);
+
+                expect(gateway.getTotalPrice()).toBe('10.13');
+            });
+
+            it('should return total price unchanged when total price has 2 decimal places', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue(storeConfigWithRoundingExp);
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    getCart(),
+                );
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCheckoutOrThrow',
+                ).mockReturnValue(getCheckout());
+
+                await gateway.initialize(getGeneric);
+
+                expect(gateway.getTotalPrice()).toBe('190.00');
+            });
+        });
+
+        it('should return total price with full decimal places when experiment PI-5075.google_pay_round_total_price_to_max_2_decimal_places is off', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfig);
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue({
+                ...getCart(),
+                currency: { ...getCurrency(), decimalPlaces: 3 },
+            });
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
+                ...getCheckout(),
+                outstandingBalance: 10.125,
+            });
+
+            await gateway.initialize(getGeneric);
+
+            expect(gateway.getTotalPrice()).toBe('10.125');
         });
     });
 
