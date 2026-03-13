@@ -791,6 +791,19 @@ describe('GooglePayGateway', () => {
     });
 
     describe('#getTotalPrice', () => {
+        beforeEach(() => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                getCart(),
+            );
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
+                getCheckout(),
+            );
+        });
+
         it('should return total price', async () => {
             const expectedPrice = '190.00';
 
@@ -815,15 +828,18 @@ describe('GooglePayGateway', () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfigWithRoundingExp);
-                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue({
+                ).mockReturnValueOnce(storeConfigWithRoundingExp);
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCartOrThrow',
+                ).mockReturnValueOnce({
                     ...getCart(),
                     currency: { ...getCurrency(), decimalPlaces: 3 },
                 });
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getCheckoutOrThrow',
-                ).mockReturnValue({
+                ).mockReturnValueOnce({
                     ...getCheckout(),
                     outstandingBalance: 10.125,
                 });
@@ -837,14 +853,7 @@ describe('GooglePayGateway', () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfigWithRoundingExp);
-                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
-                    getCart(),
-                );
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getCheckoutOrThrow',
-                ).mockReturnValue(getCheckout());
+                ).mockReturnValueOnce(storeConfigWithRoundingExp);
 
                 await gateway.initialize(getGeneric);
 
@@ -853,15 +862,29 @@ describe('GooglePayGateway', () => {
         });
 
         it('should return total price with full decimal places when experiment PI-5075.google_pay_round_total_price_to_max_2_decimal_places is off', async () => {
+            const storeConfigWithRoundingExpOff = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PI-5075.google_pay_round_total_price_to_max_2_decimal_places': false,
+                    },
+                },
+            };
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfig);
-            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue({
+            ).mockReturnValueOnce(storeConfigWithRoundingExpOff);
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValueOnce({
                 ...getCart(),
                 currency: { ...getCurrency(), decimalPlaces: 3 },
             });
-            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getCheckoutOrThrow',
+            ).mockReturnValueOnce({
                 ...getCheckout(),
                 outstandingBalance: 10.125,
             });

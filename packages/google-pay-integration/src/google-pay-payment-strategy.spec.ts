@@ -660,6 +660,7 @@ describe('GooglePayPaymentStrategy', () => {
                         },
                     },
                 };
+
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getStoreConfigOrThrow',
