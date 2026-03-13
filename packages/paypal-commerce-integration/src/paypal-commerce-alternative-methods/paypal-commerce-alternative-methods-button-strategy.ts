@@ -4,13 +4,11 @@ import {
     InvalidArgumentError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
-
 import {
-    ApproveCallbackPayload,
+    PaypalButtonCreationService,
     PayPalBuyNowInitializeOptions,
-    PayPalCommerceButtonsOptions,
-} from '../paypal-commerce-types';
+    PayPalIntegrationService,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceAlternativeMethodsButtonOptions, {
     WithPayPalCommerceAlternativeMethodsButtonInitializeOptions,
@@ -22,6 +20,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalIntegrationService: PayPalIntegrationService,
+        private paypalButtonCreationService: PaypalButtonCreationService,
     ) {}
 
     async initialize(
@@ -106,38 +105,23 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
         const { apm, buyNowInitializeOptions, style, onEligibilityFailure } =
             paypalcommercealternativemethods;
 
-        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
-        const isAvailableFundingSource = Object.values(paypalSdk.FUNDING).includes(apm);
-
-        if (!isAvailableFundingSource) {
-            throw new InvalidArgumentError(
-                `Unable to initialize PayPal button because "options.paypalcommercealternativemethods.apm" argument is not valid funding source.`,
-            );
-        }
-
-        const defaultCallbacks = {
-            createOrder: () =>
-                this.paypalIntegrationService.createOrder('paypalcommercealternativemethod'),
-            onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalIntegrationService.tokenizePayment(methodId, orderID),
-        };
-
-        const buyNowFlowCallbacks = {
-            onClick: () => this.handleClick(buyNowInitializeOptions),
-            onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
-        };
-
-        const buttonRenderOptions: PayPalCommerceButtonsOptions = {
+        const buttonRenderOptions = {
             fundingSource: apm,
-            style: this.paypalIntegrationService.getValidButtonStyle(style),
-            ...defaultCallbacks,
-            ...(buyNowInitializeOptions && buyNowFlowCallbacks),
+            style,
+            ...(buyNowInitializeOptions && {
+                onClick: () => this.handleClick(buyNowInitializeOptions),
+                onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
+            }),
         };
 
-        const paypalButtonRender = paypalSdk.Buttons(buttonRenderOptions);
+        const paypalButton = this.paypalButtonCreationService.createPayPalButton(
+            'paypalcommercealternativemethod',
+            methodId,
+            buttonRenderOptions,
+        );
 
-        if (paypalButtonRender.isEligible()) {
-            paypalButtonRender.render(`#${containerId}`);
+        if (paypalButton.isEligible()) {
+            paypalButton.render(`#${containerId}`);
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {

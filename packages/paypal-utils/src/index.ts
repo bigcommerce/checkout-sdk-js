@@ -30,3 +30,11 @@ export { default as PayPalFastlaneUtils } from './paypal-fastlane-utils';
 
 export { default as PayPalIntegrationService } from './paypal-integration-service';
 export { default as createPayPalIntegrationService } from './create-paypal-integration-service';
+
+/**
+ *
+ * PayPal Button Creation Service
+ *
+ */
+
+export { default as PaypalButtonCreationService } from './paypal-button-creation-service';
