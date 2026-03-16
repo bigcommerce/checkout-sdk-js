@@ -26,6 +26,7 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaypalButtonCreationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
@@ -193,7 +194,8 @@ declare interface PayPalCommerceAlternativeMethodsButtonOptions {
 declare class PayPalCommerceAlternativeMethodsButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
     private paypalIntegrationService;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService);
+    private paypalButtonCreationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalButtonCreationService: PaypalButtonCreationService);
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
