@@ -211,14 +211,20 @@ export default class GooglePayGateway {
         const countryCode = this.getGooglePayInitializationData().storeCountry;
 
         if (this.isWebViewWithRestrictions()) {
+            const { getCheckoutOrThrow, getStoreConfigOrThrow } =
+                this._paymentIntegrationService.getState();
             const { decimalPlaces } = getCartOrThrow().currency;
-
-            const { getCheckoutOrThrow } = this._paymentIntegrationService.getState();
-
+            const isRoundingExperimentOn = isExperimentEnabled(
+                getStoreConfigOrThrow().checkoutSettings.features,
+                'PI-5075.google_pay_round_total_price_to_max_2_decimal_places',
+            );
+            const maxDecimalPlaces = isRoundingExperimentOn
+                ? Math.min(decimalPlaces, 2)
+                : decimalPlaces;
             const totalPrice = round(
                 getCheckoutOrThrow().outstandingBalance,
-                decimalPlaces,
-            ).toFixed(decimalPlaces);
+                maxDecimalPlaces,
+            ).toFixed(maxDecimalPlaces);
 
             return {
                 ...(countryCode && { countryCode }),
