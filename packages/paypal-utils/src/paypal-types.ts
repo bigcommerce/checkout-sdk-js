@@ -535,9 +535,12 @@ export interface PayPalButtonStyleOptions {
 export interface PayPalButtonOptions {
     fundingSource: string;
     style?: PayPalButtonStyleOptions;
+    isAppSwitchEnabled?: boolean;
+    isHostedCheckoutEnabled?: boolean;
     onClick?: () => void;
     onCancel?: () => void;
     onPaymentComplete?: () => void;
+    onError?(error?: Error): void;
 }
 
 /**

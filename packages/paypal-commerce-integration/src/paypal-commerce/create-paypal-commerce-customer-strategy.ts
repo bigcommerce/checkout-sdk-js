@@ -2,17 +2,27 @@ import {
     CustomerStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
+import {
+    createPayPalIntegrationService,
+    PaypalButtonCreationService,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceCustomerStrategy from './paypal-commerce-customer-strategy';
 
 const createPayPalCommerceCustomerStrategy: CustomerStrategyFactory<
     PayPalCommerceCustomerStrategy
-> = (paymentIntegrationService) =>
-    new PayPalCommerceCustomerStrategy(
+> = (paymentIntegrationService) => {
+    const paypalIntegrationService = createPayPalIntegrationService(paymentIntegrationService);
+    const paypalButtonCreationService = new PaypalButtonCreationService(
         paymentIntegrationService,
-        createPayPalCommerceIntegrationService(paymentIntegrationService),
+        paypalIntegrationService,
     );
+
+    return new PayPalCommerceCustomerStrategy(
+        paymentIntegrationService,
+        paypalIntegrationService,
+        paypalButtonCreationService,
+    );
+};
 
 export default toResolvableModule(createPayPalCommerceCustomerStrategy, [{ id: 'paypalcommerce' }]);

@@ -23,6 +23,7 @@ import {
     getPayPalPaymentMethod,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
+    PaypalButtonCreationService,
     PayPalButtonsOptions,
     PayPalHostWindow,
     PayPalIntegrationService,
@@ -42,6 +43,7 @@ describe('PayPalCommerceButtonStrategy', () => {
     let paypalButtonElement: HTMLDivElement;
     let paypalCommerceIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
+    let paypalButtonCreationService: PaypalButtonCreationService;
 
     const defaultMethodId = 'paypalcommerce';
     const defaultButtonContainerId = 'paypal-commerce-button-mock-id';
@@ -114,9 +116,15 @@ describe('PayPalCommerceButtonStrategy', () => {
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
+        paypalButtonCreationService = new PaypalButtonCreationService(
+            paymentIntegrationService,
+            paypalCommerceIntegrationService,
+        );
+
         strategy = new PayPalCommerceButtonStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
+            paypalButtonCreationService,
         );
 
         paypalButtonElement = document.createElement('div');
