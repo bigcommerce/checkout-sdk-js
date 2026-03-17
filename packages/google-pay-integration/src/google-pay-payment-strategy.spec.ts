@@ -17,6 +17,8 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getCart,
+    getCheckout,
     getConfig,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -451,6 +453,18 @@ describe('GooglePayPaymentStrategy', () => {
             let mockReturnedPaymentDataChangedValue: NewTransactionInfo;
 
             beforeEach(() => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue(storeConfig);
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    getCart(),
+                );
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCheckoutOrThrow',
+                ).mockReturnValue(getCheckout());
+
                 const initializeMock = createInitializeImplementationMock(
                     eventEmitter,
                     CallbackTriggerType.INITIALIZE,

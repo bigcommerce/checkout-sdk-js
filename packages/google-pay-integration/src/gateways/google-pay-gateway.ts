@@ -211,14 +211,7 @@ export default class GooglePayGateway {
         const countryCode = this.getGooglePayInitializationData().storeCountry;
 
         if (this.isWebViewWithRestrictions()) {
-            const { decimalPlaces } = getCartOrThrow().currency;
-
-            const { getCheckoutOrThrow } = this._paymentIntegrationService.getState();
-
-            const totalPrice = round(
-                getCheckoutOrThrow().outstandingBalance,
-                decimalPlaces,
-            ).toFixed(decimalPlaces);
+            const totalPrice = this.getTotalPrice();
 
             return {
                 ...(countryCode && { countryCode }),
@@ -362,10 +355,18 @@ export default class GooglePayGateway {
     }
 
     getTotalPrice(): string {
-        const { getCheckoutOrThrow, getCartOrThrow } = this._paymentIntegrationService.getState();
+        const { getCheckoutOrThrow, getCartOrThrow, getStoreConfigOrThrow } =
+            this._paymentIntegrationService.getState();
         const { decimalPlaces } = getCartOrThrow().currency;
-        const totalPrice = round(getCheckoutOrThrow().outstandingBalance, decimalPlaces).toFixed(
-            decimalPlaces,
+        const isRoundingExperimentOn = isExperimentEnabled(
+            getStoreConfigOrThrow().checkoutSettings.features,
+            'PI-5075.google_pay_round_total_price_to_max_2_decimal_places',
+        );
+        const maxDecimalPlaces = isRoundingExperimentOn
+            ? Math.min(decimalPlaces, 2)
+            : decimalPlaces;
+        const totalPrice = round(getCheckoutOrThrow().outstandingBalance, maxDecimalPlaces).toFixed(
+            maxDecimalPlaces,
         );
 
         return totalPrice;

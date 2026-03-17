@@ -1,5 +1,3 @@
-import { round } from 'lodash';
-
 import {
     guard,
     InvalidArgumentError,
@@ -304,13 +302,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
                     await this._paymentIntegrationService.loadCheckout();
 
-                    const { getCheckoutOrThrow, getCartOrThrow } =
-                        this._paymentIntegrationService.getState();
-                    const { code: currencyCode, decimalPlaces } = getCartOrThrow().currency;
-                    const totalPrice = round(
-                        getCheckoutOrThrow().outstandingBalance,
-                        decimalPlaces,
-                    ).toFixed(decimalPlaces);
+                    const { code: currencyCode } = this._paymentIntegrationService
+                        .getState()
+                        .getCartOrThrow().currency;
+                    const totalPrice = this._googlePayPaymentProcessor.getTotalPrice();
 
                     return {
                         newTransactionInfo: {
