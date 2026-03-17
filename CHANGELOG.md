@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.887.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.887.0...v1.887.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* **payment:** PI-5075 [Google Pay] round `totalPrice` to max 2 decimal places ([#3179](https://github.com/bigcommerce/checkout-sdk-js/issues/3179)) ([70a432f](https://github.com/bigcommerce/checkout-sdk-js/commit/70a432f0de7dcfa471f864876f00cb344304bd6f))
+
 ## [1.887.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.886.0...v1.887.0) (2026-03-16)
 
 
