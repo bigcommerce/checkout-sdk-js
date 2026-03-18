@@ -1,5 +1,3 @@
-import { noop } from 'lodash';
-
 import {
     InvalidArgumentError,
     MissingDataError,
@@ -19,7 +17,7 @@ import {
 } from './paypal-types';
 
 class PaypalButtonCreationService {
-    private onError = noop;
+    private onError?: PayPalButtonOptions['onError'];
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -43,7 +41,7 @@ class PaypalButtonCreationService {
             onError,
         } = buttonOptions;
 
-        this.onError = onError || noop;
+        this.onError = onError;
 
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const isAvailableFundingSource = Object.values(paypalSdk.FUNDING).includes(fundingSource);

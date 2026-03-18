@@ -497,6 +497,28 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
             });
 
+            it('trigger the onError callback if the payment approval fails', async () => {
+                jest.spyOn(paypalIntegrationService, 'submitPayment').mockRejectedValue(
+                    'Request failed',
+                );
+
+                const options = {
+                    ...initializationOptions,
+                    paypalcommerce: {
+                        ...paypalCommerceOptions,
+                        onError: jest.fn(),
+                    },
+                };
+
+                await strategy.initialize(options);
+
+                eventEmitter.emit('onApprove');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(options.paypalcommerce.onError).toHaveBeenCalled();
+            });
+
             it('takes order details data from paypal', async () => {
                 const getOrderActionMock = jest.fn(() => Promise.resolve(paypalOrderDetails));
 

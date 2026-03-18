@@ -107,7 +107,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             isAppSwitchEnabled,
             isHostedCheckoutEnabled,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
-            ...(onComplete && { onPaymentComplete: () => onComplete() }),
+            ...(isHostedCheckoutEnabled && onComplete && { onPaymentComplete: () => onComplete() }),
         };
 
         const paypalButton = this.paypalButtonCreationService.createPayPalButton(

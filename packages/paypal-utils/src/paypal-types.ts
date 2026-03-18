@@ -540,7 +540,7 @@ export interface PayPalButtonOptions {
     onClick?: () => void;
     onCancel?: () => void;
     onPaymentComplete?: () => void;
-    onError?(error?: Error): void;
+    onError?(error?: Error | unknown): void;
 }
 
 /**

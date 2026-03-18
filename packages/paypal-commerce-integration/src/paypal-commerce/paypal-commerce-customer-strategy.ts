@@ -101,7 +101,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         methodId: string,
         paypalcommerce: PayPalCommerceCustomerInitializeOptions,
     ): void {
-        const { container, onClick, onComplete } = paypalcommerce;
+        const { container, onClick, onComplete, onError } = paypalcommerce;
 
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -119,7 +119,8 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
                 height: DefaultCheckoutButtonHeight,
             },
             ...(onClick && { onClick: () => onClick() }),
-            ...(onComplete && { onPaymentComplete: () => onComplete() }),
+            ...(isHostedCheckoutEnabled && onComplete && { onPaymentComplete: () => onComplete() }),
+            onError,
         };
 
         const paypalButton = this.paypalButtonCreationService.createPayPalButton(
