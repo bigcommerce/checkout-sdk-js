@@ -317,7 +317,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             existingStripeSavedPaymentMethods,
             newStripeSavedPaymentMethods,
         );
-        const paymentPayload = this._getPaymentPayload(methodId, checkoutSessionId || token, shouldSaveInstrument);
+        const paymentPayload = this._getPaymentPayload(
+            methodId,
+            checkoutSessionId || token,
+            shouldSaveInstrument,
+        );
 
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
@@ -406,7 +410,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
     private async _getStripeSavedPaymentMethodsOrThrow(): Promise<StripeSavedPaymentMethod[]> {
         const stripeActions = await this._getStripeActionsOrThrow();
-        const { savedPaymentMethods } = await stripeActions.getSession() || {};
+        const { savedPaymentMethods } = (await stripeActions.getSession()) || {};
 
         return savedPaymentMethods || [];
     }
@@ -416,9 +420,10 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         newStripeSavedPaymentMethods: StripeSavedPaymentMethod[],
     ): boolean {
         return newStripeSavedPaymentMethods.some(
-            (method: StripeSavedPaymentMethod) => !existingStripeSavedPaymentMethods.some(
-                (existingMethod: StripeSavedPaymentMethod) => existingMethod.id === method.id,
-            ),
+            (method: StripeSavedPaymentMethod) =>
+                !existingStripeSavedPaymentMethods.some(
+                    (existingMethod: StripeSavedPaymentMethod) => existingMethod.id === method.id,
+                ),
         );
     }
 }

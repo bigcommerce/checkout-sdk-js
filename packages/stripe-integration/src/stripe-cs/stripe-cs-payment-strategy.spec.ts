@@ -1355,14 +1355,25 @@ describe('StripeOCSPaymentStrategy', () => {
 
             it('should save instrument when new saved payment method is added after confirmation', async () => {
                 const existingMethods = [
-                    { id: 'pm_existing1', type: 'card', billingDetails: {}, card: { brand: 'visa', last4: '4242', expMonth: 12, expYear: 2030 } },
+                    {
+                        id: 'pm_existing1',
+                        type: 'card',
+                        billingDetails: {},
+                        card: { brand: 'visa', last4: '4242', expMonth: 12, expYear: 2030 },
+                    },
                 ];
                 const newMethods = [
                     ...existingMethods,
-                    { id: 'pm_new1', type: 'card', billingDetails: {}, card: { brand: 'mastercard', last4: '5555', expMonth: 6, expYear: 2028 } },
+                    {
+                        id: 'pm_new1',
+                        type: 'card',
+                        billingDetails: {},
+                        card: { brand: 'mastercard', last4: '5555', expMonth: 6, expYear: 2028 },
+                    },
                 ];
 
-                getSessionMock = jest.fn()
+                getSessionMock = jest
+                    .fn()
                     .mockResolvedValueOnce(null) // initial email check
                     .mockResolvedValueOnce(null) // initial email check (during execute _updateCheckoutSessionData)
                     .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }) // before confirm
@@ -1395,10 +1406,16 @@ describe('StripeOCSPaymentStrategy', () => {
 
             it('should not save instrument when no new saved payment methods are added after confirmation', async () => {
                 const existingMethods = [
-                    { id: 'pm_existing1', type: 'card', billingDetails: {}, card: { brand: 'visa', last4: '4242', expMonth: 12, expYear: 2030 } },
+                    {
+                        id: 'pm_existing1',
+                        type: 'card',
+                        billingDetails: {},
+                        card: { brand: 'visa', last4: '4242', expMonth: 12, expYear: 2030 },
+                    },
                 ];
 
-                getSessionMock = jest.fn()
+                getSessionMock = jest
+                    .fn()
                     .mockResolvedValueOnce(null) // initial email check
                     .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
                     .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }) // before confirm
@@ -1430,7 +1447,8 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             it('should not save instrument when savedPaymentMethods is undefined in session', async () => {
-                getSessionMock = jest.fn()
+                getSessionMock = jest
+                    .fn()
                     .mockResolvedValueOnce(null) // initial email check
                     .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
                     .mockResolvedValueOnce({}) // before confirm (no savedPaymentMethods field)
@@ -1462,7 +1480,8 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             it('should not save instrument when Stripe checkout session returns null', async () => {
-                getSessionMock = jest.fn()
+                getSessionMock = jest
+                    .fn()
                     .mockResolvedValueOnce(null) // initial email check
                     .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
                     .mockResolvedValueOnce(null) // before confirm
