@@ -145,6 +145,8 @@ export function getConfig(): Config {
                 showQuantityOnBackorder: false,
                 showBackorderMessage: false,
                 showQuantityOnHand: false,
+                showDefaultShippingExpectationPrompt: false,
+                defaultShippingExpectationPrompt: '',
                 showBackorderAvailabilityPrompt: false,
                 backorderAvailabilityPrompt: '',
                 shouldDisplayBackorderMessagesOnStorefront: false,
