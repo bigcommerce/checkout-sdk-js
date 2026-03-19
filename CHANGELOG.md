@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.888.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.887.1...v1.888.0) (2026-03-19)
+
+
+### Features
+
+* **payment:** Stripe CS credit card vaulting ([#3183](https://github.com/bigcommerce/checkout-sdk-js/issues/3183)) ([052e1e8](https://github.com/bigcommerce/checkout-sdk-js/commit/052e1e83ff725c5aa08ce3699b054eb972162231))
+
 ### [1.887.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.887.0...v1.887.1) (2026-03-17)
 
 
