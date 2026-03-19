@@ -30,6 +30,7 @@ import {
     StripeInitializationData,
     StripeIntegrationService,
     StripeJsVersion,
+    StripeSavedPaymentMethod,
     StripeScriptLoader,
     StripeStringConstants,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -270,7 +271,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private _getPaymentPayload(methodId: string, token: string): Payment {
+    private _getPaymentPayload(
+        methodId: string,
+        token: string,
+        shouldSaveInstrument = false,
+    ): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
 
         const formattedPayload = {
@@ -278,6 +283,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             confirm: false,
             method: this.selectedMethodId,
             credit_card_token: { token },
+            vault_payment_instrument: shouldSaveInstrument,
         };
 
         return {
@@ -301,11 +307,21 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         const { data: additionalActionData } = error.body?.additional_action_required || {};
         const { token } = additionalActionData || {};
+        const existingStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow();
 
         const { id: checkoutSessionId, status: checkoutSessionStatus } =
             await this._confirmStripePaymentOrThrow(additionalActionData);
 
-        const paymentPayload = this._getPaymentPayload(methodId, checkoutSessionId || token);
+        const newStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow();
+        const shouldSaveInstrument = this._isStripeSessionInstrumentAdded(
+            existingStripeSavedPaymentMethods,
+            newStripeSavedPaymentMethods,
+        );
+        const paymentPayload = this._getPaymentPayload(
+            methodId,
+            checkoutSessionId || token,
+            shouldSaveInstrument,
+        );
 
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
@@ -390,5 +406,24 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             name: this.stripeIntegrationService.getShopperFullName(billingAddress),
             address: this.stripeIntegrationService.mapStripeAddress(billingAddress),
         });
+    }
+
+    private async _getStripeSavedPaymentMethodsOrThrow(): Promise<StripeSavedPaymentMethod[]> {
+        const stripeActions = await this._getStripeActionsOrThrow();
+        const { savedPaymentMethods } = (await stripeActions.getSession()) || {};
+
+        return savedPaymentMethods || [];
+    }
+
+    private _isStripeSessionInstrumentAdded(
+        existingStripeSavedPaymentMethods: StripeSavedPaymentMethod[],
+        newStripeSavedPaymentMethods: StripeSavedPaymentMethod[],
+    ): boolean {
+        return newStripeSavedPaymentMethods.some(
+            (method: StripeSavedPaymentMethod) =>
+                !existingStripeSavedPaymentMethods.some(
+                    (existingMethod: StripeSavedPaymentMethod) => existingMethod.id === method.id,
+                ),
+        );
     }
 }

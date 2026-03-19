@@ -489,6 +489,7 @@ export interface StripeCheckoutSessionStatus {
 
 export interface StripeCheckoutSession {
     id: string;
+    savedPaymentMethods?: StripeSavedPaymentMethod[];
     billingAddress: StripeAddressValues;
     businessName: string;
     canConfirm: boolean;
@@ -539,6 +540,20 @@ export interface StripeCheckoutSessionActions {
     confirm(
         options: StripeCheckoutSessionConfirmPaymentData,
     ): Promise<StripeCheckoutSessionActionResult>;
+}
+
+export interface StripeSavedPaymentMethod {
+    id: string;
+    type: string;
+    billingDetails: BillingDetailsOptions;
+    card: StripeCardDetails;
+}
+
+export interface StripeCardDetails {
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
 }
 
 /**
