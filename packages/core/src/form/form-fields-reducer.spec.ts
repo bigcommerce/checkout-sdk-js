@@ -1,7 +1,9 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
+import { CheckoutHydrateActionType } from '../checkout';
+
 import { FormFieldsActionType } from './form-fields-actions';
-import { getFormFields } from './form.mock';
+import { getExtraFields, getFormFields } from './form.mock';
 
 import { formFieldsReducer, FormFieldsState } from './index';
 
@@ -39,5 +41,26 @@ describe('formFieldsReducer()', () => {
             errors: { loadError: action.payload },
             statuses: { isLoading: false },
         });
+    });
+
+    it('hydrates extraFields from initial state', () => {
+        const extraFields = getExtraFields();
+        const action = createAction(CheckoutHydrateActionType.HydrateInitialState, {
+            extraFields,
+        });
+
+        expect(formFieldsReducer(initialState, action)).toMatchObject({
+            extraFields,
+        });
+    });
+
+    it('keeps extraFields undefined when not in hydration payload', () => {
+        const action = createAction(CheckoutHydrateActionType.HydrateInitialState, {
+            formFields: getFormFields(),
+        });
+
+        const result = formFieldsReducer(initialState, action);
+
+        expect(result.extraFields).toBeUndefined();
     });
 });

@@ -1,12 +1,10 @@
 import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
-import {
-    CheckoutHydrateAction,
-    CheckoutHydrateActionType,
-} from '../checkout/checkout-hydrate-actions';
+import { CheckoutHydrateAction, CheckoutHydrateActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
 
+import { ExtraField } from './extra-field';
 import { FormFields } from './form-field';
 import { FormFieldsActionType, LoadFormFieldsAction } from './form-fields-actions';
 import FormFieldsState, {
@@ -21,6 +19,7 @@ export default function formFieldsReducer(
 ): FormFieldsState {
     const reducer = combineReducers<FormFieldsState>({
         data: dataReducer,
+        extraFields: extraFieldsReducer,
         errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
@@ -41,6 +40,19 @@ function dataReducer(
 
         default:
             return data;
+    }
+}
+
+function extraFieldsReducer(
+    extraFields: ExtraField[] | undefined,
+    action: CheckoutHydrateAction,
+): ExtraField[] | undefined {
+    switch (action.type) {
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return action.payload?.extraFields ?? extraFields;
+
+        default:
+            return extraFields;
     }
 }
 

@@ -6,11 +6,13 @@ import { Country } from '../geography';
 
 import FormField from './form-field';
 import FormFieldsState, { DEFAULT_STATE } from './form-fields-state';
+import mapExtraFieldToFormField from './map-extra-field-to-form-field';
 
 export default interface FormSelector {
     getShippingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getBillingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getCustomerAccountFields(): FormField[];
+    getAddressExtraFormFields(): FormField[];
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
@@ -43,6 +45,19 @@ export function createFormSelectorFactory(): FormSelectorFactory {
     const getCustomerAccountFields = createSelector(
         (state: FormFieldsState) => state.data,
         (formFields) => () => formFields ? formFields.customerAccount : [],
+    );
+
+    const getAddressExtraFormFields = createSelector(
+        (state: FormFieldsState) => state.extraFields,
+        (extraFields) => () => {
+            if (!extraFields || !extraFields.length) {
+                return [];
+            }
+
+            return extraFields
+                .filter((field) => field.visibleToEnduser)
+                .map(mapExtraFieldToFormField);
+        },
     );
 
     const getLoadError = createSelector(
@@ -141,6 +156,7 @@ export function createFormSelectorFactory(): FormSelectorFactory {
             getShippingAddressFields: getShippingAddressFields(state),
             getBillingAddressFields: getBillingAddressFields(state),
             getCustomerAccountFields: getCustomerAccountFields(state),
+            getAddressExtraFormFields: getAddressExtraFormFields(state),
             getLoadError: getLoadError(state),
             isLoading: isLoading(state),
         };
