@@ -7,9 +7,11 @@
 ### Properties
 
 - [backorderAvailabilityPrompt](InventorySettings.md#backorderavailabilityprompt)
+- [defaultShippingExpectationPrompt](InventorySettings.md#defaultshippingexpectationprompt)
 - [shouldDisplayBackorderMessagesOnStorefront](InventorySettings.md#shoulddisplaybackordermessagesonstorefront)
 - [showBackorderAvailabilityPrompt](InventorySettings.md#showbackorderavailabilityprompt)
 - [showBackorderMessage](InventorySettings.md#showbackordermessage)
+- [showDefaultShippingExpectationPrompt](InventorySettings.md#showdefaultshippingexpectationprompt)
 - [showQuantityOnBackorder](InventorySettings.md#showquantityonbackorder)
 - [showQuantityOnHand](InventorySettings.md#showquantityonhand)
 
@@ -18,6 +20,12 @@
 ### backorderAvailabilityPrompt
 
 • **backorderAvailabilityPrompt**: ``null`` \| `string`
+
+___
+
+### defaultShippingExpectationPrompt
+
+• **defaultShippingExpectationPrompt**: ``null`` \| `string`
 
 ___
 
@@ -36,6 +44,12 @@ ___
 ### showBackorderMessage
 
 • **showBackorderMessage**: `boolean`
+
+___
+
+### showDefaultShippingExpectationPrompt
+
+• **showDefaultShippingExpectationPrompt**: `boolean`
 
 ___
 
