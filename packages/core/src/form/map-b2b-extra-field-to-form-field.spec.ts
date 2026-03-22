@@ -32,6 +32,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             maxLength: 50,
             max: undefined,
             options: undefined,
+            hidden: false,
         });
     });
 
@@ -61,6 +62,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             maxLength: undefined,
             max: undefined,
             options: { rows: 5 },
+            hidden: false,
         });
     });
 
@@ -90,6 +92,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             maxLength: undefined,
             max: 1000,
             options: undefined,
+            hidden: false,
         });
     });
 

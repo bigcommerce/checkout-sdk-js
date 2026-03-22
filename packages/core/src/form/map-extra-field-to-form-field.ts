@@ -42,6 +42,7 @@ export default function mapExtraFieldToFormField(extraField: ExtraField): FormFi
         maxLength: extraField.maximumLength,
         max: extraField.maximumValue,
         options,
+        hidden: !extraField.visibleToEnduser,
     };
 }
 

@@ -193,7 +193,7 @@ describe('FormSelector', () => {
     });
 
     describe('#getAddressExtraFormFields()', () => {
-        it('returns mapped B2B extra fields filtered by visibleToEnduser', () => {
+        it('returns all mapped B2B extra fields with hidden flag set from visibleToEnduser', () => {
             const b2bState: FormFieldsState = {
                 data: getFormFields(),
                 extraFields: getExtraFields(),
@@ -204,18 +204,26 @@ describe('FormSelector', () => {
             const formSelector = createFormSelector(b2bState);
             const result = formSelector.getAddressExtraFormFields();
 
-            expect(result).toHaveLength(4);
+            expect(result).toHaveLength(6);
             expect(result[0].name).toBe('b2bExtraField_13449');
             expect(result[0].required).toBe(true);
             expect(result[0].fieldType).toBe('text');
+            expect(result[0].hidden).toBe(false);
             expect(result[1].name).toBe('b2bExtraField_13453');
             expect(result[1].fieldType).toBe('multiline');
             expect(result[1].options).toEqual({ rows: 8 });
+            expect(result[1].hidden).toBe(false);
             expect(result[2].name).toBe('b2bExtraField_13457');
             expect(result[2].type).toBe('integer');
-            expect(result[3].name).toBe('b2bExtraField_13530');
-            expect(result[3].fieldType).toBe('dropdown');
-            expect(result[3].options?.items).toHaveLength(8);
+            expect(result[2].hidden).toBe(false);
+            expect(result[3].name).toBe('b2bExtraField_13460');
+            expect(result[3].hidden).toBe(true);
+            expect(result[4].name).toBe('b2bExtraField_13530');
+            expect(result[4].fieldType).toBe('dropdown');
+            expect(result[4].options?.items).toHaveLength(8);
+            expect(result[4].hidden).toBe(false);
+            expect(result[5].name).toBe('b2bExtraField_13531');
+            expect(result[5].hidden).toBe(true);
         });
 
         it('returns empty array when no B2B extra fields are present', () => {

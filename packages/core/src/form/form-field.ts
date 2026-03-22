@@ -26,15 +26,16 @@ export default interface FormField {
     required: boolean;
     default?: string;
     fieldType?: FormFieldFieldType;
-    type?: FormFieldType;
-    itemtype?: string;
-    maxLength?: number;
-    secret?: boolean;
-    min?: string | number;
-    max?: string | number;
+    hidden?: boolean;
     inputDateFormat?: string;
+    itemtype?: string;
+    max?: string | number;
+    maxLength?: number;
+    min?: string | number;
     options?: FormFieldOptions;
     requirements?: CustomerPasswordRequirements;
+    secret?: boolean;
+    type?: FormFieldType;
 }
 
 export interface FormFields {

@@ -54,9 +54,7 @@ export function createFormSelectorFactory(): FormSelectorFactory {
                 return [];
             }
 
-            return extraFields
-                .filter((field) => field.visibleToEnduser)
-                .map(mapExtraFieldToFormField);
+            return extraFields.map(mapExtraFieldToFormField);
         },
     );
 

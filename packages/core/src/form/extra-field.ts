@@ -4,7 +4,6 @@ export interface ExtraFieldApiResponse {
     fieldType: number;
     isRequired: boolean;
     visibleToEnduser: boolean;
-    configType: number;
     defaultValue: string;
     labelName: string;
     maximumLength?: string;
@@ -20,7 +19,6 @@ export interface ExtraField {
     visibleToEnduser: boolean;
     defaultValue: string;
     labelName: string;
-    // configType?: number;
     listOfValue?: string[];
     maximumLength?: number;
     numberOfRows?: number;
