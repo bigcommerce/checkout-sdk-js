@@ -145,6 +145,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'worldpayaccess',
         method: 'credit_card',
     },
+    'worldpayaccess.open_banking': {
+        provider: 'worldpayaccess',
+        method: 'open_banking',
+    },
     squarev2: {
         provider: 'squarev2',
         method: 'credit_card',

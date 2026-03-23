@@ -155,6 +155,13 @@ export default class PaymentRequestTransformer {
             return { ...paymentMethod, id: paymentMethod.initializationData.gateway };
         }
 
+        // Sub-methods carry the provider name in `gateway` and the method name in `id`.
+        // BigPay's mapToId uses `id` as the gateway field unless `method === 'multi-option'`,
+        // so we swap `id` with `gateway` here to ensure the correct provider is sent.
+        if (paymentMethod.gateway) {
+            return { ...paymentMethod, id: paymentMethod.gateway };
+        }
+
         if (paymentMethod.id === CheckoutButtonMethodType.BRAINTREE_VENMO) {
             return { ...paymentMethod, id: CheckoutButtonMethodType.BRAINTREE_PAYPAL };
         }
