@@ -9,6 +9,7 @@
 - [custom](FormField.md#custom)
 - [default](FormField.md#default)
 - [fieldType](FormField.md#fieldtype)
+- [hidden](FormField.md#hidden)
 - [id](FormField.md#id)
 - [inputDateFormat](FormField.md#inputdateformat)
 - [itemtype](FormField.md#itemtype)
@@ -40,6 +41,12 @@ ___
 ### fieldType
 
 • `Optional` **fieldType**: [`FormFieldFieldType`](../README.md#formfieldfieldtype)
+
+___
+
+### hidden
+
+• `Optional` **hidden**: `boolean`
 
 ___
 

@@ -19,6 +19,7 @@
 - [country](CustomerAddress.md#country)
 - [countryCode](CustomerAddress.md#countrycode)
 - [customFields](CustomerAddress.md#customfields)
+- [extraFields](CustomerAddress.md#extrafields)
 - [firstName](CustomerAddress.md#firstname)
 - [id](CustomerAddress.md#id)
 - [lastName](CustomerAddress.md#lastname)
@@ -98,6 +99,16 @@ ___
 #### Inherited from
 
 [Address](Address.md).[customFields](Address.md#customfields)
+
+___
+
+### extraFields
+
+• `Optional` **extraFields**: [`ExtraFieldValue`](ExtraFieldValue.md)[]
+
+#### Inherited from
+
+[Address](Address.md).[extraFields](Address.md#extrafields)
 
 ___
 

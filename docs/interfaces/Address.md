@@ -25,6 +25,7 @@
 - [country](Address.md#country)
 - [countryCode](Address.md#countrycode)
 - [customFields](Address.md#customfields)
+- [extraFields](Address.md#extrafields)
 - [firstName](Address.md#firstname)
 - [lastName](Address.md#lastname)
 - [phone](Address.md#phone)
@@ -98,6 +99,16 @@ ___
 #### Inherited from
 
 [AddressRequestBody](AddressRequestBody.md).[customFields](AddressRequestBody.md#customfields)
+
+___
+
+### extraFields
+
+• `Optional` **extraFields**: [`ExtraFieldValue`](ExtraFieldValue.md)[]
+
+#### Inherited from
+
+[AddressRequestBody](AddressRequestBody.md).[extraFields](AddressRequestBody.md#extrafields)
 
 ___
 

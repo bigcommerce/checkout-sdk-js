@@ -6,6 +6,7 @@
 
 ### Methods
 
+- [getAddressExtraFormFields](FormSelector.md#getaddressextraformfields)
 - [getBillingAddressFields](FormSelector.md#getbillingaddressfields)
 - [getCustomerAccountFields](FormSelector.md#getcustomeraccountfields)
 - [getLoadError](FormSelector.md#getloaderror)
@@ -13,6 +14,16 @@
 - [isLoading](FormSelector.md#isloading)
 
 ## Methods
+
+### getAddressExtraFormFields
+
+▸ **getAddressExtraFormFields**(): [`FormField`](FormField.md)[]
+
+#### Returns
+
+[`FormField`](FormField.md)[]
+
+___
 
 ### getBillingAddressFields
 

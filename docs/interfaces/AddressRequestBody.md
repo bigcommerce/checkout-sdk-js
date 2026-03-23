@@ -20,6 +20,7 @@
 - [company](AddressRequestBody.md#company)
 - [countryCode](AddressRequestBody.md#countrycode)
 - [customFields](AddressRequestBody.md#customfields)
+- [extraFields](AddressRequestBody.md#extrafields)
 - [firstName](AddressRequestBody.md#firstname)
 - [lastName](AddressRequestBody.md#lastname)
 - [phone](AddressRequestBody.md#phone)
@@ -62,6 +63,12 @@ ___
 ### customFields
 
 • **customFields**: { `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
+
+___
+
+### extraFields
+
+• `Optional` **extraFields**: [`ExtraFieldValue`](ExtraFieldValue.md)[]
 
 ___
 

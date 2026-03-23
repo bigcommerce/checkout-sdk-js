@@ -84,6 +84,7 @@ declare interface AddressRequestBody {
         fieldId: string;
         fieldValue: string | number | string[];
     }>;
+    extraFields?: ExtraFieldValue[];
 }
 
 declare interface AdyenAdditionalActionCallbacks {
@@ -2712,6 +2713,7 @@ declare interface CheckoutInitialState {
     formFields?: FormFields;
     checkout?: Checkout;
     extensions?: Extension[];
+    extraFields?: ExtraField[];
 }
 
 declare interface CheckoutParams {
@@ -4361,6 +4363,12 @@ declare interface CheckoutStoreSelector {
      */
     getShippingAddressFields(countryCode: string): FormField[];
     /**
+     * Gets address extra form fields.
+     *
+     * @returns The list of extra form fields if available, otherwise an empty array.
+     */
+    getAddressExtraFormFields(): FormField[];
+    /**
      * Gets a list of pickup options for specified parameters.
      *
      * @param consignmentId - Id of consignment.
@@ -5400,6 +5408,25 @@ declare const enum ExtensionType {
     Worker = "worker"
 }
 
+declare interface ExtraField {
+    id: number;
+    fieldName: string;
+    fieldType: number;
+    isRequired: boolean;
+    visibleToEnduser: boolean;
+    defaultValue: string;
+    labelName: string;
+    listOfValue?: string[];
+    maximumLength?: number;
+    numberOfRows?: number;
+    maximumValue?: number;
+}
+
+declare interface ExtraFieldValue {
+    fieldId: number;
+    fieldValue: string | number;
+}
+
 /**
  * A set of options that are required to initialize the shipping step of
  * checkout in order to support Fastlane (PayPal Commerce, BigCommerce Payments, or Braintree).
@@ -5453,15 +5480,16 @@ declare interface FormField {
     required: boolean;
     default?: string;
     fieldType?: FormFieldFieldType;
-    type?: FormFieldType;
-    itemtype?: string;
-    maxLength?: number;
-    secret?: boolean;
-    min?: string | number;
-    max?: string | number;
+    hidden?: boolean;
     inputDateFormat?: string;
+    itemtype?: string;
+    max?: string | number;
+    maxLength?: number;
+    min?: string | number;
     options?: FormFieldOptions;
     requirements?: CustomerPasswordRequirements;
+    secret?: boolean;
+    type?: FormFieldType;
 }
 
 declare type FormFieldFieldType = 'checkbox' | 'date' | 'text' | 'dropdown' | 'password' | 'radio' | 'multiline';
@@ -5489,6 +5517,7 @@ declare interface FormSelector {
     getShippingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getBillingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getCustomerAccountFields(): FormField[];
+    getAddressExtraFormFields(): FormField[];
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }

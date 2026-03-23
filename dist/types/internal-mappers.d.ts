@@ -22,6 +22,7 @@ declare interface AddressRequestBody {
         fieldId: string;
         fieldValue: string | number | string[];
     }>;
+    extraFields?: ExtraFieldValue[];
 }
 
 declare interface Banner {
@@ -240,6 +241,11 @@ declare interface DiscountNotification {
     messageHtml: string;
     discountType: string | null;
     placeholders: string[];
+}
+
+declare interface ExtraFieldValue {
+    fieldId: number;
+    fieldValue: string | number;
 }
 
 declare interface Fee {

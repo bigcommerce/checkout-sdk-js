@@ -20,6 +20,7 @@
 - [countryCode](BillingAddress.md#countrycode)
 - [customFields](BillingAddress.md#customfields)
 - [email](BillingAddress.md#email)
+- [extraFields](BillingAddress.md#extrafields)
 - [firstName](BillingAddress.md#firstname)
 - [id](BillingAddress.md#id)
 - [lastName](BillingAddress.md#lastname)
@@ -104,6 +105,16 @@ ___
 ### email
 
 • `Optional` **email**: `string`
+
+___
+
+### extraFields
+
+• `Optional` **extraFields**: [`ExtraFieldValue`](ExtraFieldValue.md)[]
+
+#### Inherited from
+
+[Address](Address.md).[extraFields](Address.md#extrafields)
 
 ___
 

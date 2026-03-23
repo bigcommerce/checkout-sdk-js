@@ -245,6 +245,8 @@
 - [ExtensionCommandMap](interfaces/ExtensionCommandMap.md)
 - [ExtensionQueryMap](interfaces/ExtensionQueryMap.md)
 - [ExtensionSelector](interfaces/ExtensionSelector.md)
+- [ExtraField](interfaces/ExtraField.md)
+- [ExtraFieldValue](interfaces/ExtraFieldValue.md)
 - [FastlaneShippingInitializeOptions](interfaces/FastlaneShippingInitializeOptions.md)
 - [Fee](interfaces/Fee.md)
 - [FlashMessage](interfaces/FlashMessage.md)

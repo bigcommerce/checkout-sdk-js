@@ -9,6 +9,7 @@
 - [checkout](CheckoutInitialState.md#checkout)
 - [config](CheckoutInitialState.md#config)
 - [extensions](CheckoutInitialState.md#extensions)
+- [extraFields](CheckoutInitialState.md#extrafields)
 - [formFields](CheckoutInitialState.md#formfields)
 
 ## Properties
@@ -28,6 +29,12 @@ ___
 ### extensions
 
 • `Optional` **extensions**: [`Extension`](Extension.md)[]
+
+___
+
+### extraFields
+
+• `Optional` **extraFields**: [`ExtraField`](ExtraField.md)[]
 
 ___
 

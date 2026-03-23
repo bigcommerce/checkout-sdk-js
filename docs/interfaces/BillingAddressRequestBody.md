@@ -19,6 +19,7 @@
 - [countryCode](BillingAddressRequestBody.md#countrycode)
 - [customFields](BillingAddressRequestBody.md#customfields)
 - [email](BillingAddressRequestBody.md#email)
+- [extraFields](BillingAddressRequestBody.md#extrafields)
 - [firstName](BillingAddressRequestBody.md#firstname)
 - [lastName](BillingAddressRequestBody.md#lastname)
 - [phone](BillingAddressRequestBody.md#phone)
@@ -91,6 +92,16 @@ ___
 ### email
 
 • `Optional` **email**: `string`
+
+___
+
+### extraFields
+
+• `Optional` **extraFields**: [`ExtraFieldValue`](ExtraFieldValue.md)[]
+
+#### Inherited from
+
+[AddressRequestBody](AddressRequestBody.md).[extraFields](AddressRequestBody.md#extrafields)
 
 ___
 
