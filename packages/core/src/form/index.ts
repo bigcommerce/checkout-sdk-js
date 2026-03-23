@@ -18,7 +18,3 @@ export {
     getExtraFieldId,
     B2B_EXTRA_FIELD_PREFIX,
 } from './map-extra-field-to-form-field';
-export {
-    stripExtraFieldsFromAddress,
-    extractExtraFieldValues,
-} from './strip-extra-fields-from-address';
