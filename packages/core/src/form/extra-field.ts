@@ -1,16 +1,3 @@
-export interface ExtraFieldApiResponse {
-    id: number;
-    fieldName: string;
-    fieldType: number;
-    isRequired: boolean;
-    visibleToEnduser: boolean;
-    defaultValue: string;
-    labelName: string;
-    maximumLength?: string;
-    numberOfRows?: string;
-    maximumValue?: string;
-}
-
 export interface ExtraField {
     id: number;
     fieldName: string;

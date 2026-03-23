@@ -1,6 +1,6 @@
 export * from './form-fields-actions';
 
-export { ExtraField, ExtraFieldValue, ExtraFieldApiResponse } from './extra-field';
+export { ExtraField, ExtraFieldValue } from './extra-field';
 export {
     default as FormSelector,
     FormSelectorFactory,
