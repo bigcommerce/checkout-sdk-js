@@ -1,5 +1,3 @@
-import { noop } from 'lodash';
-
 import {
     CustomerCredentials,
     CustomerInitializeOptions,
@@ -7,32 +5,25 @@ import {
     DefaultCheckoutButtonHeight,
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
     PaymentIntegrationService,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
-    ApproveCallbackActions,
-    ApproveCallbackPayload,
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceInitializationData,
-    ShippingAddressChangeCallbackPayload,
-    ShippingOptionChangeCallbackPayload,
-} from '../paypal-commerce-types';
+    PaypalButtonCreationService,
+    PayPalButtonOptions,
+    PayPalInitializationData,
+    PayPalIntegrationService,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceCustomerInitializeOptions, {
     WithPayPalCommerceCustomerInitializeOptions,
 } from './paypal-commerce-customer-initialize-options';
 
 export default class PayPalCommerceCustomerStrategy implements CustomerStrategy {
-    private onError = noop;
-
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
+        private paypalButtonCreationService: PaypalButtonCreationService,
     ) {}
 
     async initialize(
@@ -64,8 +55,6 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             );
         }
 
-        this.onError = paypalcommerce.onError || noop;
-
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethod(methodId);
 
@@ -73,7 +62,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             await this.paymentIntegrationService.loadPaymentMethod(methodId);
         }
 
-        const paypalSdk = await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        const paypalSdk = await this.paypalIntegrationService.loadPayPalSdk(methodId);
 
         if (!paypalSdk || !paypalSdk.Buttons || typeof paypalSdk.Buttons !== 'function') {
             console.error(
@@ -112,160 +101,42 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         methodId: string,
         paypalcommerce: PayPalCommerceCustomerInitializeOptions,
     ): void {
-        const { container, onClick, onComplete } = paypalcommerce;
+        const { container, onClick, onComplete, onError } = paypalcommerce;
 
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const { isHostedCheckoutEnabled, paymentButtonStyles, isAppSwitchEnabled } =
             paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
-        const defaultCallbacks = {
-            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
-                appSwitchWhenAvailable: true,
-            }),
-            createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
-            onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
-            ...(onClick && { onClick: () => onClick() }),
-        };
-
-        const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
-                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                    this.onShippingAddressChange(data),
-                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                    this.onShippingOptionsChange(data),
-            }),
-            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
-        };
-
-        const buttonRenderOptions: PayPalCommerceButtonsOptions = {
+        const buttonOptions: PayPalButtonOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle({
+            isAppSwitchEnabled,
+            isHostedCheckoutEnabled,
+            style: {
                 ...checkoutTopButtonStyles,
                 height: DefaultCheckoutButtonHeight,
-            }),
-            ...defaultCallbacks,
-            ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
+            },
+            ...(onClick && { onClick: () => onClick() }),
+            ...(isHostedCheckoutEnabled && onComplete && { onPaymentComplete: () => onComplete() }),
+            onError,
         };
 
-        const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
+        const paypalButton = this.paypalButtonCreationService.createPayPalButton(
+            'paypalcommerce',
+            methodId,
+            buttonOptions,
+        );
 
         if (paypalButton.isEligible()) {
-            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
+            if (paypalButton.hasReturned?.() && isAppSwitchEnabled) {
                 paypalButton.resume?.();
             } else {
                 paypalButton.render(`#${container}`);
             }
         } else {
-            this.paypalCommerceIntegrationService.removeElement(container);
+            this.paypalIntegrationService.removeElement(container);
         }
-    }
-
-    private async onHostedCheckoutApprove(
-        data: ApproveCallbackPayload,
-        actions: ApproveCallbackActions,
-        methodId: string,
-        onComplete?: () => void,
-    ): Promise<void> {
-        if (!data.orderID) {
-            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
-        }
-
-        const cart = this.paymentIntegrationService.getState().getCartOrThrow();
-        const orderDetails = await actions.order.get();
-
-        try {
-            const billingAddress =
-                this.paypalCommerceIntegrationService.getBillingAddressFromOrderDetails(
-                    orderDetails,
-                );
-
-            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
-
-            if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalCommerceIntegrationService.getShippingAddressFromOrderDetails(
-                        orderDetails,
-                    );
-
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.paypalCommerceIntegrationService.updateOrder();
-            }
-
-            await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
-            await this.paypalCommerceIntegrationService.submitPayment(methodId, data.orderID);
-
-            if (onComplete && typeof onComplete === 'function') {
-                onComplete();
-            }
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    private async onShippingAddressChange(
-        data: ShippingAddressChangeCallbackPayload,
-    ): Promise<void> {
-        const address = this.paypalCommerceIntegrationService.getAddress({
-            city: data.shippingAddress.city,
-            countryCode: data.shippingAddress.countryCode,
-            postalCode: data.shippingAddress.postalCode,
-            stateOrProvinceCode: data.shippingAddress.state,
-        });
-
-        try {
-            // Info: we use the same address to fill billing and shipping addresses to have valid quota on BE for order updating process
-            // on this stage we don't have access to valid customer's address except shipping data
-            await this.paymentIntegrationService.updateBillingAddress(address);
-            await this.paymentIntegrationService.updateShippingAddress(address);
-
-            const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow();
-
-            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalCommerceIntegrationService.updateOrder();
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    private async onShippingOptionsChange(
-        data: ShippingOptionChangeCallbackPayload,
-    ): Promise<void> {
-        const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow(
-            data.selectedShippingOption.id,
-        );
-
-        try {
-            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalCommerceIntegrationService.updateOrder();
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    private handleError(error: unknown) {
-        if (typeof this.onError === 'function') {
-            this.onError(error);
-        } else {
-            throw error;
-        }
-    }
-
-    /**
-     *
-     * PayPal AppSwitch enabling handling
-     *
-     */
-    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-
-        return paymentMethod.initializationData?.isAppSwitchEnabled || false;
     }
 }

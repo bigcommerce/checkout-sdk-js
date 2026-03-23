@@ -2,18 +2,13 @@ import {
     CheckoutButtonInitializeOptions,
     CheckoutButtonStrategy,
     InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    ApproveCallbackActions,
-    ApproveCallbackPayload,
-    PayPalButtonsOptions,
+    PaypalButtonCreationService,
+    PayPalButtonOptions,
     PayPalInitializationData,
     PayPalIntegrationService,
-    ShippingAddressChangeCallbackPayload,
-    ShippingOptionChangeCallbackPayload,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceButtonInitializeOptions, {
@@ -24,6 +19,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalIntegrationService: PayPalIntegrationService,
+        private paypalButtonCreationService: PaypalButtonCreationService,
     ) {}
 
     async initialize(
@@ -101,52 +97,28 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const { isHostedCheckoutEnabled, isAppSwitchEnabled } =
             paymentMethod.initializationData || {};
 
-        const defaultCallbacks = {
-            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
-                appSwitchWhenAvailable: true,
-            }),
-            createOrder: async () => {
-                if (buyNowInitializeOptions) {
-                    const buyNowCart = await this.paypalIntegrationService.createBuyNowCartOrThrow(
-                        buyNowInitializeOptions,
-                    );
-
-                    await this.paymentIntegrationService.loadCheckout(buyNowCart.id);
-                }
-
-                return this.paypalIntegrationService.createOrder('paypalcommerce');
-            },
-            onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalIntegrationService.tokenizePayment(methodId, orderID),
-        };
-
         const buyNowFlowCallbacks = {
             onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
-        const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
-                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                    this.onShippingAddressChange(data),
-                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                    this.onShippingOptionsChange(data),
-            }),
-            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
-        };
-
-        const buttonRenderOptions: PayPalButtonsOptions = {
+        const buttonOptions: PayPalButtonOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
             style: this.paypalIntegrationService.getValidButtonStyle(style),
-            ...defaultCallbacks,
+            isAppSwitchEnabled,
+            isHostedCheckoutEnabled,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
-            ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
+            ...(isHostedCheckoutEnabled && onComplete && { onPaymentComplete: () => onComplete() }),
         };
 
-        const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
+        const paypalButton = this.paypalButtonCreationService.createPayPalButton(
+            'paypalcommerce',
+            methodId,
+            buttonOptions,
+            buyNowInitializeOptions,
+        );
 
         if (paypalButton.isEligible()) {
-            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
+            if (paypalButton.hasReturned?.() && isAppSwitchEnabled) {
                 paypalButton.resume?.();
             } else {
                 paypalButton.render(`#${containerId}`);
@@ -156,110 +128,5 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         } else {
             this.paypalIntegrationService.removeElement(containerId);
         }
-    }
-
-    private async onHostedCheckoutApprove(
-        data: ApproveCallbackPayload,
-        actions: ApproveCallbackActions,
-        methodId: string,
-        onComplete?: () => void,
-    ): Promise<boolean> {
-        if (!data.orderID) {
-            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
-        }
-
-        const state = this.paymentIntegrationService.getState();
-        const cart = state.getCartOrThrow();
-        const orderDetails = await actions.order.get();
-
-        try {
-            const billingAddress =
-                this.paypalIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
-
-            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
-
-            if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalIntegrationService.getShippingAddressFromOrderDetails(orderDetails);
-
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.paypalIntegrationService.updateOrder('paypalcommerce');
-            }
-
-            await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
-            await this.paypalIntegrationService.submitPayment(methodId, data.orderID);
-
-            if (onComplete && typeof onComplete === 'function') {
-                onComplete();
-            }
-
-            return true; // FIXME: Do we really need to return true here?
-        } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
-        }
-    }
-
-    private async onShippingAddressChange(
-        data: ShippingAddressChangeCallbackPayload,
-    ): Promise<void> {
-        const address = this.paypalIntegrationService.getAddress({
-            city: data.shippingAddress.city,
-            countryCode: data.shippingAddress.countryCode,
-            postalCode: data.shippingAddress.postalCode,
-            stateOrProvinceCode: data.shippingAddress.state,
-        });
-
-        try {
-            // Info: we use the same address to fill billing and shipping addresses to have valid quota on BE for order updating process
-            // on this stage we don't have access to valid customer's address accept shipping data
-            await this.paymentIntegrationService.updateBillingAddress(address);
-            await this.paymentIntegrationService.updateShippingAddress(address);
-
-            const shippingOption = this.paypalIntegrationService.getShippingOptionOrThrow();
-
-            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalIntegrationService.updateOrder('paypalcommerce');
-        } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
-        }
-    }
-
-    private async onShippingOptionsChange(
-        data: ShippingOptionChangeCallbackPayload,
-    ): Promise<void> {
-        const shippingOption = this.paypalIntegrationService.getShippingOptionOrThrow(
-            data.selectedShippingOption.id,
-        );
-
-        try {
-            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalIntegrationService.updateOrder('paypalcommerce');
-        } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
-        }
-    }
-
-    /**
-     *
-     * PayPal AppSwitch enabling handling
-     *
-     */
-    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-
-        return paymentMethod.initializationData?.isAppSwitchEnabled || false;
     }
 }

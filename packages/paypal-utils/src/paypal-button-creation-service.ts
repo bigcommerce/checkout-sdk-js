@@ -11,11 +11,14 @@ import {
     ApproveCallbackPayload,
     PayPalButtonOptions,
     PayPalButtons,
+    PayPalBuyNowInitializeOptions,
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
 } from './paypal-types';
 
 class PaypalButtonCreationService {
+    private onError?: PayPalButtonOptions['onError'];
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalIntegrationService: PayPalIntegrationService,
@@ -25,9 +28,20 @@ class PaypalButtonCreationService {
         providerId: string,
         methodId: string,
         buttonOptions: PayPalButtonOptions,
-        isHostedCheckoutEnabled = false,
+        buyNowInitializeOptions?: PayPalBuyNowInitializeOptions,
     ): PayPalButtons {
-        const { style, fundingSource, onClick, onCancel, onPaymentComplete } = buttonOptions;
+        const {
+            style,
+            fundingSource,
+            isAppSwitchEnabled,
+            isHostedCheckoutEnabled,
+            onClick,
+            onCancel,
+            onPaymentComplete,
+            onError,
+        } = buttonOptions;
+
+        this.onError = onError;
 
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const isAvailableFundingSource = Object.values(paypalSdk.FUNDING).includes(fundingSource);
@@ -39,10 +53,12 @@ class PaypalButtonCreationService {
         }
 
         const hostedCheckoutCallbacks = {
-            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                this.onShippingAddressChange(data, providerId),
-            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                this.onShippingOptionsChange(data, providerId),
+            ...(!isAppSwitchEnabled && {
+                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                    this.onShippingAddressChange(data, providerId),
+                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                    this.onShippingOptionsChange(data, providerId),
+            }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(
                     data,
@@ -56,7 +72,20 @@ class PaypalButtonCreationService {
         return paypalSdk.Buttons({
             fundingSource,
             style: this.paypalIntegrationService.getValidButtonStyle(style),
-            createOrder: () => this.paypalIntegrationService.createOrder(providerId),
+            ...(isAppSwitchEnabled && {
+                appSwitchWhenAvailable: true,
+            }),
+            createOrder: async () => {
+                if (buyNowInitializeOptions) {
+                    const buyNowCart = await this.paypalIntegrationService.createBuyNowCartOrThrow(
+                        buyNowInitializeOptions,
+                    );
+
+                    await this.paymentIntegrationService.loadCheckout(buyNowCart.id);
+                }
+
+                return this.paypalIntegrationService.createOrder(providerId);
+            },
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalIntegrationService.tokenizePayment(methodId, orderID),
             ...(onClick ? { onClick } : {}),
@@ -71,7 +100,7 @@ class PaypalButtonCreationService {
         methodId: string,
         providerId: string,
         onComplete?: () => void,
-    ): Promise<boolean> {
+    ): Promise<void> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
@@ -100,14 +129,8 @@ class PaypalButtonCreationService {
             if (onComplete && typeof onComplete === 'function') {
                 onComplete();
             }
-
-            return true; // FIXME: Do we really need to return true here?
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
+            this.handleError(error);
         }
     }
 
@@ -133,11 +156,7 @@ class PaypalButtonCreationService {
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalIntegrationService.updateOrder(providerId);
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
+            this.handleError(error);
         }
     }
 
@@ -153,10 +172,14 @@ class PaypalButtonCreationService {
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalIntegrationService.updateOrder(providerId);
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
+            this.handleError(error);
+        }
+    }
 
+    private handleError(error: unknown) {
+        if (typeof this.onError === 'function') {
+            this.onError(error);
+        } else {
             throw error;
         }
     }

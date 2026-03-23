@@ -4,10 +4,12 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
+    Cart,
     InvalidArgumentError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getBuyNowCart,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -26,6 +28,7 @@ import PayPalSdkLoader from './paypal-sdk-script-loader';
 import { PayPalButtonsOptions, PayPalSDK, StyleButtonColor } from './paypal-types';
 
 describe('PayPalButtonCreationService', () => {
+    let buyNowCart: Cart;
     let formPoster: FormPoster;
     let requestSender: RequestSender;
     let eventEmitter: EventEmitter;
@@ -59,6 +62,7 @@ describe('PayPalButtonCreationService', () => {
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        buyNowCart = getBuyNowCart();
 
         formPoster = createFormPoster();
         eventEmitter = new EventEmitter();
@@ -95,6 +99,9 @@ describe('PayPalButtonCreationService', () => {
         jest.spyOn(paypalIntegrationService, 'submitPayment').mockImplementation(jest.fn());
         jest.spyOn(paypalIntegrationService, 'getShippingOptionOrThrow').mockReturnValue(
             getShippingOption(),
+        );
+        jest.spyOn(paypalIntegrationService, 'createBuyNowCartOrThrow').mockReturnValue(
+            Promise.resolve(buyNowCart),
         );
 
         paypalButtonCreationService = new PaypalButtonCreationService(
@@ -249,6 +256,23 @@ describe('PayPalButtonCreationService', () => {
         });
     });
 
+    it('create PayPal button with appSwitchWhenAvailable option enabled', () => {
+        paypalButtonCreationService.createPayPalButton('paypalcommerce', 'paypalcommercecredit', {
+            fundingSource: paypalSdk.FUNDING.PAYLATER,
+            isAppSwitchEnabled: true,
+        });
+
+        expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+            fundingSource: paypalSdk.FUNDING.PAYLATER,
+            createOrder: expect.any(Function),
+            onApprove: expect.any(Function),
+            style: {
+                height: 40,
+            },
+            appSwitchWhenAvailable: true,
+        });
+    });
+
     it('create PayPal button with onCancel callback support', async () => {
         const onCancel = jest.fn();
 
@@ -283,6 +307,27 @@ describe('PayPalButtonCreationService', () => {
 
         await new Promise((resolve) => process.nextTick(resolve));
 
+        expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith('paypalcommerce');
+    });
+
+    it('creates paypal order if buy now initialisation options is passed', async () => {
+        paypalButtonCreationService.createPayPalButton(
+            'paypalcommerce',
+            'paypalcommercecredit',
+            {
+                fundingSource: paypalSdk.FUNDING.PAYLATER,
+            },
+            {
+                getBuyNowCartRequestBody: jest.fn(),
+            },
+        );
+
+        eventEmitter.emit('createOrder');
+
+        await new Promise((resolve) => process.nextTick(resolve));
+
+        expect(paypalIntegrationService.createBuyNowCartOrThrow).toHaveBeenCalled();
+        expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledWith(buyNowCart.id);
         expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith('paypalcommerce');
     });
 
@@ -360,8 +405,8 @@ describe('PayPalButtonCreationService', () => {
                     {
                         fundingSource: paypalSdk.FUNDING.PAYLATER,
                         onPaymentComplete,
+                        isHostedCheckoutEnabled: true,
                     },
-                    true,
                 );
             });
 
@@ -461,8 +506,8 @@ describe('PayPalButtonCreationService', () => {
                 'paypalcommercecredit',
                 {
                     fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
                 },
-                true,
             );
 
             eventEmitter.emit('onShippingAddressChange');
@@ -479,8 +524,8 @@ describe('PayPalButtonCreationService', () => {
                 'paypalcommercecredit',
                 {
                     fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
                 },
-                true,
             );
 
             eventEmitter.emit('onShippingAddressChange');
@@ -507,8 +552,8 @@ describe('PayPalButtonCreationService', () => {
                 'paypalcommercecredit',
                 {
                     fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
                 },
-                true,
             );
 
             eventEmitter.emit('onShippingAddressChange');
@@ -526,8 +571,8 @@ describe('PayPalButtonCreationService', () => {
                 'paypalcommercecredit',
                 {
                     fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
                 },
-                true,
             );
 
             eventEmitter.emit('onShippingOptionsChange');
@@ -546,8 +591,8 @@ describe('PayPalButtonCreationService', () => {
                 'paypalcommercecredit',
                 {
                     fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
                 },
-                true,
             );
 
             eventEmitter.emit('onShippingOptionsChange');
