@@ -46,6 +46,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     private stripeClient?: StripeClient;
     private stripeCheckout?: StripeCheckoutInstance;
     private selectedMethodId?: string;
+    private currencySelectorContainerId?: string;
+    private isCurrencySelectorMounted = false;
 
     constructor(
         private readonly paymentIntegrationService: PaymentIntegrationService,
@@ -75,6 +77,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 .getState()
                 .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
         }
+
+        this.currencySelectorContainerId = stripeocs.currencySelectorContainerId;
 
         try {
             await this._initStripeCheckoutSession(stripeocs, paymentMethod);
@@ -270,12 +274,14 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         this.selectedMethodId = event.value.type;
         paymentMethodSelect?.(`${gatewayId}-${methodId}`);
+        this._mountAdaptivePricingElement();
     }
 
     private _collapseStripeElement() {
         const stripeElement = this.stripeCheckout?.getPaymentElement();
 
         stripeElement?.collapse();
+        this._mountAdaptivePricingElement(false);
     }
 
     private async _updateCheckoutSessionData(gatewayId: string, methodId: string): Promise<void> {

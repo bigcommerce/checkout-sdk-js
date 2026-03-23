@@ -109,6 +109,7 @@ describe('StripeOCSPaymentStrategy', () => {
                         ...stripeOptions.stripeocs,
                         render: jest.fn(),
                         containerId: '',
+                        currencySelectorContainerId: 'currencySelectorContainerId',
                     },
                 }),
             ).rejects.toThrow(NotInitializedError);
@@ -141,6 +142,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 ...stripeOptions,
                 stripeocs: {
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                     render: jest.fn(),
                     onError: onErrorMock,
                 },
@@ -165,6 +167,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 ...stripeOptions,
                 stripeocs: {
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                     render: jest.fn(),
                     onError: onErrorMock,
                 },
@@ -189,6 +192,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 ...stripeOptions,
                 stripeocs: {
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                     render: renderMock,
                     onError: onErrorMock,
                     togglePreloader: togglePreloaderMock,
@@ -208,6 +212,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 ...stripeOptions,
                 stripeocs: {
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                     render: renderMock,
                     onError: onErrorMock,
                     togglePreloader: togglePreloaderMock,
@@ -242,6 +247,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 stripeocs: {
                     ...stripeOptions.stripeocs,
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                     render: renderMock,
                     onError: onErrorMock,
                     togglePreloader: togglePreloaderMock,
@@ -274,6 +280,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 ...stripeOptions,
                 stripeocs: {
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                     render: jest.fn(),
                     onError: onErrorMock,
                     handleClosePaymentMethod: jest.fn().mockImplementation((callback) => {
@@ -294,6 +301,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 ...stripeOptions,
                 stripeocs: {
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                     render: jest.fn(),
                     onError: onErrorMock,
                     handleClosePaymentMethod: jest.fn().mockImplementation((callback) => {
@@ -1029,6 +1037,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     ...stripeOptions.stripeocs,
                     render: jest.fn(),
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                     paymentMethodSelect: paymentMethodSelectMock,
                 },
             });
@@ -1076,6 +1085,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 stripeocs: {
                     render: jest.fn(),
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                 },
             });
             await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
