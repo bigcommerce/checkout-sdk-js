@@ -1,3 +1,5 @@
+import { ExtraFieldValue } from '../form';
+
 export type AddressKey = keyof Address;
 
 export default interface Address extends AddressRequestBody {
@@ -21,4 +23,5 @@ export interface AddressRequestBody {
         fieldId: string;
         fieldValue: string | number | string[];
     }>;
+    extraFields?: ExtraFieldValue[];
 }

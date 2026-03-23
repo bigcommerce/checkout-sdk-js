@@ -1,3 +1,4 @@
+import { ExtraField } from './extra-field';
 import FormField, { FormFields } from './form-field';
 import FormFieldsState from './form-fields-state';
 
@@ -144,6 +145,70 @@ export function getAddressFormFields(): FormField[] {
                     },
                 ],
             },
+        },
+    ];
+}
+
+export function getExtraFields(): ExtraField[] {
+    return [
+        {
+            id: 13449,
+            fieldName: 'textRequired',
+            fieldType: 0,
+            isRequired: true,
+            visibleToEnduser: true,
+            defaultValue: 'ddd',
+            labelName: 'textRequired',
+            maximumLength: 10,
+        },
+        {
+            id: 13453,
+            fieldName: 'multilineText',
+            fieldType: 1,
+            isRequired: false,
+            visibleToEnduser: true,
+            defaultValue: 'optional multi-line text',
+            labelName: 'multilineText',
+            numberOfRows: 8,
+        },
+        {
+            id: 13457,
+            fieldName: 'number',
+            fieldType: 2,
+            isRequired: false,
+            visibleToEnduser: true,
+            defaultValue: '100',
+            labelName: 'number',
+            maximumValue: 1000,
+        },
+        {
+            id: 13460,
+            fieldName: 'hiddenField',
+            fieldType: 0,
+            isRequired: false,
+            visibleToEnduser: false,
+            defaultValue: '',
+            labelName: 'hiddenField',
+        },
+        {
+            id: 13530,
+            fieldName: 'dropdownRequired',
+            fieldType: 3,
+            isRequired: true,
+            visibleToEnduser: true,
+            defaultValue: '',
+            labelName: 'dropdownRequired',
+            listOfValue: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        },
+        {
+            id: 13531,
+            fieldName: 'dropdownUniqueHidden',
+            fieldType: 3,
+            isRequired: false,
+            visibleToEnduser: false,
+            defaultValue: '',
+            labelName: 'dropdownUniqueHidden',
+            listOfValue: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
         },
     ];
 }

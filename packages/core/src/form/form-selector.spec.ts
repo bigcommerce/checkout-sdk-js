@@ -6,8 +6,9 @@ import { Country } from '../geography';
 import { getCountries } from '../geography/countries.mock';
 import { getShippingCountries } from '../shipping/shipping-countries.mock';
 
+import FormFieldsState from './form-fields-state';
 import FormSelector, { createFormSelectorFactory, FormSelectorFactory } from './form-selector';
-import { getAddressFormFields, getFormFields } from './form.mock';
+import { getAddressFormFields, getExtraFields, getFormFields } from './form.mock';
 
 // tslint:disable:no-non-null-assertion
 
@@ -188,6 +189,60 @@ describe('FormSelector', () => {
             const { customerAccount } = getFormFields();
 
             expect(formSelector.getCustomerAccountFields()).toEqual(customerAccount);
+        });
+    });
+
+    describe('#getAddressExtraFormFields()', () => {
+        it('returns all mapped B2B extra fields with hidden flag set from visibleToEnduser', () => {
+            const b2bState: FormFieldsState = {
+                data: getFormFields(),
+                extraFields: getExtraFields(),
+                errors: {},
+                statuses: {},
+            };
+
+            const formSelector = createFormSelector(b2bState);
+            const result = formSelector.getAddressExtraFormFields();
+
+            expect(result).toHaveLength(6);
+            expect(result[0].name).toBe('b2bExtraField_13449');
+            expect(result[0].required).toBe(true);
+            expect(result[0].fieldType).toBe('text');
+            expect(result[0].hidden).toBe(false);
+            expect(result[1].name).toBe('b2bExtraField_13453');
+            expect(result[1].fieldType).toBe('multiline');
+            expect(result[1].options).toEqual({ rows: 8 });
+            expect(result[1].hidden).toBe(false);
+            expect(result[2].name).toBe('b2bExtraField_13457');
+            expect(result[2].type).toBe('integer');
+            expect(result[2].hidden).toBe(false);
+            expect(result[3].name).toBe('b2bExtraField_13460');
+            expect(result[3].hidden).toBe(true);
+            expect(result[4].name).toBe('b2bExtraField_13530');
+            expect(result[4].fieldType).toBe('dropdown');
+            expect(result[4].options?.items).toHaveLength(8);
+            expect(result[4].hidden).toBe(false);
+            expect(result[5].name).toBe('b2bExtraField_13531');
+            expect(result[5].hidden).toBe(true);
+        });
+
+        it('returns empty array when no B2B extra fields are present', () => {
+            const formSelector = createFormSelector(state.formFields);
+
+            expect(formSelector.getAddressExtraFormFields()).toEqual([]);
+        });
+
+        it('returns empty array when extraFields is an empty array', () => {
+            const b2bState: FormFieldsState = {
+                data: getFormFields(),
+                extraFields: [],
+                errors: {},
+                statuses: {},
+            };
+
+            const formSelector = createFormSelector(b2bState);
+
+            expect(formSelector.getAddressExtraFormFields()).toEqual([]);
         });
     });
 });
