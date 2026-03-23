@@ -412,19 +412,11 @@ declare interface PayPalCommerceButtonInitializeOptions {
 declare class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
     private paypalIntegrationService;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService);
+    private paypalButtonCreationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalButtonCreationService: PaypalButtonCreationService);
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
-    private onHostedCheckoutApprove;
-    private onShippingAddressChange;
-    private onShippingOptionsChange;
-    /**
-     *
-     * PayPal AppSwitch enabling handling
-     *
-     */
-    private isPaypalCommerceAppSwitchEnabled;
 }
 
 /**
@@ -960,25 +952,15 @@ declare interface PayPalCommerceCustomerInitializeOptions {
 
 declare class PayPalCommerceCustomerStrategy implements CustomerStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
-    private onError;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService);
+    private paypalIntegrationService;
+    private paypalButtonCreationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalButtonCreationService: PaypalButtonCreationService);
     initialize(options: CustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void>;
     signOut(options?: RequestOptions): Promise<void>;
     executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<void>;
     private renderButton;
-    private onHostedCheckoutApprove;
-    private onShippingAddressChange;
-    private onShippingOptionsChange;
-    private handleError;
-    /**
-     *
-     * PayPal AppSwitch enabling handling
-     *
-     */
-    private isPaypalCommerceAppSwitchEnabled;
 }
 
 /**
