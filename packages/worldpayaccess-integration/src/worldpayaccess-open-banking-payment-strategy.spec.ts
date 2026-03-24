@@ -46,8 +46,7 @@ describe('WorldpayAccessOpenBankingPaymentStrategy', () => {
 
             await strategy.initialize();
 
-            const redirectUrl =
-                'https://secure-test.worldpay.com/example';
+            const redirectUrl = 'https://secure-test.worldpay.com/example';
 
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce({
                 body: {

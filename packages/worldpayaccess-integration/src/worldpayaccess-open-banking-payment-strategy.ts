@@ -22,8 +22,7 @@ export default class WorldpayAccessOpenBankingPaymentStrategy implements Payment
             await this._paymentIntegrationService.submitPayment(payment);
         } catch (error) {
             if (this._isWorldpayAccessRedirectResponse(error)) {
-                const redirectUrl =
-                    error.body.additional_action_required.data.redirect_url;
+                const redirectUrl = error.body.additional_action_required.data.redirect_url;
 
                 return new Promise(() => window.location.replace(redirectUrl));
             }
