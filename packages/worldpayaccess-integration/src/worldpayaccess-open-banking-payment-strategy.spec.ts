@@ -40,11 +40,26 @@ describe('WorldpayAccessOpenBankingPaymentStrategy', () => {
                 value: {
                     replace: jest.fn(),
                 },
+                writable: true,
+                configurable: true,
             });
 
             await strategy.initialize();
 
-            const redirectUrl = 'https://bank.example.com/authorize';
+            const redirectUrl =
+                'https://secure-test.worldpay.com/example';
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce({
+                body: {
+                    status: 'additional_action_required',
+                    additional_action_required: {
+                        type: 'offsite_redirect',
+                        data: {
+                            redirect_url: redirectUrl,
+                        },
+                    },
+                },
+            });
 
             void strategy.execute(payload as OrderRequestBody);
             await new Promise((resolve) => process.nextTick(resolve));
