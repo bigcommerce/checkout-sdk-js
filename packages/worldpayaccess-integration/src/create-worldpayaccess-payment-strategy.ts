@@ -11,4 +11,6 @@ const createWorldpayAccessPaymentStrategy: PaymentStrategyFactory<WorldpayAccess
     return new WorldpayAccessPaymetStrategy(paymentIntegrationService);
 };
 
-export default toResolvableModule(createWorldpayAccessPaymentStrategy, [{ gateway: 'worldpayaccess', id: 'credit_card' }]);
+export default toResolvableModule(createWorldpayAccessPaymentStrategy, [
+    { gateway: 'worldpayaccess', id: 'credit_card' },
+]);

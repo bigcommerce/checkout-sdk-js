@@ -12,8 +12,7 @@ describe('createWorldpayAccessOpenBankingPaymentStrategy', () => {
     });
 
     it('instantiates Worldpay Access Open Banking payment strategy', () => {
-        const strategy =
-            createWorldpayAccessOpenBankingPaymentStrategy(paymentIntegrationService);
+        const strategy = createWorldpayAccessOpenBankingPaymentStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(WorldpayAccessOpenBankingPaymentStrategy);
     });
