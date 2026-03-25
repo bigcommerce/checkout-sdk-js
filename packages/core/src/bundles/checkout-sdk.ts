@@ -1,5 +1,6 @@
 export { createTimeout } from '@bigcommerce/request-sender';
 
+export { isExtraFormField } from '../form/map-extra-field-to-form-field';
 export { createCheckoutService } from '../checkout';
 export { createCheckoutButtonInitializer } from '../checkout-buttons';
 export { embedCheckout } from '../embedded-checkout';
