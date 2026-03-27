@@ -39,7 +39,10 @@ import {
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import { expressCheckoutAllowedCountryCodes } from './constants';
+import {
+    expressCheckoutAllowedCountryCodes,
+    stripeAllowedShippingOptionsLength,
+} from './constants';
 import { WithStripeOCSCustomerInitializeOptions } from './stripe-ocs-customer-initialize-options';
 
 export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
@@ -536,7 +539,8 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             await this._handleShippingOptionChange(options[0]?.id);
         }
 
-        return options;
+        // Stripe has restricted the number of shipping rates.
+        return options.slice(0, stripeAllowedShippingOptionsLength);
     }
 
     private _getStripeShippingOption({ id, cost, description }: ShippingOption) {
