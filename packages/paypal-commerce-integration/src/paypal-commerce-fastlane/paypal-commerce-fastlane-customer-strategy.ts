@@ -73,6 +73,14 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
 
     async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
         await this.paymentIntegrationService.signInCustomer(credentials, options);
+
+        await this.paymentIntegrationService.updatePaymentProviderCustomer({
+            authenticationState: undefined,
+            addresses: undefined,
+            instruments: undefined,
+        });
+
+        this.paypalFastlaneUtils.removeStorageSessionId();
     }
 
     async signOut(options?: RequestOptions): Promise<void> {

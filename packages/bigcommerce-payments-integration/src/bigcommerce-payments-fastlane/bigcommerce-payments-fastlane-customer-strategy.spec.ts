@@ -188,6 +188,7 @@ describe('BigCommercePaymentsFastlaneCustomerStrategy', () => {
         );
         jest.spyOn(bigCommercePaymentsFastlaneUtils, 'initializePayPalFastlane');
         jest.spyOn(bigCommercePaymentsFastlaneUtils, 'updateStorageSessionId');
+        jest.spyOn(bigCommercePaymentsFastlaneUtils, 'removeStorageSessionId');
         jest.spyOn(bigCommercePaymentsFastlaneUtils, 'lookupCustomerOrThrow').mockImplementation(
             () =>
                 Promise.resolve({
@@ -377,6 +378,14 @@ describe('BigCommercePaymentsFastlaneCustomerStrategy', () => {
                 credentials,
                 undefined,
             );
+
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
+                authenticationState: undefined,
+                addresses: undefined,
+                instruments: undefined,
+            });
+
+            expect(bigCommercePaymentsFastlaneUtils.removeStorageSessionId).toHaveBeenCalled();
         });
     });
 
