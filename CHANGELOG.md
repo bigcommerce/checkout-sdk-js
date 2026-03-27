@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.892.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.891.0...v1.892.0) (2026-03-27)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9824 export isExtraFormField from sdk ([#3188](https://github.com/bigcommerce/checkout-sdk-js/issues/3188)) ([f78ac0f](https://github.com/bigcommerce/checkout-sdk-js/commit/f78ac0f61a188fd77a155c5025630b0d833cf37f))
+
 ## [1.891.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.890.0...v1.891.0) (2026-03-23)
 
 

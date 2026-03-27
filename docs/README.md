@@ -590,6 +590,7 @@
 - [createStepTracker](README.md#createsteptracker)
 - [createStoredCardHostedFormService](README.md#createstoredcardhostedformservice)
 - [embedCheckout](README.md#embedcheckout)
+- [isExtraFormField](README.md#isextraformfield)
 
 ## Type Aliases
 
@@ -1262,3 +1263,19 @@ embedCheckout({
 `Promise`<[`EmbeddedCheckout`](classes/EmbeddedCheckout.md)\>
 
 A promise that resolves to an instance of `EmbeddedCheckout`.
+
+___
+
+### isExtraFormField
+
+▸ **isExtraFormField**(`field`): `boolean`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `field` | [`FormField`](interfaces/FormField.md) |
+
+#### Returns
+
+`boolean`

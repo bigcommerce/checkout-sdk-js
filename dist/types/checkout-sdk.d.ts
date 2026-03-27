@@ -9524,3 +9524,5 @@ export declare function createStoredCardHostedFormService(host: string): StoredC
  * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
  */
 export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;
+
+export declare function isExtraFormField(field: FormField): boolean;
