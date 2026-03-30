@@ -203,6 +203,7 @@ export interface PayPalCommerceScriptParams {
         commit?: boolean;
         intent?: PayPalCommerceIntent;
         components?: ComponentsScriptType;
+        locale?: string;
     };
     attributes: {
         'data-client-token'?: string;

@@ -60,6 +60,7 @@ export default class PayPalCommerceIntegrationService {
         this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
             paymentMethod,
             currencyCode,
+            state.getLocale(),
             initializesOnCheckoutPage,
             forceLoad,
         );

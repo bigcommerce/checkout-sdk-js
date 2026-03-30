@@ -55,10 +55,12 @@ export default class PayPalIntegrationService {
         const state = this.paymentIntegrationService.getState();
         const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
+        const storeLanguage = state.getLocale();
 
         this.paypalSdk = await this.paypalSdkLoader.getPayPalSDK(
             paymentMethod,
             currencyCode,
+            storeLanguage,
             initializesOnCheckoutPage,
             forceLoad,
         );

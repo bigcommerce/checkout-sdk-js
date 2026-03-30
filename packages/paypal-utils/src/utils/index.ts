@@ -4,3 +4,4 @@ export { default as getFastlaneStyles } from './get-fastlane-styles';
 export { default as getPaypalMessagesStylesFromBNPLConfig } from './get-paypal-messages-styles-from-bnpl-config';
 export { default as isRedirectActionError } from './is-redirect-action-error';
 export { default as isPaypalFastlaneRequestError } from './is-paypal-fastlane-request-error';
+export { default as transformLocaleToPayPalFormat } from './transform-locale-to-paypal-format';

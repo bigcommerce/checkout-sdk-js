@@ -160,6 +160,7 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
             paymentMethod,
             cart.currency.code,
             cart.id,
+            cart.locale,
         );
 
         await this._paypalCommerceFastlaneUtils.initializePayPalFastlane(

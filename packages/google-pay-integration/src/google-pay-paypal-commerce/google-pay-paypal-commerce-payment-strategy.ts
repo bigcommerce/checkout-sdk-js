@@ -94,6 +94,7 @@ export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPay
         const payPalSDK = await this._payPalCommerceSdk.getPayPalGooglePaySdk(
             paymentMethod,
             currencyCode,
+            state.getLocale(),
             true,
         );
 

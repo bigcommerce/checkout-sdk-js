@@ -378,6 +378,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
+                cart.locale,
             );
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
                 paypalFastlaneSdk,

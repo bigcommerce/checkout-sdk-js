@@ -90,7 +90,7 @@ describe('PayPalSdkLoader', () => {
             };
 
             try {
-                await subject.getPayPalSDK(paymentMethodProp, 'USD');
+                await subject.getPayPalSDK(paymentMethodProp, 'USD', 'en-US');
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -106,17 +106,17 @@ describe('PayPalSdkLoader', () => {
             };
 
             try {
-                await subject.getPayPalSDK(mockPaymentMethod, 'USD');
+                await subject.getPayPalSDK(mockPaymentMethod, 'USD', 'en-US');
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('loads PayPalSDK with default configuration', async () => {
-            await subject.getPayPalSDK(paymentMethod, 'USD');
+            await subject.getPayPalSDK(paymentMethod, 'USD', 'en-US');
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture&locale=en_US',
                 {
                     async: true,
                     attributes: {
@@ -134,17 +134,23 @@ describe('PayPalSdkLoader', () => {
                 id: 'paypalcommercecreditcard',
             };
 
-            await subject.getPayPalSDK(paymentMethod, 'USD');
-            await subject.getPayPalSDK(paypalCommerceCreditPaymentMethod, 'USD', false, true);
+            await subject.getPayPalSDK(paymentMethod, 'USD', 'en-US');
+            await subject.getPayPalSDK(
+                paypalCommerceCreditPaymentMethod,
+                'USD',
+                'en-US',
+                false,
+                true,
+            );
 
             expect(loader.loadScript).toHaveBeenCalledTimes(2);
         });
 
         it('loads PayPalSDK script with EUR currency', async () => {
-            await subject.getPayPalSDK(paymentMethod, 'EUR');
+            await subject.getPayPalSDK(paymentMethod, 'EUR', 'en-US');
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=EUR&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=EUR&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -157,10 +163,10 @@ describe('PayPalSdkLoader', () => {
         });
 
         it('loads PayPalCommerce script with disabled card funding', async () => {
-            await subject.getPayPalSDK(paymentMethod, 'USD');
+            await subject.getPayPalSDK(paymentMethod, 'USD', 'en-US');
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -181,10 +187,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalSDK(paymentMethodProp, 'USD');
+            await subject.getPayPalSDK(paymentMethodProp, 'USD', 'en-US');
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -205,10 +211,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalSDK(paymentMethodProp, 'USD');
+            await subject.getPayPalSDK(paymentMethodProp, 'USD', 'en-US');
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=venmo&disable-funding=card%2Ccredit%2Cpaylater&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=venmo&disable-funding=card%2Ccredit%2Cpaylater&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -237,10 +243,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalSDK(paymentMethodProp, 'USD');
+            await subject.getPayPalSDK(paymentMethodProp, 'USD', 'en-US');
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=bancontact%2Cgiropay%2Cideal&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo%2Cmybank%2Csofort%2Csepa&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=bancontact%2Cgiropay%2Cideal&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo%2Cmybank%2Csofort%2Csepa&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -253,10 +259,10 @@ describe('PayPalSdkLoader', () => {
         });
 
         it('loads PayPalSDK script with commit flag as true', async () => {
-            await subject.getPayPalSDK(paymentMethod, 'USD', true);
+            await subject.getPayPalSDK(paymentMethod, 'USD', 'en-US', true);
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -269,10 +275,10 @@ describe('PayPalSdkLoader', () => {
         });
 
         it('loads PayPalSDK script with commit flag as false', async () => {
-            await subject.getPayPalSDK(paymentMethod, 'USD', false);
+            await subject.getPayPalSDK(paymentMethod, 'USD', 'en-US', false);
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -293,10 +299,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalSDK(paymentMethodMock, 'USD', false);
+            await subject.getPayPalSDK(paymentMethodMock, 'USD', 'en-US', false);
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -322,10 +328,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalSDK(paymentMethodMock, 'USD', false);
+            await subject.getPayPalSDK(paymentMethodMock, 'USD', 'en-US', false);
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -351,10 +357,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalSDK(paymentMethodMock, 'USD', false);
+            await subject.getPayPalSDK(paymentMethodMock, 'USD', 'en-US', false);
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -377,10 +383,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalSDK(paymentMethodMock, 'USD', false);
+            await subject.getPayPalSDK(paymentMethodMock, 'USD', 'en-US', false);
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture&buyer-country=UA';
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture&buyer-country=UA&locale=en_US';
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
@@ -404,10 +410,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalSDK(paymentMethodMock, 'USD', false);
+            await subject.getPayPalSDK(paymentMethodMock, 'USD', 'en-US', false);
 
             const paypalSdkScriptSrc =
-                'https://www.paypal.com/sdk/js?client-id=abc&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+                'https://www.paypal.com/sdk/js?client-id=abc&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture&locale=en_US';
             const paypalSdkAttributes = {};
 
             expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
@@ -417,7 +423,7 @@ describe('PayPalSdkLoader', () => {
         });
 
         it('returns PayPal Sdk', async () => {
-            const result = await subject.getPayPalSDK(paymentMethod, 'USD');
+            const result = await subject.getPayPalSDK(paymentMethod, 'USD', 'en-US');
 
             expect(result).toEqual(paypalSdk);
         });
@@ -430,7 +436,7 @@ describe('PayPalSdkLoader', () => {
             });
 
             try {
-                await subject.getPayPalSDK(paymentMethod, 'USD');
+                await subject.getPayPalSDK(paymentMethod, 'USD', 'en-US');
             } catch (error) {
                 expect(error).toEqual(expectedError);
             }
@@ -448,17 +454,17 @@ describe('PayPalSdkLoader', () => {
             };
 
             try {
-                await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD', sessionId);
+                await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD', sessionId, 'en-US');
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('loads PayPal Fastlane sdk script', async () => {
-            await subject.getPayPalFastlaneSdk(paymentMethod, 'USD', sessionId);
+            await subject.getPayPalFastlaneSdk(paymentMethod, 'USD', sessionId, 'en-US');
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane%2Cbuttons%2Cpayment-fields%2Chosted-fields%2Cthree-domain-secure&currency=USD&intent=capture',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane%2Cbuttons%2Cpayment-fields%2Chosted-fields%2Cthree-domain-secure&currency=USD&locale=en_US&intent=capture',
                 {
                     async: true,
                     attributes: {
@@ -483,10 +489,10 @@ describe('PayPalSdkLoader', () => {
                 },
             };
 
-            await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD', sessionId);
+            await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD', sessionId, 'en-US');
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane%2Cbuttons%2Cpayment-fields%2Chosted-fields%2Cthree-domain-secure&currency=USD&intent=capture',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane%2Cbuttons%2Cpayment-fields%2Chosted-fields%2Cthree-domain-secure&currency=USD&locale=en_US&intent=capture',
                 {
                     async: true,
                     attributes: {
@@ -503,14 +509,19 @@ describe('PayPalSdkLoader', () => {
             jest.spyOn(loader, 'loadScript').mockImplementation(jest.fn());
 
             try {
-                await subject.getPayPalFastlaneSdk(paymentMethod, 'USD', sessionId);
+                await subject.getPayPalFastlaneSdk(paymentMethod, 'USD', sessionId, 'en-US');
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
 
         it('returns PayPal Fastlane Sdk', async () => {
-            const result = await subject.getPayPalFastlaneSdk(paymentMethod, 'USD', sessionId);
+            const result = await subject.getPayPalFastlaneSdk(
+                paymentMethod,
+                'USD',
+                sessionId,
+                'en-US',
+            );
 
             expect(result).toEqual(paypalFastlaneSdk);
         });
@@ -527,17 +538,17 @@ describe('PayPalSdkLoader', () => {
             };
 
             try {
-                await subject.getPayPalMessages(mockPaymentMethod, 'USD');
+                await subject.getPayPalMessages(mockPaymentMethod, 'USD', 'en-US');
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('loads PayLater Messages sdk script', async () => {
-            await subject.getPayPalMessages(paymentMethod, 'USD');
+            await subject.getPayPalMessages(paymentMethod, 'USD', 'en-US');
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&components=messages&currency=USD',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&components=messages&currency=USD&locale=en_US',
                 {
                     async: true,
                     attributes: {
@@ -552,14 +563,14 @@ describe('PayPalSdkLoader', () => {
             jest.spyOn(loader, 'loadScript').mockImplementation(jest.fn());
 
             try {
-                await subject.getPayPalMessages(paymentMethod, 'USD');
+                await subject.getPayPalMessages(paymentMethod, 'USD', 'en-US');
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
 
         it('returns PayPal Messages Sdk', async () => {
-            const result = await subject.getPayPalMessages(paymentMethod, 'USD');
+            const result = await subject.getPayPalMessages(paymentMethod, 'USD', 'en-US');
 
             expect(result).toEqual(paypalMessagesSdk);
         });
@@ -576,17 +587,17 @@ describe('PayPalSdkLoader', () => {
             };
 
             try {
-                await subject.getPayPalGooglePaySdk(mockPaymentMethod, 'USD');
+                await subject.getPayPalGooglePaySdk(mockPaymentMethod, 'USD', 'en-US');
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('loads PayPal Google Pay sdk script', async () => {
-            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', 'en-US');
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=googlepay&currency=USD&intent=capture',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=googlepay&currency=USD&intent=capture&locale=en_US',
                 {
                     async: true,
                     attributes: {
@@ -602,28 +613,28 @@ describe('PayPalSdkLoader', () => {
             jest.spyOn(loader, 'loadScript').mockImplementation(jest.fn());
 
             try {
-                await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+                await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', 'en-US');
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
 
         it('returns PayPal Google Pay Sdk', async () => {
-            const result = await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+            const result = await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', 'en-US');
 
             expect(result).toEqual(payPalGooglePaySdk);
         });
 
         it('does not load Google Pay Sdk if already exist', async () => {
-            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
-            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', 'en-US');
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', 'en-US');
 
             expect(loader.loadScript).toHaveBeenCalledTimes(1);
         });
 
         it('reload Google Pay Sdk', async () => {
-            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
-            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', false, true);
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', 'en-US');
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', 'en-US', false, true);
 
             expect(loader.loadScript).toHaveBeenCalledTimes(2);
         });
@@ -641,6 +652,7 @@ describe('PayPalSdkLoader', () => {
                         },
                     },
                     'USD',
+                    'en-US',
                 );
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(MissingDataError);
@@ -648,10 +660,10 @@ describe('PayPalSdkLoader', () => {
         });
 
         it('loads APMs sdk script', async () => {
-            await subject.getPayPalApmsSdk(mockAPMPaymentMethod, 'USD');
+            await subject.getPayPalApmsSdk(mockAPMPaymentMethod, 'USD', 'en-US');
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=oxxo&commit=true&components=buttons%2Cpayment-fields&currency=USD&intent=capture',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=oxxo&commit=true&components=buttons%2Cpayment-fields&currency=USD&intent=capture&locale=en_US',
                 {
                     async: true,
                     attributes: {
@@ -666,14 +678,14 @@ describe('PayPalSdkLoader', () => {
             jest.spyOn(loader, 'loadScript').mockImplementation(jest.fn());
 
             try {
-                await subject.getPayPalApmsSdk(mockAPMPaymentMethod, 'USD');
+                await subject.getPayPalApmsSdk(mockAPMPaymentMethod, 'USD', 'en-US');
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
 
         it('returns PayPal APMs Sdk', async () => {
-            const result = await subject.getPayPalApmsSdk(paymentMethod, 'USD');
+            const result = await subject.getPayPalApmsSdk(paymentMethod, 'USD', 'en-US');
 
             expect(result).toEqual(paypalApmsSdk);
         });

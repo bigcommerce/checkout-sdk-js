@@ -97,6 +97,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
         jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(getOrder());
+        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en-US');
 
         jest.spyOn(paypalSdkScriptLoader, 'getPayPalApmsSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalIntegrationService, 'createOrder').mockResolvedValue(paypalOrderId);
@@ -233,6 +234,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             expect(paypalSdkScriptLoader.getPayPalApmsSdk).toHaveBeenCalledWith(
                 paymentMethod,
                 'USD',
+                'en-US',
             );
         });
     });
