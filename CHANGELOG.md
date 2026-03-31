@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.893.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.892.0...v1.893.0) (2026-03-31)
+
+
+### Features
+
+* **payment:** PAYPAL-6354 reseting payment provider customer state when signing in user ([938c9f9](https://github.com/bigcommerce/checkout-sdk-js/commit/938c9f997a82488c2364df9b24ee147d630e1451))
+
 ## [1.892.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.891.0...v1.892.0) (2026-03-27)
 
 
