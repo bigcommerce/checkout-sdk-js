@@ -8,15 +8,16 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
 import {
-    getPayPalCommerceIntegrationServiceMock,
-    getPayPalCommerceRatePayPaymentMethod,
+    getPayPalIntegrationServiceMock,
+    getPayPalRatePayPaymentMethod,
     getPayPalSDKMock,
-} from '../mocks';
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import { PayPalCommerceHostWindow, PayPalOrderStatus, PayPalSDK } from '../paypal-commerce-types';
+    PayPalHostWindow,
+    PayPalIntegrationService,
+    PayPalOrderStatus,
+    PayPalSDK,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import { PaypalCommerceRatePay } from './paypal-commerce-ratepay-initialize-options';
 import PaypalCommerceRatepayPaymentStrategy from './paypal-commerce-ratepay-payment-strategy';
@@ -25,7 +26,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     let billingAddress: BillingAddress;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
-    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
+    let paypalIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
     let strategy: PaypalCommerceRatepayPaymentStrategy;
     let loadingIndicator: LoadingIndicator;
@@ -54,13 +55,13 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     };
 
     beforeEach(() => {
-        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
+        paypalIntegrationService = getPayPalIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         loadingIndicator = new LoadingIndicator();
 
         strategy = new PaypalCommerceRatepayPaymentStrategy(
             paymentIntegrationService,
-            paypalCommerceIntegrationService,
+            paypalIntegrationService,
             loadingIndicator,
             0,
         );
@@ -68,7 +69,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
         jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
         jest.spyOn(loadingIndicator, 'hide').mockReturnValue(undefined);
 
-        jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+        jest.spyOn(paypalIntegrationService, 'getOrderStatus').mockResolvedValue(
             PayPalOrderStatus.PollingStop,
         );
         jest.spyOn(document, 'getElementById').mockImplementation((id) => {
@@ -88,7 +89,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             PAY_UPON_INVOICE: 'PAY_UPON_INVOICE',
         };
 
-        paymentMethod = getPayPalCommerceRatePayPaymentMethod();
+        paymentMethod = getPayPalRatePayPaymentMethod();
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
@@ -98,18 +99,16 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
-        jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
-            paypalSdk,
-        );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue('1eddfd');
-        jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockResolvedValue();
+        jest.spyOn(paypalIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
+        jest.spyOn(paypalIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalIntegrationService, 'createOrder').mockResolvedValue('1eddfd');
+        jest.spyOn(paypalIntegrationService, 'submitPayment').mockResolvedValue();
     });
 
     afterEach(() => {
         jest.clearAllMocks();
 
-        delete (window as PayPalCommerceHostWindow).paypal;
+        delete (window as PayPalHostWindow).paypal;
     });
 
     it('creates an instance of the PayPal Commerce RatePay payment strategy', () => {
@@ -308,7 +307,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
         });
 
         it('throws an error if orderId is not defined', async () => {
-            jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue('');
+            jest.spyOn(paypalIntegrationService, 'createOrder').mockResolvedValue('');
 
             const payload = {
                 payment: {
@@ -335,7 +334,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             await strategy.initialize(initializationOptions);
             await strategy.execute(payload);
 
-            expect(paypalCommerceIntegrationService.getOrderStatus).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.getOrderStatus).toHaveBeenCalledWith(
                 'paypalcommercealternativemethods',
                 { params: { useMetadata: true } },
             );
@@ -403,11 +402,11 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             await strategy.execute(payload);
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceIntegrationService.getOrderStatus).toHaveBeenCalled();
+            expect(paypalIntegrationService.getOrderStatus).toHaveBeenCalled();
         });
 
         it('stop polling mechanism if corresponding status received', async () => {
-            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+            jest.spyOn(paypalIntegrationService, 'getOrderStatus').mockResolvedValue(
                 PayPalOrderStatus.PollingError,
             );
 
@@ -444,7 +443,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
                 },
             };
 
-            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+            jest.spyOn(paypalIntegrationService, 'getOrderStatus').mockResolvedValue(
                 PayPalOrderStatus.PollingStop,
             );
 

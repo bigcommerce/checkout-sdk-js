@@ -140,6 +140,12 @@ export interface LegalFunding {
     };
 }
 
+export interface BirthDate {
+    getFullYear(): number;
+    getDate(): number;
+    getMonth(): number;
+}
+
 /**
  *
  * PayPal Sdk instances
