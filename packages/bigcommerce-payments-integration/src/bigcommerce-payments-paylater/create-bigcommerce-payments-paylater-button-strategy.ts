@@ -1,4 +1,3 @@
-import { createBigCommercePaymentsSdk } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     CheckoutButtonStrategyFactory,
     toResolvableModule,
@@ -14,7 +13,6 @@ const createBigCommercePaymentsPayLaterButtonStrategy: CheckoutButtonStrategyFac
     new BigCommercePaymentsPayLaterButtonStrategy(
         paymentIntegrationService,
         createBigCommercePaymentsIntegrationService(paymentIntegrationService),
-        createBigCommercePaymentsSdk(),
     );
 
 export default toResolvableModule(createBigCommercePaymentsPayLaterButtonStrategy, [
