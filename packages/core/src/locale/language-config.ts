@@ -6,10 +6,6 @@ export default interface LanguageConfig {
     locale: string;
     locales: Locales;
     translations: Translations;
-    /**
-     * @hidden This property is intended for toggling an experimental change only.
-     */
-    isCspNonceExperimentEnabled?: boolean;
 }
 
 export interface TransformedLanguageConfig {
