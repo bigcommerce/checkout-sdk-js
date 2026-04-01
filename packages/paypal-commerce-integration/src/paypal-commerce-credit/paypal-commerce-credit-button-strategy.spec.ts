@@ -17,7 +17,6 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalSdkScriptLoader,
     getBillingAddressFromOrderDetails,
     getPayPalIntegrationServiceMock,
     getPayPalOrderDetails,
@@ -27,9 +26,7 @@ import {
     PayPalButtonsOptions,
     PayPalHostWindow,
     PayPalIntegrationService,
-    PayPalMessagesSdk,
     PayPalSDK,
-    PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceCreditButtonInitializeOptions from './paypal-commerce-credit-button-initialize-options';
@@ -43,18 +40,12 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
-    let paypalMessageElement: HTMLDivElement;
     let paypalCommerceIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
-    let paypalCommerceSdk: PayPalSdkScriptLoader;
-    let payPalMessagesSdk: PayPalMessagesSdk;
 
     const defaultMethodId = 'paypalcommercecredit';
     const defaultButtonContainerId = 'paypal-commerce-credit-button-mock-id';
-    const defaultMessageContainerId = 'paypal-commerce-credit-message-mock-id';
     const paypalOrderId = 'ORDER_ID';
-
-    const paypalCommerceSdkRenderMock = jest.fn();
 
     const buyNowCartRequestBody = getBuyNowCartRequestBody();
     const storeConfig = getConfig().storeConfig;
@@ -64,7 +55,6 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
         },
         currencyCode: 'USD',
-        messagingContainerId: defaultMessageContainerId,
         style: {
             height: 45,
         },
@@ -78,7 +68,6 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
     };
 
     const paypalCommerceCreditOptions: PayPalCommerceCreditButtonInitializeOptions = {
-        messagingContainerId: defaultMessageContainerId,
         style: {
             height: 45,
         },
@@ -116,29 +105,19 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
 
         eventEmitter = new EventEmitter();
 
-        payPalMessagesSdk = {
-            Messages: jest.fn(),
-        };
-
         paypalCommerceIntegrationService = getPayPalIntegrationServiceMock();
         paymentMethod = getPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalCommerceSdk = createPayPalSdkScriptLoader();
 
         strategy = new PayPalCommerceCreditButtonStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
-            paypalCommerceSdk,
         );
 
         paypalButtonElement = document.createElement('div');
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
-
-        paypalMessageElement = document.createElement('div');
-        paypalMessageElement.id = defaultMessageContainerId;
-        document.body.appendChild(paypalMessageElement);
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
@@ -177,23 +156,6 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         jest.spyOn(paypalCommerceIntegrationService, 'getShippingOptionOrThrow').mockReturnValue(
             getShippingOption(),
         );
-        jest.spyOn(paypalCommerceSdk, 'getPayPalMessages').mockImplementation(() =>
-            Promise.resolve(payPalMessagesSdk),
-        );
-        jest.spyOn(payPalMessagesSdk, 'Messages').mockImplementation(() => ({
-            render: paypalCommerceSdkRenderMock,
-        }));
-
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue({
-            ...storeConfig,
-            checkoutSettings: {
-                ...storeConfig.checkoutSettings,
-                features: {
-                    ...storeConfig.checkoutSettings.features,
-                    'PAYPAL-5716.app_switch_functionality': false,
-                },
-            },
-        });
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation((options: PayPalButtonsOptions) => {
             eventEmitter.on('createOrder', () => {
@@ -863,99 +825,6 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
-        });
-    });
-
-    describe('PayPal Commerce Credit messages logic', () => {
-        it('does not render PayPal message if banner is disabled in paypalBNPLConfiguration', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    paypalBNPLConfiguration: [
-                        {
-                            id: 'checkout',
-                            status: false,
-                        },
-                    ],
-                },
-            });
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
-        });
-
-        it('does not render PayPal message if paypalBNPLConfiguration is not provided', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    paypalBNPLConfiguration: undefined,
-                },
-            });
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
-        });
-
-        it('initializes PayPal Messages component', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(payPalMessagesSdk.Messages).toHaveBeenCalledWith({
-                amount: cart.cartAmount,
-                placement: 'cart',
-                style: {
-                    layout: 'text',
-                    logo: {
-                        position: 'right',
-                        type: 'alternative',
-                    },
-                    text: {
-                        color: 'white',
-                        size: 10,
-                    },
-                },
-            });
-        });
-
-        it('renders PayPal message', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceSdkRenderMock).toHaveBeenCalledWith(
-                `#${defaultMessageContainerId}`,
-            );
-        });
-
-        it('do not render PayPal message if experiment is enabled', async () => {
-            const storeConfigWithFeaturesOn = {
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5557.Hide_ppc_banner_implementation': true,
-                    },
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithFeaturesOn);
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalledWith(
-                `#${defaultMessageContainerId}`,
-            );
         });
     });
 

@@ -9,15 +9,10 @@ import {
 import {
     ApproveCallbackActions,
     ApproveCallbackPayload,
-    getPaypalMessagesStylesFromBNPLConfig,
-    MessagingOptions,
-    PayPalBNPLConfigurationItem,
     PayPalButtonsOptions,
     PayPalBuyNowInitializeOptions,
     PayPalInitializationData,
     PayPalIntegrationService,
-    PayPalMessagesSdk,
-    PayPalSdkScriptLoader,
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
@@ -30,18 +25,14 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalIntegrationService: PayPalIntegrationService,
-        private paypalCommerceSdk: PayPalSdkScriptLoader,
     ) {}
 
     async initialize(
         options: CheckoutButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions,
     ): Promise<void> {
         const { paypalcommercecredit, containerId, methodId } = options;
-        const {
-            buyNowInitializeOptions,
-            currencyCode: providedCurrencyCode,
-            messagingContainerId,
-        } = paypalcommercecredit || {};
+        const { buyNowInitializeOptions, currencyCode: providedCurrencyCode } =
+            paypalcommercecredit || {};
 
         const isBuyNowFlow = !!buyNowInitializeOptions;
 
@@ -96,43 +87,6 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         await this.paypalIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
         this.renderButton(containerId, methodId, paypalcommercecredit);
-
-        // TODO: remove banner rendering implementation in this file when PAYPAL-5557.Hide_ppc_banner_implementation will be rolled out to 100%
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-        const isBannerImplementationDisabled =
-            features['PAYPAL-5557.Hide_ppc_banner_implementation'] ?? false;
-
-        if (isBannerImplementationDisabled) {
-            return;
-        }
-
-        const messagingContainer =
-            messagingContainerId && document.getElementById(messagingContainerId);
-
-        if (currencyCode && messagingContainer) {
-            const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-
-            const { paypalBNPLConfiguration = [] } = paymentMethod.initializationData || {};
-            const bannerConfiguration =
-                paypalBNPLConfiguration && paypalBNPLConfiguration.find(({ id }) => id === 'cart');
-
-            if (!bannerConfiguration?.status) {
-                return;
-            }
-
-            // TODO: remove this code when data attributes will be removed from the banner container in content service
-            messagingContainer.removeAttribute('data-pp-style-logo-type');
-            messagingContainer.removeAttribute('data-pp-style-logo-position');
-            messagingContainer.removeAttribute('data-pp-style-text-color');
-            messagingContainer.removeAttribute('data-pp-style-text-size');
-
-            const paypalSdk = await this.paypalCommerceSdk.getPayPalMessages(
-                paymentMethod,
-                currencyCode,
-            );
-
-            this.renderMessages(paypalSdk, messagingContainerId, bannerConfiguration);
-        }
     }
 
     deinitialize(): Promise<void> {
@@ -307,23 +261,5 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
 
             throw error;
         }
-    }
-
-    private renderMessages(
-        paypalMessagesSdk: PayPalMessagesSdk,
-        messagingContainerId: string,
-        bannerConfiguration: PayPalBNPLConfigurationItem,
-    ): void {
-        const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
-
-        const paypalMessagesOptions: MessagingOptions = {
-            amount: checkout.outstandingBalance,
-            placement: 'cart',
-            style: getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration),
-        };
-
-        const paypalMessages = paypalMessagesSdk.Messages(paypalMessagesOptions);
-
-        paypalMessages.render(`#${messagingContainerId}`);
     }
 }
