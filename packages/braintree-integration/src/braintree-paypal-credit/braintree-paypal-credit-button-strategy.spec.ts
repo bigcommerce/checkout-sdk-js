@@ -7,7 +7,6 @@ import {
     BraintreeError,
     BraintreeHostWindow,
     BraintreeIntegrationService,
-    BraintreeMessages,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeScriptLoader,
@@ -34,7 +33,6 @@ import {
 import {
     getBuyNowCart,
     getCart,
-    getConfig,
     getCustomer,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -53,7 +51,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     let dataCollector: BraintreeDataCollector;
     let eventEmitter: EventEmitter;
     let braintreeIntegrationService: BraintreeIntegrationService;
-    let braintreeMessages: BraintreeMessages;
     let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
     let braintreePaypalCheckoutCreatorMock: BraintreePaypalCheckoutCreator;
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -66,10 +63,8 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
 
     const defaultButtonContainerId = 'braintree-paypal-credit-button-mock-id';
-    const defaultMessageContainerId = 'braintree-paypal-credit-message-mock-id';
 
     const braintreePaypalCreditOptions: BraintreePaypalCreditButtonInitializeOptions = {
-        messagingContainerId: defaultMessageContainerId, // only available on cart page
         shouldProcessPayment: false,
         style: { height: 45 },
         onAuthorizeError: jest.fn(),
@@ -109,12 +104,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                 getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
             },
         },
-    };
-
-    const storeConfigMock = getConfig().storeConfig;
-
-    storeConfigMock.checkoutSettings.features = {
-        'PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk': false,
     };
 
     const getSDKPayPalCheckoutMockWithErrorCallbackCall = () => {
@@ -179,13 +168,10 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             braintreeScriptLoader,
             window,
         );
-        braintreeMessages = new BraintreeMessages(paymentIntegrationService);
-
         strategy = new BraintreePaypalCreditButtonStrategy(
             paymentIntegrationService,
             formPoster,
             braintreeIntegrationService,
-            braintreeMessages,
             window,
         );
 
@@ -207,7 +193,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             dataCollector,
         );
         jest.spyOn(braintreeIntegrationService, 'removeElement').mockImplementation(jest.fn());
-        jest.spyOn(braintreeMessages, 'render').mockImplementation(jest.fn());
         jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
             braintreePaypalCheckoutCreatorMock,
         );
@@ -236,14 +221,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                 render: jest.fn(),
             };
         });
-
-        jest.spyOn(paypalSdkMock, 'Messages').mockImplementation(() => ({
-            render: jest.fn(),
-        }));
-
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
-            storeConfigMock,
-        );
     });
 
     afterEach(() => {
@@ -450,38 +427,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                     cart_id: buyNowCart.id,
                 }),
             );
-        });
-
-        it('calls Braintree Messages render method', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(braintreeMessages.render).toHaveBeenCalledWith(
-                initializationOptions.methodId,
-                defaultMessageContainerId,
-                'cart',
-            );
-        });
-
-        it('do not calls Braintree Messages render method if experiment is enabled', async () => {
-            const storeConfigWithFeaturesOn = {
-                ...storeConfigMock,
-                checkoutSettings: {
-                    ...storeConfigMock.checkoutSettings,
-                    features: {
-                        ...storeConfigMock.checkoutSettings.features,
-                        'PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk':
-                            true,
-                    },
-                },
-            };
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
-                storeConfigWithFeaturesOn,
-            );
-
-            await strategy.initialize(initializationOptions);
-
-            expect(braintreeMessages.render).not.toHaveBeenCalled();
         });
 
         it('renders braintree paylater button', async () => {
