@@ -1,11 +1,4 @@
-import {
-    BigCommercePaymentsInitializationData,
-    getPaypalMessagesStylesFromBNPLConfig,
-    MessagingOptions,
-    PayPalBNPLConfigurationItem,
-    PayPalMessagesSdk,
-    PayPalSdkHelper,
-} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import { BigCommercePaymentsInitializationData } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     CheckoutButtonInitializeOptions,
     CheckoutButtonStrategy,
@@ -33,7 +26,6 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
-        private payPalSdkHelper: PayPalSdkHelper,
     ) {}
 
     async initialize(
@@ -41,11 +33,8 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
             WithBigCommercePaymentsPayLaterButtonInitializeOptions,
     ): Promise<void> {
         const { bigcommerce_payments_paylater, containerId, methodId } = options;
-        const {
-            buyNowInitializeOptions,
-            currencyCode: providedCurrencyCode,
-            messagingContainerId,
-        } = bigcommerce_payments_paylater || {};
+        const { buyNowInitializeOptions, currencyCode: providedCurrencyCode } =
+            bigcommerce_payments_paylater || {};
 
         const isBuyNowFlow = !!buyNowInitializeOptions;
 
@@ -104,35 +93,6 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
         );
 
         this.renderButton(containerId, methodId, bigcommerce_payments_paylater);
-
-        const messagingContainer =
-            messagingContainerId && document.getElementById(messagingContainerId);
-
-        if (currencyCode && messagingContainer) {
-            const paymentMethod =
-                state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-
-            const { paypalBNPLConfiguration = [] } = paymentMethod.initializationData || {};
-            const bannerConfiguration =
-                paypalBNPLConfiguration && paypalBNPLConfiguration.find(({ id }) => id === 'cart');
-
-            if (!bannerConfiguration?.status) {
-                return;
-            }
-
-            // TODO: remove this when data attributes will be removed from related cart banner container in content service
-            messagingContainer.removeAttribute('data-pp-style-logo-type');
-            messagingContainer.removeAttribute('data-pp-style-logo-position');
-            messagingContainer.removeAttribute('data-pp-style-text-color');
-            messagingContainer.removeAttribute('data-pp-style-text-size');
-
-            const payPalSdkHelper = await this.payPalSdkHelper.getPayPalMessages(
-                paymentMethod,
-                currencyCode,
-            );
-
-            this.renderMessages(payPalSdkHelper, messagingContainerId, bannerConfiguration);
-        }
     }
 
     deinitialize(): Promise<void> {
@@ -318,23 +278,5 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
 
             throw error;
         }
-    }
-
-    private renderMessages(
-        paypalMessagesSdk: PayPalMessagesSdk,
-        messagingContainerId: string,
-        bannerConfiguration: PayPalBNPLConfigurationItem,
-    ): void {
-        const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
-
-        const paypalMessagesOptions: MessagingOptions = {
-            amount: checkout.outstandingBalance,
-            placement: 'cart',
-            style: getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration),
-        };
-
-        const paypalMessages = paypalMessagesSdk.Messages(paypalMessagesOptions);
-
-        paypalMessages.render(`#${messagingContainerId}`);
     }
 }

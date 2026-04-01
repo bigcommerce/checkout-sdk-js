@@ -1,11 +1,6 @@
 import { EventEmitter } from 'events';
 
 import {
-    createBigCommercePaymentsSdk,
-    PayPalMessagesSdk,
-    PayPalSdkHelper,
-} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
-import {
     Cart,
     CheckoutButtonInitializeOptions,
     InvalidArgumentError,
@@ -47,18 +42,12 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
-    let paypalMessageElement: HTMLDivElement;
     let bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService;
     let paypalSdk: PayPalSDK;
-    let paypalSdkHelper: PayPalSdkHelper;
-    let payPalMessagesSdk: PayPalMessagesSdk;
 
     const defaultMethodId = 'bigcommerce_payments_paylater';
     const defaultButtonContainerId = 'bigcommerce-payments-paylater-button-mock-id';
-    const defaultMessageContainerId = 'bigcommerce-payments-paylater-message-mock-id';
     const paypalOrderId = 'ORDER_ID';
-
-    const bigCommercePaymentsSdkRenderMock = jest.fn();
 
     const buyNowCartRequestBody = getBuyNowCartRequestBody();
 
@@ -68,7 +57,6 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
                 getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
             },
             currencyCode: 'USD',
-            messagingContainerId: defaultMessageContainerId,
             style: {
                 height: 45,
             },
@@ -82,7 +70,6 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
     };
 
     const bigCommercePaymentsPayLaterOptions: BigCommercePaymentsPayLaterButtonInitializeOptions = {
-        messagingContainerId: defaultMessageContainerId,
         style: {
             height: 45,
         },
@@ -120,29 +107,19 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
 
         eventEmitter = new EventEmitter();
 
-        payPalMessagesSdk = {
-            Messages: jest.fn(),
-        };
-
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
         paymentMethod = getBigCommercePaymentsPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalSdkHelper = createBigCommercePaymentsSdk();
 
         strategy = new BigCommercePaymentsPayLaterButtonStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
-            paypalSdkHelper,
         );
 
         paypalButtonElement = document.createElement('div');
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
-
-        paypalMessageElement = document.createElement('div');
-        paypalMessageElement.id = defaultMessageContainerId;
-        document.body.appendChild(paypalMessageElement);
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
@@ -191,12 +168,6 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             bigCommercePaymentsIntegrationService,
             'getShippingOptionOrThrow',
         ).mockReturnValue(getShippingOption());
-        jest.spyOn(paypalSdkHelper, 'getPayPalMessages').mockImplementation(() =>
-            Promise.resolve(payPalMessagesSdk),
-        );
-        jest.spyOn(payPalMessagesSdk, 'Messages').mockImplementation(() => ({
-            render: bigCommercePaymentsSdkRenderMock,
-        }));
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: BigCommercePaymentsButtonsOptions) => {
@@ -839,75 +810,6 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(bigCommercePaymentsIntegrationService.updateOrder).toHaveBeenCalled();
-        });
-    });
-
-    describe('BigCommercePayments PayLater messages logic', () => {
-        it('does not render PayPal message if banner is disabled in paypalBNPLConfiguration', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    paypalBNPLConfiguration: [
-                        {
-                            id: 'checkout',
-                            status: false,
-                        },
-                    ],
-                },
-            });
-
-            await strategy.initialize(initializationOptions);
-
-            expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
-        });
-
-        it('does not render PayPal message if paypalBNPLConfiguration is not provided', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    paypalBNPLConfiguration: undefined,
-                },
-            });
-
-            await strategy.initialize(initializationOptions);
-
-            expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
-        });
-
-        it('initializes PayPal Messages component', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(payPalMessagesSdk.Messages).toHaveBeenCalledWith({
-                amount: cart.cartAmount,
-                placement: 'cart',
-                style: {
-                    layout: 'text',
-                    logo: {
-                        position: 'right',
-                        type: 'alternative',
-                    },
-                    text: {
-                        color: 'white',
-                        size: 10,
-                    },
-                },
-            });
-        });
-
-        it('renders PayPal message', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(bigCommercePaymentsSdkRenderMock).toHaveBeenCalledWith(
-                `#${defaultMessageContainerId}`,
-            );
         });
     });
 
