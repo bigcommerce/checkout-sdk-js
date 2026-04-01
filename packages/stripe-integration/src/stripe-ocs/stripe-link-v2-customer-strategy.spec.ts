@@ -27,6 +27,7 @@ import {
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
+import { stripeAllowedShippingOptionsLength } from './constants';
 import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
 import { getStripeOCSMock } from './stripe-ocs.mock';
 
@@ -472,6 +473,44 @@ describe('StripeLinkV2CustomerStrategy', () => {
                     },
                 ],
             });
+        });
+
+        it('limits shippingRates to a maximum of 9 items', async () => {
+            const shippingOptions = Array.from(
+                { length: stripeAllowedShippingOptionsLength + 2 },
+                (_, i) => ({
+                    id: `option-${i + 1}`,
+                    description: `Shipping Option ${i + 1}`,
+                    cost: (i + 1) * 100,
+                }),
+            );
+
+            jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+                ...paymentIntegrationService.getState(),
+                getConsignments: jest.fn().mockReturnValue([
+                    {
+                        availableShippingOptions: shippingOptions,
+                        selectedShippingOption: undefined,
+                    },
+                ]),
+            });
+
+            await strategy.initialize(initialiseOptions);
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: 'London',
+                    country: 'UK',
+                    postal_code: '091-22',
+                    state: 'CA',
+                },
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            const resolvedArgs = stripeEvent.mock.calls[0][0];
+
+            expect(resolvedArgs.shippingRates).toHaveLength(stripeAllowedShippingOptionsLength);
         });
 
         it('resolve onShippingAddressChange with recommended shipping option', async () => {

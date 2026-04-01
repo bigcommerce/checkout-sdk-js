@@ -238,3 +238,6 @@ export const expressCheckoutAllowedCountryCodes = [
     'ZW',
     'ZZ',
 ];
+
+// Stripe has restricted the number of shipping rates to 9.
+export const stripeAllowedShippingOptionsLength = 9;
