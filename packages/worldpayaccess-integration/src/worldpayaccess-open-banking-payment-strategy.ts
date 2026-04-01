@@ -56,11 +56,16 @@ export default class WorldpayAccessOpenBankingPaymentStrategy implements Payment
             return false;
         }
 
-        const partialBody = partialResponse.body;
+        const partialBody = partialResponse.body as {
+            status?: string;
+            additional_action_required?: {
+                data?: { redirect_url?: string };
+            };
+        };
 
         return (
             partialBody.status === 'additional_action_required' &&
-            !!partialBody.additional_action_required.data.redirect_url
+            !!partialBody.additional_action_required?.data?.redirect_url
         );
     }
 }
