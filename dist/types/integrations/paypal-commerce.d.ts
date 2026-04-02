@@ -518,10 +518,6 @@ declare interface PayPalCommerceCardFieldsSubmitConfig {
 
 declare interface PayPalCommerceCreditButtonInitializeOptions {
     /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
-    /**
      * A set of styling options for the checkout button.
      */
     style?: PayPalButtonStyleOptions;
@@ -548,8 +544,7 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
 declare class PayPalCommerceCreditButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
     private paypalIntegrationService;
-    private paypalCommerceSdk;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalCommerceSdk: PayPalSdkScriptLoader);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService);
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
@@ -557,7 +552,6 @@ declare class PayPalCommerceCreditButtonStrategy implements CheckoutButtonStrate
     private onHostedCheckoutApprove;
     private onShippingAddressChange;
     private onShippingOptionsChange;
-    private renderMessages;
 }
 
 /**

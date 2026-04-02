@@ -8,7 +8,6 @@
 
 - [buyNowInitializeOptions](PayPalCommerceCreditButtonInitializeOptions.md#buynowinitializeoptions)
 - [currencyCode](PayPalCommerceCreditButtonInitializeOptions.md#currencycode)
-- [messagingContainerId](PayPalCommerceCreditButtonInitializeOptions.md#messagingcontainerid)
 - [style](PayPalCommerceCreditButtonInitializeOptions.md#style)
 
 ### Methods
@@ -31,14 +30,6 @@ ___
 • `Optional` **currencyCode**: `string`
 
 The option that used to initialize a PayPal script with provided currency code.
-
-___
-
-### messagingContainerId
-
-• `Optional` **messagingContainerId**: `string`
-
-The ID of a container which the messaging should be inserted.
 
 ___
 

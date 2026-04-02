@@ -1213,10 +1213,6 @@ declare interface BigCommercePaymentsFieldsStyleOptions {
 
 declare interface BigCommercePaymentsPayLaterButtonInitializeOptions {
     /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
-    /**
      * A set of styling options for the checkout button.
      */
     style?: PayPalButtonStyleOptions;
@@ -2189,10 +2185,6 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
      * The option that used to initialize a PayPal script with provided currency code.
      */
     currencyCode?: string;
-    /**
-     * The ID of a container where the messaging component should be inserted.
-     */
-    messagingContainerId?: string;
     /**
      * A set of styling options for the checkout button.
      */
@@ -7003,10 +6995,6 @@ declare interface PayPalCommerceButtonInitializeOptions {
 }
 
 declare interface PayPalCommerceCreditButtonInitializeOptions {
-    /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
     /**
      * A set of styling options for the checkout button.
      */

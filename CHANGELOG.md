@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.895.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.894.1...v1.895.0) (2026-04-02)
+
+
+### Features
+
+* **payment:** PAYPAL-6342 remove PayPal buttons messages implementation ([5d13ee9](https://github.com/bigcommerce/checkout-sdk-js/commit/5d13ee95fc712e38c978bfa1abf1dec527dfe4d4))
+* **payment:** PAYPAL-6343 remove braintree buttons messages implementation ([ac044d6](https://github.com/bigcommerce/checkout-sdk-js/commit/ac044d636648db4bed450b466a100875c4e9cc2b))
+* **payment:** PAYPAL-6344 remove bcp buttons messages implementation ([5ba1712](https://github.com/bigcommerce/checkout-sdk-js/commit/5ba171264f7baff21ae48d635a2443a64942ea99))
+
 ### [1.894.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.894.0...v1.894.1) (2026-04-02)
 
 ## [1.894.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.893.0...v1.894.0) (2026-04-01)
