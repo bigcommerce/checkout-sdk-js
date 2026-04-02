@@ -5,12 +5,10 @@ import {
     BraintreeHostWindow,
     BraintreeInitializationData,
     BraintreeIntegrationService,
-    BraintreeMessages,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
     isBraintreeError,
-    MessagingPlacements,
     PaypalAuthorizeData,
     PaypalButtonStyleLabelOption,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -26,7 +24,6 @@ import {
     PaymentMethod,
     StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import getValidButtonStyle from '../get-valid-button-style';
 import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-address-override';
@@ -42,7 +39,6 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         private paymentIntegrationService: PaymentIntegrationService,
         private formPoster: FormPoster,
         private braintreeIntegrationService: BraintreeIntegrationService,
-        private braintreeMessages: BraintreeMessages,
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
@@ -101,20 +97,9 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             commit: false,
         };
 
-        // TODO: remove banner rendering implementation in this file when PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk will be rolled out to 100%
-        const features = state.getStoreConfig()?.checkoutSettings.features ?? {};
-        const isBannerImplementationDisabled = isExperimentEnabled(
-            features,
-            'PAYPAL-5663.hide_braintree_card_banner_implementation_in_checkout_sdk',
-        );
-
         const paypalCheckoutSuccessCallback = (
             braintreePaypalCheckout: BraintreePaypalCheckout,
         ) => {
-            if (!isBannerImplementationDisabled && braintreepaypalcredit.messagingContainerId) {
-                this.renderPayPalMessages(methodId, braintreepaypalcredit.messagingContainerId);
-            }
-
             this.renderPayPalButton(
                 braintreePaypalCheckout,
                 braintreepaypalcredit,
@@ -136,10 +121,6 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
 
     async deinitialize(): Promise<void> {
         await this.braintreeIntegrationService.teardown();
-    }
-
-    private renderPayPalMessages(methodId: string, messagingContainerId: string): void {
-        this.braintreeMessages.render(methodId, messagingContainerId, MessagingPlacements.CART);
     }
 
     private renderPayPalButton(
