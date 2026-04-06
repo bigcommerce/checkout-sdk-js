@@ -30,6 +30,7 @@ import {
     StripeInitializationData,
     StripeIntegrationService,
     StripeJsVersion,
+    StripePaymentMethodType,
     StripeSavedPaymentMethod,
     StripeScriptLoader,
     StripeStringConstants,
@@ -274,16 +275,17 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     private _getPaymentPayload(
         methodId: string,
         token: string,
-        shouldSaveInstrument = false,
+        newVaultedStripeInstrument?: StripeSavedPaymentMethod,
     ): Payment {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
+        const tokenizedOptions = this._getTokenizedOptions(token, newVaultedStripeInstrument);
 
         const formattedPayload = {
             cart_id: cartId,
             confirm: false,
             method: this.selectedMethodId,
-            credit_card_token: { token },
-            vault_payment_instrument: shouldSaveInstrument,
+            vault_payment_instrument: !!newVaultedStripeInstrument,
+            ...tokenizedOptions,
         };
 
         return {
@@ -308,19 +310,18 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const { data: additionalActionData } = error.body?.additional_action_required || {};
         const { token } = additionalActionData || {};
         const existingStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow();
-
         const { id: checkoutSessionId, status: checkoutSessionStatus } =
             await this._confirmStripePaymentOrThrow(additionalActionData);
-
         const newStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow();
-        const shouldSaveInstrument = this._isStripeSessionInstrumentAdded(
+        const newVaultedStripeInstrument = this._getNewVaultedStripeInstrument(
             existingStripeSavedPaymentMethods,
             newStripeSavedPaymentMethods,
         );
+
         const paymentPayload = this._getPaymentPayload(
             methodId,
             checkoutSessionId || token,
-            shouldSaveInstrument,
+            newVaultedStripeInstrument,
         );
 
         try {
@@ -415,15 +416,26 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         return savedPaymentMethods || [];
     }
 
-    private _isStripeSessionInstrumentAdded(
+    private _getNewVaultedStripeInstrument(
         existingStripeSavedPaymentMethods: StripeSavedPaymentMethod[],
         newStripeSavedPaymentMethods: StripeSavedPaymentMethod[],
-    ): boolean {
-        return newStripeSavedPaymentMethods.some(
+    ): StripeSavedPaymentMethod | undefined {
+        return newStripeSavedPaymentMethods.find(
             (method: StripeSavedPaymentMethod) =>
                 !existingStripeSavedPaymentMethods.some(
                     (existingMethod: StripeSavedPaymentMethod) => existingMethod.id === method.id,
                 ),
         );
+    }
+
+    private _getTokenizedOptions(
+        token: string,
+        newVaultedStripeInstrument?: StripeSavedPaymentMethod,
+    ) {
+        if (newVaultedStripeInstrument?.type === StripePaymentMethodType.ACH) {
+            return { tokenized_ach: { token } };
+        }
+
+        return { credit_card_token: { token } };
     }
 }

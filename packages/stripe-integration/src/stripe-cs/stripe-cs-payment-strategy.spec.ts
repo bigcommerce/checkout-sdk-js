@@ -31,6 +31,7 @@ import {
     StripeIntegrationService,
     StripeJsVersion,
     StripeLoadActionsResultType,
+    StripePaymentMethodType,
     StripeScriptLoader,
     StripeStringConstants,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -1474,6 +1475,109 @@ describe('StripeOCSPaymentStrategy', () => {
                     paymentData: {
                         formattedPayload: expect.objectContaining({
                             vault_payment_instrument: false,
+                        }),
+                    },
+                });
+            });
+
+            it('should use tokenized_ach when new vaulted instrument is ACH type', async () => {
+                const existingMethods = [
+                    {
+                        id: 'pm_existing1',
+                        type: 'card',
+                        billingDetails: {},
+                        card: { brand: 'visa', last4: '4242', expMonth: 12, expYear: 2030 },
+                    },
+                ];
+                const newMethods = [
+                    ...existingMethods,
+                    {
+                        id: 'pm_new_ach',
+                        type: StripePaymentMethodType.ACH,
+                        billingDetails: {},
+                    },
+                ];
+
+                getSessionMock = jest
+                    .fn()
+                    .mockResolvedValueOnce(null) // initial email check
+                    .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
+                    .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }) // before confirm
+                    .mockResolvedValueOnce({ savedPaymentMethods: newMethods }); // after confirm
+
+                confirmPaymentMockLocal = jest.fn().mockResolvedValue({
+                    session: {
+                        id: 'checkoutSessionId',
+                        status: {
+                            paymentStatus: StripeCheckoutSessionPaymentStatus.UnPaid,
+                        },
+                    },
+                });
+
+                mockStripeCheckoutWithSession(getSessionMock, confirmPaymentMockLocal);
+                mockFirstPaymentRequest(errorResponse);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+                await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(2, {
+                    methodId,
+                    paymentData: {
+                        formattedPayload: expect.objectContaining({
+                            tokenized_ach: { token: 'checkoutSessionId' },
+                            vault_payment_instrument: true,
+                        }),
+                    },
+                });
+            });
+
+            it('should use credit_card_token when new vaulted instrument is card type', async () => {
+                const existingMethods = [
+                    {
+                        id: 'pm_existing1',
+                        type: 'card',
+                        billingDetails: {},
+                        card: { brand: 'visa', last4: '4242', expMonth: 12, expYear: 2030 },
+                    },
+                ];
+                const newMethods = [
+                    ...existingMethods,
+                    {
+                        id: 'pm_new_card',
+                        type: StripePaymentMethodType.CreditCard,
+                        billingDetails: {},
+                        card: { brand: 'mastercard', last4: '5555', expMonth: 6, expYear: 2028 },
+                    },
+                ];
+
+                getSessionMock = jest
+                    .fn()
+                    .mockResolvedValueOnce(null) // initial email check
+                    .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
+                    .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }) // before confirm
+                    .mockResolvedValueOnce({ savedPaymentMethods: newMethods }); // after confirm
+
+                confirmPaymentMockLocal = jest.fn().mockResolvedValue({
+                    session: {
+                        id: 'checkoutSessionId',
+                        status: {
+                            paymentStatus: StripeCheckoutSessionPaymentStatus.UnPaid,
+                        },
+                    },
+                });
+
+                mockStripeCheckoutWithSession(getSessionMock, confirmPaymentMockLocal);
+                mockFirstPaymentRequest(errorResponse);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+                await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(2, {
+                    methodId,
+                    paymentData: {
+                        formattedPayload: expect.objectContaining({
+                            credit_card_token: { token: 'checkoutSessionId' },
+                            vault_payment_instrument: true,
                         }),
                     },
                 });
