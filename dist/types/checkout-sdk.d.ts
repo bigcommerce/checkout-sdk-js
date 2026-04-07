@@ -2531,7 +2531,7 @@ declare interface CheckoutButtonErrorsState {
     deinitializeError?: Error;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsButtonInitializeOptions & WithBigCommercePaymentsPayLaterButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions & WithBigCommercePaymentsVenmoButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsButtonInitializeOptions & WithBigCommercePaymentsPayLaterButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions & WithBigCommercePaymentsVenmoButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -6816,31 +6816,6 @@ declare interface PayPalBuyNowInitializeOptions_2 {
     getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
-declare interface PayPalCommerceAlternativeMethodsButtonOptions {
-    /**
-     * Alternative payment method id what used for initialization PayPal button as funding source.
-     */
-    apm: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions_2;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
  * method for presenting its PayPal button.
@@ -9149,10 +9124,6 @@ declare interface WithMolliePaymentInitializeOptions {
      * method. They can be omitted unless you need to support Mollie.
      */
     mollie?: MolliePaymentInitializeOptions;
-}
-
-declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
-    paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsButtonOptions;
 }
 
 declare interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {

@@ -15,7 +15,6 @@ import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration
 import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneUtils } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
@@ -164,42 +163,6 @@ declare interface PayPalButtonStyleOptions {
  */
 declare interface PayPalBuyNowInitializeOptions {
     getBuyNowCartRequestBody(): BuyNowCartRequestBody;
-}
-
-declare interface PayPalCommerceAlternativeMethodsButtonOptions {
-    /**
-     * Alternative payment method id what used for initialization PayPal button as funding source.
-     */
-    apm: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
-declare class PayPalCommerceAlternativeMethodsButtonStrategy implements CheckoutButtonStrategy {
-    private paymentIntegrationService;
-    private paypalIntegrationService;
-    private paypalButtonCreationService;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalButtonCreationService: PaypalButtonCreationService);
-    initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions): Promise<void>;
-    deinitialize(): Promise<void>;
-    private renderButton;
-    private handleClick;
 }
 
 /**
@@ -1454,14 +1417,14 @@ declare interface PayPalCommercePaymentInitializeOptions {
 
 declare class PayPalCommercePaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
-    private paypalCommerceSdk;
+    private paypalIntegrationService;
+    private payPalSdkScriptLoader;
     private loadingIndicator;
     private loadingIndicatorContainer?;
     private orderId?;
     private paypalButton?;
     private paypalcommerce?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, paypalCommerceSdk: PayPalCommerceSdk, loadingIndicator: LoadingIndicator);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, payPalSdkScriptLoader: PayPalSdkScriptLoader, loadingIndicator: LoadingIndicator);
     initialize(options?: PaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
@@ -1989,10 +1952,6 @@ declare enum StyleButtonShape {
     rect = "rect"
 }
 
-declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
-    paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsButtonOptions;
-}
-
 declare interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {
     paypalcommerce?: PayPalCommerceAlternativeMethodsPaymentOptions;
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsPaymentOptions;
@@ -2056,10 +2015,6 @@ declare interface WithPayPalCommerceVenmoPaymentInitializeOptions {
     paypalcommerce?: PayPalCommerceVenmoPaymentInitializeOptions;
     paypalcommercevenmo?: PayPalCommerceVenmoPaymentInitializeOptions;
 }
-
-export declare const createPayPalCommerceAlternativeMethodsButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<PayPalCommerceAlternativeMethodsButtonStrategy>, {
-    id: string;
-}>;
 
 export declare const createPayPalCommerceAlternativeMethodsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PayPalCommerceAlternativeMethodsPaymentStrategy>, {
     gateway: string;
