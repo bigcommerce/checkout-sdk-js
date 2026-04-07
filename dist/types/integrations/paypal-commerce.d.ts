@@ -1882,7 +1882,7 @@ declare interface PaypalCommerceRatePay {
 
 declare class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
+    private paypalCommerceService;
     private loadingIndicator;
     private pollingInterval;
     private maxPollingIntervalTime;
@@ -1891,7 +1891,7 @@ declare class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?;
     private pollingTimer;
     private stopPolling;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceService: PayPalIntegrationService, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
     initialize(options: PaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
