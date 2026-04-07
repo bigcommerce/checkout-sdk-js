@@ -463,6 +463,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             ) {
                 return threeDSNonce;
             }
+
+            throw new PaymentMethodInvalidError();
         }
 
         return nonce;
