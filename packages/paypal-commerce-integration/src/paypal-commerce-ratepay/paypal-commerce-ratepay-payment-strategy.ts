@@ -11,14 +11,13 @@ import {
     PaymentStrategy,
     TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     BirthDate,
-    PayPalCommerceInitializationData,
+    PayPalInitializationData,
+    PayPalIntegrationService,
     PayPalOrderStatus,
-} from '../paypal-commerce-types';
+} from '@bigcommerce/checkout-sdk/paypal-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import {
     PaypalCommerceRatePay,
@@ -37,7 +36,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalCommerceService: PayPalIntegrationService,
         private loadingIndicator: LoadingIndicator,
         private pollingInterval: number = POLLING_INTERVAL,
         private maxPollingIntervalTime: number = MAX_POLLING_TIME,
@@ -89,7 +88,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         this.loadingIndicatorContainer = loadingContainerId;
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(
             methodId,
             gatewayId,
         );
@@ -103,7 +102,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
         this.paypalcommerceratepay = paypalcommerceratepay;
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        await this.paypalCommerceService.loadPayPalSdk(methodId);
 
         this.createFraudNetScript(merchantId, methodId, gatewayId);
 
@@ -130,7 +129,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         this.toggleLoadingIndicator(true);
 
         try {
-            const orderId = await this.paypalCommerceIntegrationService.createOrder(
+            const orderId = await this.paypalCommerceService.createOrder(
                 'paypalcommercealternativemethodscheckout',
                 { metadataId: this.guid },
             );
@@ -223,7 +222,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         legalTextContainer.setAttribute('id', legalTextContainerId);
         buttonContainerParent?.prepend(legalTextContainer);
 
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalCommerceService.getPayPalSdkOrThrow();
         const ratePayButton = paypalSdk.Legal({
             fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE,
         });
@@ -324,7 +323,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         try {
             this.pollingTimer += this.pollingInterval;
 
-            const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(
+            const orderStatus = await this.paypalCommerceService.getOrderStatus(
                 'paypalcommercealternativemethods',
                 {
                     params: {
