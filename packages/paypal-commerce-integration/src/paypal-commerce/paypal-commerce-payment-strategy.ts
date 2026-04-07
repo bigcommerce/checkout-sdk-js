@@ -17,25 +17,22 @@ import {
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    ApproveCallbackPayload,
+    ClickCallbackActions,
     getPaypalMessagesStylesFromBNPLConfig,
-    isPaypalCommerceProviderError,
+    isPaypalProviderError,
     isRedirectActionError,
     MessagingOptions,
     PayPalBNPLConfigurationItem,
-    PayPalCommerceSdk,
+    PayPalButtons,
+    PayPalButtonsOptions,
+    PayPalInitializationData,
+    PayPalIntegrationService,
     PayPalMessagesSdk,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { isBaseInstrument } from '@bigcommerce/checkout-sdk/utility';
-
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    ApproveCallbackPayload,
-    ClickCallbackActions,
-    PayPalCommerceButtons,
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceInitializationData,
-} from '../paypal-commerce-types';
 
 import PayPalCommercePaymentInitializeOptions, {
     WithPayPalCommercePaymentInitializeOptions,
@@ -44,13 +41,13 @@ import PayPalCommercePaymentInitializeOptions, {
 export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
-    private paypalButton?: PayPalCommerceButtons;
+    private paypalButton?: PayPalButtons;
     private paypalcommerce?: PayPalCommercePaymentInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
-        private paypalCommerceSdk: PayPalCommerceSdk,
+        private paypalIntegrationService: PayPalIntegrationService,
+        private payPalSdkScriptLoader: PayPalSdkScriptLoader,
         private loadingIndicator: LoadingIndicator,
     ) {}
 
@@ -76,8 +73,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
 
         const { container, bannerContainerId } = paypalcommerce;
 
@@ -103,7 +99,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
                 return;
             }
 
-            const paypalMessages = await this.paypalCommerceSdk.getPayPalMessages(
+            const paypalMessages = await this.payPalSdkScriptLoader.getPayPalMessages(
                 paymentMethod,
                 state.getCartOrThrow().currency.code,
             );
@@ -131,7 +127,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
 
         this.loadingIndicatorContainer = container?.split('#')[1];
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId);
 
         if (paypalcommerce.onInit && typeof paypalcommerce.onInit === 'function') {
             paypalcommerce.onInit(() => this.renderButton(methodId, paypalcommerce));
@@ -178,7 +174,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             }
 
             if (this.isProviderError(error)) {
-                await this.paypalCommerceIntegrationService.loadPayPalSdk(payment.methodId);
+                await this.paypalIntegrationService.loadPayPalSdk(payment.methodId);
 
                 await new Promise((_resolve, reject) => {
                     if (this.paypalcommerce) {
@@ -281,11 +277,10 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         methodId: string,
         paypalcommerce: PayPalCommercePaymentInitializeOptions,
     ): void {
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const { paymentButtonStyles } = paymentMethod.initializationData || {};
         const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
         const { container, onError, onRenderButton, onValidate, submitForm } = paypalcommerce;
@@ -305,14 +300,12 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             );
         }
 
-        const buttonOptions: PayPalCommerceButtonsOptions = {
+        const buttonOptions: PayPalButtonsOptions = {
             ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
                 appSwitchWhenAvailable: true,
             }),
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(
-                checkoutPaymentButtonStyles,
-            ),
+            style: this.paypalIntegrationService.getValidButtonStyle(checkoutPaymentButtonStyles),
             createOrder: () => this.createOrder(),
             onClick: (_, actions) => this.handleClick(actions, onValidate),
             onApprove: (data) => this.handleApprove(data, submitForm),
@@ -375,7 +368,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     private async createOrder(): Promise<string> {
         const fieldsValues = this.getFieldsValues();
 
-        return this.paypalCommerceIntegrationService.createOrder('paypalcommercecheckout', {
+        return this.paypalIntegrationService.createOrder('paypalcommercecheckout', {
             shouldSaveInstrument: fieldsValues?.shouldSaveInstrument || false,
         });
     }
@@ -464,7 +457,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
      *
      */
     private isProviderError(error: unknown): boolean {
-        if (isPaypalCommerceProviderError(error)) {
+        if (isPaypalProviderError(error)) {
             const paypalProviderError = error?.errors?.filter((e) => e.provider_error) || [];
 
             return paypalProviderError[0]?.provider_error?.code === 'INSTRUMENT_DECLINED';
@@ -480,8 +473,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
      */
     private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
 
         return paymentMethod.initializationData?.isAppSwitchEnabled || false;
     }
