@@ -546,7 +546,8 @@ export interface StripeSavedPaymentMethod {
     id: string;
     type: string;
     billingDetails: BillingDetailsOptions;
-    card: StripeCardDetails;
+    card?: StripeCardDetails;
+    usBankAccount?: StripeUsBankAccountDetails;
 }
 
 export interface StripeCardDetails {
@@ -554,6 +555,13 @@ export interface StripeCardDetails {
     last4: string;
     expMonth: number;
     expYear: number;
+}
+
+export interface StripeUsBankAccountDetails {
+    accountHolderType: string;
+    accountType: string;
+    bankName: string;
+    last4: string;
 }
 
 /**
@@ -699,6 +707,7 @@ export interface StripeHostWindow extends Window {
 
 export enum StripePaymentMethodType {
     CreditCard = 'card',
+    ACH = 'us_bank_account',
     Link = 'link',
     EPS = 'eps',
     GRABPAY = 'grabpay',
