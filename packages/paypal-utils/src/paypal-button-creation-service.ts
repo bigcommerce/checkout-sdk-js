@@ -7,6 +7,10 @@ import {
 
 import PayPalIntegrationService from './paypal-integration-service';
 import {
+    buildMergedShippingAddressForBackfill,
+    shippingAddressFromConsignmentShippingAddress,
+} from './paypal-shipping-address-backfill';
+import {
     ApproveCallbackActions,
     ApproveCallbackPayload,
     PayPalButtonOptions,
@@ -116,10 +120,28 @@ class PaypalButtonCreationService {
             await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
             if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalIntegrationService.getShippingAddressFromOrderDetails(orderDetails);
+                await this.paymentIntegrationService.loadCheckout(cart.id);
 
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+                const refreshedState = this.paymentIntegrationService.getState();
+                const consignment = refreshedState.getConsignmentsOrThrow()[0];
+                const selectedShippingOptionId = consignment.selectedShippingOption?.id;
+
+                const quoteShippingAddress = shippingAddressFromConsignmentShippingAddress(
+                    consignment.shippingAddress,
+                );
+                const mergedShippingAddress = buildMergedShippingAddressForBackfill(
+                    quoteShippingAddress,
+                    orderDetails,
+                );
+
+                await this.paymentIntegrationService.updateShippingAddress(mergedShippingAddress);
+
+                if (selectedShippingOptionId) {
+                    await this.paymentIntegrationService.selectShippingOption(
+                        selectedShippingOptionId,
+                    );
+                }
+
                 await this.paypalIntegrationService.updateOrder(providerId);
             }
 
