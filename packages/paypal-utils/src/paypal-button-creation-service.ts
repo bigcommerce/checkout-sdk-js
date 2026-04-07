@@ -66,6 +66,7 @@ class PaypalButtonCreationService {
                     methodId,
                     providerId,
                     onPaymentComplete,
+                    isAppSwitchEnabled,
                 ),
         };
 
@@ -100,6 +101,7 @@ class PaypalButtonCreationService {
         methodId: string,
         providerId: string,
         onComplete?: () => void,
+        isAppSwitchEnabled?: boolean,
     ): Promise<void> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
@@ -110,17 +112,21 @@ class PaypalButtonCreationService {
         const orderDetails = await actions.order.get();
 
         try {
-            const billingAddress =
-                this.paypalIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
+            if (!isAppSwitchEnabled || methodId !== 'paypalcommerce') {
+                const billingAddress =
+                    this.paypalIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
 
-            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
+                await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
-            if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalIntegrationService.getShippingAddressFromOrderDetails(orderDetails);
+                if (cart.lineItems.physicalItems.length > 0) {
+                    const shippingAddress =
+                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
 
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.paypalIntegrationService.updateOrder(providerId);
+                    await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+                    await this.paypalIntegrationService.updateOrder(providerId);
+                }
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
