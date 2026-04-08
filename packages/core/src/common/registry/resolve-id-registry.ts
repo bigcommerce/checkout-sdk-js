@@ -50,12 +50,22 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
     ): string | undefined {
         const query = this._decodeToken(token);
 
-        const results: Array<{ token: string; matches: number; default: boolean }> = [];
+        const results: Array<{
+            token: string;
+            matches: number;
+            default: boolean;
+            totalKeys: number;
+        }> = [];
 
         registeredTokens.forEach((registeredToken) => {
             const resolverId = this._decodeToken(registeredToken);
 
-            const result = { token: registeredToken, matches: 0, default: false };
+            const result = {
+                token: registeredToken,
+                matches: 0,
+                default: false,
+                totalKeys: Object.keys(resolverId).length,
+            };
 
             for (const [key, value] of Object.entries(resolverId)) {
                 if (key in query && query[key] !== value) {
@@ -89,7 +99,11 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
 
         const matched = matchedResults[0];
 
-        if (exactMatch && matched?.matches !== Object.keys(query).length) {
+        if (
+            exactMatch &&
+            (matched?.matches !== Object.keys(query).length ||
+                matched?.matches !== matched?.totalKeys)
+        ) {
             throw new Error('Unable to resolve to a registered token with the provided token.');
         }
 

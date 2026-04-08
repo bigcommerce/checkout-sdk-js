@@ -168,4 +168,16 @@ describe('ResolveIdRegistry', () => {
         expect(subject.getFactory({ type: 'bigbigpaypay' }, true)).toBeUndefined();
         expect(subject.getFactory({ id: 'foo', type: 'bar' }, true)).toBeUndefined();
     });
+
+    it('returns none if query is a subset of a registered token', () => {
+        subject = new ResolveIdRegistry(true);
+        subject.register(
+            { id: 'credit_card', gateway: 'bluesnapdirect' } as TestResolveId,
+            () => new FooStrategy(),
+        );
+
+        expect(
+            subject.getFactory({ gateway: 'bluesnapdirect' } as TestResolveId, true),
+        ).toBeUndefined();
+    });
 });
