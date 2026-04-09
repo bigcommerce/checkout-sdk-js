@@ -157,11 +157,15 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return async (event: MouseEvent) => {
             event.preventDefault();
 
-            // TODO: Dispatch Widget Actions
             try {
                 this._googlePayPaymentProcessor.setShouldRequestShipping(false);
                 await this._googlePayPaymentProcessor.initializeWidget();
-                await this._interactWithPaymentSheet();
+
+                if (this._isDirectPayOnClickEnabled()) {
+                    await this._interactWithPaymentSheetAndPay();
+                } else {
+                    await this._interactWithPaymentSheet();
+                }
             } catch (error) {
                 let err: unknown = error;
 
@@ -213,6 +217,52 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         await this._paymentIntegrationService.loadCheckout();
         await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
+        this._toggleLoadingIndicator(false);
+        this._toggleBlockDeinitialization(false);
+    }
+
+    protected async _interactWithPaymentSheetAndPay(): Promise<void> {
+        const response = await this._googlePayPaymentProcessor.showPaymentSheet();
+
+        this._toggleBlockDeinitialization(true);
+        this._toggleLoadingIndicator(true);
+
+        const methodId = this._getMethodId();
+
+        const state = this._paymentIntegrationService.getState();
+        const { features } = state.getStoreConfigOrThrow().checkoutSettings;
+        const isGooglePayDontOverrideAddresssExperimentOn = isExperimentEnabled(
+            features,
+            'PI-5031.google_pay_dont_override_address',
+        );
+
+        const billingAddress =
+            this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);
+
+        if (billingAddress && !isGooglePayDontOverrideAddresssExperimentOn) {
+            await this._paymentIntegrationService.updateBillingAddress(billingAddress);
+        }
+
+        await this._googlePayPaymentProcessor.setExternalCheckoutXhr(methodId, response);
+
+        await this._paymentIntegrationService.loadCheckout();
+        await this._paymentIntegrationService.loadPaymentMethod(methodId);
+
+        const freshPaymentMethod = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<GooglePayInitializationData>(methodId);
+
+        await this._googlePayPaymentProcessor.initialize(
+            () => freshPaymentMethod,
+        );
+
+        await this.execute({ useStoreCredit: false, payment: { methodId } });
+
+        this._completeCheckoutFlow();
+    }
+
+    protected _completeCheckoutFlow(): void {
+        window.location.replace('/checkout/order-confirmation');
         this._toggleLoadingIndicator(false);
         this._toggleBlockDeinitialization(false);
     }
@@ -324,6 +374,17 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 },
             },
         };
+    }
+
+    private _isDirectPayOnClickEnabled(): boolean {
+        const { features } = this._paymentIntegrationService
+            .getState()
+            .getStoreConfigOrThrow().checkoutSettings;
+
+        return isExperimentEnabled(
+            features,
+            'PI-000.google_pay_direct_pay_on_click',
+        );
     }
 
     private _toggleBlockDeinitialization(isBlocked: boolean) {
