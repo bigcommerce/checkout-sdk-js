@@ -336,8 +336,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         if (stripeError || !stripeCheckoutSession) {
             if (sendSecondPaymentRequestOnStripeError) {
                 // INFO: even in case when stripe payment confirmation was declined
-                // we need to send submitPayment request to update status of checkout session on BE side
-                // and after this we need to throw error to display decline message to the user.
+                // we need to send submitPayment request to update status of checkout session on BE side.
                 try {
                     await this.paymentIntegrationService.submitPayment(paymentPayload);
                 } catch {
