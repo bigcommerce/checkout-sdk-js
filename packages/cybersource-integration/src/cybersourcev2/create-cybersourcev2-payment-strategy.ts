@@ -1,15 +1,12 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    CardinalClient,
-    CardinalScriptLoader,
-    CardinalThreeDSecureFlowV2,
-} from '@bigcommerce/checkout-sdk/cardinal-integration';
-import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import CybersourceUnifiedCheckoutClient from './cybersource-unified-checkout-client';
+import CybersourceUnifiedCheckoutScriptLoader from './cybersource-unified-checkout-script-loader';
 import CyberSourceV2PaymentStrategy from './cybersourcev2-payment-strategy';
 
 const createCyberSourceV2PaymentStrategy: PaymentStrategyFactory<CyberSourceV2PaymentStrategy> = (
@@ -17,9 +14,8 @@ const createCyberSourceV2PaymentStrategy: PaymentStrategyFactory<CyberSourceV2Pa
 ) => {
     return new CyberSourceV2PaymentStrategy(
         paymentIntegrationService,
-        new CardinalThreeDSecureFlowV2(
-            paymentIntegrationService,
-            new CardinalClient(new CardinalScriptLoader(getScriptLoader())),
+        new CybersourceUnifiedCheckoutClient(
+            new CybersourceUnifiedCheckoutScriptLoader(getScriptLoader()),
         ),
     );
 };

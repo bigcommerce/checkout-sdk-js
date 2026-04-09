@@ -1,8 +1,7 @@
-import { merge } from 'lodash';
-
-import { CardinalThreeDSecureFlowV2 } from '@bigcommerce/checkout-sdk/cardinal-integration';
-import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
+    InvalidArgumentError,
+    MissingDataError,
+    OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
@@ -15,25 +14,33 @@ import {
 
 import { getCybersource } from '../cybersource.mock';
 
+import CybersourceUnifiedCheckoutClient from './cybersource-unified-checkout-client';
 import CyberSourceV2PaymentStrategy from './cybersourcev2-payment-strategy';
 
 describe('CyberSourceV2PaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let strategy: CyberSourceV2PaymentStrategy;
-    let threeDSecureFlow: Pick<CardinalThreeDSecureFlowV2, 'prepare' | 'start'>;
+    let unifiedCheckoutClient: jest.Mocked<
+        Pick<CybersourceUnifiedCheckoutClient, 'load' | 'initialize' | 'createTransientToken' | 'teardown'>
+    >;
+
+    const containerId = 'unified-checkout-container';
 
     beforeEach(() => {
         paymentMethod = {
             ...getCybersource(),
-            clientToken: 'foo',
+            id: 'cybersourcev2',
+            clientToken: 'capture-context-jwt',
         };
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        threeDSecureFlow = {
-            prepare: jest.fn(() => Promise.resolve()),
-            start: jest.fn(() => Promise.resolve()),
+        unifiedCheckoutClient = {
+            load: jest.fn(() => Promise.resolve()),
+            initialize: jest.fn(),
+            createTransientToken: jest.fn(() => Promise.resolve('transient-token')),
+            teardown: jest.fn(),
         };
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
@@ -42,15 +49,28 @@ describe('CyberSourceV2PaymentStrategy', () => {
 
         strategy = new CyberSourceV2PaymentStrategy(
             paymentIntegrationService,
-            threeDSecureFlow as CardinalThreeDSecureFlowV2,
+            unifiedCheckoutClient as unknown as CybersourceUnifiedCheckoutClient,
         );
     });
 
-    it('is special type of credit card strategy', () => {
-        expect(strategy).toBeInstanceOf(CreditCardPaymentStrategy);
-    });
-
     describe('#initialize', () => {
+        it('throws InvalidArgumentError if containerId is not provided', async () => {
+            await expect(
+                strategy.initialize({ methodId: paymentMethod.id }),
+            ).rejects.toThrow(InvalidArgumentError);
+        });
+
+        it('throws MissingDataError if clientToken is missing', async () => {
+            paymentMethod.clientToken = undefined;
+
+            await expect(
+                strategy.initialize({
+                    methodId: paymentMethod.id,
+                    cybersourcev2: { containerId },
+                }),
+            ).rejects.toThrow(MissingDataError);
+        });
+
         it('throws error if payment method is not defined', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -59,81 +79,74 @@ describe('CyberSourceV2PaymentStrategy', () => {
                 throw new Error();
             });
 
-            try {
-                await strategy.initialize({ methodId: paymentMethod.id });
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-            }
+            await expect(
+                strategy.initialize({
+                    methodId: paymentMethod.id,
+                    cybersourcev2: { containerId },
+                }),
+            ).rejects.toThrow(Error);
         });
 
-        it('does not prepare 3DS flow if not enabled', async () => {
-            paymentMethod.config.is3dsEnabled = false;
+        it('loads and initializes the Unified Checkout SDK', async () => {
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                cybersourcev2: { containerId },
+            });
 
-            await strategy.initialize({ methodId: paymentMethod.id });
-
-            expect(threeDSecureFlow.prepare).not.toHaveBeenCalled();
-        });
-
-        it('prepares 3DS flow if enabled', async () => {
-            paymentMethod.config.is3dsEnabled = true;
-
-            await strategy.initialize({ methodId: paymentMethod.id });
-
-            expect(threeDSecureFlow.prepare).toHaveBeenCalled();
+            expect(unifiedCheckoutClient.load).toHaveBeenCalledWith(paymentMethod.config.testMode);
+            expect(unifiedCheckoutClient.initialize).toHaveBeenCalledWith(
+                paymentMethod.clientToken,
+                containerId,
+            );
         });
     });
 
     describe('#execute', () => {
         let payload: OrderRequestBody;
 
-        beforeEach(() => {
-            payload = merge({}, getOrderRequestBody(), {
+        beforeEach(async () => {
+            payload = {
+                ...getOrderRequestBody(),
                 payment: {
                     methodId: paymentMethod.id,
                     gatewayId: paymentMethod.gateway,
                 },
+            };
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                cybersourcev2: { containerId },
             });
         });
 
         it('throws PaymentArgumentInvalidError with empty payload', async () => {
-            paymentMethod.config.is3dsEnabled = false;
-
-            try {
-                await strategy.execute({});
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentArgumentInvalidError);
-            }
+            await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
         });
 
-        it('throws error if payment method is not defined', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockImplementation(() => {
-                throw new Error();
-            });
-
-            try {
-                await strategy.execute(payload);
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-            }
-        });
-
-        it('does not start 3DS flow if not enabled', async () => {
-            paymentMethod.config.is3dsEnabled = false;
-
+        it('creates a transient token and submits order and payment', async () => {
             await strategy.execute(payload);
 
-            expect(threeDSecureFlow.start).not.toHaveBeenCalled();
+            expect(unifiedCheckoutClient.createTransientToken).toHaveBeenCalled();
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: { nonce: 'transient-token' },
+                }),
+            );
         });
+    });
 
-        it('starts 3DS flow if enabled', async () => {
-            paymentMethod.config.is3dsEnabled = true;
+    describe('#deinitialize', () => {
+        it('tears down the Unified Checkout SDK', async () => {
+            await strategy.deinitialize();
 
-            await strategy.execute(payload);
+            expect(unifiedCheckoutClient.teardown).toHaveBeenCalled();
+        });
+    });
 
-            expect(threeDSecureFlow.start).toHaveBeenCalled();
+    describe('#finalize', () => {
+        it('rejects with OrderFinalizationNotRequiredError', async () => {
+            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         });
     });
 });
