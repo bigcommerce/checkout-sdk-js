@@ -203,7 +203,9 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
                     );
 
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.bigCommercePaymentsIntegrationService.updateOrder();
+                await this.bigCommercePaymentsIntegrationService.updateOrder(
+                    'bigcommerce_payments',
+                );
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
@@ -243,7 +245,7 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
                 this.bigCommercePaymentsIntegrationService.getShippingOptionOrThrow();
 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder('bigcommerce_payments');
         } catch (error) {
             if (typeof error === 'string') {
                 throw new Error(error);
@@ -262,7 +264,7 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
 
         try {
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder('bigcommerce_payments');
         } catch (error) {
             if (typeof error === 'string') {
                 throw new Error(error);

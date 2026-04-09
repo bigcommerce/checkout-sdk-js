@@ -17,6 +17,7 @@ import {
 import {
     getBillingAddress,
     getConfig,
+    getOrder,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -101,9 +102,13 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
 
+        jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(getOrder());
         jest.spyOn(bigCommercePaymentsSdkHelper, 'getPayPalApmsSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(bigCommercePaymentsIntegrationService, 'createOrder').mockResolvedValue(
             paypalOrderId,
+        );
+        jest.spyOn(bigCommercePaymentsIntegrationService, 'updateOrder').mockImplementation(
+            jest.fn(),
         );
         jest.spyOn(bigCommercePaymentsIntegrationService, 'submitPayment').mockResolvedValue();
         jest.spyOn(bigCommercePaymentsIntegrationService, 'getOrderStatus').mockResolvedValue(
@@ -347,6 +352,50 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
                 defaultGatewayId,
             );
         });
+
+        it('initiate an order update request if the polling is disabled and the payment method is IDEAL', async () => {
+            const storeConfigMock = {
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-6115.bcp_order_approved_processing': true,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            const nonInstantMethodId = 'ideal';
+
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: nonInstantMethodId,
+            });
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(bigCommercePaymentsIntegrationService.createOrder).toHaveBeenCalledWith(
+                'bigcommerce_payments_apms',
+            );
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(bigCommercePaymentsIntegrationService.updateOrder).toHaveBeenCalledWith(
+                'bigcommerce_payments_apms',
+                nonInstantMethodId,
+                295,
+            );
+            expect(bigCommercePaymentsIntegrationService.submitPayment).toHaveBeenCalledWith(
+                nonInstantMethodId,
+                paypalOrderId,
+                defaultGatewayId,
+            );
+        });
     });
 
     describe('#onClick button callback', () => {
@@ -584,6 +633,40 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+        });
+
+        it('do not submit order for IDEAL when exp is enabled', async () => {
+            const storeConfigMock = {
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-6115.bcp_order_approved_processing': true,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            const payload = {
+                payment: {
+                    methodId: 'ideal',
+                    gatewayId: defaultGatewayId,
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
         });
 
         it('submits payment with provided data', async () => {
