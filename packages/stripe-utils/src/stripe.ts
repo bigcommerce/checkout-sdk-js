@@ -148,6 +148,14 @@ export interface StripeError {
     payment_intent: PaymentIntent;
 }
 
+export interface StripeCheckoutSessionConfirmationError {
+    code?: string;
+    message: string;
+    paymentFailed?: {
+        declineCode?: string;
+    };
+}
+
 export interface StripeElement {
     /**
      * The `element.mount` method attaches your element to the DOM.
@@ -524,7 +532,7 @@ export interface StripeLoadActionsResult {
 
 export interface StripeCheckoutSessionActionResult {
     type: StripeLoadActionsResultType;
-    error?: StripeError;
+    error?: StripeCheckoutSessionConfirmationError;
     session?: StripeCheckoutSession;
 }
 
@@ -766,6 +774,7 @@ export interface StripeInitializationData {
     captureMethod?: 'automatic' | 'manual';
     useNewStripeJsVersion?: boolean;
     checkoutSessionEnabled?: boolean;
+    sendSecondPaymentRequestOnStripeError?: boolean;
 }
 
 export interface StripeElementUpdateOptions {

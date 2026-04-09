@@ -20,6 +20,7 @@ import {
     StripeAdditionalActionRequired,
     StripeCheckoutInstance,
     StripeCheckoutSession,
+    StripeCheckoutSessionActionResult,
     StripeCheckoutSessionActions,
     StripeCheckoutSessionPaymentStatus,
     StripeClient,
@@ -111,7 +112,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            await this._processAdditionalAction(error, methodId);
+            await this._processAdditionalAction(error, gatewayId, methodId);
         }
     }
 
@@ -298,6 +299,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
     private async _processAdditionalAction(
         error: unknown,
+        gatewayId: string,
         methodId: string,
     ): Promise<PaymentIntegrationSelectors | undefined> {
         if (
@@ -310,24 +312,43 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const { data: additionalActionData } = error.body?.additional_action_required || {};
         const { token } = additionalActionData || {};
         const existingStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow();
-        const { id: checkoutSessionId, status: checkoutSessionStatus } =
-            await this._confirmStripePaymentOrThrow(additionalActionData);
-        const newStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow();
+        const { session: stripeCheckoutSession, error: stripeError } = await this._confirmStripePayment(additionalActionData);
+        const newStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow(stripeCheckoutSession);
+        const { id: checkoutSessionId, status: checkoutSessionStatus } = stripeCheckoutSession || {};
         const newVaultedStripeInstrument = this._getNewVaultedStripeInstrument(
             existingStripeSavedPaymentMethods,
             newStripeSavedPaymentMethods,
         );
-
         const paymentPayload = this._getPaymentPayload(
             methodId,
             checkoutSessionId || token,
             newVaultedStripeInstrument,
         );
+        const { initializationData } = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
+        const { sendSecondPaymentRequestOnStripeError } = initializationData || {};
+
+        if (stripeError || !stripeCheckoutSession) {
+            if (sendSecondPaymentRequestOnStripeError) {
+                // INFO: even in case when stripe payment confirmation was declined
+                // we need to send submitPayment request to update status of checkout session on BE side
+                // and after this we need to throw error to display decline message to the user.
+                try {
+                    await this.paymentIntegrationService.submitPayment(paymentPayload);
+                } catch {
+                    // INFO: additional action should be ignored for this update status request.
+                    // will throw Stripe error message to the shopper.
+                }
+            }
+
+            throw new PaymentMethodFailedError(stripeError?.message);
+        }
 
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            if (checkoutSessionStatus.paymentStatus === StripeCheckoutSessionPaymentStatus.Paid) {
+            if (checkoutSessionStatus?.paymentStatus === StripeCheckoutSessionPaymentStatus.Paid) {
                 this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
             }
 
@@ -335,9 +356,9 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async _confirmStripePaymentOrThrow(
+    private async _confirmStripePayment(
         additionalActionData: StripeAdditionalActionRequired['data'],
-    ): Promise<StripeCheckoutSession | never> {
+    ): Promise<StripeCheckoutSessionActionResult | never> {
         const { redirect_url } = additionalActionData || {};
 
         if (!this.stripeCheckout) {
@@ -346,16 +367,10 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         const stripeActions = await this._getStripeActionsOrThrow();
 
-        const { session: stripeCheckoutSession, error: stripeError } = await stripeActions.confirm({
+        return await stripeActions.confirm({
             redirect: StripeStringConstants.IF_REQUIRED,
             returnUrl: redirect_url,
         });
-
-        if (stripeError || !stripeCheckoutSession) {
-            throw new PaymentMethodFailedError(stripeError?.message);
-        }
-
-        return stripeCheckoutSession;
     }
 
     private async _updateStripeShopperData(): Promise<void> {
@@ -409,7 +424,13 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private async _getStripeSavedPaymentMethodsOrThrow(): Promise<StripeSavedPaymentMethod[]> {
+    private async _getStripeSavedPaymentMethodsOrThrow(
+        stripeCheckoutSession?: StripeCheckoutSession,
+    ): Promise<StripeSavedPaymentMethod[]> {
+        if (stripeCheckoutSession?.savedPaymentMethods) {
+            return stripeCheckoutSession.savedPaymentMethods;
+        }
+
         const stripeActions = await this._getStripeActionsOrThrow();
         const { savedPaymentMethods } = (await stripeActions.getSession()) || {};
 
