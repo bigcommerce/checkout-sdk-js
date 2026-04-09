@@ -97,15 +97,21 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
             }
         }
 
-        const matched = matchedResults[0];
+        const queryKeyCount = Object.keys(query).length;
 
-        if (
-            exactMatch &&
-            (matched?.matches !== Object.keys(query).length ||
-                matched?.matches !== matched?.totalKeys)
-        ) {
-            throw new Error('Unable to resolve to a registered token with the provided token.');
+        if (exactMatch) {
+            const exactResult = matchedResults.find(
+                (result) => result.matches === queryKeyCount && result.matches === result.totalKeys,
+            );
+
+            if (!exactResult) {
+                throw new Error('Unable to resolve to a registered token with the provided token.');
+            }
+
+            return exactResult.token;
         }
+
+        const matched = matchedResults[0];
 
         if (matched && matched.token) {
             return matched.token;
