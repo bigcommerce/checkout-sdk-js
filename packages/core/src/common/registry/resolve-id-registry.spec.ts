@@ -180,4 +180,16 @@ describe('ResolveIdRegistry', () => {
             subject.getFactory({ gateway: 'bluesnapdirect' } as TestResolveId, true),
         ).toBeUndefined();
     });
+
+    it('returns exact match even when a more specific token with a shared key is registered first', () => {
+        subject = new ResolveIdRegistry(true);
+
+        const fooFactory = () => new FooStrategy();
+        const barFactory = () => new BarStrategy();
+
+        subject.register({ gateway: 'apms', id: 'foo' } as TestResolveId, fooFactory);
+        subject.register({ id: 'foo' } as TestResolveId, barFactory);
+
+        expect(subject.getFactory({ id: 'foo' } as TestResolveId, true)).toBe(barFactory);
+    });
 });
