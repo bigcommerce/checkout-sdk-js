@@ -1430,9 +1430,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
         describe('savedPaymentMethods from confirmation session', () => {
             it('uses savedPaymentMethods from confirmation session instead of calling getSession again', async () => {
-                const existingMethods = [
-                    { id: 'pm_existing', type: 'card', billingDetails: {} },
-                ];
+                const existingMethods = [{ id: 'pm_existing', type: 'card', billingDetails: {} }];
                 const newMethods = [
                     ...existingMethods,
                     {
@@ -1477,9 +1475,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 mockFirstPaymentRequest(errorResponse);
 
                 await stripeCSPaymentStrategy.initialize(stripeOptions);
-                await stripeCSPaymentStrategy.execute(
-                    getStripeOCSOrderRequestBodyMock(methodId),
-                );
+                await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
 
                 expect(getSessionMock).toHaveBeenCalledTimes(3);
                 expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(2, {

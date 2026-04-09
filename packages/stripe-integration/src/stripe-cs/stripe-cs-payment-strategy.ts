@@ -312,9 +312,13 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const { data: additionalActionData } = error.body?.additional_action_required || {};
         const { token } = additionalActionData || {};
         const existingStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow();
-        const { session: stripeCheckoutSession, error: stripeError } = await this._confirmStripePayment(additionalActionData);
-        const newStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow(stripeCheckoutSession);
-        const { id: checkoutSessionId, status: checkoutSessionStatus } = stripeCheckoutSession || {};
+        const { session: stripeCheckoutSession, error: stripeError } =
+            await this._confirmStripePayment(additionalActionData);
+        const newStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow(
+            stripeCheckoutSession,
+        );
+        const { id: checkoutSessionId, status: checkoutSessionStatus } =
+            stripeCheckoutSession || {};
         const newVaultedStripeInstrument = this._getNewVaultedStripeInstrument(
             existingStripeSavedPaymentMethods,
             newStripeSavedPaymentMethods,
@@ -367,7 +371,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         const stripeActions = await this._getStripeActionsOrThrow();
 
-        return await stripeActions.confirm({
+        return stripeActions.confirm({
             redirect: StripeStringConstants.IF_REQUIRED,
             returnUrl: redirect_url,
         });
