@@ -43,7 +43,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _updateCheckoutSessionData;
     private _getPaymentPayload;
     private _processAdditionalAction;
-    private _confirmStripePaymentOrThrow;
+    private _confirmStripePayment;
     private _updateStripeShopperData;
     private _updateStripeEmail;
     private _updateStripeShippingAddress;
