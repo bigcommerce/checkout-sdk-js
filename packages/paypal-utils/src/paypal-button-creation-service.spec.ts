@@ -19,12 +19,15 @@ import {
     getBillingAddressFromOrderDetails,
     getPayPalOrderDetails,
     getPayPalSDKMock,
-    getShippingAddressFromOrderDetails,
 } from './mocks';
 import PaypalButtonCreationService from './paypal-button-creation-service';
 import PayPalIntegrationService from './paypal-integration-service';
 import PayPalRequestSender from './paypal-request-sender';
 import PayPalSdkLoader from './paypal-sdk-script-loader';
+import {
+    buildMergedShippingAddressForBackfill,
+    shippingAddressFromConsignmentShippingAddress,
+} from './paypal-shipping-address-backfill';
 import { PayPalButtonsOptions, PayPalSDK, StyleButtonColor } from './paypal-types';
 
 describe('PayPalButtonCreationService', () => {
@@ -91,9 +94,6 @@ describe('PayPalButtonCreationService', () => {
 
         jest.spyOn(paypalIntegrationService, 'getBillingAddressFromOrderDetails').mockReturnValue(
             getBillingAddressFromOrderDetails(),
-        );
-        jest.spyOn(paypalIntegrationService, 'getShippingAddressFromOrderDetails').mockReturnValue(
-            getShippingAddressFromOrderDetails(),
         );
         jest.spyOn(paypalIntegrationService, 'updateOrder').mockImplementation(jest.fn());
         jest.spyOn(paypalIntegrationService, 'submitPayment').mockImplementation(jest.fn());
@@ -376,6 +376,10 @@ describe('PayPalButtonCreationService', () => {
             const onPaymentComplete = jest.fn();
 
             beforeEach(() => {
+                jest.spyOn(paymentIntegrationService, 'loadCheckout').mockResolvedValue(
+                    paymentIntegrationService.getState(),
+                );
+
                 jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
                     (options: PayPalButtonsOptions) => {
                         eventEmitter.on('onApprove', () => {
@@ -441,15 +445,24 @@ describe('PayPalButtonCreationService', () => {
             });
 
             it('updates shipping address with valid customers data if physical items are available in the cart', async () => {
+                const consignment = getConsignment();
+                const expectedMergedShipping = buildMergedShippingAddressForBackfill(
+                    shippingAddressFromConsignmentShippingAddress(consignment.shippingAddress),
+                    getPayPalOrderDetails(),
+                );
+
                 eventEmitter.emit('onApprove');
 
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(
-                    paypalIntegrationService.getShippingAddressFromOrderDetails,
-                ).toHaveBeenCalledWith(getPayPalOrderDetails());
+                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledWith(
+                    paymentIntegrationService.getState().getCartOrThrow().id,
+                );
                 expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
-                    getShippingAddressFromOrderDetails(),
+                    expectedMergedShipping,
+                );
+                expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                    getShippingOption().id,
                 );
             });
 
