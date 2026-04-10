@@ -341,6 +341,8 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         );
         let stripeError: StripeError | undefined;
 
+        console.log('*** stripePaymentData', stripePaymentData);
+
         try {
             const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
                 methodId,
