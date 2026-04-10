@@ -34,7 +34,9 @@ export {
     StripeInitCheckoutOptions,
     StripeLoadActionsResultType,
     StripeCheckoutSession,
+    StripeCheckoutSessionActionResult,
     StripeCheckoutSessionActions,
+    StripeCheckoutSessionConfirmationError,
     StripeCheckoutSessionPaymentStatus,
     StripeSavedPaymentMethod,
 } from './stripe';
