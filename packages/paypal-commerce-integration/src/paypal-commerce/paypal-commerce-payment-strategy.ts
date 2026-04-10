@@ -306,9 +306,6 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         }
 
         const buttonOptions: PayPalCommerceButtonsOptions = {
-            ...(this.isPaypalCommerceAppSwitchEnabled(methodId) && {
-                appSwitchWhenAvailable: true,
-            }),
             fundingSource: paypalSdk.FUNDING.PAYPAL,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(
                 checkoutPaymentButtonStyles,
@@ -330,7 +327,10 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             onRenderButton();
         }
 
-        if (this.paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
+        if (
+            this.paypalButton.hasReturned?.() &&
+            this.isPaypalCommerceServerSideShippingCallbacksEnabled(methodId)
+        ) {
             this.paypalButton.resume?.();
         } else {
             this.paypalButton.render(container);
@@ -475,15 +475,15 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
 
     /**
      *
-     * PayPal AppSwitch enabling handling
+     * PPCP server-side shipping callbacks enabling handling
      *
      */
-    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
+    private isPaypalCommerceServerSideShippingCallbacksEnabled(methodId: string): boolean {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
-        return paymentMethod.initializationData?.isAppSwitchEnabled || false;
+        return paymentMethod.initializationData?.isServerSideShippingCallbacksEnabled || false;
     }
 
     private getSmartButtonContainerId(container: string) {

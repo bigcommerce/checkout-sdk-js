@@ -27,6 +27,11 @@ import {
     StyleButtonColor,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
+import {
+    buildMergedShippingAddressForBackfill,
+    shippingAddressFromConsignmentShippingAddress,
+} from '../../../paypal-utils/src/paypal-shipping-address-backfill';
+
 import PayPalCommerceCustomerInitializeOptions from './paypal-commerce-customer-initialize-options';
 import PayPalCommerceCustomerStrategy from './paypal-commerce-customer-strategy';
 
@@ -278,18 +283,18 @@ describe('PayPalCommerceCustomerStrategy', () => {
         });
 
         it('calls PayPal button resume', async () => {
-            const paymentMethodWithAppSwitch = {
+            const paymentMethodWithServerSideShippingCallbacks = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithAppSwitch);
+            ).mockReturnValue(paymentMethodWithServerSideShippingCallbacks);
             await strategy.initialize(initializationOptions);
 
             expect(resumeMock).toHaveBeenCalled();
@@ -324,7 +329,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
             });
         });
 
-        it('initializes paypal buttons without shipping callbacks what appSwitch enabled', async () => {
+        it('initializes paypal buttons without shipping callbacks when server-side shipping callbacks enabled', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -333,14 +338,13 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             });
 
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: {
@@ -353,19 +357,19 @@ describe('PayPalCommerceCustomerStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render with appSwitch flag', async () => {
-            const paymentMethodWithAppSwitch = {
+        it('initializes PayPal button to render with server-side shipping callbacks flag', async () => {
+            const paymentMethodWithServerSideShippingCallbacks = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithAppSwitch);
+            ).mockReturnValue(paymentMethodWithServerSideShippingCallbacks);
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
@@ -375,7 +379,6 @@ describe('PayPalCommerceCustomerStrategy', () => {
                     color: StyleButtonColor.silver,
                     label: 'checkout',
                 },
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
@@ -577,11 +580,13 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(
-                    paypalIntegrationService.getShippingAddressFromOrderDetails,
-                ).toHaveBeenCalledWith(getPayPalOrderDetails());
+                const expectedMergedShippingAddress = buildMergedShippingAddressForBackfill(
+                    shippingAddressFromConsignmentShippingAddress(getConsignment().shippingAddress),
+                    getPayPalOrderDetails(),
+                );
+
                 expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
-                    getShippingAddressFromOrderDetails(),
+                    expectedMergedShippingAddress,
                 );
             });
 

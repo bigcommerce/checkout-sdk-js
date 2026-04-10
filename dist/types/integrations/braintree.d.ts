@@ -585,10 +585,6 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
      */
     currencyCode?: string;
     /**
-     * The ID of a container where the messaging component should be inserted.
-     */
-    messagingContainerId?: string;
-    /**
      * A set of styling options for the checkout button.
      */
     style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
@@ -627,13 +623,11 @@ declare class BraintreePaypalCreditButtonStrategy implements CheckoutButtonStrat
     private paymentIntegrationService;
     private formPoster;
     private braintreeIntegrationService;
-    private braintreeMessages;
     private braintreeHostWindow;
     private buyNowCartId;
-    constructor(paymentIntegrationService: PaymentIntegrationService, formPoster: FormPoster, braintreeIntegrationService: BraintreeIntegrationService, braintreeMessages: BraintreeMessages, braintreeHostWindow: BraintreeHostWindow);
+    constructor(paymentIntegrationService: PaymentIntegrationService, formPoster: FormPoster, braintreeIntegrationService: BraintreeIntegrationService, braintreeHostWindow: BraintreeHostWindow);
     initialize(options: CheckoutButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
-    private renderPayPalMessages;
     private renderPayPalButton;
     private setupPayment;
     private tokenizePayment;

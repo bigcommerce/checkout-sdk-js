@@ -111,7 +111,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 ...storeConfig.checkoutSettings,
                 features: {
                     ...storeConfig.checkoutSettings.features,
-                    'PAYPAL-5716.app_switch_functionality': false,
+                    'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                 },
             },
         });
@@ -303,7 +303,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -335,7 +335,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             });
         });
 
-        it('initializes paypal buttons without shipping callbacks when appSwitch enabled', async () => {
+        it('initializes paypal buttons without shipping callbacks when server-side shipping callbacks enabled', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -344,7 +344,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             });
 

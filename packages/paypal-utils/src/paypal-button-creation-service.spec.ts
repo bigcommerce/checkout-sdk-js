@@ -256,10 +256,10 @@ describe('PayPalButtonCreationService', () => {
         });
     });
 
-    it('create PayPal button with appSwitchWhenAvailable option enabled', () => {
+    it('create PayPal button when server-side shipping callbacks enabled does not pass appSwitch to SDK', () => {
         paypalButtonCreationService.createPayPalButton('paypalcommerce', 'paypalcommercecredit', {
             fundingSource: paypalSdk.FUNDING.PAYLATER,
-            isAppSwitchEnabled: true,
+            isServerSideShippingCallbacksEnabled: true,
         });
 
         expect(paypalSdk.Buttons).toHaveBeenCalledWith({
@@ -269,7 +269,6 @@ describe('PayPalButtonCreationService', () => {
             style: {
                 height: 40,
             },
-            appSwitchWhenAvailable: true,
         });
     });
 

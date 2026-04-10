@@ -250,7 +250,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             });
         });
 
-        it('render button with appSwitch flag', async () => {
+        it('render button when server-side shipping callbacks enabled does not pass appSwitch to SDK', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -258,14 +258,13 @@ describe('PayPalCommercePaymentStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             });
 
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: {
@@ -280,7 +279,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             });
         });
 
-        it('calls resume when appSwitch enabled and returned from app', async () => {
+        it('calls resume when server-side shipping callbacks enabled and returned from app', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -288,7 +287,7 @@ describe('PayPalCommercePaymentStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             });
 

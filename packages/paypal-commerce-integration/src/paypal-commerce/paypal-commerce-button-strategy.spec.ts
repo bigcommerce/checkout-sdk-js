@@ -30,6 +30,11 @@ import {
     PayPalSDK,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
+import {
+    buildMergedShippingAddressForBackfill,
+    shippingAddressFromConsignmentShippingAddress,
+} from '../../../paypal-utils/src/paypal-shipping-address-backfill';
+
 import PayPalCommerceButtonInitializeOptions from './paypal-commerce-button-initialize-options';
 import PayPalCommerceButtonStrategy from './paypal-commerce-button-strategy';
 
@@ -385,7 +390,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 checkoutSettings: {
                     ...storeConfig.checkoutSettings,
                     features: {
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -404,7 +409,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -422,7 +427,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -437,7 +442,6 @@ describe('PayPalCommerceButtonStrategy', () => {
                 expect.objectContaining({
                     fundingSource: paypalSdk.FUNDING.PAYPAL,
                     style: paypalCommerceOptions.style,
-                    appSwitchWhenAvailable: true,
                     createOrder: expect.any(Function),
                     onApprove: expect.any(Function),
                 }),
@@ -454,7 +458,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -484,13 +488,13 @@ describe('PayPalCommerceButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
+        it('initializes PayPal button to render without shipping options when server-side shipping callbacks enabled', async () => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -502,7 +506,6 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 onApprove: expect.any(Function),
@@ -574,12 +577,12 @@ describe('PayPalCommerceButtonStrategy', () => {
             );
         });
 
-        it('initializes PayPal button to render with appSwitch flag', async () => {
+        it('initializes PayPal button to render with server-side shipping callbacks flag', async () => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -591,7 +594,6 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 onApprove: expect.any(Function),
@@ -610,7 +612,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 checkoutSettings: {
                     ...storeConfig.checkoutSettings,
                     features: {
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -754,11 +756,13 @@ describe('PayPalCommerceButtonStrategy', () => {
 
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(
-                    paypalCommerceIntegrationService.getShippingAddressFromOrderDetails,
-                ).toHaveBeenCalledWith(getPayPalOrderDetails());
+                const expectedMergedShippingAddress = buildMergedShippingAddressForBackfill(
+                    shippingAddressFromConsignmentShippingAddress(getConsignment().shippingAddress),
+                    getPayPalOrderDetails(),
+                );
+
                 expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
-                    getShippingAddressFromOrderDetails(),
+                    expectedMergedShippingAddress,
                 );
             });
 
@@ -820,7 +824,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -863,7 +867,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -889,7 +893,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -938,7 +942,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -964,7 +968,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });

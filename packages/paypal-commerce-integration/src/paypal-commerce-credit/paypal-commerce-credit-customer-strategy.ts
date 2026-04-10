@@ -114,7 +114,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, paymentButtonStyles, isAppSwitchEnabled } =
+        const { isHostedCheckoutEnabled, paymentButtonStyles, isServerSideShippingCallbacksEnabled } =
             paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
@@ -127,7 +127,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>

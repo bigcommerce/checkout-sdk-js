@@ -1118,10 +1118,6 @@ declare interface BigCommercePaymentsMessagesStyleOptions {
 
 declare interface BigCommercePaymentsPayLaterButtonInitializeOptions {
     /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
-    /**
      * A set of styling options for the checkout button.
      */
     style?: PayPalButtonStyleOptions;
@@ -1148,8 +1144,7 @@ declare interface BigCommercePaymentsPayLaterButtonInitializeOptions {
 declare class BigCommercePaymentsPayLaterButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
     private bigCommercePaymentsIntegrationService;
-    private payPalSdkHelper;
-    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService, payPalSdkHelper: PayPalSdkHelper);
+    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService);
     initialize(options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsPayLaterButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
@@ -1157,7 +1152,6 @@ declare class BigCommercePaymentsPayLaterButtonStrategy implements CheckoutButto
     private onHostedCheckoutApprove;
     private onShippingAddressChange;
     private onShippingOptionsChange;
-    private renderMessages;
 }
 
 declare interface BigCommercePaymentsPayLaterCustomerInitializeOptions {

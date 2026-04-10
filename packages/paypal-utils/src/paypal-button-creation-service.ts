@@ -37,7 +37,7 @@ class PaypalButtonCreationService {
         const {
             style,
             fundingSource,
-            isAppSwitchEnabled,
+            isServerSideShippingCallbacksEnabled,
             isHostedCheckoutEnabled,
             onClick,
             onCancel,
@@ -57,7 +57,7 @@ class PaypalButtonCreationService {
         }
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data, providerId),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
@@ -76,9 +76,6 @@ class PaypalButtonCreationService {
         return paypalSdk.Buttons({
             fundingSource,
             style: this.paypalIntegrationService.getValidButtonStyle(style),
-            ...(isAppSwitchEnabled && {
-                appSwitchWhenAvailable: true,
-            }),
             createOrder: async () => {
                 if (buyNowInitializeOptions) {
                     const buyNowCart = await this.paypalIntegrationService.createBuyNowCartOrThrow(

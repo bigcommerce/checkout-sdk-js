@@ -417,7 +417,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-5716.app_switch_functionality': false,
+                        'PAYPAL-6191.ppcp_server_side_shipping_callbacks': false,
                     },
                 },
             });
@@ -447,13 +447,13 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
+        it('initializes PayPal button to render without shipping options when server-side shipping callbacks enabled', async () => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
