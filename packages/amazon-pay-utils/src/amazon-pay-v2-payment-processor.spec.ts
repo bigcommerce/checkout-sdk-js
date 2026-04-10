@@ -259,6 +259,69 @@ describe('AmazonPayV2PaymentProcessor', () => {
         });
     });
 
+    describe('#initCheckoutWithSessionConfig', () => {
+        const containerId = 'amazonpay-container';
+        let amazonPayV2ButtonParams: Required<AmazonPayV2NewButtonParams>;
+        let createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>;
+
+        beforeEach(() => {
+            amazonPayV2ButtonParams =
+                getAmazonPayV2Ph4ButtonParamsMock() as Required<AmazonPayV2NewButtonParams>;
+
+            const { publicKeyId, createCheckoutSessionConfig: signedPayload } =
+                amazonPayV2ButtonParams;
+
+            createCheckoutSessionConfig = {
+                publicKeyId,
+                ...signedPayload,
+            };
+        });
+
+        describe('should initiate checkout immediately:', () => {
+            beforeEach(async () => {
+                await processor.initialize(amazonPayV2Mock);
+                processor.createButton(containerId, amazonPayV2ButtonParams);
+            });
+
+            test('config does not include publicKeyId because it has an environment prefix', () => {
+                const expectedConfig = {
+                    createCheckoutSessionConfig:
+                        amazonPayV2ButtonParams.createCheckoutSessionConfig,
+                };
+
+                processor.initCheckoutWithSessionConfig(createCheckoutSessionConfig);
+
+                const amazonPayV2Button: AmazonPayV2Button = (
+                    amazonPayV2SDKMock.Pay.renderButton as jest.Mock
+                ).mock.results[0].value;
+
+                expect(amazonPayV2Button.initCheckout).toHaveBeenNthCalledWith(1, expectedConfig);
+            });
+
+            test('config includes publicKeyId because it does not have an environment prefix', () => {
+                const expectedConfig = {
+                    createCheckoutSessionConfig,
+                };
+
+                createCheckoutSessionConfig.publicKeyId = 'foo';
+                processor.initCheckoutWithSessionConfig(createCheckoutSessionConfig);
+
+                const amazonPayV2Button: AmazonPayV2Button = (
+                    amazonPayV2SDKMock.Pay.renderButton as jest.Mock
+                ).mock.results[0].value;
+
+                expect(amazonPayV2Button.initCheckout).toHaveBeenNthCalledWith(1, expectedConfig);
+            });
+        });
+
+        it('throws an error when amazonPayV2Button is not initialized', () => {
+            const initCheckoutWithSessionConfig = () =>
+                processor.initCheckoutWithSessionConfig(createCheckoutSessionConfig);
+
+            expect(initCheckoutWithSessionConfig).toThrow(NotInitializedError);
+        });
+    });
+
     describe('#prepareCheckoutWithCreationRequestConfig', () => {
         const containerId = 'amazonpay-container';
         let amazonPayV2ButtonParams: Required<AmazonPayV2NewButtonParams>;

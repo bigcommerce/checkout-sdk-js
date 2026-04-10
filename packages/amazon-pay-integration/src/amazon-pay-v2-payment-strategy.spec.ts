@@ -398,11 +398,10 @@ describe('AmazonPayV2PaymentStrategy', () => {
             void strategy.execute(orderRequestBody, initializeOptions);
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(amazonPayV2PaymentProcessor.prepareCheckout).toHaveBeenNthCalledWith(
-                1,
-                expectedConfig,
-            );
-            expect(amazonPayButton.click).toHaveBeenCalled();
+            expect(
+                amazonPayV2PaymentProcessor.initCheckoutWithSessionConfig,
+            ).toHaveBeenNthCalledWith(1, expectedConfig);
+            expect(amazonPayButton.click).not.toHaveBeenCalled();
         });
 
         describe('should fail if...', () => {
@@ -459,7 +458,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
                 );
 
                 expect(window.location.assign).not.toHaveBeenCalled();
-                expect(amazonPayV2PaymentProcessor.prepareCheckout).not.toHaveBeenCalled();
+                expect(
+                    amazonPayV2PaymentProcessor.initCheckoutWithSessionConfig,
+                ).not.toHaveBeenCalled();
             });
         });
     });

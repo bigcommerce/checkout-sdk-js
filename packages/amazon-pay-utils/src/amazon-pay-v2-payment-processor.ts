@@ -81,6 +81,18 @@ export default class AmazonPayV2PaymentProcessor {
         });
     }
 
+    /**
+     * Opens Amazon Pay checkout using a checkout session payload from BigPay
+     * (`additional_action_required`/APB)
+     */
+    initCheckoutWithSessionConfig(
+        createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>,
+    ): void {
+        const requestConfig = this.prepareRequestConfig(createCheckoutSessionConfig);
+
+        this.getAmazonPayV2Button().initCheckout(requestConfig);
+    }
+
     prepareCheckoutWithCreationRequestConfig(
         createCheckoutConfig: () => Promise<
             | {

@@ -134,6 +134,7 @@ export function getAmazonPayV2PaymentProcessorMock() {
         bindButton: jest.fn(),
         createButton: jest.fn(),
         prepareCheckout: jest.fn(),
+        initCheckoutWithSessionConfig: jest.fn(),
         prepareCheckoutWithCreationRequestConfig: jest.fn(),
         signout: jest.fn(() => Promise.resolve()),
         renderAmazonPayButton: jest.fn(),
