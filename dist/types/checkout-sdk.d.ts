@@ -5415,7 +5415,7 @@ declare interface ExtraField {
 }
 
 declare interface ExtraFieldValue {
-    fieldId: number;
+    fieldId: string;
     fieldValue: string | number;
 }
 

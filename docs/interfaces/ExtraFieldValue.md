@@ -13,7 +13,7 @@
 
 ### fieldId
 
-• **fieldId**: `number`
+• **fieldId**: `string`
 
 ___
 

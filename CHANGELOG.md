@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.898.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.898.4...v1.898.5) (2026-04-13)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-9889 Refactor ExtraFieldValue Interface ([#3213](https://github.com/bigcommerce/checkout-sdk-js/issues/3213)) ([bfa855a](https://github.com/bigcommerce/checkout-sdk-js/commit/bfa855a65af1c62813f22c4373b4e332d79b558d))
+
 ### [1.898.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.898.3...v1.898.4) (2026-04-13)
 
 ### [1.898.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.898.2...v1.898.3) (2026-04-10)
