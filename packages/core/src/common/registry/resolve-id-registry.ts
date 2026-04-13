@@ -105,7 +105,11 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
             );
 
             if (!exactResult) {
-                throw new Error('Unable to resolve to a registered token with the provided token.');
+                throw new Error(
+                    `Unable to resolve to a registered token with the provided token for ${JSON.stringify(
+                        query,
+                    )} with exact match.`,
+                );
             }
 
             return exactResult.token;
@@ -125,6 +129,10 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
             }
         }
 
-        throw new Error('Unable to resolve to a registered token with the provided token.');
+        throw new Error(
+            `Unable to resolve to a registered token with the provided token for ${JSON.stringify(
+                query,
+            )}.`,
+        );
     }
 }
