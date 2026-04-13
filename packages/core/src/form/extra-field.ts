@@ -13,6 +13,6 @@ export interface ExtraField {
 }
 
 export interface ExtraFieldValue {
-    fieldId: number;
+    fieldId: string;
     fieldValue: string | number;
 }
