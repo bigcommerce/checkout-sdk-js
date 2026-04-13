@@ -1,5 +1,5 @@
-import { BillingAddressState } from '../billing';
 import { B2BTokenState } from '../b2b-token';
+import { BillingAddressState } from '../billing';
 import { CartState } from '../cart';
 import { CheckoutButtonState } from '../checkout-buttons';
 import { ConfigState } from '../config';

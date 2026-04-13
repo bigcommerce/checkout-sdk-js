@@ -24,10 +24,7 @@ export default function b2bTokenReducer(
     return reducer(state, action);
 }
 
-function dataReducer(
-    data: B2BToken | undefined,
-    action: LoadB2BTokenAction,
-): B2BToken | undefined {
+function dataReducer(data: B2BToken | undefined, action: LoadB2BTokenAction): B2BToken | undefined {
     switch (action.type) {
         case B2BTokenActionType.LoadB2BTokenSucceeded:
             return action.payload;

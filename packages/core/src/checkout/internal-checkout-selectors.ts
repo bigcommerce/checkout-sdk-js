@@ -1,5 +1,5 @@
-import { BillingAddressSelector } from '../billing';
 import { B2BTokenSelector } from '../b2b-token';
+import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
 import { CheckoutButtonSelector } from '../checkout-buttons';
 import { ConfigSelector } from '../config';

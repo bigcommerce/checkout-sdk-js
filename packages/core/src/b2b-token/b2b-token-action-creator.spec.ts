@@ -3,11 +3,10 @@ import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
 import { CheckoutStore, createCheckoutStore } from '../checkout';
-import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getConfig } from '../config/configs.mock';
 import { getCustomer } from '../customer/customers.mock';
-import { getCheckout } from '../checkout/checkouts.mock';
 
 import B2BTokenActionCreator from './b2b-token-action-creator';
 import { B2BTokenActionType } from './b2b-token-actions';
@@ -85,7 +84,10 @@ describe('B2BTokenActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: B2BTokenActionType.LoadB2BTokenRequested },
-                expect.objectContaining({ type: B2BTokenActionType.LoadB2BTokenFailed, error: true }),
+                expect.objectContaining({
+                    type: B2BTokenActionType.LoadB2BTokenFailed,
+                    error: true,
+                }),
             ]);
         });
 
@@ -100,7 +102,10 @@ describe('B2BTokenActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: B2BTokenActionType.LoadB2BTokenRequested },
-                expect.objectContaining({ type: B2BTokenActionType.LoadB2BTokenFailed, error: true }),
+                expect.objectContaining({
+                    type: B2BTokenActionType.LoadB2BTokenFailed,
+                    error: true,
+                }),
             ]);
         });
     });
