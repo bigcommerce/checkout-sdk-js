@@ -11,6 +11,7 @@ import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
+import { getDefaultLogger } from '../common/log';
 import {
     LoadOrderPaymentsAction,
     OrderActionCreator,
@@ -286,11 +287,18 @@ export default class PaymentStrategyActionCreator {
         try {
             strategy = this._strategyRegistry.getByMethod(method);
         } catch {
-            strategy = this._strategyRegistryV2.get({
-                id: method.id,
-                gateway: method.gateway,
-                type: method.type,
-            });
+            try {
+                strategy = this._strategyRegistryV2.get({
+                    id: method.id,
+                    gateway: method.gateway,
+                    type: method.type,
+                });
+            } catch (error) {
+                getDefaultLogger().error(
+                    `[PaymentStrategyActionCreator] Unable to resolve V2 strategy for id: ${method.id}, gateway: ${method.gateway}, type: ${method.type}`,
+                );
+                throw error;
+            }
         }
 
         return strategy;
