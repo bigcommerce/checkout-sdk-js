@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
 import { AddressRequestBody } from '../address';
+import { B2BTokenActionCreator } from '../b2b-token';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
 import { DataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorMessageTransformer } from '../common/error';
@@ -86,6 +87,7 @@ export default class CheckoutService {
         private _storeProjection: DataStoreProjection<CheckoutSelectors>,
         private _extensionMessenger: ExtensionMessenger,
         private _extensionEventBroadcaster: ExtensionEventBroadcaster,
+        private _b2bTokenActionCreator: B2BTokenActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
@@ -676,6 +678,28 @@ export default class CheckoutService {
         const action = this._signInEmailActionCreator.sendSignInEmail(signInEmailRequest, options);
 
         return this._dispatch(action, { queueId: 'signInEmail' });
+    }
+
+    /**
+     * Retrieves a B2B authentication token for the current customer.
+     *
+     * The token can be used to authenticate requests to B2B REST and GraphQL
+     * endpoints. The customer must be signed in for this method to succeed.
+     *
+     * ```js
+     * const state = await service.getB2BToken('my-app-client-id');
+     *
+     * console.log(state.data.getB2BToken());
+     * ```
+     *
+     * @param appClientId - The B2B application client ID used to generate the BC JWT.
+     * @param options - Options for the request.
+     * @returns A promise that resolves to the current state.
+     */
+    getB2BToken(appClientId: string, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._b2bTokenActionCreator.loadB2BToken(appClientId, options);
+
+        return this._dispatch(action, { queueId: 'b2bToken' });
     }
 
     /**

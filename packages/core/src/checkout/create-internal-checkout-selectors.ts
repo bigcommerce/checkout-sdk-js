@@ -1,3 +1,4 @@
+import { createB2BTokenSelectorFactory } from '../b2b-token';
 import { createBillingAddressSelectorFactory } from '../billing';
 import { createCartSelectorFactory } from '../cart';
 import { createCheckoutButtonSelectorFactory } from '../checkout-buttons';
@@ -40,6 +41,7 @@ export type InternalCheckoutSelectorsFactory = (
 ) => InternalCheckoutSelectors;
 
 export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelectorsFactory {
+    const createB2BTokenSelector = createB2BTokenSelectorFactory();
     const createBillingAddressSelector = createBillingAddressSelectorFactory();
     const createCartSelector = createCartSelectorFactory();
     const createCheckoutButtonSelector = createCheckoutButtonSelectorFactory();
@@ -70,6 +72,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createExtensionSelector = createExtensionSelectorFactory();
 
     return (state, options = {}) => {
+        const b2bToken = createB2BTokenSelector(state.b2bToken);
         const billingAddress = createBillingAddressSelector(state.billingAddress);
         const cart = createCartSelector(state.cart);
         const checkoutButton = createCheckoutButtonSelector(state.checkoutButton);
@@ -112,6 +115,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const config = createConfigSelector(state.config, state.formFields);
 
         const selectors = {
+            b2bToken,
             billingAddress,
             cart,
             checkout,

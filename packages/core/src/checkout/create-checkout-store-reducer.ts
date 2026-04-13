@@ -1,5 +1,6 @@
 import { Action, combineReducers, Reducer } from '@bigcommerce/data-store';
 
+import { b2bTokenReducer } from '../b2b-token';
 import { billingAddressReducer } from '../billing';
 import { cartReducer } from '../cart';
 import { checkoutButtonReducer } from '../checkout-buttons';
@@ -30,6 +31,7 @@ import CheckoutStoreState from './checkout-store-state';
 
 export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState, Action> {
     return combineReducers({
+        b2bToken: b2bTokenReducer,
         billingAddress: billingAddressReducer,
         cart: cartReducer,
         checkout: checkoutReducer,

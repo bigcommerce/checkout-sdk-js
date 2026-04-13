@@ -1,4 +1,5 @@
 import { BillingAddressSelector } from '../billing';
+import { B2BTokenSelector } from '../b2b-token';
 import { CartSelector } from '../cart';
 import { CheckoutButtonSelector } from '../checkout-buttons';
 import { ConfigSelector } from '../config';
@@ -27,6 +28,7 @@ import { SubscriptionsSelector } from '../subscription';
 import CheckoutSelector from './checkout-selector';
 
 export default interface InternalCheckoutSelectors {
+    b2bToken: B2BTokenSelector;
     billingAddress: BillingAddressSelector;
     cart: CartSelector;
     checkout: CheckoutSelector;

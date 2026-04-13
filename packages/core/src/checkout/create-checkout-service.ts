@@ -1,6 +1,7 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
+import { B2BTokenActionCreator, B2BTokenRequestSender } from '../b2b-token';
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { createDataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorLogger } from '../common/error';
@@ -168,6 +169,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         storeProjection,
         extensionMessenger,
         createExtensionEventBroadcaster(storeProjection, extensionMessenger),
+        new B2BTokenActionCreator(new B2BTokenRequestSender(requestSender)),
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender),
             subscriptionsActionCreator,

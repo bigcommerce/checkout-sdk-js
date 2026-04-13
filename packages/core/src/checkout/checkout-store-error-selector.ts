@@ -289,6 +289,13 @@ export default interface CheckoutStoreErrorSelector {
     getSignInEmailError(): Error | undefined;
 
     /**
+     * Returns an error if unable to load the B2B token.
+     *
+     * @returns The error object if unable to load the B2B token, otherwise undefined.
+     */
+    getLoadB2BTokenError(): Error | undefined;
+
+    /**
      * Returns an error if unable to create customer account.
      *
      * @returns The error object if unable to create account, otherwise undefined.
@@ -382,6 +389,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getDeleteInstrumentError: state.instruments.getDeleteError,
             getLoadConfigError: state.config.getLoadError,
             getSignInEmailError: state.signInEmail.getSendError,
+            getLoadB2BTokenError: state.b2bToken.getLoadError,
             getCreateCustomerAccountError: state.customer.getCreateAccountError,
             getCreateCustomerAddressError: state.customer.getCreateAddressError,
             getPickupOptionsError: state.pickupOptions.getLoadError,

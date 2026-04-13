@@ -60,6 +60,13 @@ export default interface CheckoutStoreSelector {
     getSignInEmail(): SignInEmail | undefined;
 
     /**
+     * Gets the B2B authentication token for the current customer.
+     *
+     * @returns The B2B token string if it has been loaded, otherwise undefined.
+     */
+    getB2BToken(): string | undefined;
+
+    /**
      * Gets the shipping address of the current checkout.
      *
      * If the address is partially complete, it may not have shipping options
@@ -495,6 +502,11 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getEmail) => clone(getEmail),
     );
 
+    const getB2BToken = createSelector(
+        ({ b2bToken }: InternalCheckoutSelectors) => b2bToken.getToken,
+        (getToken) => clone(getToken),
+    );
+
     const isPaymentDataRequired = createSelector(
         ({ payment }: InternalCheckoutSelectors) => payment.isPaymentDataRequired,
         (isPaymentDataRequired) => clone(isPaymentDataRequired),
@@ -624,6 +636,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             isPaymentDataRequired: isPaymentDataRequired(state),
             isPaymentDataSubmitted: isPaymentDataSubmitted(state),
             getSignInEmail: getSignInEmail(state),
+            getB2BToken: getB2BToken(state),
             getInstruments: getInstruments(state),
             getCustomerAccountFields: getCustomerAccountFields(state),
             getBillingAddressFields: getBillingAddressFields(state),

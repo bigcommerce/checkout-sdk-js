@@ -1,4 +1,5 @@
 import { BillingAddressState } from '../billing';
+import { B2BTokenState } from '../b2b-token';
 import { CartState } from '../cart';
 import { CheckoutButtonState } from '../checkout-buttons';
 import { ConfigState } from '../config';
@@ -26,6 +27,7 @@ import { SubscriptionsState } from '../subscription';
 import CheckoutState from './checkout-state';
 
 export default interface CheckoutStoreState {
+    b2bToken: B2BTokenState;
     billingAddress: BillingAddressState;
     cart: CartState;
     checkout: CheckoutState;
