@@ -28,7 +28,6 @@ enum PaymentStrategyType {
     HUMM = 'humm',
     KLARNA = 'klarna',
     KLARNAV2 = 'klarnav2',
-    LAYBUY = 'laybuy',
     LEGACY = 'legacy',
     MOLLIE = 'mollie',
     MONERIS = 'moneris',
