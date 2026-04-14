@@ -130,7 +130,7 @@ export default class StripeScriptLoader {
             const stripeCheckoutSession = await actions.getSession();
             const stripeSessionIdFromOptions = options.clientSecret.split('_secret_')[0];
 
-            if (stripeCheckoutSession?.id === stripeSessionIdFromOptions) {
+            if (stripeCheckoutSession.id === stripeSessionIdFromOptions) {
                 return stripeCheckout;
             }
         } catch (error) {

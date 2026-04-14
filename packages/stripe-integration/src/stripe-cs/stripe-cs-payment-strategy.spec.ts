@@ -240,6 +240,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeCSPaymentStrategy.initialize({
                 ...stripeOptions,
                 stripeocs: {
+                    ...stripeOptions.stripeocs,
                     containerId: 'containerId',
                     render: renderMock,
                     onError: onErrorMock,
@@ -456,7 +457,7 @@ describe('StripeOCSPaymentStrategy', () => {
             };
 
             it('should update email if checkout session is not set', async () => {
-                mockStripeCheckout();
+                mockStripeCheckout({} as StripeCheckoutSession);
 
                 await stripeCSPaymentStrategy.initialize(stripeOptions);
 
@@ -470,20 +471,6 @@ describe('StripeOCSPaymentStrategy', () => {
                     paymentIntegrationService.getState(),
                     'getBillingAddress',
                 ).mockReturnValue(undefined);
-                mockStripeCheckout({ email: '' } as StripeCheckoutSession);
-
-                await stripeCSPaymentStrategy.initialize(stripeOptions);
-
-                expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
-                expect(getSessionMock).toHaveBeenCalled();
-                expect(updateEmailMock).toHaveBeenCalledWith('');
-            });
-
-            it('should update email if checkout session email is not set and billing address email is not set', async () => {
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getBillingAddress',
-                ).mockReturnValue({ email: '' } as BillingAddress);
                 mockStripeCheckout({ email: '' } as StripeCheckoutSession);
 
                 await stripeCSPaymentStrategy.initialize(stripeOptions);
@@ -517,7 +504,6 @@ describe('StripeOCSPaymentStrategy', () => {
                                 actions: {
                                     ...getStripeCheckoutSessionActionsMock(),
                                     updateShippingAddress: updateShippingAddressMock,
-                                    getSession: jest.fn(() => Promise.resolve(null)),
                                 },
                             }),
                     }),
@@ -576,7 +562,6 @@ describe('StripeOCSPaymentStrategy', () => {
                                 actions: {
                                     ...getStripeCheckoutSessionActionsMock(),
                                     updateBillingAddress: updateBillingAddressMock,
-                                    getSession: jest.fn(() => Promise.resolve(null)),
                                 },
                             }),
                     }),
@@ -617,6 +602,209 @@ describe('StripeOCSPaymentStrategy', () => {
                 await stripeCSPaymentStrategy.initialize(stripeOptions);
 
                 expect(updateBillingAddressMock).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('adaptive pricing', () => {
+            const mockPaymentMethodWithAdaptivePricing = (adaptivePricingEnabled: boolean) => {
+                const stripePaymentMethod = getStripeOCSMock();
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...stripePaymentMethod,
+                    initializationData: {
+                        ...stripePaymentMethod.initializationData,
+                        adaptivePricingEnabled,
+                    },
+                });
+            };
+
+            const mockStripeCheckoutWithCurrencySelector = (onMock: jest.Mock = jest.fn()) => {
+                const currencySelectorMountMock = jest.fn();
+                const currencySelectorElement = {
+                    mount: currencySelectorMountMock,
+                    unmount: jest.fn(),
+                    on: onMock,
+                    update: jest.fn(),
+                    destroy: jest.fn(),
+                    collapse: jest.fn(),
+                };
+
+                jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                    Promise.resolve({
+                        ...getStripeCheckoutInstanceMock(),
+                        createCurrencySelectorElement: jest.fn(() => currencySelectorElement),
+                    }),
+                );
+
+                return { currencySelectorMountMock, currencySelectorElement };
+            };
+
+            it('should pass adaptivePricing allowed true when adaptivePricingEnabled is true', async () => {
+                mockPaymentMethodWithAdaptivePricing(true);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(stripeScriptLoader.getStripeCheckout).toHaveBeenCalledWith(
+                    expect.anything(),
+                    expect.objectContaining({
+                        adaptivePricing: { allowed: true },
+                    }),
+                );
+            });
+
+            it('should pass adaptivePricing allowed false when adaptivePricingEnabled is not set', async () => {
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(stripeScriptLoader.getStripeCheckout).toHaveBeenCalledWith(
+                    expect.anything(),
+                    expect.objectContaining({
+                        adaptivePricing: { allowed: false },
+                    }),
+                );
+            });
+
+            it('should call onError when adaptivePricingEnabled is true but currencySelectorContainerId is not provided', async () => {
+                const onErrorMock = jest.fn();
+
+                mockPaymentMethodWithAdaptivePricing(true);
+
+                await stripeCSPaymentStrategy.initialize({
+                    ...stripeOptions,
+                    stripeocs: {
+                        containerId: 'containerId',
+                        render: jest.fn(),
+                        onError: onErrorMock,
+                    },
+                });
+
+                expect(onErrorMock).toHaveBeenCalledWith(expect.any(NotInitializedError));
+            });
+
+            it('should mount currency selector element when adaptivePricingEnabled is true', async () => {
+                mockPaymentMethodWithAdaptivePricing(true);
+                const { currencySelectorMountMock } = mockStripeCheckoutWithCurrencySelector();
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(currencySelectorMountMock).toHaveBeenCalledWith(
+                    `#currencySelectorContainerId`,
+                );
+            });
+
+            it('should not mount currency selector element when adaptivePricingEnabled is false', async () => {
+                mockPaymentMethodWithAdaptivePricing(false);
+                const { currencySelectorMountMock } = mockStripeCheckoutWithCurrencySelector();
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(currencySelectorMountMock).not.toHaveBeenCalled();
+            });
+
+            it('should not mount currency selector element when adaptivePricingEnabled is not set', async () => {
+                const { currencySelectorMountMock } = mockStripeCheckoutWithCurrencySelector();
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(currencySelectorMountMock).not.toHaveBeenCalled();
+            });
+
+            it('should call updatePaymentProviderCustomer when currency changes to a different currency', async () => {
+                const currencyEvent = {
+                    complete: false,
+                    elementType: 'currencySelector',
+                    empty: false,
+                    value: { currency: 'EUR' },
+                };
+
+                mockPaymentMethodWithAdaptivePricing(true);
+                mockStripeCheckoutWithCurrencySelector(
+                    jest.fn((_, callback) => callback(currencyEvent)),
+                );
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).toHaveBeenCalledWith({
+                    isCustomerCurrencySelected: true,
+                    customerCurrency: 'eur',
+                });
+            });
+
+            it('should set isCustomerCurrencySelected to false when currency matches cart currency', async () => {
+                const currencyEvent = {
+                    complete: false,
+                    elementType: 'currencySelector',
+                    empty: false,
+                    value: { currency: 'USD' },
+                };
+
+                mockPaymentMethodWithAdaptivePricing(true);
+                mockStripeCheckoutWithCurrencySelector(
+                    jest.fn((_, callback) => callback(currencyEvent)),
+                );
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).toHaveBeenCalledWith({
+                    isCustomerCurrencySelected: false,
+                    customerCurrency: 'usd',
+                });
+            });
+
+            it('should not call updatePaymentProviderCustomer when event value has no currency', async () => {
+                mockPaymentMethodWithAdaptivePricing(true);
+                mockStripeCheckoutWithCurrencySelector(
+                    jest.fn((_, callback) => callback(StripeEventMock)),
+                );
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).not.toHaveBeenCalled();
+            });
+
+            it('should not call updatePaymentProviderCustomer when event has no value', async () => {
+                const noValueEvent = {
+                    complete: false,
+                    elementType: 'currencySelector',
+                    empty: true,
+                };
+
+                mockPaymentMethodWithAdaptivePricing(true);
+                mockStripeCheckoutWithCurrencySelector(
+                    jest.fn((_, callback) => callback(noValueEvent)),
+                );
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).not.toHaveBeenCalled();
+            });
+
+            it('should not mount currency selector when element creation returns null', async () => {
+                jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                    Promise.resolve({
+                        ...getStripeCheckoutInstanceMock(),
+                        getCurrencySelectorElement: jest.fn().mockReturnValue(null),
+                        createCurrencySelectorElement: jest.fn().mockReturnValue(null),
+                    }),
+                );
+
+                mockPaymentMethodWithAdaptivePricing(true);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).not.toHaveBeenCalled();
             });
         });
     });
@@ -660,6 +848,34 @@ describe('StripeOCSPaymentStrategy', () => {
 
             expect(unmountMock).toHaveBeenCalled();
             expect(destroyMock).toHaveBeenCalled();
+        });
+
+        it('deinitializes currency selector element', async () => {
+            const currencySelectorUnmountMock = jest.fn();
+            const currencySelectorDestroyMock = jest.fn();
+
+            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                Promise.resolve({
+                    ...getStripeCheckoutInstanceMock(),
+                    getPaymentElement: getElementMock,
+                    getCurrencySelectorElement: jest.fn().mockReturnValue({
+                        mount: jest.fn(),
+                        unmount: currencySelectorUnmountMock,
+                        on: jest.fn(),
+                        update: jest.fn(),
+                        destroy: currencySelectorDestroyMock,
+                        collapse: jest.fn(),
+                    }),
+                }),
+            );
+
+            await stripeCSPaymentStrategy.initialize(getStripeOCSInitializeOptionsMock());
+            await stripeCSPaymentStrategy.deinitialize();
+
+            expect(unmountMock).toHaveBeenCalled();
+            expect(destroyMock).toHaveBeenCalled();
+            expect(currencySelectorUnmountMock).toHaveBeenCalled();
+            expect(currencySelectorDestroyMock).toHaveBeenCalled();
         });
     });
 
@@ -759,6 +975,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 stripeocs: {
                     render: jest.fn(),
                     containerId: 'containerId',
+                    currencySelectorContainerId: 'currencySelectorContainerId',
                 },
             });
             await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
@@ -800,10 +1017,16 @@ describe('StripeOCSPaymentStrategy', () => {
                 }),
             );
 
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getStripeOCSMock(methodId));
+
             await stripeCSPaymentStrategy.initialize({
                 ...stripeOptions,
                 methodId,
                 stripeocs: {
+                    ...stripeOptions.stripeocs,
                     render: jest.fn(),
                     containerId: 'containerId',
                     paymentMethodSelect: paymentMethodSelectMock,
@@ -1443,8 +1666,8 @@ describe('StripeOCSPaymentStrategy', () => {
 
                 const getSessionMock = jest
                     .fn()
-                    .mockResolvedValueOnce(null) // initial email check
-                    .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
+                    .mockResolvedValueOnce({}) // initial email check
+                    .mockResolvedValueOnce({}) // during execute _updateCheckoutSessionData
                     .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }); // before confirm
 
                 const confirmPaymentMockLocal = jest.fn().mockResolvedValue({
@@ -1534,8 +1757,8 @@ describe('StripeOCSPaymentStrategy', () => {
 
                 getSessionMock = jest
                     .fn()
-                    .mockResolvedValueOnce(null) // initial email check
-                    .mockResolvedValueOnce(null) // initial email check (during execute _updateCheckoutSessionData)
+                    .mockResolvedValueOnce({}) // initial email check
+                    .mockResolvedValueOnce({}) // initial email check (during execute _updateCheckoutSessionData)
                     .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }) // before confirm
                     .mockResolvedValueOnce({ savedPaymentMethods: newMethods }); // after confirm
 
@@ -1576,8 +1799,8 @@ describe('StripeOCSPaymentStrategy', () => {
 
                 getSessionMock = jest
                     .fn()
-                    .mockResolvedValueOnce(null) // initial email check
-                    .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
+                    .mockResolvedValueOnce({}) // initial email check
+                    .mockResolvedValueOnce({}) // during execute _updateCheckoutSessionData
                     .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }) // before confirm
                     .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }); // after confirm (same methods)
 
@@ -1609,8 +1832,8 @@ describe('StripeOCSPaymentStrategy', () => {
             it('should not save instrument when savedPaymentMethods is undefined in session', async () => {
                 getSessionMock = jest
                     .fn()
-                    .mockResolvedValueOnce(null) // initial email check
-                    .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
+                    .mockResolvedValueOnce({}) // initial email check
+                    .mockResolvedValueOnce({}) // during execute _updateCheckoutSessionData
                     .mockResolvedValueOnce({}) // before confirm (no savedPaymentMethods field)
                     .mockResolvedValueOnce({}); // after confirm (no savedPaymentMethods field)
 
@@ -1659,8 +1882,8 @@ describe('StripeOCSPaymentStrategy', () => {
 
                 getSessionMock = jest
                     .fn()
-                    .mockResolvedValueOnce(null) // initial email check
-                    .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
+                    .mockResolvedValueOnce({}) // initial email check
+                    .mockResolvedValueOnce({}) // during execute _updateCheckoutSessionData
                     .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }) // before confirm
                     .mockResolvedValueOnce({ savedPaymentMethods: newMethods }); // after confirm
 
@@ -1711,8 +1934,8 @@ describe('StripeOCSPaymentStrategy', () => {
 
                 getSessionMock = jest
                     .fn()
-                    .mockResolvedValueOnce(null) // initial email check
-                    .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
+                    .mockResolvedValueOnce({}) // initial email check
+                    .mockResolvedValueOnce({}) // during execute _updateCheckoutSessionData
                     .mockResolvedValueOnce({ savedPaymentMethods: existingMethods }) // before confirm
                     .mockResolvedValueOnce({ savedPaymentMethods: newMethods }); // after confirm
 
@@ -1745,10 +1968,10 @@ describe('StripeOCSPaymentStrategy', () => {
             it('should not save instrument when Stripe checkout session returns null', async () => {
                 getSessionMock = jest
                     .fn()
-                    .mockResolvedValueOnce(null) // initial email check
-                    .mockResolvedValueOnce(null) // during execute _updateCheckoutSessionData
-                    .mockResolvedValueOnce(null) // before confirm
-                    .mockResolvedValueOnce(null); // after confirm
+                    .mockResolvedValueOnce({}) // initial email check
+                    .mockResolvedValueOnce({}) // during execute _updateCheckoutSessionData
+                    .mockResolvedValueOnce({}) // before confirm
+                    .mockResolvedValueOnce({}); // after confirm
 
                 confirmPaymentMockLocal = jest.fn().mockResolvedValue({
                     session: {

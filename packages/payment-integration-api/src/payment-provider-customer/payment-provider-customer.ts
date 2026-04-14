@@ -1,7 +1,10 @@
 import { CustomerAddress } from '../customer';
 import { CardInstrument } from '../payment';
 
-export type PaymentProviderCustomer = PayPalConnectCustomer | StripeAcceleratedCheckoutCustomer;
+export type PaymentProviderCustomer =
+    | PayPalConnectCustomer
+    | StripeAcceleratedCheckoutCustomer
+    | StripeCheckoutSessionCustomer;
 
 export interface PayPalConnectCustomer {
     authenticationState?: string;
@@ -11,4 +14,9 @@ export interface PayPalConnectCustomer {
 
 export interface StripeAcceleratedCheckoutCustomer {
     stripeLinkAuthenticationState?: boolean;
+}
+
+export interface StripeCheckoutSessionCustomer {
+    isCustomerCurrencySelected?: boolean;
+    customerCurrency?: string;
 }
