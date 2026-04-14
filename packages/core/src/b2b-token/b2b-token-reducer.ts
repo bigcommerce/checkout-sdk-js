@@ -3,9 +3,9 @@ import { Action, combineReducers, composeReducers } from '@bigcommerce/data-stor
 import { clearErrorReducer } from '../common/error';
 import { objectSet } from '../common/utility';
 
-import B2BToken from './b2b-token';
 import { B2BTokenActionType, LoadB2BTokenAction } from './b2b-token-actions';
 import B2BTokenState, {
+    B2BToken,
     B2BTokenErrorsState,
     B2BTokenStatusesState,
     DEFAULT_STATE,

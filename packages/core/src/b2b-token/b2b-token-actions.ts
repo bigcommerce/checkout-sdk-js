@@ -1,6 +1,6 @@
 import { Action } from '@bigcommerce/data-store';
 
-import B2BToken from './b2b-token';
+import { B2BToken } from './b2b-token-state';
 
 export enum B2BTokenActionType {
     LoadB2BTokenRequested = 'LOAD_B2B_TOKEN_REQUESTED',

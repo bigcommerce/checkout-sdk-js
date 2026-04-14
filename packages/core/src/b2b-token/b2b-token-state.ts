@@ -1,4 +1,6 @@
-import B2BToken from './b2b-token';
+export interface B2BToken {
+    token: string;
+}
 
 export default interface B2BTokenState {
     data?: B2BToken;

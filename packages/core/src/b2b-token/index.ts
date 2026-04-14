@@ -6,6 +6,5 @@ export {
     B2BTokenSelectorFactory,
     createB2BTokenSelectorFactory,
 } from './b2b-token-selector';
-export { default as B2BTokenState } from './b2b-token-state';
+export { B2BToken, default as B2BTokenState } from './b2b-token-state';
 export { default as B2BTokenRequestSender } from './b2b-token-request-sender';
-export { default as B2BToken } from './b2b-token';
