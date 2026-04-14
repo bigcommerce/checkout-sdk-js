@@ -1,9 +1,10 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { createDataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorLogger } from '../common/error';
+import { ExperimentAwareRequestSender } from '../common/http-request';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
@@ -113,12 +114,17 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const { locale = '', shouldWarnMutation = true } = options || {};
     const requestSender = createRequestSender({ host: options && options.host });
     const store = createCheckoutStore({ config }, { shouldWarnMutation });
+    const experimentRequestSender = new ExperimentAwareRequestSender(requestSender, {
+        getBasePath: () => store.getState().config.getStoreConfig()?.links.baseUrl ?? undefined,
+        getFeatures: () =>
+            store.getState().config.getStoreConfig()?.checkoutSettings?.features ?? {},
+    }) as unknown as RequestSender;
     const paymentClient = createPaymentClient(store);
-    const orderRequestSender = new OrderRequestSender(requestSender);
-    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+    const orderRequestSender = new OrderRequestSender(experimentRequestSender);
+    const checkoutRequestSender = new CheckoutRequestSender(experimentRequestSender);
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const spamProtection = createSpamProtection(createScriptLoader());
-    const spamProtectionRequestSender = new SpamProtectionRequestSender(requestSender);
+    const spamProtectionRequestSender = new SpamProtectionRequestSender(experimentRequestSender);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(
         spamProtection,
         spamProtectionRequestSender,
@@ -128,10 +134,10 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new CheckoutValidator(checkoutRequestSender),
     );
     const subscriptionsActionCreator = new SubscriptionsActionCreator(
-        new SubscriptionsRequestSender(requestSender),
+        new SubscriptionsRequestSender(experimentRequestSender),
     );
     const formFieldsActionCreator = new FormFieldsActionCreator(
-        new FormFieldsRequestSender(requestSender),
+        new FormFieldsRequestSender(experimentRequestSender),
     );
     const checkoutActionCreator = new CheckoutActionCreator(
         checkoutRequestSender,
@@ -157,7 +163,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         rollOutLazyPaymentStrategies ? {} : customerStrategyFactories,
     );
     const extensionActionCreator = new ExtensionActionCreator(
-        new ExtensionRequestSender(requestSender),
+        new ExtensionRequestSender(experimentRequestSender),
     );
     const workerExtensionMessenger = new WorkerExtensionMessenger();
     const extensionMessenger = new ExtensionMessenger(store, workerExtensionMessenger);
@@ -169,48 +175,52 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         extensionMessenger,
         createExtensionEventBroadcaster(storeProjection, extensionMessenger),
         new BillingAddressActionCreator(
-            new BillingAddressRequestSender(requestSender),
+            new BillingAddressRequestSender(experimentRequestSender),
             subscriptionsActionCreator,
         ),
         checkoutActionCreator,
         configActionCreator,
         new CustomerActionCreator(
-            new CustomerRequestSender(requestSender),
+            new CustomerRequestSender(experimentRequestSender),
             checkoutActionCreator,
             spamProtectionActionCreator,
         ),
         new ConsignmentActionCreator(
-            new ConsignmentRequestSender(requestSender),
+            new ConsignmentRequestSender(experimentRequestSender),
             checkoutRequestSender,
         ),
-        new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
-        new CouponActionCreator(new CouponRequestSender(requestSender)),
+        new CountryActionCreator(new CountryRequestSender(experimentRequestSender, { locale })),
+        new CouponActionCreator(new CouponRequestSender(experimentRequestSender)),
         new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store, requestSender),
+            createCustomerStrategyRegistry(store, experimentRequestSender),
             customerRegistryV2,
             paymentIntegrationService,
         ),
         new ErrorActionCreator(),
-        new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
-        new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
+        new GiftCertificateActionCreator(new GiftCertificateRequestSender(experimentRequestSender)),
+        new InstrumentActionCreator(
+            new InstrumentRequestSender(paymentClient, experimentRequestSender),
+        ),
         orderActionCreator,
-        new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+        new PaymentMethodActionCreator(new PaymentMethodRequestSender(experimentRequestSender)),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, paymentClient, requestSender),
+            createPaymentStrategyRegistry(store, paymentClient, experimentRequestSender),
             registryV2,
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
         ),
-        new PickupOptionActionCreator(new PickupOptionRequestSender(requestSender)),
+        new PickupOptionActionCreator(new PickupOptionRequestSender(experimentRequestSender)),
         new ShippingCountryActionCreator(
-            new ShippingCountryRequestSender(requestSender, { locale }),
+            new ShippingCountryRequestSender(experimentRequestSender, { locale }),
             store,
         ),
-        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),
-        new SignInEmailActionCreator(new SignInEmailRequestSender(requestSender)),
+        new ShippingStrategyActionCreator(
+            createShippingStrategyRegistry(store, experimentRequestSender),
+        ),
+        new SignInEmailActionCreator(new SignInEmailRequestSender(experimentRequestSender)),
         spamProtectionActionCreator,
-        new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender)),
+        new StoreCreditActionCreator(new StoreCreditRequestSender(experimentRequestSender)),
         subscriptionsActionCreator,
         formFieldsActionCreator,
         extensionActionCreator,
