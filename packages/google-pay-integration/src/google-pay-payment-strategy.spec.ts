@@ -740,6 +740,158 @@ describe('GooglePayPaymentStrategy', () => {
                 });
             });
         });
+
+        describe('when PI-5111.google_pay_direct_pay_on_click is enabled', () => {
+            const directPayStoreConfig = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PI-5111.google_pay_direct_pay_on_click': true,
+                    },
+                },
+            };
+
+            beforeEach(async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue(directPayStoreConfig);
+
+                jest.spyOn(processor, 'mapToBillingAddressRequestBody').mockReturnValue(undefined);
+
+                await strategy.initialize(options);
+            });
+
+            it('should show loading indicator on button click', async () => {
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(LoadingShow).toHaveBeenCalled();
+            });
+
+            it('should call setExternalCheckoutXhr with methodId and payment sheet response', async () => {
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(processor.setExternalCheckoutXhr).toHaveBeenCalledWith(
+                    options.methodId,
+                    getCardDataResponse(),
+                );
+            });
+
+            it('should load checkout after receiving payment sheet response', async () => {
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
+            });
+
+            it('should load payment method with the correct methodId', async () => {
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                    options.methodId,
+                );
+            });
+
+            it('should re-initialize processor with fresh payment method', async () => {
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                // called once in strategy.initialize() and once in _interactWithPaymentSheetAndPay
+                expect(processor.initialize).toHaveBeenCalledTimes(2);
+            });
+
+            it('should execute payment with methodId', async () => {
+                const executeSpy = jest.spyOn(strategy, 'execute');
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(executeSpy).toHaveBeenCalledWith({
+                    useStoreCredit: false,
+                    payment: { methodId: options.methodId },
+                });
+            });
+
+            it('should hide loading indicator after completing checkout', async () => {
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(LoadingHide).toHaveBeenCalled();
+            });
+
+            it('should update billing address if the "do not override address" experiment is OFF', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue({
+                    ...storeConfig,
+                    checkoutSettings: {
+                        ...storeConfig.checkoutSettings,
+                        features: {
+                            ...storeConfig.checkoutSettings.features,
+                            'PI-5111.google_pay_direct_pay_on_click': true,
+                            'PI-5031.google_pay_dont_override_address': false,
+                        },
+                    },
+                });
+
+                const billingAddress = { city: 'New York', address1: '5th Ave' };
+
+                jest.spyOn(processor, 'mapToBillingAddressRequestBody').mockReturnValue(
+                    billingAddress as BillingAddressRequestBody,
+                );
+
+                const updateAddressSpy = jest
+                    .spyOn(paymentIntegrationService, 'updateBillingAddress')
+                    .mockResolvedValue(paymentIntegrationService.getState());
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(updateAddressSpy).toHaveBeenCalledWith(billingAddress);
+            });
+
+            it('should NOT update billing address if the "do not override address" experiment is ON', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue({
+                    ...storeConfig,
+                    checkoutSettings: {
+                        ...storeConfig.checkoutSettings,
+                        features: {
+                            ...storeConfig.checkoutSettings.features,
+                            'PI-5111.google_pay_direct_pay_on_click': true,
+                            'PI-5031.google_pay_dont_override_address': true,
+                        },
+                    },
+                });
+
+                const updateAddressSpy = jest.spyOn(
+                    paymentIntegrationService,
+                    'updateBillingAddress',
+                );
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(updateAddressSpy).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('#finalize', () => {
