@@ -595,11 +595,14 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void>;
     protected _addPaymentButton(walletButton: string, callbacks: Omit<GooglePayPaymentInitializeOptions, 'walletButton'>): void;
     protected _handleClick({ onPaymentSelect, onError, }: Omit<GooglePayPaymentInitializeOptions, 'walletButton'>): (event: MouseEvent) => unknown;
+    protected _interactWithPaymentSheetAndPay(): Promise<void>;
+    protected _completeCheckoutFlow(): void;
     protected _interactWithPaymentSheet(): Promise<void>;
     protected _getMethodId(): keyof WithGooglePayPaymentInitializeOptions;
     protected _getIsSignedInOrThrow(): Promise<boolean>;
     protected _handleOfferTrigger(offerData: IntermediatePaymentData['offerData']): Promise<Partial<HandleCouponsOut>>;
     protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions;
+    private _isDirectPayOnClickEnabled;
     private _toggleBlockDeinitialization;
     private _toggleLoadingIndicator;
 }

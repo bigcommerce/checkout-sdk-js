@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.899.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.898.6...v1.899.0) (2026-04-14)
+
+
+### Features
+
+* **payment:** Google Pay direct payment in modal ([70a2fb1](https://github.com/bigcommerce/checkout-sdk-js/commit/70a2fb1983d22df1cc8cb5c1bee9465ebfe9d7c8))
+
 ### [1.898.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.898.5...v1.898.6) (2026-04-13)
 
 ### [1.898.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.898.4...v1.898.5) (2026-04-13)
