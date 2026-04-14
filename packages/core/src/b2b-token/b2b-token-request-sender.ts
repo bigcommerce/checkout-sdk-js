@@ -26,14 +26,15 @@ export default class B2BTokenRequestSender {
         });
     }
 
-    exchangeForB2BToken(
+    fetchB2BToken(
         bcToken: string,
         customerId: number,
         storeHash: string,
         channelId: number,
         options?: RequestOptions,
+        b2bBaseUrl: string = B2B_BASE_URL,
     ): Promise<Response<B2BTokenResponseBody>> {
-        return this._requestSender.post(`${B2B_BASE_URL}/api/v2/login`, {
+        return this._requestSender.post(`${b2bBaseUrl}/api/v2/login`, {
             timeout: options?.timeout,
             headers: { 'Content-Type': 'application/json' },
             body: {

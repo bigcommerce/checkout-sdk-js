@@ -47,9 +47,9 @@ describe('B2BTokenRequestSender', () => {
         });
     });
 
-    describe('#exchangeForB2BToken()', () => {
-        it('posts to B2B login endpoint with correct payload', async () => {
-            await b2bTokenRequestSender.exchangeForB2BToken('bc-jwt', 123, 'abc123', 1);
+    describe('#fetchB2BToken()', () => {
+        it('posts to default B2B login endpoint when no b2bBaseUrl provided', async () => {
+            await b2bTokenRequestSender.fetchB2BToken('bc-jwt', 123, 'abc123', 1);
 
             expect(requestSender.post).toHaveBeenCalledWith(
                 'https://api-b2b.bigcommerce.com/api/v2/login',
@@ -63,6 +63,24 @@ describe('B2BTokenRequestSender', () => {
                     },
                     timeout: undefined,
                 },
+            );
+        });
+
+        it('posts to custom b2bBaseUrl when provided', async () => {
+            await b2bTokenRequestSender.fetchB2BToken(
+                'bc-jwt',
+                123,
+                'abc123',
+                1,
+                undefined,
+                'https://api-b2b.staging.zone',
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                'https://api-b2b.staging.zone/api/v2/login',
+                expect.objectContaining({
+                    body: expect.objectContaining({ bcToken: 'bc-jwt' }),
+                }),
             );
         });
     });

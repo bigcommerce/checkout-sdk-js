@@ -685,19 +685,19 @@ export default class CheckoutService {
      *
      * The token can be used to authenticate requests to B2B REST and GraphQL
      * endpoints. The customer must be signed in for this method to succeed.
+     * The B2B base URL and client ID are read from the checkout settings config.
      *
      * ```js
-     * const state = await service.getB2BToken('my-app-client-id');
+     * const state = await service.getB2BToken();
      *
      * console.log(state.data.getB2BToken());
      * ```
      *
-     * @param appClientId - The B2B application client ID used to generate the BC JWT.
      * @param options - Options for the request.
      * @returns A promise that resolves to the current state.
      */
-    getB2BToken(appClientId: string, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._b2bTokenActionCreator.loadB2BToken(appClientId, options);
+    getB2BToken(options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._b2bTokenActionCreator.loadB2BToken(options);
 
         return this._dispatch(action, { queueId: 'b2bToken' });
     }

@@ -13,12 +13,15 @@ export default class B2BTokenActionCreator {
     constructor(private _requestSender: B2BTokenRequestSender) {}
 
     loadB2BToken(
-        appClientId: string,
         options?: RequestOptions,
     ): ThunkAction<LoadB2BTokenAction, InternalCheckoutSelectors> {
         return (store) => {
             const state = store.getState();
             const { storeHash } = state.config.getStoreConfigOrThrow().storeProfile;
+            const {
+                b2bBaseUrl = 'https://api-b2b.bigcommerce.com',
+                b2bClientId = 'dl7c39mdpul6hyc489yk0vzxl6jesyx',
+            } = state.config.getStoreConfigOrThrow().checkoutSettings;
             const { id: customerId } = state.customer.getCustomerOrThrow();
             const { channelId } = state.checkout.getCheckoutOrThrow();
 
@@ -26,15 +29,16 @@ export default class B2BTokenActionCreator {
                 of(createAction(B2BTokenActionType.LoadB2BTokenRequested)),
                 defer(async () => {
                     const { body: jwtBody } = await this._requestSender.getBCJWT(
-                        appClientId,
+                        b2bClientId,
                         options,
                     );
-                    const { body } = await this._requestSender.exchangeForB2BToken(
+                    const { body } = await this._requestSender.fetchB2BToken(
                         jwtBody.token,
                         customerId,
                         storeHash,
                         channelId,
                         options,
+                        b2bBaseUrl,
                     );
 
                     return createAction(B2BTokenActionType.LoadB2BTokenSucceeded, {

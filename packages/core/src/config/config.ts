@@ -102,6 +102,8 @@ export interface UserExperienceSettings {
 
 export interface CheckoutSettings {
     capabilities?: Capabilities;
+    b2bBaseUrl?: string;
+    b2bClientId?: string;
     features: { [featureName: string]: boolean };
     checkoutBillingSameAsShippingEnabled: boolean;
     checkoutUserExperienceSettings: UserExperienceSettings;
