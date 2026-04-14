@@ -1,6 +1,12 @@
 export * from './form-fields-actions';
 
-export { ExtraField, ExtraFieldValue } from './extra-field';
+export {
+    ExtraField,
+    ExtraFieldConfig,
+    ExtraFields,
+    ExtraFieldType,
+    AddressExtraFieldValue,
+} from './extra-field';
 export {
     default as FormSelector,
     FormSelectorFactory,
@@ -14,7 +20,6 @@ export { default as formFieldsReducer } from './form-fields-reducer';
 export { default as FormFieldsState, DEFAULT_STATE } from './form-fields-state';
 export {
     default as mapExtraFieldToFormField,
-    isExtraFormField,
-    getExtraFieldId,
+    isExtraField,
     B2B_EXTRA_FIELD_PREFIX,
 } from './map-extra-field-to-form-field';

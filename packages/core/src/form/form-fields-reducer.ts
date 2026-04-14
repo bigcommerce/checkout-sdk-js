@@ -4,7 +4,7 @@ import { CheckoutHydrateAction, CheckoutHydrateActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
 
-import { ExtraField } from './extra-field';
+import { ExtraFields } from './extra-field';
 import { FormFields } from './form-field';
 import { FormFieldsActionType, LoadFormFieldsAction } from './form-fields-actions';
 import FormFieldsState, {
@@ -44,9 +44,9 @@ function dataReducer(
 }
 
 function extraFieldsReducer(
-    extraFields: ExtraField[] | undefined,
+    extraFields: ExtraFields | undefined,
     action: CheckoutHydrateAction,
-): ExtraField[] | undefined {
+): ExtraFields | undefined {
     switch (action.type) {
         case CheckoutHydrateActionType.HydrateInitialState:
             return action.payload?.extraFields ?? extraFields;

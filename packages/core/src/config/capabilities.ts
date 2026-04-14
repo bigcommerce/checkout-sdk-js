@@ -5,7 +5,7 @@ export interface Capabilities {
     userJourney: {
         disableEditCart: boolean;
         hasCompanyAddressBook: boolean;
-        hasExtraAddressFields: boolean;
+        hasAddressExtraFields: boolean;
         requiresB2BToken: boolean;
     };
     customer: {

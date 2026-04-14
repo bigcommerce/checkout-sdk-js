@@ -266,11 +266,11 @@ export default interface CheckoutStoreSelector {
     getShippingAddressFields(countryCode: string): FormField[];
 
     /**
-     * Gets address extra form fields.
+     * Gets address extra fields.
      *
-     * @returns The list of extra form fields if available, otherwise an empty array.
+     * @returns The list of extra fields if available, otherwise an empty array.
      */
-    getAddressExtraFormFields(): FormField[];
+    getAddressExtraFields(): FormField[];
 
     /**
      * Gets a list of pickup options for specified parameters.
@@ -566,9 +566,9 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             }),
     );
 
-    const getAddressExtraFormFields = createSelector(
-        ({ form }: InternalCheckoutSelectors) => form.getAddressExtraFormFields,
-        (getAddressExtraFormFields) => clone(getAddressExtraFormFields),
+    const getAddressExtraFields = createSelector(
+        ({ form }: InternalCheckoutSelectors) => form.getAddressExtraFields,
+        (getAddressExtraFields) => clone(getAddressExtraFields),
     );
 
     const getFlashMessages = createSelector(
@@ -641,7 +641,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getCustomerAccountFields: getCustomerAccountFields(state),
             getBillingAddressFields: getBillingAddressFields(state),
             getShippingAddressFields: getShippingAddressFields(state),
-            getAddressExtraFormFields: getAddressExtraFormFields(state),
+            getAddressExtraFields: getAddressExtraFields(state),
             getPickupOptions: getPickupOptions(state),
             getUserExperienceSettings: getUserExperienceSettings(state),
             getPaymentProviderCustomer: getPaymentProviderCustomer(state),
