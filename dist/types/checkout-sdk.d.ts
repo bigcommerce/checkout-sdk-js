@@ -8245,6 +8245,7 @@ declare interface StoreCurrency {
 }
 
 declare interface StoreLinks {
+    baseUrl?: string | null;
     cartLink: string;
     checkoutLink: string;
     createAccountLink: string;

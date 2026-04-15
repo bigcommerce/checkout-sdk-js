@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [baseUrl](StoreLinks.md#baseurl)
 - [cartLink](StoreLinks.md#cartlink)
 - [checkoutLink](StoreLinks.md#checkoutlink)
 - [createAccountLink](StoreLinks.md#createaccountlink)
@@ -16,6 +17,12 @@
 - [siteLink](StoreLinks.md#sitelink)
 
 ## Properties
+
+### baseUrl
+
+• `Optional` **baseUrl**: ``null`` \| `string`
+
+___
 
 ### cartLink
 
