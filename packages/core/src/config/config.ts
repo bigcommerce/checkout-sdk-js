@@ -74,6 +74,7 @@ export interface PaymentSettings {
 }
 
 export interface StoreLinks {
+    baseUrl?: string | null;
     cartLink: string;
     checkoutLink: string;
     createAccountLink: string;
