@@ -1,4 +1,4 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -50,12 +50,15 @@ import PaymentIntegrationStoreProjectionFactory from './payment-integration-stor
 
 export default function createPaymentIntegrationService(
     store: CheckoutStore,
+    requestSender?: RequestSender,
 ): PaymentIntegrationService {
     const {
         config: { getHost, getLocale },
     } = store.getState();
 
-    const requestSender = createRequestSender({ host: getHost() });
+    if (!requestSender) {
+        requestSender = createRequestSender({ host: getHost() });
+    }
 
     const storeProjectionFactory = new PaymentIntegrationStoreProjectionFactory(
         createPaymentIntegrationSelectors,
