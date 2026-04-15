@@ -36,12 +36,13 @@ export default class B2BTokenRequestSender {
     ): Promise<Response<B2BTokenResponseBody>> {
         return this._requestSender.post(`${b2bBaseUrl}/api/v2/login`, {
             timeout: options?.timeout,
+            credentials: false,
             headers: { 'Content-Type': 'application/json' },
             body: {
                 bcToken,
-                customerId: String(customerId),
+                customerId,
                 storeHash,
-                channelId: String(channelId),
+                channelId,
             },
         });
     }
