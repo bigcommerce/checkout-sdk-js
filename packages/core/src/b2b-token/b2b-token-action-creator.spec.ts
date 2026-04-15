@@ -72,8 +72,8 @@ describe('B2BTokenActionCreator', () => {
                 customer.id,
                 storeHash,
                 checkout.channelId,
-                undefined,
                 b2bBaseUrl,
+                undefined,
             );
         });
 

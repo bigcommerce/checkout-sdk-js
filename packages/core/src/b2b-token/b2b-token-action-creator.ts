@@ -18,6 +18,7 @@ export default class B2BTokenActionCreator {
         return (store) => {
             const state = store.getState();
             const { storeHash } = state.config.getStoreConfigOrThrow().storeProfile;
+            // TODO: Remove fallback to default b2bClientId once all stores have it configured in checkout settings
             const {
                 b2bBaseUrl = 'https://api-b2b.bigcommerce.com',
                 b2bClientId = 'dl7c39mdpul6hyc489yk0vzxl6jesyx',
@@ -37,8 +38,8 @@ export default class B2BTokenActionCreator {
                         customerId,
                         storeHash,
                         channelId,
-                        options,
                         b2bBaseUrl,
+                        options,
                     );
 
                     return createAction(B2BTokenActionType.LoadB2BTokenSucceeded, {

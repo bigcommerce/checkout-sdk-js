@@ -2,8 +2,6 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
-const B2B_BASE_URL = 'https://api-b2b.bigcommerce.com';
-
 export interface BCJWTResponseBody {
     token: string;
 }
@@ -31,8 +29,8 @@ export default class B2BTokenRequestSender {
         customerId: number,
         storeHash: string,
         channelId: number,
+        b2bBaseUrl: string,
         options?: RequestOptions,
-        b2bBaseUrl: string = B2B_BASE_URL,
     ): Promise<Response<B2BTokenResponseBody>> {
         return this._requestSender.post(`${b2bBaseUrl}/api/v2/login`, {
             timeout: options?.timeout,
