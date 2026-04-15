@@ -144,7 +144,10 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         configActionCreator,
         formFieldsActionCreator,
     );
-    const paymentIntegrationService = createPaymentIntegrationService(store);
+    const paymentIntegrationService = createPaymentIntegrationService(
+        store,
+        experimentRequestSender,
+    );
 
     // NO_PAYMENT_DATA_REQUIRED must always be available regardless of build mode — it handles
     // free orders / full store credit checkouts and cannot be lazily loaded via integrations.
