@@ -11,6 +11,8 @@ export interface ExtraFieldConfig {
 export interface ExtraField {
     id: string;
     name: string;
+    labelName: string;
+    visibleToEnduser: boolean;
     isRequired: boolean;
     type: ExtraFieldType;
     config: ExtraFieldConfig;

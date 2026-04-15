@@ -5,7 +5,9 @@ describe('mapB2bExtraFieldToFormField', () => {
     it('maps a text field', () => {
         const extraField: ExtraField = {
             id: '100',
-            name: 'Text Field',
+            name: 'textField',
+            labelName: 'Text Field',
+            visibleToEnduser: true,
             type: 'text',
             isRequired: true,
             config: { defaultValue: 'hello', maxLength: 50 },
@@ -18,6 +20,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             name: 'b2bExtraField_100',
             custom: false,
             label: 'Text Field',
+            hidden: false,
             required: true,
             default: 'hello',
             fieldType: 'text',
@@ -31,7 +34,9 @@ describe('mapB2bExtraFieldToFormField', () => {
     it('maps a multiline text field', () => {
         const extraField: ExtraField = {
             id: '200',
-            name: 'Multiline Field',
+            name: 'multilineField',
+            labelName: 'Multiline Field',
+            visibleToEnduser: true,
             type: 'multiline_text',
             isRequired: false,
             config: { defaultValue: 'multi', numberOfRows: 5 },
@@ -44,6 +49,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             name: 'b2bExtraField_200',
             custom: false,
             label: 'Multiline Field',
+            hidden: false,
             required: false,
             default: 'multi',
             fieldType: 'multiline',
@@ -57,7 +63,9 @@ describe('mapB2bExtraFieldToFormField', () => {
     it('maps a number field', () => {
         const extraField: ExtraField = {
             id: '300',
-            name: 'Number Field',
+            name: 'numberField',
+            labelName: 'Number Field',
+            visibleToEnduser: true,
             type: 'number',
             isRequired: true,
             config: { defaultValue: 42, maxValue: 1000 },
@@ -70,6 +78,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             name: 'b2bExtraField_300',
             custom: false,
             label: 'Number Field',
+            hidden: false,
             required: true,
             default: '42',
             fieldType: 'text',
@@ -83,7 +92,9 @@ describe('mapB2bExtraFieldToFormField', () => {
     it('maps a dropdown field', () => {
         const extraField: ExtraField = {
             id: '400',
-            name: 'Dropdown Field',
+            name: 'dropdownField',
+            labelName: 'Dropdown Field',
+            visibleToEnduser: true,
             type: 'dropdown',
             isRequired: true,
             config: { options: ['A', 'B', 'C'] },
@@ -96,6 +107,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             name: 'b2bExtraField_400',
             custom: false,
             label: 'Dropdown Field',
+            hidden: false,
             required: true,
             default: undefined,
             fieldType: 'dropdown',
@@ -117,7 +129,9 @@ describe('defaultValue coercion', () => {
     it('stringifies a numeric defaultValue', () => {
         const extraField: ExtraField = {
             id: '500',
-            name: 'Numeric Default',
+            name: 'numericDefault',
+            labelName: 'Numeric Default',
+            visibleToEnduser: true,
             type: 'number',
             isRequired: false,
             config: { defaultValue: 0, maxValue: 100 },
@@ -131,7 +145,9 @@ describe('defaultValue coercion', () => {
     it('passes through a string defaultValue as-is', () => {
         const extraField: ExtraField = {
             id: '501',
-            name: 'String Default',
+            name: 'stringDefault',
+            labelName: 'String Default',
+            visibleToEnduser: true,
             type: 'text',
             isRequired: false,
             config: { defaultValue: 'preset' },
@@ -145,7 +161,9 @@ describe('defaultValue coercion', () => {
     it('returns undefined when config has no defaultValue', () => {
         const extraField: ExtraField = {
             id: '502',
-            name: 'No Default',
+            name: 'noDefault',
+            labelName: 'No Default',
+            visibleToEnduser: true,
             type: 'dropdown',
             isRequired: false,
             config: { options: ['X', 'Y'] },

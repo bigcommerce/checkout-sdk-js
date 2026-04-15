@@ -154,6 +154,8 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13449',
             name: 'textRequired',
+            labelName: 'textRequired',
+            visibleToEnduser: true,
             type: 'text',
             isRequired: true,
             config: { defaultValue: 'ddd', maxLength: 10 },
@@ -161,6 +163,8 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13453',
             name: 'multilineText',
+            labelName: 'multilineText',
+            visibleToEnduser: true,
             type: 'multiline_text',
             isRequired: false,
             config: { defaultValue: 'optional multi-line text', numberOfRows: 8 },
@@ -168,6 +172,8 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13457',
             name: 'number',
+            labelName: 'number',
+            visibleToEnduser: true,
             type: 'number',
             isRequired: false,
             config: { defaultValue: 100, maxValue: 1000 },
@@ -175,6 +181,8 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13530',
             name: 'dropdownRequired',
+            labelName: 'dropdownRequired',
+            visibleToEnduser: true,
             type: 'dropdown',
             isRequired: true,
             config: { options: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] },
@@ -182,6 +190,8 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13531',
             name: 'dropdownOptional',
+            labelName: 'dropdownOptional',
+            visibleToEnduser: true,
             type: 'dropdown',
             isRequired: false,
             config: { options: ['A', 'B', 'C', 'D', 'E', 'F', 'G'] },
