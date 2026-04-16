@@ -282,6 +282,13 @@ export default interface CheckoutStoreStatusSelector {
     isSendingSignInEmail(): boolean;
 
     /**
+     * Checks whether a B2B token is being loaded.
+     *
+     * @returns True if a B2B token is being loaded, otherwise false.
+     */
+    isLoadingB2BToken(): boolean;
+
+    /**
      * Checks whether the current customer is applying a gift certificate.
      *
      * @returns True if applying a gift certificate, otherwise false.
@@ -507,6 +514,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isDeletingInstrument: state.instruments.isDeleting,
             isLoadingConfig: state.config.isLoading,
             isSendingSignInEmail: state.signInEmail.isSending,
+            isLoadingB2BToken: state.b2bToken.isLoading,
             isCustomerStepPending: isCustomerStepPending(state),
             isShippingStepPending: isShippingStepPending(state),
             isPaymentStepPending: isPaymentStepPending(state),

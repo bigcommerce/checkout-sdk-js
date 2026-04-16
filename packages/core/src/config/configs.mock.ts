@@ -19,6 +19,10 @@ export function getConfig(): Config {
         storeConfig: {
             cdnPath: 'https://cdn.bcapp.dev/rHEAD',
             checkoutSettings: {
+                b2bServiceDetails: {
+                    b2bBaseUrl: 'https://api-b2b.test.zone',
+                    b2bClientId: 'test-b2b-client-id',
+                },
                 features: {},
                 checkoutBillingSameAsShippingEnabled: true,
                 checkoutUserExperienceSettings: {

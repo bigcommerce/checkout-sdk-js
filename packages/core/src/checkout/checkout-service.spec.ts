@@ -11,6 +11,7 @@ import {
     PaymentStrategy as PaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { B2BTokenActionCreator, B2BTokenRequestSender } from '../b2b-token';
 import {
     BillingAddressActionCreator,
     BillingAddressActionType,
@@ -418,6 +419,7 @@ describe('CheckoutService', () => {
             storeProjection,
             extensionMessenger,
             extensionEventBroadcaster,
+            new B2BTokenActionCreator(new B2BTokenRequestSender(requestSender)),
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,

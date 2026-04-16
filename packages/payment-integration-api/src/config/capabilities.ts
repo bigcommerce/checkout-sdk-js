@@ -6,6 +6,7 @@ export interface Capabilities {
         disableEditCart: boolean;
         hasCompanyAddressBook: boolean;
         hasExtraAddressFields: boolean;
+        requiresB2BToken: boolean;
     };
     customer: {
         superAdminCompanySelector: boolean;
