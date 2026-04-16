@@ -8,86 +8,70 @@ describe('B2BTokenRequestSender', () => {
     let requestSender: RequestSender;
     let b2bTokenRequestSender: B2BTokenRequestSender;
 
+    const jwtToken = 'bc-jwt-token';
+    const b2bToken = 'b2b-token-value';
+
     beforeEach(() => {
         requestSender = createRequestSender();
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        jest.spyOn(requestSender, 'get').mockResolvedValue({ body: { token: 'bc-jwt-token' } });
+        jest.spyOn(requestSender, 'get').mockResolvedValue({ body: { token: jwtToken } });
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         jest.spyOn(requestSender, 'post').mockResolvedValue({
-            body: { code: 200, data: { token: 'b2b-token-value' } },
+            body: { code: 200, data: { token: b2bToken } },
         });
 
         b2bTokenRequestSender = new B2BTokenRequestSender(requestSender);
     });
 
-    describe('#getBCJWT()', () => {
-        it('sends GET to /customer/current.jwt with app_client_id param', async () => {
-            await b2bTokenRequestSender.getBCJWT('my-client-id');
+    describe('#getB2BToken()', () => {
+        it('fetches BC JWT then exchanges it for a B2B token', async () => {
+            await b2bTokenRequestSender.getB2BToken(
+                'my-client-id',
+                123,
+                'abc123',
+                1,
+                'https://api-b2b.bigcommerce.com',
+            );
 
             expect(requestSender.get).toHaveBeenCalledWith('/customer/current.jwt', {
                 params: { app_client_id: 'my-client-id' },
                 headers: SDK_VERSION_HEADERS,
                 timeout: undefined,
             });
-        });
-
-        it('passes timeout option through', async () => {
-            const timeout = {};
-
-            await b2bTokenRequestSender.getBCJWT('my-client-id', { timeout: timeout as any });
-
-            expect(requestSender.get).toHaveBeenCalledWith(
-                '/customer/current.jwt',
-                expect.objectContaining({ timeout }),
-            );
-        });
-    });
-
-    describe('#fetchB2BToken()', () => {
-        it('posts to the provided b2bBaseUrl', async () => {
-            await b2bTokenRequestSender.fetchB2BToken(
-                'bc-jwt',
-                123,
-                'abc123',
-                1,
-                'https://api-b2b.bigcommerce.com',
-                undefined,
-            );
 
             expect(requestSender.post).toHaveBeenCalledWith(
                 'https://api-b2b.bigcommerce.com/api/v2/login',
                 {
+                    credentials: false,
                     headers: { 'Content-Type': 'application/json' },
                     body: {
-                        bcToken: 'bc-jwt',
+                        bcToken: jwtToken,
                         customerId: 123,
                         storeHash: 'abc123',
                         channelId: 1,
                     },
-                    credentials: false,
                     timeout: undefined,
                 },
             );
         });
 
-        it('posts to custom b2bBaseUrl when provided', async () => {
-            await b2bTokenRequestSender.fetchB2BToken(
-                'bc-jwt',
+        it('uses the provided b2bBaseUrl for the token exchange', async () => {
+            await b2bTokenRequestSender.getB2BToken(
+                'my-client-id',
                 123,
                 'abc123',
                 1,
                 'https://api-b2b.staging.zone',
-                undefined,
             );
 
             expect(requestSender.post).toHaveBeenCalledWith(
                 'https://api-b2b.staging.zone/api/v2/login',
                 expect.objectContaining({
-                    body: expect.objectContaining({ bcToken: 'bc-jwt' }),
+                    body: expect.objectContaining({ bcToken: jwtToken }),
                 }),
             );
         });

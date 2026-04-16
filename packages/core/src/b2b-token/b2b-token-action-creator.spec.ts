@@ -17,15 +17,13 @@ describe('B2BTokenActionCreator', () => {
     let requestSender: B2BTokenRequestSender;
     let actionCreator: B2BTokenActionCreator;
 
-    const jwtResponse = getResponse({ token: 'bc-jwt-token' });
     const b2bResponse = getResponse({ code: 200, data: { token: 'b2b-auth-token' } });
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = new B2BTokenRequestSender(createRequestSender());
 
-        jest.spyOn(requestSender, 'getBCJWT').mockResolvedValue(jwtResponse);
-        jest.spyOn(requestSender, 'fetchB2BToken').mockResolvedValue(b2bResponse);
+        jest.spyOn(requestSender, 'getB2BToken').mockResolvedValue(b2bResponse);
 
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
             getConfig().storeConfig,
@@ -51,24 +49,17 @@ describe('B2BTokenActionCreator', () => {
             ]);
         });
 
-        it('calls getBCJWT with b2bClientId from checkout settings', async () => {
-            const { b2bClientId } = getConfig().storeConfig.checkoutSettings;
-
-            await from(actionCreator.loadB2BToken()(store)).toPromise();
-
-            expect(requestSender.getBCJWT).toHaveBeenCalledWith(b2bClientId ?? '', undefined);
-        });
-
-        it('calls fetchB2BToken with state data, BC JWT, and b2bBaseUrl from checkout settings', async () => {
+        it('calls getB2BToken with state data and b2bServiceDetails from checkout settings', async () => {
             const customer = getCustomer();
             const checkout = getCheckout();
             const { storeHash } = getConfig().storeConfig.storeProfile;
-            const { b2bBaseUrl } = getConfig().storeConfig.checkoutSettings;
+            const { b2bBaseUrl, b2bClientId } =
+                getConfig().storeConfig.checkoutSettings.b2bServiceDetails!;
 
             await from(actionCreator.loadB2BToken()(store)).toPromise();
 
-            expect(requestSender.fetchB2BToken).toHaveBeenCalledWith(
-                'bc-jwt-token',
+            expect(requestSender.getB2BToken).toHaveBeenCalledWith(
+                b2bClientId,
                 customer.id,
                 storeHash,
                 checkout.channelId,
@@ -77,26 +68,8 @@ describe('B2BTokenActionCreator', () => {
             );
         });
 
-        it('emits error actions if getBCJWT fails', async () => {
-            jest.spyOn(requestSender, 'getBCJWT').mockRejectedValue(getErrorResponse());
-
-            const errorHandler = jest.fn((action) => of(action));
-            const actions = await from(actionCreator.loadB2BToken()(store))
-                .pipe(catchError(errorHandler), toArray())
-                .toPromise();
-
-            expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toEqual([
-                { type: B2BTokenActionType.LoadB2BTokenRequested },
-                expect.objectContaining({
-                    type: B2BTokenActionType.LoadB2BTokenFailed,
-                    error: true,
-                }),
-            ]);
-        });
-
-        it('emits error actions if fetchB2BToken fails', async () => {
-            jest.spyOn(requestSender, 'fetchB2BToken').mockRejectedValue(getErrorResponse());
+        it('emits error actions if getB2BToken fails', async () => {
+            jest.spyOn(requestSender, 'getB2BToken').mockRejectedValue(getErrorResponse());
 
             const errorHandler = jest.fn((action) => of(action));
             const actions = await from(actionCreator.loadB2BToken()(store))

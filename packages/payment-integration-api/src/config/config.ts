@@ -100,10 +100,14 @@ export interface UserExperienceSettings {
     floatingLabelEnabled: boolean;
 }
 
+export interface B2BServiceDetails {
+    b2bBaseUrl: string;
+    b2bClientId: string;
+}
+
 export interface CheckoutSettings {
     capabilities?: Capabilities;
-    b2bBaseUrl?: string;
-    b2bClientId?: string;
+    b2bServiceDetails?: B2BServiceDetails;
     features: { [featureName: string]: boolean };
     checkoutBillingSameAsShippingEnabled: boolean;
     checkoutUserExperienceSettings: UserExperienceSettings;
