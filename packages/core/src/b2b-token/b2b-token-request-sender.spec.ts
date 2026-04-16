@@ -1,6 +1,7 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import { SDK_VERSION_HEADERS } from '../common/http-request';
+import { getResponse } from '../common/http-request/responses.mock';
 
 import B2BTokenRequestSender from './b2b-token-request-sender';
 
@@ -14,15 +15,10 @@ describe('B2BTokenRequestSender', () => {
     beforeEach(() => {
         requestSender = createRequestSender();
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(requestSender, 'get').mockResolvedValue({ body: { token: jwtToken } });
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(requestSender, 'post').mockResolvedValue({
-            body: { code: 200, data: { token: b2bToken } },
-        });
+        jest.spyOn(requestSender, 'get').mockResolvedValue(getResponse({ token: jwtToken }));
+        jest.spyOn(requestSender, 'post').mockResolvedValue(
+            getResponse({ code: 200, data: { token: b2bToken } }),
+        );
 
         b2bTokenRequestSender = new B2BTokenRequestSender(requestSender);
     });
