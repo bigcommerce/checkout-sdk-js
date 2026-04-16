@@ -31,7 +31,7 @@ export default function mapExtraFieldToFormField(extraField: ExtraField): FormFi
         name: `${B2B_EXTRA_FIELD_PREFIX}${extraField.id}`,
         custom: false,
         label: extraField.name,
-        hidden: !extraField.visibleToEnduser,
+        hidden: !extraField.visibleToStorefront,
         required: extraField.isRequired,
         default:
             extraField.config.defaultValue != null

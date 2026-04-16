@@ -6,7 +6,7 @@ describe('mapB2bExtraFieldToFormField', () => {
         const extraField: ExtraField = {
             id: '100',
             name: 'textField',
-            visibleToEnduser: true,
+            visibleToStorefront: true,
             type: 'text',
             isRequired: true,
             config: { defaultValue: 'hello', maxLength: 50 },
@@ -34,7 +34,7 @@ describe('mapB2bExtraFieldToFormField', () => {
         const extraField: ExtraField = {
             id: '200',
             name: 'multilineField',
-            visibleToEnduser: true,
+            visibleToStorefront: true,
             type: 'multiline_text',
             isRequired: false,
             config: { defaultValue: 'multi', numberOfRows: 5 },
@@ -62,7 +62,7 @@ describe('mapB2bExtraFieldToFormField', () => {
         const extraField: ExtraField = {
             id: '300',
             name: 'numberField',
-            visibleToEnduser: true,
+            visibleToStorefront: true,
             type: 'number',
             isRequired: true,
             config: { defaultValue: 42, maxValue: 1000 },
@@ -90,7 +90,7 @@ describe('mapB2bExtraFieldToFormField', () => {
         const extraField: ExtraField = {
             id: '400',
             name: 'dropdownField',
-            visibleToEnduser: true,
+            visibleToStorefront: true,
             type: 'dropdown',
             isRequired: true,
             config: { options: ['A', 'B', 'C'] },
@@ -126,7 +126,7 @@ describe('defaultValue coercion', () => {
         const extraField: ExtraField = {
             id: '500',
             name: 'numericDefault',
-            visibleToEnduser: true,
+            visibleToStorefront: true,
             type: 'number',
             isRequired: false,
             config: { defaultValue: 0, maxValue: 100 },
@@ -141,7 +141,7 @@ describe('defaultValue coercion', () => {
         const extraField: ExtraField = {
             id: '501',
             name: 'stringDefault',
-            visibleToEnduser: true,
+            visibleToStorefront: true,
             type: 'text',
             isRequired: false,
             config: { defaultValue: 'preset' },
@@ -156,7 +156,7 @@ describe('defaultValue coercion', () => {
         const extraField: ExtraField = {
             id: '502',
             name: 'noDefault',
-            visibleToEnduser: true,
+            visibleToStorefront: true,
             type: 'dropdown',
             isRequired: false,
             config: { options: ['X', 'Y'] },
