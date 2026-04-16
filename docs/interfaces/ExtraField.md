@@ -6,41 +6,24 @@
 
 ### Properties
 
-- [defaultValue](ExtraField.md#defaultvalue)
-- [fieldName](ExtraField.md#fieldname)
-- [fieldType](ExtraField.md#fieldtype)
+- [config](ExtraField.md#config)
 - [id](ExtraField.md#id)
 - [isRequired](ExtraField.md#isrequired)
-- [labelName](ExtraField.md#labelname)
-- [listOfValue](ExtraField.md#listofvalue)
-- [maximumLength](ExtraField.md#maximumlength)
-- [maximumValue](ExtraField.md#maximumvalue)
-- [numberOfRows](ExtraField.md#numberofrows)
-- [visibleToEnduser](ExtraField.md#visibletoenduser)
+- [name](ExtraField.md#name)
+- [type](ExtraField.md#type)
+- [visibleToStorefront](ExtraField.md#visibletostorefront)
 
 ## Properties
 
-### defaultValue
+### config
 
-• **defaultValue**: `string`
-
-___
-
-### fieldName
-
-• **fieldName**: `string`
-
-___
-
-### fieldType
-
-• **fieldType**: `number`
+• **config**: [`ExtraFieldConfig`](ExtraFieldConfig.md)
 
 ___
 
 ### id
 
-• **id**: `number`
+• **id**: `string`
 
 ___
 
@@ -50,36 +33,18 @@ ___
 
 ___
 
-### labelName
+### name
 
-• **labelName**: `string`
-
-___
-
-### listOfValue
-
-• `Optional` **listOfValue**: `string`[]
+• **name**: `string`
 
 ___
 
-### maximumLength
+### type
 
-• `Optional` **maximumLength**: `number`
-
-___
-
-### maximumValue
-
-• `Optional` **maximumValue**: `number`
+• **type**: [`ExtraFieldType`](../README.md#extrafieldtype)
 
 ___
 
-### numberOfRows
+### visibleToStorefront
 
-• `Optional` **numberOfRows**: `number`
-
-___
-
-### visibleToEnduser
-
-• **visibleToEnduser**: `boolean`
+• **visibleToStorefront**: `boolean`

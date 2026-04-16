@@ -104,7 +104,7 @@ ___
 
 ### extraFields
 
-• `Optional` **extraFields**: [`ExtraFieldValue`](ExtraFieldValue.md)[]
+• `Optional` **extraFields**: [`AddressExtraFieldValue`](AddressExtraFieldValue.md)[]
 
 #### Inherited from
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.899.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.899.3...v1.899.4) (2026-04-16)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-9938 Update Extra Field Types ([#3221](https://github.com/bigcommerce/checkout-sdk-js/issues/3221)) ([eecd46c](https://github.com/bigcommerce/checkout-sdk-js/commit/eecd46c974483413d2c375b77724e20804d61c17))
+
 ### [1.899.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.899.2...v1.899.3) (2026-04-16)
 
 ### [1.899.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.899.1...v1.899.2) (2026-04-15)

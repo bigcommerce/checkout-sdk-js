@@ -34,7 +34,7 @@ ___
 
 ### extraFields
 
-• `Optional` **extraFields**: [`ExtraField`](ExtraField.md)[]
+• `Optional` **extraFields**: [`ExtraFields`](ExtraFields.md)
 
 ___
 

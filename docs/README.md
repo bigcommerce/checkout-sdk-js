@@ -68,6 +68,7 @@
 
 - [AchInstrument](interfaces/AchInstrument.md)
 - [Address](interfaces/Address.md)
+- [AddressExtraFieldValue](interfaces/AddressExtraFieldValue.md)
 - [AddressRequestBody](interfaces/AddressRequestBody.md)
 - [AdyenAdditionalActionCallbacks](interfaces/AdyenAdditionalActionCallbacks.md)
 - [AdyenAdditionalActionOptions](interfaces/AdyenAdditionalActionOptions.md)
@@ -248,7 +249,8 @@
 - [ExtensionQueryMap](interfaces/ExtensionQueryMap.md)
 - [ExtensionSelector](interfaces/ExtensionSelector.md)
 - [ExtraField](interfaces/ExtraField.md)
-- [ExtraFieldValue](interfaces/ExtraFieldValue.md)
+- [ExtraFieldConfig](interfaces/ExtraFieldConfig.md)
+- [ExtraFields](interfaces/ExtraFields.md)
 - [FastlaneShippingInitializeOptions](interfaces/FastlaneShippingInitializeOptions.md)
 - [Fee](interfaces/Fee.md)
 - [FlashMessage](interfaces/FlashMessage.md)
@@ -540,6 +542,7 @@
 - [CustomerInitializeOptions](README.md#customerinitializeoptions)
 - [ExtensionEvent](README.md#extensionevent)
 - [ExtensionMessage](README.md#extensionmessage)
+- [ExtraFieldType](README.md#extrafieldtype)
 - [FastlaneStylesOption](README.md#fastlanestylesoption)
 - [FlashMessageType](README.md#flashmessagetype)
 - [FormFieldFieldType](README.md#formfieldfieldtype)
@@ -590,7 +593,7 @@
 - [createStepTracker](README.md#createsteptracker)
 - [createStoredCardHostedFormService](README.md#createstoredcardhostedformservice)
 - [embedCheckout](README.md#embedcheckout)
-- [isExtraFormField](README.md#isextraformfield)
+- [isExtraField](README.md#isextrafield)
 
 ## Type Aliases
 
@@ -683,6 +686,12 @@ ___
 ### ExtensionMessage
 
 Ƭ **ExtensionMessage**: [`ExtensionEvent`](README.md#extensionevent) \| [`GetConsignmentsMessage`](interfaces/GetConsignmentsMessage.md)
+
+___
+
+### ExtraFieldType
+
+Ƭ **ExtraFieldType**: ``"text"`` \| ``"multiline_text"`` \| ``"number"`` \| ``"dropdown"``
 
 ___
 
@@ -1266,9 +1275,9 @@ A promise that resolves to an instance of `EmbeddedCheckout`.
 
 ___
 
-### isExtraFormField
+### isExtraField
 
-▸ **isExtraFormField**(`field`): `boolean`
+▸ **isExtraField**(`field`): `boolean`
 
 #### Parameters
 

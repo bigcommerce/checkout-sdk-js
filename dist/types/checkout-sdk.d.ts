@@ -66,6 +66,11 @@ declare interface Address extends AddressRequestBody {
     shouldSaveAddress?: boolean;
 }
 
+declare interface AddressExtraFieldValue {
+    fieldId: string;
+    fieldValue: string | number;
+}
+
 declare type AddressKey = keyof Address;
 
 declare interface AddressRequestBody {
@@ -84,7 +89,7 @@ declare interface AddressRequestBody {
         fieldId: string;
         fieldValue: string | number | string[];
     }>;
-    extraFields?: ExtraFieldValue[];
+    extraFields?: AddressExtraFieldValue[];
 }
 
 declare interface AdyenAdditionalActionCallbacks {
@@ -2287,7 +2292,7 @@ declare interface Capabilities {
     userJourney: {
         disableEditCart: boolean;
         hasCompanyAddressBook: boolean;
-        hasExtraAddressFields: boolean;
+        hasAddressExtraFields: boolean;
         requiresB2BToken: boolean;
     };
     customer: {
@@ -2717,7 +2722,7 @@ declare interface CheckoutInitialState {
     formFields?: FormFields;
     checkout?: Checkout;
     extensions?: Extension[];
-    extraFields?: ExtraField[];
+    extraFields?: ExtraFields;
 }
 
 declare interface CheckoutParams {
@@ -4398,11 +4403,11 @@ declare interface CheckoutStoreSelector {
      */
     getShippingAddressFields(countryCode: string): FormField[];
     /**
-     * Gets address extra form fields.
+     * Gets address extra fields.
      *
-     * @returns The list of extra form fields if available, otherwise an empty array.
+     * @returns The list of extra fields if available, otherwise an empty array.
      */
-    getAddressExtraFormFields(): FormField[];
+    getAddressExtraFields(): FormField[];
     /**
      * Gets a list of pickup options for specified parameters.
      *
@@ -5450,22 +5455,27 @@ declare const enum ExtensionType {
 }
 
 declare interface ExtraField {
-    id: number;
-    fieldName: string;
-    fieldType: number;
+    id: string;
+    name: string;
+    visibleToStorefront: boolean;
     isRequired: boolean;
-    visibleToEnduser: boolean;
-    defaultValue: string;
-    labelName: string;
-    listOfValue?: string[];
-    maximumLength?: number;
-    numberOfRows?: number;
-    maximumValue?: number;
+    type: ExtraFieldType;
+    config: ExtraFieldConfig;
 }
 
-declare interface ExtraFieldValue {
-    fieldId: string;
-    fieldValue: string | number;
+declare interface ExtraFieldConfig {
+    defaultValue?: string | number;
+    maxLength?: number;
+    numberOfRows?: number;
+    maxValue?: number;
+    options?: string[];
+}
+
+declare type ExtraFieldType = 'text' | 'multiline_text' | 'number' | 'dropdown';
+
+declare interface ExtraFields {
+    address: ExtraField[];
+    order: ExtraField[];
 }
 
 /**
@@ -5558,7 +5568,7 @@ declare interface FormSelector {
     getShippingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getBillingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getCustomerAccountFields(): FormField[];
-    getAddressExtraFormFields(): FormField[];
+    getAddressExtraFields(): FormField[];
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
@@ -9530,4 +9540,4 @@ export declare function createStoredCardHostedFormService(host: string): StoredC
  */
 export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;
 
-export declare function isExtraFormField(field: FormField): boolean;
+export declare function isExtraField(field: FormField): boolean;

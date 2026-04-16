@@ -6,6 +6,11 @@ declare interface Address extends AddressRequestBody {
     shouldSaveAddress?: boolean;
 }
 
+declare interface AddressExtraFieldValue {
+    fieldId: string;
+    fieldValue: string | number;
+}
+
 declare interface AddressRequestBody {
     firstName: string;
     lastName: string;
@@ -22,7 +27,7 @@ declare interface AddressRequestBody {
         fieldId: string;
         fieldValue: string | number | string[];
     }>;
-    extraFields?: ExtraFieldValue[];
+    extraFields?: AddressExtraFieldValue[];
 }
 
 declare interface Banner {
@@ -241,11 +246,6 @@ declare interface DiscountNotification {
     messageHtml: string;
     discountType: string | null;
     placeholders: string[];
-}
-
-declare interface ExtraFieldValue {
-    fieldId: string;
-    fieldValue: string | number;
 }
 
 declare interface Fee {

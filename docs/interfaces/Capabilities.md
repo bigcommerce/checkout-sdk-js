@@ -97,6 +97,6 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `disableEditCart` | `boolean` |
+| `hasAddressExtraFields` | `boolean` |
 | `hasCompanyAddressBook` | `boolean` |
-| `hasExtraAddressFields` | `boolean` |
 | `requiresB2BToken` | `boolean` |

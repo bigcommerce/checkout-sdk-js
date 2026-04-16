@@ -11,7 +11,7 @@ checkout information, such as shipping and billing details.
 
 ### Methods
 
-- [getAddressExtraFormFields](CheckoutStoreSelector.md#getaddressextraformfields)
+- [getAddressExtraFields](CheckoutStoreSelector.md#getaddressextrafields)
 - [getB2BToken](CheckoutStoreSelector.md#getb2btoken)
 - [getBillingAddress](CheckoutStoreSelector.md#getbillingaddress)
 - [getBillingAddressFields](CheckoutStoreSelector.md#getbillingaddressfields)
@@ -46,17 +46,17 @@ checkout information, such as shipping and billing details.
 
 ## Methods
 
-### getAddressExtraFormFields
+### getAddressExtraFields
 
-▸ **getAddressExtraFormFields**(): [`FormField`](FormField.md)[]
+▸ **getAddressExtraFields**(): [`FormField`](FormField.md)[]
 
-Gets address extra form fields.
+Gets address extra fields.
 
 #### Returns
 
 [`FormField`](FormField.md)[]
 
-The list of extra form fields if available, otherwise an empty array.
+The list of extra fields if available, otherwise an empty array.
 
 ___
 
