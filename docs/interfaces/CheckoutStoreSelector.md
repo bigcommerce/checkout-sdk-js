@@ -12,6 +12,7 @@ checkout information, such as shipping and billing details.
 ### Methods
 
 - [getAddressExtraFormFields](CheckoutStoreSelector.md#getaddressextraformfields)
+- [getB2BToken](CheckoutStoreSelector.md#getb2btoken)
 - [getBillingAddress](CheckoutStoreSelector.md#getbillingaddress)
 - [getBillingAddressFields](CheckoutStoreSelector.md#getbillingaddressfields)
 - [getBillingCountries](CheckoutStoreSelector.md#getbillingcountries)
@@ -56,6 +57,20 @@ Gets address extra form fields.
 [`FormField`](FormField.md)[]
 
 The list of extra form fields if available, otherwise an empty array.
+
+___
+
+### getB2BToken
+
+▸ **getB2BToken**(): `undefined` \| `string`
+
+Gets the B2B authentication token for the current customer.
+
+#### Returns
+
+`undefined` \| `string`
+
+The B2B token string if it has been loaded, otherwise undefined.
 
 ___
 

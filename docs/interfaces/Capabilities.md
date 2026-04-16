@@ -99,3 +99,4 @@ ___
 | `disableEditCart` | `boolean` |
 | `hasCompanyAddressBook` | `boolean` |
 | `hasExtraAddressFields` | `boolean` |
+| `requiresB2BToken` | `boolean` |

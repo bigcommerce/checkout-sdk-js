@@ -34,6 +34,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [executePaymentMethodCheckout](CheckoutService.md#executepaymentmethodcheckout)
 - [executeSpamCheck](CheckoutService.md#executespamcheck)
 - [finalizeOrderIfNeeded](CheckoutService.md#finalizeorderifneeded)
+- [getB2BToken](CheckoutService.md#getb2btoken)
 - [getState](CheckoutService.md#getstate)
 - [handleExtensionCommand](CheckoutService.md#handleextensioncommand)
 - [handleExtensionQuery](CheckoutService.md#handleextensionquery)
@@ -633,6 +634,36 @@ is not required for the current order at the time of execution.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `options?` | [`OrderFinalizeOptions`](../interfaces/OrderFinalizeOptions.md) | Options for finalizing the current order. |
+
+#### Returns
+
+`Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+A promise that resolves to the current state.
+
+___
+
+### getB2BToken
+
+▸ **getB2BToken**(`options?`): `Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+Retrieves a B2B authentication token for the current customer.
+
+The token can be used to authenticate requests to B2B REST and GraphQL
+endpoints. The customer must be signed in for this method to succeed.
+The B2B base URL and client ID are read from the checkout settings config.
+
+```js
+const state = await service.getB2BToken();
+
+console.log(state.data.getB2BToken());
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options?` | [`RequestOptions`](../interfaces/RequestOptions.md)<`Object`\> | Options for the request. |
 
 #### Returns
 

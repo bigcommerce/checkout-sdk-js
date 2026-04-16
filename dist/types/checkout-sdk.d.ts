@@ -660,6 +660,17 @@ declare interface ApplePayPaymentInitializeOptions {
     subtotalLabel?: string;
 }
 
+declare interface B2BServiceDetails {
+    b2bBaseUrl: string;
+    b2bClientId: string;
+}
+
+declare interface B2BTokenSelector {
+    getToken(): string | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
+
 declare interface BankInstrument extends BaseAccountInstrument {
     accountNumber: string;
     issuer: string;
@@ -2277,6 +2288,7 @@ declare interface Capabilities {
         disableEditCart: boolean;
         hasCompanyAddressBook: boolean;
         hasExtraAddressFields: boolean;
+        requiresB2BToken: boolean;
     };
     customer: {
         superAdminCompanySelector: boolean;
@@ -2758,6 +2770,7 @@ declare class CheckoutService {
     private _storeProjection;
     private _extensionMessenger;
     private _extensionEventBroadcaster;
+    private _b2bTokenActionCreator;
     private _billingAddressActionCreator;
     private _checkoutActionCreator;
     private _configActionCreator;
@@ -3213,6 +3226,23 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     sendSignInEmail(signInEmailRequest: SignInEmailRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Retrieves a B2B authentication token for the current customer.
+     *
+     * The token can be used to authenticate requests to B2B REST and GraphQL
+     * endpoints. The customer must be signed in for this method to succeed.
+     * The B2B base URL and client ID are read from the checkout settings config.
+     *
+     * ```js
+     * const state = await service.getB2BToken();
+     *
+     * console.log(state.data.getB2BToken());
+     * ```
+     *
+     * @param options - Options for the request.
+     * @returns A promise that resolves to the current state.
+     */
+    getB2BToken(options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Creates a customer account.
      *
@@ -3845,6 +3875,7 @@ declare interface CheckoutServiceOptions {
 
 declare interface CheckoutSettings {
     capabilities?: Capabilities;
+    b2bServiceDetails?: B2BServiceDetails;
     features: {
         [featureName: string]: boolean;
     };
@@ -4119,6 +4150,12 @@ declare interface CheckoutStoreErrorSelector {
      */
     getSignInEmailError(): Error | undefined;
     /**
+     * Returns an error if unable to load the B2B token.
+     *
+     * @returns The error object if unable to load the B2B token, otherwise undefined.
+     */
+    getLoadB2BTokenError(): Error | undefined;
+    /**
      * Returns an error if unable to create customer account.
      *
      * @returns The error object if unable to create account, otherwise undefined.
@@ -4176,6 +4213,12 @@ declare interface CheckoutStoreSelector {
      * @returns The sign-in email object if sent, otherwise undefined
      */
     getSignInEmail(): SignInEmail | undefined;
+    /**
+     * Gets the B2B authentication token for the current customer.
+     *
+     * @returns The B2B token string if it has been loaded, otherwise undefined.
+     */
+    getB2BToken(): string | undefined;
     /**
      * Gets the shipping address of the current checkout.
      *
@@ -4644,6 +4687,12 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if sending a sign-in email, otherwise false
      */
     isSendingSignInEmail(): boolean;
+    /**
+     * Checks whether a B2B token is being loaded.
+     *
+     * @returns True if a B2B token is being loaded, otherwise false.
+     */
+    isLoadingB2BToken(): boolean;
     /**
      * Checks whether the current customer is applying a gift certificate.
      *
@@ -6282,6 +6331,7 @@ declare interface InternalAddress<T = string> {
 }
 
 declare interface InternalCheckoutSelectors {
+    b2bToken: B2BTokenSelector;
     billingAddress: BillingAddressSelector;
     cart: CartSelector;
     checkout: CheckoutSelector;

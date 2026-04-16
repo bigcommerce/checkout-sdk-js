@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [b2bToken](InternalCheckoutSelectors.md#b2btoken)
 - [billingAddress](InternalCheckoutSelectors.md#billingaddress)
 - [cart](InternalCheckoutSelectors.md#cart)
 - [checkout](InternalCheckoutSelectors.md#checkout)
@@ -36,6 +37,12 @@
 - [subscriptions](InternalCheckoutSelectors.md#subscriptions)
 
 ## Properties
+
+### b2bToken
+
+• **b2bToken**: [`B2BTokenSelector`](B2BTokenSelector.md)
+
+___
 
 ### billingAddress
 

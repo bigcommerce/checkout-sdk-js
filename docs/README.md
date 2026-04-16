@@ -90,6 +90,8 @@
 - [ApplePayButtonInitializeOptions](interfaces/ApplePayButtonInitializeOptions.md)
 - [ApplePayCustomerInitializeOptions](interfaces/ApplePayCustomerInitializeOptions.md)
 - [ApplePayPaymentInitializeOptions](interfaces/ApplePayPaymentInitializeOptions.md)
+- [B2BServiceDetails](interfaces/B2BServiceDetails.md)
+- [B2BTokenSelector](interfaces/B2BTokenSelector.md)
 - [BankInstrument](interfaces/BankInstrument.md)
 - [Banner](interfaces/Banner.md)
 - [BaseAccountInstrument](interfaces/BaseAccountInstrument.md)

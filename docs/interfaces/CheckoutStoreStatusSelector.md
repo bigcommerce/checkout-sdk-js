@@ -30,6 +30,7 @@ order and waiting for the request to complete.
 - [isInitializingCustomer](CheckoutStoreStatusSelector.md#isinitializingcustomer)
 - [isInitializingPayment](CheckoutStoreStatusSelector.md#isinitializingpayment)
 - [isInitializingShipping](CheckoutStoreStatusSelector.md#isinitializingshipping)
+- [isLoadingB2BToken](CheckoutStoreStatusSelector.md#isloadingb2btoken)
 - [isLoadingBillingCountries](CheckoutStoreStatusSelector.md#isloadingbillingcountries)
 - [isLoadingCart](CheckoutStoreStatusSelector.md#isloadingcart)
 - [isLoadingCheckout](CheckoutStoreStatusSelector.md#isloadingcheckout)
@@ -359,6 +360,20 @@ identifier.
 `boolean`
 
 True if the shipping step is initializing, otherwise false.
+
+___
+
+### isLoadingB2BToken
+
+▸ **isLoadingB2BToken**(): `boolean`
+
+Checks whether a B2B token is being loaded.
+
+#### Returns
+
+`boolean`
+
+True if a B2B token is being loaded, otherwise false.
 
 ___
 

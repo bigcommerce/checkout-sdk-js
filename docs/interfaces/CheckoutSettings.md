@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [b2bServiceDetails](CheckoutSettings.md#b2bservicedetails)
 - [capabilities](CheckoutSettings.md#capabilities)
 - [checkoutBillingSameAsShippingEnabled](CheckoutSettings.md#checkoutbillingsameasshippingenabled)
 - [checkoutUserExperienceSettings](CheckoutSettings.md#checkoutuserexperiencesettings)
@@ -40,6 +41,12 @@
 - [shouldRedirectToStorefrontForAuth](CheckoutSettings.md#shouldredirecttostorefrontforauth)
 
 ## Properties
+
+### b2bServiceDetails
+
+• `Optional` **b2bServiceDetails**: [`B2BServiceDetails`](B2BServiceDetails.md)
+
+___
 
 ### capabilities
 

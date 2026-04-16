@@ -27,6 +27,7 @@ you can use this object to retrieve the reason for the failure.
 - [getInitializeCustomerError](CheckoutStoreErrorSelector.md#getinitializecustomererror)
 - [getInitializePaymentError](CheckoutStoreErrorSelector.md#getinitializepaymenterror)
 - [getInitializeShippingError](CheckoutStoreErrorSelector.md#getinitializeshippingerror)
+- [getLoadB2BTokenError](CheckoutStoreErrorSelector.md#getloadb2btokenerror)
 - [getLoadBillingCountriesError](CheckoutStoreErrorSelector.md#getloadbillingcountrieserror)
 - [getLoadCartError](CheckoutStoreErrorSelector.md#getloadcarterror)
 - [getLoadCheckoutError](CheckoutStoreErrorSelector.md#getloadcheckouterror)
@@ -289,6 +290,20 @@ process.
 `undefined` \| `Error`
 
 The error object if unable to initialize, otherwise undefined.
+
+___
+
+### getLoadB2BTokenError
+
+▸ **getLoadB2BTokenError**(): `undefined` \| `Error`
+
+Returns an error if unable to load the B2B token.
+
+#### Returns
+
+`undefined` \| `Error`
+
+The error object if unable to load the B2B token, otherwise undefined.
 
 ___
 
