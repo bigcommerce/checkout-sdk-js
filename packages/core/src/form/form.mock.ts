@@ -154,7 +154,7 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13449',
             name: 'textRequired',
-            labelName: 'textRequired',
+
             visibleToEnduser: true,
             type: 'text',
             isRequired: true,
@@ -163,7 +163,7 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13453',
             name: 'multilineText',
-            labelName: 'multilineText',
+
             visibleToEnduser: true,
             type: 'multiline_text',
             isRequired: false,
@@ -172,7 +172,7 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13457',
             name: 'number',
-            labelName: 'number',
+
             visibleToEnduser: true,
             type: 'number',
             isRequired: false,
@@ -181,7 +181,7 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13530',
             name: 'dropdownRequired',
-            labelName: 'dropdownRequired',
+
             visibleToEnduser: true,
             type: 'dropdown',
             isRequired: true,
@@ -190,7 +190,7 @@ export function getAddressExtraFields(): ExtraField[] {
         {
             id: '13531',
             name: 'dropdownOptional',
-            labelName: 'dropdownOptional',
+
             visibleToEnduser: true,
             type: 'dropdown',
             isRequired: false,

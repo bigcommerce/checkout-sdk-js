@@ -6,7 +6,6 @@ describe('mapB2bExtraFieldToFormField', () => {
         const extraField: ExtraField = {
             id: '100',
             name: 'textField',
-            labelName: 'Text Field',
             visibleToEnduser: true,
             type: 'text',
             isRequired: true,
@@ -19,7 +18,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             id: 'b2bExtraField_100',
             name: 'b2bExtraField_100',
             custom: false,
-            label: 'Text Field',
+            label: 'textField',
             hidden: false,
             required: true,
             default: 'hello',
@@ -35,7 +34,6 @@ describe('mapB2bExtraFieldToFormField', () => {
         const extraField: ExtraField = {
             id: '200',
             name: 'multilineField',
-            labelName: 'Multiline Field',
             visibleToEnduser: true,
             type: 'multiline_text',
             isRequired: false,
@@ -48,7 +46,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             id: 'b2bExtraField_200',
             name: 'b2bExtraField_200',
             custom: false,
-            label: 'Multiline Field',
+            label: 'multilineField',
             hidden: false,
             required: false,
             default: 'multi',
@@ -64,7 +62,6 @@ describe('mapB2bExtraFieldToFormField', () => {
         const extraField: ExtraField = {
             id: '300',
             name: 'numberField',
-            labelName: 'Number Field',
             visibleToEnduser: true,
             type: 'number',
             isRequired: true,
@@ -77,7 +74,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             id: 'b2bExtraField_300',
             name: 'b2bExtraField_300',
             custom: false,
-            label: 'Number Field',
+            label: 'numberField',
             hidden: false,
             required: true,
             default: '42',
@@ -93,7 +90,6 @@ describe('mapB2bExtraFieldToFormField', () => {
         const extraField: ExtraField = {
             id: '400',
             name: 'dropdownField',
-            labelName: 'Dropdown Field',
             visibleToEnduser: true,
             type: 'dropdown',
             isRequired: true,
@@ -106,7 +102,7 @@ describe('mapB2bExtraFieldToFormField', () => {
             id: 'b2bExtraField_400',
             name: 'b2bExtraField_400',
             custom: false,
-            label: 'Dropdown Field',
+            label: 'dropdownField',
             hidden: false,
             required: true,
             default: undefined,
@@ -130,7 +126,6 @@ describe('defaultValue coercion', () => {
         const extraField: ExtraField = {
             id: '500',
             name: 'numericDefault',
-            labelName: 'Numeric Default',
             visibleToEnduser: true,
             type: 'number',
             isRequired: false,
@@ -146,7 +141,6 @@ describe('defaultValue coercion', () => {
         const extraField: ExtraField = {
             id: '501',
             name: 'stringDefault',
-            labelName: 'String Default',
             visibleToEnduser: true,
             type: 'text',
             isRequired: false,
@@ -162,7 +156,6 @@ describe('defaultValue coercion', () => {
         const extraField: ExtraField = {
             id: '502',
             name: 'noDefault',
-            labelName: 'No Default',
             visibleToEnduser: true,
             type: 'dropdown',
             isRequired: false,
