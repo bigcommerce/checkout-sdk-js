@@ -10,8 +10,8 @@ import { B2BTokenActionType, LoadB2BTokenAction } from './b2b-token-actions';
 import B2BTokenRequestSender from './b2b-token-request-sender';
 
 // TODO: Remove once all stores have b2bServiceDetails configured in checkout settings
-const DEFAULT_B2B_BASE_URL = 'https://api-b2b.bigcommerce.com';
-const DEFAULT_B2B_CLIENT_ID = 'dl7c39mdpul6hyc489yk0vzxl6jesyx';
+const DEFAULT_B2B_BASE_URL = '';
+const DEFAULT_B2B_CLIENT_ID = '';
 
 export default class B2BTokenActionCreator {
     constructor(private _requestSender: B2BTokenRequestSender) {}
