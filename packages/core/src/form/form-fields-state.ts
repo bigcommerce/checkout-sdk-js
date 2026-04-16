@@ -1,9 +1,9 @@
-import { ExtraField } from './extra-field';
+import { ExtraFields } from './extra-field';
 import { FormFields } from './form-field';
 
 export default interface FormFieldsState {
     data?: FormFields;
-    extraFields?: ExtraField[];
+    extraFields?: ExtraFields;
     errors: FormFieldsErrorState;
     statuses: FormFieldsStatusesState;
 }

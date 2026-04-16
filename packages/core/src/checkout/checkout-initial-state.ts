@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { Extension } from '../extension';
-import { ExtraField, FormFields } from '../form';
+import { ExtraFields, FormFields } from '../form';
 
 import Checkout from './checkout';
 
@@ -9,5 +9,5 @@ export default interface CheckoutInitialState {
     formFields?: FormFields;
     checkout?: Checkout;
     extensions?: Extension[];
-    extraFields?: ExtraField[];
+    extraFields?: ExtraFields;
 }

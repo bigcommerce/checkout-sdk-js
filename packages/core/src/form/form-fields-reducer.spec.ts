@@ -3,7 +3,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { CheckoutHydrateActionType } from '../checkout';
 
 import { FormFieldsActionType } from './form-fields-actions';
-import { getExtraFields, getFormFields } from './form.mock';
+import { getAddressExtraFields, getFormFields } from './form.mock';
 
 import { formFieldsReducer, FormFieldsState } from './index';
 
@@ -44,7 +44,7 @@ describe('formFieldsReducer()', () => {
     });
 
     it('hydrates extraFields from initial state', () => {
-        const extraFields = getExtraFields();
+        const extraFields = { address: getAddressExtraFields(), order: [] };
         const action = createAction(CheckoutHydrateActionType.HydrateInitialState, {
             extraFields,
         });
