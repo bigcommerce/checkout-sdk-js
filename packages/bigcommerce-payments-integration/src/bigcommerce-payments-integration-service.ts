@@ -132,16 +132,18 @@ export default class BigCommercePaymentsIntegrationService {
         return { orderId, ...(setupToken ? { setupToken } : {}) };
     }
 
-    async updateOrder(): Promise<void> {
+    async updateOrder(providerId: string, methodId?: string, orderId?: number): Promise<void> {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const consignment = state.getConsignmentsOrThrow()[0];
 
         try {
-            await this.bigCommercePaymentsRequestSender.updateOrder({
+            await this.bigCommercePaymentsRequestSender.updateOrder(providerId, {
                 availableShippingOptions: consignment.availableShippingOptions,
                 cartId: cart.id,
                 selectedShippingOption: consignment.selectedShippingOption,
+                ...(methodId ? { methodId } : {}),
+                ...(orderId ? { orderId } : {}),
             });
         } catch (_error) {
             throw new RequestError();

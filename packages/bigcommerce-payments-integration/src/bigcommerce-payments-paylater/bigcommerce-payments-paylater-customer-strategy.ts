@@ -199,7 +199,9 @@ export default class BigCommercePaymentsPayLaterCustomerStrategy implements Cust
                     );
 
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.bigCommercePaymentsIntegrationService.updateOrder();
+                await this.bigCommercePaymentsIntegrationService.updateOrder(
+                    'bigcommerce_payments',
+                );
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
@@ -233,7 +235,7 @@ export default class BigCommercePaymentsPayLaterCustomerStrategy implements Cust
                 this.bigCommercePaymentsIntegrationService.getShippingOptionOrThrow();
 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder('bigcommerce_payments');
         } catch (error) {
             this.handleError(error);
         }
@@ -248,7 +250,7 @@ export default class BigCommercePaymentsPayLaterCustomerStrategy implements Cust
 
         try {
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder('bigcommerce_payments');
         } catch (error) {
             this.handleError(error);
         }

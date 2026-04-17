@@ -46,7 +46,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     private paypalApms?: PayPalApmSdk;
     private pollingTimer = 0;
     private stopPolling = noop;
-    private isPollingEnabled = false;
+    private isOrderApprovedProcessing = false;
     private bigCommercePaymentsAlternativeMethods?: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions;
 
     constructor(
@@ -93,7 +93,11 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
 
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
-        this.isPollingEnabled = isExperimentEnabled(features, 'PAYPAL-5624.bcp_ideal_polling');
+        this.isOrderApprovedProcessing = isExperimentEnabled(
+            features,
+            'PAYPAL-6115.bcp_order_approved_processing',
+            false,
+        );
 
         // Info:
         // The APM button and fields should not be rendered when shopper was redirected to Checkout page
@@ -132,13 +136,17 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             throw new PaymentMethodInvalidError();
         }
 
-        if (this.isPollingEnabled && methodId === 'ideal') {
+        if (!this.isOrderApprovedProcessing && methodId === 'ideal') {
             await new Promise((resolve, reject) => {
                 void this.initializePollingMechanism(methodId, resolve, reject, gatewayId);
             });
         }
 
-        if (!this.isNonInstantPaymentMethod(methodId)) {
+        if (
+            !this.isNonInstantPaymentMethod(methodId) ||
+            (methodId === NonInstantAlternativePaymentMethods.IDEAL &&
+                !this.isOrderApprovedProcessing)
+        ) {
             await this.paymentIntegrationService.submitOrder(order, options);
         }
 
@@ -156,7 +164,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     deinitialize(): Promise<void> {
         this.orderId = undefined;
 
-        if (this.isPollingEnabled) {
+        if (!this.isOrderApprovedProcessing) {
             this.resetPollingMechanism();
         }
 
@@ -249,7 +257,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     private handleError(error: unknown) {
         const { onError } = this.bigCommercePaymentsAlternativeMethods || {};
 
-        if (this.isPollingEnabled) {
+        if (!this.isOrderApprovedProcessing) {
             this.resetPollingMechanism();
         }
 
@@ -331,7 +339,12 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             'bigcommerce_payments_apms',
         );
 
-        if (this.isNonInstantPaymentMethod(methodId)) {
+        if (
+            this.isNonInstantPaymentMethod(methodId) &&
+            ((methodId === NonInstantAlternativePaymentMethods.IDEAL &&
+                this.isOrderApprovedProcessing) ||
+                methodId === NonInstantAlternativePaymentMethods.OXXO)
+        ) {
             const order = { useStoreCredit: false };
             const options = {
                 params: {
@@ -341,6 +354,18 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             };
 
             await this.paymentIntegrationService.submitOrder(order, options);
+
+            if (methodId === NonInstantAlternativePaymentMethods.IDEAL) {
+                const state = this.paymentIntegrationService.getState();
+                const bcOrderId = state.getOrder()?.orderId;
+
+                await this.bigCommercePaymentsIntegrationService.updateOrder(
+                    'bigcommerce_payments_apms',
+                    methodId,
+                    bcOrderId,
+                );
+            }
+
             await this.bigCommercePaymentsIntegrationService.submitPayment(
                 methodId,
                 orderId,
