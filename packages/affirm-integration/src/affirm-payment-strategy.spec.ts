@@ -480,10 +480,17 @@ describe('AffirmPaymentStrategy', () => {
             await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
         });
 
-        it('opens Affirm modal before submitting order when experiment is enabled', async () => {
+        it('opens Affirm modal before submitting order when postponeOrderCreation is enabled', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
                 getConfig().storeConfig,
             );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: { postponeOrderCreation: true },
+            });
 
             const callOrder: string[] = [];
 
@@ -503,19 +510,16 @@ describe('AffirmPaymentStrategy', () => {
             expect(callOrder).toEqual(['affirmOpen', 'submitOrder']);
         });
 
-        it('submits order before opening Affirm modal when experiment is disabled', async () => {
+        it('submits order before opening Affirm modal when postponeOrderCreation is disabled', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
                 getConfig().storeConfig,
             );
             jest.spyOn(
                 paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
+                'getPaymentMethodOrThrow',
             ).mockReturnValue({
-                ...getConfig().storeConfig,
-                checkoutSettings: {
-                    ...getConfig().storeConfig.checkoutSettings,
-                    features: { 'PI-5213.affirm_submit_order_after_submit_payment': false },
-                },
+                ...paymentMethod,
+                initializationData: { postponeOrderCreation: false },
             });
 
             const callOrder: string[] = [];

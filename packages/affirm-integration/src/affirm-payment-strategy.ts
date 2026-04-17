@@ -19,13 +19,13 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import {
     Affirm,
     AffirmAddress,
     AffirmDiscount,
     AffirmFailResponse,
+    AffirmInitializationData,
     AffirmItem,
     AffirmRequestData,
     AffirmSuccessResponse,
@@ -69,15 +69,12 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment.methodId']);
         }
 
-        const { checkoutSettings } = this.paymentIntegrationService
+        const { initializationData } = this.paymentIntegrationService
             .getState()
-            .getStoreConfigOrThrow();
-        const isSubmitOrderAfterPaymentEnabled = isExperimentEnabled(
-            checkoutSettings.features,
-            'PI-5213.affirm_submit_order_after_submit_payment',
-        );
+            .getPaymentMethodOrThrow<AffirmInitializationData>(methodId);
+        const postponeOrderCreation = initializationData?.postponeOrderCreation ?? false;
 
-        if (!isSubmitOrderAfterPaymentEnabled) {
+        if (!postponeOrderCreation) {
             await this.paymentIntegrationService.submitOrder({ useStoreCredit }, options);
         }
 
@@ -88,7 +85,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             paymentData: { nonce: affirmCheckout.checkout_token },
         };
 
-        if (isSubmitOrderAfterPaymentEnabled) {
+        if (postponeOrderCreation) {
             await this.paymentIntegrationService.submitOrder({ useStoreCredit }, options);
         }
 
