@@ -671,6 +671,32 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 );
             });
 
+            it('catch unrecognized states when show() resolves due to customers issue (e.g. Access Control Server failures)', async () => {
+                const paypalFastlaneSdkMock = {
+                    ...paypalFastlaneSdk,
+                    ThreeDomainSecureClient: {
+                        ...threeDomainSecureComponentMock,
+                        show: jest.fn().mockReturnValue({
+                            liabilityShift: LiabilityShiftEnum.Possible,
+                            authenticationState: 'UNRECOGNIZED_AUTH_STATE',
+                            nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
+                        }),
+                    },
+                };
+
+                jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                    Promise.resolve(paypalFastlaneSdkMock),
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                try {
+                    await strategy.execute(executeOptions);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(Error);
+                }
+            });
+
             it('throws an error if liabilityShift no or unknown', async () => {
                 const paypalFastlaneSdkMock = {
                     ...paypalFastlaneSdk,
