@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.900.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.899.4...v1.900.0) (2026-04-17)
+
+
+### Features
+
+* **payment:** PAYPAL-6378 catch all unrecognized states to avoid placing an order with a wrong nonce value provided by default in specific 3DSecure silent fallthrough scenario ([5f0c67b](https://github.com/bigcommerce/checkout-sdk-js/commit/5f0c67b427af7f901bdeda9cbe348db26cfd13dc))
+
 ### [1.899.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.899.3...v1.899.4) (2026-04-16)
 
 
