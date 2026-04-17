@@ -39,7 +39,7 @@ describe('ExternalPaymentStrategy', () => {
 
         it('submits order without payment data', async () => {
             const payload = getOrderRequestBody();
-            const options = { methodId: 'laybuy' };
+            const options = { methodId: 'external' };
             const { payment } = payload;
             const paymentData = payment && payment.paymentData;
 
@@ -67,8 +67,8 @@ describe('ExternalPaymentStrategy', () => {
             expect(formPoster.postForm).not.toHaveBeenCalled();
         });
 
-        it('redirects to Laybuy if additional action is required', async () => {
-            const redirect_url = 'https://sandbox-payment.laybuy.com';
+        it('redirects to external provider if additional action is required', async () => {
+            const redirect_url = 'https://sandbox-payment.example.com';
             const error = new RequestError(
                 getResponse({
                     ...getErrorPaymentResponseBody(),
