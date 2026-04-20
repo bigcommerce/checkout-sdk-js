@@ -13,6 +13,7 @@
 ### Properties
 
 - [addedByPromotion](DigitalItem.md#addedbypromotion)
+- [backorderMessage](DigitalItem.md#backordermessage)
 - [brand](DigitalItem.md#brand)
 - [categories](DigitalItem.md#categories)
 - [categoryNames](DigitalItem.md#categorynames)
@@ -35,6 +36,7 @@
 - [parentId](DigitalItem.md#parentid)
 - [productId](DigitalItem.md#productid)
 - [quantity](DigitalItem.md#quantity)
+- [quantityBackordered](DigitalItem.md#quantitybackordered)
 - [retailPrice](DigitalItem.md#retailprice)
 - [salePrice](DigitalItem.md#saleprice)
 - [sku](DigitalItem.md#sku)
@@ -52,6 +54,16 @@
 #### Inherited from
 
 [LineItem](LineItem.md).[addedByPromotion](LineItem.md#addedbypromotion)
+
+___
+
+### backorderMessage
+
+• `Optional` **backorderMessage**: ``null`` \| `string`
+
+#### Inherited from
+
+[LineItem](LineItem.md).[backorderMessage](LineItem.md#backordermessage)
 
 ___
 
@@ -260,6 +272,16 @@ ___
 #### Inherited from
 
 [LineItem](LineItem.md).[quantity](LineItem.md#quantity)
+
+___
+
+### quantityBackordered
+
+• `Optional` **quantityBackordered**: `number`
+
+#### Inherited from
+
+[LineItem](LineItem.md).[quantityBackordered](LineItem.md#quantitybackordered)
 
 ___
 

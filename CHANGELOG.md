@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.901.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.900.0...v1.901.0) (2026-04-20)
+
+
+### Features
+
+* **order:** BACK-392 Add order BO fields to LineItem type ([8c4d737](https://github.com/bigcommerce/checkout-sdk-js/commit/8c4d737e3a540d77670b4f2b95c4a72abe9a7242))
+
 ## [1.900.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.899.4...v1.900.0) (2026-04-17)
 
 
