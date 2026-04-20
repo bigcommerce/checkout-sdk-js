@@ -66,6 +66,8 @@ export interface LineItem {
     options?: LineItemOption[];
     addedByPromotion: boolean;
     parentId?: string | null;
+    quantityBackordered?: number;
+    backorderMessage?: string | null;
     stockPosition?: StockPosition;
 }
 
