@@ -1503,7 +1503,7 @@ declare class PayPalCommerceScriptLoader {
     private scriptLoader;
     private window;
     constructor(scriptLoader: ScriptLoader);
-    getPayPalSDK(paymentMethod: PaymentMethod<PayPalCommerceInitializationData>, currencyCode: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean): Promise<PayPalSDK>;
+    getPayPalSDK(paymentMethod: PaymentMethod<PayPalCommerceInitializationData>, currencyCode: string, storeLanguage: string | undefined, initializesOnCheckoutPage?: boolean, forceLoad?: boolean): Promise<PayPalSDK>;
     private loadPayPalSDK;
     private getPayPalSdkScriptConfigOrThrow;
     private transformConfig;

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.902.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.901.0...v1.902.0) (2026-04-20)
+
+
+### Features
+
+* **payment:** PAYPAL-5046 send locale parameter in PayPal SDK call ([5198314](https://github.com/bigcommerce/checkout-sdk-js/commit/51983141df3dfe784c27e362878a4da4789dfa5a))
+
 ## [1.901.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.900.0...v1.901.0) (2026-04-20)
 
 
