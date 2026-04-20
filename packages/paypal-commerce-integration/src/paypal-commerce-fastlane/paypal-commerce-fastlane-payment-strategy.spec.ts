@@ -144,6 +144,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             paymentIntegrationService.getState(),
             'getPaymentProviderCustomer',
         ).mockReturnValue({});
+        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en-US');
 
         jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
             Promise.resolve(paypalFastlaneSdk),
@@ -291,6 +292,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
+                'en-US',
             );
         });
 

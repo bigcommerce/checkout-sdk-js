@@ -6,6 +6,7 @@ import {
     PaymentMethod,
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { transformLocaleToPayPalFormat } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
     PayPalCommerceHostWindow,
@@ -27,12 +28,14 @@ export default class PayPalCommerceSdk {
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
         sessionId: string,
+        storeLanguage: string | undefined,
     ): Promise<PayPalFastlaneSdk> {
         if (!this.window.paypalFastlaneSdk) {
             const config = this.getPayPalFastlaneSdkConfiguration(
                 paymentMethod,
                 currencyCode,
                 sessionId,
+                storeLanguage,
             );
 
             await this.loadPayPalSdk(config);
@@ -48,6 +51,7 @@ export default class PayPalCommerceSdk {
     async getPayPalGooglePaySdk(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        storeLanguage: string | undefined,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
     ): Promise<PayPalGooglePaySdk> {
@@ -55,6 +59,7 @@ export default class PayPalCommerceSdk {
             const paypalSdkScriptConfig = this.getPayPalGooglePaySdkScriptConfigOrThrow(
                 paymentMethod,
                 currencyCode,
+                storeLanguage,
                 initializesOnCheckoutPage,
             );
 
@@ -71,9 +76,14 @@ export default class PayPalCommerceSdk {
     async getPayPalApmsSdk(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        storeLanguage: string | undefined,
     ) {
         if (!this.window.paypalApms) {
-            const config = this.getPayPalApmSdkConfiguration(paymentMethod, currencyCode);
+            const config = this.getPayPalApmSdkConfiguration(
+                paymentMethod,
+                currencyCode,
+                storeLanguage,
+            );
 
             await this.loadPayPalSdk(config);
 
@@ -88,11 +98,13 @@ export default class PayPalCommerceSdk {
     async getPayPalMessages(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        storeLanguage: string | undefined,
     ): Promise<PayPalMessagesSdk> {
         if (!this.window.paypalMessages) {
             const paypalSdkMessagesConfig = this.getPayPalSdkMessagesConfiguration(
                 paymentMethod,
                 currencyCode,
+                storeLanguage,
             );
 
             await this.loadPayPalSdk(paypalSdkMessagesConfig);
@@ -134,6 +146,7 @@ export default class PayPalCommerceSdk {
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
         sessionId: string,
+        storeLanguage: string | undefined,
     ): PayPalSdkConfig {
         const { clientToken, initializationData } = paymentMethod;
 
@@ -142,6 +155,8 @@ export default class PayPalCommerceSdk {
         }
 
         const { intent, clientId, merchantId, attributionId } = initializationData;
+
+        const locale = transformLocaleToPayPalFormat(storeLanguage);
 
         return {
             options: {
@@ -157,6 +172,7 @@ export default class PayPalCommerceSdk {
                 ],
                 currency: currencyCode,
                 intent,
+                ...(locale && { locale }),
             },
             attributes: {
                 'data-client-metadata-id': sessionId.replace(/-/g, ''),
@@ -170,6 +186,7 @@ export default class PayPalCommerceSdk {
     private getPayPalGooglePaySdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        storeLanguage: string | undefined,
         initializesOnCheckoutPage = true,
     ): PayPalSdkConfig {
         const { clientToken, initializationData } = paymentMethod;
@@ -190,6 +207,8 @@ export default class PayPalCommerceSdk {
 
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
 
+        const locale = transformLocaleToPayPalFormat(storeLanguage);
+
         return {
             options: {
                 'client-id': clientId,
@@ -199,6 +218,7 @@ export default class PayPalCommerceSdk {
                 currency: currencyCode,
                 intent,
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+                ...(locale && { locale }),
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
@@ -211,6 +231,7 @@ export default class PayPalCommerceSdk {
     private getPayPalApmSdkConfiguration(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        storeLanguage: string | undefined,
     ): PayPalSdkConfig {
         const { initializationData } = paymentMethod;
 
@@ -234,6 +255,8 @@ export default class PayPalCommerceSdk {
             (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
         );
 
+        const locale = transformLocaleToPayPalFormat(storeLanguage);
+
         return {
             options: {
                 'client-id': clientId,
@@ -245,6 +268,7 @@ export default class PayPalCommerceSdk {
                 currency: currencyCode,
                 intent,
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+                ...(locale && { locale }),
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
@@ -256,6 +280,7 @@ export default class PayPalCommerceSdk {
     private getPayPalSdkMessagesConfiguration(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        storeLanguage: string | undefined,
     ): PayPalSdkConfig {
         const { initializationData } = paymentMethod;
 
@@ -266,6 +291,8 @@ export default class PayPalCommerceSdk {
         const { clientId, merchantId, attributionId, isDeveloperModeApplicable, buyerCountry } =
             initializationData;
 
+        const locale = transformLocaleToPayPalFormat(storeLanguage);
+
         return {
             options: {
                 'client-id': clientId,
@@ -273,6 +300,7 @@ export default class PayPalCommerceSdk {
                 components: ['messages'],
                 currency: currencyCode,
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+                ...(locale && { locale }),
             },
             attributes: {
                 'data-namespace': 'paypalMessages',

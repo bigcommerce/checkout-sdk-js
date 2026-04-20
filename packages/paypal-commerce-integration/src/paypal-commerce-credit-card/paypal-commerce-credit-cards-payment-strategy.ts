@@ -744,6 +744,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
+                state.getLocale(),
             );
 
             await this.paypalFastlaneUtils.initializePayPalFastlane(

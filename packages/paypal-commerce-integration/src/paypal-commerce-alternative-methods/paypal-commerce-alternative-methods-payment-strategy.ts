@@ -116,6 +116,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         this.paypalApms = await this.paypalSdkScriptLoader.getPayPalApmsSdk(
             paymentMethod,
             state.getCartOrThrow().currency.code,
+            state.getLocale(),
         );
 
         this.loadingIndicatorContainer = paypalOptions.container.split('#')[1];

@@ -32,7 +32,8 @@ export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
         isBuyNowFlow?: boolean,
         currencyCode?: string,
     ): Promise<void> {
-        const currency = this.service.getState().getStoreConfig()?.currency.code ?? currencyCode;
+        const state = this.service.getState();
+        const currency = state.getStoreConfig()?.currency.code ?? currencyCode;
 
         if (!currency) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -51,6 +52,7 @@ export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
         const googlePaySdk = await this.payPalCommerceSdk.getPayPalGooglePaySdk(
             paymentMethod,
             currency,
+            state.getLocale(),
         );
 
         this.googlepayConfig = await googlePaySdk.Googlepay().config();

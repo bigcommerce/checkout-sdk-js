@@ -82,6 +82,7 @@ describe('PayPalIntegrationService', () => {
         jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
         jest.spyOn(state, 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(state, 'getConsignmentsOrThrow').mockReturnValue(consignments);
+        jest.spyOn(state, 'getLocale').mockReturnValue('en-US');
 
         jest.spyOn(paypalSdkLoader, 'getPayPalSDK').mockResolvedValue(paypalSdk);
     });
@@ -97,6 +98,7 @@ describe('PayPalIntegrationService', () => {
             expect(paypalSdkLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
+                'en-US',
                 false,
                 false,
             );
@@ -115,6 +117,7 @@ describe('PayPalIntegrationService', () => {
             expect(paypalSdkLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 providedCurrencyCode,
+                'en-US',
                 false,
                 false,
             );

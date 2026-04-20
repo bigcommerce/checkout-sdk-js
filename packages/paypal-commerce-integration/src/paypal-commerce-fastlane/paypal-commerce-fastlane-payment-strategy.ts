@@ -110,6 +110,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             paymentMethod,
             cart.currency.code,
             cart.id,
+            state.getLocale(),
         );
 
         const paypalFastlaneStyling = isFastlaneStylingEnabled

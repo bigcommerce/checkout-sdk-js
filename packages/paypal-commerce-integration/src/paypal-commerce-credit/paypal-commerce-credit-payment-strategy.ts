@@ -87,6 +87,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
             const paypalMessages = await this.payPalSdkScriptLoader.getPayPalMessages(
                 paymentMethod,
                 state.getCartOrThrow().currency.code,
+                state.getLocale(),
             );
 
             return this.renderMessages(paypalMessages, bannerContainerId, bannerConfiguration);

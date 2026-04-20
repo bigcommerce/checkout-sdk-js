@@ -102,6 +102,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             const paypalMessages = await this.payPalSdkScriptLoader.getPayPalMessages(
                 paymentMethod,
                 state.getCartOrThrow().currency.code,
+                state.getLocale(),
             );
 
             if (!paypalMessages || typeof paypalMessages?.Messages !== 'function') {

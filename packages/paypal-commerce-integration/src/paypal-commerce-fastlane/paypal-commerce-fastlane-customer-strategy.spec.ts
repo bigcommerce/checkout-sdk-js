@@ -182,6 +182,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
         jest.spyOn(state, 'getConsignments').mockReturnValue(consignments);
         jest.spyOn(state, 'getBillingAddress').mockReturnValue(getBillingAddress());
         jest.spyOn(state, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
+        jest.spyOn(state, 'getLocale').mockReturnValue('en-US');
 
         jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
             Promise.resolve(paypalFastlaneSdk),
@@ -302,6 +303,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
+                'en-US',
             );
 
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
@@ -325,6 +327,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
+                'en-US',
             );
 
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(

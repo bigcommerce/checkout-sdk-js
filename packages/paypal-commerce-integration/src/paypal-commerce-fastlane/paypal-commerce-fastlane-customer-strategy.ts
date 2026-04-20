@@ -52,6 +52,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 paymentMethod,
                 cart.currency.code,
                 cart.id,
+                state.getLocale(),
             );
 
             await this.paypalFastlaneUtils.initializePayPalFastlane(

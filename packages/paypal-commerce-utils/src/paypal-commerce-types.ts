@@ -73,6 +73,7 @@ export interface PayPalSdkConfig {
         commit?: boolean;
         intent?: PayPalCommerceIntent;
         components?: PayPalSdkComponents;
+        locale?: string;
     };
     attributes: {
         'data-client-metadata-id'?: string;
