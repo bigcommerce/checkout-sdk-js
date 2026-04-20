@@ -25,6 +25,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
     async initialize(
         options: CheckoutButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions,
     ): Promise<void> {
+        console.log('INITIALIZED', options);
         const { paypalcommerce, containerId, methodId } = options;
 
         const isBuyNowFlow = Boolean(paypalcommerce?.buyNowInitializeOptions);
