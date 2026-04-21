@@ -31,10 +31,15 @@ export default class HostedFormOrderDataTransformer {
             'ccNumber',
             'ccCvv',
         ) as HostedCreditCardInstrument;
-        const paymentMethod = state.paymentMethods.getPaymentMethod(
+        let paymentMethod = state.paymentMethods.getPaymentMethod(
             payload.methodId,
             payload.gatewayId,
         );
+
+        if (paymentMethod?.gateway === 'worldpayaccess' && paymentMethod?.id === 'credit_card') {
+            paymentMethod = { ...paymentMethod, id: 'worldpayaccess', method: 'credit-card' };
+        }
+
         const paymentMethodMeta = state.paymentMethods.getPaymentMethodsMeta();
         const authToken =
             instrumentMeta && payment && isVaultedInstrument(payment)

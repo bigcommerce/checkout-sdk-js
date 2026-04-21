@@ -37,3 +37,18 @@ export interface WithWorldpayAccessPaymentInitializeOptions {
      */
     worldpay?: WorldpayAccessPaymentInitializeOptions;
 }
+
+/**
+ * Error response body when the backend requires a redirect (e.g. Open Banking).
+ */
+export interface WorldpayAccessRedirectResponse {
+    body: {
+        additional_action_required: {
+            type: string;
+            data: {
+                redirect_url: string;
+            };
+        };
+        status: string;
+    };
+}
