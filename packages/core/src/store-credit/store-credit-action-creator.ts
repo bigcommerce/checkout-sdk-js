@@ -28,9 +28,18 @@ export default class StoreCreditActionCreator {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                     }
 
+                    const { id } = checkout;
+                    const checkoutVersion = options?.version ?? checkout.version;
+
                     const { body } = await (useStoreCredit
-                        ? this._storeCreditRequestSender.applyStoreCredit(checkout.id, options)
-                        : this._storeCreditRequestSender.removeStoreCredit(checkout.id, options));
+                        ? this._storeCreditRequestSender.applyStoreCredit(id, {
+                              ...options,
+                              version: checkoutVersion,
+                          })
+                        : this._storeCreditRequestSender.removeStoreCredit(id, {
+                              ...options,
+                              version: checkoutVersion,
+                          }));
 
                     return createAction(StoreCreditActionType.ApplyStoreCreditSucceeded, body);
                 }),

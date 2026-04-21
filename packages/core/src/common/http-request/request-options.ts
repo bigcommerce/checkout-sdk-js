@@ -15,4 +15,9 @@ export default interface RequestOptions<TParams = {}> {
      * The parameters of the request, if required.
      */
     params?: TParams;
+
+    /**
+     * The version of the checkout, used for optimistic concurrency control.
+     */
+    version?: number;
 }
