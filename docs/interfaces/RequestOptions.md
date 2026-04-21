@@ -30,6 +30,7 @@ A set of options for configuring an asynchronous request.
 
 - [params](RequestOptions.md#params)
 - [timeout](RequestOptions.md#timeout)
+- [version](RequestOptions.md#version)
 
 ## Properties
 
@@ -48,3 +49,11 @@ ___
 Provide this option if you want to cancel or time out the request. If the
 timeout object completes before the request, the request will be
 cancelled.
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.

@@ -2529,6 +2529,7 @@ declare interface Checkout {
     channelId: number;
     fees: Fee[];
     totalDiscount: number;
+    version: number;
 }
 
 declare interface CheckoutButtonDataState {
@@ -8007,6 +8008,10 @@ declare interface RequestOptions<TParams = {}> {
      * The parameters of the request, if required.
      */
     params?: TParams;
+    /**
+     * The version of the checkout, used for optimistic concurrency control.
+     */
+    version?: number;
 }
 
 declare interface SearchArea {

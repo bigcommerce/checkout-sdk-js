@@ -24,6 +24,7 @@ to execution method.
 - [methodId](ExecutePaymentMethodCheckoutOptions.md#methodid)
 - [params](ExecutePaymentMethodCheckoutOptions.md#params)
 - [timeout](ExecutePaymentMethodCheckoutOptions.md#timeout)
+- [version](ExecutePaymentMethodCheckoutOptions.md#version)
 
 ### Methods
 
@@ -65,6 +66,18 @@ cancelled.
 #### Inherited from
 
 [CustomerRequestOptions](CustomerRequestOptions.md).[timeout](CustomerRequestOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[CustomerRequestOptions](CustomerRequestOptions.md).[version](CustomerRequestOptions.md#version)
 
 ## Methods
 

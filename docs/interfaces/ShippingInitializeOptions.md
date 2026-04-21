@@ -36,6 +36,7 @@ step of checkout.
 - [paypalcommercefastlane](ShippingInitializeOptions.md#paypalcommercefastlane)
 - [stripeupe](ShippingInitializeOptions.md#stripeupe)
 - [timeout](ShippingInitializeOptions.md#timeout)
+- [version](ShippingInitializeOptions.md#version)
 
 ## Properties
 
@@ -129,3 +130,15 @@ cancelled.
 #### Inherited from
 
 [ShippingRequestOptions](ShippingRequestOptions.md).[timeout](ShippingRequestOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[ShippingRequestOptions](ShippingRequestOptions.md).[version](ShippingRequestOptions.md#version)

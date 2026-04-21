@@ -28,6 +28,7 @@ information in order to initialize the customer step of checkout.
 - [methodId](BaseCustomerInitializeOptions.md#methodid)
 - [params](BaseCustomerInitializeOptions.md#params)
 - [timeout](BaseCustomerInitializeOptions.md#timeout)
+- [version](BaseCustomerInitializeOptions.md#version)
 
 ## Properties
 
@@ -72,3 +73,15 @@ cancelled.
 #### Inherited from
 
 [CustomerRequestOptions](CustomerRequestOptions.md).[timeout](CustomerRequestOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[CustomerRequestOptions](CustomerRequestOptions.md).[version](CustomerRequestOptions.md#version)

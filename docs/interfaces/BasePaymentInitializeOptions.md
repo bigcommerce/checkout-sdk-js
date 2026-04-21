@@ -21,6 +21,7 @@ current checkout flow.
 - [methodId](BasePaymentInitializeOptions.md#methodid)
 - [params](BasePaymentInitializeOptions.md#params)
 - [timeout](BasePaymentInitializeOptions.md#timeout)
+- [version](BasePaymentInitializeOptions.md#version)
 
 ## Properties
 
@@ -92,3 +93,15 @@ cancelled.
 #### Inherited from
 
 [PaymentRequestOptions](PaymentRequestOptions.md).[timeout](PaymentRequestOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[PaymentRequestOptions](PaymentRequestOptions.md).[version](PaymentRequestOptions.md#version)

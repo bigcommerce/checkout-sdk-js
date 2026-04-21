@@ -40,6 +40,7 @@
 - [taxes](Checkout.md#taxes)
 - [totalDiscount](Checkout.md#totaldiscount)
 - [updatedTime](Checkout.md#updatedtime)
+- [version](Checkout.md#version)
 
 ## Properties
 
@@ -249,3 +250,9 @@ ___
 ### updatedTime
 
 • **updatedTime**: `string`
+
+___
+
+### version
+
+• **version**: `number`

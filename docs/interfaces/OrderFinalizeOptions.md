@@ -15,6 +15,7 @@
 - [integrations](OrderFinalizeOptions.md#integrations)
 - [params](OrderFinalizeOptions.md#params)
 - [timeout](OrderFinalizeOptions.md#timeout)
+- [version](OrderFinalizeOptions.md#version)
 
 ## Properties
 
@@ -49,3 +50,15 @@ cancelled.
 #### Inherited from
 
 [RequestOptions](RequestOptions.md).[timeout](RequestOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[RequestOptions](RequestOptions.md).[version](RequestOptions.md#version)

@@ -31,6 +31,7 @@ options are not required.
 - [methodId](ShippingRequestOptions.md#methodid)
 - [params](ShippingRequestOptions.md#params)
 - [timeout](ShippingRequestOptions.md#timeout)
+- [version](ShippingRequestOptions.md#version)
 
 ## Properties
 
@@ -63,3 +64,15 @@ cancelled.
 #### Inherited from
 
 [RequestOptions](RequestOptions.md).[timeout](RequestOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[RequestOptions](RequestOptions.md).[version](RequestOptions.md#version)

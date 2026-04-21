@@ -26,6 +26,7 @@ flow for signing in or out a customer. Otherwise, these options are not required
 - [methodId](CustomerRequestOptions.md#methodid)
 - [params](CustomerRequestOptions.md#params)
 - [timeout](CustomerRequestOptions.md#timeout)
+- [version](CustomerRequestOptions.md#version)
 
 ## Properties
 
@@ -58,3 +59,15 @@ cancelled.
 #### Inherited from
 
 [RequestOptions](RequestOptions.md).[timeout](RequestOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[RequestOptions](RequestOptions.md).[version](RequestOptions.md#version)

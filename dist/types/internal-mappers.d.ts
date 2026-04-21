@@ -128,6 +128,7 @@ declare interface Checkout {
     channelId: number;
     fees: Fee[];
     totalDiscount: number;
+    version: number;
 }
 
 declare interface CheckoutPayment {

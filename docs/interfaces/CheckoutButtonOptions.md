@@ -19,6 +19,7 @@ The set of options for configuring the checkout button.
 - [methodId](CheckoutButtonOptions.md#methodid)
 - [params](CheckoutButtonOptions.md#params)
 - [timeout](CheckoutButtonOptions.md#timeout)
+- [version](CheckoutButtonOptions.md#version)
 
 ## Properties
 
@@ -53,3 +54,15 @@ cancelled.
 #### Inherited from
 
 [RequestOptions](RequestOptions.md).[timeout](RequestOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[RequestOptions](RequestOptions.md).[version](RequestOptions.md#version)

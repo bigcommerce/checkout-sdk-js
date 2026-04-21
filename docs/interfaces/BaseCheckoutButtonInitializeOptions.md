@@ -22,6 +22,7 @@
 - [params](BaseCheckoutButtonInitializeOptions.md#params)
 - [paypal](BaseCheckoutButtonInitializeOptions.md#paypal)
 - [timeout](BaseCheckoutButtonInitializeOptions.md#timeout)
+- [version](BaseCheckoutButtonInitializeOptions.md#version)
 
 ## Properties
 
@@ -85,3 +86,15 @@ cancelled.
 #### Inherited from
 
 [CheckoutButtonOptions](CheckoutButtonOptions.md).[timeout](CheckoutButtonOptions.md#timeout)
+
+___
+
+### version
+
+• `Optional` **version**: `number`
+
+The version of the checkout, used for optimistic concurrency control.
+
+#### Inherited from
+
+[CheckoutButtonOptions](CheckoutButtonOptions.md).[version](CheckoutButtonOptions.md#version)
