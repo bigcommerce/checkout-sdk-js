@@ -1583,7 +1583,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 );
             };
 
-            it('sends second submitPayment request when flag is true and stripe returns error', async () => {
+            it('sends second submitPayment request with client_side_error when flag is true and stripe returns error', async () => {
                 const stripeErrorMock = { message: 'Your card was declined' };
 
                 mockPaymentMethodWithFlag(true);
@@ -1598,9 +1598,19 @@ describe('StripeOCSPaymentStrategy', () => {
                 ).rejects.toThrow(PaymentMethodFailedError);
 
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    2,
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                client_side_error: true,
+                            }),
+                        }),
+                    }),
+                );
             });
 
-            it('throws PaymentMethodFailedError with stripe decline message even when second submitPayment fails', async () => {
+            it('throws PaymentMethodFailedError with stripe decline message even when second submitPayment with client_side_error fails', async () => {
                 const stripeErrorMock = { message: 'Your card was declined' };
 
                 mockPaymentMethodWithFlag(true);
@@ -1616,6 +1626,16 @@ describe('StripeOCSPaymentStrategy', () => {
                 ).rejects.toThrow('Your card was declined');
 
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    2,
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                client_side_error: true,
+                            }),
+                        }),
+                    }),
+                );
             });
 
             it('does not send second submitPayment when flag is false and stripe returns error', async () => {
@@ -1635,7 +1655,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
             });
 
-            it('sends second submitPayment and throws when confirmation returns no session and flag is true', async () => {
+            it('sends second submitPayment with client_side_error when confirmation returns no session and flag is true', async () => {
                 mockPaymentMethodWithFlag(true);
                 mockFirstPaymentRequest(errorResponse);
                 confirmPaymentMock = jest.fn().mockResolvedValue({});
@@ -1648,6 +1668,16 @@ describe('StripeOCSPaymentStrategy', () => {
                 ).rejects.toThrow(PaymentMethodFailedError);
 
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    2,
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                client_side_error: true,
+                            }),
+                        }),
+                    }),
+                );
             });
         });
 

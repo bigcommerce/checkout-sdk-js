@@ -1,4 +1,4 @@
-import { some } from 'lodash';
+import { merge, some } from 'lodash';
 
 import {
     FormattedHostedInstrument,
@@ -17,7 +17,6 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
-    PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
     RequestError,
@@ -37,8 +36,8 @@ import {
     StripeElementsCreateOptions,
     StripeElementType,
     StripeElementUpdateOptions,
-    StripeError,
     StripeEventType,
+    StripeFormattedPaymentPayload,
     StripeInitializationData,
     StripeIntegrationService,
     StripeJsVersion,
@@ -151,6 +150,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         await this._executeWithStripeConfirmation(
             payment.methodId,
+            payment.gatewayId,
             stripeLinkAuthenticationState ? false : shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
         );
@@ -171,6 +171,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     private async _executeWithStripeConfirmation(
         methodId: string,
+        gatewayId?: string,
         shouldSaveInstrument?: boolean,
         shouldSetAsDefaultInstrument?: boolean,
     ): Promise<void> {
@@ -189,6 +190,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             await this._processAdditionalActionWithStripeConfirmation(
                 error,
                 methodId,
+                gatewayId,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
             );
@@ -326,6 +328,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private async _processAdditionalActionWithStripeConfirmation(
         error: unknown,
         methodId: string,
+        gatewayId?: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
     ): Promise<void> {
@@ -343,7 +346,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const { data: additionalActionData } = error.body.additional_action_required;
         const { token } = additionalActionData;
 
-        const { paymentIntent } = await this._confirmStripePaymentOrThrow(
+        const { paymentIntent, error: stripeError } = await this._confirmStripePaymentOrThrow(
             methodId,
             additionalActionData,
         );
@@ -354,6 +357,34 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
         );
+
+        if (stripeError || !paymentIntent) {
+            const { initializationData } = this.paymentIntegrationService
+                .getState()
+                .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
+            const { sendSecondPaymentRequestOnStripeError } = initializationData || {};
+
+            if (sendSecondPaymentRequestOnStripeError) {
+                // INFO: even in case when stripe payment confirmation was declined
+                // we need to send submitPayment request to update status of checkout session on BE side.
+                try {
+                    const paymentPayloadWithError = merge({}, paymentPayload, {
+                        paymentData: {
+                            formattedPayload: {
+                                client_side_error: true,
+                            },
+                        },
+                    });
+
+                    await this.paymentIntegrationService.submitPayment(paymentPayloadWithError);
+                } catch {
+                    // INFO: additional action should be ignored for this update status request.
+                    // will throw Stripe error message to the shopper.
+                }
+            }
+
+            this.stripeIntegrationService.throwStripeError(stripeError);
+        }
 
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
@@ -366,34 +397,25 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         methodId: string,
         additionalActionData: StripeAdditionalActionRequired['data'],
     ): Promise<StripeResult | never> {
+        if (!this._stripeUPEClient) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
         const { token, redirect_url } = additionalActionData;
         const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
             this._stripeElements,
             redirect_url,
             !!this._allowRedisplayForStoredInstruments,
         );
-        let stripeError: StripeError | undefined;
 
-        try {
-            const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
-                methodId,
-                this._stripeUPEClient,
-            );
+        const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
+            methodId,
+            this._stripeUPEClient,
+        );
 
-            const confirmationResult = !isPaymentCompleted
-                ? await this._stripeUPEClient?.confirmPayment(stripePaymentData)
-                : await this._stripeUPEClient?.retrievePaymentIntent(token || '');
-
-            stripeError = confirmationResult?.error;
-
-            if (stripeError || !confirmationResult?.paymentIntent) {
-                throw new PaymentMethodFailedError();
-            }
-
-            return confirmationResult;
-        } catch (error: unknown) {
-            this.stripeIntegrationService.throwStripeError(stripeError);
-        }
+        return !isPaymentCompleted
+            ? this._stripeUPEClient.confirmPayment(stripePaymentData)
+            : this._stripeUPEClient.retrievePaymentIntent(token || '');
     }
 
     private async _processVaultedAdditionalAction(
@@ -468,7 +490,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         token: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
-    ): Payment {
+    ): Payment<StripeFormattedPaymentPayload> {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
         const formattedPayload: StripeUPEIntent & FormattedHostedInstrument = {
             cart_id: cartId,

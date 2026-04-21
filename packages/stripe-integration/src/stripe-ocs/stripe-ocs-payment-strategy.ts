@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
     InvalidArgumentError,
     isRequestError,
@@ -11,7 +13,6 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
-    PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -24,8 +25,8 @@ import {
     StripeElementEvent,
     StripeElements,
     StripeElementType,
-    StripeError,
     StripeEventType,
+    StripeFormattedPaymentPayload,
     StripeInitializationData,
     StripeInstrumentSetupFutureUsage,
     StripeIntegrationService,
@@ -117,7 +118,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            await this._processAdditionalAction(error, methodId);
+            await this._processAdditionalAction(error, methodId, gatewayId);
         }
     }
 
@@ -265,7 +266,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         methodId: string,
         token: string,
         paymentMethodOptions?: StripePIPaymentMethodOptions,
-    ): Payment {
+    ): Payment<StripeFormattedPaymentPayload> {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
         const { card, us_bank_account } = paymentMethodOptions || {};
         const shouldSaveInstrument =
@@ -291,6 +292,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private async _processAdditionalAction(
         error: unknown,
         methodId: string,
+        gatewayId: string,
     ): Promise<PaymentIntegrationSelectors | undefined> {
         if (
             !isRequestError(error) ||
@@ -306,7 +308,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         const { data: additionalActionData } = error.body.additional_action_required;
         const { token } = additionalActionData;
 
-        const { paymentIntent } = await this._confirmStripePaymentOrThrow(
+        const { paymentIntent, error: stripeError } = await this._confirmStripePaymentOrThrow(
             methodId,
             additionalActionData,
         );
@@ -321,6 +323,34 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             paymentMethodOptions,
         );
 
+        if (stripeError || !paymentIntent) {
+            const { initializationData } = this.paymentIntegrationService
+                .getState()
+                .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
+            const { sendSecondPaymentRequestOnStripeError } = initializationData || {};
+
+            if (sendSecondPaymentRequestOnStripeError) {
+                // INFO: even in case when stripe payment confirmation was declined
+                // we need to send submitPayment request to update status of checkout session on BE side.
+                try {
+                    const paymentPayloadWithError = merge({}, paymentPayload, {
+                        paymentData: {
+                            formattedPayload: {
+                                client_side_error: true,
+                            },
+                        },
+                    });
+
+                    await this.paymentIntegrationService.submitPayment(paymentPayloadWithError);
+                } catch {
+                    // INFO: additional action should be ignored for this update status request.
+                    // will throw Stripe error message to the shopper.
+                }
+            }
+
+            this.stripeIntegrationService.throwStripeError(stripeError);
+        }
+
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
@@ -332,33 +362,24 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         methodId: string,
         additionalActionData: StripeAdditionalActionRequired['data'],
     ): Promise<StripeResult | never> {
+        if (!this.stripeClient) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
         const { token, redirect_url } = additionalActionData;
         const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
             this.stripeElements,
             redirect_url,
         );
-        let stripeError: StripeError | undefined;
 
-        try {
-            const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
-                methodId,
-                this.stripeClient,
-            );
+        const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
+            methodId,
+            this.stripeClient,
+        );
 
-            const confirmationResult = !isPaymentCompleted
-                ? await this.stripeClient?.confirmPayment(stripePaymentData)
-                : await this.stripeClient?.retrievePaymentIntent(token || '');
-
-            stripeError = confirmationResult?.error;
-
-            if (stripeError || !confirmationResult?.paymentIntent) {
-                throw new PaymentMethodFailedError();
-            }
-
-            return confirmationResult;
-        } catch (error: unknown) {
-            return this.stripeIntegrationService.throwStripeError(stripeError);
-        }
+        return !isPaymentCompleted
+            ? this.stripeClient.confirmPayment(stripePaymentData)
+            : this.stripeClient.retrievePaymentIntent(token || '');
     }
 
     private _onStripeElementChange(
