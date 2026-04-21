@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.902.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.902.0...v1.902.1) (2026-04-21)
+
+
+### Bug Fixes
+
+* **payment:** Update locale for Stripe OCS ([#3216](https://github.com/bigcommerce/checkout-sdk-js/issues/3216)) ([c6edeca](https://github.com/bigcommerce/checkout-sdk-js/commit/c6edeca8511349e394d6685dad6ad1a731c761a9))
+
 ## [1.902.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.901.0...v1.902.0) (2026-04-20)
 
 
