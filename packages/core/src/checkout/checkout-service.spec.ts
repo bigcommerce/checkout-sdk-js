@@ -1350,7 +1350,7 @@ describe('CheckoutService', () => {
 
             expect(storeCreditRequestSender.applyStoreCredit).toHaveBeenCalledWith(
                 getCheckout().id,
-                options,
+                { ...options, version: getCheckout().version },
             );
         });
 
@@ -1361,7 +1361,7 @@ describe('CheckoutService', () => {
 
             expect(storeCreditRequestSender.removeStoreCredit).toHaveBeenCalledWith(
                 getCheckout().id,
-                options,
+                { ...options, version: getCheckout().version },
             );
         });
     });

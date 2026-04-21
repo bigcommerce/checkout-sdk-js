@@ -37,7 +37,9 @@ describe('StoreCredit Request Sender', () => {
 
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
-            const output = await storeCreditRequestSender.applyStoreCredit(checkoutId);
+            const output = await storeCreditRequestSender.applyStoreCredit(checkoutId, {
+                version: 1,
+            });
 
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith(
@@ -50,6 +52,8 @@ describe('StoreCredit Request Sender', () => {
                         Accept: ContentType.JsonV1,
                         ...SDK_VERSION_HEADERS,
                     },
+                    timeout: undefined,
+                    body: { version: 1 },
                 },
             );
         });
@@ -60,7 +64,10 @@ describe('StoreCredit Request Sender', () => {
 
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
-            const output = await storeCreditRequestSender.applyStoreCredit(checkoutId, options);
+            const output = await storeCreditRequestSender.applyStoreCredit(checkoutId, {
+                ...options,
+                version: 1,
+            });
 
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith(
@@ -74,6 +81,7 @@ describe('StoreCredit Request Sender', () => {
                         Accept: ContentType.JsonV1,
                         ...SDK_VERSION_HEADERS,
                     },
+                    body: { version: 1 },
                 },
             );
         });
@@ -85,7 +93,9 @@ describe('StoreCredit Request Sender', () => {
 
             jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
 
-            const output = await storeCreditRequestSender.removeStoreCredit(checkoutId);
+            const output = await storeCreditRequestSender.removeStoreCredit(checkoutId, {
+                version: 1,
+            });
 
             expect(output).toEqual(response);
             expect(requestSender.delete).toHaveBeenCalledWith(
@@ -98,6 +108,8 @@ describe('StoreCredit Request Sender', () => {
                     params: {
                         include: defaultIncludes,
                     },
+                    timeout: undefined,
+                    body: { version: 1 },
                 },
             );
         });
@@ -108,7 +120,10 @@ describe('StoreCredit Request Sender', () => {
 
             jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
 
-            const output = await storeCreditRequestSender.removeStoreCredit(checkoutId, options);
+            const output = await storeCreditRequestSender.removeStoreCredit(checkoutId, {
+                ...options,
+                version: 1,
+            });
 
             expect(output).toEqual(response);
             expect(requestSender.delete).toHaveBeenCalledWith(
@@ -122,6 +137,7 @@ describe('StoreCredit Request Sender', () => {
                     params: {
                         include: defaultIncludes,
                     },
+                    body: { version: 1 },
                 },
             );
         });

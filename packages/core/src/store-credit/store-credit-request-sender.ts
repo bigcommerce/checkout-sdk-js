@@ -13,7 +13,7 @@ export default class StoreCreditRequestSender {
 
     applyStoreCredit(
         checkoutId: string,
-        { timeout }: RequestOptions = {},
+        { timeout, version }: RequestOptions = {},
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/store-credit`;
         const headers = {
@@ -27,12 +27,13 @@ export default class StoreCreditRequestSender {
             params: {
                 include: joinIncludes(CHECKOUT_DEFAULT_INCLUDES),
             },
+            body: { version },
         });
     }
 
     removeStoreCredit(
         checkoutId: string,
-        { timeout }: RequestOptions = {},
+        { timeout, version }: RequestOptions = {},
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/store-credit`;
         const headers = {
@@ -46,6 +47,7 @@ export default class StoreCreditRequestSender {
             params: {
                 include: joinIncludes(CHECKOUT_DEFAULT_INCLUDES),
             },
+            body: { version },
         });
     }
 }
