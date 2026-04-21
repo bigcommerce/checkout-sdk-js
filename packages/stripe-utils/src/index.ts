@@ -12,6 +12,7 @@ export {
     StripeElementUpdateOptions,
     StripeError,
     StripeEventType,
+    StripeFormattedPaymentPayload,
     StripeFormMode,
     StripeInitializationData,
     StripeInstrumentSetupFutureUsage,

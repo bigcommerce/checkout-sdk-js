@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import {
     InvalidArgumentError,
     isRequestError,
@@ -29,6 +31,7 @@ import {
     StripeElementEvent,
     StripeElementsCreateOptions,
     StripeEventType,
+    StripeFormattedPaymentPayload,
     StripeInitializationData,
     StripeIntegrationService,
     StripeJsVersion,
@@ -291,7 +294,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         methodId: string,
         token: string,
         newVaultedStripeInstrument?: StripeSavedPaymentMethod,
-    ): Payment {
+    ): Payment<StripeFormattedPaymentPayload> {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
         const tokenizedOptions = this._getTokenizedOptions(token, newVaultedStripeInstrument);
 
@@ -352,7 +355,15 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 // INFO: even in case when stripe payment confirmation was declined
                 // we need to send submitPayment request to update status of checkout session on BE side.
                 try {
-                    await this.paymentIntegrationService.submitPayment(paymentPayload);
+                    const paymentPayloadWithError = merge({}, paymentPayload, {
+                        paymentData: {
+                            formattedPayload: {
+                                client_side_error: true,
+                            },
+                        },
+                    });
+
+                    await this.paymentIntegrationService.submitPayment(paymentPayloadWithError);
                 } catch {
                     // INFO: additional action should be ignored for this update status request.
                     // will throw Stripe error message to the shopper.

@@ -910,3 +910,14 @@ export interface StripeLinkV2Options {
     captureMethod?: 'automatic' | 'manual';
     amount?: number;
 }
+
+export interface StripeFormattedPaymentPayload {
+    cart_id: string;
+    confirm: boolean;
+    method?: string;
+    credit_card_token?: { token: string };
+    tokenized_ach?: { token: string };
+    vault_payment_instrument?: boolean;
+    set_as_default_stored_instrument?: boolean;
+    client_side_error?: boolean;
+}

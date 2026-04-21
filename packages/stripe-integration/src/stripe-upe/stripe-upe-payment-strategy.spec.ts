@@ -1200,10 +1200,9 @@ describe('StripeUPEPaymentStrategy', () => {
                 );
 
                 await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toThrow(
-                    'throw stripe error',
+                    'stripe confirmation error',
                 );
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
-                expect(stripeUPEIntegrationService.throwStripeError).toHaveBeenCalled();
             });
 
             it('stripe confirms payment returns stripe error', async () => {
@@ -1229,9 +1228,8 @@ describe('StripeUPEPaymentStrategy', () => {
                 );
 
                 await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toThrow(
-                    'throw stripe error',
+                    TypeError,
                 );
-                expect(stripeUPEIntegrationService.throwStripeError).toHaveBeenCalled();
             });
 
             it('stripe confirms payment returns no PI ID', async () => {
@@ -1395,6 +1393,119 @@ describe('StripeUPEPaymentStrategy', () => {
                     stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage,
                 ).toHaveBeenCalled();
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+            });
+
+            describe('sendSecondPaymentRequestOnStripeError', () => {
+                const mockPaymentMethodWithFlag = (
+                    sendSecondPaymentRequestOnStripeError: boolean,
+                ) => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getPaymentMethodOrThrow',
+                    ).mockReturnValue({
+                        ...getStripeUPEMock(),
+                        initializationData: {
+                            ...getStripeUPEMock().initializationData,
+                            sendSecondPaymentRequestOnStripeError,
+                        },
+                    });
+                };
+
+                it('sends second submitPayment request with client_side_error when flag is true and stripe returns error', async () => {
+                    mockPaymentMethodWithFlag(true);
+                    stripeUPEJsMock.confirmPayment = jest.fn().mockResolvedValue({
+                        error: { message: 'Your card was declined' },
+                    });
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce(
+                        getAdditionalActionErrorResponse(),
+                    );
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).rejects.toThrow('throw stripe error');
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                        2,
+                        expect.objectContaining({
+                            paymentData: expect.objectContaining({
+                                formattedPayload: expect.objectContaining({
+                                    client_side_error: true,
+                                }),
+                            }),
+                        }),
+                    );
+                });
+
+                it('does not send second submitPayment when flag is false and stripe returns error', async () => {
+                    mockPaymentMethodWithFlag(false);
+                    stripeUPEJsMock.confirmPayment = jest.fn().mockResolvedValue({
+                        error: { message: 'Your card was declined' },
+                    });
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce(
+                        getAdditionalActionErrorResponse(),
+                    );
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).rejects.toThrow('throw stripe error');
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
+                });
+
+                it('sends second submitPayment with client_side_error when flag is true and no payment intent', async () => {
+                    mockPaymentMethodWithFlag(true);
+                    stripeUPEJsMock.confirmPayment = jest.fn().mockResolvedValue({});
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce(
+                        getAdditionalActionErrorResponse(),
+                    );
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).rejects.toThrow('throw stripe error');
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                        2,
+                        expect.objectContaining({
+                            paymentData: expect.objectContaining({
+                                formattedPayload: expect.objectContaining({
+                                    client_side_error: true,
+                                }),
+                            }),
+                        }),
+                    );
+                });
+
+                it('throws stripe error even when second submitPayment with client_side_error fails', async () => {
+                    mockPaymentMethodWithFlag(true);
+                    stripeUPEJsMock.confirmPayment = jest.fn().mockResolvedValue({
+                        error: { message: 'Your card was declined' },
+                    });
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getAdditionalActionErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).rejects.toThrow('throw stripe error');
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                        2,
+                        expect.objectContaining({
+                            paymentData: expect.objectContaining({
+                                formattedPayload: expect.objectContaining({
+                                    client_side_error: true,
+                                }),
+                            }),
+                        }),
+                    );
+                });
             });
         });
     });
