@@ -34,7 +34,8 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
-    private _initializeStripeElement;
+    private _initStripeCheckoutSession;
+    private _initializePaymentElement;
     private _loadStripeJs;
     private _getStripeActionsOrThrow;
     private _getStripeElement;
@@ -51,6 +52,9 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _getStripeSavedPaymentMethodsOrThrow;
     private _getNewVaultedStripeInstrument;
     private _getTokenizedOptions;
+    private _initializeAdaptivePricingElement;
+    private _getCurrencySelectorElement;
+    private _initAdaptivePricingEvents;
 }
 
 declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
@@ -193,6 +197,10 @@ declare interface StripeOCSPaymentInitializeOptions extends StripePaymentInitial
      * The location to insert the credit card number form field.
      */
     containerId: string;
+    /**
+     * The location to insert the currency selector form field.
+     */
+    currencySelectorContainerId?: string;
     /**
      * Checkout styles from store theme
      */

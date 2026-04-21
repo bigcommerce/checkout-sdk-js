@@ -8542,6 +8542,10 @@ declare interface StripeOCSPaymentInitializeOptions extends StripePaymentInitial
      */
     containerId: string;
     /**
+     * The location to insert the currency selector form field.
+     */
+    currencySelectorContainerId?: string;
+    /**
      * Checkout styles from store theme
      */
     style?: Record<string, StripeAppearanceValues>;

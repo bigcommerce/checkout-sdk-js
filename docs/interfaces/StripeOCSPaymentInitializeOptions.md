@@ -35,6 +35,7 @@ service.initializePayment({
 
 - [appearance](StripeOCSPaymentInitializeOptions.md#appearance)
 - [containerId](StripeOCSPaymentInitializeOptions.md#containerid)
+- [currencySelectorContainerId](StripeOCSPaymentInitializeOptions.md#currencyselectorcontainerid)
 - [fonts](StripeOCSPaymentInitializeOptions.md#fonts)
 - [layout](StripeOCSPaymentInitializeOptions.md#layout)
 - [style](StripeOCSPaymentInitializeOptions.md#style)
@@ -66,6 +67,14 @@ The location to insert the credit card number form field.
 #### Overrides
 
 StripePaymentInitializeOptions.containerId
+
+___
+
+### currencySelectorContainerId
+
+• `Optional` **currencySelectorContainerId**: `string`
+
+The location to insert the currency selector form field.
 
 ___
 

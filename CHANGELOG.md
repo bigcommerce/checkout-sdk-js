@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.903.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.902.1...v1.903.0) (2026-04-21)
+
+
+### Features
+
+* **payment:** Add Stripe Adaptive Pricing support to Checkout Session strategy ([#3218](https://github.com/bigcommerce/checkout-sdk-js/issues/3218)) ([0954bae](https://github.com/bigcommerce/checkout-sdk-js/commit/0954bae4db76cd6797f1dcfe54e2aff397b3ece5))
+
 ### [1.902.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.902.0...v1.902.1) (2026-04-21)
 
 
