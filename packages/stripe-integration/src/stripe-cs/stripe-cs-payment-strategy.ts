@@ -274,14 +274,12 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         this.selectedMethodId = event.value.type;
         paymentMethodSelect?.(`${gatewayId}-${methodId}`);
-        this._mountAdaptivePricingElement();
     }
 
     private _collapseStripeElement() {
         const stripeElement = this.stripeCheckout?.getPaymentElement();
 
         stripeElement?.collapse();
-        this._mountAdaptivePricingElement(false);
     }
 
     private async _updateCheckoutSessionData(gatewayId: string, methodId: string): Promise<void> {
