@@ -1,6 +1,8 @@
 import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 declare interface WithWorldpayAccessPaymentInitializeOptions {
@@ -9,6 +11,16 @@ declare interface WithWorldpayAccessPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Apple Pay.
      */
     worldpay?: WorldpayAccessPaymentInitializeOptions;
+}
+
+declare class WorldpayAccessOpenBankingPaymentStrategy implements PaymentStrategy {
+    private _paymentIntegrationService;
+    constructor(_paymentIntegrationService: PaymentIntegrationService);
+    execute({ payment }: OrderRequestBody): Promise<void>;
+    initialize(): Promise<void>;
+    finalize(): Promise<void>;
+    deinitialize(): Promise<void>;
+    private _isWorldpayAccessRedirectResponse;
 }
 
 declare interface WorldpayAccessPaymentInitializeOptions {
@@ -36,6 +48,15 @@ declare class WorldpayAccessPaymentStrategy extends CreditCardPaymentStrategy {
     private _isValidJsonWithSessionId;
 }
 
-export declare const createWorldpayAccessPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<WorldpayAccessPaymentStrategy>, {
+export declare const createWorldpayAccessOpenBankingPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<WorldpayAccessOpenBankingPaymentStrategy>, {
     id: string;
+    gateway: string;
+}>;
+
+export declare const createWorldpayAccessPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<WorldpayAccessPaymentStrategy>, {
+    gateway: string;
+    id: string;
+} | {
+    id: string;
+    gateway?: undefined;
 }>;
