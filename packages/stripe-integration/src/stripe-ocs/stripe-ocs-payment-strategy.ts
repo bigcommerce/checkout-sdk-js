@@ -16,7 +16,6 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    formatStripeLocale,
     isStripePaymentEvent,
     isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
@@ -160,7 +159,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         }
 
         const { clientToken, initializationData } = paymentMethod;
-        const { shopperLanguage, customerSessionToken, enableLink } = initializationData;
+        const { customerSessionToken, enableLink } = initializationData;
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -182,7 +181,6 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         this.stripeElements = await this.scriptLoader.getElements(this.stripeClient, {
             clientSecret: clientToken,
             customerSessionClientSecret: customerSessionToken,
-            locale: formatStripeLocale(shopperLanguage),
             appearance,
             fonts,
         });
