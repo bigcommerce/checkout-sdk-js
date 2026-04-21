@@ -234,6 +234,12 @@ export interface StripePaymentEvent extends StripeEvent {
     collapsed?: boolean;
 }
 
+export interface StripeCurrencyEvent extends StripeEvent {
+    value: {
+        currency: string;
+    };
+}
+
 export interface Address {
     city: string;
     country: string;
@@ -244,6 +250,7 @@ export interface Address {
 }
 
 export type StripeEventType =
+    | StripeCurrencyEvent
     | StripeShippingEvent
     | StripeCustomerEvent
     | StripePaymentEvent
@@ -495,6 +502,22 @@ export interface StripeCheckoutSessionStatus {
     paymentStatus: StripeCheckoutSessionPaymentStatus;
 }
 
+export interface StripeCheckoutSessionAmount {
+    minorUnitsAmount: number;
+    amount: string;
+}
+
+export interface StripeCheckoutSessionTotal {
+    appliedBalance: StripeCheckoutSessionAmount;
+    balanceAppliedToNextInvoice: boolean;
+    discount: StripeCheckoutSessionAmount;
+    shippingRate: StripeCheckoutSessionAmount;
+    subtotal: StripeCheckoutSessionAmount;
+    taxExclusive: StripeCheckoutSessionAmount;
+    taxInclusive: StripeCheckoutSessionAmount;
+    total: StripeCheckoutSessionAmount;
+}
+
 export interface StripeCheckoutSession {
     id: string;
     savedPaymentMethods?: StripeSavedPaymentMethod[];
@@ -510,13 +533,15 @@ export interface StripeCheckoutSession {
     status: StripeCheckoutSessionStatus;
     tax: unknown;
     taxAmounts: unknown;
-    total: unknown;
+    total: StripeCheckoutSessionTotal;
 }
 
 export interface StripeCheckoutInstance {
     loadActions(): Promise<StripeLoadActionsResult>;
     createPaymentElement(options?: StripeElementsCreateOptions): StripeElement;
     getPaymentElement(): StripeElement | null;
+    getCurrencySelectorElement(): StripeElement | null;
+    createCurrencySelectorElement(): StripeElement;
 }
 
 export enum StripeLoadActionsResultType {
@@ -544,7 +569,7 @@ export interface StripeCheckoutSessionActions {
     updateBillingAddress(
         billingAddress: StripeAddressValues,
     ): Promise<StripeCheckoutSessionActionResult>;
-    getSession(): Promise<StripeCheckoutSession | null>;
+    getSession(): Promise<StripeCheckoutSession>;
     confirm(
         options: StripeCheckoutSessionConfirmPaymentData,
     ): Promise<StripeCheckoutSessionActionResult>;
@@ -775,6 +800,8 @@ export interface StripeInitializationData {
     useNewStripeJsVersion?: boolean;
     checkoutSessionEnabled?: boolean;
     sendSecondPaymentRequestOnStripeError?: boolean;
+    adaptivePricingEnabled?: boolean;
+    hasSectionOnTopOfPaymentsList?: boolean;
 }
 
 export interface StripeElementUpdateOptions {

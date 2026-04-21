@@ -11,6 +11,7 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
+    PaymentMethod,
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
@@ -61,19 +62,25 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { clientToken } = this.paymentIntegrationService
+        let paymentMethod = this.paymentIntegrationService
             .getState()
             .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
 
-        if (!clientToken) {
+        if (!paymentMethod?.clientToken) {
             await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
                 params: { method: methodId },
             });
+
+            paymentMethod = this.paymentIntegrationService
+                .getState()
+                .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
         }
 
         try {
-            await this._initializeStripeElement(stripeocs, gatewayId, methodId);
+            await this._initStripeCheckoutSession(stripeocs, paymentMethod);
             await this._updateStripeShopperData();
+            this._initializePaymentElement(stripeocs, paymentMethod);
+            this._initializeAdaptivePricingElement(stripeocs, paymentMethod);
         } catch (error) {
             if (error instanceof Error) {
                 stripeocs.onError?.(error);
@@ -122,9 +129,12 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
     deinitialize(): Promise<void> {
         const paymentElement = this.stripeCheckout?.getPaymentElement();
+        const currencySelectorElement = this.stripeCheckout?.getCurrencySelectorElement();
 
         paymentElement?.unmount();
         paymentElement?.destroy();
+        currencySelectorElement?.unmount();
+        currencySelectorElement?.destroy();
         this.stripeCheckout = undefined;
         this.stripeClient = undefined;
         this.selectedMethodId = undefined;
@@ -132,14 +142,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private async _initializeStripeElement(
+    private async _initStripeCheckoutSession(
         stripe: StripeOCSPaymentInitializeOptions,
-        gatewayId: string,
-        methodId: string,
-    ) {
-        const { clientToken, initializationData } = this.paymentIntegrationService
-            .getState()
-            .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
+        paymentMethod: PaymentMethod<StripeInitializationData>,
+    ): Promise<void> {
+        const { clientToken, initializationData } = paymentMethod;
 
         if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -147,17 +154,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         this.stripeClient = await this._loadStripeJs(initializationData);
 
-        const { enableLink } = initializationData;
-        const {
-            appearance,
-            containerId,
-            fonts,
-            layout,
-            render,
-            paymentMethodSelect,
-            handleClosePaymentMethod,
-            togglePreloader,
-        } = stripe;
+        const { appearance, fonts } = stripe;
 
         this.stripeCheckout = await this.scriptLoader.getStripeCheckout(this.stripeClient, {
             clientSecret: clientToken,
@@ -166,9 +163,26 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 fonts,
             },
             adaptivePricing: {
-                allowed: false,
+                allowed: !!initializationData?.adaptivePricingEnabled,
             },
         });
+    }
+
+    private _initializePaymentElement(
+        stripe: StripeOCSPaymentInitializeOptions,
+        paymentMethod: PaymentMethod<StripeInitializationData>,
+    ) {
+        const { initializationData, id: methodId, gateway } = paymentMethod;
+
+        const { enableLink } = initializationData || {};
+        const {
+            containerId,
+            layout,
+            render,
+            paymentMethodSelect,
+            handleClosePaymentMethod,
+            togglePreloader,
+        } = stripe;
 
         const stripeElement = this._getStripeElement({
             fields: {
@@ -186,7 +200,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             layout,
         });
 
-        if (!stripeElement) {
+        if (!stripeElement || !gateway) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -201,7 +215,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         });
 
         stripeElement.on(StripeElementEvent.CHANGE, (event: StripeEventType) => {
-            this._onStripeElementChange(event, gatewayId, methodId, paymentMethodSelect);
+            this._onStripeElementChange(event, gateway, methodId, paymentMethodSelect);
         });
 
         handleClosePaymentMethod?.(this._collapseStripeElement.bind(this));
@@ -387,7 +401,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     private async _updateStripeEmail(stripeActions: StripeCheckoutSessionActions): Promise<void> {
         const stripeCheckoutSession = await stripeActions.getSession();
 
-        if (stripeCheckoutSession?.email) {
+        if (stripeCheckoutSession.email) {
             return;
         }
 
@@ -435,7 +449,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
 
         const stripeActions = await this._getStripeActionsOrThrow();
-        const { savedPaymentMethods } = (await stripeActions.getSession()) || {};
+        const { savedPaymentMethods } = await stripeActions.getSession();
 
         return savedPaymentMethods || [];
     }
@@ -461,5 +475,55 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
 
         return { credit_card_token: { token } };
+    }
+
+    private _initializeAdaptivePricingElement(
+        stripe: StripeOCSPaymentInitializeOptions,
+        paymentMethod: PaymentMethod<StripeInitializationData>,
+    ): void {
+        const { initializationData } = paymentMethod;
+        const { currencySelectorContainerId } = stripe;
+
+        if (!initializationData?.adaptivePricingEnabled) {
+            return;
+        }
+
+        if (!currencySelectorContainerId) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const currencySelectorElement = this._getCurrencySelectorElement();
+
+        if (!currencySelectorElement) {
+            return;
+        }
+
+        currencySelectorElement.mount(`#${currencySelectorContainerId}`);
+
+        this._initAdaptivePricingEvents(currencySelectorElement);
+    }
+
+    private _getCurrencySelectorElement(): StripeElement | undefined {
+        return (
+            this.stripeCheckout?.getCurrencySelectorElement() ||
+            this.stripeCheckout?.createCurrencySelectorElement()
+        );
+    }
+
+    private _initAdaptivePricingEvents(currencySelectorElement: StripeElement): void {
+        currencySelectorElement.on(StripeElementEvent.CHANGE, async (event: StripeEventType) => {
+            if (!event.value || !('currency' in event.value)) {
+                return;
+            }
+
+            const { currency } = this.paymentIntegrationService.getState().getCartOrThrow();
+            const currencyCode = currency.code.toLowerCase();
+            const stripeCurrencyCode = event.value.currency.toLowerCase();
+
+            await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                isCustomerCurrencySelected: currencyCode !== stripeCurrencyCode,
+                customerCurrency: stripeCurrencyCode,
+            });
+        });
     }
 }

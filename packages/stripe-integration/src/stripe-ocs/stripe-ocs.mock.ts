@@ -51,6 +51,7 @@ export function getStripeOCSInitializeOptionsMock(
         gatewayId,
         [gatewayId]: {
             containerId: `${gatewayId}-${methodId}-component-field`,
+            currencySelectorContainerId: 'currencySelectorContainerId',
             layout: defaultAccordionLayout,
             appearance,
             render: jest.fn(),

@@ -6,6 +6,7 @@ import {
 
 import {
     StripeCheckoutInstance,
+    StripeCheckoutSession,
     StripeCheckoutSessionActions,
     StripeClient,
     StripeElement,
@@ -172,7 +173,7 @@ export function getRetrievePaymentIntentResponseWithError() {
 export function getStripeCheckoutSessionActionsMock(): StripeCheckoutSessionActions {
     return {
         updateEmail: jest.fn(),
-        getSession: jest.fn(),
+        getSession: jest.fn(() => Promise.resolve({} as StripeCheckoutSession)),
         confirm: jest.fn(),
         updateShippingAddress: jest.fn(),
         updateBillingAddress: jest.fn(),
@@ -188,5 +189,7 @@ export function getStripeCheckoutInstanceMock(): StripeCheckoutInstance {
             }),
         createPaymentElement: jest.fn(() => getStripeElementMock()),
         getPaymentElement: jest.fn().mockReturnValue(null),
+        getCurrencySelectorElement: jest.fn().mockReturnValue(null),
+        createCurrencySelectorElement: jest.fn(() => getStripeElementMock()),
     };
 }
