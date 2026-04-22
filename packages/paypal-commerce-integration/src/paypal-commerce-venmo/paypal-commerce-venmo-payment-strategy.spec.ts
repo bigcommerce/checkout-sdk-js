@@ -11,19 +11,16 @@ import {
     PaymentMethodInvalidError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
 import {
-    getPayPalCommerceIntegrationServiceMock,
-    getPayPalCommercePaymentMethod,
+    getPayPalIntegrationServiceMock,
+    getPayPalPaymentMethod,
     getPayPalSDKMock,
-} from '../mocks';
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceHostWindow,
+    PayPalButtonsOptions,
+    PayPalHostWindow,
+    PayPalIntegrationService,
     PayPalSDK,
-} from '../paypal-commerce-types';
+} from '@bigcommerce/checkout-sdk/paypal-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceVenmoPaymentInitializeOptions from './paypal-commerce-venmo-payment-initialize-options';
 import PayPalCommerceVenmoPaymentStrategy from './paypal-commerce-venmo-payment-strategy';
@@ -33,7 +30,7 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
     let loadingIndicator: LoadingIndicator;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
-    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
+    let paypalIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
     let strategy: PayPalCommerceVenmoPaymentStrategy;
 
@@ -58,17 +55,17 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
         eventEmitter = new EventEmitter();
 
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getPayPalCommercePaymentMethod();
+        paymentMethod = getPayPalPaymentMethod();
         paymentMethod.id = defaultMethodId;
         paymentMethod.initializationData.orderId = undefined;
 
         loadingIndicator = new LoadingIndicator();
-        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
+        paypalIntegrationService = getPayPalIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceVenmoPaymentStrategy(
             paymentIntegrationService,
-            paypalCommerceIntegrationService,
+            paypalIntegrationService,
             loadingIndicator,
         );
 
@@ -76,74 +73,70 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
             paymentMethod,
         );
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
-        jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
-            paypalSdk,
-        );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue('');
-        jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockResolvedValue(undefined);
+        jest.spyOn(paypalIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
+        jest.spyOn(paypalIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalIntegrationService, 'createOrder').mockResolvedValue('');
+        jest.spyOn(paypalIntegrationService, 'submitPayment').mockResolvedValue(undefined);
 
         jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
         jest.spyOn(loadingIndicator, 'hide').mockReturnValue(undefined);
 
-        jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-            (options: PayPalCommerceButtonsOptions) => {
-                eventEmitter.on('createOrder', () => {
-                    if (options.createOrder) {
-                        options.createOrder();
-                    }
-                });
+        jest.spyOn(paypalSdk, 'Buttons').mockImplementation((options: PayPalButtonsOptions) => {
+            eventEmitter.on('createOrder', () => {
+                if (options.createOrder) {
+                    options.createOrder();
+                }
+            });
 
-                eventEmitter.on('onClick', () => {
-                    if (options.onClick) {
-                        options.onClick(
-                            { fundingSource: 'venmo' },
-                            {
-                                reject: jest.fn(),
-                                resolve: jest.fn(),
+            eventEmitter.on('onClick', () => {
+                if (options.onClick) {
+                    options.onClick(
+                        { fundingSource: 'venmo' },
+                        {
+                            reject: jest.fn(),
+                            resolve: jest.fn(),
+                        },
+                    );
+                }
+            });
+
+            eventEmitter.on('onApprove', () => {
+                if (options.onApprove) {
+                    options.onApprove(
+                        { orderID: paypalOrderId },
+                        {
+                            order: {
+                                get: jest.fn(),
                             },
-                        );
-                    }
-                });
+                        },
+                    );
+                }
+            });
 
-                eventEmitter.on('onApprove', () => {
-                    if (options.onApprove) {
-                        options.onApprove(
-                            { orderID: paypalOrderId },
-                            {
-                                order: {
-                                    get: jest.fn(),
-                                },
-                            },
-                        );
-                    }
-                });
+            eventEmitter.on('onCancel', () => {
+                if (options.onCancel) {
+                    options.onCancel();
+                }
+            });
 
-                eventEmitter.on('onCancel', () => {
-                    if (options.onCancel) {
-                        options.onCancel();
-                    }
-                });
+            eventEmitter.on('onError', () => {
+                if (options.onError) {
+                    options.onError(new Error());
+                }
+            });
 
-                eventEmitter.on('onError', () => {
-                    if (options.onError) {
-                        options.onError(new Error());
-                    }
-                });
-
-                return {
-                    isEligible: jest.fn(() => true),
-                    render: jest.fn(),
-                    close: jest.fn(),
-                };
-            },
-        );
+            return {
+                isEligible: jest.fn(() => true),
+                render: jest.fn(),
+                close: jest.fn(),
+            };
+        });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
 
-        delete (window as PayPalCommerceHostWindow).paypal;
+        delete (window as PayPalHostWindow).paypal;
     });
 
     it('creates an instance of the PayPal Commerce Venmo payment strategy', () => {
@@ -178,15 +171,13 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).not.toHaveBeenCalled();
+            expect(paypalIntegrationService.loadPayPalSdk).not.toHaveBeenCalled();
         });
 
         it('loads paypal sdk', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
-                defaultMethodId,
-            );
+            expect(paypalIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(defaultMethodId);
         });
     });
 
@@ -248,7 +239,7 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommercevenmocheckout',
             );
         });
@@ -411,7 +402,7 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(paypalCommerceIntegrationService.submitPayment).toHaveBeenCalledWith(
+            expect(paypalIntegrationService.submitPayment).toHaveBeenCalledWith(
                 payload.payment.methodId,
                 paypalOrderId,
             );

@@ -10,16 +10,15 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     ApproveCallbackPayload,
     ClickCallbackActions,
-    PayPalCommerceButtons,
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceInitializationData,
-} from '../paypal-commerce-types';
+    PayPalButtons,
+    PayPalButtonsOptions,
+    PayPalInitializationData,
+    PayPalIntegrationService,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceVenmoPaymentInitializeOptions, {
     WithPayPalCommerceVenmoPaymentInitializeOptions,
@@ -28,11 +27,11 @@ import PayPalCommerceVenmoPaymentInitializeOptions, {
 export default class PayPalCommerceVenmoPaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
-    private paypalButton?: PayPalCommerceButtons;
+    private paypalButton?: PayPalButtons;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
         private loadingIndicator: LoadingIndicator,
     ) {}
 
@@ -58,8 +57,7 @@ export default class PayPalCommerceVenmoPaymentStrategy implements PaymentStrate
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
 
         // Info:
         // The PayPal button and fields should not be rendered when shopper was redirected to Checkout page
@@ -71,7 +69,7 @@ export default class PayPalCommerceVenmoPaymentStrategy implements PaymentStrate
             return;
         }
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId);
 
         this.loadingIndicatorContainer = paypalOptions.container.split('#')[1];
 
@@ -90,7 +88,7 @@ export default class PayPalCommerceVenmoPaymentStrategy implements PaymentStrate
         }
 
         await this.paymentIntegrationService.submitOrder(order, options);
-        await this.paypalCommerceIntegrationService.submitPayment(payment.methodId, this.orderId);
+        await this.paypalIntegrationService.submitPayment(payment.methodId, this.orderId);
     }
 
     finalize(): Promise<void> {
@@ -114,23 +112,20 @@ export default class PayPalCommerceVenmoPaymentStrategy implements PaymentStrate
         methodId: string,
         paypalcommercevenmo: PayPalCommerceVenmoPaymentInitializeOptions,
     ): void {
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const { paymentButtonStyles } = paymentMethod.initializationData || {};
         const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
 
         const { container, onError, onRenderButton, onValidate, submitForm } = paypalcommercevenmo;
 
-        const buttonOptions: PayPalCommerceButtonsOptions = {
+        const buttonOptions: PayPalButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.VENMO,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(
-                checkoutPaymentButtonStyles,
-            ),
+            style: this.paypalIntegrationService.getValidButtonStyle(checkoutPaymentButtonStyles),
             createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder('paypalcommercevenmocheckout'),
+                this.paypalIntegrationService.createOrder('paypalcommercevenmocheckout'),
             onClick: (_, actions) => this.handleClick(actions, onValidate),
             onApprove: (data) => this.handleApprove(data, submitForm),
             onCancel: () => this.toggleLoadingIndicator(false),
