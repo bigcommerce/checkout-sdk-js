@@ -32,7 +32,7 @@ ___
 
 ### costAfterDiscount
 
-• `Optional` **costAfterDiscount**: `number`
+• **costAfterDiscount**: `number`
 
 ___
 
