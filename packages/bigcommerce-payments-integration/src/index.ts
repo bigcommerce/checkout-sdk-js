@@ -62,9 +62,6 @@ export { WithBigCommercePaymentsCreditCardsPaymentInitializeOptions } from './bi
  * BigCommercePayments Alternative methods strategies
  *
  */
-export { default as createBigCommercePaymentsAlternativeMethodsButtonStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-button-strategy';
-export { WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-button-initialize-options';
-
 export { default as createBigCommercePaymentsAlternativeMethodsPaymentStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-payment-strategy';
 export { WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-payment-initialize-options';
 
