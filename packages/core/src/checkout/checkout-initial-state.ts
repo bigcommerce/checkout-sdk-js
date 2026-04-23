@@ -1,4 +1,4 @@
-import { Config } from '../config';
+import { B2BApiSettings, Config } from '../config';
 import { Extension } from '../extension';
 import { ExtraFields, FormFields } from '../form';
 
@@ -10,4 +10,5 @@ export default interface CheckoutInitialState {
     checkout?: Checkout;
     extensions?: Extension[];
     extraFields?: ExtraFields;
+    b2bApiSettings?: B2BApiSettings;
 }

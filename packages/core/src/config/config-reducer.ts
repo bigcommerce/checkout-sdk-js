@@ -29,8 +29,24 @@ function dataReducer(
         case ConfigActionType.LoadConfigSucceeded:
             return objectMerge(data, action.payload);
 
-        case CheckoutHydrateActionType.HydrateInitialState:
-            return objectMerge(data, action.payload?.config);
+        case CheckoutHydrateActionType.HydrateInitialState: {
+            const merged = objectMerge(data, action.payload?.config);
+
+            // b2bApiSettings is a top-level field in CheckoutInitialState (separate from config),
+            // so it must be merged into storeConfig manually after the config hydration.
+            // Skip if config data is absent or this is a non-B2B store (no b2bApiSettings).
+            if (!merged || !action.payload?.b2bApiSettings) {
+                return merged;
+            }
+
+            return {
+                ...merged,
+                storeConfig: {
+                    ...merged.storeConfig,
+                    b2bApiSettings: action.payload.b2bApiSettings,
+                },
+            };
+        }
 
         default:
             return data;

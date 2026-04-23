@@ -9,10 +9,6 @@ import { RequestOptions } from '../common/http-request';
 import { B2BTokenActionType, LoadB2BTokenAction } from './b2b-token-actions';
 import B2BTokenRequestSender from './b2b-token-request-sender';
 
-// TODO: Remove once all stores have b2bServiceDetails configured in checkout settings
-const DEFAULT_B2B_BASE_URL = '';
-const DEFAULT_B2B_CLIENT_ID = '';
-
 export default class B2BTokenActionCreator {
     constructor(private _requestSender: B2BTokenRequestSender) {}
 
@@ -21,9 +17,10 @@ export default class B2BTokenActionCreator {
     ): ThunkAction<LoadB2BTokenAction, InternalCheckoutSelectors> {
         return (store) => {
             const state = store.getState();
-            const { storeHash } = state.config.getStoreConfigOrThrow().storeProfile;
-            const { b2bBaseUrl = DEFAULT_B2B_BASE_URL, b2bClientId = DEFAULT_B2B_CLIENT_ID } =
-                state.config.getStoreConfigOrThrow().checkoutSettings.b2bServiceDetails ?? {};
+            const storeConfig = state.config.getStoreConfigOrThrow();
+            const { storeHash } = storeConfig.storeProfile;
+            const { baseUrl: b2bBaseUrl = '', clientId: b2bClientId = '' } =
+                storeConfig.b2bApiSettings ?? {};
             const { id: customerId } = state.customer.getCustomerOrThrow();
             const { channelId } = state.checkout.getCheckoutOrThrow();
 

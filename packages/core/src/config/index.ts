@@ -8,6 +8,7 @@ export {
     FlashMessage,
     FlashMessageType,
     UserExperienceSettings,
+    B2BApiSettings,
 } from './config';
 export { default as ConfigActionCreator } from './config-action-creator';
 export {
