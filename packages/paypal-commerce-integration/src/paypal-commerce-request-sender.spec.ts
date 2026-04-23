@@ -117,4 +117,115 @@ describe('PayPalCommerceRequestSender', () => {
             }),
         );
     });
+
+    describe('#createPaymentOrderIntent', () => {
+        const requestBody = {
+            walletEntityId: 'paypalcommerce.paypal',
+            cartId: '12341234',
+        };
+
+        const mockRequest = ({
+            orderId = '10',
+            errors = [],
+        }: {
+            orderId?: string;
+            errors?: Array<{ message: string }>;
+        } = {}) => {
+            const requestResponseMock = getResponse({
+                data: {
+                    payment: {
+                        paymentWallet: {
+                            createPaymentWalletIntent: {
+                                paymentWalletIntentData: { orderId },
+                                errors,
+                            },
+                        },
+                    },
+                },
+            });
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(requestResponseMock));
+        };
+
+        beforeEach(() => {
+            mockRequest();
+        });
+
+        it('should throw an error', async () => {
+            mockRequest({ errors: [{ message: 'error message' }] });
+
+            try {
+                await paypalCommerceRequestSender.createPaymentOrderIntent(
+                    requestBody.walletEntityId,
+                    requestBody.cartId,
+                );
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+                expect((error as Error).message).toBe('error message');
+            }
+        });
+
+        describe('create order', () => {
+            it('with provided data', async () => {
+                await paypalCommerceRequestSender.createPaymentOrderIntent(
+                    requestBody.walletEntityId,
+                    requestBody.cartId,
+                );
+
+                expect(requestSender.post).toHaveBeenCalledWith(
+                    'http://localhost/api/wallet-buttons/create-payment-wallet-intent',
+                    expect.objectContaining({
+                        body: requestBody,
+                    }),
+                );
+            });
+        });
+    });
+
+    describe('#getRedirectToCheckoutUrl', () => {
+        const url = 'https://example.com';
+        const redirectedCheckoutUrl = 'https://redirect-to-checkout.com';
+
+        const mockRequest = ({
+            createCartRedirectUrls = { redirectUrls: { redirectedCheckoutUrl } },
+        }: {
+            createCartRedirectUrls?: { redirectUrls: { redirectedCheckoutUrl: string } | null };
+        } = {}) => {
+            const requestResponseMock = getResponse({
+                data: {
+                    cart: {
+                        createCartRedirectUrls,
+                    },
+                },
+            });
+
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(requestResponseMock));
+        };
+
+        it('get redirect to checkout url', async () => {
+            mockRequest();
+
+            const redirectToCheckoutUrl =
+                await paypalCommerceRequestSender.getRedirectToCheckoutUrl(url);
+
+            expect(requestSender.get).toHaveBeenCalledWith(url, undefined);
+
+            expect(redirectToCheckoutUrl).toEqual(redirectedCheckoutUrl);
+        });
+
+        it('should throw an error if there is no redirect url', async () => {
+            mockRequest({
+                createCartRedirectUrls: {
+                    redirectUrls: null,
+                },
+            });
+
+            try {
+                await paypalCommerceRequestSender.getRedirectToCheckoutUrl(url);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+                expect((error as Error).message).toBe('Failed to redirection to checkout page');
+            }
+        });
+    });
 });
