@@ -49,21 +49,27 @@ describe('B2BTokenActionCreator', () => {
             ]);
         });
 
-        it('calls getB2BToken with state data and b2bServiceDetails from checkout settings', async () => {
+        it('calls getB2BToken with b2bApiSettings from initial state', async () => {
             const customer = getCustomer();
             const checkout = getCheckout();
-            const { storeHash } = getConfig().storeConfig.storeProfile;
-            const { b2bBaseUrl, b2bClientId } =
-                getConfig().storeConfig.checkoutSettings.b2bServiceDetails!;
+            const b2bApiSettings = {
+                clientId: 'dl7c39mdpul6hyc489yk0vzxl6jesyx',
+                baseUrl: 'https://api-b2b.bigcommerce.com',
+            };
+
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                ...getConfig().storeConfig,
+                b2bApiSettings,
+            });
 
             await from(actionCreator.loadB2BToken()(store)).toPromise();
 
             expect(requestSender.getB2BToken).toHaveBeenCalledWith(
-                b2bClientId,
+                b2bApiSettings.clientId,
                 customer.id,
-                storeHash,
+                getConfig().storeConfig.storeProfile.storeHash,
                 checkout.channelId,
-                b2bBaseUrl,
+                b2bApiSettings.baseUrl,
                 undefined,
             );
         });
