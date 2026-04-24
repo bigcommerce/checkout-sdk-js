@@ -665,9 +665,9 @@ declare interface ApplePayPaymentInitializeOptions {
     subtotalLabel?: string;
 }
 
-declare interface B2BServiceDetails {
-    b2bBaseUrl: string;
-    b2bClientId: string;
+declare interface B2BApiSettings {
+    clientId: string;
+    baseUrl: string;
 }
 
 declare interface B2BTokenSelector {
@@ -773,31 +773,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-}
-
-declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
-    /**
-     * Alternative payment method id what used for initialization PayPal button as funding source.
-     */
-    apm: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
 }
 
 /**
@@ -2549,7 +2524,7 @@ declare interface CheckoutButtonErrorsState {
     deinitializeError?: Error;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsButtonInitializeOptions & WithBigCommercePaymentsPayLaterButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions & WithBigCommercePaymentsVenmoButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsButtonInitializeOptions & WithBigCommercePaymentsPayLaterButtonInitializeOptions & WithBigCommercePaymentsVenmoButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -2724,6 +2699,7 @@ declare interface CheckoutInitialState {
     checkout?: Checkout;
     extensions?: Extension[];
     extraFields?: ExtraFields;
+    b2bApiSettings?: B2BApiSettings;
 }
 
 declare interface CheckoutParams {
@@ -3881,7 +3857,6 @@ declare interface CheckoutServiceOptions {
 
 declare interface CheckoutSettings {
     capabilities?: Capabilities;
-    b2bServiceDetails?: B2BServiceDetails;
     features: {
         [featureName: string]: boolean;
     };
@@ -8271,6 +8246,7 @@ declare interface StockPosition {
 declare interface StoreConfig {
     cdnPath: string;
     checkoutSettings: CheckoutSettings;
+    b2bApiSettings?: B2BApiSettings;
     currency: StoreCurrency;
     displayDateFormat: string;
     displaySettings: DisplaySettings;
@@ -8971,10 +8947,6 @@ declare interface WithApplePayPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Apple Pay.
      */
     applepay?: ApplePayPaymentInitializeOptions;
-}
-
-declare interface WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
-    bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsButtonInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions {

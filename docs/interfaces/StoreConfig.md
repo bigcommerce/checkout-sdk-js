@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [b2bApiSettings](StoreConfig.md#b2bapisettings)
 - [cdnPath](StoreConfig.md#cdnpath)
 - [checkoutSettings](StoreConfig.md#checkoutsettings)
 - [currency](StoreConfig.md#currency)
@@ -23,6 +24,12 @@
 - [storeProfile](StoreConfig.md#storeprofile)
 
 ## Properties
+
+### b2bApiSettings
+
+• `Optional` **b2bApiSettings**: [`B2BApiSettings`](B2BApiSettings.md)
+
+___
 
 ### cdnPath
 

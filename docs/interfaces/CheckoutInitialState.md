@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [b2bApiSettings](CheckoutInitialState.md#b2bapisettings)
 - [checkout](CheckoutInitialState.md#checkout)
 - [config](CheckoutInitialState.md#config)
 - [extensions](CheckoutInitialState.md#extensions)
@@ -13,6 +14,12 @@
 - [formFields](CheckoutInitialState.md#formfields)
 
 ## Properties
+
+### b2bApiSettings
+
+• `Optional` **b2bApiSettings**: [`B2BApiSettings`](B2BApiSettings.md)
+
+___
 
 ### checkout
 

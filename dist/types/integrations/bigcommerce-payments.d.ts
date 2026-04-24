@@ -61,41 +61,6 @@ declare interface ApproveCallbackPayload {
     orderID?: string;
 }
 
-declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
-    /**
-     * Alternative payment method id what used for initialization PayPal button as funding source.
-     */
-    apm: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-    /**
-     *
-     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
-     *
-     */
-    onEligibilityFailure?(): void;
-}
-
-declare class BigCommercePaymentsAlternativeMethodsButtonStrategy implements CheckoutButtonStrategy {
-    private paymentIntegrationService;
-    private bigCommercePaymentsIntegrationService;
-    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService);
-    initialize(options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions): Promise<void>;
-    deinitialize(): Promise<void>;
-    private renderButton;
-    private handleClick;
-}
-
 /**
  * A set of options that are required to initialize the BigCommercePayments payment
  * method for presenting its PayPal button.
@@ -2036,10 +2001,6 @@ declare enum StyleButtonShape {
     rect = "rect"
 }
 
-declare interface WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
-    bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsButtonInitializeOptions;
-}
-
 declare interface WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions {
     bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions;
 }
@@ -2103,10 +2064,6 @@ declare interface WithBigCommercePaymentsVenmoCustomerInitializeOptions {
 declare interface WithBigCommercePaymentsVenmoPaymentInitializeOptions {
     bigcommerce_payments_venmo?: BigCommercePaymentsVenmoPaymentInitializeOptions;
 }
-
-export declare const createBigCommercePaymentsAlternativeMethodsButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BigCommercePaymentsAlternativeMethodsButtonStrategy>, {
-    id: string;
-}>;
 
 export declare const createBigCommercePaymentsAlternativeMethodsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsAlternativeMethodsPaymentStrategy>, {
     gateway: string;

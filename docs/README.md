@@ -91,7 +91,7 @@
 - [ApplePayButtonInitializeOptions](interfaces/ApplePayButtonInitializeOptions.md)
 - [ApplePayCustomerInitializeOptions](interfaces/ApplePayCustomerInitializeOptions.md)
 - [ApplePayPaymentInitializeOptions](interfaces/ApplePayPaymentInitializeOptions.md)
-- [B2BServiceDetails](interfaces/B2BServiceDetails.md)
+- [B2BApiSettings](interfaces/B2BApiSettings.md)
 - [B2BTokenSelector](interfaces/B2BTokenSelector.md)
 - [BankInstrument](interfaces/BankInstrument.md)
 - [Banner](interfaces/Banner.md)
@@ -102,7 +102,6 @@
 - [BaseIndividualElementOptions](interfaces/BaseIndividualElementOptions.md)
 - [BaseInstrument](interfaces/BaseInstrument.md)
 - [BasePaymentInitializeOptions](interfaces/BasePaymentInitializeOptions.md)
-- [BigCommercePaymentsAlternativeMethodsButtonInitializeOptions](interfaces/BigCommercePaymentsAlternativeMethodsButtonInitializeOptions.md)
 - [BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions](interfaces/BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions.md)
 - [BigCommercePaymentsButtonInitializeOptions](interfaces/BigCommercePaymentsButtonInitializeOptions.md)
 - [BigCommercePaymentsCreditCardsPaymentInitializeOptions](interfaces/BigCommercePaymentsCreditCardsPaymentInitializeOptions.md)
@@ -463,7 +462,6 @@
 - [WithApplePayButtonInitializeOptions](interfaces/WithApplePayButtonInitializeOptions.md)
 - [WithApplePayCustomerInitializeOptions](interfaces/WithApplePayCustomerInitializeOptions.md)
 - [WithApplePayPaymentInitializeOptions](interfaces/WithApplePayPaymentInitializeOptions.md)
-- [WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions](interfaces/WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions.md)
 - [WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions](interfaces/WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions.md)
 - [WithBigCommercePaymentsButtonInitializeOptions](interfaces/WithBigCommercePaymentsButtonInitializeOptions.md)
 - [WithBigCommercePaymentsCreditCardsPaymentInitializeOptions](interfaces/WithBigCommercePaymentsCreditCardsPaymentInitializeOptions.md)
@@ -631,7 +629,7 @@ ___
 
 ### CheckoutButtonInitializeOptions
 
-Ƭ **CheckoutButtonInitializeOptions**: [`BaseCheckoutButtonInitializeOptions`](interfaces/BaseCheckoutButtonInitializeOptions.md) & [`WithAmazonPayV2ButtonInitializeOptions`](interfaces/WithAmazonPayV2ButtonInitializeOptions.md) & [`WithApplePayButtonInitializeOptions`](interfaces/WithApplePayButtonInitializeOptions.md) & [`WithBigCommercePaymentsButtonInitializeOptions`](interfaces/WithBigCommercePaymentsButtonInitializeOptions.md) & [`WithBigCommercePaymentsPayLaterButtonInitializeOptions`](interfaces/WithBigCommercePaymentsPayLaterButtonInitializeOptions.md) & [`WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions`](interfaces/WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions.md) & [`WithBigCommercePaymentsVenmoButtonInitializeOptions`](interfaces/WithBigCommercePaymentsVenmoButtonInitializeOptions.md) & [`WithBoltButtonInitializeOptions`](interfaces/WithBoltButtonInitializeOptions.md) & [`WithBraintreePaypalButtonInitializeOptions`](interfaces/WithBraintreePaypalButtonInitializeOptions.md) & [`WithBraintreePaypalCreditButtonInitializeOptions`](interfaces/WithBraintreePaypalCreditButtonInitializeOptions.md) & [`WithGooglePayButtonInitializeOptions`](README.md#withgooglepaybuttoninitializeoptions) & [`WithPayPalCommerceButtonInitializeOptions`](interfaces/WithPayPalCommerceButtonInitializeOptions.md) & [`WithPayPalCommerceCreditButtonInitializeOptions`](interfaces/WithPayPalCommerceCreditButtonInitializeOptions.md) & [`WithPayPalCommerceVenmoButtonInitializeOptions`](interfaces/WithPayPalCommerceVenmoButtonInitializeOptions.md)
+Ƭ **CheckoutButtonInitializeOptions**: [`BaseCheckoutButtonInitializeOptions`](interfaces/BaseCheckoutButtonInitializeOptions.md) & [`WithAmazonPayV2ButtonInitializeOptions`](interfaces/WithAmazonPayV2ButtonInitializeOptions.md) & [`WithApplePayButtonInitializeOptions`](interfaces/WithApplePayButtonInitializeOptions.md) & [`WithBigCommercePaymentsButtonInitializeOptions`](interfaces/WithBigCommercePaymentsButtonInitializeOptions.md) & [`WithBigCommercePaymentsPayLaterButtonInitializeOptions`](interfaces/WithBigCommercePaymentsPayLaterButtonInitializeOptions.md) & [`WithBigCommercePaymentsVenmoButtonInitializeOptions`](interfaces/WithBigCommercePaymentsVenmoButtonInitializeOptions.md) & [`WithBoltButtonInitializeOptions`](interfaces/WithBoltButtonInitializeOptions.md) & [`WithBraintreePaypalButtonInitializeOptions`](interfaces/WithBraintreePaypalButtonInitializeOptions.md) & [`WithBraintreePaypalCreditButtonInitializeOptions`](interfaces/WithBraintreePaypalCreditButtonInitializeOptions.md) & [`WithGooglePayButtonInitializeOptions`](README.md#withgooglepaybuttoninitializeoptions) & [`WithPayPalCommerceButtonInitializeOptions`](interfaces/WithPayPalCommerceButtonInitializeOptions.md) & [`WithPayPalCommerceCreditButtonInitializeOptions`](interfaces/WithPayPalCommerceCreditButtonInitializeOptions.md) & [`WithPayPalCommerceVenmoButtonInitializeOptions`](interfaces/WithPayPalCommerceVenmoButtonInitializeOptions.md)
 
 ___
 

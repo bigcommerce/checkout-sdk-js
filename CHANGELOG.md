@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.905.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.904.2...v1.905.0) (2026-04-24)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9956 get client id and b2b base url from initial state ([#3229](https://github.com/bigcommerce/checkout-sdk-js/issues/3229)) ([3a66f39](https://github.com/bigcommerce/checkout-sdk-js/commit/3a66f39b01df35508d0d1df88aa88e90a36bb3bd))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-6336 removed BCP APM SPB related code ([#3208](https://github.com/bigcommerce/checkout-sdk-js/issues/3208)) ([a173c34](https://github.com/bigcommerce/checkout-sdk-js/commit/a173c3450795b18f69086a6b87fe89450e0443dc))
+
 ### [1.904.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.904.1...v1.904.2) (2026-04-22)
 
 ### [1.904.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.904.0...v1.904.1) (2026-04-21)
