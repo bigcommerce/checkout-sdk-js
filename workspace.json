@@ -49,6 +49,7 @@
         "td-bank-integration": "packages/td-bank-integration",
         "ui": "packages/ui",
         "utility": "packages/utility",
+        "wallet-button-integration": "packages/wallet-button-integration",
         "workspace-tools": "packages/workspace-tools",
         "worldpayaccess-integration": "packages/worldpayaccess-integration",
         "zip-integration": "packages/zip-integration"
