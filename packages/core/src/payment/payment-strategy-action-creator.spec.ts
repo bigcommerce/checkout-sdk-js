@@ -261,21 +261,7 @@ describe('PaymentStrategyActionCreator', () => {
 
                 mockStrategyFactory = jest.fn().mockReturnValue(mockStrategy);
 
-                store = createCheckoutStore(
-                    merge({}, state, {
-                        config: {
-                            data: {
-                                storeConfig: {
-                                    checkoutSettings: {
-                                        features: {
-                                            'CHECKOUT-9450.lazy_load_payment_strategies': true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    }),
-                );
+                store = createCheckoutStore(state);
 
                 actionCreator = new PaymentStrategyActionCreator(
                     registry,

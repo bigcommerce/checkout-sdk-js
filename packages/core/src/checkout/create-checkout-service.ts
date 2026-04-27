@@ -94,8 +94,6 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         );
     }
 
-    const rollOutLazyPaymentStrategies = options?.rollOutLazyPaymentStrategies ?? false;
-
     if (getEnvironment() !== 'production') {
         getDefaultLogger().warn(
             'Note that the development build is not optimized. To create a production build, set process\u200b.env.NODE_ENV to `production`.',
@@ -157,14 +155,12 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     };
     const registryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
-        // TODO: Replace once CHECKOUT-9450.lazy_load_payment_strategies experiment is rolled out
-        // process.env.ESSENTIAL_BUILD ? essentialPaymentStrategyFactories : paymentStrategyFactories,
-        rollOutLazyPaymentStrategies ? essentialPaymentStrategyFactories : paymentStrategyFactories,
+        process.env.ESSENTIAL_BUILD ? essentialPaymentStrategyFactories : paymentStrategyFactories,
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(
         paymentIntegrationService,
-        rollOutLazyPaymentStrategies ? {} : customerStrategyFactories,
+        process.env.ESSENTIAL_BUILD ? {} : customerStrategyFactories,
     );
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(experimentRequestSender),
@@ -239,5 +235,4 @@ export interface CheckoutServiceOptions {
     shouldWarnMutation?: boolean;
     externalSource?: string;
     errorLogger?: ErrorLogger;
-    rollOutLazyPaymentStrategies?: boolean;
 }
