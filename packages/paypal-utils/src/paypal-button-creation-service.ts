@@ -42,6 +42,7 @@ class PaypalButtonCreationService {
         } = buttonOptions;
 
         this.onError = onError;
+        console.log('CREATE PAYPAL Button');
 
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const isAvailableFundingSource = Object.values(paypalSdk.FUNDING).includes(fundingSource);
@@ -103,6 +104,7 @@ class PaypalButtonCreationService {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
+        console.log('ON HOSTED');
 
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
