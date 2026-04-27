@@ -126,7 +126,7 @@ class PaypalButtonCreationService {
                     const quoteShippingAddress = consignment.shippingAddress;
                     shippingAddress = {
                         ...this.paypalIntegrationService.getShippingAddressFromOrderDetails(
-                            orderDetails
+                            orderDetails,
                         ),
                         ...quoteShippingAddress,
                     };
