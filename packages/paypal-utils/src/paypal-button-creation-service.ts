@@ -33,7 +33,7 @@ class PaypalButtonCreationService {
         const {
             style,
             fundingSource,
-            isAppSwitchEnabled,
+            isServerSideShippingCallbacksEnabled,
             isHostedCheckoutEnabled,
             onClick,
             onCancel,
@@ -53,7 +53,7 @@ class PaypalButtonCreationService {
         }
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data, providerId),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
@@ -65,6 +65,7 @@ class PaypalButtonCreationService {
                     actions,
                     methodId,
                     providerId,
+                    isServerSideShippingCallbacksEnabled,
                     onPaymentComplete,
                 ),
         };
@@ -72,9 +73,6 @@ class PaypalButtonCreationService {
         return paypalSdk.Buttons({
             fundingSource,
             style: this.paypalIntegrationService.getValidButtonStyle(style),
-            ...(isAppSwitchEnabled && {
-                appSwitchWhenAvailable: true,
-            }),
             createOrder: async () => {
                 if (buyNowInitializeOptions) {
                     const buyNowCart = await this.paypalIntegrationService.createBuyNowCartOrThrow(
@@ -99,11 +97,13 @@ class PaypalButtonCreationService {
         actions: ApproveCallbackActions,
         methodId: string,
         providerId: string,
+        isServerSideShippingCallbacksEnabled?: boolean,
         onComplete?: () => void,
     ): Promise<void> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
+        console.log('isServerSideShippingCallbacksEnabled', isServerSideShippingCallbacksEnabled);
 
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
@@ -116,10 +116,26 @@ class PaypalButtonCreationService {
             await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
             if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalIntegrationService.getShippingAddressFromOrderDetails(orderDetails);
+                if (isServerSideShippingCallbacksEnabled) {
+                // TODO: IMPLEMENT NEW LOGIC HERE
+                    const consignment = this.paymentIntegrationService.getState().getConsignmentsOrThrow();
+                    const selectedShippingOptionId = consignment[0].selectedShippingOption?.id;
+                    console.log('SHIPPING FROM CONSIGNMENT', consignment);
 
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+                    if (selectedShippingOptionId) {
+                        await this.paymentIntegrationService.selectShippingOption(
+                            selectedShippingOptionId,
+                        );
+                    }
+                } else {
+                    const shippingAddress =
+                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
+
+                    await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+                }
+
                 await this.paypalIntegrationService.updateOrder(providerId);
             }
 
