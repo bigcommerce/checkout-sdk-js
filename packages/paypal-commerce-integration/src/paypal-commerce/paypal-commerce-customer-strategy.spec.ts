@@ -282,7 +282,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -304,6 +304,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
+                    isServerSideShippingCallbacksEnabled: false,
                 },
             });
 
@@ -333,14 +334,13 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             });
 
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: {
@@ -358,7 +358,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -375,7 +375,6 @@ describe('PayPalCommerceCustomerStrategy', () => {
                     color: StyleButtonColor.silver,
                     label: 'checkout',
                 },
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
