@@ -28,6 +28,44 @@ describe('WorldpayAccessOpenBankingPaymentStrategy', () => {
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
         });
 
+        it('submits open banking payment with formattedPayload for BigPay mapping', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'open_banking',
+                    gatewayId: 'worldpayaccess',
+                },
+            };
+
+            await strategy.initialize();
+            await strategy.execute(payload as OrderRequestBody);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: 'open_banking',
+                gatewayId: 'worldpayaccess',
+                paymentData: {
+                    formattedPayload: {
+                        open_banking: {},
+                        vault_payment_instrument: false,
+                        set_as_default_stored_instrument: false,
+                    },
+                },
+            });
+        });
+
+        it('submits credit card payment unchanged when not open banking', async () => {
+            const payment = {
+                methodId: 'credit_card',
+                gatewayId: 'worldpayaccess',
+                paymentData: { instrumentId: 'token-123' },
+            };
+            const payload = { payment };
+
+            await strategy.initialize();
+            await strategy.execute(payload as OrderRequestBody);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(payment);
+        });
+
         it('redirects when additional_action_required with redirect_url is returned', async () => {
             const payload = {
                 payment: {

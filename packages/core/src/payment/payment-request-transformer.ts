@@ -158,8 +158,14 @@ export default class PaymentRequestTransformer {
         // Worldpay Access: sub-methods carry the provider name in `gateway` and the method
         // name in `id`. BigPay's mapToId uses `id` as the gateway field unless
         // `method === 'multi-option'`, so we align with hosted-form-order-data-transformer
-        if (paymentMethod.gateway === 'worldpayaccess' && paymentMethod.id === 'credit_card') {
-            return { ...paymentMethod, id: 'worldpayaccess', method: 'credit-card' };
+        if (paymentMethod.gateway === 'worldpayaccess') {
+            if (paymentMethod.id === 'credit_card') {
+                return { ...paymentMethod, id: 'worldpayaccess', method: 'credit-card' };
+            }
+
+            if (paymentMethod.id === 'open_banking') {
+                return { ...paymentMethod, id: 'worldpayaccess', method: 'open_banking' };
+            }
         }
 
         if (paymentMethod.id === CheckoutButtonMethodType.BRAINTREE_VENMO) {

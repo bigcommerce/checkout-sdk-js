@@ -1,6 +1,9 @@
 import {
+    isHostedInstrumentLike,
     OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
     OrderRequestBody,
+    Payment,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentStrategy,
@@ -19,7 +22,11 @@ export default class WorldpayAccessOpenBankingPaymentStrategy implements Payment
         await this._paymentIntegrationService.submitOrder();
 
         try {
-            await this._paymentIntegrationService.submitPayment(payment);
+            if (this._isWorldpayAccessOpenBankingPayment(payment)) {
+                await this._executeWorldpayAccessOpenBankingPayment(payment);
+            } else {
+                await this._executeWorldpayAccessCreditCardPayment(payment);
+            }
         } catch (error) {
             if (this._isWorldpayAccessRedirectResponse(error)) {
                 const redirectUrl = error.body.additional_action_required.data.redirect_url;
@@ -41,6 +48,43 @@ export default class WorldpayAccessOpenBankingPaymentStrategy implements Payment
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
+    }
+
+    private async _executeWorldpayAccessOpenBankingPayment(
+        payment: OrderPaymentRequestBody,
+    ): Promise<void> {
+        await this._paymentIntegrationService.submitPayment(
+            this._buildOpenBankingSubmitPayment(payment),
+        );
+    }
+
+    private async _executeWorldpayAccessCreditCardPayment(
+        payment: OrderPaymentRequestBody,
+    ): Promise<void> {
+        await this._paymentIntegrationService.submitPayment(payment);
+    }
+
+    private _buildOpenBankingSubmitPayment(payment: OrderPaymentRequestBody): Payment {
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
+            payment.paymentData,
+        )
+            ? payment.paymentData
+            : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
+
+        return {
+            ...payment,
+            paymentData: {
+                formattedPayload: {
+                    open_banking: {},
+                    vault_payment_instrument: shouldSaveInstrument || false,
+                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
+                },
+            },
+        };
+    }
+
+    private _isWorldpayAccessOpenBankingPayment(payment: OrderPaymentRequestBody): boolean {
+        return payment.gatewayId === 'worldpayaccess' && payment.methodId === 'open_banking';
     }
 
     private _isWorldpayAccessRedirectResponse(
