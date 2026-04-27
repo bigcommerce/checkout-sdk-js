@@ -68,6 +68,7 @@ export interface PayPalInitializationData {
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
     threeDSVerificationMethod?: string;
     isAppSwitchEnabled?: boolean;
+    isServerSideShippingCallbacksEnabled?: boolean;
 }
 
 /**
@@ -543,6 +544,7 @@ export interface PayPalButtonOptions {
     fundingSource: string;
     style?: PayPalButtonStyleOptions;
     isAppSwitchEnabled?: boolean;
+    isServerSideShippingCallbacksEnabled?: boolean;
     isHostedCheckoutEnabled?: boolean;
     onClick?: () => void;
     onCancel?: () => void;

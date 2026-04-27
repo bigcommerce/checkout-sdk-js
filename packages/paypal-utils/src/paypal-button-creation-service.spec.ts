@@ -269,7 +269,6 @@ describe('PayPalButtonCreationService', () => {
             style: {
                 height: 40,
             },
-            appSwitchWhenAvailable: true,
         });
     });
 

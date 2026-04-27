@@ -404,7 +404,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -422,7 +422,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -437,7 +437,6 @@ describe('PayPalCommerceButtonStrategy', () => {
                 expect.objectContaining({
                     fundingSource: paypalSdk.FUNDING.PAYPAL,
                     style: paypalCommerceOptions.style,
-                    appSwitchWhenAvailable: true,
                     createOrder: expect.any(Function),
                     onApprove: expect.any(Function),
                 }),
@@ -490,7 +489,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -502,7 +501,6 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 onApprove: expect.any(Function),
@@ -591,7 +589,6 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 onApprove: expect.any(Function),
