@@ -127,10 +127,10 @@ class PaypalButtonCreationService {
                     const selectedShippingOptionId = consignment.selectedShippingOption?.id;
                     const quoteShippingAddress = consignment.shippingAddress;
                     shippingAddress = {
+                        ...quoteShippingAddress,
                         ...this.paypalIntegrationService.getShippingAddressFromOrderDetails(
                             orderDetails,
                         ),
-                        ...quoteShippingAddress,
                     };
 
                     console.log('SHIPPING ADDRESS', shippingAddress);
