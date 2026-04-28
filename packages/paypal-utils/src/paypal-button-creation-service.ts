@@ -132,8 +132,14 @@ class PaypalButtonCreationService {
                             orderDetails,
                         ),
                     };
-
-                    console.log('SHIPPING ADDRESS', shippingAddress);
+                    console.log('QUOTE SHIPPING ADDRESS', quoteShippingAddress);
+                    console.log(
+                        'ORDER DETAILS SHIPPING ADDRESS',
+                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        )
+                    );
+                    console.log('MERGED SHIPPING ADDRESS', shippingAddress);
 
                     if (selectedShippingOptionId) {
                         await this.paymentIntegrationService.selectShippingOption(
