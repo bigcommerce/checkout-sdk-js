@@ -62,11 +62,18 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
 
         if (this._shouldUseHostedFields) {
             this._blueSnapDirectHostedForm.initialize(this._blueSnapSdk, creditCard.form.fields);
-            await this._blueSnapDirectHostedForm.attach(
-                this._getPaymentFieldsToken(),
-                creditCard,
-                is3dsEnabled,
-            );
+            try {
+                await this._blueSnapDirectHostedForm.attach(
+                    this._getPaymentFieldsToken(),
+                    creditCard,
+                    is3dsEnabled,
+                );
+            } catch (error) {
+                if (error instanceof InvalidArgumentError) {
+                    return;
+                }
+                throw error;
+            }
         }
     }
 
