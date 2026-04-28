@@ -137,7 +137,7 @@ class PaypalButtonCreationService {
                         'ORDER DETAILS SHIPPING ADDRESS',
                         this.paypalIntegrationService.getShippingAddressFromOrderDetails(
                             orderDetails,
-                        )
+                        ),
                     );
                     console.log('MERGED SHIPPING ADDRESS', shippingAddress);
 
