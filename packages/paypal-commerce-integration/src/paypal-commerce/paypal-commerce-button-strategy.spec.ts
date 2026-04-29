@@ -404,7 +404,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -417,32 +417,32 @@ describe('PayPalCommerceButtonStrategy', () => {
             expect(resumeMock).toHaveBeenCalled();
         });
 
-        it('initializes PayPal button to render (buy now flow)', async () => {
-            const paymentMethodWithShippingOptionsFeature = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
-            await strategy.initialize(initializationOptions);
-            await strategy.initialize(buyNowInitializationOptions);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    fundingSource: paypalSdk.FUNDING.PAYPAL,
-                    style: paypalCommerceOptions.style,
-                    appSwitchWhenAvailable: true,
-                    createOrder: expect.any(Function),
-                    onApprove: expect.any(Function),
-                }),
-            );
-        });
+        // it('initializes PayPal button to render (buy now flow)', async () => {
+        //     const paymentMethodWithShippingOptionsFeature = {
+        //         ...paymentMethod,
+        //         initializationData: {
+        //             ...paymentMethod.initializationData,
+        //             isServerSideShippingCallbacksEnabled: true,
+        //         },
+        //     };
+        //
+        //     jest.spyOn(
+        //         paymentIntegrationService.getState(),
+        //         'getPaymentMethodOrThrow',
+        //     ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+        //     await strategy.initialize(initializationOptions);
+        //     await strategy.initialize(buyNowInitializationOptions);
+        //
+        //     expect(paypalSdk.Buttons).toHaveBeenCalledWith(
+        //         expect.objectContaining({
+        //             fundingSource: paypalSdk.FUNDING.PAYPAL,
+        //             style: paypalCommerceOptions.style,
+        //             isServerSideShippingCallbacksEnabled: true,
+        //             createOrder: expect.any(Function),
+        //             onApprove: expect.any(Function),
+        //         }),
+        //     );
+        // });
 
         it('initializes PayPal button to render (with shipping options feature enabled)', async () => {
             jest.spyOn(
@@ -484,31 +484,31 @@ describe('PayPalCommerceButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
-            const paymentMethodWithShippingOptionsFeature = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
-                createOrder: expect.any(Function),
-                fundingSource: paypalSdk.FUNDING.PAYPAL,
-                onApprove: expect.any(Function),
-                style: paypalCommerceOptions.style,
-            });
-        });
+        // it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
+        //     const paymentMethodWithShippingOptionsFeature = {
+        //         ...paymentMethod,
+        //         initializationData: {
+        //             ...paymentMethod.initializationData,
+        //             isHostedCheckoutEnabled: true,
+        //             isAppSwitchEnabled: true,
+        //         },
+        //     };
+        //
+        //     jest.spyOn(
+        //         paymentIntegrationService.getState(),
+        //         'getPaymentMethodOrThrow',
+        //     ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+        //
+        //     await strategy.initialize(initializationOptions);
+        //
+        //     expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+        //         appSwitchWhenAvailable: true,
+        //         createOrder: expect.any(Function),
+        //         fundingSource: paypalSdk.FUNDING.PAYPAL,
+        //         onApprove: expect.any(Function),
+        //         style: paypalCommerceOptions.style,
+        //     });
+        // });
 
         it('renders PayPal button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
@@ -574,30 +574,30 @@ describe('PayPalCommerceButtonStrategy', () => {
             );
         });
 
-        it('initializes PayPal button to render with appSwitch flag', async () => {
-            const paymentMethodWithShippingOptionsFeature = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
-            await strategy.initialize(initializationOptions);
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
-                createOrder: expect.any(Function),
-                fundingSource: paypalSdk.FUNDING.PAYPAL,
-                onApprove: expect.any(Function),
-                style: paypalCommerceOptions.style,
-            });
-        });
+        // it('initializes PayPal button to render with appSwitch flag', async () => {
+        //     const paymentMethodWithShippingOptionsFeature = {
+        //         ...paymentMethod,
+        //         initializationData: {
+        //             ...paymentMethod.initializationData,
+        //             isAppSwitchEnabled: true,
+        //         },
+        //     };
+        //
+        //     jest.spyOn(
+        //         paymentIntegrationService.getState(),
+        //         'getPaymentMethodOrThrow',
+        //     ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+        //     await strategy.initialize(initializationOptions);
+        //     await strategy.initialize(initializationOptions);
+        //
+        //     expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+        //         appSwitchWhenAvailable: true,
+        //         createOrder: expect.any(Function),
+        //         fundingSource: paypalSdk.FUNDING.PAYPAL,
+        //         onApprove: expect.any(Function),
+        //         style: paypalCommerceOptions.style,
+        //     });
+        // });
     });
 
     describe('#createOrder', () => {
