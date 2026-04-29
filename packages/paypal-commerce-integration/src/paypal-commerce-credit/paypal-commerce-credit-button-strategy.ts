@@ -83,7 +83,6 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         const currencyCode = isBuyNowFlow
             ? providedCurrencyCode
             : state.getCartOrThrow().currency.code;
-
         await this.paypalIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
         this.renderButton(containerId, methodId, paypalcommercecredit);

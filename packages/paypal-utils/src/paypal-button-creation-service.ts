@@ -42,7 +42,6 @@ class PaypalButtonCreationService {
         } = buttonOptions;
 
         this.onError = onError;
-        console.log('CREATE PAYPAL Button');
 
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const isAvailableFundingSource = Object.values(paypalSdk.FUNDING).includes(fundingSource);
@@ -118,7 +117,6 @@ class PaypalButtonCreationService {
             if (cart.lineItems.physicalItems.length > 0) {
                 if (isServerSideShippingCallbacksEnabled) {
                     await this.paymentIntegrationService.loadCheckout(cart.id);
-
                     const refreshedState = this.paymentIntegrationService.getState();
                     const consignment = refreshedState.getConsignmentsOrThrow()[0];
                     const selectedShippingOptionId = consignment.selectedShippingOption?.id;
@@ -141,7 +139,6 @@ class PaypalButtonCreationService {
                             orderDetails,
                         );
                 }
-
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
                 await this.paypalIntegrationService.updateOrder(providerId);
             }
