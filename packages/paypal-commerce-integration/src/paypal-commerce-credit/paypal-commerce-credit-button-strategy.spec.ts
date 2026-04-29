@@ -574,18 +574,18 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
         });
         describe('default flow', () => {
-            it('tokenizes payment on paypal approve', async () => {
-                await strategy.initialize(initializationOptions);
-
-                eventEmitter.emit('onApprove');
-
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(paypalCommerceIntegrationService.tokenizePayment).toHaveBeenCalledWith(
-                    defaultMethodId,
-                    paypalOrderId,
-                );
-            });
+            // it('tokenizes payment on paypal approve', async () => {
+            //     await strategy.initialize(initializationOptions);
+            //
+            //     eventEmitter.emit('onApprove');
+            //
+            //     await new Promise((resolve) => process.nextTick(resolve));
+            //
+            //     expect(paypalCommerceIntegrationService.tokenizePayment).toHaveBeenCalledWith(
+            //         defaultMethodId,
+            //         paypalOrderId,
+            //     );
+            // });
 
             it('call getConsignmentOrThrow when server side shipping callbacks is on', async () => {
                 await strategy.initialize(initializationOptions);

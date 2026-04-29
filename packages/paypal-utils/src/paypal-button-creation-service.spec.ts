@@ -602,7 +602,7 @@ describe('PayPalButtonCreationService', () => {
         });
     });
     describe('#onApprove', () => {
-        it('calls getState when server side shipping callbacks is on', async () => {
+        it('calls getState when server side shipping callbacks is on', () => {
             jest.spyOn(paymentIntegrationService, 'getState').mockImplementation(jest.fn());
             paypalButtonCreationService.createPayPalButton(
                 'paypalcommerce',
@@ -701,7 +701,9 @@ describe('PayPalButtonCreationService', () => {
             eventEmitter.emit('onApprove');
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(shippingAddress);
+            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
+                shippingAddress,
+            );
         });
     });
 });
