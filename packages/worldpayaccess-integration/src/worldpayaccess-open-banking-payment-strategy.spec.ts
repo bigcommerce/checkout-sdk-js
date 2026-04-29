@@ -1,6 +1,5 @@
 import {
     OrderFinalizationNotRequiredError,
-    OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -26,6 +25,30 @@ describe('WorldpayAccessOpenBankingPaymentStrategy', () => {
             await strategy.initialize();
 
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
+        });
+
+        it('submits open banking payment with formattedPayload for BigPay mapping', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'open_banking',
+                    gatewayId: 'worldpayaccess',
+                },
+            };
+
+            await strategy.initialize();
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: 'open_banking',
+                gatewayId: 'worldpayaccess',
+                paymentData: {
+                    formattedPayload: {
+                        open_banking: {},
+                        vault_payment_instrument: false,
+                        set_as_default_stored_instrument: false,
+                    },
+                },
+            });
         });
 
         it('redirects when additional_action_required with redirect_url is returned', async () => {
@@ -60,7 +83,7 @@ describe('WorldpayAccessOpenBankingPaymentStrategy', () => {
                 },
             });
 
-            void strategy.execute(payload as OrderRequestBody);
+            void strategy.execute(payload);
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(window.location.replace).toHaveBeenCalledWith(redirectUrl);
