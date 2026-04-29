@@ -240,6 +240,16 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
                 expect(hostedForm.attach).not.toHaveBeenCalled();
             });
         });
+
+        it('should not throw when attach fails due to missing DOM containers (user navigated away)', async () => {
+            jest.spyOn(hostedForm, 'attach').mockRejectedValue(
+                new InvalidArgumentError(
+                    'Unable to create hosted payment fields to invalid HTML container elements.',
+                ),
+            );
+
+            await expect(strategy.initialize(options)).resolves.not.toThrow();
+        });
     });
 
     describe('#execute()', () => {
