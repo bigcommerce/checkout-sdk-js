@@ -126,7 +126,13 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                     this.onShippingOptionsChange(data),
             }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
+                this.onHostedCheckoutApprove(
+                    data,
+                    actions,
+                    methodId,
+                    onComplete,
+                    isServerSideShippingCallbacksEnabled,
+                ),
         };
 
         const fundingSources = [paypalSdk.FUNDING.PAYLATER, paypalSdk.FUNDING.CREDIT];
@@ -175,6 +181,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         actions: ApproveCallbackActions,
         methodId: string,
         onComplete?: () => void,
+        isServerSideShippingCallbacksEnabled?: boolean,
     ): Promise<boolean> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
@@ -183,6 +190,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const orderDetails = await actions.order.get();
+        let shippingAddress;
 
         try {
             const billingAddress =
@@ -191,8 +199,31 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
             await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
             if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalIntegrationService.getShippingAddressFromOrderDetails(orderDetails);
+                if (isServerSideShippingCallbacksEnabled) {
+                    await this.paymentIntegrationService.loadCheckout(cart.id);
+
+                    const refreshedState = this.paymentIntegrationService.getState();
+                    const consignment = refreshedState.getConsignmentsOrThrow()[0];
+                    const selectedShippingOptionId = consignment.selectedShippingOption?.id;
+                    const quoteShippingAddress = consignment.shippingAddress;
+                    shippingAddress = {
+                        ...quoteShippingAddress,
+                        ...this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        ),
+                    };
+
+                    if (selectedShippingOptionId) {
+                        await this.paymentIntegrationService.selectShippingOption(
+                            selectedShippingOptionId,
+                        );
+                    }
+                } else {
+                    shippingAddress =
+                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
+                }
 
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
                 await this.paypalIntegrationService.updateOrder('paypalcommerce');

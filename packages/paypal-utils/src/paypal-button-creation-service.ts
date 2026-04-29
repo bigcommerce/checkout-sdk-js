@@ -104,7 +104,6 @@ class PaypalButtonCreationService {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
-        console.log('ON HOSTED');
 
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
@@ -117,13 +116,11 @@ class PaypalButtonCreationService {
             await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
             if (cart.lineItems.physicalItems.length > 0) {
-                //TODO: NEW LOGIC HERE
                 if (isServerSideShippingCallbacksEnabled) {
                     await this.paymentIntegrationService.loadCheckout(cart.id);
 
                     const refreshedState = this.paymentIntegrationService.getState();
                     const consignment = refreshedState.getConsignmentsOrThrow()[0];
-                    console.log('CONSIGNMENT', consignment);
                     const selectedShippingOptionId = consignment.selectedShippingOption?.id;
                     const quoteShippingAddress = consignment.shippingAddress;
                     shippingAddress = {
@@ -132,14 +129,6 @@ class PaypalButtonCreationService {
                             orderDetails,
                         ),
                     };
-                    console.log('QUOTE SHIPPING ADDRESS', quoteShippingAddress);
-                    console.log(
-                        'ORDER DETAILS SHIPPING ADDRESS',
-                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
-                            orderDetails,
-                        ),
-                    );
-                    console.log('MERGED SHIPPING ADDRESS', shippingAddress);
 
                     if (selectedShippingOptionId) {
                         await this.paymentIntegrationService.selectShippingOption(
