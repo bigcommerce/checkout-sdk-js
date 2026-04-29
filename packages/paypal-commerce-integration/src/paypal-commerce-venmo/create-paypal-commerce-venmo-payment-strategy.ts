@@ -4,7 +4,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
+import { createPayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceVenmoPaymentStrategy from './paypal-commerce-venmo-payment-strategy';
 
@@ -13,7 +13,7 @@ const createPayPalCommerceVenmoPaymentStrategy: PaymentStrategyFactory<
 > = (paymentIntegrationService) =>
     new PayPalCommerceVenmoPaymentStrategy(
         paymentIntegrationService,
-        createPayPalCommerceIntegrationService(paymentIntegrationService),
+        createPayPalIntegrationService(paymentIntegrationService),
         new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
     );
 
