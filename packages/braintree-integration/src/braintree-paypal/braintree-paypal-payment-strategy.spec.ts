@@ -197,6 +197,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
     afterEach(() => {
         const buttonContainer = document.getElementById('checkout-button-container');
+
         if (buttonContainer) {
             buttonContainer.remove();
         }
@@ -519,6 +520,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             const braintreeOptions = {
                 ...options,
                 braintree: {
+                    containerId: '#checkout-button-container',
                     onError: jest.fn(),
                 },
             };
