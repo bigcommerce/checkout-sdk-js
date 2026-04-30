@@ -22,6 +22,8 @@ import PayPalCommerceCreditButtonInitializeOptions, {
 } from './paypal-commerce-credit-button-initialize-options';
 
 export default class PayPalCommerceCreditButtonStrategy implements CheckoutButtonStrategy {
+    private buyNowCartId?: string;
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalIntegrationService: PayPalIntegrationService,
@@ -171,6 +173,8 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                 buyNowInitializeOptions,
             );
 
+            this.buyNowCartId = buyNowCart.id;
+
             await this.paymentIntegrationService.loadCheckout(buyNowCart.id);
         }
     }
@@ -199,8 +203,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
 
             if (cart.lineItems.physicalItems.length > 0) {
                 if (isServerSideShippingCallbacksEnabled) {
-                    await this.paymentIntegrationService.loadCheckout(cart.id);
-
+                    await this.paymentIntegrationService.loadCheckout(this.buyNowCartId);
                     const refreshedState = this.paymentIntegrationService.getState();
                     const consignment = refreshedState.getConsignmentsOrThrow()[0];
                     const selectedShippingOptionId = consignment.selectedShippingOption?.id;

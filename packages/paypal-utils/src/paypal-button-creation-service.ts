@@ -18,6 +18,7 @@ import {
 
 class PaypalButtonCreationService {
     private onError?: PayPalButtonOptions['onError'];
+    private buyNowCartId?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -78,6 +79,7 @@ class PaypalButtonCreationService {
                     const buyNowCart = await this.paypalIntegrationService.createBuyNowCartOrThrow(
                         buyNowInitializeOptions,
                     );
+                    this.buyNowCartId = buyNowCart.id;
 
                     await this.paymentIntegrationService.loadCheckout(buyNowCart.id);
                 }
@@ -116,7 +118,7 @@ class PaypalButtonCreationService {
 
             if (cart.lineItems.physicalItems.length > 0) {
                 if (isServerSideShippingCallbacksEnabled) {
-                    await this.paymentIntegrationService.loadCheckout(cart.id);
+                    await this.paymentIntegrationService.loadCheckout(this.buyNowCartId);
                     const refreshedState = this.paymentIntegrationService.getState();
                     const consignment = refreshedState.getConsignmentsOrThrow()[0];
                     const selectedShippingOptionId = consignment.selectedShippingOption?.id;
