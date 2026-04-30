@@ -22,6 +22,8 @@ import PayPalCommerceCreditButtonInitializeOptions, {
 } from './paypal-commerce-credit-button-initialize-options';
 
 export default class PayPalCommerceCreditButtonStrategy implements CheckoutButtonStrategy {
+    private buyNowCartId?: string;
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalIntegrationService: PayPalIntegrationService,
@@ -83,7 +85,6 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         const currencyCode = isBuyNowFlow
             ? providedCurrencyCode
             : state.getCartOrThrow().currency.code;
-
         await this.paypalIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
         this.renderButton(containerId, methodId, paypalcommercecredit);
@@ -104,7 +105,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, isAppSwitchEnabled } =
+        const { isHostedCheckoutEnabled, isServerSideShippingCallbacksEnabled } =
             paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
@@ -119,14 +120,20 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
                     this.onShippingOptionsChange(data),
             }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
+                this.onHostedCheckoutApprove(
+                    data,
+                    actions,
+                    methodId,
+                    onComplete,
+                    isServerSideShippingCallbacksEnabled,
+                ),
         };
 
         const fundingSources = [paypalSdk.FUNDING.PAYLATER, paypalSdk.FUNDING.CREDIT];
@@ -166,6 +173,8 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                 buyNowInitializeOptions,
             );
 
+            this.buyNowCartId = buyNowCart.id;
+
             await this.paymentIntegrationService.loadCheckout(buyNowCart.id);
         }
     }
@@ -175,6 +184,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         actions: ApproveCallbackActions,
         methodId: string,
         onComplete?: () => void,
+        isServerSideShippingCallbacksEnabled?: boolean,
     ): Promise<boolean> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
@@ -183,6 +193,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const orderDetails = await actions.order.get();
+        let shippingAddress;
 
         try {
             const billingAddress =
@@ -191,8 +202,30 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
             await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
             if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalIntegrationService.getShippingAddressFromOrderDetails(orderDetails);
+                if (isServerSideShippingCallbacksEnabled) {
+                    await this.paymentIntegrationService.loadCheckout(this.buyNowCartId || cart.id);
+                    const refreshedState = this.paymentIntegrationService.getState();
+                    const consignment = refreshedState.getConsignmentsOrThrow()[0];
+                    const selectedShippingOptionId = consignment.selectedShippingOption?.id;
+                    const quoteShippingAddress = consignment.shippingAddress;
+                    shippingAddress = {
+                        ...quoteShippingAddress,
+                        ...this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        ),
+                    };
+
+                    if (selectedShippingOptionId) {
+                        await this.paymentIntegrationService.selectShippingOption(
+                            selectedShippingOptionId,
+                        );
+                    }
+                } else {
+                    shippingAddress =
+                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
+                }
 
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
                 await this.paypalIntegrationService.updateOrder('paypalcommerce');
