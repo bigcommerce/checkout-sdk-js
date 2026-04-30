@@ -118,7 +118,7 @@ class PaypalButtonCreationService {
 
             if (cart.lineItems.physicalItems.length > 0) {
                 if (isServerSideShippingCallbacksEnabled) {
-                    await this.paymentIntegrationService.loadCheckout(this.buyNowCartId);
+                    await this.paymentIntegrationService.loadCheckout(this.buyNowCartId || cart.id);
                     const refreshedState = this.paymentIntegrationService.getState();
                     const consignment = refreshedState.getConsignmentsOrThrow()[0];
                     const selectedShippingOptionId = consignment.selectedShippingOption?.id;
