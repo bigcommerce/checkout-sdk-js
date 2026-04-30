@@ -321,7 +321,10 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             onRenderButton();
         }
 
-        if (this.paypalButton.hasReturned?.() && this.isPaypalCommerceServerSideShippingCallbacksEnabled(methodId)) {
+        if (
+            this.paypalButton.hasReturned?.() &&
+            this.isPaypalCommerceServerSideShippingCallbacksEnabled(methodId)
+        ) {
             this.paypalButton.resume?.();
         } else {
             this.paypalButton.render(container);
