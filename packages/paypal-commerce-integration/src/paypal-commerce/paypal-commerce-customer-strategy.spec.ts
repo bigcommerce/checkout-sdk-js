@@ -278,7 +278,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
         });
 
         it('calls PayPal button resume', async () => {
-            const paymentMethodWithAppSwitch = {
+            const paymentMethodWithServerSideCallbacks = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
@@ -289,7 +289,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithAppSwitch);
+            ).mockReturnValue(paymentMethodWithServerSideCallbacks);
             await strategy.initialize(initializationOptions);
 
             expect(resumeMock).toHaveBeenCalled();
@@ -325,7 +325,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
             });
         });
 
-        it('initializes paypal buttons without shipping callbacks what appSwitch enabled', async () => {
+        it('initializes paypal buttons without shipping callbacks what server side shipping callbacks enabled', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -348,34 +348,6 @@ describe('PayPalCommerceCustomerStrategy', () => {
                     color: StyleButtonColor.silver,
                     label: 'checkout',
                 },
-                onApprove: expect.any(Function),
-                onClick: expect.any(Function),
-            });
-        });
-
-        it('initializes PayPal button to render with appSwitch flag', async () => {
-            const paymentMethodWithAppSwitch = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isServerSideShippingCallbacksEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithAppSwitch);
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                fundingSource: paypalSdk.FUNDING.PAYPAL,
-                style: {
-                    height: DefaultCheckoutButtonHeight,
-                    color: StyleButtonColor.silver,
-                    label: 'checkout',
-                },
-                createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
             });

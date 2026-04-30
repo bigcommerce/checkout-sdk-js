@@ -256,22 +256,6 @@ describe('PayPalButtonCreationService', () => {
         });
     });
 
-    it('create PayPal button with appSwitchWhenAvailable option enabled', () => {
-        paypalButtonCreationService.createPayPalButton('paypalcommerce', 'paypalcommercecredit', {
-            fundingSource: paypalSdk.FUNDING.PAYLATER,
-            isAppSwitchEnabled: true,
-        });
-
-        expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-            fundingSource: paypalSdk.FUNDING.PAYLATER,
-            createOrder: expect.any(Function),
-            onApprove: expect.any(Function),
-            style: {
-                height: 40,
-            },
-        });
-    });
-
     it('create PayPal button with onCancel callback support', async () => {
         const onCancel = jest.fn();
 
