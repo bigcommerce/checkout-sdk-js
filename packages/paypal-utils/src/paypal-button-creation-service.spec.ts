@@ -256,23 +256,6 @@ describe('PayPalButtonCreationService', () => {
         });
     });
 
-    it('create PayPal button with appSwitchWhenAvailable option enabled', () => {
-        paypalButtonCreationService.createPayPalButton('paypalcommerce', 'paypalcommercecredit', {
-            fundingSource: paypalSdk.FUNDING.PAYLATER,
-            isAppSwitchEnabled: true,
-        });
-
-        expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-            fundingSource: paypalSdk.FUNDING.PAYLATER,
-            createOrder: expect.any(Function),
-            onApprove: expect.any(Function),
-            style: {
-                height: 40,
-            },
-            appSwitchWhenAvailable: true,
-        });
-    });
-
     it('create PayPal button with onCancel callback support', async () => {
         const onCancel = jest.fn();
 
@@ -600,6 +583,109 @@ describe('PayPalButtonCreationService', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalIntegrationService.updateOrder).toHaveBeenCalledWith('paypalcommerce');
+        });
+    });
+    describe('#onApprove', () => {
+        beforeEach(() => {
+            const consignment = getConsignment();
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getConsignmentsOrThrow',
+            ).mockReturnValue([consignment]);
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('calls getState when server side shipping callbacks is on', () => {
+            paypalButtonCreationService.createPayPalButton(
+                'paypalcommerce',
+                'paypalcommercecredit',
+                {
+                    fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
+                },
+            );
+
+            eventEmitter.emit('onApprove');
+
+            expect(paymentIntegrationService.getState).toHaveBeenCalled();
+        });
+
+        it('calls getConsignmentsOrThrow when server side shipping callbacks is on', async () => {
+            paypalButtonCreationService.createPayPalButton(
+                'paypalcommerce',
+                'paypalcommercecredit',
+                {
+                    fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
+                },
+            );
+
+            eventEmitter.emit('onApprove');
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.getState().getConsignmentsOrThrow).toHaveBeenCalled();
+        });
+
+        it('selects shipping option when server side shipping callbacks is on', async () => {
+            paypalButtonCreationService.createPayPalButton(
+                'paypalcommerce',
+                'paypalcommercecredit',
+                {
+                    fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
+                },
+            );
+
+            eventEmitter.emit('onApprove');
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();
+        });
+
+        it('updates address with merged object when server side shipping callbacks is on', async () => {
+            const consignment = getConsignment();
+            paypalButtonCreationService.createPayPalButton(
+                'paypalcommerce',
+                'paypalcommercecredit',
+                {
+                    fundingSource: paypalSdk.FUNDING.PAYLATER,
+                    isHostedCheckoutEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
+                },
+            );
+            const orderDetails = {
+                firstName: 'Full',
+                lastName: 'Name',
+                email: 'john@doe.com',
+                phone: '',
+                company: '',
+                address1: '2 E 61st St',
+                address2: 'Apt.1',
+                city: 'New York',
+                countryCode: 'US',
+                postalCode: '10065',
+                stateOrProvince: '',
+                stateOrProvinceCode: 'NY',
+                customFields: [],
+            };
+
+            const shippingAddress = {
+                ...consignment.shippingAddress,
+                ...orderDetails,
+            };
+
+            eventEmitter.emit('onApprove');
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
+                shippingAddress,
+            );
         });
     });
 });
