@@ -106,13 +106,16 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, paymentButtonStyles, isAppSwitchEnabled } =
-            paymentMethod.initializationData || {};
+        const {
+            isHostedCheckoutEnabled,
+            paymentButtonStyles,
+            isServerSideShippingCallbacksEnabled,
+        } = paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const buttonOptions: PayPalButtonOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            isAppSwitchEnabled,
+            isServerSideShippingCallbacksEnabled,
             isHostedCheckoutEnabled,
             style: {
                 ...checkoutTopButtonStyles,
@@ -130,7 +133,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         );
 
         if (paypalButton.isEligible()) {
-            if (paypalButton.hasReturned?.() && isAppSwitchEnabled) {
+            if (paypalButton.hasReturned?.() && isServerSideShippingCallbacksEnabled) {
                 paypalButton.resume?.();
             } else {
                 paypalButton.render(`#${container}`);

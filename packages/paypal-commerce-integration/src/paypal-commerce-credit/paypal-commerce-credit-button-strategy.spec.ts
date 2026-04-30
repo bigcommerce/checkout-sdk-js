@@ -453,7 +453,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -558,17 +558,107 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
     });
 
     describe('#onApprove button callback', () => {
+        beforeEach(() => {
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+        });
         describe('default flow', () => {
             it('tokenizes payment on paypal approve', async () => {
+                const paymentMethodObject = {
+                    ...paymentMethod,
+                    initializationData: {
+                        ...paymentMethod.initializationData,
+                        isHostedCheckoutEnabled: false,
+                    },
+                };
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(paymentMethodObject);
+
                 await strategy.initialize(initializationOptions);
 
                 eventEmitter.emit('onApprove');
-
                 await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalCommerceIntegrationService.tokenizePayment).toHaveBeenCalledWith(
                     defaultMethodId,
                     paypalOrderId,
+                );
+            });
+
+            it('call getConsignmentOrThrow when server side shipping callbacks is on', async () => {
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(
+                    paymentIntegrationService.getState().getConsignmentsOrThrow,
+                ).toHaveBeenCalled();
+            });
+
+            it('selects shipping option when server side shipping callbacks is on', async () => {
+                const consignment = getConsignment();
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignmentsOrThrow',
+                ).mockReturnValue([consignment]);
+
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();
+            });
+
+            it('updates address with merged object when server side shipping callbacks is on', async () => {
+                const consignment = getConsignment();
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignmentsOrThrow',
+                ).mockReturnValue([consignment]);
+
+                await strategy.initialize(initializationOptions);
+
+                const orderDetails = {
+                    firstName: 'Full',
+                    lastName: 'Name',
+                    email: 'john@doe.com',
+                    phone: '',
+                    company: '',
+                    address1: '2 E 61st St',
+                    address2: 'Apt.1',
+                    city: 'New York',
+                    countryCode: 'US',
+                    postalCode: '10065',
+                    stateOrProvince: '',
+                    stateOrProvinceCode: 'NY',
+                    customFields: [],
+                };
+
+                const shippingAddress = {
+                    ...consignment.shippingAddress,
+                    ...orderDetails,
+                };
+
+                eventEmitter.emit('onApprove');
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
+                    shippingAddress,
                 );
             });
         });

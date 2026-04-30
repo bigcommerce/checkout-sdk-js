@@ -261,6 +261,7 @@ export interface PayPalCommerceInitializationData {
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
     isAppSwitchEnabled?: boolean;
+    isServerSideShippingCallbacksEnabled?: boolean;
 }
 
 export interface PayPalBNPLConfigurationItem {
