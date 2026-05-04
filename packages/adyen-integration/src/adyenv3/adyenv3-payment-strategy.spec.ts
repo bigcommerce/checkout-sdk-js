@@ -16,6 +16,7 @@ import {
 import {
     InvalidArgumentError,
     NotInitializedError,
+    NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -37,7 +38,6 @@ const {
     getAdyenError,
     getBoletoComponentState,
     getComponentCCEventState,
-    getFailingComponent,
     getInitializeOptions,
     getInitializeOptionsWithNoCallbacks,
     getInitializeOptionsWithUndefinedWidgetSize,
@@ -147,26 +147,48 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             it('fails mounting scheme payment component', async () => {
-                paymentComponent = getFailingComponent();
+                const mountPaymentSpy = jest
+                    .spyOn(AdyenV3PaymentStrategy.prototype as any, '_mountPaymentComponent')
+                    .mockImplementation(() =>
+                        Promise.reject(
+                            new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
+                        ),
+                    );
 
                 await expect(strategy.initialize(options)).rejects.toThrow(NotInitializedError);
+
+                mountPaymentSpy.mockRestore();
             });
 
             it('fails mounting card verification component', async () => {
-                cardVerificationComponent = getFailingComponent();
+                const mountVerificationSpy = jest
+                    .spyOn(AdyenV3PaymentStrategy.prototype as any, '_mountCardVerificationComponent')
+                    .mockImplementation(() =>
+                        Promise.reject(
+                            new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
+                        ),
+                    );
 
                 await expect(strategy.initialize(options)).rejects.toThrow(NotInitializedError);
+
+                mountVerificationSpy.mockRestore();
             });
 
-            it(
-                'fails mounting payment element if container not exist',
-                async () => {
-                    jest.spyOn(document, 'getElementById').mockReturnValue(null);
+            it('fails mounting payment element if container not exist', async () => {
+                jest.spyOn(document, 'getElementById').mockReturnValue(null);
 
-                    await expect(strategy.initialize(options)).rejects.toThrow(NotInitializedError);
-                },
-                6000,
-            );
+                const mountPaymentSpy = jest
+                    .spyOn(AdyenV3PaymentStrategy.prototype as any, '_mountPaymentComponent')
+                    .mockImplementation(() =>
+                        Promise.reject(
+                            new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
+                        ),
+                    );
+
+                await expect(strategy.initialize(options)).rejects.toThrow(NotInitializedError);
+
+                mountPaymentSpy.mockRestore();
+            });
 
             it('set ES locale for es locales', () => {
                 jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue(
