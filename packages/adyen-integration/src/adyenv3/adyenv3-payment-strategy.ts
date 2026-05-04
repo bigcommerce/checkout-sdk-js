@@ -349,14 +349,16 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 );
             }
 
-            this._mountElement(additionalActionComponent, containerId);
-
-            if (onLoad && typeof onLoad === 'function') {
-                onLoad(() => {
-                    reject(new PaymentMethodCancelledError());
-                    additionalActionComponent.unmount();
-                });
-            }
+            void this._mountElement(additionalActionComponent, containerId)
+                .then(() => {
+                    if (onLoad && typeof onLoad === 'function') {
+                        onLoad(() => {
+                            reject(new PaymentMethodCancelledError());
+                            additionalActionComponent.unmount();
+                        });
+                    }
+                })
+                .catch(reject);
         });
     }
 
@@ -394,72 +396,66 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private _mountCardVerificationComponent(): Promise<AdyenComponent> {
+    private async _mountCardVerificationComponent(): Promise<AdyenComponent> {
         const adyenv3 = this._getPaymentInitializeOptions();
         const adyenClient = this._getAdyenClient();
-        let cardVerificationComponent: AdyenComponent;
 
-        return new Promise((resolve, reject) => {
-            if (adyenv3.cardVerificationContainerId) {
-                cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
-                    ...adyenv3.options,
-                    styles: {
-                        ...adyenv3.options?.styles,
-                        placeholder: {
-                            color: 'transparent',
-                            caretColor: '#000',
-                            ...adyenv3.options?.styles?.placeholder,
-                        },
-                    },
-                    onChange: (componentState) => this._updateComponentState(componentState),
-                    onError: (validateState) => adyenv3.validateCardFields(validateState),
-                    onFieldValid: (validateState) => adyenv3.validateCardFields(validateState),
-                });
+        if (!adyenv3.cardVerificationContainerId) {
+            return undefined as unknown as AdyenComponent;
+        }
 
-                try {
-                    this._mountElement(
-                        cardVerificationComponent,
-                        adyenv3.cardVerificationContainerId,
-                    );
-                } catch (error) {
-                    reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
-                }
-            }
-
-            resolve(cardVerificationComponent);
+        const cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
+            ...adyenv3.options,
+            styles: {
+                ...adyenv3.options?.styles,
+                placeholder: {
+                    color: 'transparent',
+                    caretColor: '#000',
+                    ...adyenv3.options?.styles?.placeholder,
+                },
+            },
+            onChange: (componentState) => this._updateComponentState(componentState),
+            onError: (validateState) => adyenv3.validateCardFields(validateState),
+            onFieldValid: (validateState) => adyenv3.validateCardFields(validateState),
         });
+
+        try {
+            await this._mountElement(
+                cardVerificationComponent,
+                adyenv3.cardVerificationContainerId,
+            );
+        } catch {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return cardVerificationComponent;
     }
 
-    private _mountPaymentComponent(paymentMethod: PaymentMethod): Promise<AdyenComponent> {
-        let paymentComponent: AdyenComponent;
+    private async _mountPaymentComponent(paymentMethod: PaymentMethod): Promise<AdyenComponent> {
         const adyenv3 = this._getPaymentInitializeOptions();
         const adyenClient = this._getAdyenClient();
+        const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
+        const { prefillCardHolderName } = paymentMethod.initializationData;
 
-        return new Promise((resolve, reject) => {
-            const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
-
-            const { prefillCardHolderName } = paymentMethod.initializationData;
-
-            paymentComponent = adyenClient.create(paymentMethod.method, {
-                ...adyenv3.options,
-                showBrandsUnderCardNumber: false,
-                billingAddressRequired: false,
-                showEmailAddress: false,
-                onChange: (componentState) => this._updateComponentState(componentState),
-                onSubmit: (componentState) => this._updateComponentState(componentState),
-                ...(billingAddress
-                    ? { data: this._mapAdyenPlaceholderData(billingAddress, prefillCardHolderName) }
-                    : {}),
-            });
-
-            try {
-                this._mountElement(paymentComponent, adyenv3.containerId);
-            } catch (error) {
-                reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
-            }
-
-            resolve(paymentComponent);
+        const paymentComponent = adyenClient.create(paymentMethod.method, {
+            ...adyenv3.options,
+            showBrandsUnderCardNumber: false,
+            billingAddressRequired: false,
+            showEmailAddress: false,
+            onChange: (componentState) => this._updateComponentState(componentState),
+            onSubmit: (componentState) => this._updateComponentState(componentState),
+            ...(billingAddress
+                ? { data: this._mapAdyenPlaceholderData(billingAddress, prefillCardHolderName) }
+                : {}),
         });
+
+        try {
+            await this._mountElement(paymentComponent, adyenv3.containerId);
+        } catch {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return paymentComponent;
     }
 
     private async _processAdditionalAction(
