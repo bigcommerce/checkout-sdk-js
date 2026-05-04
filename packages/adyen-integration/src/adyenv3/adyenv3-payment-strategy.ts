@@ -396,12 +396,12 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private async _mountCardVerificationComponent(): Promise<AdyenComponent> {
+    private async _mountCardVerificationComponent(): Promise<AdyenComponent | undefined> {
         const adyenv3 = this._getPaymentInitializeOptions();
         const adyenClient = this._getAdyenClient();
 
         if (!adyenv3.cardVerificationContainerId) {
-            return undefined as unknown as AdyenComponent;
+            return undefined;
         }
 
         const cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
