@@ -162,7 +162,10 @@ describe('AdyenV3PaymentStrategy', () => {
 
             it('fails mounting card verification component', async () => {
                 const mountVerificationSpy = jest
-                    .spyOn(AdyenV3PaymentStrategy.prototype as any, '_mountCardVerificationComponent')
+                    .spyOn(
+                        AdyenV3PaymentStrategy.prototype as any,
+                        '_mountCardVerificationComponent',
+                    )
                     .mockImplementation(() =>
                         Promise.reject(
                             new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
