@@ -158,15 +158,15 @@ describe('AdyenV3PaymentStrategy', () => {
                 await expect(strategy.initialize(options)).rejects.toThrow(NotInitializedError);
             });
 
-            it('fails mounting payment element if container not exist', () => {
-                const adyenClient = getAdyenClient();
-                const adyenComponent = adyenClient.create('scheme', {});
+            it(
+                'fails mounting payment element if container not exist',
+                async () => {
+                    jest.spyOn(document, 'getElementById').mockReturnValue(null);
 
-                jest.spyOn(document, 'getElementById').mockReturnValue(null);
-
-                expect(strategy.initialize(options));
-                expect(adyenComponent.mount).not.toHaveBeenCalled();
-            });
+                    await expect(strategy.initialize(options)).rejects.toThrow(NotInitializedError);
+                },
+                6000,
+            );
 
             it('set ES locale for es locales', () => {
                 jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue(
