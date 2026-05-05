@@ -1,5 +1,6 @@
 {
-    "root": "packages/squarev2-integration",
+    "name": "squarev2-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/squarev2-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,10 +12,11 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/squarev2-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/squarev2-integration"],
             "options": {
-                "jestConfig": "packages/squarev2-integration/jest.config.js"
+                "jestConfig": "packages/squarev2-integration/jest.config.ts",
+                "passWithNoTests": false
             }
         }
     },

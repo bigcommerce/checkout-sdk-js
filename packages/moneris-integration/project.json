@@ -1,5 +1,6 @@
 {
-    "root": "packages/moneris-integration",
+    "name": "moneris-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/moneris-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/moneris-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/moneris-integration"],
             "options": {
-                "jestConfig": "packages/moneris-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/moneris-integration/jest.config.ts"
             }
         }
     },

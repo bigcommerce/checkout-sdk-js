@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx nx *)",
+      "Bash(node_modules/.bin/nx --version)"
+    ]
+  }
+}

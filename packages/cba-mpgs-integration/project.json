@@ -1,5 +1,6 @@
 {
-    "root": "packages/cba-mpgs-integration",
+    "name": "cba-mpgs-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/cba-mpgs-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/cba-mpgs-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/cba-mpgs-integration"],
             "options": {
-                "jestConfig": "packages/cba-mpgs-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/cba-mpgs-integration/jest.config.ts"
             }
         }
     },

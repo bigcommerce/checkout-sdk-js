@@ -1,5 +1,6 @@
 {
-    "root": "packages/braintree-utils",
+    "name": "braintree-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/braintree-utils/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/braintree-utils"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/braintree-utils"],
             "options": {
-                "jestConfig": "packages/braintree-utils/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/braintree-utils/jest.config.ts"
             }
         }
     },

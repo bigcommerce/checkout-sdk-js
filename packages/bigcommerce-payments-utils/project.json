@@ -1,5 +1,6 @@
 {
-    "root": "packages/bigcommerce-payments-utils",
+    "name": "bigcommerce-payments-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/bigcommerce-payments-utils/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/bigcommerce-payments-utils"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/bigcommerce-payments-utils"],
             "options": {
-                "jestConfig": "packages/bigcommerce-payments-utils/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/bigcommerce-payments-utils/jest.config.ts"
             }
         }
     },

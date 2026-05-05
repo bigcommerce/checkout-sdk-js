@@ -1,5 +1,6 @@
 {
-    "root": "packages/hosted-form-v2",
+    "name": "hosted-form-v2",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/hosted-form-v2/src",
     "projectType": "library",
     "targets": {
@@ -11,15 +12,14 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/hosted-form-v2"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/hosted-form-v2"],
             "options": {
-                "jestConfig": "packages/hosted-form-v2/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/hosted-form-v2/jest.config.ts"
             }
         },
         "build-dts": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "cwd": "packages/hosted-form-v2",
                 "parallel": false,

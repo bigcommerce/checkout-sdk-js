@@ -1,5 +1,6 @@
 {
-    "root": "packages/bolt-integration",
+    "name": "bolt-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/bolt-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,10 +12,11 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/bolt-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/bolt-integration"],
             "options": {
-                "jestConfig": "packages/bolt-integration/jest.config.js"
+                "jestConfig": "packages/bolt-integration/jest.config.ts",
+                "passWithNoTests": false
             }
         }
     },

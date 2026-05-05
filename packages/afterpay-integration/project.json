@@ -1,5 +1,6 @@
 {
-    "root": "packages/afterpay-integration",
+    "name": "afterpay-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/afterpay-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/afterpay-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/afterpay-integration"],
             "options": {
-                "jestConfig": "packages/afterpay-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/afterpay-integration/jest.config.ts"
             }
         }
     },

@@ -1,5 +1,6 @@
 {
-    "root": "packages/paypal-commerce-utils",
+    "name": "paypal-commerce-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/paypal-commerce-utils/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/paypal-commerce-utils"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/paypal-commerce-utils"],
             "options": {
-                "jestConfig": "packages/paypal-commerce-utils/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/paypal-commerce-utils/jest.config.ts"
             }
         }
     },

@@ -1,5 +1,6 @@
 {
-    "root": "packages/workspace-tools",
+    "name": "workspace-tools",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/workspace-tools/src",
     "targets": {
         "build": {
@@ -37,11 +38,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/workspace-tools"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/workspace-tools"],
             "options": {
-                "jestConfig": "packages/workspace-tools/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/workspace-tools/jest.config.ts"
             }
         }
     },

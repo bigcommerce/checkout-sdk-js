@@ -1,26 +1,26 @@
 {
-    "root": "packages/core",
+    "name": "core",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/core/src",
     "projectType": "library",
     "targets": {
         "build": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "command": "webpack --config webpack.config.js"
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 },
                 {
                     "target": "build",
-                    "projects": "dependencies"
+                    "dependencies": true
                 }
             ]
         },
         "build-analyze": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "commands": [
                     "webpack --config webpack.config.js --config-name esm --profile --json > webpack-stats.json",
@@ -30,33 +30,31 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 },
                 {
                     "target": "build",
-                    "projects": "dependencies"
+                    "dependencies": true
                 }
             ]
         },
         "build-watch": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "command": "webpack --config webpack.config.js --config-name esm --watch --progress"
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 },
                 {
                     "target": "build",
-                    "projects": "dependencies"
+                    "dependencies": true
                 }
             ]
         },
         "build-cdn": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "parallel": false,
                 "commands": [
@@ -66,17 +64,16 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 },
                 {
                     "target": "build",
-                    "projects": "dependencies"
+                    "dependencies": true
                 }
             ]
         },
         "build-dts": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "cwd": "packages/core",
                 "parallel": false,
@@ -90,7 +87,7 @@
             }
         },
         "docs": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "cwd": "packages/core",
                 "parallel": false,
@@ -101,8 +98,7 @@
             },
             "dependsOn": [
                 {
-                    "target": "build-dts",
-                    "projects": "self"
+                    "target": "build-dts"
                 }
             ]
         },
@@ -115,28 +111,25 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 }
             ]
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/core"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/core"],
             "options": {
-                "jestConfig": "packages/core/jest.config.js",
-                "passWithNoTests": true,
+                "jestConfig": "packages/core/jest.config.ts",
                 "runInBand": true
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 }
             ]
         },
         "generate": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "commands": [
                     "rm -rf packages/core/src/generated",

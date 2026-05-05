@@ -52,5 +52,6 @@
         "workspace-tools": "packages/workspace-tools",
         "worldpayaccess-integration": "packages/worldpayaccess-integration",
         "zip-integration": "packages/zip-integration"
-    }
+    },
+    "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

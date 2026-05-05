@@ -1,5 +1,6 @@
 {
-    "root": "packages/payment-integrations-test-utils",
+    "name": "payment-integrations-test-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/payment-integrations-test-utils/src",
     "projectType": "library",
     "targets": {
@@ -7,17 +8,14 @@
             "executor": "@nrwl/linter:eslint",
             "outputs": ["{options.outputFile}"],
             "options": {
-                "lintFilePatterns": [
-                    "packages/payment-integrations-test-utils/**/*.ts"
-                ]
+                "lintFilePatterns": ["packages/payment-integrations-test-utils/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/payment-integrations-test-utils"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/payment-integrations-test-utils"],
             "options": {
-                "jestConfig": "packages/payment-integrations-test-utils/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/payment-integrations-test-utils/jest.config.ts"
             }
         }
     },

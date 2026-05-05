@@ -1,5 +1,6 @@
 {
-    "root": "packages/stripe-integration",
+    "name": "stripe-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/stripe-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/stripe-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/stripe-integration"],
             "options": {
-                "jestConfig": "packages/stripe-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/stripe-integration/jest.config.ts"
             }
         }
     },

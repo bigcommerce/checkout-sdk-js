@@ -1,5 +1,6 @@
 {
-    "root": "packages/offsite-integration",
+    "name": "offsite-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/offsite-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/offsite-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/offsite-integration"],
             "options": {
-                "jestConfig": "packages/offsite-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/offsite-integration/jest.config.ts"
             }
         }
     },

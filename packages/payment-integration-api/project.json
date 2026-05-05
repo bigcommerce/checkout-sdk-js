@@ -1,5 +1,6 @@
 {
-    "root": "packages/payment-integration-api",
+    "name": "payment-integration-api",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/payment-integration-api/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/payment-integration-api"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/payment-integration-api"],
             "options": {
-                "jestConfig": "packages/payment-integration-api/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/payment-integration-api/jest.config.ts"
             }
         }
     },

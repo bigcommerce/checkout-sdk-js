@@ -13,3 +13,6 @@
 .vscode
 junit.xml
 /build-analysis
+
+.nx/cache
+.nx/workspace-data

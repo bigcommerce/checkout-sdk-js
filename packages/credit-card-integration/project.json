@@ -1,5 +1,6 @@
 {
-    "root": "packages/credit-card-integration",
+    "name": "credit-card-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/credit-card-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,10 +12,11 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/credit-card-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/credit-card-integration"],
             "options": {
-                "jestConfig": "packages/credit-card-integration/jest.config.js"
+                "jestConfig": "packages/credit-card-integration/jest.config.ts",
+                "passWithNoTests": false
             }
         }
     },

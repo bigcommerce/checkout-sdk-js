@@ -1,5 +1,6 @@
 {
-    "root": "packages/sagepay-integration",
+    "name": "sagepay-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/sagepay-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/sagepay-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/sagepay-integration"],
             "options": {
-                "jestConfig": "packages/sagepay-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/sagepay-integration/jest.config.ts"
             }
         }
     },

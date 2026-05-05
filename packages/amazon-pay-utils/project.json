@@ -1,5 +1,6 @@
 {
-    "root": "packages/amazon-pay-utils",
+    "name": "amazon-pay-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/amazon-pay-utils/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/amazon-pay-utils"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/amazon-pay-utils"],
             "options": {
-                "jestConfig": "packages/amazon-pay-utils/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/amazon-pay-utils/jest.config.ts"
             }
         }
     },

@@ -1,5 +1,6 @@
 {
-    "root": "packages/klarna-integration",
+    "name": "klarna-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/klarna-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/klarna-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/klarna-integration"],
             "options": {
-                "jestConfig": "packages/klarna-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/klarna-integration/jest.config.ts"
             }
         }
     },

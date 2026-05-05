@@ -1,5 +1,6 @@
 {
-    "root": "packages/legacy-integration",
+    "name": "legacy-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/legacy-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/legacy-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/legacy-integration"],
             "options": {
-                "jestConfig": "packages/legacy-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/legacy-integration/jest.config.ts"
             }
         }
     },

@@ -1,5 +1,6 @@
 {
-    "root": "packages/worldpayaccess-integration",
+    "name": "worldpayaccess-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/worldpayaccess-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,10 +12,11 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/worldpayaccess-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/worldpayaccess-integration"],
             "options": {
-                "jestConfig": "packages/worldpayaccess-integration/jest.config.js"
+                "jestConfig": "packages/worldpayaccess-integration/jest.config.ts",
+                "passWithNoTests": false
             }
         }
     },

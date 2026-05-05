@@ -80,7 +80,9 @@
                 "packages/google-pay-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/hosted-form-v2": ["packages/hosted-form-v2/src/index.ts"],
-            "@bigcommerce/checkout-sdk/humm-integration": ["packages/humm-integration/src/index.ts"],
+            "@bigcommerce/checkout-sdk/humm-integration": [
+                "packages/humm-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/klarna-integration": [
                 "packages/klarna-integration/src/index.ts"
             ],

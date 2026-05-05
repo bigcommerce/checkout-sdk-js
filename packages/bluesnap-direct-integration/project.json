@@ -1,5 +1,6 @@
 {
-    "root": "packages/bluesnap-direct-integration",
+    "name": "bluesnap-direct-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/bluesnap-direct-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,10 +12,11 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/bluesnap-direct-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/bluesnap-direct-integration"],
             "options": {
-                "jestConfig": "packages/bluesnap-direct-integration/jest.config.js"
+                "jestConfig": "packages/bluesnap-direct-integration/jest.config.ts",
+                "passWithNoTests": false
             }
         }
     },

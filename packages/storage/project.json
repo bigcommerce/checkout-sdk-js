@@ -1,5 +1,6 @@
 {
-    "root": "packages/storage",
+    "name": "storage",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/storage/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/storage"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/storage"],
             "options": {
-                "jestConfig": "packages/storage/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/storage/jest.config.ts"
             }
         }
     },

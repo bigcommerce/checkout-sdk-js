@@ -1,5 +1,6 @@
 {
-    "root": "packages/zip-integration",
+    "name": "zip-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/zip-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,11 +12,10 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/zip-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/zip-integration"],
             "options": {
-                "jestConfig": "packages/zip-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/zip-integration/jest.config.ts"
             }
         }
     },

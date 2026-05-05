@@ -1,5 +1,6 @@
 {
-    "root": "packages/sezzle-integration",
+    "name": "sezzle-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/sezzle-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,10 +12,11 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/sezzle-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/sezzle-integration"],
             "options": {
-                "jestConfig": "packages/sezzle-integration/jest.config.js"
+                "jestConfig": "packages/sezzle-integration/jest.config.ts",
+                "passWithNoTests": false
             }
         }
     },

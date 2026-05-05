@@ -1,5 +1,6 @@
 {
-    "root": "packages/no-payment-integration",
+    "name": "no-payment-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/no-payment-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,10 +12,11 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/no-payment-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/no-payment-integration"],
             "options": {
-                "jestConfig": "packages/no-payment-integration/jest.config.js"
+                "jestConfig": "packages/no-payment-integration/jest.config.ts",
+                "passWithNoTests": false
             }
         }
     },

@@ -1,5 +1,6 @@
 {
-    "root": "packages/external-integration",
+    "name": "external-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/external-integration/src",
     "projectType": "library",
     "targets": {
@@ -11,10 +12,11 @@
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/external-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/external-integration"],
             "options": {
-                "jestConfig": "packages/external-integration/jest.config.js"
+                "jestConfig": "packages/external-integration/jest.config.ts",
+                "passWithNoTests": false
             }
         }
     },
