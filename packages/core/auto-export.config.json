@@ -18,6 +18,7 @@
         {
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/wallet-button-strategies.ts",
+            "packageOutputPath": "packages/core/src/generated/integrations/<moduleName>/index.ts",
             "memberPattern": "^create.+WalletStrategy$"
         }
     ]

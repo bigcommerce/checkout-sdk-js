@@ -43,6 +43,8 @@ export default class PaypalCommerceWalletService {
         this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
             paymentMethod,
             providedCurrencyCode,
+            // TODO: pass language from store config
+            'en',
             initializesOnCheckoutPage,
             forceLoad,
         );
