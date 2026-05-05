@@ -1,4 +1,4 @@
-import { generateFiles, readProjectConfiguration, Tree } from '@nrwl/devkit';
+import { generateFiles, readProjectConfiguration, Tree } from '@nx/devkit';
 import { basename, join, parse } from 'path';
 
 import extendInterface from './extend-interface';

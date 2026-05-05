@@ -4,14 +4,14 @@
     "projectType": "library",
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/bluesnap-direct-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
+            "executor": "@nx/jest:jest",
             "outputs": ["coverage/packages/bluesnap-direct-integration"],
             "options": {
                 "jestConfig": "packages/bluesnap-direct-integration/jest.config.js"

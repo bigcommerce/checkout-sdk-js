@@ -4,14 +4,14 @@
     "projectType": "library",
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/hosted-form-v2/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
+            "executor": "@nx/jest:jest",
             "outputs": ["coverage/packages/hosted-form-v2"],
             "options": {
                 "jestConfig": "packages/hosted-form-v2/jest.config.js",
@@ -19,7 +19,7 @@
             }
         },
         "build-dts": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "cwd": "packages/hosted-form-v2",
                 "parallel": false,
