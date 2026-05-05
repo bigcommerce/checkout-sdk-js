@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'apple-pay',
     preset: '../../jest.preset.js',

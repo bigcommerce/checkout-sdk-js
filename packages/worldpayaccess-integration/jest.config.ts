@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'worldpayaccess-integration',
     preset: '../../jest.preset.js',

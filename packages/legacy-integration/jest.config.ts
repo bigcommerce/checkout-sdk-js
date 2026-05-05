@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'legacy-integration',
     preset: '../../jest.preset.js',

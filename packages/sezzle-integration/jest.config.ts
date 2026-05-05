@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'sezzle-integration',
     preset: '../../jest.preset.js',

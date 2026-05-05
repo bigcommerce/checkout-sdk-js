@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'moneris-integration',
     preset: '../../jest.preset.js',

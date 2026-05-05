@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'adyen-utils',
     preset: '../../jest.preset.js',

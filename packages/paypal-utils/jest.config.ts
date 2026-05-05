@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'paypal-utils',
     preset: '../../jest.preset.js',

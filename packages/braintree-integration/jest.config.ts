@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'braintree-integration',
     preset: '../../jest.preset.js',

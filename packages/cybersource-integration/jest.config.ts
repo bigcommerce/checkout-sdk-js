@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'cybersource-integration',
     preset: '../../jest.preset.js',

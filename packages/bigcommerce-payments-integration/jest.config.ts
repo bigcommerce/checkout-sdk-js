@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'bigcommerce-payments-integration',
     preset: '../../jest.preset.js',

@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'td-bank-integration',
     preset: '../../jest.preset.js',

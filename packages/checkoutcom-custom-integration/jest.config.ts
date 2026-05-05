@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'checkoutcom-custom-integration',
     preset: '../../jest.preset.js',

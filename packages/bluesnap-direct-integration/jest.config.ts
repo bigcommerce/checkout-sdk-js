@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'bluesnap-direct-integration',
     preset: '../../jest.preset.js',

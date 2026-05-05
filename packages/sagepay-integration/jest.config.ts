@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'sagepay-integration',
     preset: '../../jest.preset.js',

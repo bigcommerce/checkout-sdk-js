@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'humm-integration',
     preset: '../../jest.preset.js',

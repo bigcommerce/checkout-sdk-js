@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'cba-mpgs-integration',
     preset: '../../jest.preset.js',

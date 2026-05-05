@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'amazon-pay-utils',
     preset: '../../jest.preset.js',

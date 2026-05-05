@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'afterpay-integration',
     preset: '../../jest.preset.js',

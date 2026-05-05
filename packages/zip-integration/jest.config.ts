@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'zip-integration',
     preset: '../../jest.preset.js',

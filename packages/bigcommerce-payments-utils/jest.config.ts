@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'bigcommerce-payments-utils',
     preset: '../../jest.preset.js',

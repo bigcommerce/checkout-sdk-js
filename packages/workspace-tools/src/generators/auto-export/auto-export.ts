@@ -67,13 +67,11 @@ async function createPackageExports({
     });
 
     Array.from(packageGroups.entries()).forEach(([packageName, declarations]) => {
-        const packageContent = ts
-            .createPrinter()
-            .printList(
-                ts.ListFormat.MultiLine,
-                ts.factory.createNodeArray(declarations),
-                ts.createSourceFile('', '', ts.ScriptTarget.ESNext),
-            );
+        const printer = ts.createPrinter();
+        const sourceFile = ts.createSourceFile('', '', ts.ScriptTarget.ESNext);
+        const packageContent = declarations
+            .map((decl) => printer.printNode(ts.EmitHint.Unspecified, decl, sourceFile))
+            .join('\n');
 
         packageExports.set(packageName, packageContent);
     });
@@ -104,13 +102,12 @@ async function createPackageExportsGrouped({
         )
     ).filter(exists);
 
-    return ts
-        .createPrinter()
-        .printList(
-            ts.ListFormat.MultiLine,
-            ts.factory.createNodeArray(results.map((result) => result.exportDeclaration)),
-            ts.createSourceFile(outputPath, '', ts.ScriptTarget.ESNext),
-        );
+    const printer = ts.createPrinter();
+    const sourceFile = ts.createSourceFile(outputPath, '', ts.ScriptTarget.ESNext);
+
+    return results
+        .map((result) => printer.printNode(ts.EmitHint.Unspecified, result.exportDeclaration, sourceFile))
+        .join('\n');
 }
 
 async function createExportDeclaration(
@@ -147,7 +144,6 @@ async function createExportDeclaration(
     }
 
     const exportDeclaration = ts.factory.createExportDeclaration(
-        undefined,
         undefined,
         false,
         ts.factory.createNamedExports(

@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'bolt-integration',
     preset: '../../jest.preset.js',

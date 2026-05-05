@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'clearpay-integration',
     preset: '../../jest.preset.js',

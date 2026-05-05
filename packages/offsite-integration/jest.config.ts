@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'offsite-integration',
     preset: '../../jest.preset.js',

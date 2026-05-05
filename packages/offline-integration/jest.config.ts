@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'offline-integration',
     preset: '../../jest.preset.js',

@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'cardinal-integration',
     preset: '../../jest.preset.js',

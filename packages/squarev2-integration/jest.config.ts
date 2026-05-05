@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'squarev2-integration',
     preset: '../../jest.preset.js',

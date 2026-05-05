@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'google-pay-integration',
     preset: '../../jest.preset.js',

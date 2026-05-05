@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'paypal-pro-integration',
     preset: '../../jest.preset.js',

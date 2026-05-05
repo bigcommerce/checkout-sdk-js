@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'mollie-integration',
     preset: '../../jest.preset.js',

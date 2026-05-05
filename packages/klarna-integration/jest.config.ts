@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'klarna-integration',
     preset: '../../jest.preset.js',

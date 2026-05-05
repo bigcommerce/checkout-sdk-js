@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'credit-card-integration',
     preset: '../../jest.preset.js',

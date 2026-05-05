@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
     displayName: 'hosted-form-v2',
     preset: '../../jest.preset.js',
