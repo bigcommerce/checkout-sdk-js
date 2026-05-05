@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.908.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.907.0...v1.908.0) (2026-05-05)
+
+
+### Features
+
+* **payment:** PI-4985 [Worldpay Access][FE][B2B checkout] Open Banking ([#3231](https://github.com/bigcommerce/checkout-sdk-js/issues/3231)) ([901427d](https://github.com/bigcommerce/checkout-sdk-js/commit/901427d15033b3e97f60c423d5b6b8559073858b))
+
 ## [1.907.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.906.0...v1.907.0) (2026-05-04)
 
 

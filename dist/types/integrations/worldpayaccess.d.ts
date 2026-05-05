@@ -20,6 +20,7 @@ declare class WorldpayAccessOpenBankingPaymentStrategy implements PaymentStrateg
     initialize(): Promise<void>;
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
+    private _buildOpenBankingSubmitPayment;
     private _isWorldpayAccessRedirectResponse;
 }
 
