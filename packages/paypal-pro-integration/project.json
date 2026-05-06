@@ -1,7 +1,9 @@
 {
-    "root": "packages/paypal-pro-integration",
+    "name": "paypal-pro-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/paypal-pro-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/paypal-pro-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/paypal-pro-integration"],
             "options": {
                 "jestConfig": "packages/paypal-pro-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

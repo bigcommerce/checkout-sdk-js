@@ -388,7 +388,7 @@ describe('PayPalIntegrationService', () => {
 
             const output = subject.getShippingOptionOrThrow(consignment.selectedShippingOption?.id);
 
-            expect(output).toStrictEqual(consignment.selectedShippingOption || {});
+            expect(output).toStrictEqual(consignment.selectedShippingOption);
         });
 
         it('returns recommended shipping option if there is no selected ones', () => {

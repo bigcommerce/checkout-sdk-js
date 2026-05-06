@@ -32,7 +32,7 @@ describe('consignmentReducer', () => {
         const action = createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout());
 
         expect(consignmentReducer(initialState, action)).toMatchObject({
-            data: action.payload && action.payload.consignments,
+            data: action.payload?.consignments,
         });
     });
 
@@ -64,7 +64,7 @@ describe('consignmentReducer', () => {
         );
 
         expect(consignmentReducer(initialState, action)).toMatchObject({
-            data: action.payload && action.payload.consignments,
+            data: action.payload?.consignments,
             errors: {
                 createError: undefined,
             },
@@ -122,7 +122,7 @@ describe('consignmentReducer', () => {
         );
 
         expect(consignmentReducer(initialState, action)).toMatchObject({
-            data: action.payload && action.payload.consignments,
+            data: action.payload?.consignments,
             errors: {
                 updateError: {
                     foo: undefined,
@@ -175,7 +175,7 @@ describe('consignmentReducer', () => {
         );
 
         expect(consignmentReducer(initialState, action)).toMatchObject({
-            data: action.payload && action.payload.consignments,
+            data: action.payload?.consignments,
             errors: {
                 deleteError: {
                     foo: undefined,
@@ -230,7 +230,7 @@ describe('consignmentReducer', () => {
         );
 
         expect(consignmentReducer(initialState, action)).toMatchObject({
-            data: action.payload && action.payload.consignments,
+            data: action.payload?.consignments,
             errors: {
                 updateShippingOptionError: {
                     foo: undefined,
@@ -267,7 +267,7 @@ describe('consignmentReducer', () => {
         const action = createAction(CouponActionType.ApplyCouponSucceeded, getCheckout());
 
         expect(consignmentReducer(initialState, action)).toMatchObject({
-            data: action.payload && action.payload.consignments,
+            data: action.payload?.consignments,
         });
     });
 
@@ -275,7 +275,7 @@ describe('consignmentReducer', () => {
         const action = createAction(CouponActionType.RemoveCouponSucceeded, getCheckout());
 
         expect(consignmentReducer(initialState, action)).toMatchObject({
-            data: action.payload && action.payload.consignments,
+            data: action.payload?.consignments,
         });
     });
 });

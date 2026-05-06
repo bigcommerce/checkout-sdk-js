@@ -49,7 +49,7 @@ export default class HostedInputValidator {
             return {
                 errors: (
                     Object.keys(results.errors) as Array<keyof HostedInputValidateErrorDataMap>
-                ).reduce(
+                ).reduce<HostedInputValidateErrorDataMap>(
                     (result, fieldType) => ({
                         ...result,
                         [fieldType]: (error as ValidationError).inner
@@ -60,7 +60,7 @@ export default class HostedInputValidator {
                                 type: innerError.type,
                             })),
                     }),
-                    {} as HostedInputValidateErrorDataMap,
+                    {},
                 ),
                 isValid: false,
             };

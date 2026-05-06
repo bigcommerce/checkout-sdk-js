@@ -31,7 +31,7 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
         private _checkoutActionCreator: CheckoutActionCreator,
         private _paypalScriptLoader: PaypalScriptLoader,
         private _formPoster: FormPoster,
-        private _host: string = '',
+        private _host = '',
     ) {}
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {

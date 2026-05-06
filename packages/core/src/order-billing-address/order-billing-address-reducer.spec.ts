@@ -19,7 +19,7 @@ describe('orderBillingAddressReducer', () => {
         const output = orderBillingAddressReducer(initialState, action);
 
         expect(output).toEqual({
-            data: action.payload && action.payload.billingAddress,
+            data: action.payload?.billingAddress,
         });
     });
 
@@ -28,7 +28,7 @@ describe('orderBillingAddressReducer', () => {
         const output = orderBillingAddressReducer(initialState, action);
 
         expect(output).toEqual({
-            data: action.payload && action.payload.billingAddress,
+            data: action.payload?.billingAddress,
         });
     });
 });

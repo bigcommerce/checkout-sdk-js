@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 
 import IframeEvent from './iframe-event';
 import IframeEventPoster from './iframe-event-poster';
-import isIframeEvent from './is-iframe-event';
 
 describe('IframeEventPoster', () => {
     let eventEmitter: EventEmitter;
@@ -95,13 +94,11 @@ describe('IframeEventPoster', () => {
         const targetWindow = Object.create(window);
         const poster = new IframeEventPoster<IframeEvent>(origin, targetWindow);
 
-        jest.spyOn(targetWindow, 'postMessage').mockImplementation((message) => {
-            if (isIframeEvent(message, 'FOOBAR_REQUEST')) {
-                eventEmitter.emit('message', {
-                    origin,
-                    data: { type: 'FOOBAR_SUCCESS', payload: '123' },
-                });
-            }
+        jest.spyOn(targetWindow, 'postMessage').mockImplementation(() => {
+            eventEmitter.emit('message', {
+                origin,
+                data: { type: 'FOOBAR_SUCCESS', payload: '123' },
+            });
         });
 
         expect(
@@ -116,13 +113,11 @@ describe('IframeEventPoster', () => {
         const targetWindow = Object.create(window);
         const poster = new IframeEventPoster<IframeEvent>(origin, targetWindow);
 
-        jest.spyOn(targetWindow, 'postMessage').mockImplementation((message) => {
-            if (isIframeEvent(message, 'FOOBAR_REQUEST')) {
-                eventEmitter.emit('message', {
-                    origin,
-                    data: { type: 'FOOBAR_ERROR', payload: 'Unexpected error' },
-                });
-            }
+        jest.spyOn(targetWindow, 'postMessage').mockImplementation(() => {
+            eventEmitter.emit('message', {
+                origin,
+                data: { type: 'FOOBAR_ERROR', payload: 'Unexpected error' },
+            });
         });
 
         try {

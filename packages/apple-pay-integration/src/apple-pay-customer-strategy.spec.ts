@@ -138,22 +138,17 @@ describe('ApplePayCustomerStrategy', () => {
             );
 
             const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
+            await strategy.initialize(customerInitializeOptions);
 
-                await strategy.initialize(customerInitializeOptions);
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                const button = buttonContainer?.firstChild as HTMLElement;
+            button.click();
 
-                if (button) {
-                    button.click();
-
-                    expect(applePaySession.begin).toHaveBeenCalled();
-                }
-            }
+            expect(applePaySession.begin).toHaveBeenCalled();
         });
 
         it('does not start another apple pay session if one is in place already', async () => {
@@ -166,22 +161,19 @@ describe('ApplePayCustomerStrategy', () => {
             );
 
             const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
+            await strategy.initialize(customerInitializeOptions);
 
-                await strategy.initialize(customerInitializeOptions);
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                const button = buttonContainer?.firstChild as HTMLElement;
+            button.click();
 
-                button.click();
+            button.click();
 
-                button.click();
-
-                expect(applePaySession.begin).toHaveBeenCalledTimes(1);
-            }
+            expect(applePaySession.begin).toHaveBeenCalledTimes(1);
         });
 
         it('throws error when applepay object is empty', async () => {
@@ -198,23 +190,19 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    expect(applePaySession.begin).toHaveBeenCalled();
+            expect(applePaySession.begin).toHaveBeenCalled();
 
-                    await applePaySession.oncancel();
+            await applePaySession.oncancel();
 
-                    expect(requestSender.get).toHaveBeenCalled();
-                    expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
-                }
-            }
+            expect(requestSender.get).toHaveBeenCalled();
+            expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
         });
 
         it('throws payment method cancelled error if loadCheckout fails', async () => {
@@ -224,23 +212,19 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    expect(applePaySession.begin).toHaveBeenCalled();
+            expect(applePaySession.begin).toHaveBeenCalled();
 
-                    try {
-                        await applePaySession.oncancel();
-                    } catch (err) {
-                        expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
-                    }
-                }
+            try {
+                await applePaySession.oncancel();
+            } catch (err) {
+                expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
             }
         });
 
@@ -253,24 +237,20 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const validateEvent = {
-                        validationURL: 'test',
-                    } as ApplePayJS.ApplePayValidateMerchantEvent;
+            const validateEvent = {
+                validationURL: 'test',
+            } as ApplePayJS.ApplePayValidateMerchantEvent;
 
-                    await applePaySession.onvalidatemerchant(validateEvent);
+            await applePaySession.onvalidatemerchant(validateEvent);
 
-                    expect(requestSender.post).toHaveBeenCalled();
-                }
-            }
+            expect(requestSender.post).toHaveBeenCalled();
         });
 
         it('triggers onClick callback provided through initialization options', async () => {
@@ -282,20 +262,16 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                jest.spyOn(customerInitializeOptions.applepay, 'onClick');
+            jest.spyOn(customerInitializeOptions.applepay, 'onClick');
 
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    expect(customerInitializeOptions.applepay.onClick).toHaveBeenCalled();
-                }
-            }
+            expect(customerInitializeOptions.applepay.onClick).toHaveBeenCalled();
         });
 
         it('throws error if merchant validation fails', async () => {
@@ -305,24 +281,20 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const validateEvent = {
-                        validationURL: 'test',
-                    } as ApplePayJS.ApplePayValidateMerchantEvent;
+            const validateEvent = {
+                validationURL: 'test',
+            } as ApplePayJS.ApplePayValidateMerchantEvent;
 
-                    await applePaySession.onvalidatemerchant(validateEvent);
+            await applePaySession.onvalidatemerchant(validateEvent);
 
-                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
-                }
-            }
+            expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
         });
 
         it('gets shipping contact selected successfully', async () => {
@@ -330,24 +302,20 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingContact: getContactAddress(),
-                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+            const event = {
+                shippingContact: getContactAddress(),
+            } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
-                    await applePaySession.onshippingcontactselected(event);
+            await applePaySession.onshippingcontactselected(event);
 
-                    expect(applePaySession.completeShippingContactSelection).toHaveBeenCalled();
-                }
-            }
+            expect(applePaySession.completeShippingContactSelection).toHaveBeenCalled();
         });
 
         it('gets shipping contact selected successfully with a selected shipping option', async () => {
@@ -389,31 +357,27 @@ describe('ApplePayCustomerStrategy', () => {
             );
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingContact: getContactAddress(),
-                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+            const event = {
+                shippingContact: getContactAddress(),
+            } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
-                    await applePaySession.onshippingcontactselected(event);
+            await applePaySession.onshippingcontactselected(event);
 
-                    expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
-                        '0:61d4bb52f746477e1d4fb41127361823',
-                    );
-                    expect(applePaySession.completeShippingContactSelection).toHaveBeenCalledWith({
-                        newShippingMethods: availableShippingMethods,
-                        newTotal: expect.anything(),
-                        newLineItems: expect.anything(),
-                    });
-                }
-            }
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                '0:61d4bb52f746477e1d4fb41127361823',
+            );
+            expect(applePaySession.completeShippingContactSelection).toHaveBeenCalledWith({
+                newShippingMethods: availableShippingMethods,
+                newTotal: expect.anything(),
+                newLineItems: expect.anything(),
+            });
         });
 
         it('gets shipping options sorted correctly with recommended option first', async () => {
@@ -466,25 +430,21 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(CheckoutButtonInitializeOptions);
 
-            if (CheckoutButtonInitializeOptions.applepay) {
-                const button = container.firstChild as HTMLElement;
+            const button = container.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingContact: getContactAddress(),
-                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+            const event = {
+                shippingContact: getContactAddress(),
+            } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
-                    await applePaySession.onshippingcontactselected(event);
+            await applePaySession.onshippingcontactselected(event);
 
-                    const actualShippingMethods =
-                        applePaySession.completeShippingContactSelection.mock.calls[0][0]
-                            .newShippingMethods;
+            const actualShippingMethods =
+                applePaySession.completeShippingContactSelection.mock.calls[0][0]
+                    .newShippingMethods;
 
-                    expect(actualShippingMethods).toEqual(expectedShippingMethods);
-                }
-            }
+            expect(actualShippingMethods).toEqual(expectedShippingMethods);
         });
 
         it('throws error if call to update address fails', async () => {
@@ -496,24 +456,20 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingContact: getContactAddress(),
-                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+            const event = {
+                shippingContact: getContactAddress(),
+            } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
-                    await applePaySession.onshippingcontactselected(event);
+            await applePaySession.onshippingcontactselected(event);
 
-                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
-                }
-            }
+            expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
         });
 
         it('gets shipping method selected successfully', async () => {
@@ -521,29 +477,25 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingMethod: {
-                            label: 'test',
-                            detail: 'test2',
-                            amount: '10',
-                            identifier: '1',
-                        },
-                    } as ApplePayJS.ApplePayShippingMethodSelectedEvent;
+            const event = {
+                shippingMethod: {
+                    label: 'test',
+                    detail: 'test2',
+                    amount: '10',
+                    identifier: '1',
+                },
+            } as ApplePayJS.ApplePayShippingMethodSelectedEvent;
 
-                    await applePaySession.onshippingmethodselected(event);
+            await applePaySession.onshippingmethodselected(event);
 
-                    expect(applePaySession.completeShippingMethodSelection).toHaveBeenCalled();
-                }
-            }
+            expect(applePaySession.completeShippingMethodSelection).toHaveBeenCalled();
         });
 
         it('gets call to update shipping option in consignment fails', async () => {
@@ -553,29 +505,25 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingMethod: {
-                            label: 'test',
-                            detail: 'test2',
-                            amount: '10',
-                            identifier: '1',
-                        },
-                    } as ApplePayJS.ApplePayShippingMethodSelectedEvent;
+            const event = {
+                shippingMethod: {
+                    label: 'test',
+                    detail: 'test2',
+                    amount: '10',
+                    identifier: '1',
+                },
+            } as ApplePayJS.ApplePayShippingMethodSelectedEvent;
 
-                    await applePaySession.onshippingmethodselected(event);
+            await applePaySession.onshippingmethodselected(event);
 
-                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
-                }
-            }
+            expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
         });
 
         it('submits payment when shopper authorises', async () => {
@@ -598,23 +546,17 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
-                    await applePaySession.onpaymentauthorized(authEvent);
+            button.click();
+            await applePaySession.onpaymentauthorized(authEvent);
 
-                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
-                    expect(applePaySession.completePayment).toHaveBeenCalled();
-                    expect(
-                        customerInitializeOptions.applepay.onPaymentAuthorize,
-                    ).toHaveBeenCalled();
-                }
-            }
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+            expect(applePaySession.completePayment).toHaveBeenCalled();
+            expect(customerInitializeOptions.applepay.onPaymentAuthorize).toHaveBeenCalled();
         });
 
         it('returns an error if autorize payment fails', async () => {
@@ -638,21 +580,17 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
-                    await applePaySession.onpaymentauthorized(authEvent);
+            button.click();
+            await applePaySession.onpaymentauthorized(authEvent);
 
-                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
-                    expect(applePaySession.completePayment).toHaveBeenCalled();
-                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
-                }
-            }
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+            expect(applePaySession.completePayment).toHaveBeenCalled();
+            expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
         });
 
         describe('initialize apple pay with braintree gateway', () => {
@@ -769,25 +707,21 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingContact: getContactAddress(),
-                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+            const event = {
+                shippingContact: getContactAddress(),
+            } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
-                    try {
-                        await applePaySession.onshippingcontactselected(event);
-                    } catch (err) {
-                        expect(err).toBeInstanceOf(Error);
-                    }
-                }
+            try {
+                await applePaySession.onshippingcontactselected(event);
+            } catch (err) {
+                expect(err).toBeInstanceOf(Error);
             }
         });
 
@@ -804,24 +738,20 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingContact: getContactAddress(),
-                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+            const event = {
+                shippingContact: getContactAddress(),
+            } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
-                    await applePaySession.onshippingcontactselected(event);
+            await applePaySession.onshippingcontactselected(event);
 
-                    expect(applePaySession.completeShippingContactSelection).toHaveBeenCalled();
-                }
-            }
+            expect(applePaySession.completeShippingContactSelection).toHaveBeenCalled();
         });
 
         it('throws error if unable to update shipping option', async () => {
@@ -834,24 +764,20 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
+            button.click();
 
-                    const event = {
-                        shippingContact: getContactAddress(),
-                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+            const event = {
+                shippingContact: getContactAddress(),
+            } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
-                    await applePaySession.onshippingcontactselected(event);
+            await applePaySession.onshippingcontactselected(event);
 
-                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
-                }
-            }
+            expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
         });
 
         it('submits payment when shopper authorises without phone number', async () => {
@@ -872,23 +798,17 @@ describe('ApplePayCustomerStrategy', () => {
 
             await strategy.initialize(customerInitializeOptions);
 
-            if (customerInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(
-                    customerInitializeOptions.applepay.container,
-                );
-                const button = buttonContainer?.firstChild as HTMLElement;
+            const buttonContainer = document.getElementById(
+                customerInitializeOptions.applepay.container,
+            );
+            const button = buttonContainer.firstChild as HTMLElement;
 
-                if (button) {
-                    button.click();
-                    await applePaySession.onpaymentauthorized(authEvent);
+            button.click();
+            await applePaySession.onpaymentauthorized(authEvent);
 
-                    expect(
-                        paymentIntegrationService.verifyCheckoutSpamProtection,
-                    ).toHaveBeenCalled();
-                    expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalled();
-                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
-                }
-            }
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
+            expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalled();
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
         });
     });
 

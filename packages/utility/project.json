@@ -1,7 +1,9 @@
 {
-    "root": "packages/utility",
+    "name": "utility",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/utility/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,11 +14,10 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/utility"],
+            "outputs": ["{workspaceRoot}/coverage/packages/utility"],
             "options": {
                 "jestConfig": "packages/utility/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

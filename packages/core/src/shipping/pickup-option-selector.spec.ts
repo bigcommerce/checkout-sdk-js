@@ -28,9 +28,7 @@ describe('PickupOptionSelector', () => {
 
             const flattenedQuery = objectFlatten(query);
             const sortedFlattenedQuery = objectWithSortedKeys(flattenedQuery);
-            const result =
-                state.pickupOptions.data &&
-                state.pickupOptions.data[btoa(JSON.stringify(sortedFlattenedQuery))];
+            const result = state.pickupOptions.data?.[btoa(JSON.stringify(sortedFlattenedQuery))];
 
             expect(
                 pickupOptionSelector.getPickupOptions(query.consignmentId, query.searchArea),

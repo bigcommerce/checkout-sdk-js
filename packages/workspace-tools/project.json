@@ -1,6 +1,8 @@
 {
-    "root": "packages/workspace-tools",
+    "name": "@bigcommerce/checkout-sdk/workspace-tools",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/workspace-tools/src",
+    "tags": [],
     "targets": {
         "build": {
             "executor": "@nx/js:tsc",
@@ -38,12 +40,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/workspace-tools"],
+            "outputs": ["{workspaceRoot}/coverage/packages/workspace-tools"],
             "options": {
                 "jestConfig": "packages/workspace-tools/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": []
+    }
 }

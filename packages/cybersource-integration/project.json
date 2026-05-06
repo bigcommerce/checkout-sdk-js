@@ -1,7 +1,9 @@
 {
-    "root": "packages/cybersource-integration",
+    "name": "cybersource-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/cybersource-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/cybersource-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/cybersource-integration"],
             "options": {
                 "jestConfig": "packages/cybersource-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

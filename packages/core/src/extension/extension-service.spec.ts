@@ -135,10 +135,7 @@ describe('ExtensionService', () => {
 
         jest.spyOn(extensionService, 'post');
         jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
-            const listener =
-                typeof eventListener === 'function' ? eventListener : () => eventListener;
-
-            return eventEmitter.addListener(type, listener);
+            return eventEmitter.addListener(type, eventListener as EventListener);
         });
         jest.spyOn(eventPoster, 'post').mockImplementation(() => {
             eventEmitter.emit('message', {

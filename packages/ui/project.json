@@ -1,7 +1,9 @@
 {
-    "root": "packages/ui",
+    "name": "ui",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/ui/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/ui"],
+            "outputs": ["{workspaceRoot}/coverage/packages/ui"],
             "options": {
                 "jestConfig": "packages/ui/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

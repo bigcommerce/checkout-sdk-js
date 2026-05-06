@@ -1,7 +1,9 @@
 {
-    "root": "packages/affirm-integration",
+    "name": "affirm-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/affirm-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/affirm-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/affirm-integration"],
             "options": {
                 "jestConfig": "packages/affirm-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

@@ -242,15 +242,13 @@ describe('BraintreeVenmoButtonStrategy', () => {
                 tokenize: jest.fn(),
             };
 
-            const venmoButton = document.getElementById(options.containerId);
+            const venmoButton = document.getElementById(options.containerId)!;
 
             await strategy.initialize(options);
 
-            if (venmoButton) {
-                venmoButton.click();
+            venmoButton.click();
 
-                expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
-            }
+            expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
         });
 
         it('successfully tokenize braintreeVenmoCheckout on venmo button click', async () => {
@@ -265,17 +263,15 @@ describe('BraintreeVenmoButtonStrategy', () => {
             );
 
             const options = getBraintreeVenmoButtonOptionsMock();
-            const venmoButton = document.getElementById(options.containerId);
+            const venmoButton = document.getElementById(options.containerId)!;
 
             await strategy.initialize(options);
 
-            if (venmoButton) {
-                venmoButton.click();
+            venmoButton.click();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
-            }
+            expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
         });
 
         it('successfully sends data through formPoster on venmo button click', async () => {
@@ -306,29 +302,27 @@ describe('BraintreeVenmoButtonStrategy', () => {
             );
 
             const options = getBraintreeVenmoButtonOptionsMock();
-            const venmoButton = document.getElementById(options.containerId);
+            const venmoButton = document.getElementById(options.containerId)!;
 
             await strategy.initialize(options);
 
-            if (venmoButton) {
-                venmoButton.click();
+            venmoButton.click();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
+            expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
-                    action: 'set_external_checkout',
-                    device_data: { device: 'something' },
-                    nonce: 'tokenization_nonce',
-                    payment_type: 'paypal',
-                    provider: 'braintreevenmo',
-                    billing_address: JSON.stringify(expectedAddress),
-                    shipping_address: JSON.stringify(expectedAddress),
-                });
-            }
+            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
+                action: 'set_external_checkout',
+                device_data: { device: 'something' },
+                nonce: 'tokenization_nonce',
+                payment_type: 'paypal',
+                provider: 'braintreevenmo',
+                billing_address: JSON.stringify(expectedAddress),
+                shipping_address: JSON.stringify(expectedAddress),
+            });
         });
 
         it('successfully sends data through formPoster on venmo button click with Buy Now cart id', async () => {
@@ -366,29 +360,27 @@ describe('BraintreeVenmoButtonStrategy', () => {
             });
 
             const options = getBuyNowBraintreeVenmoButtonOptionsMock();
-            const venmoButton = document.getElementById(options.containerId);
+            const venmoButton = document.getElementById(options.containerId)!;
 
             await strategy.initialize(options);
 
-            if (venmoButton) {
-                venmoButton.click();
+            venmoButton.click();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
+            expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
-                    action: 'set_external_checkout',
-                    device_data: { device: 'something' },
-                    nonce: 'tokenization_nonce',
-                    payment_type: 'paypal',
-                    provider: 'braintreevenmo',
-                    billing_address: JSON.stringify(expectedAddress),
-                    shipping_address: JSON.stringify(expectedAddress),
-                });
-            }
+            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
+                action: 'set_external_checkout',
+                device_data: { device: 'something' },
+                nonce: 'tokenization_nonce',
+                payment_type: 'paypal',
+                provider: 'braintreevenmo',
+                billing_address: JSON.stringify(expectedAddress),
+                shipping_address: JSON.stringify(expectedAddress),
+            });
         });
 
         it('successfully sends data through formPoster on venmo button click with shipping data if billing data is not provided', async () => {
@@ -418,31 +410,29 @@ describe('BraintreeVenmoButtonStrategy', () => {
             );
 
             const options = getBraintreeVenmoButtonOptionsMock();
-            const venmoButton = document.getElementById(options.containerId);
+            const venmoButton = document.getElementById(options.containerId)!;
 
             await strategy.initialize(options);
 
-            if (venmoButton) {
-                venmoButton.click();
+            venmoButton.click();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
+            expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
-                    action: 'set_external_checkout',
-                    device_data: {
-                        device: 'something',
-                    },
-                    nonce: 'tokenization_nonce',
-                    payment_type: 'paypal',
-                    provider: 'braintreevenmo',
-                    billing_address: JSON.stringify(expectedAddress),
-                    shipping_address: JSON.stringify(expectedAddress),
-                });
-            }
+            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
+                action: 'set_external_checkout',
+                device_data: {
+                    device: 'something',
+                },
+                nonce: 'tokenization_nonce',
+                payment_type: 'paypal',
+                provider: 'braintreevenmo',
+                billing_address: JSON.stringify(expectedAddress),
+                shipping_address: JSON.stringify(expectedAddress),
+            });
         });
     });
 

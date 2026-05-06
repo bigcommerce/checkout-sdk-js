@@ -492,9 +492,7 @@ describe('BigCommercePaymentsFastlaneCustomerStrategy', () => {
                 bcAddressMock,
             );
             expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
-                consignments[0]?.availableShippingOptions
-                    ? consignments[0]?.availableShippingOptions[0].id
-                    : undefined,
+                consignments[0]?.availableShippingOptions?.[0].id,
             );
             expect(bigCommercePaymentsFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
                 cart.id,

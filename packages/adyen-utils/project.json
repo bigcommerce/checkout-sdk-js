@@ -1,7 +1,9 @@
 {
-    "root": "packages/adyen-utils",
+    "name": "adyen-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/adyen-utils/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/adyen-utils"],
+            "outputs": ["{workspaceRoot}/coverage/packages/adyen-utils"],
             "options": {
                 "jestConfig": "packages/adyen-utils/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

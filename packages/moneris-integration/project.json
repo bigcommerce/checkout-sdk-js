@@ -1,7 +1,9 @@
 {
-    "root": "packages/moneris-integration",
+    "name": "moneris-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/moneris-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/moneris-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/moneris-integration"],
             "options": {
                 "jestConfig": "packages/moneris-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

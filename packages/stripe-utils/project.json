@@ -1,7 +1,9 @@
 {
-    "root": "packages/stripe-utils",
+    "name": "stripe-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/stripe-utils/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/stripe-utils"],
+            "outputs": ["{workspaceRoot}/coverage/packages/stripe-utils"],
             "options": {
                 "jestConfig": "packages/stripe-utils/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

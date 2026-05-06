@@ -1,7 +1,9 @@
 {
-    "root": "packages/paypal-express-integration",
+    "name": "paypal-express-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/paypal-express-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,11 +14,10 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/paypal-express-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/paypal-express-integration"],
             "options": {
                 "jestConfig": "packages/paypal-express-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

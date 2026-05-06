@@ -447,17 +447,17 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
                 PayPalOrderStatus.PollingStop,
             );
 
-            jest.spyOn(document, 'getElementById').mockImplementation((id) => {
-                if (id === 'legal-text-container') {
-                    const el = document.createElement('div');
+            const legalTextEl = document.createElement('div');
 
-                    el.remove = jest.fn();
+            legalTextEl.remove = jest.fn();
 
-                    return el;
-                }
+            const elementsByid: Record<string, HTMLElement | null> = {
+                'legal-text-container': legalTextEl,
+            };
 
-                return null;
-            });
+            jest.spyOn(document, 'getElementById').mockImplementation(
+                (id) => elementsByid[id] as HTMLElement | null,
+            );
             jest.spyOn(global, 'clearTimeout');
 
             await strategy.initialize(initializationOptions);

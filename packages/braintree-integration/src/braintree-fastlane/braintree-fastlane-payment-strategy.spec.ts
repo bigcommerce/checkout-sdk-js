@@ -569,9 +569,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            if (container.id) {
-                callback(container.id);
-            }
+            callback(container.id);
 
             expect(renderMethodMock).toHaveBeenCalledWith(container.id);
         });
@@ -949,12 +947,10 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             const threeDSecureMock = {
                 ...threeDSecure,
                 verifyCard: (_options, callback) => {
-                    if (callback) {
-                        callback(
-                            { code: 'THREEDS_VERIFY_CARD_CANCELED_BY_MERCHANT' },
-                            { nonce: 'fastlane_token_mock' },
-                        );
-                    }
+                    callback(
+                        { code: 'THREEDS_VERIFY_CARD_CANCELED_BY_MERCHANT' },
+                        { nonce: 'fastlane_token_mock' },
+                    );
 
                     return Promise.resolve('fastlane_token_mock');
                 },

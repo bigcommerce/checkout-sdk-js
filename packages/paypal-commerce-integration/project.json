@@ -1,7 +1,9 @@
 {
-    "root": "packages/paypal-commerce-integration",
+    "name": "paypal-commerce-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/paypal-commerce-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,11 +14,10 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/paypal-commerce-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/paypal-commerce-integration"],
             "options": {
                 "jestConfig": "packages/paypal-commerce-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

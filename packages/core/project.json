@@ -1,7 +1,9 @@
 {
-    "root": "packages/core",
+    "name": "core",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/core/src",
     "projectType": "library",
+    "tags": ["scope:core"],
     "targets": {
         "build": {
             "executor": "nx:run-commands",
@@ -10,12 +12,11 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 },
                 {
                     "target": "build",
-                    "projects": "dependencies"
+                    "dependencies": true
                 }
             ]
         },
@@ -30,12 +31,11 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 },
                 {
                     "target": "build",
-                    "projects": "dependencies"
+                    "dependencies": true
                 }
             ]
         },
@@ -46,12 +46,11 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 },
                 {
                     "target": "build",
-                    "projects": "dependencies"
+                    "dependencies": true
                 }
             ]
         },
@@ -66,12 +65,11 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 },
                 {
                     "target": "build",
-                    "projects": "dependencies"
+                    "dependencies": true
                 }
             ]
         },
@@ -101,8 +99,7 @@
             },
             "dependsOn": [
                 {
-                    "target": "build-dts",
-                    "projects": "self"
+                    "target": "build-dts"
                 }
             ]
         },
@@ -115,14 +112,13 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 }
             ]
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/core"],
+            "outputs": ["{workspaceRoot}/coverage/packages/core"],
             "options": {
                 "jestConfig": "packages/core/jest.config.js",
                 "passWithNoTests": true,
@@ -130,8 +126,7 @@
             },
             "dependsOn": [
                 {
-                    "target": "generate",
-                    "projects": "self"
+                    "target": "generate"
                 }
             ]
         },
@@ -147,6 +142,5 @@
                 "parallel": false
             }
         }
-    },
-    "tags": ["scope:core"]
+    }
 }

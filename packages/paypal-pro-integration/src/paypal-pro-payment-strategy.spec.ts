@@ -160,7 +160,7 @@ describe('PaypalProPaymentStrategy', () => {
                 expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
                     {
                         ...payload,
-                        payment: { methodId: payload.payment && payload.payment.methodId },
+                        payment: { methodId: payload.payment?.methodId },
                     },
                     undefined,
                 );

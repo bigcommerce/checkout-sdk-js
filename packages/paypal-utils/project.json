@@ -1,7 +1,9 @@
 {
-    "root": "packages/paypal-utils",
+    "name": "paypal-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/paypal-utils/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/paypal-utils"],
+            "outputs": ["{workspaceRoot}/coverage/packages/paypal-utils"],
             "options": {
                 "jestConfig": "packages/paypal-utils/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

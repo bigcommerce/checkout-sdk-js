@@ -703,16 +703,14 @@ describe('PayPalCommerceButtonStrategy', () => {
                 jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
                     (options: PayPalButtonsOptions) => {
                         eventEmitter.on('onApprove', () => {
-                            if (options.onApprove) {
-                                options.onApprove(
-                                    { orderID: paypalOrderId },
-                                    {
-                                        order: {
-                                            get: getOrderActionMock,
-                                        },
+                            options.onApprove?.(
+                                { orderID: paypalOrderId },
+                                {
+                                    order: {
+                                        get: getOrderActionMock,
                                     },
-                                );
-                            }
+                                },
+                            );
                         });
 
                         return {

@@ -1,6 +1,6 @@
 import Country from './country';
 
 export interface CountryResponseBody {
-    meta: {};
+    meta: object;
     data: Country[];
 }

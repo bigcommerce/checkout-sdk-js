@@ -126,7 +126,7 @@ describe('WepayPaymentStrategy', () => {
             const paymentWithToken = {
                 ...payload.payment,
                 paymentData: {
-                    ...(payload.payment && payload.payment.paymentData),
+                    ...payload.payment?.paymentData,
                     deviceSessionId: testRiskToken,
                 },
             };

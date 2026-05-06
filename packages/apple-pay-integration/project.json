@@ -1,7 +1,9 @@
 {
-    "root": "packages/apple-pay-integration",
+    "name": "apple-pay-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/apple-pay-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,11 +14,10 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/apple-pay-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/apple-pay-integration"],
             "options": {
                 "jestConfig": "packages/apple-pay-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

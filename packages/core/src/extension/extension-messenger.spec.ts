@@ -82,9 +82,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    if (type === ExtensionCommandType.ReloadCheckout) {
-                        listener({ type }, context);
-                    }
+                    listener({ type }, context);
                 });
             });
 
@@ -109,9 +107,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    if (type === ExtensionCommandType.ReloadCheckout) {
-                        listener({ type }, context);
-                    }
+                    listener({ type }, context);
                 });
             });
 
@@ -137,9 +133,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    if (type === ExtensionCommandType.ReloadCheckout) {
-                        listener({ type }, context);
-                    }
+                    listener({ type }, context);
                 });
             });
 
@@ -222,9 +216,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    if (type === ExtensionQueryType.GetConsignments) {
-                        listener({ type }, context);
-                    }
+                    listener({ type }, context);
                 });
             });
 
@@ -249,9 +241,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    if (type === ExtensionQueryType.GetConsignments) {
-                        listener({ type }, context);
-                    }
+                    listener({ type }, context);
                 });
             });
 
@@ -277,9 +267,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    if (type === ExtensionQueryType.GetConsignments) {
-                        listener({ type }, context);
-                    }
+                    listener({ type }, context);
                 });
             });
 

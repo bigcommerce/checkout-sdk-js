@@ -381,6 +381,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
     describe('#getShippingOptionOrThrow', () => {
         it('returns selected shipping option', () => {
             const consignment = getConsignment();
+            const expectedShippingOption = consignment.selectedShippingOption;
 
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -389,7 +390,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
 
             const output = subject.getShippingOptionOrThrow(consignment.selectedShippingOption?.id);
 
-            expect(output).toStrictEqual(consignment.selectedShippingOption || {});
+            expect(output).toStrictEqual(expectedShippingOption);
         });
 
         it('returns recommended shipping option if there is no selected ones', () => {

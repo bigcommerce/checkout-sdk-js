@@ -1,7 +1,9 @@
 {
-    "root": "packages/external-integration",
+    "name": "external-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/external-integration/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,11 +14,10 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/external-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/external-integration"],
             "options": {
                 "jestConfig": "packages/external-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

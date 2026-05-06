@@ -141,9 +141,9 @@ describe('HostedCardNumberInput', () => {
     });
 
     it('notifies when bin number can no longer be detected', () => {
-        jest.spyOn(numberFormatter, 'format').mockImplementation((value) =>
-            value === '4111111111111111' ? '4111 1111 1111 1111' : value,
-        );
+        jest.spyOn(numberFormatter, 'format')
+            .mockReturnValueOnce('4111 1111 1111 1111')
+            .mockReturnValueOnce('41');
 
         jest.spyOn(eventPoster, 'post');
 

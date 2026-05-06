@@ -179,13 +179,13 @@ export default class LanguageService {
     }
 
     private _transformData(data: TranslationData): TranslationData {
-        return Object.keys(data).reduce((result, key) => {
+        return Object.keys(data).reduce<TranslationData>((result, key) => {
             const value = data[key];
 
             result[key] = value === null || value === undefined ? '' : value;
 
             return result;
-        }, {} as TranslationData);
+        }, {});
     }
 
     private _hasTranslations(): boolean {

@@ -117,9 +117,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
         describe('#initialize()', () => {
             it('does not create adyen card verification component', async () => {
-                if (options.adyenv2) {
-                    options.adyenv2.cardVerificationContainerId = undefined;
-                }
+                options.adyenv2!.cardVerificationContainerId = undefined;
 
                 await strategy.initialize(options);
 
@@ -568,11 +566,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
                 jest.spyOn(adyenCheckout, 'createFromAction').mockImplementation(
                     jest.fn((_type, options) => {
-                        if (options) {
-                            const { onError } = options;
-
-                            handleOnError = onError;
-                        }
+                        handleOnError = options?.onError;
 
                         return additionalActionComponentWithError;
                     }),

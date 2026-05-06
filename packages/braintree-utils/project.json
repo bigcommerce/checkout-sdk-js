@@ -1,7 +1,9 @@
 {
-    "root": "packages/braintree-utils",
+    "name": "braintree-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/braintree-utils/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/braintree-utils"],
+            "outputs": ["{workspaceRoot}/coverage/packages/braintree-utils"],
             "options": {
                 "jestConfig": "packages/braintree-utils/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

@@ -1,7 +1,9 @@
 {
-    "root": "packages/checkoutcom-custom-integration",
+    "name": "checkoutcom-custom-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/checkoutcom-custom-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/checkoutcom-custom-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/checkoutcom-custom-integration"],
             "options": {
                 "jestConfig": "packages/checkoutcom-custom-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

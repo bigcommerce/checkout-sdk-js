@@ -1,7 +1,9 @@
 {
-    "root": "packages/td-bank-integration",
+    "name": "td-bank-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/td-bank-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/td-bank-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/td-bank-integration"],
             "options": {
                 "jestConfig": "packages/td-bank-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

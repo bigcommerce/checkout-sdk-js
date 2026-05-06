@@ -41,7 +41,7 @@ describe('ExternalPaymentStrategy', () => {
             const payload = getOrderRequestBody();
             const options = { methodId: 'external' };
             const { payment } = payload;
-            const paymentData = payment && payment.paymentData;
+            const paymentData = payment?.paymentData;
 
             await strategy.execute(payload, options);
 

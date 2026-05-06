@@ -150,10 +150,8 @@ describe('GooglePayStripeGateway', () => {
             try {
                 await strategy.execute(payload);
             } catch (error) {
-                if (error instanceof Error) {
-                    expect(error.message).toBe('Some Stripe error message');
-                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
-                }
+                expect((error as Error).message).toBe('Some Stripe error message');
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
             }
         });
 

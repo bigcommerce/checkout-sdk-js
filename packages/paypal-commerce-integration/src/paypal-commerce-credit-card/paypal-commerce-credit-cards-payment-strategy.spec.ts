@@ -476,12 +476,10 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
                 (options: PaypalCardFieldsConfig) => {
                     eventEmitter.on('onApprove', () => {
-                        if (options.onApprove) {
-                            options.onApprove({
-                                orderID: hostedFormOrderId,
-                                liabilityShift: LiabilityShiftEnum.No,
-                            });
-                        }
+                        options.onApprove?.({
+                            orderID: hostedFormOrderId,
+                            liabilityShift: LiabilityShiftEnum.No,
+                        });
                     });
 
                     return Promise.resolve(cardFieldsInstanceMock);
@@ -501,12 +499,10 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
                 (options: PaypalCardFieldsConfig) => {
                     eventEmitter.on('onApprove', () => {
-                        if (options.onApprove) {
-                            options.onApprove({
-                                orderID: 'orderId',
-                                vaultSetupToken: 'vaultSetupToken',
-                            });
-                        }
+                        options.onApprove?.({
+                            orderID: 'orderId',
+                            vaultSetupToken: 'vaultSetupToken',
+                        });
                     });
 
                     return Promise.resolve(cardFieldsInstanceMock);

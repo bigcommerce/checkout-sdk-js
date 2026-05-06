@@ -252,24 +252,24 @@ describe('CheckoutStoreSelector', () => {
 
     it('returns shipping address fields', () => {
         const results = selector.getShippingAddressFields('AU');
-        const predicate = ({ name }: FormField) =>
-            name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
+        const addressFields = ['stateOrProvince', 'stateOrProvinceCode', 'countryCode'];
+        const predicate = ({ name }: FormField) => addressFields.includes(name);
         const field = find(results, { name: 'stateOrProvinceCode' });
 
         expect(reject(results, predicate)).toEqual(reject(getAddressFormFields(), predicate));
-        expect(field && field.options && field.options.items).toEqual(
+        expect(field?.options?.items).toEqual(
             getAustralia().subdivisions.map(({ code, name }) => ({ label: name, value: code })),
         );
     });
 
     it('returns billing address fields', () => {
         const results = selector.getBillingAddressFields('US');
-        const predicate = ({ name }: FormField) =>
-            name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
+        const addressFields = ['stateOrProvince', 'stateOrProvinceCode', 'countryCode'];
+        const predicate = ({ name }: FormField) => addressFields.includes(name);
         const field = find(results, { name: 'stateOrProvinceCode' });
 
         expect(reject(results, predicate)).toEqual(reject(getAddressFormFields(), predicate));
-        expect(field && field.options && field.options.items).toEqual(
+        expect(field?.options?.items).toEqual(
             getUnitedStates().subdivisions.map(({ code, name }) => ({ label: name, value: code })),
         );
     });

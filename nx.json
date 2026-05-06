@@ -1,21 +1,19 @@
 {
-  "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "affected": {
+    "$schema": "./node_modules/nx/schemas/nx-schema.json",
+    "targetDefaults": {
+        "build": {
+            "cache": true
+        },
+        "build-watch": {
+            "cache": true
+        },
+        "lint": {
+            "cache": true
+        },
+        "test": {
+            "cache": true
+        }
+    },
+    "parallel": 5,
     "defaultBase": "master"
-  },
-  "targetDefaults": {
-    "build": {
-      "cache": true
-    },
-    "build-watch": {
-      "cache": true
-    },
-    "lint": {
-      "cache": true
-    },
-    "test": {
-      "cache": true
-    }
-  },
-  "parallel": 5
 }

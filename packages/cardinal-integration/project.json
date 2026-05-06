@@ -1,7 +1,9 @@
 {
-    "root": "packages/cardinal-integration",
+    "name": "cardinal-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/cardinal-integration/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/cardinal-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/cardinal-integration"],
             "options": {
                 "jestConfig": "packages/cardinal-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

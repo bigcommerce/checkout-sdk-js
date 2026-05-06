@@ -1,7 +1,9 @@
 {
-    "root": "packages/mollie-integration",
+    "name": "mollie-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/mollie-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/mollie-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/mollie-integration"],
             "options": {
                 "jestConfig": "packages/mollie-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

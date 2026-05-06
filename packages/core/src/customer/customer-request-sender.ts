@@ -13,7 +13,7 @@ export default class CustomerRequestSender {
     createAccount(
         customerAccount: CustomerAccountInternalRequestBody,
         { timeout }: RequestOptions = {},
-    ): Promise<Response<{}>> {
+    ): Promise<Response<object>> {
         const url = '/api/storefront/customer';
 
         return this._requestSender.post(url, {

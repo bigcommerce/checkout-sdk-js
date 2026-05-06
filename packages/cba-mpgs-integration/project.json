@@ -1,7 +1,9 @@
 {
-    "root": "packages/cba-mpgs-integration",
+    "name": "cba-mpgs-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/cba-mpgs-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/cba-mpgs-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/cba-mpgs-integration"],
             "options": {
                 "jestConfig": "packages/cba-mpgs-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

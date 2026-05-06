@@ -1,7 +1,9 @@
 {
-    "root": "packages/amazon-pay-integration",
+    "name": "amazon-pay-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/amazon-pay-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
             "executor": "@nx/eslint:lint",
@@ -12,12 +14,11 @@
         },
         "test": {
             "executor": "@nx/jest:jest",
-            "outputs": ["coverage/packages/amazon-pay-integration"],
+            "outputs": ["{workspaceRoot}/coverage/packages/amazon-pay-integration"],
             "options": {
                 "jestConfig": "packages/amazon-pay-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }
