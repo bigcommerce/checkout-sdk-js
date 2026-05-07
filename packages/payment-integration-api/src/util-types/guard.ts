@@ -3,5 +3,5 @@ export default function guard<T>(value: T, errorFactory?: () => Error): NonNulla
         throw errorFactory ? errorFactory() : new Error('An unexpected error has occurred.');
     }
 
-    return value;
+    return value as NonNullable<T>;
 }

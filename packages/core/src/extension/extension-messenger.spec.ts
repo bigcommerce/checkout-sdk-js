@@ -10,10 +10,10 @@ import {
     UnsupportedExtensionQueryError,
 } from './errors';
 import { Extension } from './extension';
-import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
+import { ExtensionCommand, ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
 import { ExtensionEvent } from './extension-events';
 import { ExtensionMessenger } from './extension-messenger';
-import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
+import { ExtensionQuery, ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
 import { getExtensionEvent, getExtensions } from './extension.mock';
 import { WorkerExtensionMessenger } from './worker-extension-messenger';
 
@@ -82,7 +82,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type }, context);
+                    listener({ type } as ExtensionCommand, context);
                 });
             });
 
@@ -107,7 +107,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type }, context);
+                    listener({ type } as ExtensionCommand, context);
                 });
             });
 
@@ -133,7 +133,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type }, context);
+                    listener({ type } as ExtensionCommand, context);
                 });
             });
 
@@ -216,7 +216,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type }, context);
+                    listener({ type } as ExtensionQuery, context);
                 });
             });
 
@@ -241,7 +241,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type }, context);
+                    listener({ type } as ExtensionQuery, context);
                 });
             });
 
@@ -267,7 +267,7 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type }, context);
+                    listener({ type } as ExtensionQuery, context);
                 });
             });
 

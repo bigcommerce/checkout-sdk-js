@@ -71,14 +71,14 @@ export default class HostedInputManualOrderPaymentHandler {
                 this._eventPoster.post({
                     type: HostedInputEventType.SubmitManualOrderFailed,
                     payload: {
-                        error: { code: get(response.body, 'code') },
+                        error: { code: String(get(response.body, 'code') ?? '') },
                     },
                 });
             } else if (isError) {
                 this._eventPoster.post({
                     type: HostedInputEventType.SubmitManualOrderFailed,
                     payload: {
-                        error: { code: get(response.body, 'type') },
+                        error: { code: String(get(response.body, 'type') ?? '') },
                     },
                 });
             } else if (isSuccess) {
