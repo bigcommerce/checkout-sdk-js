@@ -10,10 +10,10 @@ import {
     UnsupportedExtensionQueryError,
 } from './errors';
 import { Extension } from './extension';
-import { ExtensionCommand, ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
+import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
 import { ExtensionEvent } from './extension-events';
 import { ExtensionMessenger } from './extension-messenger';
-import { ExtensionQuery, ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
+import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
 import { getExtensionEvent, getExtensions } from './extension.mock';
 import { WorkerExtensionMessenger } from './worker-extension-messenger';
 
@@ -82,7 +82,9 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionCommand, context);
+                    if (type === ExtensionCommandType.ReloadCheckout) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -107,7 +109,9 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionCommand, context);
+                    if (type === ExtensionCommandType.ReloadCheckout) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -133,7 +137,9 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionCommand, context);
+                    if (type === ExtensionCommandType.ReloadCheckout) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -216,7 +222,9 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionQuery, context);
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -241,7 +249,9 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionQuery, context);
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -267,7 +277,9 @@ describe('ExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionQuery, context);
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
                 });
             });
 

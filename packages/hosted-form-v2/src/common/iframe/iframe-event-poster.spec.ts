@@ -94,11 +94,16 @@ describe('IframeEventPoster', () => {
         const targetWindow = Object.create(window);
         const poster = new IframeEventPoster<IframeEvent>(origin, targetWindow);
 
-        jest.spyOn(targetWindow, 'postMessage').mockImplementation(() => {
-            eventEmitter.emit('message', {
-                origin,
-                data: { type: 'FOOBAR_SUCCESS', payload: '123' },
-            });
+        jest.spyOn(targetWindow, 'postMessage').mockImplementation((message) => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (message.type === 'FOOBAR_REQUEST') {
+                eventEmitter.emit('message', {
+                    origin,
+                    data: { type: 'FOOBAR_SUCCESS', payload: '123' },
+                });
+            }
         });
 
         expect(
@@ -113,11 +118,16 @@ describe('IframeEventPoster', () => {
         const targetWindow = Object.create(window);
         const poster = new IframeEventPoster<IframeEvent>(origin, targetWindow);
 
-        jest.spyOn(targetWindow, 'postMessage').mockImplementation(() => {
-            eventEmitter.emit('message', {
-                origin,
-                data: { type: 'FOOBAR_ERROR', payload: 'Unexpected error' },
-            });
+        jest.spyOn(targetWindow, 'postMessage').mockImplementation((message) => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (message.type === 'FOOBAR_REQUEST') {
+                eventEmitter.emit('message', {
+                    origin,
+                    data: { type: 'FOOBAR_ERROR', payload: 'Unexpected error' },
+                });
+            }
         });
 
         try {

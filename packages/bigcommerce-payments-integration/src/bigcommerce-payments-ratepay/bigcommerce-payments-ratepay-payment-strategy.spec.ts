@@ -464,10 +464,17 @@ describe('BigCommercePaymentsRatePayPaymentStrategy', () => {
                 PayPalOrderStatus.PollingStop,
             );
 
-            const legalTextEl = document.createElement('div');
+            jest.spyOn(document, 'getElementById').mockImplementation((id) => {
+                if (id === 'legal-text-container') {
+                    const el = document.createElement('div');
 
-            legalTextEl.remove = jest.fn();
-            jest.spyOn(document, 'getElementById').mockReturnValue(legalTextEl);
+                    el.remove = jest.fn();
+
+                    return el;
+                }
+
+                return null;
+            });
             jest.spyOn(global, 'clearTimeout');
 
             await strategy.initialize(initializationOptions);

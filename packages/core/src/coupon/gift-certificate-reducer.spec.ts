@@ -21,7 +21,7 @@ describe('giftCertificateReducer()', () => {
 
         expect(giftCertificateReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.giftCertificates,
+                data: action.payload && action.payload.giftCertificates,
             }),
         );
     });
@@ -48,7 +48,7 @@ describe('giftCertificateReducer()', () => {
 
         expect(giftCertificateReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.giftCertificates,
+                data: action.payload && action.payload.giftCertificates,
             }),
         );
     });
@@ -62,7 +62,7 @@ describe('giftCertificateReducer()', () => {
 
         expect(giftCertificateReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.giftCertificates,
+                data: action.payload && action.payload.giftCertificates,
             }),
         );
     });
@@ -76,7 +76,7 @@ describe('giftCertificateReducer()', () => {
 
         expect(giftCertificateReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.giftCertificates,
+                data: action.payload && action.payload.giftCertificates,
             }),
         );
     });
@@ -90,7 +90,7 @@ describe('giftCertificateReducer()', () => {
 
         expect(giftCertificateReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.giftCertificates,
+                data: action.payload && action.payload.giftCertificates,
             }),
         );
     });
@@ -103,7 +103,7 @@ describe('giftCertificateReducer()', () => {
 
         expect(giftCertificateReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.giftCertificates,
+                data: action.payload && action.payload.giftCertificates,
             }),
         );
     });

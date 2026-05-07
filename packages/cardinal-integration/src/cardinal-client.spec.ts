@@ -332,9 +332,12 @@ describe('CardinalClient', () => {
                 );
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodFailedError);
-                expect((error as PaymentMethodFailedError).message).toBe(
-                    'User failed authentication or an error was encountered while processing the transaction.',
-                );
+
+                if (error instanceof PaymentMethodFailedError) {
+                    expect(error.message).toBe(
+                        'User failed authentication or an error was encountered while processing the transaction.',
+                    );
+                }
             }
         });
 
@@ -403,9 +406,12 @@ describe('CardinalClient', () => {
                 );
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodFailedError);
-                expect((error as PaymentMethodFailedError).message).toBe(
-                    'An error was encountered while processing the transaction.',
-                );
+
+                if (error instanceof PaymentMethodFailedError) {
+                    expect(error.message).toBe(
+                        'An error was encountered while processing the transaction.',
+                    );
+                }
             }
         });
     });

@@ -22,7 +22,7 @@ describe('billingAddressReducer', () => {
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({
-            data: action.payload?.billingAddress,
+            data: action.payload && action.payload.billingAddress,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });
@@ -79,7 +79,7 @@ describe('billingAddressReducer', () => {
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({
-            data: action.payload?.billingAddress,
+            data: action.payload && action.payload.billingAddress,
             errors: {
                 continueAsGuestError: undefined,
             },

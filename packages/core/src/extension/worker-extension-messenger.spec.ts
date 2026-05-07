@@ -7,8 +7,8 @@ import {
     UnsupportedExtensionCommandError,
     UnsupportedExtensionQueryError,
 } from './errors';
-import { ExtensionCommand, ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
-import { ExtensionQuery, ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
+import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
+import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
 import { WorkerExtensionMessenger } from './worker-extension-messenger';
 
 jest.mock('../common/worker', () => ({
@@ -75,7 +75,9 @@ describe('WorkerExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionCommand, context);
+                    if (type === ExtensionCommandType.ReloadCheckout) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -100,7 +102,9 @@ describe('WorkerExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionCommand, context);
+                    if (type === ExtensionCommandType.ReloadCheckout) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -126,7 +130,9 @@ describe('WorkerExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionCommand, context);
+                    if (type === ExtensionCommandType.ReloadCheckout) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -202,7 +208,9 @@ describe('WorkerExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionQuery, context);
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -227,7 +235,9 @@ describe('WorkerExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionQuery, context);
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
                 });
             });
 
@@ -253,7 +263,9 @@ describe('WorkerExtensionMessenger', () => {
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
                 eventEmitter.addListener(type, ({ context }) => {
-                    listener({ type } as ExtensionQuery, context);
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
                 });
             });
 

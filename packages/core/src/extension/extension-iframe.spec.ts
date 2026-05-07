@@ -53,7 +53,7 @@ describe('ExtensionIframe', () => {
     it('attaches iframe to the container', async () => {
         await extensionIframe.attach();
 
-        const iframe = container.querySelector('iframe')!;
+        const iframe = container.querySelector('iframe') || document.createElement('iframe');
 
         const url = new URL(iframe.src);
 

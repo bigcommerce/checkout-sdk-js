@@ -571,7 +571,9 @@ describe('GooglePayCustomerStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.SHIPPING_OPTION,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -613,7 +615,9 @@ describe('GooglePayCustomerStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.OFFER,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -641,7 +645,9 @@ describe('GooglePayCustomerStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.OFFER,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -693,7 +699,9 @@ describe('GooglePayCustomerStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.OFFER,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 

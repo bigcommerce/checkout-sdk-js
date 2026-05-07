@@ -267,7 +267,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.INITIALIZE,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -305,7 +307,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.SHIPPING_ADDRESS,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -382,7 +386,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.INITIALIZE,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -413,7 +419,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.INITIALIZE,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -451,7 +459,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.INITIALIZE,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -489,7 +499,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.SHIPPING_OPTION,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -563,7 +575,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.OFFER,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -585,7 +599,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.OFFER,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -631,7 +647,9 @@ describe('GooglePayButtonStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.OFFER,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 

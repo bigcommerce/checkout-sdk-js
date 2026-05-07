@@ -497,8 +497,8 @@ describe('PaymentStrategyActionCreator', () => {
             await from(actionCreator.execute(payload)(store)).toPromise();
 
             expect(strategy.execute).toHaveBeenCalledWith(payload, {
-                methodId: payload.payment?.methodId,
-                gatewayId: payload.payment?.gatewayId,
+                methodId: payload.payment && payload.payment.methodId,
+                gatewayId: payload.payment && payload.payment.gatewayId,
             });
         });
 
@@ -521,7 +521,7 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('emits action to load order and notify execution progress', async () => {
             const payload = getOrderRequestBody();
-            const methodId = payload.payment?.methodId;
+            const methodId = payload.payment && payload.payment.methodId;
             const actions = await from(actionCreator.execute(payload)(store))
                 .pipe(toArray())
                 .toPromise();
@@ -540,7 +540,7 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('emits error action if unable to execute', async () => {
             const payload = getOrderRequestBody();
-            const methodId = payload.payment?.methodId;
+            const methodId = payload.payment && payload.payment.methodId;
             const executeError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 
@@ -614,8 +614,8 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(registryV2.get).toHaveBeenCalledWith({ id: 'nopaymentdatarequired' });
             expect(noPaymentDataStrategy.execute).toHaveBeenCalledWith(payload, {
-                methodId: payload.payment?.methodId,
-                gatewayId: payload.payment?.gatewayId,
+                methodId: payload.payment && payload.payment.methodId,
+                gatewayId: payload.payment && payload.payment.gatewayId,
             });
         });
     });

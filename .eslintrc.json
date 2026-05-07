@@ -26,7 +26,8 @@
                         "tabWidth": 4
                     }
                 ],
-                // TODO:CHECKOUT-9228 Fix lint errors after nx upgrade to 19.8.9
+                // TODO:CHECKOUT-10008 Fix lint errors after nx upgrade to 19.8.9
+                "jest/no-conditional-in-test": "off",
                 "@typescript-eslint/ban-tslint-comment": "off",
                 "@typescript-eslint/consistent-indexed-object-style": "off",
                 "@typescript-eslint/naming-convention": "off",

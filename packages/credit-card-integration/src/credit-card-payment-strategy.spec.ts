@@ -143,7 +143,7 @@ describe('CreditCardPaymentStrategy', () => {
             it('does not submit with hosted form', async () => {
                 const payload = getOrderRequestBody();
                 const { payment, ...order } = payload;
-                const paymentData = payment?.paymentData;
+                const paymentData = payment && payment.paymentData;
 
                 jest.spyOn(
                     paymentIntegrationService.getState(),

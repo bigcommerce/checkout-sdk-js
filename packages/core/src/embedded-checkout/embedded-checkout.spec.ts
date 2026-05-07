@@ -281,7 +281,9 @@ describe('EmbeddedCheckout', () => {
     });
 
     it('redirects user to allow third party cookie to be set', () => {
-        jest.spyOn(storage, 'getItem').mockReturnValue(null);
+        jest.spyOn(storage, 'getItem').mockImplementation((key) =>
+            key === IS_COOKIE_ALLOWED_KEY ? null : true,
+        );
 
         embeddedCheckout.attach();
 

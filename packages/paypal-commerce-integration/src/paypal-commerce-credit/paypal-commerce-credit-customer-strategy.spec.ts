@@ -516,14 +516,16 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
                     (options: PayPalCommerceButtonsOptions) => {
                         eventEmitter.on('onApprove', () => {
-                            options.onApprove?.(
-                                { orderID: approveDataOrderId },
-                                {
-                                    order: {
-                                        get: getOrderActionMock,
+                            if (options.onApprove) {
+                                options.onApprove(
+                                    { orderID: approveDataOrderId },
+                                    {
+                                        order: {
+                                            get: getOrderActionMock,
+                                        },
                                     },
-                                },
-                            );
+                                );
+                            }
                         });
 
                         return {

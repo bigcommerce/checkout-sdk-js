@@ -129,7 +129,9 @@ describe('AdyenV3PaymentStrategy', () => {
 
         describe('#initialize()', () => {
             it('does not create adyen card verification component', async () => {
-                options.adyenv3!.cardVerificationContainerId = undefined;
+                if (options.adyenv3) {
+                    options.adyenv3.cardVerificationContainerId = undefined;
+                }
 
                 await strategy.initialize(options);
 
@@ -384,17 +386,21 @@ describe('AdyenV3PaymentStrategy', () => {
                 );
                 jest.spyOn(adyenCheckout, 'create').mockImplementation(
                     jest.fn((_method, options) => {
-                        const handleOnChange = options?.onChange;
+                        if (options && options.onChange) {
+                            const { onChange } = options;
 
-                        paymentComponent = {
-                            mount: jest.fn(() => {
-                                handleOnChange?.(getBoletoComponentState(), paymentComponent);
+                            const handleOnChange = onChange;
 
-                                return document.createElement('div');
-                            }),
-                            unmount: jest.fn(),
-                            submit: jest.fn(),
-                        };
+                            paymentComponent = {
+                                mount: jest.fn(() => {
+                                    handleOnChange(getBoletoComponentState(), paymentComponent);
+
+                                    return document.createElement('div');
+                                }),
+                                unmount: jest.fn(),
+                                submit: jest.fn(),
+                            };
+                        }
 
                         return paymentComponent;
                     }),
@@ -434,18 +440,22 @@ describe('AdyenV3PaymentStrategy', () => {
                 );
                 jest.spyOn(adyenCheckout, 'create').mockImplementation(
                     jest.fn((_method, options) => {
-                        const handleOnChange = options?.onChange;
-                        const componentState = getComponentCCEventState();
+                        if (options && options.onChange) {
+                            const { onChange } = options;
+                            const handleOnChange = onChange;
 
-                        paymentComponent = {
-                            mount: jest.fn(() => {
-                                handleOnChange?.(componentState, paymentComponent);
+                            const componentState = getComponentCCEventState();
 
-                                return document.createElement('div');
-                            }),
-                            unmount: jest.fn(),
-                            submit: jest.fn(),
-                        };
+                            paymentComponent = {
+                                mount: jest.fn(() => {
+                                    handleOnChange(componentState, paymentComponent);
+
+                                    return document.createElement('div');
+                                }),
+                                unmount: jest.fn(),
+                                submit: jest.fn(),
+                            };
+                        }
 
                         return paymentComponent;
                     }),
@@ -520,7 +530,11 @@ describe('AdyenV3PaymentStrategy', () => {
 
                 jest.spyOn(adyenCheckout, 'createFromAction').mockImplementation(
                     jest.fn((_type, options) => {
-                        handleOnError = options?.onError;
+                        if (options) {
+                            const { onError } = options;
+
+                            handleOnError = onError;
+                        }
 
                         return additionalActionComponentWithError;
                     }),

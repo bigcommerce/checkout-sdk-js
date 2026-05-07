@@ -469,7 +469,9 @@ describe('GooglePayPaymentStrategy', () => {
                     eventEmitter,
                     CallbackTriggerType.INITIALIZE,
                     (res) => {
-                        mockReturnedPaymentDataChangedValue = res;
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
 
@@ -583,7 +585,9 @@ describe('GooglePayPaymentStrategy', () => {
                         eventEmitter,
                         CallbackTriggerType.OFFER,
                         (res) => {
-                            mockReturnedPaymentDataChangedValue = res;
+                            if (res) {
+                                mockReturnedPaymentDataChangedValue = res;
+                            }
                         },
                     );
 
@@ -611,7 +615,9 @@ describe('GooglePayPaymentStrategy', () => {
                         eventEmitter,
                         CallbackTriggerType.OFFER,
                         (res) => {
-                            mockReturnedPaymentDataChangedValue = res;
+                            if (res) {
+                                mockReturnedPaymentDataChangedValue = res;
+                            }
                         },
                     );
 
@@ -663,7 +669,9 @@ describe('GooglePayPaymentStrategy', () => {
                         eventEmitter,
                         CallbackTriggerType.OFFER,
                         (res) => {
-                            mockReturnedPaymentDataChangedValue = res;
+                            if (res) {
+                                mockReturnedPaymentDataChangedValue = res;
+                            }
                         },
                     );
 
@@ -708,7 +716,9 @@ describe('GooglePayPaymentStrategy', () => {
                         eventEmitter,
                         CallbackTriggerType.OFFER,
                         (res) => {
-                            mockReturnedPaymentDataChangedValue = res;
+                            if (res) {
+                                mockReturnedPaymentDataChangedValue = res;
+                            }
                         },
                     );
 

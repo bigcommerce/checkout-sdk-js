@@ -52,7 +52,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let store: Pick<CheckoutStore, 'dispatch' | 'getState'>;
     let storeProjection: Pick<
         DataStoreProjection<PaymentIntegrationSelectors>,
-        'getState' | 'subscribe'
+        'getState' | 'subscribe' | 'getState'
     >;
     let storeProjectionFactory: Pick<PaymentIntegrationStoreProjectionFactory, 'create'>;
     let checkoutActionCreator: Pick<

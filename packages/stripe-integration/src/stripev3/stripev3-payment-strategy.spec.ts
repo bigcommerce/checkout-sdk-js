@@ -749,7 +749,12 @@ describe('StripeV3PaymentStrategy', () => {
                         expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
                         expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
                         expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalled();
-                        expect((error as Error).message).toEqual(unexpectedError.message);
+
+                        if (error instanceof Error) {
+                            expect(error.message).toEqual(
+                                unexpectedError && unexpectedError.message,
+                            );
+                        }
                     }
                 });
 

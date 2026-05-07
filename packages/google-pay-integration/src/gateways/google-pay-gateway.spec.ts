@@ -355,7 +355,9 @@ describe('GooglePayGateway', () => {
             try {
                 await gateway.getNonce('methodId');
             } catch (err) {
-                error = err as MissingDataError;
+                if (err instanceof MissingDataError) {
+                    error = err;
+                }
             } finally {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -385,7 +387,9 @@ describe('GooglePayGateway', () => {
             try {
                 await gateway.getNonce('methodId');
             } catch (err) {
-                error = err as MissingDataError;
+                if (err instanceof MissingDataError) {
+                    error = err;
+                }
             } finally {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -916,7 +920,9 @@ describe('GooglePayGateway', () => {
             try {
                 await gateway.mapToExternalCheckoutData(response);
             } catch (err) {
-                error = err as MissingDataError;
+                if (err instanceof MissingDataError) {
+                    error = err;
+                }
             } finally {
                 expect(error).toBeInstanceOf(MissingDataError);
             }

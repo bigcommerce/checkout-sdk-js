@@ -36,7 +36,7 @@ describe('PaymentSelector', () => {
 
             const payment = paymentSelector.getPaymentId();
 
-            expect(payment?.providerId).toBe('authorizenet');
+            expect(payment && payment.providerId).toBe('authorizenet');
         });
 
         it('returns payment ID from internal order if order has just been created before order is loaded', () => {
@@ -52,7 +52,7 @@ describe('PaymentSelector', () => {
 
             const payment = paymentSelector.getPaymentId();
 
-            expect(payment?.providerId).toBe('authorizenet');
+            expect(payment && payment.providerId).toBe('authorizenet');
         });
 
         it('returns payment ID from checkout if order has not been created', () => {
@@ -71,7 +71,7 @@ describe('PaymentSelector', () => {
 
             const payment = paymentSelector.getPaymentId();
 
-            expect(payment?.providerId).toBe('authorizenet');
+            expect(payment && payment.providerId).toBe('authorizenet');
         });
     });
 
@@ -146,7 +146,9 @@ describe('PaymentSelector', () => {
         it('returns payment token if available', () => {
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentToken()).toEqual(state.order.meta?.token);
+            expect(paymentSelector.getPaymentToken()).toEqual(
+                state.order.meta && state.order.meta.token,
+            );
         });
 
         it('returns undefined if unavailable', () => {
@@ -230,7 +232,9 @@ describe('PaymentSelector', () => {
         it('returns true if payment is finalized', () => {
             const checkout = getCheckoutWithPayments();
 
-            checkout.payments![0].detail.step = FINALIZE;
+            if (checkout.payments) {
+                checkout.payments[0].detail.step = FINALIZE;
+            }
 
             selectors = createInternalCheckoutSelectors({
                 ...state,

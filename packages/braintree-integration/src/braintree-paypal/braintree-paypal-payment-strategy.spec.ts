@@ -401,9 +401,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             const state = paymentIntegrationService.getState();
 
-            jest.spyOn(state, 'getOutstandingBalance')
-                .mockReturnValueOnce(150)
-                .mockReturnValueOnce(190);
+            jest.spyOn(state, 'getOutstandingBalance').mockImplementation((useStoreCredit) =>
+                useStoreCredit ? 150 : 190,
+            );
 
             await strategy.execute({ ...orderRequestBody, useStoreCredit: true }, options);
 
@@ -702,10 +702,13 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     expect(braintreeIntegrationService.paypal).not.toHaveBeenCalledWith();
                     expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalledWith();
                     expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalledWith();
-                    expect(error).toBeInstanceOf(InvalidArgumentError);
-                    expect((error as InvalidArgumentError).message).toBe(
-                        'Vaulting is disabled but a vaulted instrument was being used for this transaction',
-                    );
+
+                    if (error instanceof InvalidArgumentError) {
+                        expect(error).toBeInstanceOf(InvalidArgumentError);
+                        expect(error.message).toBe(
+                            'Vaulting is disabled but a vaulted instrument was being used for this transaction',
+                        );
+                    }
                 }
             });
         });

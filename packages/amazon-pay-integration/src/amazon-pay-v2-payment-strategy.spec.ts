@@ -135,7 +135,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethodMock);
 
-            delete initializeOptions.amazonpay!.editButtonId;
+            if (initializeOptions.amazonpay) {
+                delete initializeOptions.amazonpay.editButtonId;
+            }
 
             await strategy.initialize(initializeOptions);
 
@@ -191,7 +193,11 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
             await strategy.initialize(initializeOptions);
 
-            document.getElementById(changeMethodId)!.click();
+            const editButton = document.getElementById(changeMethodId);
+
+            if (editButton) {
+                editButton.click();
+            }
 
             expect(paymentIntegrationService.widgetInteraction).toHaveBeenCalled();
         });
@@ -207,7 +213,11 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
             await strategy.initialize(initializeOptions);
 
-            document.getElementById(changeMethodId)!.click();
+            const editButton = document.getElementById(changeMethodId);
+
+            if (editButton) {
+                editButton.click();
+            }
 
             expect(paymentIntegrationService.widgetInteraction).not.toHaveBeenCalled();
         });

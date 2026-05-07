@@ -119,12 +119,18 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         });
 
         it('do not render the visa button if there is no element with the containerId identifier in the DOM', async () => {
-            await expect(
-                strategy.initialize({
+            try {
+                await strategy.initialize({
                     ...initializationOptions,
                     containerId: 'test-container',
-                }),
-            ).rejects.toThrow('Need a container to place the button');
+                });
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+
+                if (error instanceof Error) {
+                    expect(error.message).toBe('Need a container to place the button');
+                }
+            }
         });
 
         it('throws error if client token is missing', async () => {

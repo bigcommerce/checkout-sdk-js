@@ -780,14 +780,16 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
                 (options: BigCommercePaymentsButtonsOptions) => {
                     eventEmitter.on('onApprove', () => {
-                        options.onApprove?.(
-                            { orderID: paypalOrderId },
-                            {
-                                order: {
-                                    get: jest.fn(),
+                        if (options.onApprove) {
+                            options.onApprove(
+                                { orderID: paypalOrderId },
+                                {
+                                    order: {
+                                        get: jest.fn(),
+                                    },
                                 },
-                            },
-                        );
+                            );
+                        }
                     });
 
                     return {

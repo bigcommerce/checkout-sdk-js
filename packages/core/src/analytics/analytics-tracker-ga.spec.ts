@@ -19,7 +19,7 @@ describe('analytics step tracker helpers', () => {
             shipping: order.shippingCostTotal,
             tax: order.taxTotal,
             discount: order.discountAmount,
-            coupon: order.coupons.map((coupon) => coupon.code.toUpperCase()).join(','),
+            coupon: (order.coupons || []).map((coupon) => coupon.code.toUpperCase()).join(','),
             currency: 'USD',
             products: getPayloadProducts({}, order.lineItems),
         });
@@ -44,7 +44,7 @@ describe('analytics step tracker helpers', () => {
             shipping: order.shippingCostTotal,
             tax: order.taxTotal,
             discount: order.discountAmount,
-            coupon: order.coupons.map((coupon) => coupon.code.toUpperCase()).join(','),
+            coupon: (order.coupons || []).map((coupon) => coupon.code.toUpperCase()).join(','),
             currency: 'USD',
             products: getPayloadProducts({}, lineItems),
         });

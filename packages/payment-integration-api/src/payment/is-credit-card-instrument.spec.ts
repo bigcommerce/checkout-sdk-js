@@ -12,7 +12,7 @@ describe('isCreditCardInstrument', () => {
             ccCvv: '123',
         };
 
-        expect(isCreditCardInstrument(paymentData)).toBe(true);
+        expect(paymentData && isCreditCardInstrument(paymentData)).toBe(true);
     });
 
     it('returns false if a Vaulted Instrument', () => {

@@ -25,7 +25,7 @@ describe('couponReducer()', () => {
 
         expect(couponReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.coupons,
+                data: action.payload && action.payload.coupons,
             }),
         );
     });
@@ -61,7 +61,7 @@ describe('couponReducer()', () => {
 
         expect(couponReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.coupons,
+                data: action.payload && action.payload.coupons,
             }),
         );
     });
@@ -71,7 +71,7 @@ describe('couponReducer()', () => {
 
         expect(couponReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                data: action.payload?.coupons,
+                data: action.payload && action.payload.coupons,
             }),
         );
     });

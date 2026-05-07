@@ -5,7 +5,7 @@ describe('isCreditCardLike', () => {
     it('returns true if the object looks like a credit creditcard', () => {
         const paymentData = getCreditCardInstrument();
 
-        expect(isCreditCardLike(paymentData)).toBeTruthy();
+        expect(paymentData && isCreditCardLike(paymentData)).toBeTruthy();
     });
 
     it('returns false if a Vaulted Instrument', () => {

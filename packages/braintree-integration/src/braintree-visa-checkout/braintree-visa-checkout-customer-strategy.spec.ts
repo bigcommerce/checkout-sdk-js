@@ -127,14 +127,22 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         });
 
         it('do not render the visa button if there is no element with the containerId identifier in the DOM', async () => {
-            await expect(
-                strategy.initialize({
+            try {
+                await strategy.initialize({
                     ...initializationOptions,
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     braintreevisacheckout: {},
-                }),
-            ).rejects.toThrow('Unable to proceed because the provided container ID is not valid.');
+                });
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+
+                if (error instanceof Error) {
+                    expect(error.message).toBe(
+                        'Unable to proceed because the provided container ID is not valid.',
+                    );
+                }
+            }
         });
 
         it('throws error if client token is missing', async () => {

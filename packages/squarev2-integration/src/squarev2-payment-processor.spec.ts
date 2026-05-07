@@ -251,13 +251,14 @@ describe('SquareV2PaymentProcessor', () => {
             try {
                 await processor.tokenize();
             } catch (error) {
-                expect(error).toBeInstanceOf(PaymentExecuteError);
-                expect((error as PaymentExecuteError).name).toBe('SquareV2TokenizationError');
-                expect((error as PaymentExecuteError).type).toBe('custom_provider_execute_error');
-                expect((error as PaymentExecuteError).subtype).toBe('payment.errors.card_error');
-                expect((error as PaymentExecuteError).message).toBe(
-                    'Tokenization failed with status: OK and errors: [{"type":"tokenization error 1","message":"error message 1"},{"type":"tokenization error 2","message":"error message 2"}]',
-                );
+                if (error instanceof PaymentExecuteError) {
+                    expect(error.name).toBe('SquareV2TokenizationError');
+                    expect(error.type).toBe('custom_provider_execute_error');
+                    expect(error.subtype).toBe('payment.errors.card_error');
+                    expect(error.message).toBe(
+                        'Tokenization failed with status: OK and errors: [{"type":"tokenization error 1","message":"error message 1"},{"type":"tokenization error 2","message":"error message 2"}]',
+                    );
+                }
             }
         });
     });

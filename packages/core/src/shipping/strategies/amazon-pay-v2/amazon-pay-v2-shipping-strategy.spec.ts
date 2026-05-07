@@ -152,7 +152,9 @@ describe('AmazonPayV2ShippingStrategy', () => {
 
             const editButton = document.getElementById(shippingId);
 
-            editButton?.click();
+            if (editButton) {
+                editButton.click();
+            }
 
             expect(shippingStrategyActionCreator.widgetInteraction).toHaveBeenCalled();
         });
@@ -168,7 +170,9 @@ describe('AmazonPayV2ShippingStrategy', () => {
 
             const editButton = document.getElementById(shippingId);
 
-            editButton?.click();
+            if (editButton) {
+                editButton.click();
+            }
 
             expect(shippingStrategyActionCreator.widgetInteraction).not.toHaveBeenCalled();
         });
