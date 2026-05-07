@@ -4,7 +4,7 @@ describe('AmountTransformer', () => {
     it('converts decimal into integer', () => {
         expect(new AmountTransformer(2).toInteger(1.234)).toBe(123);
 
-        expect(new AmountTransformer(2).toInteger(-1.234)).toEqual(-123);
+        expect(new AmountTransformer(2).toInteger(-1.234)).toBe(-123);
 
         expect(new AmountTransformer(0).toInteger(1.234)).toBe(1);
     });
