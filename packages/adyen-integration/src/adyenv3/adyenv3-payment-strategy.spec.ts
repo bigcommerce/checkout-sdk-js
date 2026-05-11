@@ -214,6 +214,42 @@ describe('AdyenV3PaymentStrategy', () => {
                     expect.objectContaining({ locale: 'en_US' }),
                 );
             });
+
+            it('does not hide shopper input fields for non-Oney payment methods', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(getAdyenV3('boletobancario'));
+
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).toHaveBeenCalledWith(
+                    'boletobancario',
+                    expect.not.objectContaining({
+                        visibility: expect.anything(),
+                    }),
+                );
+            });
+
+            it('hides shopper input fields for Oney payment methods', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(getAdyenV3('facilypay_3x'));
+
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).toHaveBeenCalledWith(
+                    'facilypay_3x',
+                    expect.objectContaining({
+                        visibility: {
+                            personalDetails: 'hidden',
+                            billingAddress: 'hidden',
+                            deliveryAddress: 'hidden',
+                        },
+                    }),
+                );
+            });
         });
 
         describe('#execute', () => {
