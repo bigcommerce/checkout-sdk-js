@@ -24,7 +24,12 @@ export class ManualOrderPaymentRequestSender {
 
         let instrument: Instrument;
 
-        if (paymentMethodId === manualPaymentMethod) {
+        if (requestInitializationData.token) {
+            instrument = {
+                type: InstrumentType.TokenizedCard,
+                token: requestInitializationData.token,
+            };
+        } else if (paymentMethodId === manualPaymentMethod) {
             instrument = {
                 type: InstrumentType.ManualPayment,
                 note: instrumentFormData.note ?? '',

@@ -147,4 +147,37 @@ describe('ManualOrderPaymentRequestSender', () => {
             }),
         );
     });
+
+    it('submits tokenized card payment', async () => {
+        (requestSender.post as jest.Mock).mockResolvedValue(response);
+
+        requestInitializationData.paymentMethodId = 'squarev2.credit_card';
+        requestInitializationData.token = 'cnon:test-token';
+        instrumentFormData = {} as HostedInputValues;
+
+        const result = await manualOrderPaymentRequestSender.submitPayment(
+            requestInitializationData,
+            instrumentFormData,
+        );
+
+        expect(result).toBe(response);
+        expect(requestSender.post).toHaveBeenCalledWith(
+            `${paymentOrigin}/payments`,
+            expect.objectContaining({
+                headers: {
+                    Accept: ContentType.Json,
+                    'Content-Type': ContentType.Json,
+                    'X-Payment-Session-Token': pstToken,
+                },
+                body: {
+                    instrument: {
+                        type: InstrumentType.TokenizedCard,
+                        token: 'cnon:test-token',
+                    },
+                    payment_method_id: 'squarev2.credit_card',
+                    form_nonce: undefined,
+                },
+            }),
+        );
+    });
 });

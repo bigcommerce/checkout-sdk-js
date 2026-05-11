@@ -211,4 +211,39 @@ describe('HostedInputManualOrderPaymentHandler', () => {
             },
         });
     });
+
+    it('should forward token to submitPayment and post succeeded event for tokenized card', async () => {
+        const event: HostedFieldSubmitManualOrderRequestEvent = {
+            type: HostedFieldEventType.SubmitManualOrderRequested,
+            payload: {
+                data: {
+                    paymentMethodId: 'squarev2.credit_card',
+                    paymentSessionToken: pstToken,
+                    token: 'cnon:test-token',
+                },
+            },
+        };
+        const response = {
+            body: { type: 'success' },
+        };
+
+        jest.spyOn(inputAggregator, 'getInputValues').mockReturnValue({});
+        jest.spyOn(inputValidator, 'validate').mockResolvedValue({ isValid: true, errors: {} });
+
+        const submitPaymentSpy = jest
+            .spyOn(manualOrderPaymentRequestSender, 'submitPayment')
+            .mockResolvedValue(response as Response<unknown>);
+
+        jest.spyOn(eventPoster, 'post');
+
+        await handler.handle(event);
+
+        expect(submitPaymentSpy).toHaveBeenCalledWith(event.payload.data, {}, undefined);
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.SubmitManualOrderSucceeded,
+            payload: {
+                response,
+            },
+        });
+    });
 });
