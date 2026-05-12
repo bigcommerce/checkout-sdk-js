@@ -1,22 +1,23 @@
 {
-    "root": "packages/google-pay-integration",
+    "name": "google-pay-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/google-pay-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/google-pay-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/google-pay-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/google-pay-integration"],
             "options": {
                 "jestConfig": "packages/google-pay-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

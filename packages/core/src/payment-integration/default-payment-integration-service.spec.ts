@@ -29,11 +29,11 @@ import { CustomerActionCreator } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { getOrder } from '../order/orders.mock';
-import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import PaymentStrategyWidgetActionCreator from '../payment/payment-strategy-widget-action-creator';
 import { getPayment } from '../payment/payments.mock';
+import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
@@ -52,7 +52,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let store: Pick<CheckoutStore, 'dispatch' | 'getState'>;
     let storeProjection: Pick<
         DataStoreProjection<PaymentIntegrationSelectors>,
-        'getState' | 'subscribe' | 'getState'
+        'getState' | 'subscribe'
     >;
     let storeProjectionFactory: Pick<PaymentIntegrationStoreProjectionFactory, 'create'>;
     let checkoutActionCreator: Pick<

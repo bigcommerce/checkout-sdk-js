@@ -94,7 +94,7 @@ export default class SquareV2PaymentProcessor {
         if (result.status !== 'OK' || !result.token) {
             let errorMessage = `Tokenization failed with status: ${result.status}`;
 
-            if (result.errors) {
+            if ('errors' in result && result.errors) {
                 errorMessage += ` and errors: ${JSON.stringify(result.errors)}`;
             }
 

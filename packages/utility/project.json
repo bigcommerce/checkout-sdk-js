@@ -1,22 +1,23 @@
 {
-    "root": "packages/utility",
+    "name": "utility",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/utility/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/utility/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/utility"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/utility"],
             "options": {
                 "jestConfig": "packages/utility/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

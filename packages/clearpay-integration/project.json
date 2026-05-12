@@ -1,23 +1,24 @@
 {
-    "root": "packages/clearpay-integration",
+    "name": "clearpay-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/clearpay-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/clearpay-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/clearpay-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/clearpay-integration"],
             "options": {
                 "jestConfig": "packages/clearpay-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

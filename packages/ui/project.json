@@ -1,23 +1,24 @@
 {
-    "root": "packages/ui",
+    "name": "ui",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/ui/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/ui/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/ui"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/ui"],
             "options": {
                 "jestConfig": "packages/ui/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

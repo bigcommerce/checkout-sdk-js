@@ -45,10 +45,15 @@ export default class CheckoutComSEPAPaymentStrategy extends CheckoutComCustomPay
         paymentData: PaymentInstrument,
     ): WithCheckoutcomSEPAInstrument {
         const formattedPayload: WithCheckoutcomSEPAInstrument = { iban: '', bic: '' };
-        const { iban, bic } =
-            'iban' in paymentData && 'bic' in paymentData ? paymentData : formattedPayload;
 
-        if (methodId === CHECKOUTCOM_SEPA_PAYMENT_METHOD && document) {
+        if (
+            methodId === CHECKOUTCOM_SEPA_PAYMENT_METHOD &&
+            document &&
+            'iban' in paymentData &&
+            'bic' in paymentData
+        ) {
+            const { iban, bic } = paymentData as unknown as WithCheckoutcomSEPAInstrument;
+
             formattedPayload.iban = iban;
             formattedPayload.bic = bic;
         }

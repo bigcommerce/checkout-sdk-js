@@ -1,23 +1,24 @@
 {
-    "root": "packages/legacy-integration",
+    "name": "legacy-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/legacy-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/legacy-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/legacy-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/legacy-integration"],
             "options": {
                 "jestConfig": "packages/legacy-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

@@ -1,4 +1,4 @@
-export default interface InternalResponseBody<TData = {}, TMeta = {}> {
+export default interface InternalResponseBody<TData = object, TMeta = object> {
     data: TData;
     meta: TMeta;
 }

@@ -1,22 +1,23 @@
 {
-    "root": "packages/sezzle-integration",
+    "name": "sezzle-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/sezzle-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/sezzle-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/sezzle-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/sezzle-integration"],
             "options": {
                 "jestConfig": "packages/sezzle-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

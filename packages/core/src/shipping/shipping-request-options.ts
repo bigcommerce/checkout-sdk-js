@@ -16,7 +16,7 @@ import { StripeUPEShippingInitializeOptions } from './strategies/stripe-upe';
  * specific flow for setting the shipping address or option. Otherwise, these
  * options are not required.
  */
-export interface ShippingRequestOptions<T = {}> extends RequestOptions<T> {
+export interface ShippingRequestOptions<T = object> extends RequestOptions<T> {
     methodId?: string;
 }
 
@@ -30,7 +30,7 @@ export interface ShippingRequestOptions<T = {}> extends RequestOptions<T> {
  * need to provide additional information in order to initialize the shipping
  * step of checkout.
  */
-export interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptions<T> {
+export interface ShippingInitializeOptions<T = object> extends ShippingRequestOptions<T> {
     /**
      * The options that are required to initialize the shipping step of checkout
      * when using AmazonPayV2.

@@ -1,23 +1,24 @@
 {
-    "root": "packages/bigcommerce-payments-utils",
+    "name": "bigcommerce-payments-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/bigcommerce-payments-utils/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/bigcommerce-payments-utils/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/bigcommerce-payments-utils"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/bigcommerce-payments-utils"],
             "options": {
                 "jestConfig": "packages/bigcommerce-payments-utils/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

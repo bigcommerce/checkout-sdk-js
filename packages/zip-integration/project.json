@@ -1,23 +1,24 @@
 {
-    "root": "packages/zip-integration",
+    "name": "zip-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/zip-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/zip-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/zip-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/zip-integration"],
             "options": {
                 "jestConfig": "packages/zip-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

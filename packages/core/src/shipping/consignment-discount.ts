@@ -4,7 +4,7 @@ interface ConsignmentDiscountBase<T> {
     type: T;
 }
 
-interface ConsignmentAutomaticDiscount extends ConsignmentDiscountBase<'AUTOMATIC'> {}
+type ConsignmentAutomaticDiscount = ConsignmentDiscountBase<'AUTOMATIC'>;
 
 interface ConsignmentCouponDiscount extends ConsignmentDiscountBase<'COUPON'> {
     couponId: number;

@@ -114,9 +114,9 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
                 return [];
             }
 
-            const assignedLineItemIds = (getConsignments() || []).reduce(
+            const assignedLineItemIds = (getConsignments() || []).reduce<string[]>(
                 (itemIds, consignment) => itemIds.concat(consignment.lineItemIds),
-                [] as string[],
+                [],
             );
 
             return (cart.lineItems.physicalItems || []).filter(

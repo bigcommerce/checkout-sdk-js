@@ -13,13 +13,13 @@ const DEFAULT_RESPONSE = {
  * any server response into a JS error object.
  */
 export default class RequestError<TBody = any> extends StandardError {
-    body: TBody | {};
+    body: TBody | object;
     headers: { [key: string]: any };
     errors: Array<{ code: string; message?: string }>;
     status: number;
 
     constructor(
-        response?: Response<TBody | {}>,
+        response?: Response<TBody | object>,
         {
             message,
             errors,

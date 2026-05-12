@@ -1,22 +1,23 @@
 {
-    "root": "packages/offline-integration",
+    "name": "offline-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/offline-integration/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/offline-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/offline-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/offline-integration"],
             "options": {
                 "jestConfig": "packages/offline-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

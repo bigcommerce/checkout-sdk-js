@@ -1,23 +1,24 @@
 {
-    "root": "packages/cardinal-integration",
+    "name": "cardinal-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/cardinal-integration/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/cardinal-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/cardinal-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/cardinal-integration"],
             "options": {
                 "jestConfig": "packages/cardinal-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }

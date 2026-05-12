@@ -33,11 +33,11 @@ export default class HostedInputAggregator {
     }
 
     getInputValues(filter?: (field: HostedInput) => boolean): HostedInputValues {
-        return this.getInputs(filter).reduce((result, input) => {
+        return this.getInputs(filter).reduce<HostedInputValues>((result, input) => {
             return {
                 ...result,
                 [input.getType()]: input.getValue(),
             };
-        }, {} as HostedInputValues);
+        }, {});
     }
 }

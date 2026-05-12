@@ -41,7 +41,7 @@ describe('HostedAutocompleteFieldset', () => {
 
         expect(input.style.opacity).toBe('0');
         expect(input.style.position).toBe('absolute');
-        expect(input.tabIndex).toEqual(-1);
+        expect(input.tabIndex).toBe(-1);
     });
 
     it('configures autocomplete property based on field type', () => {

@@ -439,7 +439,8 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
         // that does not require api calls first
         if (
             !!braintreePaymentProviderCustomer &&
-            braintreePaymentProviderCustomer !== BraintreeFastlaneAuthenticationState.CANCELED
+            braintreePaymentProviderCustomer?.authenticationState !==
+                BraintreeFastlaneAuthenticationState.CANCELED
         ) {
             const paymentMethod = await this._getBraintreePaymentMethodOrThrow(methodId);
 

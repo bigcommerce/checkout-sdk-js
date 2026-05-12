@@ -1,24 +1,19 @@
 {
-  "extends": "@nrwl/workspace/presets/core.json",
-  "npmScope": "@bigcommerce/checkout-sdk",
-  "affected": {
+    "$schema": "./node_modules/nx/schemas/nx-schema.json",
+    "targetDefaults": {
+        "build": {
+            "cache": true
+        },
+        "build-watch": {
+            "cache": true
+        },
+        "lint": {
+            "cache": true
+        },
+        "test": {
+            "cache": true
+        }
+    },
+    "parallel": 5,
     "defaultBase": "master"
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/workspace"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "build-watch",
-          "lint",
-          "test"
-        ],
-        "parallel": 5
-      }
-    }
-  }
 }

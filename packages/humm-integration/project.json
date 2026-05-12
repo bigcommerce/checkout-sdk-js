@@ -1,22 +1,23 @@
 {
-    "root": "packages/humm-integration",
+    "name": "humm-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/humm-integration/src",
     "projectType": "library",
+    "tags": ["scope:integration"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/humm-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/humm-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/humm-integration"],
             "options": {
                 "jestConfig": "packages/humm-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:integration"]
+    }
 }

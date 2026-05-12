@@ -14,7 +14,7 @@ export default function mapToInternalLineItems(
     decimalPlaces: number,
     idKey: keyof LineItem = 'id',
 ): InternalLineItem[] {
-    return (Object.keys(itemMap) as Array<keyof LineItemMap>).reduce(
+    return (Object.keys(itemMap) as Array<keyof LineItemMap>).reduce<InternalLineItem[]>(
         (result, key) => [
             ...result,
             ...(itemMap[key] as LineItem[]).map((item: any) => {
@@ -30,7 +30,7 @@ export default function mapToInternalLineItems(
                 );
             }),
         ],
-        [] as InternalLineItem[],
+        [],
     );
 }
 

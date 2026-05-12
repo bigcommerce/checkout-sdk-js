@@ -1,22 +1,23 @@
 {
-    "root": "packages/no-payment-integration",
+    "name": "no-payment-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/no-payment-integration/src",
     "projectType": "library",
+    "tags": ["scope:shared"],
     "targets": {
         "lint": {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/eslint:lint",
             "outputs": ["{options.outputFile}"],
             "options": {
                 "lintFilePatterns": ["packages/no-payment-integration/**/*.ts"]
             }
         },
         "test": {
-            "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/no-payment-integration"],
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/no-payment-integration"],
             "options": {
                 "jestConfig": "packages/no-payment-integration/jest.config.js"
             }
         }
-    },
-    "tags": ["scope:shared"]
+    }
 }
