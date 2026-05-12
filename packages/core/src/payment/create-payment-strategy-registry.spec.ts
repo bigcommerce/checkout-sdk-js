@@ -8,7 +8,6 @@ import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { PPSDKStrategy } from './strategies/ppsdk';
-import { WepayPaymentStrategy } from './strategies/wepay';
 
 describe('CreatePaymentStrategyRegistry', () => {
     let registry: PaymentStrategyRegistry;
@@ -29,12 +28,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
 
         expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
-    });
-
-    it('can instantiate wepay', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.WE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(WepayPaymentStrategy);
     });
 
     it('can instantiate ppsdk', () => {

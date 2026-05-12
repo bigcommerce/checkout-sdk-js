@@ -55,7 +55,6 @@ enum PaymentStrategyType {
     BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',
     BRAINTREE_VISA_CHECKOUT = 'braintreevisacheckout',
     BRAINTREE_GOOGLE_PAY = 'googlepaybraintree',
-    WE_PAY = 'wepay',
     WORLDPAYACCESS = 'worldpayaccess',
     WORLDPAYACCESS_GOOGLE_PAY = 'googlepayworldpayaccess',
     STRIPE_GOOGLE_PAY = 'googlepaystripe',

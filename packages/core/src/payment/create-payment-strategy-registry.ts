@@ -1,6 +1,6 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { BrowserStorage } from '../common/storage';
@@ -20,7 +20,6 @@ import {
     PaymentResumer,
     PPSDKStrategy,
 } from './strategies/ppsdk';
-import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
@@ -31,7 +30,6 @@ export default function createPaymentStrategyRegistry(
         defaultToken: PaymentStrategyType.CREDIT_CARD,
     });
 
-    const scriptLoader = getScriptLoader();
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
@@ -80,18 +78,6 @@ export default function createPaymentStrategyRegistry(
                 ),
                 new PaymentResumer(requestSender, stepHandler),
                 new BrowserStorage('PPSDK'),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.WE_PAY,
-        () =>
-            new WepayPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                new WepayRiskClient(scriptLoader),
             ),
     );
 

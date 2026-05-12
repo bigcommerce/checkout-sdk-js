@@ -368,24 +368,6 @@ export function getSquare(): PaymentMethod {
     };
 }
 
-export function getWepay(): PaymentMethod {
-    return {
-        id: 'wepay',
-        logoUrl: '',
-        method: 'credit-card',
-        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
-        config: {
-            displayName: 'Credit Card',
-            enablePaypal: false,
-            merchantId: '',
-            testMode: true,
-            isVisaCheckoutEnabled: false,
-        },
-        type: 'PAYMENT_TYPE_API',
-        skipRedirectConfirmationAlert: false,
-    };
-}
-
 export function getGooglePay(): PaymentMethod {
     return {
         id: 'googlepay',
