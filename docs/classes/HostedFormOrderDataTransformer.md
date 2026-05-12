@@ -16,13 +16,17 @@
 
 ### constructor
 
-• **new HostedFormOrderDataTransformer**(`_store`)
+• **new HostedFormOrderDataTransformer**(`_store`): [`HostedFormOrderDataTransformer`](HostedFormOrderDataTransformer.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_store` | [`ReadableCheckoutStore`](../README.md#readablecheckoutstore) |
+
+#### Returns
+
+[`HostedFormOrderDataTransformer`](HostedFormOrderDataTransformer.md)
 
 ## Methods
 

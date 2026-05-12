@@ -6,19 +6,19 @@
 
 ### Properties
 
-- [HOSTED_INPUT%3AATTACH_FAILED](HostedInputEventMap.md#hosted_input:attach_failed)
-- [HOSTED_INPUT%3AATTACH_SUCCEEDED](HostedInputEventMap.md#hosted_input:attach_succeeded)
-- [HOSTED_INPUT%3ABIN_CHANGED](HostedInputEventMap.md#hosted_input:bin_changed)
-- [HOSTED_INPUT%3ABLURRED](HostedInputEventMap.md#hosted_input:blurred)
-- [HOSTED_INPUT%3ACARD_TYPE_CHANGED](HostedInputEventMap.md#hosted_input:card_type_changed)
-- [HOSTED_INPUT%3ACHANGED](HostedInputEventMap.md#hosted_input:changed)
-- [HOSTED_INPUT%3AENTERED](HostedInputEventMap.md#hosted_input:entered)
-- [HOSTED_INPUT%3AFOCUSED](HostedInputEventMap.md#hosted_input:focused)
-- [HOSTED_INPUT%3ASTORED_CARD_FAILED](HostedInputEventMap.md#hosted_input:stored_card_failed)
-- [HOSTED_INPUT%3ASTORED_CARD_SUCCEEDED](HostedInputEventMap.md#hosted_input:stored_card_succeeded)
-- [HOSTED_INPUT%3ASUBMIT_FAILED](HostedInputEventMap.md#hosted_input:submit_failed)
-- [HOSTED_INPUT%3ASUBMIT_SUCCEEDED](HostedInputEventMap.md#hosted_input:submit_succeeded)
-- [HOSTED_INPUT%3AVALIDATED](HostedInputEventMap.md#hosted_input:validated)
+- [HOSTED\_INPUT:ATTACH\_FAILED](HostedInputEventMap.md#hosted_input:attach_failed)
+- [HOSTED\_INPUT:ATTACH\_SUCCEEDED](HostedInputEventMap.md#hosted_input:attach_succeeded)
+- [HOSTED\_INPUT:BIN\_CHANGED](HostedInputEventMap.md#hosted_input:bin_changed)
+- [HOSTED\_INPUT:BLURRED](HostedInputEventMap.md#hosted_input:blurred)
+- [HOSTED\_INPUT:CARD\_TYPE\_CHANGED](HostedInputEventMap.md#hosted_input:card_type_changed)
+- [HOSTED\_INPUT:CHANGED](HostedInputEventMap.md#hosted_input:changed)
+- [HOSTED\_INPUT:ENTERED](HostedInputEventMap.md#hosted_input:entered)
+- [HOSTED\_INPUT:FOCUSED](HostedInputEventMap.md#hosted_input:focused)
+- [HOSTED\_INPUT:STORED\_CARD\_FAILED](HostedInputEventMap.md#hosted_input:stored_card_failed)
+- [HOSTED\_INPUT:STORED\_CARD\_SUCCEEDED](HostedInputEventMap.md#hosted_input:stored_card_succeeded)
+- [HOSTED\_INPUT:SUBMIT\_FAILED](HostedInputEventMap.md#hosted_input:submit_failed)
+- [HOSTED\_INPUT:SUBMIT\_SUCCEEDED](HostedInputEventMap.md#hosted_input:submit_succeeded)
+- [HOSTED\_INPUT:VALIDATED](HostedInputEventMap.md#hosted_input:validated)
 
 ## Properties
 

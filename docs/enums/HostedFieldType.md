@@ -17,34 +17,34 @@
 
 ### CardCode
 
-• **CardCode**
+• **CardCode** = ``"cardCode"``
 
 ___
 
 ### CardCodeVerification
 
-• **CardCodeVerification**
+• **CardCodeVerification** = ``"cardCodeVerification"``
 
 ___
 
 ### CardExpiry
 
-• **CardExpiry**
+• **CardExpiry** = ``"cardExpiry"``
 
 ___
 
 ### CardName
 
-• **CardName**
+• **CardName** = ``"cardName"``
 
 ___
 
 ### CardNumber
 
-• **CardNumber**
+• **CardNumber** = ``"cardNumber"``
 
 ___
 
 ### CardNumberVerification
 
-• **CardNumberVerification**
+• **CardNumberVerification** = ``"cardNumberVerification"``

@@ -32,7 +32,7 @@ The ID of a container which the checkout button should be inserted into.
 
 ### onClick
 
-▸ `Optional` **onClick**(): `void`
+▸ **onClick**(): `void`
 
 A callback that gets called when wallet button clicked
 
@@ -44,7 +44,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error`): `void`
+▸ **onError**(`error`): `void`
 
 A callback that gets called on any error instead of submit payment or authorization errors.
 

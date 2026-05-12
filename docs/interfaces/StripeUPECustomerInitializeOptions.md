@@ -46,13 +46,13 @@ The identifier of the payment method.
 
 ### getStyles
 
-▸ `Optional` **getStyles**(): `undefined` \| { [key: string]: `string`;  }
+▸ **getStyles**(): `undefined` \| \{ `[key: string]`: `string`;  }
 
 get styles from store theme
 
 #### Returns
 
-`undefined` \| { [key: string]: `string`;  }
+`undefined` \| \{ `[key: string]`: `string`;  }
 
 ___
 

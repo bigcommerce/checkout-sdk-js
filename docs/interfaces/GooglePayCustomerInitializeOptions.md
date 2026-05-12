@@ -56,7 +56,7 @@ the GooglePay wallet modal by clicking on a button. It should be an HTML element
 
 ### onClick
 
-▸ `Optional` **onClick**(): `void`
+▸ **onClick**(): `void`
 
 Callback that get called on wallet button click
 
@@ -68,7 +68,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error`): `void`
+▸ **onError**(`error`): `void`
 
 A callback that gets called when GooglePay fails to initialize or
 selects a payment option.

@@ -23,7 +23,7 @@
 
 ### onActionHandled
 
-▸ `Optional` **onActionHandled**(): `void`
+▸ **onActionHandled**(): `void`
 
 A callback that gets called when an action, for example a QR code or 3D Secure 2 authentication screen, is shown to the shopper
 
@@ -35,7 +35,7 @@ ___
 
 ### onBeforeLoad
 
-▸ `Optional` **onBeforeLoad**(`shopperInteraction?`): `void`
+▸ **onBeforeLoad**(`shopperInteraction?`): `void`
 
 A callback that gets called before adyen component is loaded
 
@@ -53,7 +53,7 @@ ___
 
 ### onComplete
 
-▸ `Optional` **onComplete**(): `void`
+▸ **onComplete**(): `void`
 
 A callback that gets called when adyen component verification
 is completed
@@ -66,7 +66,7 @@ ___
 
 ### onLoad
 
-▸ `Optional` **onLoad**(`cancel?`): `void`
+▸ **onLoad**(`cancel?`): `void`
 
 A callback that gets called when adyen component is loaded
 

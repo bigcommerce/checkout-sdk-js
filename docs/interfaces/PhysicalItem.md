@@ -128,7 +128,7 @@ ___
 
 ### discounts
 
-• **discounts**: { `discountedAmount`: `number` ; `name`: `string`  }[]
+• **discounts**: \{ `discountedAmount`: `number` ; `name`: `string`  }[]
 
 #### Inherited from
 

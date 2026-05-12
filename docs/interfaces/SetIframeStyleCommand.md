@@ -19,7 +19,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `style` | `Object` |
+| `style` | \{ `[key: string]`: `string` \| `number` \| ``null``;  } |
 
 ___
 

@@ -616,7 +616,7 @@ declare interface PaypalStyleOptions {
 /**
  * A set of options for configuring an asynchronous request.
  */
-declare interface RequestOptions<TParams = {}> {
+declare interface RequestOptions<TParams = object> {
     /**
      * Provide this option if you want to cancel or time out the request. If the
      * timeout object completes before the request, the request will be

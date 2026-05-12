@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / ConsignmentDiscountBase
 
-# Interface: ConsignmentDiscountBase<T\>
+# Interface: ConsignmentDiscountBase\<T\>
 
 ## Type parameters
 
@@ -11,8 +11,6 @@
 ## Hierarchy
 
 - **`ConsignmentDiscountBase`**
-
-  ↳ [`ConsignmentAutomaticDiscount`](ConsignmentAutomaticDiscount.md)
 
   ↳ [`ConsignmentCouponDiscount`](ConsignmentCouponDiscount.md)
 

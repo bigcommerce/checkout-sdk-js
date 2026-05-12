@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) / StyleButtonLabel_2
+[@bigcommerce/checkout-sdk](../README.md) / StyleButtonLabel\_2
 
 # Enumeration: StyleButtonLabel\_2
 
@@ -16,28 +16,28 @@
 
 ### buynow
 
-• **buynow**
+• **buynow** = ``"buynow"``
 
 ___
 
 ### checkout
 
-• **checkout**
+• **checkout** = ``"checkout"``
 
 ___
 
 ### installment
 
-• **installment**
+• **installment** = ``"installment"``
 
 ___
 
 ### pay
 
-• **pay**
+• **pay** = ``"pay"``
 
 ___
 
 ### paypal
 
-• **paypal**
+• **paypal** = ``"paypal"``

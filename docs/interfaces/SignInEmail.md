@@ -7,7 +7,7 @@
 ### Properties
 
 - [expiry](SignInEmail.md#expiry)
-- [sent_email](SignInEmail.md#sent_email)
+- [sent\_email](SignInEmail.md#sent_email)
 
 ## Properties
 

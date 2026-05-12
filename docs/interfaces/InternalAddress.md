@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / InternalAddress
 
-# Interface: InternalAddress<T\>
+# Interface: InternalAddress\<T\>
 
 ## Type parameters
 
@@ -68,7 +68,7 @@ ___
 
 ### customFields
 
-• **customFields**: { `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
+• **customFields**: \{ `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
 
 ___
 

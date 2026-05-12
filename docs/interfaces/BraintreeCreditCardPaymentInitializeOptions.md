@@ -41,7 +41,6 @@ ___
 
 • `Optional` **form**: `BraintreeFormOptions`
 
-**`alpha`**
 Please note that this option is currently in an early stage of
 development. Therefore the API is unstable and not ready for public
 consumption.
@@ -81,7 +80,7 @@ List of credit cards brands:
 
 ### onError
 
-▸ `Optional` **onError**(`error`): `void`
+▸ **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 
@@ -99,7 +98,7 @@ ___
 
 ### onPaymentError
 
-▸ `Optional` **onPaymentError**(`error`): `void`
+▸ **onPaymentError**(`error`): `void`
 
 A callback that gets called if unable to submit payment.
 
@@ -117,7 +116,7 @@ ___
 
 ### onRenderButton
 
-▸ `Optional` **onRenderButton**(): `void`
+▸ **onRenderButton**(): `void`
 
 A callback right before render Smart Payment Button that gets called when
 Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
@@ -130,7 +129,7 @@ ___
 
 ### submitForm
 
-▸ `Optional` **submitForm**(): `void`
+▸ **submitForm**(): `void`
 
 A callback for submitting payment form that gets called
 when buyer approved PayPal account.

@@ -16,13 +16,17 @@
 
 ### constructor
 
-• **new HostedFormFactory**(`_store`)
+• **new HostedFormFactory**(`_store`): [`HostedFormFactory`](HostedFormFactory.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_store` | [`ReadableCheckoutStore`](../README.md#readablecheckoutstore) |
+
+#### Returns
+
+[`HostedFormFactory`](HostedFormFactory.md)
 
 ## Methods
 

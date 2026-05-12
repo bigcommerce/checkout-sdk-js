@@ -15,22 +15,22 @@
 
 ### LARGE
 
-• **LARGE**
+• **LARGE** = ``"large"``
 
 ___
 
 ### MEDIUM
 
-• **MEDIUM**
+• **MEDIUM** = ``"medium"``
 
 ___
 
 ### RESPONSIVE
 
-• **RESPONSIVE**
+• **RESPONSIVE** = ``"responsive"``
 
 ___
 
 ### SMALL
 
-• **SMALL**
+• **SMALL** = ``"small"``

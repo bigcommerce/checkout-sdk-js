@@ -26,13 +26,17 @@ for example, product prices or eligible discounts have changed.
 
 ### constructor
 
-• **new CartConsistencyError**(`message?`)
+• **new CartConsistencyError**(`message?`): [`CartConsistencyError`](CartConsistencyError.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `message?` | `string` |
+
+#### Returns
+
+[`CartConsistencyError`](CartConsistencyError.md)
 
 #### Overrides
 

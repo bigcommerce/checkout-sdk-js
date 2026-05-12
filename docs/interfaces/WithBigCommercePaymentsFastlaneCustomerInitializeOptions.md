@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [bigcommerce_payments_fastlane](WithBigCommercePaymentsFastlaneCustomerInitializeOptions.md#bigcommerce_payments_fastlane)
+- [bigcommerce\_payments\_fastlane](WithBigCommercePaymentsFastlaneCustomerInitializeOptions.md#bigcommerce_payments_fastlane)
 
 ## Properties
 

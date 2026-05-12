@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [browser_info](CreditCardInstrument.md#browser_info)
+- [browser\_info](CreditCardInstrument.md#browser_info)
 - [ccCustomerCode](CreditCardInstrument.md#cccustomercode)
 - [ccCvv](CreditCardInstrument.md#cccvv)
 - [ccExpiry](CreditCardInstrument.md#ccexpiry)

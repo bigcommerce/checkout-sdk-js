@@ -16,28 +16,28 @@
 
 ### ReRenderShippingForm
 
-• **ReRenderShippingForm**
+• **ReRenderShippingForm** = ``"EXTENSION:RE_RENDER_SHIPPING_FORM"``
 
 ___
 
 ### ReRenderShippingStep
 
-• **ReRenderShippingStep**
+• **ReRenderShippingStep** = ``"EXTENSION:RE_RENDER_SHIPPING_STEP"``
 
 ___
 
 ### ReloadCheckout
 
-• **ReloadCheckout**
+• **ReloadCheckout** = ``"EXTENSION:RELOAD_CHECKOUT"``
 
 ___
 
 ### SetIframeStyle
 
-• **SetIframeStyle**
+• **SetIframeStyle** = ``"EXTENSION:SET_IFRAME_STYLE"``
 
 ___
 
 ### ShowLoadingIndicator
 
-• **ShowLoadingIndicator**
+• **ShowLoadingIndicator** = ``"EXTENSION:SHOW_LOADING_INDICATOR"``

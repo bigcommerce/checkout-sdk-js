@@ -17,7 +17,11 @@
 
 ### constructor
 
-• **new CheckoutButtonStatusSelector**()
+• **new CheckoutButtonStatusSelector**(): [`CheckoutButtonStatusSelector`](CheckoutButtonStatusSelector.md)
+
+#### Returns
+
+[`CheckoutButtonStatusSelector`](CheckoutButtonStatusSelector.md)
 
 ## Methods
 

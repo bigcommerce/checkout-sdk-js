@@ -43,7 +43,7 @@ A set of styling options for the checkout button.
 
 ### onComplete
 
-▸ `Optional` **onComplete**(): `void`
+▸ **onComplete**(): `void`
 
 A callback that gets called when payment complete on paypal side.
 
@@ -55,9 +55,9 @@ ___
 
 ### onEligibilityFailure
 
-▸ `Optional` **onEligibilityFailure**(): `void`
+▸ **onEligibilityFailure**(): `void`
 
- A callback that gets called when PayPal SDK restricts to render PayPal component.
+A callback that gets called when PayPal SDK restricts to render PayPal component.
 
 #### Returns
 

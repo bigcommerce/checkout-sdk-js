@@ -65,9 +65,12 @@ ___
 
 • **formFields**: [`FormFields`](FormFields.md)
 
-**`deprecated`** Please use instead the data selectors
+**`Deprecated`**
 
-**`remarks`**
+Please use instead the data selectors
+
+**`Remarks`**
+
 ```js
 const data = CheckoutService.getState().data;
 const shippingAddressFields = data.getShippingAddressFields('US');

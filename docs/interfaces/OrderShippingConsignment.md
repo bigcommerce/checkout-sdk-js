@@ -114,7 +114,7 @@ ___
 
 ### customFields
 
-• **customFields**: { `name`: `string` ; `value`: ``null`` \| `string`  }[]
+• **customFields**: \{ `name`: `string` ; `value`: ``null`` \| `string`  }[]
 
 ___
 
@@ -180,7 +180,7 @@ ___
 
 ### lineItems
 
-• **lineItems**: { `id`: `number`  }[]
+• **lineItems**: \{ `id`: `number`  }[]
 
 ___
 

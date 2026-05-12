@@ -18,7 +18,7 @@
 
 ### constructor
 
-• **new GoogleRecaptcha**(`googleRecaptchaScriptLoader`, `mutationObserverFactory`)
+• **new GoogleRecaptcha**(`googleRecaptchaScriptLoader`, `mutationObserverFactory`): [`GoogleRecaptcha`](GoogleRecaptcha.md)
 
 #### Parameters
 
@@ -27,21 +27,25 @@
 | `googleRecaptchaScriptLoader` | [`GoogleRecaptchaScriptLoader`](GoogleRecaptchaScriptLoader.md) |
 | `mutationObserverFactory` | [`MutationObserverFactory`](MutationObserverFactory.md) |
 
+#### Returns
+
+[`GoogleRecaptcha`](GoogleRecaptcha.md)
+
 ## Methods
 
 ### execute
 
-▸ **execute**(): `Observable`<[`RecaptchaResult`](../interfaces/RecaptchaResult.md)\>
+▸ **execute**(): `Observable`\<[`RecaptchaResult`](../interfaces/RecaptchaResult.md)\>
 
 #### Returns
 
-`Observable`<[`RecaptchaResult`](../interfaces/RecaptchaResult.md)\>
+`Observable`\<[`RecaptchaResult`](../interfaces/RecaptchaResult.md)\>
 
 ___
 
 ### load
 
-▸ **load**(`containerId`, `sitekey`): `Promise`<`void`\>
+▸ **load**(`containerId`, `sitekey`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -52,7 +56,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 

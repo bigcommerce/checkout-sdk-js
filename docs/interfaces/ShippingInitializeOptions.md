@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / ShippingInitializeOptions
 
-# Interface: ShippingInitializeOptions<T\>
+# Interface: ShippingInitializeOptions\<T\>
 
 A set of options that are required to initialize the shipping step of the
 current checkout flow.
@@ -15,11 +15,11 @@ step of checkout.
 
 | Name | Type |
 | :------ | :------ |
-| `T` | {} |
+| `T` | `object` |
 
 ## Hierarchy
 
-- [`ShippingRequestOptions`](ShippingRequestOptions.md)<`T`\>
+- [`ShippingRequestOptions`](ShippingRequestOptions.md)\<`T`\>
 
   ↳ **`ShippingInitializeOptions`**
 
@@ -28,7 +28,7 @@ step of checkout.
 ### Properties
 
 - [amazonpay](ShippingInitializeOptions.md#amazonpay)
-- [bigcommerce_payments_fastlane](ShippingInitializeOptions.md#bigcommerce_payments_fastlane)
+- [bigcommerce\_payments\_fastlane](ShippingInitializeOptions.md#bigcommerce_payments_fastlane)
 - [braintreefastlane](ShippingInitializeOptions.md#braintreefastlane)
 - [fastlane](ShippingInitializeOptions.md#fastlane)
 - [methodId](ShippingInitializeOptions.md#methodid)

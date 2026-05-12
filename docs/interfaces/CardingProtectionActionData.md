@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [human_verification_token](CardingProtectionActionData.md#human_verification_token)
+- [human\_verification\_token](CardingProtectionActionData.md#human_verification_token)
 
 ## Properties
 

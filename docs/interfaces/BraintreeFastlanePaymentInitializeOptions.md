@@ -52,15 +52,78 @@ service.initializePayment({
 
 ### Properties
 
-- [styles](BraintreeFastlanePaymentInitializeOptions.md#styles)
-
-### Methods
-
 - [onChange](BraintreeFastlanePaymentInitializeOptions.md#onchange)
 - [onError](BraintreeFastlanePaymentInitializeOptions.md#onerror)
 - [onInit](BraintreeFastlanePaymentInitializeOptions.md#oninit)
+- [styles](BraintreeFastlanePaymentInitializeOptions.md#styles)
 
 ## Properties
+
+### onChange
+
+• `Optional` **onChange**: (`showPayPalCardSelector`: () => `Promise`\<`undefined` \| `CardInstrument`\>) => `void`
+
+Is a callback that shows Braintree stored instruments
+when get triggered
+
+#### Type declaration
+
+▸ (`showPayPalCardSelector`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `showPayPalCardSelector` | () => `Promise`\<`undefined` \| `CardInstrument`\> |
+
+##### Returns
+
+`void`
+
+___
+
+### onError
+
+• `Optional` **onError**: (`error`: `Error`) => `void`
+
+#### Type declaration
+
+▸ (`error`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `Error` |
+
+##### Returns
+
+`void`
+
+___
+
+### onInit
+
+• `Optional` **onInit**: (`renderPayPalComponentMethod`: (`container`: `string`) => `void`) => `void`
+
+Is a callback that takes the CSS selector of a container
+where the Braintree Fastlane form should be inserted into.
+
+#### Type declaration
+
+▸ (`renderPayPalComponentMethod`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `renderPayPalComponentMethod` | (`container`: `string`) => `void` |
+
+##### Returns
+
+`void`
+
+___
 
 ### styles
 
@@ -71,57 +134,3 @@ Is a stylisation options for customizing Braintree Fastlane components
 Note: the styles for all Braintree Fastlane strategies should be the same,
 because they will be provided to PayPal library only for the first strategy initialization
 no matter what strategy was initialised first
-
-## Methods
-
-### onChange
-
-▸ `Optional` **onChange**(`showPayPalCardSelector`): `void`
-
-Is a callback that shows Braintree stored instruments
-when get triggered
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `showPayPalCardSelector` | () => `Promise`<`undefined` \| `CardInstrument`\> |
-
-#### Returns
-
-`void`
-
-___
-
-### onError
-
-▸ `Optional` **onError**(`error`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `error` | `Error` |
-
-#### Returns
-
-`void`
-
-___
-
-### onInit
-
-▸ `Optional` **onInit**(`renderPayPalComponentMethod`): `void`
-
-Is a callback that takes the CSS selector of a container
-where the Braintree Fastlane form should be inserted into.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `renderPayPalComponentMethod` | (`container`: `string`) => `void` |
-
-#### Returns
-
-`void`

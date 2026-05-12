@@ -16,28 +16,28 @@
 
 ### buynow
 
-• **buynow**
+• **buynow** = ``"buynow"``
 
 ___
 
 ### checkout
 
-• **checkout**
+• **checkout** = ``"checkout"``
 
 ___
 
 ### installment
 
-• **installment**
+• **installment** = ``"installment"``
 
 ___
 
 ### pay
 
-• **pay**
+• **pay** = ``"pay"``
 
 ___
 
 ### paypal
 
-• **paypal**
+• **paypal** = ``"paypal"``

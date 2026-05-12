@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [bigcommerce_payments](WithBigCommercePaymentsButtonInitializeOptions.md#bigcommerce_payments)
+- [bigcommerce\_payments](WithBigCommercePaymentsButtonInitializeOptions.md#bigcommerce_payments)
 
 ## Properties
 

@@ -8,7 +8,7 @@ Once Square payment is initialized, an iframed payment element will be
 inserted into the current page. These options provide a location, styling,
 and a callback function that advises when it's safe to pay.
 
-**`example`**
+**`Example`**
 
 ```html
 <!-- These container is where the hosted (iframed) payment method element will be inserted -->
@@ -43,11 +43,8 @@ service.initializePayment({
 ### Properties
 
 - [containerId](SquareV2PaymentInitializeOptions.md#containerid)
-- [style](SquareV2PaymentInitializeOptions.md#style)
-
-### Methods
-
 - [onValidationChange](SquareV2PaymentInitializeOptions.md#onvalidationchange)
+- [style](SquareV2PaymentInitializeOptions.md#style)
 
 ## Properties
 
@@ -56,6 +53,29 @@ service.initializePayment({
 • **containerId**: `string`
 
 The ID of a container which the payment widget should insert into.
+
+___
+
+### onValidationChange
+
+• `Optional` **onValidationChange**: (`isReadyToPay`: `boolean`) => `void`
+
+A callback that gets called when the validity of the
+payment component changes.
+
+#### Type declaration
+
+▸ (`isReadyToPay`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `isReadyToPay` | `boolean` |
+
+##### Returns
+
+`void`
 
 ___
 
@@ -69,22 +89,3 @@ input fields from the card element.
 For more information about applying custom styles to the card form, see
 the available [CardClassSelectors](https://developer.squareup.com/reference/sdks/web/payments/objects/CardClassSelectors)
 for styling.
-
-## Methods
-
-### onValidationChange
-
-▸ `Optional` **onValidationChange**(`isReadyToPay`): `void`
-
-A callback that gets called when the validity of the
-payment component changes.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `isReadyToPay` | `boolean` |
-
-#### Returns
-
-`void`

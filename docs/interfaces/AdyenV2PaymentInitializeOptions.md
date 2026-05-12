@@ -116,7 +116,7 @@ ___
 
 ### options
 
-• `Optional` **options**: [`AdyenIdealComponentOptions`](AdyenIdealComponentOptions.md) \| `Omit`<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"onChange"``\>
+• `Optional` **options**: [`AdyenIdealComponentOptions`](AdyenIdealComponentOptions.md) \| `Omit`\<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"onChange"``\>
 
 Optional. Overwriting the default options
 
@@ -132,7 +132,9 @@ ___
 
 • **threeDS2ContainerId**: `string`
 
-**`deprecated`** The location to insert the Adyen 3DS V2 component.
+**`Deprecated`**
+
+The location to insert the Adyen 3DS V2 component.
 Use additionalActionOptions instead as this property will be removed in the future
 
 ___
@@ -141,7 +143,8 @@ ___
 
 • `Optional` **threeDS2Options**: [`AdyenThreeDS2Options`](AdyenThreeDS2Options.md)
 
-**`deprecated`**
+**`Deprecated`**
+
 Use additionalActionOptions instead as this property will be removed in the future
 
 ## Methods

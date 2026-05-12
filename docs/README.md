@@ -28,12 +28,12 @@
 - [PaypalButtonStyleSizeOption](enums/PaypalButtonStyleSizeOption.md)
 - [RadiusUnit](enums/RadiusUnit.md)
 - [StyleButtonColor](enums/StyleButtonColor.md)
-- [StyleButtonColor_2](enums/StyleButtonColor_2.md)
+- [StyleButtonColor\_2](enums/StyleButtonColor_2.md)
 - [StyleButtonLabel](enums/StyleButtonLabel.md)
-- [StyleButtonLabel_2](enums/StyleButtonLabel_2.md)
+- [StyleButtonLabel\_2](enums/StyleButtonLabel_2.md)
 - [StyleButtonShape](enums/StyleButtonShape.md)
-- [StyleButtonShape_2](enums/StyleButtonShape_2.md)
-- [StyleButtonShape_3](enums/StyleButtonShape_3.md)
+- [StyleButtonShape\_2](enums/StyleButtonShape_2.md)
+- [StyleButtonShape\_3](enums/StyleButtonShape_3.md)
 - [StyleButtonSize](enums/StyleButtonSize.md)
 - [UntrustedShippingCardVerificationType](enums/UntrustedShippingCardVerificationType.md)
 
@@ -123,7 +123,7 @@
 - [BillingAddressRequestBody](interfaces/BillingAddressRequestBody.md)
 - [BillingAddressSelector](interfaces/BillingAddressSelector.md)
 - [BirthDate](interfaces/BirthDate.md)
-- [BirthDate_2](interfaces/BirthDate_2.md)
+- [BirthDate\_2](interfaces/BirthDate_2.md)
 - [BlockElementStyles](interfaces/BlockElementStyles.md)
 - [BlueSnapDirectAPMInitializeOptions](interfaces/BlueSnapDirectAPMInitializeOptions.md)
 - [BlueSnapDirectStyleProps](interfaces/BlueSnapDirectStyleProps.md)
@@ -194,7 +194,6 @@
 - [Consignment](interfaces/Consignment.md)
 - [ConsignmentAssignmentBaseRequestBodyWithAddress](interfaces/ConsignmentAssignmentBaseRequestBodyWithAddress.md)
 - [ConsignmentAssignmentBaseRequestBodyWithShippingAddress](interfaces/ConsignmentAssignmentBaseRequestBodyWithShippingAddress.md)
-- [ConsignmentAutomaticDiscount](interfaces/ConsignmentAutomaticDiscount.md)
 - [ConsignmentCouponDiscount](interfaces/ConsignmentCouponDiscount.md)
 - [ConsignmentCreateRequestBody](interfaces/ConsignmentCreateRequestBody.md)
 - [ConsignmentDiscountBase](interfaces/ConsignmentDiscountBase.md)
@@ -210,7 +209,7 @@
 - [Coupon](interfaces/Coupon.md)
 - [CouponSelector](interfaces/CouponSelector.md)
 - [CreditCardInstrument](interfaces/CreditCardInstrument.md)
-- [CreditCardPaymentInitializeOptions_2](interfaces/CreditCardPaymentInitializeOptions_2.md)
+- [CreditCardPaymentInitializeOptions\_2](interfaces/CreditCardPaymentInitializeOptions_2.md)
 - [CreditCardPlaceHolder](interfaces/CreditCardPlaceHolder.md)
 - [CssProperties](interfaces/CssProperties.md)
 - [Currency](interfaces/Currency.md)
@@ -306,7 +305,7 @@
 - [IframeEventPostOptions](interfaces/IframeEventPostOptions.md)
 - [IndividualCardElementOptions](interfaces/IndividualCardElementOptions.md)
 - [InitCallbackActions](interfaces/InitCallbackActions.md)
-- [InitCallbackActions_2](interfaces/InitCallbackActions_2.md)
+- [InitCallbackActions\_2](interfaces/InitCallbackActions_2.md)
 - [InitiaizedQuery](interfaces/InitiaizedQuery.md)
 - [InitializationStrategy](interfaces/InitializationStrategy.md)
 - [InlineElementStyles](interfaces/InlineElementStyles.md)
@@ -319,7 +318,7 @@
 - [InternalOrderPayment](interfaces/InternalOrderPayment.md)
 - [InventorySettings](interfaces/InventorySettings.md)
 - [Item](interfaces/Item.md)
-- [Item_2](interfaces/Item_2.md)
+- [Item\_2](interfaces/Item_2.md)
 - [LabelStyles](interfaces/LabelStyles.md)
 - [LanguageConfig](interfaces/LanguageConfig.md)
 - [LegacyHostedFormOptions](interfaces/LegacyHostedFormOptions.md)
@@ -350,9 +349,9 @@
 - [OrderShippingConsignmentDiscount](interfaces/OrderShippingConsignmentDiscount.md)
 - [PasswordRequirements](interfaces/PasswordRequirements.md)
 - [PayPalButtonStyleOptions](interfaces/PayPalButtonStyleOptions.md)
-- [PayPalButtonStyleOptions_2](interfaces/PayPalButtonStyleOptions_2.md)
+- [PayPalButtonStyleOptions\_2](interfaces/PayPalButtonStyleOptions_2.md)
 - [PayPalBuyNowInitializeOptions](interfaces/PayPalBuyNowInitializeOptions.md)
-- [PayPalBuyNowInitializeOptions_2](interfaces/PayPalBuyNowInitializeOptions_2.md)
+- [PayPalBuyNowInitializeOptions\_2](interfaces/PayPalBuyNowInitializeOptions_2.md)
 - [PayPalCommerceAlternativeMethodsPaymentOptions](interfaces/PayPalCommerceAlternativeMethodsPaymentOptions.md)
 - [PayPalCommerceAnalyticTrackerService](interfaces/PayPalCommerceAnalyticTrackerService.md)
 - [PayPalCommerceButtonInitializeOptions](interfaces/PayPalCommerceButtonInitializeOptions.md)
@@ -534,6 +533,7 @@
 - [CheckoutIncludeParam](README.md#checkoutincludeparam)
 - [ComparableCheckout](README.md#comparablecheckout)
 - [ConsignmentAssignmentRequestBody](README.md#consignmentassignmentrequestbody)
+- [ConsignmentAutomaticDiscount](README.md#consignmentautomaticdiscount)
 - [ConsignmentDiscount](README.md#consignmentdiscount)
 - [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 - [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
@@ -635,13 +635,13 @@ ___
 
 ### CheckoutIncludeParam
 
-Ƭ **CheckoutIncludeParam**: { [key in CheckoutIncludes]?: boolean }
+Ƭ **CheckoutIncludeParam**: \{ [key in CheckoutIncludes]?: boolean }
 
 ___
 
 ### ComparableCheckout
 
-Ƭ **ComparableCheckout**: `Pick`<[`Checkout`](interfaces/Checkout.md), ``"outstandingBalance"`` \| ``"coupons"`` \| ``"giftCertificates"``\> & { `cart`: `Partial`<[`Cart`](interfaces/Cart.md)\>  }
+Ƭ **ComparableCheckout**: `Pick`\<[`Checkout`](interfaces/Checkout.md), ``"outstandingBalance"`` \| ``"coupons"`` \| ``"giftCertificates"``\> & \{ `cart`: `Partial`\<[`Cart`](interfaces/Cart.md)\>  }
 
 ___
 
@@ -651,9 +651,15 @@ ___
 
 ___
 
+### ConsignmentAutomaticDiscount
+
+Ƭ **ConsignmentAutomaticDiscount**: [`ConsignmentDiscountBase`](interfaces/ConsignmentDiscountBase.md)\<``"AUTOMATIC"``\>
+
+___
+
 ### ConsignmentDiscount
 
-Ƭ **ConsignmentDiscount**: [`ConsignmentAutomaticDiscount`](interfaces/ConsignmentAutomaticDiscount.md) \| [`ConsignmentCouponDiscount`](interfaces/ConsignmentCouponDiscount.md)
+Ƭ **ConsignmentDiscount**: [`ConsignmentAutomaticDiscount`](README.md#consignmentautomaticdiscount) \| [`ConsignmentCouponDiscount`](interfaces/ConsignmentCouponDiscount.md)
 
 ___
 
@@ -733,13 +739,13 @@ ___
 
 ### GuestCredentials
 
-Ƭ **GuestCredentials**: `Partial`<[`Subscriptions`](interfaces/Subscriptions.md)\> & { `email`: `string` ; `id?`: `string`  }
+Ƭ **GuestCredentials**: `Partial`\<[`Subscriptions`](interfaces/Subscriptions.md)\> & \{ `email`: `string` ; `id?`: `string`  }
 
 ___
 
 ### HostedCreditCardInstrument
 
-Ƭ **HostedCreditCardInstrument**: [`Omit`](README.md#omit)<[`CreditCardInstrument`](interfaces/CreditCardInstrument.md), ``"ccExpiry"`` \| ``"ccName"`` \| ``"ccNumber"`` \| ``"ccCvv"``\>
+Ƭ **HostedCreditCardInstrument**: [`Omit`](README.md#omit)\<[`CreditCardInstrument`](interfaces/CreditCardInstrument.md), ``"ccExpiry"`` \| ``"ccName"`` \| ``"ccNumber"`` \| ``"ccCvv"``\>
 
 ___
 
@@ -799,37 +805,37 @@ ___
 
 ### HostedFormErrorsData
 
-Ƭ **HostedFormErrorsData**: `Partial`<`Record`<[`HostedFormErrorDataKeys`](README.md#hostedformerrordatakeys), [`HostedFormErrorData`](interfaces/HostedFormErrorData.md)\>\>
+Ƭ **HostedFormErrorsData**: `Partial`\<`Record`\<[`HostedFormErrorDataKeys`](README.md#hostedformerrordatakeys), [`HostedFormErrorData`](interfaces/HostedFormErrorData.md)\>\>
 
 ___
 
 ### HostedFormEventCallbacks
 
-Ƭ **HostedFormEventCallbacks**: `Pick`<[`LegacyHostedFormOptions`](interfaces/LegacyHostedFormOptions.md), ``"onBlur"`` \| ``"onCardTypeChange"`` \| ``"onFocus"`` \| ``"onEnter"`` \| ``"onValidate"``\>
+Ƭ **HostedFormEventCallbacks**: `Pick`\<[`LegacyHostedFormOptions`](interfaces/LegacyHostedFormOptions.md), ``"onBlur"`` \| ``"onCardTypeChange"`` \| ``"onFocus"`` \| ``"onEnter"`` \| ``"onValidate"``\>
 
 ___
 
 ### HostedInputStyles
 
-Ƭ **HostedInputStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
+Ƭ **HostedInputStyles**: `Partial`\<`Pick`\<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
 
 ___
 
 ### HostedVaultedInstrument
 
-Ƭ **HostedVaultedInstrument**: [`Omit`](README.md#omit)<[`VaultedInstrument`](interfaces/VaultedInstrument.md), ``"ccNumber"`` \| ``"ccCvv"``\>
+Ƭ **HostedVaultedInstrument**: [`Omit`](README.md#omit)\<[`VaultedInstrument`](interfaces/VaultedInstrument.md), ``"ccNumber"`` \| ``"ccCvv"``\>
 
 ___
 
 ### IframeEventMap
 
-Ƭ **IframeEventMap**<`TType`\>: { [key in TType]: IframeEvent<TType\> }
+Ƭ **IframeEventMap**\<`TType`\>: \{ [key in TType]: IframeEvent\<TType\> }
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `TType` | extends `string` \| `number` \| `symbol``string` |
+| `TType` | extends `string` \| `number` \| `symbol` = `string` |
 
 ___
 
@@ -847,7 +853,7 @@ ___
 
 ### Omit
 
-Ƭ **Omit**<`T`, `K`\>: `Pick`<`T`, `Exclude`<keyof `T`, `K`\>\>
+Ƭ **Omit**\<`T`, `K`\>: `Pick`\<`T`, `Exclude`\<keyof `T`, `K`\>\>
 
 #### Type parameters
 
@@ -896,7 +902,7 @@ ___
 
 ### ReadableCheckoutStore
 
-Ƭ **ReadableCheckoutStore**: `ReadableDataStore`<[`InternalCheckoutSelectors`](interfaces/InternalCheckoutSelectors.md)\>
+Ƭ **ReadableCheckoutStore**: `ReadableDataStore`\<[`InternalCheckoutSelectors`](interfaces/InternalCheckoutSelectors.md)\>
 
 ___
 
@@ -908,7 +914,7 @@ ___
 
 ### WithGooglePayButtonInitializeOptions
 
-Ƭ **WithGooglePayButtonInitializeOptions**: { [k in GooglePayKey]?: GooglePayButtonInitializeOptions }
+Ƭ **WithGooglePayButtonInitializeOptions**: \{ [k in GooglePayKey]?: GooglePayButtonInitializeOptions }
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
@@ -917,7 +923,7 @@ ___
 
 ### WithGooglePayCustomerInitializeOptions
 
-Ƭ **WithGooglePayCustomerInitializeOptions**: { [k in GooglePayKey]?: GooglePayCustomerInitializeOptions }
+Ƭ **WithGooglePayCustomerInitializeOptions**: \{ [k in GooglePayKey]?: GooglePayCustomerInitializeOptions }
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
@@ -926,7 +932,7 @@ ___
 
 ### WithGooglePayPaymentInitializeOptions
 
-Ƭ **WithGooglePayPaymentInitializeOptions**: { [k in GooglePayKey]?: GooglePayPaymentInitializeOptions }
+Ƭ **WithGooglePayPaymentInitializeOptions**: \{ [k in GooglePayKey]?: GooglePayPaymentInitializeOptions }
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
@@ -938,14 +944,6 @@ They can be omitted unless you need to support GooglePay.
 ▸ **createBodlService**(`subscribe`): [`BodlService`](interfaces/BodlService.md)
 
 Creates an instance of `BodlService`.
-
-**`remarks`**
-
-```js
-const bodlService = BodlService();
-bodlService.checkoutBegin();
-
-```
 
 #### Parameters
 
@@ -959,6 +957,14 @@ bodlService.checkoutBegin();
 
 an instance of `BodlService`.
 
+**`Remarks`**
+
+```js
+const bodlService = BodlService();
+bodlService.checkoutBegin();
+
+```
+
 ___
 
 ### createBraintreeAnalyticTracker
@@ -966,18 +972,6 @@ ___
 ▸ **createBraintreeAnalyticTracker**(`checkoutService`): [`BraintreeAnalyticTrackerService`](interfaces/BraintreeAnalyticTrackerService.md)
 
 Creates an instance of `BraintreeAnalyticTrackerService`.
-
-**`remarks`**
-```js
-const checkoutService = createCheckoutService();
-await checkoutService.loadCheckout();
-const braintreeAnalyticTracker = createBraintreeAnalyticTracker(checkoutService);
-
-braintreeAnalyticTracker.customerPaymentMethodExecuted();
-braintreeAnalyticTracker.paymentComplete();
-braintreeAnalyticTracker.selectedPaymentMethod('applepay');
-braintreeAnalyticTracker.walletButtonClick('paypal');
-```
 
 #### Parameters
 
@@ -991,6 +985,19 @@ braintreeAnalyticTracker.walletButtonClick('paypal');
 
 an instance of `BraintreeAnalyticTrackerService`.
 
+**`Remarks`**
+
+```js
+const checkoutService = createCheckoutService();
+await checkoutService.loadCheckout();
+const braintreeAnalyticTracker = createBraintreeAnalyticTracker(checkoutService);
+
+braintreeAnalyticTracker.customerPaymentMethodExecuted();
+braintreeAnalyticTracker.paymentComplete();
+braintreeAnalyticTracker.selectedPaymentMethod('applepay');
+braintreeAnalyticTracker.walletButtonClick('paypal');
+```
+
 ___
 
 ### createCheckoutButtonInitializer
@@ -998,23 +1005,6 @@ ___
 ▸ **createCheckoutButtonInitializer**(`options?`): [`CheckoutButtonInitializer`](classes/CheckoutButtonInitializer.md)
 
 Creates an instance of `CheckoutButtonInitializer`.
-
-**`remarks`**
-```js
-const initializer = createCheckoutButtonInitializer();
-
-initializer.initializeButton({
-    methodId: 'braintreepaypal',
-    braintreepaypal: {
-        container: '#checkoutButton',
-    },
-});
-```
-
-**`alpha`**
-Please note that `CheckoutButtonInitializer` is currently in an early stage
-of development. Therefore the API is unstable and not ready for public
-consumption.
 
 #### Parameters
 
@@ -1028,6 +1018,23 @@ consumption.
 
 an instance of `CheckoutButtonInitializer`.
 
+**`Remarks`**
+
+```js
+const initializer = createCheckoutButtonInitializer();
+
+initializer.initializeButton({
+    methodId: 'braintreepaypal',
+    braintreepaypal: {
+        container: '#checkoutButton',
+    },
+});
+```
+
+Please note that `CheckoutButtonInitializer` is currently in an early stage
+of development. Therefore the API is unstable and not ready for public
+consumption.
+
 ___
 
 ### createCheckoutService
@@ -1035,17 +1042,6 @@ ___
 ▸ **createCheckoutService**(`options?`): [`CheckoutService`](classes/CheckoutService.md)
 
 Creates an instance of `CheckoutService`.
-
-**`remarks`**
-```js
-const service = createCheckoutService();
-
-service.subscribe(state => {
-    console.log(state);
-});
-
-service.loadCheckout();
-```
 
 #### Parameters
 
@@ -1059,6 +1055,18 @@ service.loadCheckout();
 
 an instance of `CheckoutService`.
 
+**`Remarks`**
+
+```js
+const service = createCheckoutService();
+
+service.subscribe(state => {
+    console.log(state);
+});
+
+service.loadCheckout();
+```
+
 ___
 
 ### createCurrencyService
@@ -1066,17 +1074,6 @@ ___
 ▸ **createCurrencyService**(`config`): [`CurrencyService`](classes/CurrencyService.md)
 
 Creates an instance of `CurrencyService`.
-
-**`remarks`**
-```js
-const { data } = checkoutService.getState();
-const config = data.getConfig();
-const checkout = data.getCheckout();
-const currencyService = createCurrencyService(config);
-
-currencyService.toStoreCurrency(checkout.grandTotal);
-currencyService.toCustomerCurrency(checkout.grandTotal);
-```
 
 #### Parameters
 
@@ -1090,6 +1087,18 @@ currencyService.toCustomerCurrency(checkout.grandTotal);
 
 an instance of `CurrencyService`.
 
+**`Remarks`**
+
+```js
+const { data } = checkoutService.getState();
+const config = data.getConfig();
+const checkout = data.getCheckout();
+const currencyService = createCurrencyService(config);
+
+currencyService.toStoreCurrency(checkout.grandTotal);
+currencyService.toCustomerCurrency(checkout.grandTotal);
+```
+
 ___
 
 ### createEmbeddedCheckoutMessenger
@@ -1098,7 +1107,20 @@ ___
 
 Create an instance of `EmbeddedCheckoutMessenger`.
 
-**`remarks`**
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`EmbeddedCheckoutMessengerOptions`](interfaces/EmbeddedCheckoutMessengerOptions.md) | Options for creating `EmbeddedCheckoutMessenger` |
+
+#### Returns
+
+[`EmbeddedCheckoutMessenger`](interfaces/EmbeddedCheckoutMessenger.md)
+
+- An instance of `EmbeddedCheckoutMessenger`
+
+**`Remarks`**
+
 The object is responsible for posting messages to the parent window from the
 iframe when certain events have occurred. For example, when the checkout
 form is first loaded, you should notify the parent window about it.
@@ -1113,21 +1135,8 @@ const messenger = createEmbeddedCheckoutMessenger({
 messenger.postFrameLoaded();
 ```
 
-**`alpha`**
 Please note that this feature is currently in an early stage of development.
 Therefore the API is unstable and not ready for public consumption.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `options` | [`EmbeddedCheckoutMessengerOptions`](interfaces/EmbeddedCheckoutMessengerOptions.md) | Options for creating `EmbeddedCheckoutMessenger` |
-
-#### Returns
-
-[`EmbeddedCheckoutMessenger`](interfaces/EmbeddedCheckoutMessenger.md)
-
-- An instance of `EmbeddedCheckoutMessenger`
 
 ___
 
@@ -1137,25 +1146,26 @@ ___
 
 Creates an instance of `LanguageService`.
 
-**`remarks`**
-```js
-const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
-const service = createLanguageService(language);
-
-console.log(service.translate('address.city_label'));
-```
-
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `config?` | `Partial`<[`LanguageConfig`](interfaces/LanguageConfig.md)\> | A configuration object. |
+| `config?` | `Partial`\<[`LanguageConfig`](interfaces/LanguageConfig.md)\> | A configuration object. |
 
 #### Returns
 
 [`LanguageService`](classes/LanguageService.md)
 
 An instance of `LanguageService`.
+
+**`Remarks`**
+
+```js
+const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
+const service = createLanguageService(language);
+
+console.log(service.translate('address.city_label'));
+```
 
 ___
 
@@ -1164,18 +1174,6 @@ ___
 ▸ **createPayPalCommerceAnalyticTracker**(`checkoutService`): [`PayPalCommerceAnalyticTrackerService`](interfaces/PayPalCommerceAnalyticTrackerService.md)
 
 Creates an instance of `PayPalCommerceAnalyticTrackerService`.
-
-**`remarks`**
-```js
-const checkoutService = createCheckoutService();
-await checkoutService.loadCheckout();
-const paypalCommerceAnalyticTracker = createPayPalCommerceAnalyticTracker(checkoutService);
-
-paypalCommerceAnalyticTracker.customerPaymentMethodExecuted();
-paypalCommerceAnalyticTracker.paymentComplete();
-paypalCommerceAnalyticTracker.selectedPaymentMethod('applepay');
-paypalCommerceAnalyticTracker.walletButtonClick('paypal');
-```
 
 #### Parameters
 
@@ -1189,6 +1187,19 @@ paypalCommerceAnalyticTracker.walletButtonClick('paypal');
 
 an instance of `PayPalCommerceAnalyticTrackerService`.
 
+**`Remarks`**
+
+```js
+const checkoutService = createCheckoutService();
+await checkoutService.loadCheckout();
+const paypalCommerceAnalyticTracker = createPayPalCommerceAnalyticTracker(checkoutService);
+
+paypalCommerceAnalyticTracker.customerPaymentMethodExecuted();
+paypalCommerceAnalyticTracker.paymentComplete();
+paypalCommerceAnalyticTracker.selectedPaymentMethod('applepay');
+paypalCommerceAnalyticTracker.walletButtonClick('paypal');
+```
+
 ___
 
 ### createStepTracker
@@ -1196,15 +1207,6 @@ ___
 ▸ **createStepTracker**(`checkoutService`, `stepTrackerConfig?`): [`StepTracker`](interfaces/StepTracker.md)
 
 Creates an instance of `StepTracker`.
-
-**`remarks`**
-```js
-const checkoutService = createCheckoutService();
-await checkoutService.loadCheckout();
-const stepTracker = createStepTracker(checkoutService);
-
-stepTracker.trackCheckoutStarted();
-```
 
 #### Parameters
 
@@ -1218,6 +1220,16 @@ stepTracker.trackCheckoutStarted();
 [`StepTracker`](interfaces/StepTracker.md)
 
 an instance of `StepTracker`.
+
+**`Remarks`**
+
+```js
+const checkoutService = createCheckoutService();
+await checkoutService.loadCheckout();
+const stepTracker = createStepTracker(checkoutService);
+
+stepTracker.trackCheckoutStarted();
+```
 
 ___
 
@@ -1243,11 +1255,24 @@ ___
 
 ### embedCheckout
 
-▸ **embedCheckout**(`options`): `Promise`<[`EmbeddedCheckout`](classes/EmbeddedCheckout.md)\>
+▸ **embedCheckout**(`options`): `Promise`\<[`EmbeddedCheckout`](classes/EmbeddedCheckout.md)\>
 
 Embed the checkout form in an iframe.
 
-**`remarks`**
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`EmbeddedCheckoutOptions`](interfaces/EmbeddedCheckoutOptions.md) | Options for embedding the checkout form. |
+
+#### Returns
+
+`Promise`\<[`EmbeddedCheckout`](classes/EmbeddedCheckout.md)\>
+
+A promise that resolves to an instance of `EmbeddedCheckout`.
+
+**`Remarks`**
+
 Once the iframe is embedded, it will automatically resize according to the
 size of the checkout form. It will also notify the parent window when certain
 events have occurred. i.e.: when the form is loaded and ready to be used.
@@ -1258,18 +1283,6 @@ embedCheckout({
     containerId: 'container-id',
 });
 ```
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `options` | [`EmbeddedCheckoutOptions`](interfaces/EmbeddedCheckoutOptions.md) | Options for embedding the checkout form. |
-
-#### Returns
-
-`Promise`<[`EmbeddedCheckout`](classes/EmbeddedCheckout.md)\>
-
-A promise that resolves to an instance of `EmbeddedCheckout`.
 
 ___
 

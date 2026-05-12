@@ -38,13 +38,17 @@ all custom errors thrown in this library.
 
 ### constructor
 
-• **new StandardError**(`message?`)
+• **new StandardError**(`message?`): [`StandardError`](StandardError.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `message?` | `string` |
+
+#### Returns
+
+[`StandardError`](StandardError.md)
 
 #### Overrides
 

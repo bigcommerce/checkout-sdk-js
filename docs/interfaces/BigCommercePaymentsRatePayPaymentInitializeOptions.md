@@ -44,7 +44,7 @@ The CSS selector of a container where loading indicator should be rendered
 
 ### getFieldsValues
 
-▸ `Optional` **getFieldsValues**(): `Object`
+▸ **getFieldsValues**(): `Object`
 
 A callback that gets form values
 
@@ -62,7 +62,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error`): `void`
+▸ **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 
@@ -80,7 +80,7 @@ ___
 
 ### onRenderButton
 
-▸ `Optional` **onRenderButton**(): `void`
+▸ **onRenderButton**(): `void`
 
 A callback right before render Smart Payment Button that gets called when
 Smart Payment Button is eligible. This callback can be used to hide the standard submit button.

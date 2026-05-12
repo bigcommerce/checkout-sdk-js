@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) / BirthDate_2
+[@bigcommerce/checkout-sdk](../README.md) / BirthDate\_2
 
 # Interface: BirthDate\_2
 

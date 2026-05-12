@@ -17,17 +17,21 @@
 
 ### constructor
 
-• **new EmbeddedCheckout**()
+• **new EmbeddedCheckout**(): [`EmbeddedCheckout`](EmbeddedCheckout.md)
+
+#### Returns
+
+[`EmbeddedCheckout`](EmbeddedCheckout.md)
 
 ## Methods
 
 ### attach
 
-▸ **attach**(): `Promise`<[`EmbeddedCheckout`](EmbeddedCheckout.md)\>
+▸ **attach**(): `Promise`\<[`EmbeddedCheckout`](EmbeddedCheckout.md)\>
 
 #### Returns
 
-`Promise`<[`EmbeddedCheckout`](EmbeddedCheckout.md)\>
+`Promise`\<[`EmbeddedCheckout`](EmbeddedCheckout.md)\>
 
 ___
 

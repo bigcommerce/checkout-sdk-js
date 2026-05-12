@@ -33,14 +33,14 @@ ___
 
 ### onBlur
 
-▸ `Optional` **onBlur**(`data`): `void`
+▸ **onBlur**(`data`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `data` | `Object` |
-| `data.errors?` | `Partial`<`Record`<[`HostedFormErrorDataKeys`](../README.md#hostedformerrordatakeys), [`HostedFormErrorData`](HostedFormErrorData.md)\>\> |
+| `data.errors?` | `Partial`\<`Record`\<[`HostedFormErrorDataKeys`](../README.md#hostedformerrordatakeys), [`HostedFormErrorData`](HostedFormErrorData.md)\>\> |
 | `data.fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
 
 #### Returns
@@ -51,7 +51,7 @@ ___
 
 ### onCardTypeChange
 
-▸ `Optional` **onCardTypeChange**(`data`): `void`
+▸ **onCardTypeChange**(`data`): `void`
 
 #### Parameters
 
@@ -68,7 +68,7 @@ ___
 
 ### onEnter
 
-▸ `Optional` **onEnter**(`data`): `void`
+▸ **onEnter**(`data`): `void`
 
 #### Parameters
 
@@ -85,7 +85,7 @@ ___
 
 ### onFocus
 
-▸ `Optional` **onFocus**(`data`): `void`
+▸ **onFocus**(`data`): `void`
 
 #### Parameters
 
@@ -102,7 +102,7 @@ ___
 
 ### onValidate
 
-▸ `Optional` **onValidate**(`data`): `void`
+▸ **onValidate**(`data`): `void`
 
 #### Parameters
 

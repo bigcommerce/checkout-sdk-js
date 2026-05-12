@@ -38,7 +38,7 @@ ___
 
 ### params
 
-• `Optional` **params**: `Object`
+• `Optional` **params**: `object`
 
 The parameters of the request, if required.
 

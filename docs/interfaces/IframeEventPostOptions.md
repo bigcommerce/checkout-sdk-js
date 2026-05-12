@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / IframeEventPostOptions
 
-# Interface: IframeEventPostOptions<TSuccessEvent, TErrorEvent\>
+# Interface: IframeEventPostOptions\<TSuccessEvent, TErrorEvent\>
 
 ## Type parameters
 

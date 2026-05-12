@@ -18,40 +18,40 @@
 
 ### GlobalWebWorker
 
-• **GlobalWebWorker**
+• **GlobalWebWorker** = ``"global"``
 
 ___
 
 ### PaymentPaymentMethodListBefore
 
-• **PaymentPaymentMethodListBefore**
+• **PaymentPaymentMethodListBefore** = ``"payment.paymentMethodList.before"``
 
 ___
 
 ### ShippingSelectedShippingMethod
 
-• **ShippingSelectedShippingMethod**
+• **ShippingSelectedShippingMethod** = ``"shipping.selectedShippingMethod"``
 
 ___
 
 ### ShippingShippingAddressFormAfter
 
-• **ShippingShippingAddressFormAfter**
+• **ShippingShippingAddressFormAfter** = ``"shipping.shippingAddressForm.after"``
 
 ___
 
 ### ShippingShippingAddressFormBefore
 
-• **ShippingShippingAddressFormBefore**
+• **ShippingShippingAddressFormBefore** = ``"shipping.shippingAddressForm.before"``
 
 ___
 
 ### SummaryAfter
 
-• **SummaryAfter**
+• **SummaryAfter** = ``"summary.after"``
 
 ___
 
 ### SummaryLastItemAfter
 
-• **SummaryLastItemAfter**
+• **SummaryLastItemAfter** = ``"summary.lastItem.after"``

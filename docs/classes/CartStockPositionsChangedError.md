@@ -27,7 +27,7 @@ and the server returns type `cart_stock_positions_changed`.
 
 ### constructor
 
-• **new CartStockPositionsChangedError**(`changedItemIds`, `message?`)
+• **new CartStockPositionsChangedError**(`changedItemIds`, `message?`): [`CartStockPositionsChangedError`](CartStockPositionsChangedError.md)
 
 #### Parameters
 
@@ -35,6 +35,10 @@ and the server returns type `cart_stock_positions_changed`.
 | :------ | :------ |
 | `changedItemIds` | `string`[] |
 | `message?` | `string` |
+
+#### Returns
+
+[`CartStockPositionsChangedError`](CartStockPositionsChangedError.md)
 
 #### Overrides
 

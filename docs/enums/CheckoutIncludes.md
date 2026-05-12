@@ -14,16 +14,16 @@
 
 ### AvailableShippingOptions
 
-• **AvailableShippingOptions**
+• **AvailableShippingOptions** = ``"consignments.availableShippingOptions"``
 
 ___
 
 ### DigitalItemsCategoryNames
 
-• **DigitalItemsCategoryNames**
+• **DigitalItemsCategoryNames** = ``"cart.lineItems.digitalItems.categoryNames"``
 
 ___
 
 ### PhysicalItemsCategoryNames
 
-• **PhysicalItemsCategoryNames**
+• **PhysicalItemsCategoryNames** = ``"cart.lineItems.physicalItems.categoryNames"``

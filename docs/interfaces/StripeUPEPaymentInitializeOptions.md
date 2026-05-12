@@ -57,7 +57,7 @@ ___
 
 ### style
 
-• `Optional` **style**: `Record`<`string`, `StripeAppearanceValues`\>
+• `Optional` **style**: `Record`\<`string`, `StripeAppearanceValues`\>
 
 Checkout styles from store theme
 
@@ -69,7 +69,7 @@ StripePaymentInitializeOptions.style
 
 ### initStripeElementUpdateTrigger
 
-▸ `Optional` **initStripeElementUpdateTrigger**(`updateTriggerFn`): `void`
+▸ **initStripeElementUpdateTrigger**(`updateTriggerFn`): `void`
 
 #### Parameters
 
@@ -85,7 +85,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error?`): `void`
+▸ **onError**(`error?`): `void`
 
 #### Parameters
 

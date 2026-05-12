@@ -12,4 +12,4 @@
 
 ### GetConsignments
 
-• **GetConsignments**
+• **GetConsignments** = ``"EXTENSION:GET_CONSIGNMENTS"``

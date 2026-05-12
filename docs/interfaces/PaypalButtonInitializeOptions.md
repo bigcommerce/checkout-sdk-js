@@ -35,7 +35,7 @@ ___
 
 ### style
 
-• `Optional` **style**: `Pick`<[`PaypalStyleOptions`](PaypalStyleOptions.md), ``"color"`` \| ``"label"`` \| ``"layout"`` \| ``"shape"`` \| ``"size"`` \| ``"fundingicons"`` \| ``"tagline"``\>
+• `Optional` **style**: `Pick`\<[`PaypalStyleOptions`](PaypalStyleOptions.md), ``"color"`` \| ``"label"`` \| ``"layout"`` \| ``"shape"`` \| ``"size"`` \| ``"fundingicons"`` \| ``"tagline"``\>
 
 A set of styling options for the checkout button.
 
@@ -43,7 +43,7 @@ A set of styling options for the checkout button.
 
 ### onAuthorizeError
 
-▸ `Optional` **onAuthorizeError**(`error`): `void`
+▸ **onAuthorizeError**(`error`): `void`
 
 A callback that gets called if unable to authorize and tokenize payment.
 
@@ -61,7 +61,7 @@ ___
 
 ### onPaymentError
 
-▸ `Optional` **onPaymentError**(`error`): `void`
+▸ **onPaymentError**(`error`): `void`
 
 A callback that gets called if unable to submit payment.
 

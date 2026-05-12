@@ -16,7 +16,7 @@
 
 ### constructor
 
-• **new DetachmentObserver**(`_mutationObserver`)
+• **new DetachmentObserver**(`_mutationObserver`): [`DetachmentObserver`](DetachmentObserver.md)
 
 #### Parameters
 
@@ -24,11 +24,15 @@
 | :------ | :------ |
 | `_mutationObserver` | [`MutationObserverFactory`](MutationObserverFactory.md) |
 
+#### Returns
+
+[`DetachmentObserver`](DetachmentObserver.md)
+
 ## Methods
 
 ### ensurePresence
 
-▸ **ensurePresence**<`T`\>(`targets`, `promise`): `Promise`<`T`\>
+▸ **ensurePresence**\<`T`\>(`targets`, `promise`): `Promise`\<`T`\>
 
 #### Type parameters
 
@@ -41,8 +45,8 @@
 | Name | Type |
 | :------ | :------ |
 | `targets` | `Node`[] |
-| `promise` | `Promise`<`T`\> |
+| `promise` | `Promise`\<`T`\> |
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`\>

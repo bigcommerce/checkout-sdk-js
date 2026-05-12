@@ -2,6 +2,8 @@
 
 # Interface: StripeElementStyleVariant
 
+CSS properties supported by Stripe.js.
+
 ## Hierarchy
 
 - [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
@@ -12,13 +14,13 @@
 
 ### Properties
 
-- [%3A-webkit-autofill](StripeElementStyleVariant.md#:-webkit-autofill)
-- [%3A%3A-ms-clear](StripeElementStyleVariant.md#::-ms-clear)
-- [%3A%3Aplaceholder](StripeElementStyleVariant.md#::placeholder)
-- [%3A%3Aselection](StripeElementStyleVariant.md#::selection)
-- [%3Adisabled](StripeElementStyleVariant.md#:disabled)
-- [%3Afocus](StripeElementStyleVariant.md#:focus)
-- [%3Ahover](StripeElementStyleVariant.md#:hover)
+- [:-webkit-autofill](StripeElementStyleVariant.md#:-webkit-autofill)
+- [::-ms-clear](StripeElementStyleVariant.md#::-ms-clear)
+- [::placeholder](StripeElementStyleVariant.md#::placeholder)
+- [::selection](StripeElementStyleVariant.md#::selection)
+- [:disabled](StripeElementStyleVariant.md#:disabled)
+- [:focus](StripeElementStyleVariant.md#:focus)
+- [:hover](StripeElementStyleVariant.md#:hover)
 - [backgroundColor](StripeElementStyleVariant.md#backgroundcolor)
 - [color](StripeElementStyleVariant.md#color)
 - [fontFamily](StripeElementStyleVariant.md#fontfamily)
@@ -46,7 +48,7 @@ ___
 
 ### ::-ms-clear
 
-• `Optional` **::-ms-clear**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md) & { `display`: `string`  }
+• `Optional` **::-ms-clear**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md) & \{ `display`: `string`  }
 
 Available for the `cardNumber`, `cardExpiry`, and `cardCvc` elements.
 

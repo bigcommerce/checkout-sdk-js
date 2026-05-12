@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / RequestError
 
-# Class: RequestError<TBody\>
+# Class: RequestError\<TBody\>
 
 Throw this error if we are unable to make a request to the server. It wraps
 any server response into a JS error object.
@@ -36,7 +36,7 @@ any server response into a JS error object.
 
 ### constructor
 
-• **new RequestError**<`TBody`\>(`response?`, `__namedParameters?`)
+• **new RequestError**\<`TBody`\>(`response?`, `«destructured»?`): [`RequestError`](RequestError.md)\<`TBody`\>
 
 #### Type parameters
 
@@ -48,10 +48,14 @@ any server response into a JS error object.
 
 | Name | Type |
 | :------ | :------ |
-| `response?` | `default`<{} \| `TBody`\> |
-| `__namedParameters?` | `Object` |
-| `__namedParameters.errors?` | { `code`: `string` ; `message?`: `string`  }[] |
-| `__namedParameters.message?` | `string` |
+| `response?` | `default`\<`object` \| `TBody`\> |
+| `«destructured»` | `Object` |
+| › `errors?` | \{ `code`: `string` ; `message?`: `string`  }[] |
+| › `message?` | `string` |
+
+#### Returns
+
+[`RequestError`](RequestError.md)\<`TBody`\>
 
 #### Overrides
 
@@ -61,13 +65,13 @@ any server response into a JS error object.
 
 ### body
 
-• **body**: {} \| `TBody`
+• **body**: `object` \| `TBody`
 
 ___
 
 ### errors
 
-• **errors**: { `code`: `string` ; `message?`: `string`  }[]
+• **errors**: \{ `code`: `string` ; `message?`: `string`  }[]
 
 ___
 

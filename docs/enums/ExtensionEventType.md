@@ -12,4 +12,4 @@
 
 ### ConsignmentsChanged
 
-• **ConsignmentsChanged**
+• **ConsignmentsChanged** = ``"EXTENSION:CONSIGNMENTS_CHANGED"``

@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [bigcommerce_payments_ratepay](WithBigCommercePaymentsRatePayPaymentInitializeOptions.md#bigcommerce_payments_ratepay)
+- [bigcommerce\_payments\_ratepay](WithBigCommercePaymentsRatePayPaymentInitializeOptions.md#bigcommerce_payments_ratepay)
 
 ## Properties
 

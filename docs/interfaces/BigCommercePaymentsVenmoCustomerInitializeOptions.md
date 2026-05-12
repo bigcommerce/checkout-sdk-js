@@ -25,7 +25,7 @@ The ID of a container which the checkout button should be inserted into.
 
 ### onClick
 
-▸ `Optional` **onClick**(): `void`
+▸ **onClick**(): `void`
 
 A callback that gets called when Venmo button clicked.
 
@@ -37,7 +37,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error?`): `void`
+▸ **onError**(`error?`): `void`
 
 A callback that gets called if unable to initialize the widget or select
 one of the address options provided by the widget.

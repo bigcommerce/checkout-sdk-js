@@ -21,7 +21,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `address?` | ``false`` \| [`InternalAddress`](InternalAddress.md)<`string`\> |
+| `address?` | ``false`` \| [`InternalAddress`](InternalAddress.md)\<`string`\> |
 
 ___
 
@@ -56,4 +56,4 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `address?` | ``false`` \| [`InternalAddress`](InternalAddress.md)<`string`\> |
+| `address?` | ``false`` \| [`InternalAddress`](InternalAddress.md)\<`string`\> |

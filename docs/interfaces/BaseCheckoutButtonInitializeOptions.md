@@ -2,6 +2,8 @@
 
 # Interface: BaseCheckoutButtonInitializeOptions
 
+The set of options for configuring the checkout button.
+
 ## Hierarchy
 
 - [`CheckoutButtonOptions`](CheckoutButtonOptions.md)
@@ -56,7 +58,7 @@ ___
 
 ### params
 
-• `Optional` **params**: `Object`
+• `Optional` **params**: `object`
 
 The parameters of the request, if required.
 

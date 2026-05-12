@@ -35,7 +35,7 @@ service.initializePayment({
 
 ### onError
 
-▸ `Optional` **onError**(`error`): `void`
+▸ **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 

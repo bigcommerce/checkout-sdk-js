@@ -155,8 +155,7 @@ declare interface Consignment {
     shippingCostBeforeDiscount: number;
 }
 
-declare interface ConsignmentAutomaticDiscount extends ConsignmentDiscountBase<'AUTOMATIC'> {
-}
+declare type ConsignmentAutomaticDiscount = ConsignmentDiscountBase<'AUTOMATIC'>;
 
 declare interface ConsignmentCouponDiscount extends ConsignmentDiscountBase<'COUPON'> {
     couponId: number;

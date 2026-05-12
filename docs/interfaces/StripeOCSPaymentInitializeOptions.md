@@ -88,7 +88,7 @@ ___
 
 ### layout
 
-• `Optional` **layout**: `Record`<`string`, `string` \| `number` \| `boolean`\>
+• `Optional` **layout**: `Record`\<`string`, `string` \| `number` \| `boolean`\>
 
 Stripe OCS layout options
 
@@ -96,7 +96,7 @@ ___
 
 ### style
 
-• `Optional` **style**: `Record`<`string`, `StripeAppearanceValues`\>
+• `Optional` **style**: `Record`\<`string`, `StripeAppearanceValues`\>
 
 Checkout styles from store theme
 
@@ -108,7 +108,7 @@ StripePaymentInitializeOptions.style
 
 ### handleClosePaymentMethod
 
-▸ `Optional` **handleClosePaymentMethod**(`collapseElement`): `void`
+▸ **handleClosePaymentMethod**(`collapseElement`): `void`
 
 #### Parameters
 
@@ -124,7 +124,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error?`): `void`
+▸ **onError**(`error?`): `void`
 
 #### Parameters
 
@@ -144,7 +144,7 @@ ___
 
 ### paymentMethodSelect
 
-▸ `Optional` **paymentMethodSelect**(`id`): `void`
+▸ **paymentMethodSelect**(`id`): `void`
 
 #### Parameters
 
@@ -174,7 +174,7 @@ ___
 
 ### togglePreloader
 
-▸ `Optional` **togglePreloader**(`showLoader`): `void`
+▸ **togglePreloader**(`showLoader`): `void`
 
 #### Parameters
 

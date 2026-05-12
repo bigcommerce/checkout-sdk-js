@@ -57,13 +57,13 @@ you can use this object to retrieve the reason for the failure.
 
 ### getApplyCouponError
 
-▸ **getApplyCouponError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+▸ **getApplyCouponError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 Returns an error if unable to apply a coupon code.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 The error object if unable to apply, otherwise undefined.
 
@@ -71,13 +71,13 @@ ___
 
 ### getApplyGiftCertificateError
 
-▸ **getApplyGiftCertificateError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+▸ **getApplyGiftCertificateError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 Returns an error if unable to apply a gift certificate.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 The error object if unable to apply, otherwise undefined.
 
@@ -85,13 +85,13 @@ ___
 
 ### getApplyStoreCreditError
 
-▸ **getApplyStoreCreditError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+▸ **getApplyStoreCreditError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 Returns an error if unable to apply store credit.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 The error object if unable to apply, otherwise undefined.
 
@@ -369,8 +369,6 @@ ___
 
 Returns an error if unable to fetch extensions.
 
-**`alpha`**
-
 #### Returns
 
 `undefined` \| `Error`
@@ -485,13 +483,13 @@ ___
 
 ### getRemoveCouponError
 
-▸ **getRemoveCouponError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+▸ **getRemoveCouponError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 Returns an error if unable to remove a coupon code.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 The error object if unable to remove, otherwise undefined.
 
@@ -499,13 +497,13 @@ ___
 
 ### getRemoveGiftCertificateError
 
-▸ **getRemoveGiftCertificateError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+▸ **getRemoveGiftCertificateError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 Returns an error if unable to remove a gift certificate.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 The error object if unable to remove, otherwise undefined.
 

@@ -21,7 +21,7 @@
 
 ### constructor
 
-• **new HostedField**(`_type`, `_containerId`, `_placeholder`, `_accessibilityLabel`, `_styles`, `_eventPoster`, `_eventListener`, `_detachmentObserver`, `_checkoutId?`, `_cardInstrument?`)
+• **new HostedField**(`_type`, `_containerId`, `_placeholder`, `_accessibilityLabel`, `_styles`, `_eventPoster`, `_eventListener`, `_detachmentObserver`, `_checkoutId?`, `_cardInstrument?`): [`HostedField`](HostedField.md)
 
 #### Parameters
 
@@ -32,21 +32,25 @@
 | `_placeholder` | `string` |
 | `_accessibilityLabel` | `string` |
 | `_styles` | [`HostedFieldStylesMap`](../interfaces/HostedFieldStylesMap.md) |
-| `_eventPoster` | [`IframeEventPoster`](IframeEventPoster.md)<[`HostedFieldEvent`](../README.md#hostedfieldevent), `undefined`\> |
-| `_eventListener` | [`IframeEventListener`](IframeEventListener.md)<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md), `undefined`\> |
+| `_eventPoster` | [`IframeEventPoster`](IframeEventPoster.md)\<[`HostedFieldEvent`](../README.md#hostedfieldevent), `undefined`\> |
+| `_eventListener` | [`IframeEventListener`](IframeEventListener.md)\<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md), `undefined`\> |
 | `_detachmentObserver` | [`DetachmentObserver`](DetachmentObserver.md) |
 | `_checkoutId?` | `string` |
 | `_cardInstrument?` | [`CardInstrument`](../interfaces/CardInstrument.md) |
+
+#### Returns
+
+[`HostedField`](HostedField.md)
 
 ## Methods
 
 ### attach
 
-▸ **attach**(): `Promise`<`void`\>
+▸ **attach**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
@@ -72,7 +76,7 @@ ___
 
 ### submitForm
 
-▸ **submitForm**(`fields`, `data`): `Promise`<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
+▸ **submitForm**(`fields`, `data`): `Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
 
 #### Parameters
 
@@ -83,13 +87,13 @@ ___
 
 #### Returns
 
-`Promise`<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
+`Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
 
 ___
 
 ### submitStoredCardForm
 
-▸ **submitStoredCardForm**(`fields`, `data`): `Promise`<[`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
+▸ **submitStoredCardForm**(`fields`, `data`): `Promise`\<[`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
 
 #### Parameters
 
@@ -100,14 +104,14 @@ ___
 
 #### Returns
 
-`Promise`<[`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
+`Promise`\<[`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
 
 ___
 
 ### validateForm
 
-▸ **validateForm**(): `Promise`<`void`\>
+▸ **validateForm**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>

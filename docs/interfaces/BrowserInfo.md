@@ -6,12 +6,12 @@
 
 ### Properties
 
-- [color_depth](BrowserInfo.md#color_depth)
-- [java_enabled](BrowserInfo.md#java_enabled)
+- [color\_depth](BrowserInfo.md#color_depth)
+- [java\_enabled](BrowserInfo.md#java_enabled)
 - [language](BrowserInfo.md#language)
-- [screen_height](BrowserInfo.md#screen_height)
-- [screen_width](BrowserInfo.md#screen_width)
-- [time_zone_offset](BrowserInfo.md#time_zone_offset)
+- [screen\_height](BrowserInfo.md#screen_height)
+- [screen\_width](BrowserInfo.md#screen_width)
+- [time\_zone\_offset](BrowserInfo.md#time_zone_offset)
 
 ## Properties
 

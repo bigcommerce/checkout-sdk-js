@@ -233,8 +233,6 @@ ___
 
 Gets the extension associated with a given region.
 
-**`alpha`**
-
 #### Parameters
 
 | Name | Type | Description |
@@ -254,8 +252,6 @@ ___
 ▸ **getExtensions**(): `undefined` \| [`Extension`](Extension.md)[]
 
 Gets a list of extensions available for checkout.
-
-**`alpha`**
 
 #### Returns
 
@@ -320,7 +316,7 @@ The list of payment instruments if it is loaded, otherwise undefined.
 
 | Name | Type |
 | :------ | :------ |
-| `paymentMethod` | [`PaymentMethod`](PaymentMethod.md)<`any`\> |
+| `paymentMethod` | [`PaymentMethod`](PaymentMethod.md)\<`any`\> |
 
 #### Returns
 
@@ -344,7 +340,7 @@ ___
 
 ### getPaymentMethod
 
-▸ **getPaymentMethod**(`methodId`, `gatewayId?`): `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
+▸ **getPaymentMethod**(`methodId`, `gatewayId?`): `undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 Gets a payment method by an id.
 
@@ -361,7 +357,7 @@ is not loaded.
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
+`undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 The payment method object if loaded and available, otherwise,
 undefined.
@@ -370,13 +366,13 @@ ___
 
 ### getPaymentMethods
 
-▸ **getPaymentMethods**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>[]
+▸ **getPaymentMethods**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>[]
 
 Gets a list of payment methods available for checkout.
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>[]
+`undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>[]
 
 The list of payment methods if it is loaded, otherwise undefined.
 
@@ -387,8 +383,6 @@ ___
 ▸ **getPaymentProviderCustomer**(): `undefined` \| `PaymentProviderCustomer`
 
 Gets payment provider customers data.
-
-**`alpha`**
 
 #### Returns
 
@@ -422,13 +416,13 @@ ___
 
 ### getSelectedPaymentMethod
 
-▸ **getSelectedPaymentMethod**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
+▸ **getSelectedPaymentMethod**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 Gets the payment method that is selected for checkout.
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
+`undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 The payment method object if there is a selected method;
 undefined if otherwise.

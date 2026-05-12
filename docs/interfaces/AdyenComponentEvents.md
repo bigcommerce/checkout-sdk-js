@@ -23,7 +23,7 @@
 
 ### onChange
 
-▸ `Optional` **onChange**(`state`, `component`): `void`
+▸ **onChange**(`state`, `component`): `void`
 
 Called when the shopper enters data in the card input fields.
 Here you have the option to override your main Adyen Checkout configuration.
@@ -43,7 +43,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`state`, `component`): `void`
+▸ **onError**(`state`, `component`): `void`
 
 Called in case of an invalid card number, invalid expiry date, or
  incomplete field. Called again when errors are cleared.
@@ -63,7 +63,7 @@ ___
 
 ### onFieldValid
 
-▸ `Optional` **onFieldValid**(`state`, `component`): `void`
+▸ **onFieldValid**(`state`, `component`): `void`
 
 #### Parameters
 
@@ -80,7 +80,7 @@ ___
 
 ### onSubmit
 
-▸ `Optional` **onSubmit**(`state`, `component`): `void`
+▸ **onSubmit**(`state`, `component`): `void`
 
 Called when the shopper selects the Pay button and payment details are valid.
 

@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [bigcommerce_payments_creditcards](WithBigCommercePaymentsCreditCardsPaymentInitializeOptions.md#bigcommerce_payments_creditcards)
+- [bigcommerce\_payments\_creditcards](WithBigCommercePaymentsCreditCardsPaymentInitializeOptions.md#bigcommerce_payments_creditcards)
 
 ## Properties
 

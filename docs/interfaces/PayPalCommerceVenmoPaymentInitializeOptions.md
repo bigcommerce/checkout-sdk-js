@@ -70,7 +70,7 @@ The CSS selector of a container where the payment widget should be inserted into
 
 ### onError
 
-▸ `Optional` **onError**(`error`): `void`
+▸ **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 
@@ -88,7 +88,7 @@ ___
 
 ### onRenderButton
 
-▸ `Optional` **onRenderButton**(): `void`
+▸ **onRenderButton**(): `void`
 
 A callback right before render Smart Payment Button that gets called when
 Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
@@ -101,7 +101,7 @@ ___
 
 ### onValidate
 
-▸ **onValidate**(`resolve`, `reject`): `Promise`<`void`\>
+▸ **onValidate**(`resolve`, `reject`): `Promise`\<`void`\>
 
 A callback that gets called when a buyer click on Smart Payment Button
 and should validate payment form.
@@ -115,7 +115,7 @@ and should validate payment form.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 reject() or resolve()
 

@@ -15,7 +15,7 @@ checkout to support Bolt.
 
 ### onInit
 
-▸ `Optional` **onInit**(`hasBoltAccount`, `email?`): `void`
+▸ **onInit**(`hasBoltAccount`, `email?`): `void`
 
 A callback that gets called on initialize the strategy
 

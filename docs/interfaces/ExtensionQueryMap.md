@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [EXTENSION%3AGET_CONSIGNMENTS](ExtensionQueryMap.md#extension:get_consignments)
+- [EXTENSION:GET\_CONSIGNMENTS](ExtensionQueryMap.md#extension:get_consignments)
 
 ## Properties
 

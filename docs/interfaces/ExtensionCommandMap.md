@@ -6,11 +6,11 @@
 
 ### Properties
 
-- [EXTENSION%3ARELOAD_CHECKOUT](ExtensionCommandMap.md#extension:reload_checkout)
-- [EXTENSION%3ARE_RENDER_SHIPPING_FORM](ExtensionCommandMap.md#extension:re_render_shipping_form)
-- [EXTENSION%3ARE_RENDER_SHIPPING_STEP](ExtensionCommandMap.md#extension:re_render_shipping_step)
-- [EXTENSION%3ASET_IFRAME_STYLE](ExtensionCommandMap.md#extension:set_iframe_style)
-- [EXTENSION%3ASHOW_LOADING_INDICATOR](ExtensionCommandMap.md#extension:show_loading_indicator)
+- [EXTENSION:RELOAD\_CHECKOUT](ExtensionCommandMap.md#extension:reload_checkout)
+- [EXTENSION:RE\_RENDER\_SHIPPING\_FORM](ExtensionCommandMap.md#extension:re_render_shipping_form)
+- [EXTENSION:RE\_RENDER\_SHIPPING\_STEP](ExtensionCommandMap.md#extension:re_render_shipping_step)
+- [EXTENSION:SET\_IFRAME\_STYLE](ExtensionCommandMap.md#extension:set_iframe_style)
+- [EXTENSION:SHOW\_LOADING\_INDICATOR](ExtensionCommandMap.md#extension:show_loading_indicator)
 
 ## Properties
 

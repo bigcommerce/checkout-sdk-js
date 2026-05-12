@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) / PayPalButtonStyleOptions_2
+[@bigcommerce/checkout-sdk](../README.md) / PayPalButtonStyleOptions\_2
 
 # Interface: PayPalButtonStyleOptions\_2
 

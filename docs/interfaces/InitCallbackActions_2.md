@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) / InitCallbackActions_2
+[@bigcommerce/checkout-sdk](../README.md) / InitCallbackActions\_2
 
 # Interface: InitCallbackActions\_2
 

@@ -14,16 +14,16 @@
 
 ### CardNumber
 
-• **CardNumber**
+• **CardNumber** = ``"encryptedCardNumber"``
 
 ___
 
 ### ExpiryDate
 
-• **ExpiryDate**
+• **ExpiryDate** = ``"encryptedExpiryDate"``
 
 ___
 
 ### SecurityCode
 
-• **SecurityCode**
+• **SecurityCode** = ``"encryptedSecurityCode"``

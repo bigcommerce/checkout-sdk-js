@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) / PayPalBuyNowInitializeOptions_2
+[@bigcommerce/checkout-sdk](../README.md) / PayPalBuyNowInitializeOptions\_2
 
 # Interface: PayPalBuyNowInitializeOptions\_2
 

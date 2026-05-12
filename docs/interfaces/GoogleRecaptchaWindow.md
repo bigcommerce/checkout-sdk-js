@@ -28,7 +28,7 @@
 
 ### initRecaptcha
 
-▸ `Optional` **initRecaptcha**(): `void`
+▸ **initRecaptcha**(): `void`
 
 #### Returns
 

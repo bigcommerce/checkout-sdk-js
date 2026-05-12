@@ -42,9 +42,9 @@ A set of styling options for the checkout button.
 
 ### onEligibilityFailure
 
-▸ `Optional` **onEligibilityFailure**(): `void`
+▸ **onEligibilityFailure**(): `void`
 
- A callback that gets called when PayPal SDK restricts to render PayPal component.
+A callback that gets called when PayPal SDK restricts to render PayPal component.
 
 #### Returns
 

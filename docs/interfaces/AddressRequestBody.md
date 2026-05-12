@@ -62,7 +62,7 @@ ___
 
 ### customFields
 
-• **customFields**: { `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
+• **customFields**: \{ `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
 
 ___
 

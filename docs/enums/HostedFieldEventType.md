@@ -15,22 +15,22 @@
 
 ### AttachRequested
 
-• **AttachRequested**
+• **AttachRequested** = ``"HOSTED_FIELD:ATTACH_REQUESTED"``
 
 ___
 
 ### StoredCardRequested
 
-• **StoredCardRequested**
+• **StoredCardRequested** = ``"HOSTED_FIELD:STORED_CARD_REQUESTED"``
 
 ___
 
 ### SubmitRequested
 
-• **SubmitRequested**
+• **SubmitRequested** = ``"HOSTED_FIELD:SUBMITTED_REQUESTED"``
 
 ___
 
 ### ValidateRequested
 
-• **ValidateRequested**
+• **ValidateRequested** = ``"HOSTED_FIELD:VALIDATE_REQUESTED"``

@@ -17,34 +17,34 @@
 
 ### CheckoutComplete
 
-• **CheckoutComplete**
+• **CheckoutComplete** = ``"CHECKOUT_COMPLETE"``
 
 ___
 
 ### CheckoutError
 
-• **CheckoutError**
+• **CheckoutError** = ``"CHECKOUT_ERROR"``
 
 ___
 
 ### CheckoutLoaded
 
-• **CheckoutLoaded**
+• **CheckoutLoaded** = ``"CHECKOUT_LOADED"``
 
 ___
 
 ### FrameError
 
-• **FrameError**
+• **FrameError** = ``"FRAME_ERROR"``
 
 ___
 
 ### FrameLoaded
 
-• **FrameLoaded**
+• **FrameLoaded** = ``"FRAME_LOADED"``
 
 ___
 
 ### SignedOut
 
-• **SignedOut**
+• **SignedOut** = ``"SIGNED_OUT"``

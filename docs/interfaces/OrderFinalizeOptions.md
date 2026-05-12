@@ -2,6 +2,8 @@
 
 # Interface: OrderFinalizeOptions
 
+A set of options for configuring an asynchronous request.
+
 ## Hierarchy
 
 - [`RequestOptions`](RequestOptions.md)
@@ -21,15 +23,13 @@
 
 ### integrations
 
-• `Optional` **integrations**: `PaymentStrategyFactory`<`default`\>[]
-
-**`alpha`**
+• `Optional` **integrations**: `PaymentStrategyFactory`\<`default`\>[]
 
 ___
 
 ### params
 
-• `Optional` **params**: `Object`
+• `Optional` **params**: `object`
 
 The parameters of the request, if required.
 

@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [bigcommerce_payments_apms](WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions.md#bigcommerce_payments_apms)
+- [bigcommerce\_payments\_apms](WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions.md#bigcommerce_payments_apms)
 
 ## Properties
 

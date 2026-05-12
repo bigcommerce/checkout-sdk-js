@@ -16,11 +16,11 @@
 
 ### getApplyError
 
-▸ **getApplyError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+▸ **getApplyError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 ___
 
@@ -36,11 +36,11 @@ ___
 
 ### getRemoveError
 
-▸ **getRemoveError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+▸ **getRemoveError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`any`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
 
 ___
 

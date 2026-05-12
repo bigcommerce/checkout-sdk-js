@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- `Partial`<[`UnknownObject`](UnknownObject.md)\>
+- `Partial`\<[`UnknownObject`](UnknownObject.md)\>
 
   ↳ **`InitializationStrategy`**
 

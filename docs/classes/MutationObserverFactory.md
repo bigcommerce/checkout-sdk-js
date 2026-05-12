@@ -16,13 +16,17 @@
 
 ### constructor
 
-• **new MutationObserverFactory**(`_window?`)
+• **new MutationObserverFactory**(`_window?`): [`MutationObserverFactory`](MutationObserverFactory.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_window?` | [`MutationObserverWindow`](../interfaces/MutationObserverWindow.md) |
+
+#### Returns
+
+[`MutationObserverFactory`](MutationObserverFactory.md)
 
 ## Methods
 

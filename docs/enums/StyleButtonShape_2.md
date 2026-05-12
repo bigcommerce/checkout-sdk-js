@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) / StyleButtonShape_2
+[@bigcommerce/checkout-sdk](../README.md) / StyleButtonShape\_2
 
 # Enumeration: StyleButtonShape\_2
 
@@ -13,10 +13,10 @@
 
 ### Pill
 
-• **Pill**
+• **Pill** = ``"pill"``
 
 ___
 
 ### Rect
 
-• **Rect**
+• **Rect** = ``"rect"``

@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / RequestOptions
 
-# Interface: RequestOptions<TParams\>
+# Interface: RequestOptions\<TParams\>
 
 A set of options for configuring an asynchronous request.
 
@@ -8,7 +8,7 @@ A set of options for configuring an asynchronous request.
 
 | Name | Type |
 | :------ | :------ |
-| `TParams` | {} |
+| `TParams` | `object` |
 
 ## Hierarchy
 

@@ -23,7 +23,7 @@ ___
 
 ### customFields
 
-• `Optional` **customFields**: { `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
+• `Optional` **customFields**: \{ `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
 
 ___
 

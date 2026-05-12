@@ -50,7 +50,7 @@ Sub total label to be passed to apple sheet.
 
 ### onClick
 
-▸ `Optional` **onClick**(): `void`
+▸ **onClick**(): `void`
 
 A callback that gets called when wallet button clicked
 
@@ -62,7 +62,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error?`): `void`
+▸ **onError**(`error?`): `void`
 
 A callback that gets called if unable to initialize the widget or select
 one of the address options provided by the widget.

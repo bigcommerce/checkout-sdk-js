@@ -16,28 +16,28 @@
 
 ### BLACK
 
-• **BLACK**
+• **BLACK** = ``"black"``
 
 ___
 
 ### BLUE
 
-• **BLUE**
+• **BLUE** = ``"blue"``
 
 ___
 
 ### GOLD
 
-• **GOLD**
+• **GOLD** = ``"gold"``
 
 ___
 
 ### SIlVER
 
-• **SIlVER**
+• **SIlVER** = ``"silver"``
 
 ___
 
 ### WHITE
 
-• **WHITE**
+• **WHITE** = ``"white"``

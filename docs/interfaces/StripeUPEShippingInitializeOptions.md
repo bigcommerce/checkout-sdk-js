@@ -82,7 +82,7 @@ ___
 
 ### getStyles
 
-▸ `Optional` **getStyles**(): `Object`
+▸ **getStyles**(): `Object`
 
 get styles from store theme
 
@@ -112,7 +112,7 @@ ___
 
 ### setStripeExperiments
 
-▸ `Optional` **setStripeExperiments**(`experiments`): `void`
+▸ **setStripeExperiments**(`experiments`): `void`
 
 Set the Stripe experiments to be used in checkout-js components;
 Stripe specific experiments broadcasts to SDK from payment provider configs request.
@@ -121,7 +121,7 @@ Stripe specific experiments broadcasts to SDK from payment provider configs requ
 
 | Name | Type |
 | :------ | :------ |
-| `experiments` | `Record`<`string`, `boolean`\> |
+| `experiments` | `Record`\<`string`, `boolean`\> |
 
 #### Returns
 

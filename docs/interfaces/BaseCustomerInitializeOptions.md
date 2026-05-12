@@ -34,9 +34,7 @@ information in order to initialize the customer step of checkout.
 
 ### integrations
 
-• `Optional` **integrations**: `CustomerStrategyFactory`<`default`\>[]
-
-**`alpha`**
+• `Optional` **integrations**: `CustomerStrategyFactory`\<`default`\>[]
 
 ___
 
@@ -52,7 +50,7 @@ ___
 
 ### params
 
-• `Optional` **params**: `Object`
+• `Optional` **params**: `object`
 
 The parameters of the request, if required.
 

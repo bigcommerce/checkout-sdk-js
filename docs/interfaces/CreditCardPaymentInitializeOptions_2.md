@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) / CreditCardPaymentInitializeOptions_2
+[@bigcommerce/checkout-sdk](../README.md) / CreditCardPaymentInitializeOptions\_2
 
 # Interface: CreditCardPaymentInitializeOptions\_2
 

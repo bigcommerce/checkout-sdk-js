@@ -79,7 +79,7 @@ ___
 
 ### onPaymentSelect
 
-▸ `Optional` **onPaymentSelect**(`hasBoltAccount`): `void`
+▸ **onPaymentSelect**(`hasBoltAccount`): `void`
 
 A callback that gets called when the customer selects Bolt as payment option.
 

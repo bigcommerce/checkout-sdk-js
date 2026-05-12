@@ -82,9 +82,6 @@ service.initializePayment({
 ### Properties
 
 - [form](PayPalCommerceCreditCardsPaymentInitializeOptions.md#form)
-
-### Methods
-
 - [onCreditCardFieldsRenderingError](PayPalCommerceCreditCardsPaymentInitializeOptions.md#oncreditcardfieldsrenderingerror)
 - [onLoadComplete](PayPalCommerceCreditCardsPaymentInitializeOptions.md#onloadcomplete)
 
@@ -96,21 +93,25 @@ service.initializePayment({
 
 The form is data for Credit Card Form
 
-## Methods
+___
 
 ### onCreditCardFieldsRenderingError
 
-▸ `Optional` **onCreditCardFieldsRenderingError**(`error`): `void`
+• `Optional` **onCreditCardFieldsRenderingError**: (`error`: `unknown`) => `void`
 
 The callback that gets called when there is an issue with rendering credit card fields
 
-#### Parameters
+#### Type declaration
+
+▸ (`error`): `void`
+
+##### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `error` | `unknown` |
 
-#### Returns
+##### Returns
 
 `void`
 
@@ -118,10 +119,14 @@ ___
 
 ### onLoadComplete
 
-▸ `Optional` **onLoadComplete**(): `void`
+• `Optional` **onLoadComplete**: () => `void`
 
 The callback that gets called when PayPal SDK load complete
 
-#### Returns
+#### Type declaration
+
+▸ (): `void`
+
+##### Returns
 
 `void`

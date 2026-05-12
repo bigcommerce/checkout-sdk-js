@@ -12,13 +12,33 @@ to simplify initialization and avoid provider-specific checks.
 
 ### Properties
 
+- [onPayPalFastlaneAddressChange](FastlaneShippingInitializeOptions.md#onpaypalfastlaneaddresschange)
 - [styles](FastlaneShippingInitializeOptions.md#styles)
 
-### Methods
-
-- [onPayPalFastlaneAddressChange](FastlaneShippingInitializeOptions.md#onpaypalfastlaneaddresschange)
-
 ## Properties
+
+### onPayPalFastlaneAddressChange
+
+• `Optional` **onPayPalFastlaneAddressChange**: (`showFastlaneAddressSelector`: () => `Promise`\<`undefined` \| `CustomerAddress`\>) => `void`
+
+A callback that shows the Fastlane popup with customer addresses
+when triggered
+
+#### Type declaration
+
+▸ (`showFastlaneAddressSelector`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `showFastlaneAddressSelector` | () => `Promise`\<`undefined` \| `CustomerAddress`\> |
+
+##### Returns
+
+`void`
+
+___
 
 ### styles
 
@@ -29,22 +49,3 @@ Styling options for customizing Fastlane components
 Note: the styles for all Fastlane strategies should be the same,
 because they will be provided to the Fastlane library only for the first strategy initialization
 no matter what strategy was initialized first
-
-## Methods
-
-### onPayPalFastlaneAddressChange
-
-▸ `Optional` **onPayPalFastlaneAddressChange**(`showFastlaneAddressSelector`): `void`
-
-A callback that shows the Fastlane popup with customer addresses
-when triggered
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `showFastlaneAddressSelector` | () => `Promise`<`undefined` \| `CustomerAddress`\> |
-
-#### Returns
-
-`void`

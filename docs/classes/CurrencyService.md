@@ -19,7 +19,11 @@ Responsible for formatting and converting currencies.
 
 ### constructor
 
-• **new CurrencyService**()
+• **new CurrencyService**(): [`CurrencyService`](CurrencyService.md)
+
+#### Returns
+
+[`CurrencyService`](CurrencyService.md)
 
 ## Methods
 

@@ -13,10 +13,10 @@
 
 ### HORIZONTAL
 
-• **HORIZONTAL**
+• **HORIZONTAL** = ``"horizontal"``
 
 ___
 
 ### VERTICAL
 
-• **VERTICAL**
+• **VERTICAL** = ``"vertical"``

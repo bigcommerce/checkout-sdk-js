@@ -16,11 +16,11 @@
 
 ### getApplyError
 
-▸ **getApplyError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`StorefrontErrorResponseBody`\>
+▸ **getApplyError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\>
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`StorefrontErrorResponseBody`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\>
 
 ___
 
@@ -36,11 +36,11 @@ ___
 
 ### getRemoveError
 
-▸ **getRemoveError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)<`StorefrontErrorResponseBody`\>
+▸ **getRemoveError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\>
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)<`StorefrontErrorResponseBody`\>
+`undefined` \| [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\>
 
 ___
 

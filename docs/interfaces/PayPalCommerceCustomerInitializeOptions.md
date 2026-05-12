@@ -29,7 +29,7 @@ The ID of a container which the checkout button should be inserted into.
 
 ### onClick
 
-▸ `Optional` **onClick**(): `void`
+▸ **onClick**(): `void`
 
 A callback that gets called when paypal button clicked.
 
@@ -41,7 +41,7 @@ ___
 
 ### onComplete
 
-▸ `Optional` **onComplete**(): `void`
+▸ **onComplete**(): `void`
 
 A callback that gets called when payment complete on paypal side.
 
@@ -53,7 +53,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error?`): `void`
+▸ **onError**(`error?`): `void`
 
 A callback that gets called if unable to initialize the widget or select
 one of the address options provided by the widget.

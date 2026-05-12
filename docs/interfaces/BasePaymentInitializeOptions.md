@@ -29,7 +29,6 @@ current checkout flow.
 
 • `Optional` **creditCard**: `CreditCardPaymentInitializeOptions`
 
-**`alpha`**
 Please note that this option is currently in an early stage of
 development. Therefore the API is unstable and not ready for public
 consumption.
@@ -52,9 +51,7 @@ ___
 
 ### integrations
 
-• `Optional` **integrations**: `PaymentStrategyFactory`<`default`\>[]
-
-**`alpha`**
+• `Optional` **integrations**: `PaymentStrategyFactory`\<`default`\>[]
 
 ___
 
@@ -72,7 +69,7 @@ ___
 
 ### params
 
-• `Optional` **params**: `Object`
+• `Optional` **params**: `object`
 
 The parameters of the request, if required.
 

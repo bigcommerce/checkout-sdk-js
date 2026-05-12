@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / ShippingRequestOptions
 
-# Interface: ShippingRequestOptions<T\>
+# Interface: ShippingRequestOptions\<T\>
 
 A set of options for configuring any requests related to the shipping step of
 the current checkout flow.
@@ -14,11 +14,11 @@ options are not required.
 
 | Name | Type |
 | :------ | :------ |
-| `T` | {} |
+| `T` | `object` |
 
 ## Hierarchy
 
-- [`RequestOptions`](RequestOptions.md)<`T`\>
+- [`RequestOptions`](RequestOptions.md)\<`T`\>
 
   ↳ **`ShippingRequestOptions`**
 

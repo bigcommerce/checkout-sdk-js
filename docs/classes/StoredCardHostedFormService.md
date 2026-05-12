@@ -18,7 +18,7 @@
 
 ### constructor
 
-• **new StoredCardHostedFormService**(`_host`, `_hostedFormFactory`)
+• **new StoredCardHostedFormService**(`_host`, `_hostedFormFactory`): [`StoredCardHostedFormService`](StoredCardHostedFormService.md)
 
 #### Parameters
 
@@ -26,6 +26,10 @@
 | :------ | :------ |
 | `_host` | `string` |
 | `_hostedFormFactory` | [`HostedFormFactory`](HostedFormFactory.md) |
+
+#### Returns
+
+[`StoredCardHostedFormService`](StoredCardHostedFormService.md)
 
 ## Methods
 
@@ -41,7 +45,7 @@ ___
 
 ### initialize
 
-▸ **initialize**(`options`): `Promise`<`void`\>
+▸ **initialize**(`options`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -51,13 +55,13 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 ___
 
 ### submitStoredCard
 
-▸ **submitStoredCard**(`fields`, `data`): `Promise`<`void`\>
+▸ **submitStoredCard**(`fields`, `data`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -68,4 +72,4 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>

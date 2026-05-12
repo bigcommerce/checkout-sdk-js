@@ -26,7 +26,11 @@ MessageFormat](http://userguide.icu-project.org/formatparse/messages) syntax.
 
 ### constructor
 
-• **new LanguageService**()
+• **new LanguageService**(): [`LanguageService`](LanguageService.md)
+
+#### Returns
+
+[`LanguageService`](LanguageService.md)
 
 ## Methods
 

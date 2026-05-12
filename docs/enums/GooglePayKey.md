@@ -8,108 +8,108 @@ The recognized keys to pass the initialization options for Google Pay.
 
 ### Enumeration Members
 
-- [ADYEN_V2](GooglePayKey.md#adyen_v2)
-- [ADYEN_V3](GooglePayKey.md#adyen_v3)
-- [AUTHORIZE_NET](GooglePayKey.md#authorize_net)
-- [BIGCOMMERCE_PAYMENTS](GooglePayKey.md#bigcommerce_payments)
+- [ADYEN\_V2](GooglePayKey.md#adyen_v2)
+- [ADYEN\_V3](GooglePayKey.md#adyen_v3)
+- [AUTHORIZE\_NET](GooglePayKey.md#authorize_net)
+- [BIGCOMMERCE\_PAYMENTS](GooglePayKey.md#bigcommerce_payments)
 - [BNZ](GooglePayKey.md#bnz)
 - [BRAINTREE](GooglePayKey.md#braintree)
-- [CHECKOUT_COM](GooglePayKey.md#checkout_com)
-- [CYBERSOURCE_V2](GooglePayKey.md#cybersource_v2)
+- [CHECKOUT\_COM](GooglePayKey.md#checkout_com)
+- [CYBERSOURCE\_V2](GooglePayKey.md#cybersource_v2)
 - [ORBITAL](GooglePayKey.md#orbital)
-- [PAYPAL_COMMERCE](GooglePayKey.md#paypal_commerce)
+- [PAYPAL\_COMMERCE](GooglePayKey.md#paypal_commerce)
 - [STRIPE](GooglePayKey.md#stripe)
-- [STRIPE_OCS](GooglePayKey.md#stripe_ocs)
-- [STRIPE_UPE](GooglePayKey.md#stripe_upe)
-- [TD_ONLINE_MART](GooglePayKey.md#td_online_mart)
-- [WORLDPAY_ACCESS](GooglePayKey.md#worldpay_access)
+- [STRIPE\_OCS](GooglePayKey.md#stripe_ocs)
+- [STRIPE\_UPE](GooglePayKey.md#stripe_upe)
+- [TD\_ONLINE\_MART](GooglePayKey.md#td_online_mart)
+- [WORLDPAY\_ACCESS](GooglePayKey.md#worldpay_access)
 
 ## Enumeration Members
 
 ### ADYEN\_V2
 
-• **ADYEN\_V2**
+• **ADYEN\_V2** = ``"googlepayadyenv2"``
 
 ___
 
 ### ADYEN\_V3
 
-• **ADYEN\_V3**
+• **ADYEN\_V3** = ``"googlepayadyenv3"``
 
 ___
 
 ### AUTHORIZE\_NET
 
-• **AUTHORIZE\_NET**
+• **AUTHORIZE\_NET** = ``"googlepayauthorizenet"``
 
 ___
 
 ### BIGCOMMERCE\_PAYMENTS
 
-• **BIGCOMMERCE\_PAYMENTS**
+• **BIGCOMMERCE\_PAYMENTS** = ``"googlepay_bigcommerce_payments"``
 
 ___
 
 ### BNZ
 
-• **BNZ**
+• **BNZ** = ``"googlepaybnz"``
 
 ___
 
 ### BRAINTREE
 
-• **BRAINTREE**
+• **BRAINTREE** = ``"googlepaybraintree"``
 
 ___
 
 ### CHECKOUT\_COM
 
-• **CHECKOUT\_COM**
+• **CHECKOUT\_COM** = ``"googlepaycheckoutcom"``
 
 ___
 
 ### CYBERSOURCE\_V2
 
-• **CYBERSOURCE\_V2**
+• **CYBERSOURCE\_V2** = ``"googlepaycybersourcev2"``
 
 ___
 
 ### ORBITAL
 
-• **ORBITAL**
+• **ORBITAL** = ``"googlepayorbital"``
 
 ___
 
 ### PAYPAL\_COMMERCE
 
-• **PAYPAL\_COMMERCE**
+• **PAYPAL\_COMMERCE** = ``"googlepaypaypalcommerce"``
 
 ___
 
 ### STRIPE
 
-• **STRIPE**
+• **STRIPE** = ``"googlepaystripe"``
 
 ___
 
 ### STRIPE\_OCS
 
-• **STRIPE\_OCS**
+• **STRIPE\_OCS** = ``"googlepaystripeocs"``
 
 ___
 
 ### STRIPE\_UPE
 
-• **STRIPE\_UPE**
+• **STRIPE\_UPE** = ``"googlepaystripeupe"``
 
 ___
 
 ### TD\_ONLINE\_MART
 
-• **TD\_ONLINE\_MART**
+• **TD\_ONLINE\_MART** = ``"googlepaytdonlinemart"``
 
 ___
 
 ### WORLDPAY\_ACCESS
 
-• **WORLDPAY\_ACCESS**
+• **WORLDPAY\_ACCESS** = ``"googlepayworldpayaccess"``

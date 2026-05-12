@@ -4812,8 +4812,7 @@ declare interface ConsignmentAssignmentBaseRequestBodyWithShippingAddress {
 
 declare type ConsignmentAssignmentRequestBody = ConsignmentAssignmentBaseRequestBodyWithShippingAddress | ConsignmentAssignmentBaseRequestBodyWithAddress;
 
-declare interface ConsignmentAutomaticDiscount extends ConsignmentDiscountBase<'AUTOMATIC'> {
-}
+declare type ConsignmentAutomaticDiscount = ConsignmentDiscountBase<'AUTOMATIC'>;
 
 declare interface ConsignmentCouponDiscount extends ConsignmentDiscountBase<'COUPON'> {
     couponId: number;
@@ -7950,7 +7949,7 @@ declare interface RemoteCheckoutStateData {
  * any server response into a JS error object.
  */
 declare class RequestError<TBody = any> extends StandardError {
-    body: TBody | {};
+    body: TBody | object;
     headers: {
         [key: string]: any;
     };
@@ -7959,7 +7958,7 @@ declare class RequestError<TBody = any> extends StandardError {
         message?: string;
     }>;
     status: number;
-    constructor(response?: Response<TBody | {}>, { message, errors, }?: {
+    constructor(response?: Response<TBody | object>, { message, errors, }?: {
         message?: string;
         errors?: Array<{
             code: string;
@@ -7971,7 +7970,7 @@ declare class RequestError<TBody = any> extends StandardError {
 /**
  * A set of options for configuring an asynchronous request.
  */
-declare interface RequestOptions<TParams = {}> {
+declare interface RequestOptions<TParams = object> {
     /**
      * Provide this option if you want to cancel or time out the request. If the
      * timeout object completes before the request, the request will be
@@ -8035,7 +8034,7 @@ declare interface ShippingCountrySelector {
  * need to provide additional information in order to initialize the shipping
  * step of checkout.
  */
-declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptions<T> {
+declare interface ShippingInitializeOptions<T = object> extends ShippingRequestOptions<T> {
     /**
      * The options that are required to initialize the shipping step of checkout
      * when using AmazonPayV2.
@@ -8092,7 +8091,7 @@ declare interface ShippingOption {
  * specific flow for setting the shipping address or option. Otherwise, these
  * options are not required.
  */
-declare interface ShippingRequestOptions<T = {}> extends RequestOptions<T> {
+declare interface ShippingRequestOptions<T = object> extends RequestOptions<T> {
     methodId?: string;
 }
 

@@ -19,7 +19,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `response` | `default`<`unknown`\> |
+| `response` | `default`\<`unknown`\> |
 
 ___
 

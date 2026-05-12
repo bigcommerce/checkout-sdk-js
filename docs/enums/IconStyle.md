@@ -13,10 +13,10 @@
 
 ### Default
 
-• **Default**
+• **Default** = ``"default"``
 
 ___
 
 ### Solid
 
-• **Solid**
+• **Solid** = ``"solid"``

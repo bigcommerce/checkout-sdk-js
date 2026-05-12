@@ -21,11 +21,11 @@
 
 ### getPaymentId
 
-▸ **getPaymentId**(): `undefined` \| { `gatewayId?`: `string` ; `providerId`: `string`  }
+▸ **getPaymentId**(): `undefined` \| \{ `gatewayId?`: `string` ; `providerId`: `string`  }
 
 #### Returns
 
-`undefined` \| { `gatewayId?`: `string` ; `providerId`: `string`  }
+`undefined` \| \{ `gatewayId?`: `string` ; `providerId`: `string`  }
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `paymentMethod?` | [`PaymentMethod`](PaymentMethod.md)<`any`\> |
+| `paymentMethod?` | [`PaymentMethod`](PaymentMethod.md)\<`any`\> |
 
 #### Returns
 

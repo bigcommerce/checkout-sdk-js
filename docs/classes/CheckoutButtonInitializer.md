@@ -19,13 +19,17 @@
 
 ### constructor
 
-• **new CheckoutButtonInitializer**()
+• **new CheckoutButtonInitializer**(): [`CheckoutButtonInitializer`](CheckoutButtonInitializer.md)
+
+#### Returns
+
+[`CheckoutButtonInitializer`](CheckoutButtonInitializer.md)
 
 ## Methods
 
 ### deinitializeButton
 
-▸ **deinitializeButton**(`options`): `Promise`<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
+▸ **deinitializeButton**(`options`): `Promise`\<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
 
 De-initializes the checkout button by performing any necessary clean-ups.
 
@@ -43,7 +47,7 @@ await service.deinitializeButton({
 
 #### Returns
 
-`Promise`<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
+`Promise`\<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
 
 A promise that resolves to the current state.
 
@@ -75,7 +79,7 @@ ___
 
 ### initializeButton
 
-▸ **initializeButton**(`options`): `Promise`<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
+▸ **initializeButton**(`options`): `Promise`\<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
 
 Initializes the checkout button of a payment method.
 
@@ -99,7 +103,7 @@ initializer.initializeButton({
 
 #### Returns
 
-`Promise`<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
+`Promise`\<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
 
 A promise that resolves to the current state.
 
@@ -107,7 +111,7 @@ ___
 
 ### subscribe
 
-▸ **subscribe**(`subscriber`, ...`filters`): () => `void`
+▸ **subscribe**(`subscriber`, `...filters`): () => `void`
 
 Subscribes to any changes to the current state.
 
@@ -147,31 +151,6 @@ A function, if called, will unsubscribe the subscriber.
 
 ▸ (): `void`
 
-Subscribes to any changes to the current state.
-
-The method registers a callback function and executes it every time there
-is a change in the current state.
-
-```js
-service.subscribe(state => {
-    console.log(state.statuses.isInitializingButton());
-});
-```
-
-The method can be configured to notify subscribers only regarding
-relevant changes, by providing a filter function.
-
-```js
-const filter = state => state.errors.getInitializeButtonError();
-
-// Only trigger the subscriber when the cart changes.
-service.subscribe(state => {
-    console.log(state.errors.getInitializeButtonError())
-}, filter);
-```
-
 ##### Returns
 
 `void`
-
-A function, if called, will unsubscribe the subscriber.

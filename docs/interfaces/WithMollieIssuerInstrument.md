@@ -7,7 +7,7 @@
 ### Properties
 
 - [issuer](WithMollieIssuerInstrument.md#issuer)
-- [shopper_locale](WithMollieIssuerInstrument.md#shopper_locale)
+- [shopper\_locale](WithMollieIssuerInstrument.md#shopper_locale)
 
 ## Properties
 

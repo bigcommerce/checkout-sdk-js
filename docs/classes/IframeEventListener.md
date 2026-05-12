@@ -1,12 +1,12 @@
 [@bigcommerce/checkout-sdk](../README.md) / IframeEventListener
 
-# Class: IframeEventListener<TEventMap, TContext\>
+# Class: IframeEventListener\<TEventMap, TContext\>
 
 ## Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `TEventMap` | extends [`IframeEventMap`](../README.md#iframeeventmap)<keyof `TEventMap`\> |
+| `TEventMap` | extends [`IframeEventMap`](../README.md#iframeeventmap)\<keyof `TEventMap`\> |
 | `TContext` | `undefined` |
 
 ## Table of contents
@@ -27,13 +27,13 @@
 
 ### constructor
 
-• **new IframeEventListener**<`TEventMap`, `TContext`\>(`sourceOrigin`)
+• **new IframeEventListener**\<`TEventMap`, `TContext`\>(`sourceOrigin`): [`IframeEventListener`](IframeEventListener.md)\<`TEventMap`, `TContext`\>
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `TEventMap` | extends [`IframeEventMap`](../README.md#iframeeventmap)<keyof `TEventMap`\> |
+| `TEventMap` | extends [`IframeEventMap`](../README.md#iframeeventmap)\<keyof `TEventMap`\> |
 | `TContext` | `undefined` |
 
 #### Parameters
@@ -42,11 +42,15 @@
 | :------ | :------ |
 | `sourceOrigin` | `string` |
 
+#### Returns
+
+[`IframeEventListener`](IframeEventListener.md)\<`TEventMap`, `TContext`\>
+
 ## Methods
 
 ### addListener
 
-▸ **addListener**<`TType`\>(`type`, `listener`): `void`
+▸ **addListener**\<`TType`\>(`type`, `listener`): `void`
 
 #### Type parameters
 
@@ -79,7 +83,7 @@ ___
 
 ### removeListener
 
-▸ **removeListener**<`TType`\>(`type`, `listener`): `void`
+▸ **removeListener**\<`TType`\>(`type`, `listener`): `void`
 
 #### Type parameters
 
@@ -112,7 +116,7 @@ ___
 
 ### trigger
 
-▸ **trigger**<`TType`\>(`event`, `context?`): `void`
+▸ **trigger**\<`TType`\>(`event`, `context?`): `void`
 
 #### Type parameters
 

@@ -53,7 +53,7 @@ ___
 
 ### onRenderButton
 
-▸ `Optional` **onRenderButton**(): `void`
+▸ **onRenderButton**(): `void`
 
 A callback right before render Smart Payment Button that gets called when
 This callback can be used to hide the standard submit button.
@@ -66,7 +66,7 @@ ___
 
 ### submitForm
 
-▸ `Optional` **submitForm**(): `void`
+▸ **submitForm**(): `void`
 
 A callback for submitting payment form that gets called
 when buyer approved PayPal account.

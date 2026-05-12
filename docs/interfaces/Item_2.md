@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) / Item_2
+[@bigcommerce/checkout-sdk](../README.md) / Item\_2
 
 # Interface: Item\_2
 

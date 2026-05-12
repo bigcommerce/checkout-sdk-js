@@ -21,7 +21,7 @@
 | :------ | :------ |
 | `error?` | `PaymentErrorData` |
 | `errors?` | `string`[] |
-| `response?` | `default`<`PaymentErrorResponseBody`\> |
+| `response?` | `default`\<`PaymentErrorResponseBody`\> |
 
 ___
 

@@ -20,7 +20,7 @@
 | Name | Type |
 | :------ | :------ |
 | `error` | `PaymentErrorData` |
-| `response?` | `default`<`PaymentErrorResponseBody`\> |
+| `response?` | `default`\<`PaymentErrorResponseBody`\> |
 
 ___
 

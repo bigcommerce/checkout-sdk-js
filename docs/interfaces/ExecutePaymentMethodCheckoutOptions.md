@@ -45,7 +45,7 @@ ___
 
 ### params
 
-• `Optional` **params**: `Object`
+• `Optional` **params**: `object`
 
 The parameters of the request, if required.
 
@@ -83,7 +83,7 @@ The version of the checkout, used for optimistic concurrency control.
 
 ### checkoutPaymentMethodExecuted
 
-▸ `Optional` **checkoutPaymentMethodExecuted**(`data?`): `void`
+▸ **checkoutPaymentMethodExecuted**(`data?`): `void`
 
 #### Parameters
 
@@ -99,7 +99,7 @@ ___
 
 ### continueWithCheckoutCallback
 
-▸ `Optional` **continueWithCheckoutCallback**(): `void`
+▸ **continueWithCheckoutCallback**(): `void`
 
 #### Returns
 

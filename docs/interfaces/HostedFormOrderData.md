@@ -56,13 +56,13 @@ ___
 
 ### payment
 
-• `Optional` **payment**: [`HostedCreditCardInstrument`](../README.md#hostedcreditcardinstrument) & [`PaymentInstrumentMeta`](PaymentInstrumentMeta.md) & [`HostedVaultedInstrument`](../README.md#hostedvaultedinstrument) & [`PaymentInstrumentMeta`](PaymentInstrumentMeta.md)
+• `Optional` **payment**: (HostedCreditCardInstrument \| HostedVaultedInstrument) & PaymentInstrumentMeta
 
 ___
 
 ### paymentMethod
 
-• `Optional` **paymentMethod**: [`PaymentMethod`](PaymentMethod.md)<`any`\>
+• `Optional` **paymentMethod**: [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 ___
 

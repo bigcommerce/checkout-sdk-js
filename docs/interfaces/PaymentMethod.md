@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / PaymentMethod
 
-# Interface: PaymentMethod<T\>
+# Interface: PaymentMethod\<T\>
 
 ## Type parameters
 

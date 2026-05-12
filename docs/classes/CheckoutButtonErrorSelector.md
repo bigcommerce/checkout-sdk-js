@@ -17,7 +17,11 @@
 
 ### constructor
 
-• **new CheckoutButtonErrorSelector**()
+• **new CheckoutButtonErrorSelector**(): [`CheckoutButtonErrorSelector`](CheckoutButtonErrorSelector.md)
+
+#### Returns
+
+[`CheckoutButtonErrorSelector`](CheckoutButtonErrorSelector.md)
 
 ## Methods
 

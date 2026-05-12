@@ -26,27 +26,31 @@
 
 ### constructor
 
-• **new HostedForm**(`_fields`, `_eventListener`, `_payloadTransformer`, `_eventCallbacks`, `_paymentHumanVerificationHandler`)
+• **new HostedForm**(`_fields`, `_eventListener`, `_payloadTransformer`, `_eventCallbacks`, `_paymentHumanVerificationHandler`): [`HostedForm`](HostedForm.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_fields` | [`HostedField`](HostedField.md)[] |
-| `_eventListener` | [`IframeEventListener`](IframeEventListener.md)<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md), `undefined`\> |
+| `_eventListener` | [`IframeEventListener`](IframeEventListener.md)\<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md), `undefined`\> |
 | `_payloadTransformer` | [`HostedFormOrderDataTransformer`](HostedFormOrderDataTransformer.md) |
 | `_eventCallbacks` | [`HostedFormEventCallbacks`](../README.md#hostedformeventcallbacks) |
 | `_paymentHumanVerificationHandler` | [`PaymentHumanVerificationHandler`](PaymentHumanVerificationHandler.md) |
+
+#### Returns
+
+[`HostedForm`](HostedForm.md)
 
 ## Methods
 
 ### attach
 
-▸ **attach**(): `Promise`<`void`\>
+▸ **attach**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 
@@ -98,7 +102,7 @@ ___
 
 ### submit
 
-▸ **submit**(`payload`, `additionalActionData?`): `Promise`<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
+▸ **submit**(`payload`, `additionalActionData?`): `Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
 
 #### Parameters
 
@@ -109,7 +113,7 @@ ___
 
 #### Returns
 
-`Promise`<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
+`Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
 
 #### Implementation of
 
@@ -119,7 +123,7 @@ ___
 
 ### submitStoredCard
 
-▸ **submitStoredCard**(`payload`): `Promise`<`void` \| [`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
+▸ **submitStoredCard**(`payload`): `Promise`\<`void` \| [`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
 
 #### Parameters
 
@@ -131,17 +135,17 @@ ___
 
 #### Returns
 
-`Promise`<`void` \| [`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
+`Promise`\<`void` \| [`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
 
 ___
 
 ### validate
 
-▸ **validate**(): `Promise`<`void`\>
+▸ **validate**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 

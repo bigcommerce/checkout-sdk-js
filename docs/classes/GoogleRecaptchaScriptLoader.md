@@ -16,7 +16,7 @@
 
 ### constructor
 
-• **new GoogleRecaptchaScriptLoader**(`_scriptLoader`, `_window?`)
+• **new GoogleRecaptchaScriptLoader**(`_scriptLoader`, `_window?`): [`GoogleRecaptchaScriptLoader`](GoogleRecaptchaScriptLoader.md)
 
 #### Parameters
 
@@ -25,12 +25,16 @@
 | `_scriptLoader` | `default` |
 | `_window?` | [`GoogleRecaptchaWindow`](../interfaces/GoogleRecaptchaWindow.md) |
 
+#### Returns
+
+[`GoogleRecaptchaScriptLoader`](GoogleRecaptchaScriptLoader.md)
+
 ## Methods
 
 ### load
 
-▸ **load**(): `Promise`<`undefined` \| `ReCaptcha`\>
+▸ **load**(): `Promise`\<`undefined` \| `ReCaptcha`\>
 
 #### Returns
 
-`Promise`<`undefined` \| `ReCaptcha`\>
+`Promise`\<`undefined` \| `ReCaptcha`\>

@@ -111,7 +111,7 @@ ___
 
 ### options
 
-• `Optional` **options**: `Omit`<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"onChange"``\>
+• `Optional` **options**: `Omit`\<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"onChange"``\>
 
 Optional. Overwriting the default options
 

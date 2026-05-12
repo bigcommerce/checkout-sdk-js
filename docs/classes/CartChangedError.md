@@ -2,6 +2,9 @@
 
 # Class: CartChangedError
 
+This error type should not be constructed directly. It is a base class for
+all custom errors thrown in this library.
+
 ## Hierarchy
 
 - [`StandardError`](StandardError.md)
@@ -24,7 +27,7 @@
 
 ### constructor
 
-• **new CartChangedError**(`previous`, `updated`)
+• **new CartChangedError**(`previous`, `updated`): [`CartChangedError`](CartChangedError.md)
 
 #### Parameters
 
@@ -32,6 +35,10 @@
 | :------ | :------ |
 | `previous` | [`ComparableCheckout`](../README.md#comparablecheckout) |
 | `updated` | [`ComparableCheckout`](../README.md#comparablecheckout) |
+
+#### Returns
+
+[`CartChangedError`](CartChangedError.md)
 
 #### Overrides
 
@@ -43,7 +50,6 @@
 
 • **data**: `Object`
 
-**`alpha`**
 Please note that this option is currently in an early stage of
 development. Therefore the API is unstable and not ready for public
 consumption.

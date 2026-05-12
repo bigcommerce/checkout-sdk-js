@@ -13,10 +13,10 @@
 
 ### PILL
 
-• **PILL**
+• **PILL** = ``"pill"``
 
 ___
 
 ### RECT
 
-• **RECT**
+• **RECT** = ``"rect"``

@@ -12,7 +12,7 @@
 
 ### getCheckout
 
-▸ **getCheckout**<`TMethodId`\>(`methodId`): `undefined` \| [`RemoteCheckoutStateData`](RemoteCheckoutStateData.md)[`TMethodId`]
+▸ **getCheckout**\<`TMethodId`\>(`methodId`): `undefined` \| [`RemoteCheckoutStateData`](RemoteCheckoutStateData.md)[`TMethodId`]
 
 #### Type parameters
 

@@ -41,7 +41,7 @@ ___
 
 ### onComplete
 
-▸ `Optional` **onComplete**(`event`): `void`
+▸ **onComplete**(`event`): `void`
 
 #### Parameters
 
@@ -57,7 +57,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`event`): `void`
+▸ **onError**(`event`): `void`
 
 #### Parameters
 
@@ -73,7 +73,7 @@ ___
 
 ### onFrameError
 
-▸ `Optional` **onFrameError**(`event`): `void`
+▸ **onFrameError**(`event`): `void`
 
 #### Parameters
 
@@ -89,7 +89,7 @@ ___
 
 ### onFrameLoad
 
-▸ `Optional` **onFrameLoad**(`event`): `void`
+▸ **onFrameLoad**(`event`): `void`
 
 #### Parameters
 
@@ -105,7 +105,7 @@ ___
 
 ### onLoad
 
-▸ `Optional` **onLoad**(`event`): `void`
+▸ **onLoad**(`event`): `void`
 
 #### Parameters
 
@@ -121,7 +121,7 @@ ___
 
 ### onSignOut
 
-▸ `Optional` **onSignOut**(`event`): `void`
+▸ **onSignOut**(`event`): `void`
 
 #### Parameters
 

@@ -45,7 +45,7 @@ ___
 
 ### getPaymentMethod
 
-▸ **getPaymentMethod**(`methodId`, `gatewayId?`): `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
+▸ **getPaymentMethod**(`methodId`, `gatewayId?`): `undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 #### Parameters
 
@@ -56,13 +56,13 @@ ___
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
+`undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 ___
 
 ### getPaymentMethodOrThrow
 
-▸ **getPaymentMethodOrThrow**(`methodId`, `gatewayId?`): [`PaymentMethod`](PaymentMethod.md)<`any`\>
+▸ **getPaymentMethodOrThrow**(`methodId`, `gatewayId?`): [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 #### Parameters
 
@@ -73,17 +73,17 @@ ___
 
 #### Returns
 
-[`PaymentMethod`](PaymentMethod.md)<`any`\>
+[`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 ___
 
 ### getPaymentMethods
 
-▸ **getPaymentMethods**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>[]
+▸ **getPaymentMethods**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>[]
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>[]
+`undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>[]
 
 ___
 

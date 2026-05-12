@@ -14,16 +14,16 @@
 
 ### Large
 
-• **Large**
+• **Large** = ``"large"``
 
 ___
 
 ### Medium
 
-• **Medium**
+• **Medium** = ``"medium"``
 
 ___
 
 ### Small
 
-• **Small**
+• **Small** = ``"small"``

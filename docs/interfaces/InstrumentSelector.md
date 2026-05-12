@@ -84,7 +84,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `paymentMethod` | [`PaymentMethod`](PaymentMethod.md)<`any`\> |
+| `paymentMethod` | [`PaymentMethod`](PaymentMethod.md)\<`any`\> |
 
 #### Returns
 

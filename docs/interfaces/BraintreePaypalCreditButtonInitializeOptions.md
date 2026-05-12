@@ -53,7 +53,7 @@ ___
 
 ### style
 
-• `Optional` **style**: `Pick`<`PaypalStyleOptions`, ``"color"`` \| ``"height"`` \| ``"label"`` \| ``"layout"`` \| ``"shape"`` \| ``"size"`` \| ``"fundingicons"`` \| ``"tagline"``\>
+• `Optional` **style**: `Pick`\<`PaypalStyleOptions`, ``"color"`` \| ``"height"`` \| ``"label"`` \| ``"layout"`` \| ``"shape"`` \| ``"size"`` \| ``"fundingicons"`` \| ``"tagline"``\>
 
 A set of styling options for the checkout button.
 
@@ -61,7 +61,7 @@ A set of styling options for the checkout button.
 
 ### onAuthorizeError
 
-▸ `Optional` **onAuthorizeError**(`error`): `void`
+▸ **onAuthorizeError**(`error`): `void`
 
 A callback that gets called if unable to authorize and tokenize payment.
 
@@ -79,9 +79,9 @@ ___
 
 ### onEligibilityFailure
 
-▸ `Optional` **onEligibilityFailure**(): `void`
+▸ **onEligibilityFailure**(): `void`
 
- A callback that gets called when Braintree SDK restricts to render PayPal component.
+A callback that gets called when Braintree SDK restricts to render PayPal component.
 
 #### Returns
 
@@ -91,7 +91,7 @@ ___
 
 ### onError
 
-▸ `Optional` **onError**(`error`): `void`
+▸ **onError**(`error`): `void`
 
 A callback that gets called on any error instead of submit payment or authorization errors.
 
@@ -109,7 +109,7 @@ ___
 
 ### onPaymentError
 
-▸ `Optional` **onPaymentError**(`error`): `void`
+▸ **onPaymentError**(`error`): `void`
 
 A callback that gets called if unable to submit payment.
 

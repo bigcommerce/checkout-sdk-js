@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- [`ConsignmentDiscountBase`](ConsignmentDiscountBase.md)<``"COUPON"``\>
+- [`ConsignmentDiscountBase`](ConsignmentDiscountBase.md)\<``"COUPON"``\>
 
   ↳ **`ConsignmentCouponDiscount`**
 

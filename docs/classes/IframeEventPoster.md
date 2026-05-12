@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / IframeEventPoster
 
-# Class: IframeEventPoster<TEvent, TContext\>
+# Class: IframeEventPoster\<TEvent, TContext\>
 
 ## Type parameters
 
@@ -25,7 +25,7 @@
 
 ### constructor
 
-• **new IframeEventPoster**<`TEvent`, `TContext`\>(`targetOrigin`, `_targetWindow?`, `_context?`)
+• **new IframeEventPoster**\<`TEvent`, `TContext`\>(`targetOrigin`, `_targetWindow?`, `_context?`): [`IframeEventPoster`](IframeEventPoster.md)\<`TEvent`, `TContext`\>
 
 #### Type parameters
 
@@ -41,6 +41,10 @@
 | `targetOrigin` | `string` |
 | `_targetWindow?` | `Window` |
 | `_context?` | `TContext` |
+
+#### Returns
+
+[`IframeEventPoster`](IframeEventPoster.md)\<`TEvent`, `TContext`\>
 
 ## Methods
 
@@ -58,25 +62,25 @@
 
 `void`
 
-▸ **post**<`TSuccessEvent`, `TErrorEvent`\>(`event`, `options`): `Promise`<`TSuccessEvent`\>
+▸ **post**\<`TSuccessEvent`, `TErrorEvent`\>(`event`, `options`): `Promise`\<`TSuccessEvent`\>
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `TSuccessEvent` | extends [`IframeEvent`](../interfaces/IframeEvent.md)<`string`, `any`, `TSuccessEvent`\>[`IframeEvent`](../interfaces/IframeEvent.md)<`string`, `any`\> |
-| `TErrorEvent` | extends [`IframeEvent`](../interfaces/IframeEvent.md)<`string`, `any`, `TErrorEvent`\>[`IframeEvent`](../interfaces/IframeEvent.md)<`string`, `any`\> |
+| `TSuccessEvent` | extends [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`, `TSuccessEvent`\> = [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`\> |
+| `TErrorEvent` | extends [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`, `TErrorEvent`\> = [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `event` | `TEvent` |
-| `options` | [`IframeEventPostOptions`](../interfaces/IframeEventPostOptions.md)<`TSuccessEvent`, `TErrorEvent`\> |
+| `options` | [`IframeEventPostOptions`](../interfaces/IframeEventPostOptions.md)\<`TSuccessEvent`, `TErrorEvent`\> |
 
 #### Returns
 
-`Promise`<`TSuccessEvent`\>
+`Promise`\<`TSuccessEvent`\>
 
 ___
 

@@ -16,7 +16,7 @@
 
 ### constructor
 
-• **new PaymentHumanVerificationHandler**(`_googleRecaptcha`)
+• **new PaymentHumanVerificationHandler**(`_googleRecaptcha`): [`PaymentHumanVerificationHandler`](PaymentHumanVerificationHandler.md)
 
 #### Parameters
 
@@ -24,11 +24,15 @@
 | :------ | :------ |
 | `_googleRecaptcha` | [`GoogleRecaptcha`](GoogleRecaptcha.md) |
 
+#### Returns
+
+[`PaymentHumanVerificationHandler`](PaymentHumanVerificationHandler.md)
+
 ## Methods
 
 ### handle
 
-▸ **handle**(`error`): `Promise`<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
+▸ **handle**(`error`): `Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
 
 #### Parameters
 
@@ -38,9 +42,9 @@
 
 #### Returns
 
-`Promise`<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
+`Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
 
-▸ **handle**(`id`, `key`): `Promise`<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
+▸ **handle**(`id`, `key`): `Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
 
 #### Parameters
 
@@ -51,4 +55,4 @@
 
 #### Returns
 
-`Promise`<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
+`Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>

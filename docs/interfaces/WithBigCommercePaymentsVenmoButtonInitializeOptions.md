@@ -6,7 +6,7 @@
 
 ### Properties
 
-- [bigcommerce_payments_venmo](WithBigCommercePaymentsVenmoButtonInitializeOptions.md#bigcommerce_payments_venmo)
+- [bigcommerce\_payments\_venmo](WithBigCommercePaymentsVenmoButtonInitializeOptions.md#bigcommerce_payments_venmo)
 
 ## Properties
 

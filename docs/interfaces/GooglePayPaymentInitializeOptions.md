@@ -74,7 +74,7 @@ It should be an HTML element.
 
 ### onError
 
-▸ `Optional` **onError**(`error`): `void`
+▸ **onError**(`error`): `void`
 
 A callback that gets called when GooglePay fails to initialize or
 selects a payment option.
@@ -93,7 +93,7 @@ ___
 
 ### onPaymentSelect
 
-▸ `Optional` **onPaymentSelect**(): `void`
+▸ **onPaymentSelect**(): `void`
 
 A callback that gets called when the customer selects a payment option.
 

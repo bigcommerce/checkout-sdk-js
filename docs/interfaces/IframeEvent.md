@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) / IframeEvent
 
-# Interface: IframeEvent<TType, TPayload\>
+# Interface: IframeEvent\<TType, TPayload\>
 
 ## Type parameters
 

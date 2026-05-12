@@ -9,13 +9,33 @@ checkout in order to support BigCommercePayments  Fastlane.
 
 ### Properties
 
+- [onPayPalFastlaneAddressChange](BigCommercePaymentsFastlaneShippingInitializeOptions.md#onpaypalfastlaneaddresschange)
 - [styles](BigCommercePaymentsFastlaneShippingInitializeOptions.md#styles)
 
-### Methods
-
-- [onPayPalFastlaneAddressChange](BigCommercePaymentsFastlaneShippingInitializeOptions.md#onpaypalfastlaneaddresschange)
-
 ## Properties
+
+### onPayPalFastlaneAddressChange
+
+• `Optional` **onPayPalFastlaneAddressChange**: (`showPayPalFastlaneAddressSelector`: () => `Promise`\<`undefined` \| `CustomerAddress`\>) => `void`
+
+Is a callback that shows BigCommercePayments Fastlane popup with customer addresses
+when get triggered
+
+#### Type declaration
+
+▸ (`showPayPalFastlaneAddressSelector`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `showPayPalFastlaneAddressSelector` | () => `Promise`\<`undefined` \| `CustomerAddress`\> |
+
+##### Returns
+
+`void`
+
+___
 
 ### styles
 
@@ -26,22 +46,3 @@ Is a stylisation options for customizing BigCommercePayments Fastlane components
 Note: the styles for all BigCommercePayments Fastlane strategies should be the same,
 because they will be provided to fastlane library only for the first strategy initialization
 no matter what strategy was initialised first
-
-## Methods
-
-### onPayPalFastlaneAddressChange
-
-▸ `Optional` **onPayPalFastlaneAddressChange**(`showPayPalFastlaneAddressSelector`): `void`
-
-Is a callback that shows BigCommercePayments Fastlane popup with customer addresses
-when get triggered
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `showPayPalFastlaneAddressSelector` | () => `Promise`<`undefined` \| `CustomerAddress`\> |
-
-#### Returns
-
-`void`

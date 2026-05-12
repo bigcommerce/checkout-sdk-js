@@ -16,13 +16,17 @@
 
 ### constructor
 
-• **new MutationObeserverCreator**(`callback`)
+• **new MutationObeserverCreator**(`callback`): `MutationObserver`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `callback` | `MutationCallback` |
+
+#### Returns
+
+`MutationObserver`
 
 ## Properties
 
