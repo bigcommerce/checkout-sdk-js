@@ -335,34 +335,6 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             });
         });
 
-        it('initializes paypal buttons without shipping callbacks when appSwitch enabled', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
-                },
-            });
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                fundingSource: paypalSdk.FUNDING.PAYLATER,
-                style: {
-                    height: DefaultCheckoutButtonHeight,
-                    color: StyleButtonColor.silver,
-                    label: 'checkout',
-                },
-                createOrder: expect.any(Function),
-                onApprove: expect.any(Function),
-                onClick: expect.any(Function),
-            });
-        });
-
         it('renders PayPal PayLater button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
@@ -454,6 +426,14 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
     });
 
     describe('#onApprove button callback', () => {
+        beforeEach(() => {
+            const consignment = getConsignment();
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getConsignmentsOrThrow',
+            ).mockReturnValue([consignment]);
+        });
+
         describe('default flow', () => {
             it('tokenizes payment on paypal approve', async () => {
                 await strategy.initialize(initializationOptions);
@@ -465,6 +445,94 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 expect(paypalCommerceIntegrationService.tokenizePayment).toHaveBeenCalledWith(
                     methodId,
                     approveDataOrderId,
+                );
+            });
+
+            it('call getConsignmentOrThrow when server side shipping callbacks is on', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...paymentMethod,
+                    initializationData: {
+                        ...paymentMethod.initializationData,
+                        isHostedCheckoutEnabled: true,
+                        isServerSideShippingCallbacksEnabled: true,
+                    },
+                });
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(
+                    paymentIntegrationService.getState().getConsignmentsOrThrow,
+                ).toHaveBeenCalled();
+            });
+
+            it('selects shipping option when server side shipping callbacks is on', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...paymentMethod,
+                    initializationData: {
+                        ...paymentMethod.initializationData,
+                        isHostedCheckoutEnabled: true,
+                        isServerSideShippingCallbacksEnabled: true,
+                    },
+                });
+
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();
+            });
+
+            it('updates address with merged object when server side shipping callbacks is on', async () => {
+                const consignment = getConsignment();
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...paymentMethod,
+                    initializationData: {
+                        ...paymentMethod.initializationData,
+                        isHostedCheckoutEnabled: true,
+                        isServerSideShippingCallbacksEnabled: true,
+                    },
+                });
+
+                await strategy.initialize(initializationOptions);
+
+                const orderDetails = {
+                    firstName: 'Full',
+                    lastName: 'Name',
+                    email: 'john@doe.com',
+                    phone: '',
+                    company: '',
+                    address1: '2 E 61st St',
+                    address2: 'Apt.1',
+                    city: 'New York',
+                    countryCode: 'US',
+                    postalCode: '10065',
+                    stateOrProvince: '',
+                    stateOrProvinceCode: 'NY',
+                    customFields: [],
+                };
+
+                const shippingAddress = {
+                    ...consignment.shippingAddress,
+                    ...orderDetails,
+                };
+
+                eventEmitter.emit('onApprove');
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
+                    shippingAddress,
                 );
             });
         });

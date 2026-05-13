@@ -114,8 +114,11 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, paymentButtonStyles, isAppSwitchEnabled } =
-            paymentMethod.initializationData || {};
+        const {
+            isHostedCheckoutEnabled,
+            paymentButtonStyles,
+            isServerSideShippingCallbacksEnabled,
+        } = paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
@@ -127,14 +130,20 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
                     this.onShippingOptionsChange(data),
             }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
+                this.onHostedCheckoutApprove(
+                    data,
+                    actions,
+                    methodId,
+                    onComplete,
+                    isServerSideShippingCallbacksEnabled,
+                ),
         };
 
         const fundingSources = [paypalSdk.FUNDING.PAYLATER, paypalSdk.FUNDING.CREDIT];
@@ -171,6 +180,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         actions: ApproveCallbackActions,
         methodId: string,
         onComplete?: () => void,
+        isServerSideShippingCallbacksEnabled?: boolean,
     ): Promise<void> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
@@ -178,6 +188,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
 
         const cart = this.paymentIntegrationService.getState().getCartOrThrow();
         const orderDetails = await actions.order.get();
+        let shippingAddress;
 
         try {
             const billingAddress =
@@ -188,10 +199,30 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
             await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
             if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalCommerceIntegrationService.getShippingAddressFromOrderDetails(
-                        orderDetails,
-                    );
+                if (isServerSideShippingCallbacksEnabled) {
+                    await this.paymentIntegrationService.loadCheckout(cart.id);
+                    const refreshedState = this.paymentIntegrationService.getState();
+                    const consignment = refreshedState.getConsignmentsOrThrow()[0];
+                    const selectedShippingOptionId = consignment.selectedShippingOption?.id;
+                    const quoteShippingAddress = consignment.shippingAddress;
+                    shippingAddress = {
+                        ...quoteShippingAddress,
+                        ...this.paypalCommerceIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        ),
+                    };
+
+                    if (selectedShippingOptionId) {
+                        await this.paymentIntegrationService.selectShippingOption(
+                            selectedShippingOptionId,
+                        );
+                    }
+                } else {
+                    shippingAddress =
+                        this.paypalCommerceIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
+                }
 
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
                 await this.paypalCommerceIntegrationService.updateOrder();

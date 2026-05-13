@@ -404,7 +404,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -422,7 +422,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -437,7 +437,6 @@ describe('PayPalCommerceButtonStrategy', () => {
                 expect.objectContaining({
                     fundingSource: paypalSdk.FUNDING.PAYPAL,
                     style: paypalCommerceOptions.style,
-                    appSwitchWhenAvailable: true,
                     createOrder: expect.any(Function),
                     onApprove: expect.any(Function),
                 }),
@@ -484,13 +483,13 @@ describe('PayPalCommerceButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
+        it('initializes PayPal button to render without shipping options when server side shipping callbacks enabled', async () => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -502,7 +501,6 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
                 createOrder: expect.any(Function),
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
                 onApprove: expect.any(Function),
@@ -572,31 +570,6 @@ describe('PayPalCommerceButtonStrategy', () => {
             expect(paypalCommerceIntegrationService.removeElement).toHaveBeenCalledWith(
                 defaultButtonContainerId,
             );
-        });
-
-        it('initializes PayPal button to render with appSwitch flag', async () => {
-            const paymentMethodWithShippingOptionsFeature = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isAppSwitchEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
-            await strategy.initialize(initializationOptions);
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                appSwitchWhenAvailable: true,
-                createOrder: expect.any(Function),
-                fundingSource: paypalSdk.FUNDING.PAYPAL,
-                onApprove: expect.any(Function),
-                style: paypalCommerceOptions.style,
-            });
         });
     });
 
