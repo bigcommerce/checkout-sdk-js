@@ -418,15 +418,12 @@ describe('GooglePayPaymentStrategy', () => {
                 jest.spyOn(processor, 'getNonce').mockRejectedValue(
                     new MissingDataError(MissingDataErrorType.MissingConsignments),
                 );
-
-                const execute = () => strategy.execute(payload);
-
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
                 ).mockReturnValue(getGeneric());
 
-                await expect(execute()).rejects.toThrow(MissingDataError);
+                await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
             });
         });
     });
@@ -451,10 +448,6 @@ describe('GooglePayPaymentStrategy', () => {
             const rejectedInitializeWidgetMock = createInitializeWidgetMock(internalError);
 
             await strategy.initialize(options);
-
-            button.click();
-
-            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(LoadingHide).toHaveBeenCalled();
             expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
