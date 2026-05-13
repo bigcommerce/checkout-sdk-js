@@ -99,6 +99,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         if (container) {
             this._isContainerMode = true;
+
             const renderButton = () =>
                 this._addPaymentButtonToContainer(
                     container,

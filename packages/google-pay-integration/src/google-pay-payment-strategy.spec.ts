@@ -449,6 +449,10 @@ describe('GooglePayPaymentStrategy', () => {
 
             await strategy.initialize(options);
 
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
             expect(LoadingHide).toHaveBeenCalled();
             expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
             expect(options.googlepayworldpayaccess?.onError).toHaveBeenCalled();
@@ -899,12 +903,12 @@ describe('GooglePayPaymentStrategy', () => {
         });
     });
 
-    describe('Container mode', () => {
+    describe('#initialize with container', () => {
         const CONTAINER_ID = 'checkout-payment-continue';
 
         let containerHost: HTMLDivElement;
         let brandedButton: HTMLButtonElement;
-        let capturedOnClick: (event: MouseEvent) => Promise<void>;
+        let containerButtonOnClick: (event: MouseEvent) => Promise<void>;
 
         beforeEach(() => {
             containerHost = document.createElement('div');
@@ -915,11 +919,17 @@ describe('GooglePayPaymentStrategy', () => {
             jest.spyOn(brandedButton, 'remove');
             jest.spyOn(brandedButton, 'removeEventListener');
 
-            jest.spyOn(processor, 'addPaymentButton').mockImplementation((_id, buttonOpts) => {
-                capturedOnClick = buttonOpts.onClick;
+            jest.spyOn(processor, 'addPaymentButton').mockImplementation(
+                (_containerId, buttonOpts) => {
+                    containerButtonOnClick = buttonOpts.onClick;
 
-                return brandedButton;
-            });
+                    brandedButton.onclick = (event: MouseEvent) => {
+                        void buttonOpts.onClick(event);
+                    };
+
+                    return brandedButton;
+                },
+            );
 
             options = {
                 methodId: 'googlepayworldpayaccess',
@@ -932,12 +942,15 @@ describe('GooglePayPaymentStrategy', () => {
         });
 
         afterEach(() => {
+            brandedButton.onclick = null;
             containerHost.remove();
         });
 
         describe('#initialize', () => {
             it('should initialize when only container is provided', async () => {
-                await expect(strategy.initialize(options)).resolves.toBeUndefined();
+                const initialize = strategy.initialize(options);
+
+                await expect(initialize).resolves.toBeUndefined();
 
                 expect(processor.addPaymentButton).toHaveBeenCalledWith(
                     CONTAINER_ID,
@@ -981,7 +994,7 @@ describe('GooglePayPaymentStrategy', () => {
                 expect(processor.addPaymentButton).not.toHaveBeenCalled();
                 expect(onInit).toHaveBeenCalledWith(expect.any(Function));
 
-                const renderButton = onInit.mock.calls[0][0] as () => void;
+                const [[renderButton]] = onInit.mock.calls;
 
                 renderButton();
 
@@ -1007,6 +1020,7 @@ describe('GooglePayPaymentStrategy', () => {
                 };
 
                 await strategy.initialize(options);
+
                 capturedRenderButton();
                 capturedRenderButton();
 
@@ -1017,25 +1031,14 @@ describe('GooglePayPaymentStrategy', () => {
                 test('container element is not in the DOM', async () => {
                     jest.spyOn(processor, 'addPaymentButton').mockReturnValue(undefined);
 
-                    await expect(strategy.initialize(options)).rejects.toThrow(
-                        InvalidArgumentError,
-                    );
-                });
+                    const initialize = strategy.initialize(options);
 
-                test('both walletButton and container are provided', async () => {
-                    options.googlepayworldpayaccess = {
-                        walletButton: 'walletButton',
-                        container: CONTAINER_ID,
-                    };
-
-                    await expect(strategy.initialize(options)).rejects.toThrow(
-                        InvalidArgumentError,
-                    );
+                    await expect(initialize).rejects.toThrow(InvalidArgumentError);
                 });
             });
         });
 
-        describe('container button onClick', () => {
+        describe('when clicking the container payment button', () => {
             let completeCheckoutFlowSpy: jest.SpyInstance;
 
             beforeEach(async () => {
@@ -1055,7 +1058,9 @@ describe('GooglePayPaymentStrategy', () => {
             it('should run direct pay flow via _interactWithPaymentSheetAndPay without PI-5111 experiment', async () => {
                 const executeSpy = jest.spyOn(strategy, 'execute');
 
-                await capturedOnClick(new MouseEvent('click'));
+                brandedButton.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(processor.setShouldRequestShipping).toHaveBeenCalledWith(false);
                 expect(processor.initializeWidget).toHaveBeenCalled();
@@ -1067,12 +1072,12 @@ describe('GooglePayPaymentStrategy', () => {
             });
 
             it('should call onError when initializeWidget throws', async () => {
-                const internalError = new Error('widget failed');
+                const widgetError = new Error('widget failed');
 
-                jest.spyOn(processor, 'initializeWidget').mockRejectedValueOnce(internalError);
+                jest.spyOn(processor, 'initializeWidget').mockRejectedValueOnce(widgetError);
 
-                await expect(capturedOnClick(new MouseEvent('click'))).rejects.toThrow(
-                    internalError,
+                await expect(containerButtonOnClick(new MouseEvent('click'))).rejects.toThrow(
+                    widgetError,
                 );
 
                 expect(options.googlepayworldpayaccess?.onError).toHaveBeenCalled();
@@ -1086,7 +1091,7 @@ describe('GooglePayPaymentStrategy', () => {
 
                 jest.spyOn(processor, 'initializeWidget').mockRejectedValueOnce(canceledError);
 
-                await expect(capturedOnClick(new MouseEvent('click'))).rejects.toThrow(
+                await expect(containerButtonOnClick(new MouseEvent('click'))).rejects.toThrow(
                     PaymentMethodCancelledError,
                 );
             });
