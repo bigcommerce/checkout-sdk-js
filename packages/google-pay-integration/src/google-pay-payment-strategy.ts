@@ -215,33 +215,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return async (event: MouseEvent) => {
             event.preventDefault();
 
-            try {
+            await this._runGooglePayWidgetInteractionWithErrorHandling(onError, async () => {
                 this._googlePayPaymentProcessor.setShouldRequestShipping(false);
                 await this._googlePayPaymentProcessor.initializeWidget();
                 await this._interactWithPaymentSheetAndPay();
-            } catch (error) {
-                let err: unknown = error;
-
-                this._toggleLoadingIndicator(false);
-
-                if (isGooglePayErrorObject(error)) {
-                    if (error.statusCode === 'CANCELED') {
-                        throw new PaymentMethodCancelledError();
-                    }
-
-                    err = new PaymentMethodFailedError(JSON.stringify(error));
-                }
-
-                onError?.(
-                    new PaymentMethodFailedError(
-                        'An error occurred while requesting your Google Pay payment details.',
-                    ),
-                );
-
-                throw err;
-            } finally {
-                this._toggleBlockDeinitialization(false);
-            }
+            });
         };
     }
 
@@ -253,7 +231,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             event.preventDefault();
 
             // TODO: Dispatch Widget Actions
-            try {
+            await this._runGooglePayWidgetInteractionWithErrorHandling(onError, async () => {
                 this._googlePayPaymentProcessor.setShouldRequestShipping(false);
                 await this._googlePayPaymentProcessor.initializeWidget();
 
@@ -262,29 +240,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 } else {
                     await this._interactWithPaymentSheet();
                 }
-            } catch (error) {
-                let err: unknown = error;
-
-                this._toggleLoadingIndicator(false);
-
-                if (isGooglePayErrorObject(error)) {
-                    if (error.statusCode === 'CANCELED') {
-                        throw new PaymentMethodCancelledError();
-                    }
-
-                    err = new PaymentMethodFailedError(JSON.stringify(error));
-                }
-
-                onError?.(
-                    new PaymentMethodFailedError(
-                        'An error occurred while requesting your Google Pay payment details.',
-                    ),
-                );
-
-                throw err;
-            } finally {
-                this._toggleBlockDeinitialization(false);
-            }
+            });
 
             onPaymentSelect?.();
         };
@@ -468,6 +424,37 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 },
             },
         };
+    }
+
+    private async _runGooglePayWidgetInteractionWithErrorHandling(
+        onError: GooglePayPaymentInitializeOptions['onError'],
+        interaction: () => Promise<void>,
+    ): Promise<void> {
+        try {
+            await interaction();
+        } catch (error) {
+            let err: unknown = error;
+
+            this._toggleLoadingIndicator(false);
+
+            if (isGooglePayErrorObject(error)) {
+                if (error.statusCode === 'CANCELED') {
+                    throw new PaymentMethodCancelledError();
+                }
+
+                err = new PaymentMethodFailedError(JSON.stringify(error));
+            }
+
+            onError?.(
+                new PaymentMethodFailedError(
+                    'An error occurred while requesting your Google Pay payment details.',
+                ),
+            );
+
+            throw err;
+        } finally {
+            this._toggleBlockDeinitialization(false);
+        }
     }
 
     private _isDirectPayOnClickEnabled(): boolean {
