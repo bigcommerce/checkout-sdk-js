@@ -58,6 +58,7 @@ declare class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _mapAdyenPlaceholderData;
     private _mountCardVerificationComponent;
     private _mountPaymentComponent;
+    private _isOneyPaymentMethod;
     private _processAdditionalAction;
     private _validateCardData;
     private _mapCardErrors;
