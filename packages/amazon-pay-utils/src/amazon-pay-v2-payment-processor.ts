@@ -15,7 +15,6 @@ import {
     AmazonPayV2Button,
     AmazonPayV2ButtonColor,
     AmazonPayV2ButtonConfig,
-    AmazonPayV2ButtonDesign,
     AmazonPayV2ButtonParameters,
     AmazonPayV2ButtonRenderingOptions,
     AmazonPayV2ChangeActionType,
@@ -122,7 +121,6 @@ export default class AmazonPayV2PaymentProcessor {
         methodId,
         options,
         placement,
-        isButtonMicroTextDisabled = false,
     }: AmazonPayV2ButtonRenderingOptions): HTMLDivElement | undefined {
         const container = document.querySelector<HTMLElement>(`#${containerId}`);
 
@@ -131,10 +129,6 @@ export default class AmazonPayV2PaymentProcessor {
         }
 
         const { id: parentContainerId } = container.appendChild(this.getButtonParentContainer());
-
-        if (options && isButtonMicroTextDisabled) {
-            options.design = AmazonPayV2ButtonDesign.C0001;
-        }
 
         const amazonPayV2ButtonOptions =
             options ??
@@ -222,7 +216,6 @@ export default class AmazonPayV2PaymentProcessor {
             extractAmazonCheckoutSessionId,
             ledgerCurrency,
             publicKeyId = '',
-            isButtonMicroTextDisabled,
         } = initializationData;
 
         if (!merchantId || !ledgerCurrency) {
@@ -235,7 +228,6 @@ export default class AmazonPayV2PaymentProcessor {
             checkoutLanguage,
             placement,
             buttonColor,
-            ...(isButtonMicroTextDisabled ? { design: AmazonPayV2ButtonDesign.C0001 } : {}),
         };
 
         if (this.isBuyNowFlow) {
