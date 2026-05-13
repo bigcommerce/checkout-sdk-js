@@ -307,6 +307,7 @@ export interface GooglePayButtonOptions {
     onClick: (event: MouseEvent) => Promise<void>;
     allowedPaymentMethods: [GooglePayBaseCardPaymentMethod];
     buttonColor?: GooglePayButtonColor;
+    buttonSizeMode?: GooglePayButtonSizeMode;
     buttonType?: GooglePayButtonType;
 }
 
@@ -519,6 +520,7 @@ export interface ExtraPaymentData {
 }
 
 export type GooglePayButtonColor = 'default' | 'black' | 'white';
+export type GooglePayButtonSizeMode = 'static' | 'fill';
 export type GooglePayButtonType =
     | 'book'
     | 'buy'
