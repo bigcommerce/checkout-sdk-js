@@ -481,10 +481,19 @@ export interface AdyenIdealComponentOptions
     showImage?: boolean;
 }
 
+export type AdyenComponentFieldVisibility = 'hidden' | 'readOnly' | 'editable';
+
+export interface AdyenOpenInvoiceComponentVisibility {
+    personalDetails?: AdyenComponentFieldVisibility;
+    billingAddress?: AdyenComponentFieldVisibility;
+    deliveryAddress?: AdyenComponentFieldVisibility;
+}
+
 export interface AdyenBoletoComponentOptions extends AdyenComponentEvents {
     personalDetailsRequired?: boolean;
     billingAddressRequired?: boolean;
     showEmailAddress?: boolean;
+    visibility?: AdyenOpenInvoiceComponentVisibility;
 }
 
 export interface AdyenStoredPaymentMethod {

@@ -438,6 +438,15 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         const { prefillCardHolderName } = paymentMethod.initializationData;
 
         const paymentComponent = adyenClient.create(paymentMethod.method, {
+            ...(this._isOneyPaymentMethod(paymentMethod.method)
+                ? {
+                      visibility: {
+                          personalDetails: 'hidden',
+                          billingAddress: 'hidden',
+                          deliveryAddress: 'hidden',
+                      },
+                  }
+                : {}),
             ...adyenv3.options,
             showBrandsUnderCardNumber: false,
             billingAddressRequired: false,
@@ -456,6 +465,10 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         }
 
         return paymentComponent;
+    }
+
+    private _isOneyPaymentMethod(method: string): boolean {
+        return method.startsWith('facilypay');
     }
 
     private async _processAdditionalAction(
