@@ -21,6 +21,11 @@
       "types": "./dist/types/integrations/*.d.ts",
       "import": "./dist/esm/integrations/*.js",
       "require": "./dist/cjs/integrations/*.js"
+    },
+    "./hosted-form-v2-iframe-host": {
+      "types": "./dist/hosted-form-v2-iframe-host.d.ts",
+      "import": "./dist/esm/hosted-form-v2-iframe-host.js",
+      "require": "./dist/cjs/hosted-form-v2-iframe-host.js"
     }
   },
   "files": [
