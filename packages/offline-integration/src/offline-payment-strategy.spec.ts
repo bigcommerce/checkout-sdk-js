@@ -1,4 +1,5 @@
 import {
+    NonceInstrument,
     OrderFinalizationNotRequiredError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -41,6 +42,70 @@ describe('OfflinePaymentStrategy', () => {
                     ...getOrderRequestBody(),
                     payment: undefined,
                 },
+                undefined,
+            );
+        });
+
+        it('includes only purchaseOrderNumber in paymentData when methodId is purchaseorder', async () => {
+            const payload = {
+                ...getOrderRequestBody(),
+                payment: {
+                    methodId: 'purchaseorder',
+                    paymentData: {
+                        purchaseOrderNumber: '1111111',
+                        shouldCreateAccount: true,
+                        shouldSaveInstrument: false,
+                        terms: false,
+                    } as NonceInstrument,
+                },
+            };
+
+            await strategy.execute(payload, undefined);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                {
+                    ...payload,
+                    payment: {
+                        methodId: 'purchaseorder',
+                        paymentData: {
+                            purchaseOrderNumber: '1111111',
+                        },
+                    },
+                },
+                undefined,
+            );
+        });
+
+        it('does not include paymentData when methodId is purchaseorder but paymentData is absent', async () => {
+            const payload = {
+                ...getOrderRequestBody(),
+                payment: {
+                    methodId: 'purchaseorder',
+                },
+            };
+
+            await strategy.execute(payload, undefined);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                {
+                    ...payload,
+                    payment: {
+                        methodId: 'purchaseorder',
+                    },
+                },
+                undefined,
+            );
+        });
+
+        it('does not include paymentData for non-purchaseorder offline methods', async () => {
+            await strategy.execute(getOrderRequestBody(), undefined);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    payment: {
+                        methodId: 'authorizenet',
+                    },
+                }),
                 undefined,
             );
         });
