@@ -80,7 +80,9 @@
                 "packages/google-pay-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/hosted-form-v2": ["packages/hosted-form-v2/src/index.ts"],
-            "@bigcommerce/checkout-sdk/humm-integration": ["packages/humm-integration/src/index.ts"],
+            "@bigcommerce/checkout-sdk/humm-integration": [
+                "packages/humm-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/klarna-integration": [
                 "packages/klarna-integration/src/index.ts"
             ],
@@ -140,6 +142,9 @@
             ],
             "@bigcommerce/checkout-sdk/ui": ["packages/ui/src/index.ts"],
             "@bigcommerce/checkout-sdk/utility": ["packages/utility/src/index.ts"],
+            "@bigcommerce/checkout-sdk/wallet-button-integration": [
+                "packages/wallet-button-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/workspace-tools": ["packages/workspace-tools/src/index.ts"],
             "@bigcommerce/checkout-sdk/worldpayaccess-integration": [
                 "packages/worldpayaccess-integration/src/index.ts"

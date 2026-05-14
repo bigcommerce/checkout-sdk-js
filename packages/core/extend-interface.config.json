@@ -23,6 +23,14 @@
             "memberPattern": "^With.+ButtonInitializeOptions$",
             "targetPath": "packages/core/src/checkout-buttons/index.ts",
             "targetMemberName": "BaseCheckoutButtonInitializeOptions"
+        },
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/wallet-button-initialize-options.ts",
+            "outputMemberName": "WalletButtonInitializeOptions",
+            "memberPattern": "^With.+WalletInitializeOptions$",
+            "targetPath": "packages/core/src/wallet-buttons/index.ts",
+            "targetMemberName": "BaseWalletButtonInitializeOptions"
         }
     ]
 }
