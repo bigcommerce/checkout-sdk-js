@@ -94,7 +94,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, isAppSwitchEnabled } =
+        const { isHostedCheckoutEnabled, isServerSideShippingCallbacksEnabled } =
             paymentMethod.initializationData || {};
 
         const buyNowFlowCallbacks = {
@@ -104,7 +104,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const buttonOptions: PayPalButtonOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
             style: this.paypalIntegrationService.getValidButtonStyle(style),
-            isAppSwitchEnabled,
+            isServerSideShippingCallbacksEnabled,
             isHostedCheckoutEnabled,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
             ...(isHostedCheckoutEnabled && onComplete && { onPaymentComplete: () => onComplete() }),
@@ -118,11 +118,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         );
 
         if (paypalButton.isEligible()) {
-            if (paypalButton.hasReturned?.() && isAppSwitchEnabled) {
-                paypalButton.resume?.();
-            } else {
-                paypalButton.render(`#${containerId}`);
-            }
+            paypalButton.render(`#${containerId}`);
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {

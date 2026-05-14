@@ -33,8 +33,8 @@ class PaypalButtonCreationService {
         const {
             style,
             fundingSource,
-            isAppSwitchEnabled,
             isHostedCheckoutEnabled,
+            isServerSideShippingCallbacksEnabled,
             onClick,
             onCancel,
             onPaymentComplete,
@@ -53,7 +53,7 @@ class PaypalButtonCreationService {
         }
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data, providerId),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
@@ -72,9 +72,6 @@ class PaypalButtonCreationService {
         return paypalSdk.Buttons({
             fundingSource,
             style: this.paypalIntegrationService.getValidButtonStyle(style),
-            ...(isAppSwitchEnabled && {
-                appSwitchWhenAvailable: true,
-            }),
             createOrder: async () => {
                 if (buyNowInitializeOptions) {
                     const buyNowCart = await this.paypalIntegrationService.createBuyNowCartOrThrow(
@@ -100,6 +97,7 @@ class PaypalButtonCreationService {
         methodId: string,
         providerId: string,
         onComplete?: () => void,
+        isServerSideShippingCallbacksEnabled?: boolean,
     ): Promise<void> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
@@ -107,20 +105,30 @@ class PaypalButtonCreationService {
 
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const orderDetails = await actions.order.get();
+        let orderDetails;
 
         try {
-            const billingAddress =
-                this.paypalIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
-
-            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
-
             if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalIntegrationService.getShippingAddressFromOrderDetails(orderDetails);
+                if (!isServerSideShippingCallbacksEnabled) {
+                    const billingAddress =
+                        this.paypalIntegrationService.getBillingAddressFromOrderDetails(
+                            orderDetails,
+                        );
 
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.paypalIntegrationService.updateOrder(providerId);
+                    await this.paymentIntegrationService.updateBillingAddress(billingAddress);
+                    orderDetails = await actions.order.get();
+                    const shippingAddress =
+                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
+                    await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+                }
+                await this.paypalIntegrationService.updateOrder(
+                    providerId,
+                    undefined,
+                    undefined,
+                    isServerSideShippingCallbacksEnabled,
+                );
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
