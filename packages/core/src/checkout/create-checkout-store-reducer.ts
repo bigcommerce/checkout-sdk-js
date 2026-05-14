@@ -15,6 +15,7 @@ import { orderBillingAddressReducer } from '../order-billing-address';
 import { paymentMethodReducer, paymentReducer, paymentStrategyReducer } from '../payment';
 import { paymentProviderCustomerReducer } from '../payment-provider-customer';
 import { instrumentReducer } from '../payment/instrument';
+import { poConfigReducer } from '../po-config';
 import { remoteCheckoutReducer } from '../remote-checkout';
 import {
     consignmentReducer,
@@ -53,6 +54,7 @@ export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState
         paymentStrategies: paymentStrategyReducer,
         pickupOptions: pickupOptionReducer,
         paymentProviderCustomer: paymentProviderCustomerReducer,
+        poConfig: poConfigReducer,
         remoteCheckout: remoteCheckoutReducer,
         shippingCountries: shippingCountryReducer,
         shippingStrategies: shippingStrategyReducer,

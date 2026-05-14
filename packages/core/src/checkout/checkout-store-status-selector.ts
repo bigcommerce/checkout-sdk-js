@@ -289,6 +289,13 @@ export default interface CheckoutStoreStatusSelector {
     isLoadingB2BToken(): boolean;
 
     /**
+     * Checks whether the PO (purchase order) configuration is being loaded.
+     *
+     * @returns True if the PO config is being loaded, otherwise false.
+     */
+    isLoadingPoConfig(): boolean;
+
+    /**
      * Checks whether the current customer is applying a gift certificate.
      *
      * @returns True if applying a gift certificate, otherwise false.
@@ -515,6 +522,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingConfig: state.config.isLoading,
             isSendingSignInEmail: state.signInEmail.isSending,
             isLoadingB2BToken: state.b2bToken.isLoading,
+            isLoadingPoConfig: state.poConfig.isLoading,
             isCustomerStepPending: isCustomerStepPending(state),
             isShippingStepPending: isShippingStepPending(state),
             isPaymentStepPending: isPaymentStepPending(state),

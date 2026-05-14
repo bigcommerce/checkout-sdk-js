@@ -44,6 +44,7 @@ import {
 } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
+import { PoConfigActionCreator, PoConfigRequestSender } from '../po-config';
 import {
     ConsignmentActionCreator,
     ConsignmentRequestSender,
@@ -212,6 +213,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             paymentIntegrationService,
         ),
         new PickupOptionActionCreator(new PickupOptionRequestSender(experimentRequestSender)),
+        new PoConfigActionCreator(new PoConfigRequestSender(requestSender)),
         new ShippingCountryActionCreator(
             new ShippingCountryRequestSender(experimentRequestSender, { locale }),
             store,

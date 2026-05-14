@@ -13,6 +13,7 @@ import { OrderBillingAddressState } from '../order-billing-address';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
 import { PaymentProviderCustomerState } from '../payment-provider-customer';
 import { InstrumentState } from '../payment/instrument';
+import { PoConfigState } from '../po-config';
 import { RemoteCheckoutState } from '../remote-checkout';
 import {
     ConsignmentState,
@@ -49,6 +50,7 @@ export default interface CheckoutStoreState {
     paymentProviderCustomer: PaymentProviderCustomerState;
     paymentStrategies: PaymentStrategyState;
     pickupOptions: PickupOptionState;
+    poConfig: PoConfigState;
     remoteCheckout: RemoteCheckoutState;
     shippingCountries: ShippingCountryState;
     shippingStrategies: ShippingStrategyState;

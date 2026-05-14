@@ -120,6 +120,7 @@ export function getCheckoutState(): CheckoutState {
 export function getCheckoutStoreState(): CheckoutStoreState {
     return {
         b2bToken: { errors: {}, statuses: {} },
+        poConfig: { errors: {}, statuses: {} },
         billingAddress: getBillingAddressState(),
         cart: getCartState(),
         checkout: getCheckoutState(),

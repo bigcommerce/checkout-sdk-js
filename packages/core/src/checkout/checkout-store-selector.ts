@@ -16,6 +16,7 @@ import { Order } from '../order';
 import { PaymentMethod } from '../payment';
 import { PaymentProviderCustomer } from '../payment-provider-customer';
 import { CardInstrument, PaymentInstrument } from '../payment/instrument';
+import { PoConfig } from '../po-config';
 import { Consignment, PickupOptionResult, SearchArea, ShippingOption } from '../shipping';
 import { SignInEmail } from '../signin-email';
 
@@ -65,6 +66,13 @@ export default interface CheckoutStoreSelector {
      * @returns The B2B token string if it has been loaded, otherwise undefined.
      */
     getB2BToken(): string | undefined;
+
+    /**
+     * Gets the PO (purchase order) configuration for the current store.
+     *
+     * @returns The `PoConfig` object if it has been loaded, otherwise undefined.
+     */
+    getPoConfig(): PoConfig | undefined;
 
     /**
      * Gets the shipping address of the current checkout.
@@ -507,6 +515,11 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getToken) => clone(getToken),
     );
 
+    const getPoConfig = createSelector(
+        ({ poConfig }: InternalCheckoutSelectors) => poConfig.getConfig,
+        (getConfig) => clone(getConfig),
+    );
+
     const isPaymentDataRequired = createSelector(
         ({ payment }: InternalCheckoutSelectors) => payment.isPaymentDataRequired,
         (isPaymentDataRequired) => clone(isPaymentDataRequired),
@@ -637,6 +650,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             isPaymentDataSubmitted: isPaymentDataSubmitted(state),
             getSignInEmail: getSignInEmail(state),
             getB2BToken: getB2BToken(state),
+            getPoConfig: getPoConfig(state),
             getInstruments: getInstruments(state),
             getCustomerAccountFields: getCustomerAccountFields(state),
             getBillingAddressFields: getBillingAddressFields(state),

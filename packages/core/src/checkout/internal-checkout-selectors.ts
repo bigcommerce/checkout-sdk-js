@@ -13,6 +13,7 @@ import OrderBillingAddressSelector from '../order-billing-address/order-billing-
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { PaymentProviderCustomerSelector } from '../payment-provider-customer';
 import { InstrumentSelector } from '../payment/instrument';
+import { PoConfigSelector } from '../po-config';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import {
     ConsignmentSelector,
@@ -50,6 +51,7 @@ export default interface InternalCheckoutSelectors {
     paymentStrategies: PaymentStrategySelector;
     paymentProviderCustomer: PaymentProviderCustomerSelector;
     pickupOptions: PickupOptionSelector;
+    poConfig: PoConfigSelector;
     remoteCheckout: RemoteCheckoutSelector;
     shippingAddress: ShippingAddressSelector;
     shippingCountries: ShippingCountrySelector;

@@ -18,6 +18,7 @@ import {
 } from '../payment';
 import { createPaymentProviderCustomerSelectorFactory } from '../payment-provider-customer';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
+import { createPoConfigSelectorFactory } from '../po-config';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
 import {
     createConsignmentSelectorFactory,
@@ -57,6 +58,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createPaymentStrategySelector = createPaymentStrategySelectorFactory();
     const createPickupOptionSelector = createPickupOptionSelectorFactory();
     const createPaymentProviderCustomerSelector = createPaymentProviderCustomerSelectorFactory();
+    const createPoConfigSelector = createPoConfigSelectorFactory();
     const createRemoteCheckoutSelector = createRemoteCheckoutSelectorFactory();
     const createShippingAddressSelector = createShippingAddressSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
@@ -91,6 +93,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         );
         const paymentStrategies = createPaymentStrategySelector(state.paymentStrategies);
         const pickupOptions = createPickupOptionSelector(state.pickupOptions);
+        const poConfig = createPoConfigSelector(state.poConfig);
         const remoteCheckout = createRemoteCheckoutSelector(state.remoteCheckout);
         const shippingAddress = createShippingAddressSelector(state.consignments);
         const shippingCountries = createShippingCountrySelector(state.shippingCountries);
@@ -137,6 +140,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             paymentProviderCustomer,
             paymentStrategies,
             pickupOptions,
+            poConfig,
             remoteCheckout,
             shippingAddress,
             shippingCountries,

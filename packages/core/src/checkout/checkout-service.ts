@@ -43,6 +43,7 @@ import {
     PaymentStrategyActionCreator,
 } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
+import { PoConfigActionCreator } from '../po-config';
 import {
     ConsignmentActionCreator,
     ConsignmentAssignmentRequestBody,
@@ -103,6 +104,7 @@ export default class CheckoutService {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _pickupOptionActionCreator: PickupOptionActionCreator,
+        private _poConfigActionCreator: PoConfigActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator,
         private _signInEmailActionCreator: SignInEmailActionCreator,
@@ -700,6 +702,28 @@ export default class CheckoutService {
         const action = this._b2bTokenActionCreator.loadB2BToken(options);
 
         return this._dispatch(action, { queueId: 'b2bToken' });
+    }
+
+    /**
+     * Loads the PO (purchase order) configuration for the current store.
+     *
+     * The configuration is fetched from the B2B store-configs endpoint and
+     * describes whether the PO number field is enabled on checkout, its label,
+     * and whether it is required.
+     *
+     * ```js
+     * const state = await service.loadPoConfig();
+     *
+     * console.log(state.data.getPoConfig());
+     * ```
+     *
+     * @param options - Options for the request.
+     * @returns A promise that resolves to the current state.
+     */
+    loadPoConfig(options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._poConfigActionCreator.loadPoConfig(options);
+
+        return this._dispatch(action, { queueId: 'poConfig' });
     }
 
     /**

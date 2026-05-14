@@ -71,6 +71,7 @@ import {
 } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
+import { PoConfigActionCreator, PoConfigRequestSender } from '../po-config';
 import { InstrumentActionType } from '../payment/instrument/instrument-actions';
 import {
     deleteInstrumentResponseBody,
@@ -442,6 +443,7 @@ describe('CheckoutService', () => {
             paymentMethodActionCreator,
             paymentStrategyActionCreator,
             new PickupOptionActionCreator(new PickupOptionRequestSender(requestSender)),
+            new PoConfigActionCreator(new PoConfigRequestSender(requestSender)),
             new ShippingCountryActionCreator(shippingCountryRequestSender, store),
             shippingStrategyActionCreator,
             signInEmailActionCreator,
