@@ -10,10 +10,20 @@ export default class OfflinePaymentStrategy implements PaymentStrategy {
     constructor(private _paymentIntegrationService: PaymentIntegrationService) {}
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
+
+        console.log('payload =======1', payload)
+
         await this._paymentIntegrationService.submitOrder(
             {
                 ...payload,
-                payment: payload.payment ? { methodId: payload.payment.methodId } : undefined,
+                payment: payload.payment
+                    ? {
+                          methodId: payload.payment.methodId,
+                          ...(payload.payment.methodId === 'purchaseorder' && {
+                              paymentData: payload.payment.paymentData,
+                          }),
+                      }
+                    : undefined,
             },
             options,
         );
