@@ -142,15 +142,13 @@ export default class PayPalIntegrationService {
 
         try {
             await this.paypalRequestSender.updateOrder(providerId, {
-                availableShippingOptions:
-                    isServerSideShippingCallbacksEnabled
+                availableShippingOptions: isServerSideShippingCallbacksEnabled
                     ? []
                     : consignment.availableShippingOptions,
                 cartId: cart.id,
-                selectedShippingOption:
-                    isServerSideShippingCallbacksEnabled
-                        ? null
-                        : consignment.selectedShippingOption,
+                selectedShippingOption: isServerSideShippingCallbacksEnabled
+                    ? null
+                    : consignment.selectedShippingOption,
                 ...(methodId ? { methodId } : {}),
                 ...(orderId ? { orderId } : {}),
             });

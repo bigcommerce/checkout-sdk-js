@@ -66,6 +66,7 @@ class PaypalButtonCreationService {
                     methodId,
                     providerId,
                     onPaymentComplete,
+                    isServerSideShippingCallbacksEnabled,
                 ),
         };
 
@@ -105,24 +106,29 @@ class PaypalButtonCreationService {
 
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        let orderDetails;
 
         try {
-            if (cart.lineItems.physicalItems.length > 0) {
-                if (!isServerSideShippingCallbacksEnabled) {
-                    const billingAddress =
-                        this.paypalIntegrationService.getBillingAddressFromOrderDetails(
-                            orderDetails,
-                        );
+            const hasPhysicalItems = cart.lineItems.physicalItems.length > 0;
 
-                    await this.paymentIntegrationService.updateBillingAddress(billingAddress);
-                    orderDetails = await actions.order.get();
+            if (!isServerSideShippingCallbacksEnabled) {
+                const orderDetails = await actions.order.get();
+
+                const billingAddress =
+                    this.paypalIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
+
+                await this.paymentIntegrationService.updateBillingAddress(billingAddress);
+
+                if (hasPhysicalItems) {
                     const shippingAddress =
                         this.paypalIntegrationService.getShippingAddressFromOrderDetails(
                             orderDetails,
                         );
+
                     await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
                 }
+            }
+
+            if (hasPhysicalItems) {
                 await this.paypalIntegrationService.updateOrder(
                     providerId,
                     undefined,
@@ -132,11 +138,10 @@ class PaypalButtonCreationService {
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
+
             await this.paypalIntegrationService.submitPayment(methodId, data.orderID);
 
-            if (onComplete && typeof onComplete === 'function') {
-                onComplete();
-            }
+            onComplete?.();
         } catch (error) {
             this.handleError(error);
         }

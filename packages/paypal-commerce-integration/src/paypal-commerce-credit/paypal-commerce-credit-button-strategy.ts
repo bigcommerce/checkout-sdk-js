@@ -104,7 +104,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, isAppSwitchEnabled } =
+        const { isHostedCheckoutEnabled, isServerSideShippingCallbacksEnabled } =
             paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
@@ -119,14 +119,20 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
                     this.onShippingOptionsChange(data),
             }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
+                this.onHostedCheckoutApprove(
+                    data,
+                    actions,
+                    methodId,
+                    onComplete,
+                    isServerSideShippingCallbacksEnabled,
+                ),
         };
 
         const fundingSources = [paypalSdk.FUNDING.PAYLATER, paypalSdk.FUNDING.CREDIT];
@@ -175,6 +181,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         actions: ApproveCallbackActions,
         methodId: string,
         onComplete?: () => void,
+        isServerSideShippingCallbacksEnabled?: boolean,
     ): Promise<boolean> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
@@ -182,28 +189,42 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
 
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const orderDetails = await actions.order.get();
 
         try {
-            const billingAddress =
-                this.paypalIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
+            const hasPhysicalItems = cart.lineItems.physicalItems.length > 0;
 
-            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
+            if (!isServerSideShippingCallbacksEnabled) {
+                const orderDetails = await actions.order.get();
 
-            if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.paypalIntegrationService.getShippingAddressFromOrderDetails(orderDetails);
+                const billingAddress =
+                    this.paypalIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
 
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.paypalIntegrationService.updateOrder('paypalcommerce');
+                await this.paymentIntegrationService.updateBillingAddress(billingAddress);
+
+                if (hasPhysicalItems) {
+                    const shippingAddress =
+                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
+
+                    await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+                }
+            }
+
+            if (hasPhysicalItems) {
+                await this.paypalIntegrationService.updateOrder(
+                    'paypalcommerce',
+                    undefined,
+                    undefined,
+                    isServerSideShippingCallbacksEnabled,
+                );
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
+
             await this.paypalIntegrationService.submitPayment(methodId, data.orderID);
 
-            if (onComplete && typeof onComplete === 'function') {
-                onComplete();
-            }
+            onComplete?.();
 
             return true; // FIXME: Do we really need to return true here?
         } catch (error) {
