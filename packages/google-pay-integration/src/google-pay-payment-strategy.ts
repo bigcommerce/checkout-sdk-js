@@ -100,14 +100,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         if (container) {
             this._isContainerMode = true;
 
-            const renderButton = () =>
-                this._addPaymentButtonToContainer(
-                    container,
-                    buttonColor,
-                    buttonSizeMode,
-                    buttonType,
-                    callbacks.onError,
-                );
+            const renderButton = () => this._addPaymentButtonToContainer(googlePayOptions);
 
             if (onInit) {
                 onInit(renderButton);
@@ -183,17 +176,19 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     }
 
     protected _addPaymentButtonToContainer(
-        containerId: string,
-        buttonColor: GooglePayPaymentInitializeOptions['buttonColor'],
-        buttonSizeMode: GooglePayPaymentInitializeOptions['buttonSizeMode'],
-        buttonType: GooglePayPaymentInitializeOptions['buttonType'],
-        onError: GooglePayPaymentInitializeOptions['onError'],
+        googlePayOptions: GooglePayPaymentInitializeOptions,
     ): void {
         if (this._paymentButton) {
             return;
         }
 
-        const button = this._googlePayPaymentProcessor.addPaymentButton(containerId, {
+        const { container, buttonColor, buttonSizeMode, buttonType, onError } = googlePayOptions;
+
+        if (!container) {
+            throw new InvalidArgumentError('Unable to proceed: container ID is not valid.');
+        }
+
+        const button = this._googlePayPaymentProcessor.addPaymentButton(container, {
             buttonColor: buttonColor ?? 'default',
             buttonSizeMode: buttonSizeMode ?? 'fill',
             buttonType: buttonType ?? 'pay',
@@ -202,7 +197,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         if (!button) {
             throw new InvalidArgumentError(
-                `Unable to proceed: container element "#${containerId}" not found in the DOM.`,
+                `Unable to proceed: container element "#${container}" not found in the DOM.`,
             );
         }
 
