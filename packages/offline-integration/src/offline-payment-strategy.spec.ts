@@ -1,5 +1,4 @@
 import {
-    NonceInstrument,
     OrderFinalizationNotRequiredError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -56,7 +55,7 @@ describe('OfflinePaymentStrategy', () => {
                         shouldCreateAccount: true,
                         shouldSaveInstrument: false,
                         terms: false,
-                    } as NonceInstrument,
+                    },
                 },
             };
 

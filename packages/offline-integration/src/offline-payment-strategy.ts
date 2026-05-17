@@ -22,8 +22,13 @@ export default class OfflinePaymentStrategy implements PaymentStrategy {
         const { payment } = payload;
         let purchaseOrderPaymentData: PurchaseOrderPaymentData | undefined;
 
-        if (payment?.methodId === 'purchaseorder' && isPurchaseOrderPaymentData(payment.paymentData)) {
-            purchaseOrderPaymentData = { purchaseOrderNumber: payment.paymentData.purchaseOrderNumber };
+        if (
+            payment?.methodId === 'purchaseorder' &&
+            isPurchaseOrderPaymentData(payment.paymentData)
+        ) {
+            purchaseOrderPaymentData = {
+                purchaseOrderNumber: payment.paymentData.purchaseOrderNumber,
+            };
         }
 
         await this._paymentIntegrationService.submitOrder(
@@ -32,7 +37,9 @@ export default class OfflinePaymentStrategy implements PaymentStrategy {
                 payment: payment
                     ? {
                           methodId: payment.methodId,
-                          ...(purchaseOrderPaymentData && { paymentData: purchaseOrderPaymentData }),
+                          ...(purchaseOrderPaymentData && {
+                              paymentData: purchaseOrderPaymentData,
+                          }),
                       }
                     : undefined,
             },
