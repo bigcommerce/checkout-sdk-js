@@ -122,14 +122,11 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
         const {
             isHostedCheckoutEnabled,
             paymentButtonStyles,
-            isAppSwitchEnabled = false,
+            isServerSideShippingCallbacksEnabled,
         } = paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
-            ...(isAppSwitchEnabled && {
-                appSwitchWhenAvailable: true,
-            }),
             createOrder: () =>
                 this.bigCommercePaymentsIntegrationService.createOrder('bigcommerce_payments'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
@@ -138,7 +135,7 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
@@ -161,11 +158,7 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            if (paypalButton.hasReturned?.() && isAppSwitchEnabled) {
-                paypalButton.resume?.();
-            } else {
-                paypalButton.render(`#${container}`);
-            }
+            paypalButton.render(`#${container}`);
         } else {
             this.bigCommercePaymentsIntegrationService.removeElement(container);
         }
@@ -176,38 +169,46 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
         actions: ApproveCallbackActions,
         methodId: string,
         onComplete?: () => void,
+        isServerSideShippingCallbacksEnabled?: boolean,
     ): Promise<void> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
 
         const cart = this.paymentIntegrationService.getState().getCartOrThrow();
-        const orderDetails = await actions.order.get();
 
         try {
-            const billingAddress =
-                this.bigCommercePaymentsIntegrationService.getBillingAddressFromOrderDetails(
-                    orderDetails,
+            const hasPhysicalItems = cart.lineItems.physicalItems.length > 0;
+
+            if (!isServerSideShippingCallbacksEnabled) {
+                const orderDetails = await actions.order.get();
+
+                const billingAddress =
+                    this.bigCommercePaymentsIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
+
+                await this.paymentIntegrationService.updateBillingAddress(billingAddress);
+
+                if (hasPhysicalItems) {
+                    const shippingAddress =
+                        this.bigCommercePaymentsIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
+
+                    await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+                }
+            }
+
+            if (hasPhysicalItems) {
+                await this.bigCommercePaymentsIntegrationService.updateOrder(
+                    isServerSideShippingCallbacksEnabled,
                 );
-
-            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
-
-            if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.bigCommercePaymentsIntegrationService.getShippingAddressFromOrderDetails(
-                        orderDetails,
-                    );
-
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.bigCommercePaymentsIntegrationService.updateOrder();
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
+
             await this.bigCommercePaymentsIntegrationService.submitPayment(methodId, data.orderID);
 
-            if (onComplete && typeof onComplete === 'function') {
-                onComplete();
-            }
+            onComplete?.();
         } catch (error) {
             this.handleError(error);
         }
