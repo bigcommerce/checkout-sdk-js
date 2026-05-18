@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.911.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.910.0...v1.911.0) (2026-05-18)
+
+
+### Features
+
+* **payment:** PI-5215 [FE][Google Pay] Implement container mode in GooglePayPaymentStrategy ([#3247](https://github.com/bigcommerce/checkout-sdk-js/issues/3247)) ([81a6dbc](https://github.com/bigcommerce/checkout-sdk-js/commit/81a6dbcefe6ea584825a74fe581f2923adfd23b4))
+
 ## [1.910.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.909.5...v1.910.0) (2026-05-17)
 
 

@@ -546,6 +546,7 @@
 - [FormFieldFieldType](README.md#formfieldfieldtype)
 - [FormFieldType](README.md#formfieldtype)
 - [GooglePayButtonColor](README.md#googlepaybuttoncolor)
+- [GooglePayButtonSizeMode](README.md#googlepaybuttonsizemode)
 - [GooglePayButtonType](README.md#googlepaybuttontype)
 - [GuestCredentials](README.md#guestcredentials)
 - [HostedCreditCardInstrument](README.md#hostedcreditcardinstrument)
@@ -728,6 +729,12 @@ ___
 ### GooglePayButtonColor
 
 Ƭ **GooglePayButtonColor**: ``"default"`` \| ``"black"`` \| ``"white"``
+
+___
+
+### GooglePayButtonSizeMode
+
+Ƭ **GooglePayButtonSizeMode**: ``"static"`` \| ``"fill"``
 
 ___
 

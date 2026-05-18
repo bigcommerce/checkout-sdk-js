@@ -159,8 +159,11 @@ declare interface GooglePayButtonOptions {
     onClick: (event: MouseEvent) => Promise<void>;
     allowedPaymentMethods: [GooglePayBaseCardPaymentMethod];
     buttonColor?: GooglePayButtonColor;
+    buttonSizeMode?: GooglePayButtonSizeMode;
     buttonType?: GooglePayButtonType;
 }
+
+declare type GooglePayButtonSizeMode = 'static' | 'fill';
 
 declare class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentIntegrationService;
@@ -487,6 +490,25 @@ declare interface GooglePayPaymentDataResponse<T> extends GooglePayGatewayBaseRe
  *     },
  * });
  * ```
+ *
+ * Alternatively, a container-based Google Pay button can be rendered directly
+ * in the payment step (replacing the Place Order button):
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'googlepaybraintree',
+ *     googlepaybraintree: {
+ *         container: 'checkout-payment-continue',
+ *         onInit(renderButton) {
+ *             // Hide Place Order, then render the button once container is in DOM
+ *             renderButton();
+ *         },
+ *         onError(error) {
+ *             console.log(error);
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface GooglePayPaymentInitializeOptions {
     /**
@@ -499,6 +521,39 @@ declare interface GooglePayPaymentInitializeOptions {
      * It should be an HTML element.
      */
     walletButton?: string;
+    /**
+     * The ID of the container element where the Google Pay button will be rendered.
+     * When provided, a branded Google Pay button is created inside this container.
+     * Clicking the button opens the Google Pay payment sheet and, on success, submits
+     * the order and redirects to the order confirmation page directly — no separate
+     * "Place Order" step is needed.
+     */
+    container?: string;
+    /**
+     * The color of the Google Pay button rendered into `container`.
+     * Defaults to `'default'`.
+     */
+    buttonColor?: GooglePayButtonColor;
+    /**
+     * The size mode of the Google Pay button rendered into `container`.
+     * Defaults to `'fill'`.
+     */
+    buttonSizeMode?: GooglePayButtonSizeMode;
+    /**
+     * The type/label of the Google Pay button rendered into `container`.
+     * Defaults to `'pay'`.
+     */
+    buttonType?: GooglePayButtonType;
+    /**
+     * Called after the Google Pay processor is fully initialized, with a
+     * `renderButton` function that — when invoked — creates the Google Pay
+     * button inside `container`.  Use this callback to control timing: hide
+     * the Place Order button first, then call `renderButton()` once the
+     * container element is present in the DOM.
+     *
+     * Only used when `container` is provided.
+     */
+    onInit?(renderButton: () => void): void;
     /**
      * A callback that gets called when GooglePay fails to initialize or
      * selects a payment option.
@@ -588,12 +643,15 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     private _clickListener?;
     private _methodId?;
     private _isDeinitializationBlocked;
+    private _isContainerMode;
     constructor(_paymentIntegrationService: PaymentIntegrationService, _googlePayPaymentProcessor: GooglePayPaymentProcessor);
     initialize(options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions): Promise<void>;
     execute({ payment }: OrderRequestBody): Promise<void>;
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
     protected _addPaymentButton(walletButton: string, callbacks: Omit<GooglePayPaymentInitializeOptions, 'walletButton'>): void;
+    protected _addPaymentButtonToContainer(googlePayOptions: GooglePayPaymentInitializeOptions): void;
+    protected _handleContainerButtonClick(onError: GooglePayPaymentInitializeOptions['onError']): (event: MouseEvent) => Promise<void>;
     protected _handleClick({ onPaymentSelect, onError, }: Omit<GooglePayPaymentInitializeOptions, 'walletButton'>): (event: MouseEvent) => unknown;
     protected _interactWithPaymentSheetAndPay(): Promise<void>;
     protected _completeCheckoutFlow(): void;
@@ -602,6 +660,7 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     protected _getIsSignedInOrThrow(): Promise<boolean>;
     protected _handleOfferTrigger(offerData: IntermediatePaymentData['offerData']): Promise<Partial<HandleCouponsOut>>;
     protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions;
+    private _runGooglePayWidgetInteractionWithErrorHandling;
     private _isDirectPayOnClickEnabled;
     private _toggleBlockDeinitialization;
     private _toggleLoadingIndicator;

@@ -5640,6 +5640,8 @@ declare interface GooglePayButtonInitializeOptions {
     buttonType?: GooglePayButtonType;
 }
 
+declare type GooglePayButtonSizeMode = 'static' | 'fill';
+
 declare type GooglePayButtonType = 'book' | 'buy' | 'checkout' | 'donate' | 'order' | 'pay' | 'plain' | 'subscribe' | 'long' | 'short';
 
 declare interface GooglePayCustomerInitializeOptions {
@@ -5740,6 +5742,25 @@ declare enum GooglePayKey {
  *     },
  * });
  * ```
+ *
+ * Alternatively, a container-based Google Pay button can be rendered directly
+ * in the payment step (replacing the Place Order button):
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'googlepaybraintree',
+ *     googlepaybraintree: {
+ *         container: 'checkout-payment-continue',
+ *         onInit(renderButton) {
+ *             // Hide Place Order, then render the button once container is in DOM
+ *             renderButton();
+ *         },
+ *         onError(error) {
+ *             console.log(error);
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface GooglePayPaymentInitializeOptions {
     /**
@@ -5752,6 +5773,39 @@ declare interface GooglePayPaymentInitializeOptions {
      * It should be an HTML element.
      */
     walletButton?: string;
+    /**
+     * The ID of the container element where the Google Pay button will be rendered.
+     * When provided, a branded Google Pay button is created inside this container.
+     * Clicking the button opens the Google Pay payment sheet and, on success, submits
+     * the order and redirects to the order confirmation page directly — no separate
+     * "Place Order" step is needed.
+     */
+    container?: string;
+    /**
+     * The color of the Google Pay button rendered into `container`.
+     * Defaults to `'default'`.
+     */
+    buttonColor?: GooglePayButtonColor;
+    /**
+     * The size mode of the Google Pay button rendered into `container`.
+     * Defaults to `'fill'`.
+     */
+    buttonSizeMode?: GooglePayButtonSizeMode;
+    /**
+     * The type/label of the Google Pay button rendered into `container`.
+     * Defaults to `'pay'`.
+     */
+    buttonType?: GooglePayButtonType;
+    /**
+     * Called after the Google Pay processor is fully initialized, with a
+     * `renderButton` function that — when invoked — creates the Google Pay
+     * button inside `container`.  Use this callback to control timing: hide
+     * the Place Order button first, then call `renderButton()` once the
+     * container element is present in the DOM.
+     *
+     * Only used when `container` is provided.
+     */
+    onInit?(renderButton: () => void): void;
     /**
      * A callback that gets called when GooglePay fails to initialize or
      * selects a payment option.
