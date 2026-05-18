@@ -289,6 +289,13 @@ export default interface CheckoutStoreStatusSelector {
     isLoadingB2BToken(): boolean;
 
     /**
+     * Checks whether company payment methods are being loaded.
+     *
+     * @returns True if company payment methods are being loaded, otherwise false.
+     */
+    isLoadingB2BCompanyPaymentMethods(): boolean;
+
+    /**
      * Checks whether the current customer is applying a gift certificate.
      *
      * @returns True if applying a gift certificate, otherwise false.
@@ -515,6 +522,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingConfig: state.config.isLoading,
             isSendingSignInEmail: state.signInEmail.isSending,
             isLoadingB2BToken: state.b2bToken.isLoading,
+            isLoadingB2BCompanyPaymentMethods: state.b2bCompanyPaymentMethods.isLoading,
             isCustomerStepPending: isCustomerStepPending(state),
             isShippingStepPending: isShippingStepPending(state),
             isPaymentStepPending: isPaymentStepPending(state),

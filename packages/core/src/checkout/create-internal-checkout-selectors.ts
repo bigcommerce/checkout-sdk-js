@@ -12,12 +12,13 @@ import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
 import { createOrderBillingAddressSelectorFactory } from '../order-billing-address';
 import {
+    createB2BCompanyPaymentMethodSelectorFactory,
     createPaymentMethodSelectorFactory,
     createPaymentSelectorFactory,
     createPaymentStrategySelectorFactory,
 } from '../payment';
-import { createPaymentProviderCustomerSelectorFactory } from '../payment-provider-customer';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
+import { createPaymentProviderCustomerSelectorFactory } from '../payment-provider-customer';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
 import {
     createConsignmentSelectorFactory,
@@ -41,6 +42,7 @@ export type InternalCheckoutSelectorsFactory = (
 ) => InternalCheckoutSelectors;
 
 export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelectorsFactory {
+    const createB2BCompanyPaymentMethodSelector = createB2BCompanyPaymentMethodSelectorFactory();
     const createB2BTokenSelector = createB2BTokenSelectorFactory();
     const createBillingAddressSelector = createBillingAddressSelectorFactory();
     const createCartSelector = createCartSelectorFactory();
@@ -72,6 +74,9 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createExtensionSelector = createExtensionSelectorFactory();
 
     return (state, options = {}) => {
+        const b2bCompanyPaymentMethods = createB2BCompanyPaymentMethodSelector(
+            state.b2bCompanyPaymentMethods,
+        );
         const b2bToken = createB2BTokenSelector(state.b2bToken);
         const billingAddress = createBillingAddressSelector(state.billingAddress);
         const cart = createCartSelector(state.cart);
@@ -115,6 +120,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const config = createConfigSelector(state.config, state.formFields);
 
         const selectors = {
+            b2bCompanyPaymentMethods,
             b2bToken,
             billingAddress,
             cart,

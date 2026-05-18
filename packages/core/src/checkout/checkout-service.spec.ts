@@ -62,6 +62,8 @@ import { OrderActionCreator, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import {
+    B2BCompanyPaymentMethodActionCreator,
+    B2BCompanyPaymentMethodRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistryV2,
     PaymentMethodActionCreator,
@@ -69,7 +71,6 @@ import {
     PaymentStrategyActionCreator,
     PaymentStrategyRegistry,
 } from '../payment';
-import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { InstrumentActionType } from '../payment/instrument/instrument-actions';
 import {
@@ -83,6 +84,7 @@ import {
     getPaymentMethods,
 } from '../payment/payment-methods.mock';
 import { PaymentStrategyActionType } from '../payment/payment-strategy-actions';
+import { createPaymentIntegrationService } from '../payment-integration';
 import {
     ConsignmentActionCreator,
     ConsignmentActionType,
@@ -420,6 +422,9 @@ describe('CheckoutService', () => {
             extensionMessenger,
             extensionEventBroadcaster,
             new B2BTokenActionCreator(new B2BTokenRequestSender(requestSender)),
+            new B2BCompanyPaymentMethodActionCreator(
+                new B2BCompanyPaymentMethodRequestSender(requestSender),
+            ),
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,

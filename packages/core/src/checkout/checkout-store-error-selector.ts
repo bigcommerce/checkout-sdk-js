@@ -296,6 +296,14 @@ export default interface CheckoutStoreErrorSelector {
     getLoadB2BTokenError(): Error | undefined;
 
     /**
+     * Returns an error if unable to load company payment methods.
+     *
+     * @returns The error object if unable to load company payment methods,
+     * otherwise undefined.
+     */
+    getLoadB2BCompanyPaymentMethodsError(): Error | undefined;
+
+    /**
      * Returns an error if unable to create customer account.
      *
      * @returns The error object if unable to create account, otherwise undefined.
@@ -390,6 +398,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getLoadConfigError: state.config.getLoadError,
             getSignInEmailError: state.signInEmail.getSendError,
             getLoadB2BTokenError: state.b2bToken.getLoadError,
+            getLoadB2BCompanyPaymentMethodsError: state.b2bCompanyPaymentMethods.getLoadError,
             getCreateCustomerAccountError: state.customer.getCreateAccountError,
             getCreateCustomerAddressError: state.customer.getCreateAddressError,
             getPickupOptionsError: state.pickupOptions.getLoadError,

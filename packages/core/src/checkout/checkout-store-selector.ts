@@ -13,7 +13,7 @@ import { Extension, ExtensionRegion } from '../extension';
 import { FormField } from '../form';
 import { Country } from '../geography';
 import { Order } from '../order';
-import { PaymentMethod } from '../payment';
+import { B2BCompanyPaymentMethod, PaymentMethod } from '../payment';
 import { PaymentProviderCustomer } from '../payment-provider-customer';
 import { CardInstrument, PaymentInstrument } from '../payment/instrument';
 import { Consignment, PickupOptionResult, SearchArea, ShippingOption } from '../shipping';
@@ -65,6 +65,14 @@ export default interface CheckoutStoreSelector {
      * @returns The B2B token string if it has been loaded, otherwise undefined.
      */
     getB2BToken(): string | undefined;
+
+    /**
+     * Gets the list of payment methods allowed by the customer's B2B company.
+     *
+     * @returns The list of company payment methods if it has been loaded,
+     * otherwise undefined.
+     */
+    getB2BCompanyPaymentMethods(): B2BCompanyPaymentMethod[] | undefined;
 
     /**
      * Gets the shipping address of the current checkout.
@@ -507,6 +515,12 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getToken) => clone(getToken),
     );
 
+    const getB2BCompanyPaymentMethods = createSelector(
+        ({ b2bCompanyPaymentMethods }: InternalCheckoutSelectors) =>
+            b2bCompanyPaymentMethods.getB2BCompanyPaymentMethods,
+        (getB2BCompanyPaymentMethods) => clone(getB2BCompanyPaymentMethods),
+    );
+
     const isPaymentDataRequired = createSelector(
         ({ payment }: InternalCheckoutSelectors) => payment.isPaymentDataRequired,
         (isPaymentDataRequired) => clone(isPaymentDataRequired),
@@ -637,6 +651,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             isPaymentDataSubmitted: isPaymentDataSubmitted(state),
             getSignInEmail: getSignInEmail(state),
             getB2BToken: getB2BToken(state),
+            getB2BCompanyPaymentMethods: getB2BCompanyPaymentMethods(state),
             getInstruments: getInstruments(state),
             getCustomerAccountFields: getCustomerAccountFields(state),
             getBillingAddressFields: getBillingAddressFields(state),

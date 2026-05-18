@@ -4,9 +4,28 @@ export {
     PaymentInitializeOptions,
     PaymentRequestOptions,
 } from './payment-request-options';
+export * from './b2b-company-payment-method-actions';
 export * from './payment-method-actions';
 export * from './payment-method-types';
 export * from './payment-status-types';
+
+export { default as B2BCompanyPaymentMethod } from './b2b-company-payment-method';
+export { default as B2BCompanyPaymentMethodActionCreator } from './b2b-company-payment-method-action-creator';
+export { default as b2bCompanyPaymentMethodReducer } from './b2b-company-payment-method-reducer';
+export {
+    default as B2BCompanyPaymentMethodRequestSender,
+    B2BCompanyPaymentMethodsResponseBody,
+} from './b2b-company-payment-method-request-sender';
+export {
+    default as B2BCompanyPaymentMethodSelector,
+    B2BCompanyPaymentMethodSelectorFactory,
+    createB2BCompanyPaymentMethodSelectorFactory,
+} from './b2b-company-payment-method-selector';
+export {
+    default as B2BCompanyPaymentMethodState,
+    B2BCompanyPaymentMethodErrorsState,
+    B2BCompanyPaymentMethodStatusesState,
+} from './b2b-company-payment-method-state';
 
 export {
     default as PaymentAdditionalAction,

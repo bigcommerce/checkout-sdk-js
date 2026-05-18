@@ -119,6 +119,7 @@ export function getCheckoutState(): CheckoutState {
 
 export function getCheckoutStoreState(): CheckoutStoreState {
     return {
+        b2bCompanyPaymentMethods: { errors: {}, statuses: {} },
         b2bToken: { errors: {}, statuses: {} },
         billingAddress: getBillingAddressState(),
         cart: getCartState(),

@@ -10,7 +10,12 @@ import { FormSelector } from '../form';
 import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
 import OrderBillingAddressSelector from '../order-billing-address/order-billing-address-selector';
-import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
+import {
+    B2BCompanyPaymentMethodSelector,
+    PaymentMethodSelector,
+    PaymentSelector,
+    PaymentStrategySelector,
+} from '../payment';
 import { PaymentProviderCustomerSelector } from '../payment-provider-customer';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
@@ -28,6 +33,7 @@ import { SubscriptionsSelector } from '../subscription';
 import CheckoutSelector from './checkout-selector';
 
 export default interface InternalCheckoutSelectors {
+    b2bCompanyPaymentMethods: B2BCompanyPaymentMethodSelector;
     b2bToken: B2BTokenSelector;
     billingAddress: BillingAddressSelector;
     cart: CartSelector;

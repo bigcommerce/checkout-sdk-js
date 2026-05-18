@@ -10,7 +10,12 @@ import { FormFieldsState } from '../form';
 import { CountryState } from '../geography';
 import { OrderState } from '../order';
 import { OrderBillingAddressState } from '../order-billing-address';
-import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
+import {
+    B2BCompanyPaymentMethodState,
+    PaymentMethodState,
+    PaymentState,
+    PaymentStrategyState,
+} from '../payment';
 import { PaymentProviderCustomerState } from '../payment-provider-customer';
 import { InstrumentState } from '../payment/instrument';
 import { RemoteCheckoutState } from '../remote-checkout';
@@ -27,6 +32,7 @@ import { SubscriptionsState } from '../subscription';
 import CheckoutState from './checkout-state';
 
 export default interface CheckoutStoreState {
+    b2bCompanyPaymentMethods: B2BCompanyPaymentMethodState;
     b2bToken: B2BTokenState;
     billingAddress: BillingAddressState;
     cart: CartState;

@@ -35,6 +35,8 @@ import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
+    B2BCompanyPaymentMethodActionCreator,
+    B2BCompanyPaymentMethodRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistry,
     createPaymentStrategyRegistryV2,
@@ -42,8 +44,8 @@ import {
     PaymentMethodRequestSender,
     PaymentStrategyActionCreator,
 } from '../payment';
-import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
+import { createPaymentIntegrationService } from '../payment-integration';
 import {
     ConsignmentActionCreator,
     ConsignmentRequestSender,
@@ -175,6 +177,9 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         extensionMessenger,
         createExtensionEventBroadcaster(storeProjection, extensionMessenger),
         new B2BTokenActionCreator(new B2BTokenRequestSender(requestSender)),
+        new B2BCompanyPaymentMethodActionCreator(
+            new B2BCompanyPaymentMethodRequestSender(requestSender),
+        ),
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(experimentRequestSender),
             subscriptionsActionCreator,

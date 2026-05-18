@@ -36,6 +36,7 @@ import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import {
+    B2BCompanyPaymentMethodActionCreator,
     OrderFinalizeOptions,
     PaymentInitializeOptions,
     PaymentMethodActionCreator,
@@ -88,6 +89,7 @@ export default class CheckoutService {
         private _extensionMessenger: ExtensionMessenger,
         private _extensionEventBroadcaster: ExtensionEventBroadcaster,
         private _b2bTokenActionCreator: B2BTokenActionCreator,
+        private _b2bCompanyPaymentMethodActionCreator: B2BCompanyPaymentMethodActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
@@ -700,6 +702,36 @@ export default class CheckoutService {
         const action = this._b2bTokenActionCreator.loadB2BToken(options);
 
         return this._dispatch(action, { queueId: 'b2bToken' });
+    }
+
+    /**
+     * Loads the list of payment methods allowed by the customer's B2B company.
+     *
+     * The customer must be signed in, associated with an approved B2B company,
+     * and a B2B token must already be loaded (via
+     * {@link CheckoutService.getB2BToken}). The result is the company's
+     * allow-list as configured in B2B Edition; storefront consumers intersect
+     * it against the regular payment method list to filter what is offered to
+     * the buyer.
+     *
+     * The returned promise rejects with a `MissingDataError` if the customer
+     * is a guest, has no associated company, or the B2B token / API base URL
+     * is unavailable.
+     *
+     * ```js
+     * const state = await service.loadB2BCompanyPaymentMethods();
+     *
+     * console.log(state.data.getB2BCompanyPaymentMethods());
+     * ```
+     *
+     * @param options - Options for the request.
+     * @returns A promise that resolves to the current state.
+     */
+    loadB2BCompanyPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action =
+            this._b2bCompanyPaymentMethodActionCreator.loadB2BCompanyPaymentMethods(options);
+
+        return this._dispatch(action, { queueId: 'b2bCompanyPaymentMethods' });
     }
 
     /**
