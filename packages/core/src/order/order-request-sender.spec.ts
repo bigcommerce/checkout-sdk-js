@@ -9,6 +9,7 @@ import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import { MissingShippingMethodError, OrderTaxProviderUnavailableError } from './errors';
+import InvalidBillingAddressError from './errors/invalid-billing-address-error';
 import InvalidShippingAddressError from './errors/invalid-shipping-address-error';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
@@ -235,6 +236,52 @@ describe('OrderRequestSender', () => {
             await expect(orderRequestSender.submitOrder(payload)).rejects.toThrow(
                 InvalidShippingAddressError,
             );
+        });
+
+        it('throws `InvalidBillingAddressError` if error type is `invalid_billing_address`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 400,
+                    title: 'Invalid billing address',
+                    type: 'invalid_billing_address',
+                },
+                undefined,
+                400,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            const payload = {
+                cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                useStoreCredit: false,
+            };
+
+            await expect(orderRequestSender.submitOrder(payload)).rejects.toThrow(
+                InvalidBillingAddressError,
+            );
+        });
+
+        it('throws `InvalidBillingAddressError` carrying `detail` as the message when present', async () => {
+            const detail = 'The billing address is missing a required field.';
+            const error = getErrorResponse(
+                {
+                    status: 400,
+                    title: 'Invalid billing address',
+                    type: 'invalid_billing_address',
+                    detail,
+                } as any,
+                undefined,
+                400,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            const payload = {
+                cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                useStoreCredit: false,
+            };
+
+            await expect(orderRequestSender.submitOrder(payload)).rejects.toThrow(detail);
         });
 
         it('throws `EmptyCartError` if error type is `empty_cart`', async () => {

@@ -14,6 +14,7 @@ import {
 } from '../common/http-request';
 
 import { MissingShippingMethodError, OrderTaxProviderUnavailableError } from './errors';
+import InvalidBillingAddressError from './errors/invalid-billing-address-error';
 import InvalidShippingAddressError from './errors/invalid-shipping-address-error';
 import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
@@ -93,6 +94,10 @@ export default class OrderRequestSender {
 
                 if (error.body.type === 'invalid_shipping_address') {
                     throw new InvalidShippingAddressError(error.body.detail);
+                }
+
+                if (error.body.type === 'invalid_billing_address') {
+                    throw new InvalidBillingAddressError(error.body.detail || error.body.title);
                 }
 
                 if (error.body.type === 'empty_cart') {
