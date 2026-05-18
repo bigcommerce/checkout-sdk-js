@@ -142,7 +142,13 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
                     this.onShippingOptionsChange(data),
             }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
+                this.onHostedCheckoutApprove(
+                    data,
+                    actions,
+                    methodId,
+                    onComplete,
+                    isServerSideShippingCallbacksEnabled,
+                ),
         };
 
         const buttonRenderOptions: BigCommercePaymentsButtonsOptions = {
@@ -184,7 +190,9 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
                 const orderDetails = await actions.order.get();
 
                 const billingAddress =
-                    this.bigCommercePaymentsIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
+                    this.bigCommercePaymentsIntegrationService.getBillingAddressFromOrderDetails(
+                        orderDetails,
+                    );
 
                 await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
@@ -204,11 +212,17 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
                 );
             }
 
+            if (isServerSideShippingCallbacksEnabled) {
+                await this.paymentIntegrationService.loadCheckout();
+            }
+
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
 
             await this.bigCommercePaymentsIntegrationService.submitPayment(methodId, data.orderID);
 
-            onComplete?.();
+            if (onComplete && typeof onComplete === 'function') {
+                onComplete();
+            }
         } catch (error) {
             this.handleError(error);
         }

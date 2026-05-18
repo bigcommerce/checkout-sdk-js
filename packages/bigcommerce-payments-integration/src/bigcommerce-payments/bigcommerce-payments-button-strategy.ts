@@ -130,7 +130,13 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
                     this.onShippingOptionsChange(data),
             }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
+                this.onHostedCheckoutApprove(
+                    data,
+                    actions,
+                    methodId,
+                    onComplete,
+                    isServerSideShippingCallbacksEnabled,
+                ),
         };
 
         const buttonRenderOptions: BigCommercePaymentsButtonsOptions = {
@@ -186,7 +192,9 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
                 const orderDetails = await actions.order.get();
 
                 const billingAddress =
-                    this.bigCommercePaymentsIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
+                    this.bigCommercePaymentsIntegrationService.getBillingAddressFromOrderDetails(
+                        orderDetails,
+                    );
 
                 await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
@@ -206,11 +214,17 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
                 );
             }
 
+            if (isServerSideShippingCallbacksEnabled) {
+                await this.paymentIntegrationService.loadCheckout();
+            }
+
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
 
             await this.bigCommercePaymentsIntegrationService.submitPayment(methodId, data.orderID);
 
-            onComplete?.();
+            if (onComplete && typeof onComplete === 'function') {
+                onComplete();
+            }
 
             return true; // FIXME: Do we really need to return true here?
         } catch (error) {
