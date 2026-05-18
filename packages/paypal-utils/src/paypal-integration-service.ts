@@ -138,17 +138,20 @@ export default class PayPalIntegrationService {
     ): Promise<void> {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const consignment = state.getConsignmentsOrThrow()[0];
+        let consignment;
+        if (!isServerSideShippingCallbacksEnabled) {
+            consignment = state.getConsignmentsOrThrow()[0];
+        }
 
         try {
             await this.paypalRequestSender.updateOrder(providerId, {
                 availableShippingOptions: isServerSideShippingCallbacksEnabled
                     ? []
-                    : consignment.availableShippingOptions,
+                    : consignment?.availableShippingOptions,
                 cartId: cart.id,
                 selectedShippingOption: isServerSideShippingCallbacksEnabled
                     ? null
-                    : consignment.selectedShippingOption,
+                    : consignment?.selectedShippingOption,
                 ...(methodId ? { methodId } : {}),
                 ...(orderId ? { orderId } : {}),
             });

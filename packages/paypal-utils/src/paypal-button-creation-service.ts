@@ -137,11 +137,17 @@ class PaypalButtonCreationService {
                 );
             }
 
+            if (isServerSideShippingCallbacksEnabled) {
+                await this.paymentIntegrationService.loadCheckout();
+            }
+
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
 
             await this.paypalIntegrationService.submitPayment(methodId, data.orderID);
 
-            onComplete?.();
+            if (onComplete && typeof onComplete === 'function') {
+                onComplete();
+            }
         } catch (error) {
             this.handleError(error);
         }

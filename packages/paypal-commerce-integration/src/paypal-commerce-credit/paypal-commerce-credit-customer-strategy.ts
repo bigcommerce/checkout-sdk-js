@@ -217,10 +217,16 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
                 );
             }
 
+            if (isServerSideShippingCallbacksEnabled) {
+                await this.paymentIntegrationService.loadCheckout();
+            }
+
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
             await this.paypalCommerceIntegrationService.submitPayment(methodId, data.orderID);
 
-            onComplete?.();
+            if (onComplete && typeof onComplete === 'function') {
+                onComplete();
+            }
         } catch (error) {
             this.handleError(error);
         }

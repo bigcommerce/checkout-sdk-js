@@ -472,6 +472,33 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             });
         });
 
+        it('initializes PayPal button to render with shipping options when server side shipping callbacks disabled', async () => {
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                    isServerSideShippingCallbacksEnabled: false,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYLATER,
+                style: paypalCommerceCreditOptions.style,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+                onShippingAddressChange: expect.any(Function),
+                onShippingOptionsChange: expect.any(Function),
+            });
+        });
+
         it('renders PayPal button if it is eligible', async () => {
             const renderMock = jest.fn();
 

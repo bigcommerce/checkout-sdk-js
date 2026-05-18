@@ -220,11 +220,17 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                 );
             }
 
+            if (isServerSideShippingCallbacksEnabled) {
+                await this.paymentIntegrationService.loadCheckout();
+            }
+
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
 
             await this.paypalIntegrationService.submitPayment(methodId, data.orderID);
 
-            onComplete?.();
+            if (onComplete && typeof onComplete === 'function') {
+                onComplete();
+            }
 
             return true; // FIXME: Do we really need to return true here?
         } catch (error) {
