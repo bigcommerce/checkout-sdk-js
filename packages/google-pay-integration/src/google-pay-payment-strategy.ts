@@ -42,6 +42,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _clickListener?: (event: MouseEvent) => unknown;
     private _methodId?: keyof WithGooglePayPaymentInitializeOptions;
     private _isDeinitializationBlocked = false;
+    private _isContainerMode = false;
 
     constructor(
         protected _paymentIntegrationService: PaymentIntegrationService,
@@ -65,11 +66,20 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         const googlePayOptions = options[this._getMethodId()];
 
-        if (!googlePayOptions?.walletButton) {
+        if (!googlePayOptions?.walletButton && !googlePayOptions?.container) {
             throw new InvalidArgumentError('Unable to proceed without valid options.');
         }
 
-        const { walletButton, loadingContainerId, ...callbacks } = googlePayOptions;
+        const {
+            walletButton,
+            loadingContainerId,
+            container,
+            buttonColor,
+            buttonSizeMode,
+            buttonType,
+            onInit,
+            ...callbacks
+        } = googlePayOptions;
 
         this._loadingIndicatorContainer = loadingContainerId;
 
@@ -87,7 +97,19 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
         );
 
-        this._addPaymentButton(walletButton, callbacks);
+        if (container) {
+            this._isContainerMode = true;
+
+            const renderButton = () => this._addPaymentButtonToContainer(googlePayOptions);
+
+            if (onInit) {
+                onInit(renderButton);
+            } else {
+                renderButton();
+            }
+        } else {
+            this._addPaymentButton(walletButton!, callbacks);
+        }
     }
 
     async execute({ payment }: OrderRequestBody): Promise<void> {
@@ -119,13 +141,16 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             return Promise.resolve();
         }
 
-        if (this._clickListener) {
+        if (this._isContainerMode) {
+            this._paymentButton?.remove();
+        } else if (this._clickListener) {
             this._paymentButton?.removeEventListener('click', this._clickListener);
         }
 
         this._paymentButton = undefined;
         this._clickListener = undefined;
         this._methodId = undefined;
+        this._isContainerMode = false;
 
         return Promise.resolve();
     }
@@ -150,6 +175,49 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         this._paymentButton.addEventListener('click', this._clickListener);
     }
 
+    protected _addPaymentButtonToContainer(
+        googlePayOptions: GooglePayPaymentInitializeOptions,
+    ): void {
+        if (this._paymentButton) {
+            return;
+        }
+
+        const { container, buttonColor, buttonSizeMode, buttonType, onError } = googlePayOptions;
+
+        if (!container) {
+            throw new InvalidArgumentError('Unable to proceed: container ID is not valid.');
+        }
+
+        const button = this._googlePayPaymentProcessor.addPaymentButton(container, {
+            buttonColor: buttonColor ?? 'default',
+            buttonSizeMode: buttonSizeMode ?? 'fill',
+            buttonType: buttonType ?? 'pay',
+            onClick: this._handleContainerButtonClick(onError),
+        });
+
+        if (!button) {
+            throw new InvalidArgumentError(
+                `Unable to proceed: container element "#${container}" not found in the DOM.`,
+            );
+        }
+
+        this._paymentButton = button;
+    }
+
+    protected _handleContainerButtonClick(
+        onError: GooglePayPaymentInitializeOptions['onError'],
+    ): (event: MouseEvent) => Promise<void> {
+        return async (event: MouseEvent) => {
+            event.preventDefault();
+
+            await this._runGooglePayWidgetInteractionWithErrorHandling(onError, async () => {
+                this._googlePayPaymentProcessor.setShouldRequestShipping(false);
+                await this._googlePayPaymentProcessor.initializeWidget();
+                await this._interactWithPaymentSheetAndPay();
+            });
+        };
+    }
+
     protected _handleClick({
         onPaymentSelect,
         onError,
@@ -158,7 +226,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             event.preventDefault();
 
             // TODO: Dispatch Widget Actions
-            try {
+            await this._runGooglePayWidgetInteractionWithErrorHandling(onError, async () => {
                 this._googlePayPaymentProcessor.setShouldRequestShipping(false);
                 await this._googlePayPaymentProcessor.initializeWidget();
 
@@ -167,29 +235,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 } else {
                     await this._interactWithPaymentSheet();
                 }
-            } catch (error) {
-                let err: unknown = error;
-
-                this._toggleLoadingIndicator(false);
-
-                if (isGooglePayErrorObject(error)) {
-                    if (error.statusCode === 'CANCELED') {
-                        throw new PaymentMethodCancelledError();
-                    }
-
-                    err = new PaymentMethodFailedError(JSON.stringify(error));
-                }
-
-                onError?.(
-                    new PaymentMethodFailedError(
-                        'An error occurred while requesting your Google Pay payment details.',
-                    ),
-                );
-
-                throw err;
-            } finally {
-                this._toggleBlockDeinitialization(false);
-            }
+            });
 
             onPaymentSelect?.();
         };
@@ -373,6 +419,37 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 },
             },
         };
+    }
+
+    private async _runGooglePayWidgetInteractionWithErrorHandling(
+        onError: GooglePayPaymentInitializeOptions['onError'],
+        interaction: () => Promise<void>,
+    ): Promise<void> {
+        try {
+            await interaction();
+        } catch (error) {
+            let err: unknown = error;
+
+            this._toggleLoadingIndicator(false);
+
+            if (isGooglePayErrorObject(error)) {
+                if (error.statusCode === 'CANCELED') {
+                    throw new PaymentMethodCancelledError();
+                }
+
+                err = new PaymentMethodFailedError(JSON.stringify(error));
+            }
+
+            onError?.(
+                new PaymentMethodFailedError(
+                    'An error occurred while requesting your Google Pay payment details.',
+                ),
+            );
+
+            throw err;
+        } finally {
+            this._toggleBlockDeinitialization(false);
+        }
     }
 
     private _isDirectPayOnClickEnabled(): boolean {

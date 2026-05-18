@@ -15,6 +15,7 @@ import {
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethod,
+    PaymentMethodCancelledError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCart,
@@ -35,6 +36,7 @@ import { createInitializeImplementationMock } from './mocks/google-pay-processor
 import {
     CallbackTriggerType,
     ErrorReasonType,
+    GooglePayErrorObject,
     GooglePayInitializationData,
     GooglePaymentsClient,
     NewTransactionInfo,
@@ -209,6 +211,16 @@ describe('GooglePayPaymentStrategy', () => {
             test('walletButton is empty', async () => {
                 options.googlepayworldpayaccess = {
                     walletButton: '',
+                };
+
+                const initialize = strategy.initialize(options);
+
+                await expect(initialize).rejects.toThrow(InvalidArgumentError);
+            });
+
+            test('container is empty', async () => {
+                options.googlepayworldpayaccess = {
+                    container: '',
                 };
 
                 const initialize = strategy.initialize(options);
@@ -406,15 +418,12 @@ describe('GooglePayPaymentStrategy', () => {
                 jest.spyOn(processor, 'getNonce').mockRejectedValue(
                     new MissingDataError(MissingDataErrorType.MissingConsignments),
                 );
-
-                const execute = () => strategy.execute(payload);
-
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
                 ).mockReturnValue(getGeneric());
 
-                await expect(execute()).rejects.toThrow(MissingDataError);
+                await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
             });
         });
     });
@@ -890,6 +899,211 @@ describe('GooglePayPaymentStrategy', () => {
                 await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(updateAddressSpy).not.toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('#initialize with container', () => {
+        const CONTAINER_ID = 'checkout-payment-continue';
+
+        let containerHost: HTMLDivElement;
+        let brandedButton: HTMLButtonElement;
+        let containerButtonOnClick: (event: MouseEvent) => Promise<void>;
+
+        beforeEach(() => {
+            containerHost = document.createElement('div');
+            containerHost.id = CONTAINER_ID;
+            document.body.appendChild(containerHost);
+
+            brandedButton = document.createElement('button');
+            jest.spyOn(brandedButton, 'remove');
+            jest.spyOn(brandedButton, 'removeEventListener');
+
+            jest.spyOn(processor, 'addPaymentButton').mockImplementation(
+                (_containerId, buttonOpts) => {
+                    containerButtonOnClick = buttonOpts.onClick;
+
+                    brandedButton.onclick = (event: MouseEvent) => {
+                        void buttonOpts.onClick(event);
+                    };
+
+                    return brandedButton;
+                },
+            );
+
+            options = {
+                methodId: 'googlepayworldpayaccess',
+                googlepayworldpayaccess: {
+                    loadingContainerId: 'id',
+                    container: CONTAINER_ID,
+                    onError: jest.fn(),
+                },
+            };
+        });
+
+        afterEach(() => {
+            brandedButton.onclick = null;
+            containerHost.remove();
+        });
+
+        describe('#initialize', () => {
+            it('should initialize when only container is provided', async () => {
+                const initialize = strategy.initialize(options);
+
+                await expect(initialize).resolves.toBeUndefined();
+
+                expect(processor.addPaymentButton).toHaveBeenCalledWith(
+                    CONTAINER_ID,
+                    expect.objectContaining({
+                        buttonColor: 'default',
+                        buttonType: 'pay',
+                        buttonSizeMode: 'fill',
+                        onClick: expect.any(Function),
+                    }),
+                );
+            });
+
+            it('should pass custom buttonColor and buttonType to addPaymentButton', async () => {
+                options.googlepayworldpayaccess = {
+                    ...options.googlepayworldpayaccess,
+                    buttonColor: 'black',
+                    buttonType: 'checkout',
+                };
+
+                await strategy.initialize(options);
+
+                expect(processor.addPaymentButton).toHaveBeenCalledWith(
+                    CONTAINER_ID,
+                    expect.objectContaining({
+                        buttonColor: 'black',
+                        buttonType: 'checkout',
+                    }),
+                );
+            });
+
+            it('should defer addPaymentButton until onInit calls renderButton', async () => {
+                const onInit = jest.fn();
+
+                options.googlepayworldpayaccess = {
+                    ...options.googlepayworldpayaccess,
+                    onInit,
+                };
+
+                await strategy.initialize(options);
+
+                expect(processor.addPaymentButton).not.toHaveBeenCalled();
+                expect(onInit).toHaveBeenCalledWith(expect.any(Function));
+
+                const [[renderButton]] = onInit.mock.calls;
+
+                renderButton();
+
+                expect(processor.addPaymentButton).toHaveBeenCalledTimes(1);
+            });
+
+            it('should add button only once when initialize is called twice', async () => {
+                await strategy.initialize(options);
+                await strategy.initialize(options);
+
+                expect(processor.addPaymentButton).toHaveBeenCalledTimes(1);
+            });
+
+            it('should add button only once when renderButton is called twice via onInit', async () => {
+                let capturedRenderButton!: () => void;
+                const onInit = jest.fn((renderButton: () => void) => {
+                    capturedRenderButton = renderButton;
+                });
+
+                options.googlepayworldpayaccess = {
+                    ...options.googlepayworldpayaccess,
+                    onInit,
+                };
+
+                await strategy.initialize(options);
+
+                capturedRenderButton();
+                capturedRenderButton();
+
+                expect(processor.addPaymentButton).toHaveBeenCalledTimes(1);
+            });
+
+            describe('should fail if:', () => {
+                test('container element is not in the DOM', async () => {
+                    jest.spyOn(processor, 'addPaymentButton').mockReturnValue(undefined);
+
+                    const initialize = strategy.initialize(options);
+
+                    await expect(initialize).rejects.toThrow(InvalidArgumentError);
+                });
+            });
+        });
+
+        describe('when clicking the container payment button', () => {
+            let completeCheckoutFlowSpy: jest.SpyInstance;
+
+            beforeEach(async () => {
+                jest.spyOn(processor, 'setShouldRequestShipping');
+                jest.spyOn(processor, 'mapToBillingAddressRequestBody').mockReturnValue(undefined);
+                completeCheckoutFlowSpy = jest
+                    .spyOn(Object.getPrototypeOf(strategy), '_completeCheckoutFlow')
+                    .mockImplementation(() => undefined);
+
+                await strategy.initialize(options);
+            });
+
+            afterEach(() => {
+                completeCheckoutFlowSpy.mockRestore();
+            });
+
+            it('should run direct pay flow via _interactWithPaymentSheetAndPay without PI-5111 experiment', async () => {
+                const executeSpy = jest.spyOn(strategy, 'execute');
+
+                brandedButton.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(processor.setShouldRequestShipping).toHaveBeenCalledWith(false);
+                expect(processor.initializeWidget).toHaveBeenCalled();
+                expect(processor.showPaymentSheet).toHaveBeenCalled();
+                expect(executeSpy).toHaveBeenCalledWith({
+                    useStoreCredit: false,
+                    payment: { methodId: options.methodId },
+                });
+            });
+
+            it('should call onError when initializeWidget throws', async () => {
+                const widgetError = new Error('widget failed');
+
+                jest.spyOn(processor, 'initializeWidget').mockRejectedValueOnce(widgetError);
+
+                await expect(containerButtonOnClick(new MouseEvent('click'))).rejects.toThrow(
+                    widgetError,
+                );
+
+                expect(options.googlepayworldpayaccess?.onError).toHaveBeenCalled();
+                expect(LoadingHide).toHaveBeenCalled();
+            });
+
+            it('should throw PaymentMethodCancelledError when Google Pay returns CANCELED', async () => {
+                const canceledError: GooglePayErrorObject = {
+                    statusCode: 'CANCELED',
+                };
+
+                jest.spyOn(processor, 'initializeWidget').mockRejectedValueOnce(canceledError);
+
+                await expect(containerButtonOnClick(new MouseEvent('click'))).rejects.toThrow(
+                    PaymentMethodCancelledError,
+                );
+            });
+        });
+
+        describe('#deinitialize', () => {
+            it('should remove the branded button instead of removeEventListener', async () => {
+                await strategy.initialize(options);
+                await strategy.deinitialize();
+
+                expect(brandedButton.remove).toHaveBeenCalled();
+                expect(brandedButton.removeEventListener).not.toHaveBeenCalled();
             });
         });
     });
