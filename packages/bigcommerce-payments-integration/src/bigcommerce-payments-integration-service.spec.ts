@@ -232,6 +232,20 @@ describe('BigCommercePaymentsIntegrationService', () => {
             });
         });
 
+        it('successfully updates order when server side shipping callbacks is on', async () => {
+            jest.spyOn(bigCommercePaymentsRequestSender, 'updateOrder').mockResolvedValue({
+                statusCode: 200,
+            });
+
+            await subject.updateOrder(true);
+
+            expect(bigCommercePaymentsRequestSender.updateOrder).toHaveBeenCalledWith({
+                availableShippingOptions: [],
+                cartId: cart.id,
+                selectedShippingOption: null,
+            });
+        });
+
         it('throws an error if something went wrong during order update process', async () => {
             jest.spyOn(bigCommercePaymentsRequestSender, 'updateOrder').mockImplementation(() =>
                 Promise.reject(new Error()),

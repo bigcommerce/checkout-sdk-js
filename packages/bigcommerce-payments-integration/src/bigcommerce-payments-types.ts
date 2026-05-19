@@ -265,7 +265,7 @@ export interface BigCommercePaymentsInitializationData {
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
-    isAppSwitchEnabled?: boolean;
+    isServerSideShippingCallbacksEnabled?: boolean;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
 }
 
@@ -597,7 +597,7 @@ export interface PayPalOrderData {
 export interface PayPalUpdateOrderRequestBody {
     availableShippingOptions?: ShippingOption[];
     cartId: string;
-    selectedShippingOption?: ShippingOption;
+    selectedShippingOption?: ShippingOption | null;
 }
 
 export interface PayPalUpdateOrderResponse {

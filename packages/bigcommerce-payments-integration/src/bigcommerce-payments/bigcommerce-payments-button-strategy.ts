@@ -88,7 +88,7 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
             false,
         );
 
-        this.renderButton(containerId, methodId, bigcommerce_payments, isBuyNowFlow);
+        this.renderButton(containerId, methodId, bigcommerce_payments);
     }
 
     deinitialize(): Promise<void> {
@@ -99,7 +99,6 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
         containerId: string,
         methodId: string,
         bigcommerce_payments: BigCommercePaymentsButtonInitializeOptions,
-        isBuyNowFlow?: boolean,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } =
             bigcommerce_payments;
@@ -108,14 +107,10 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-        const { isHostedCheckoutEnabled, isAppSwitchEnabled } =
+        const { isHostedCheckoutEnabled, isServerSideShippingCallbacksEnabled } =
             paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
-            ...(!isBuyNowFlow &&
-                this.isPaypalCommerceAppSwitchEnabled(methodId) && {
-                    appSwitchWhenAvailable: true,
-                }),
             createOrder: () =>
                 this.bigCommercePaymentsIntegrationService.createOrder('bigcommerce_payments'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
@@ -128,14 +123,20 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
         };
 
         const hostedCheckoutCallbacks = {
-            ...(!isAppSwitchEnabled && {
+            ...(!isServerSideShippingCallbacksEnabled && {
                 onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
                     this.onShippingAddressChange(data),
                 onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
                     this.onShippingOptionsChange(data),
             }),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
+                this.onHostedCheckoutApprove(
+                    data,
+                    actions,
+                    methodId,
+                    onComplete,
+                    isServerSideShippingCallbacksEnabled,
+                ),
         };
 
         const buttonRenderOptions: BigCommercePaymentsButtonsOptions = {
@@ -149,11 +150,7 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
         const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButton.isEligible()) {
-            if (paypalButton.hasReturned?.() && this.isPaypalCommerceAppSwitchEnabled(methodId)) {
-                paypalButton.resume?.();
-            } else {
-                paypalButton.render(`#${containerId}`);
-            }
+            paypalButton.render(`#${containerId}`);
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {
@@ -179,6 +176,7 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
         actions: ApproveCallbackActions,
         methodId: string,
         onComplete?: () => void,
+        isServerSideShippingCallbacksEnabled?: boolean,
     ): Promise<boolean> {
         if (!data.orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
@@ -186,27 +184,42 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
 
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const orderDetails = await actions.order.get();
 
         try {
-            const billingAddress =
-                this.bigCommercePaymentsIntegrationService.getBillingAddressFromOrderDetails(
-                    orderDetails,
-                );
+            const hasPhysicalItems = cart.lineItems.physicalItems.length > 0;
 
-            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
+            if (!isServerSideShippingCallbacksEnabled) {
+                const orderDetails = await actions.order.get();
 
-            if (cart.lineItems.physicalItems.length > 0) {
-                const shippingAddress =
-                    this.bigCommercePaymentsIntegrationService.getShippingAddressFromOrderDetails(
+                const billingAddress =
+                    this.bigCommercePaymentsIntegrationService.getBillingAddressFromOrderDetails(
                         orderDetails,
                     );
 
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.bigCommercePaymentsIntegrationService.updateOrder();
+                await this.paymentIntegrationService.updateBillingAddress(billingAddress);
+
+                if (hasPhysicalItems) {
+                    const shippingAddress =
+                        this.bigCommercePaymentsIntegrationService.getShippingAddressFromOrderDetails(
+                            orderDetails,
+                        );
+
+                    await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+                }
+            }
+
+            if (hasPhysicalItems) {
+                await this.bigCommercePaymentsIntegrationService.updateOrder(
+                    isServerSideShippingCallbacksEnabled,
+                );
+            }
+
+            if (isServerSideShippingCallbacksEnabled) {
+                await this.paymentIntegrationService.loadCheckout();
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
+
             await this.bigCommercePaymentsIntegrationService.submitPayment(methodId, data.orderID);
 
             if (onComplete && typeof onComplete === 'function') {
@@ -270,18 +283,5 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
 
             throw error;
         }
-    }
-
-    /**
-     *
-     * PayPal AppSwitch enabling handling
-     *
-     */
-    private isPaypalCommerceAppSwitchEnabled(methodId: string): boolean {
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-
-        return paymentMethod.initializationData?.isAppSwitchEnabled ?? false;
     }
 }

@@ -132,16 +132,24 @@ export default class BigCommercePaymentsIntegrationService {
         return { orderId, ...(setupToken ? { setupToken } : {}) };
     }
 
-    async updateOrder(): Promise<void> {
+    async updateOrder(isServerSideShippingCallbacksEnabled?: boolean): Promise<void> {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const consignment = state.getConsignmentsOrThrow()[0];
+        let consignment;
+
+        if (!isServerSideShippingCallbacksEnabled) {
+            consignment = state.getConsignmentsOrThrow()[0];
+        }
 
         try {
             await this.bigCommercePaymentsRequestSender.updateOrder({
-                availableShippingOptions: consignment.availableShippingOptions,
+                availableShippingOptions: isServerSideShippingCallbacksEnabled
+                    ? []
+                    : consignment?.availableShippingOptions,
                 cartId: cart.id,
-                selectedShippingOption: consignment.selectedShippingOption,
+                selectedShippingOption: isServerSideShippingCallbacksEnabled
+                    ? null
+                    : consignment?.selectedShippingOption,
             });
         } catch (_error) {
             throw new RequestError();
