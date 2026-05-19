@@ -278,12 +278,6 @@ declare class BigCommercePaymentsButtonStrategy implements CheckoutButtonStrateg
     private onHostedCheckoutApprove;
     private onShippingAddressChange;
     private onShippingOptionsChange;
-    /**
-     *
-     * PayPal AppSwitch enabling handling
-     *
-     */
-    private isPaypalCommerceAppSwitchEnabled;
 }
 
 /**
@@ -988,7 +982,7 @@ declare interface BigCommercePaymentsInitializationData {
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
-    isAppSwitchEnabled?: boolean;
+    isServerSideShippingCallbacksEnabled?: boolean;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
 }
 
@@ -1019,7 +1013,7 @@ declare class BigCommercePaymentsIntegrationService {
      */
     createOrder(providerId: string, requestBody?: Partial<PayPalCreateOrderRequestBody>): Promise<string>;
     createOrderCardFields(providerId: string, requestBody?: Partial<PayPalCreateOrderRequestBody>): Promise<PayPalCreateOrderCardFieldsResponse>;
-    updateOrder(): Promise<void>;
+    updateOrder(isServerSideShippingCallbacksEnabled?: boolean): Promise<void>;
     getOrderStatus(methodId?: string, options?: RequestOptions): Promise<PayPalOrderStatus>;
     /**
      *
@@ -1440,12 +1434,6 @@ declare class BigCommercePaymentsPaymentStrategy implements PaymentStrategy {
      * */
     private renderMessages;
     private isProviderError;
-    /**
-     *
-     * AppSwitch enabling handling
-     *
-     */
-    private isAppSwitchEnabled;
 }
 
 declare interface BigCommercePaymentsRatePayPaymentInitializeOptions {
@@ -1963,7 +1951,7 @@ declare interface PayPalSelectedShippingOption {
 declare interface PayPalUpdateOrderRequestBody {
     availableShippingOptions?: ShippingOption[];
     cartId: string;
-    selectedShippingOption?: ShippingOption;
+    selectedShippingOption?: ShippingOption | null;
 }
 
 declare interface PayPalUpdateOrderResponse {

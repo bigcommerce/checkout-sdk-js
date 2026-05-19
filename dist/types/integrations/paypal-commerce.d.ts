@@ -1207,7 +1207,7 @@ declare interface PayPalCommerceInitializationData {
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
-    isAppSwitchEnabled?: boolean;
+    isServerSideShippingCallbacksEnabled?: boolean;
 }
 
 declare class PayPalCommerceIntegrationService {
@@ -1237,7 +1237,7 @@ declare class PayPalCommerceIntegrationService {
      */
     createOrder(providerId: string, requestBody?: Partial<PayPalCreateOrderRequestBody>): Promise<string>;
     createOrderCardFields(providerId: string, requestBody?: Partial<PayPalCreateOrderRequestBody>): Promise<PayPalCreateOrderCardFieldsResponse>;
-    updateOrder(): Promise<void>;
+    updateOrder(isServerSideShippingCallbacksEnabled?: boolean): Promise<void>;
     getOrderStatus(methodId?: string, options?: RequestOptions): Promise<PayPalOrderStatus>;
     /**
      *
@@ -1472,12 +1472,6 @@ declare class PayPalCommercePaymentStrategy implements PaymentStrategy {
      *
      */
     private isProviderError;
-    /**
-     *
-     * PayPal AppSwitch enabling handling
-     *
-     */
-    private isPaypalCommerceAppSwitchEnabled;
     private getSmartButtonContainerId;
 }
 
@@ -1782,7 +1776,7 @@ declare interface PayPalSelectedShippingOption {
 declare interface PayPalUpdateOrderRequestBody {
     availableShippingOptions?: ShippingOption[];
     cartId: string;
-    selectedShippingOption?: ShippingOption;
+    selectedShippingOption?: ShippingOption | null;
 }
 
 declare interface PayPalUpdateOrderResponse {
