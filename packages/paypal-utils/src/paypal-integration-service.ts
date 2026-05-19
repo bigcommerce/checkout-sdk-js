@@ -130,16 +130,28 @@ export default class PayPalIntegrationService {
         return { orderId, ...(setupToken ? { setupToken } : {}) };
     }
 
-    async updateOrder(providerId: string, methodId?: string, orderId?: number): Promise<void> {
+    async updateOrder(
+        providerId: string,
+        methodId?: string,
+        orderId?: number,
+        isServerSideShippingCallbacksEnabled?: boolean,
+    ): Promise<void> {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const consignment = state.getConsignmentsOrThrow()[0];
+        let consignment;
+        if (!isServerSideShippingCallbacksEnabled) {
+            consignment = state.getConsignmentsOrThrow()[0];
+        }
 
         try {
             await this.paypalRequestSender.updateOrder(providerId, {
-                availableShippingOptions: consignment.availableShippingOptions,
+                availableShippingOptions: isServerSideShippingCallbacksEnabled
+                    ? []
+                    : consignment?.availableShippingOptions,
                 cartId: cart.id,
-                selectedShippingOption: consignment.selectedShippingOption,
+                selectedShippingOption: isServerSideShippingCallbacksEnabled
+                    ? null
+                    : consignment?.selectedShippingOption,
                 ...(methodId ? { methodId } : {}),
                 ...(orderId ? { orderId } : {}),
             });

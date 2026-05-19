@@ -260,7 +260,7 @@ export interface PayPalCommerceInitializationData {
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
-    isAppSwitchEnabled?: boolean;
+    isServerSideShippingCallbacksEnabled?: boolean;
 }
 
 export interface PayPalBNPLConfigurationItem {
@@ -600,7 +600,7 @@ export interface PayPalOrderData {
 export interface PayPalUpdateOrderRequestBody {
     availableShippingOptions?: ShippingOption[];
     cartId: string;
-    selectedShippingOption?: ShippingOption;
+    selectedShippingOption?: ShippingOption | null;
 }
 
 export interface PayPalUpdateOrderResponse {

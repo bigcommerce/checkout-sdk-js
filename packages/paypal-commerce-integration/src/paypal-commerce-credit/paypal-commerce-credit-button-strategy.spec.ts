@@ -447,13 +447,13 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render without shipping options when appSwitch enabled', async () => {
+        it('initializes PayPal button to render without shipping options when server side shipping callbacks enabled', async () => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             };
 
@@ -469,6 +469,33 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                 style: paypalCommerceCreditOptions.style,
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+            });
+        });
+
+        it('initializes PayPal button to render with shipping options when server side shipping callbacks disabled', async () => {
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                    isServerSideShippingCallbacksEnabled: false,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYLATER,
+                style: paypalCommerceCreditOptions.style,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+                onShippingAddressChange: expect.any(Function),
+                onShippingOptionsChange: expect.any(Function),
             });
         });
 

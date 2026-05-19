@@ -335,7 +335,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             });
         });
 
-        it('initializes paypal buttons without shipping callbacks when appSwitch enabled', async () => {
+        it('initializes paypal buttons without shipping callbacks when server side shipping callbacks enabled', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -344,7 +344,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
-                    isAppSwitchEnabled: true,
+                    isServerSideShippingCallbacksEnabled: true,
                 },
             });
 
