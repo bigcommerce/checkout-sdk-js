@@ -24,6 +24,7 @@ import {
 import { getGuestCustomer } from '../../../customer/customers.mock';
 import { getAddressFormFields } from '../../../form/form.mock';
 import {
+    B2BCompanyPaymentMethodRequestSender,
     LoadPaymentMethodAction,
     PaymentMethod,
     PaymentMethodActionCreator,
@@ -101,6 +102,7 @@ describe('StripeUPEShippingStrategy', () => {
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(requestSender),
+            new B2BCompanyPaymentMethodRequestSender(requestSender),
         );
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));

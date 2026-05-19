@@ -19,6 +19,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
+    B2BCompanyPaymentMethodRequestSender,
     createPaymentClient,
     PaymentActionCreator,
     PaymentMethodActionCreator,
@@ -91,6 +92,7 @@ export default function createPaymentIntegrationService(
 
     const paymentMethodActionCreator = new PaymentMethodActionCreator(
         new PaymentMethodRequestSender(requestSender),
+        new B2BCompanyPaymentMethodRequestSender(requestSender),
     );
 
     const paymentActionCreator = new PaymentActionCreator(

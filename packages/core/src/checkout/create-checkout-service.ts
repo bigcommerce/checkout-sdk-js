@@ -35,6 +35,7 @@ import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
+    B2BCompanyPaymentMethodRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistry,
     createPaymentStrategyRegistryV2,
@@ -203,7 +204,10 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             new InstrumentRequestSender(paymentClient, experimentRequestSender),
         ),
         orderActionCreator,
-        new PaymentMethodActionCreator(new PaymentMethodRequestSender(experimentRequestSender)),
+        new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(experimentRequestSender),
+            new B2BCompanyPaymentMethodRequestSender(requestSender),
+        ),
         new PaymentStrategyActionCreator(
             createPaymentStrategyRegistry(store, paymentClient, experimentRequestSender),
             registryV2,

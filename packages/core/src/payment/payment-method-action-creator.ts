@@ -1,10 +1,15 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
+// TODO: CHECKOUT-9979 remove this import before delivery
+import { resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
+import B2BCompanyPaymentMethodRequestSender from './b2b-company-payment-method-request-sender';
+import filterPaymentMethodsByB2BCompanyAllowList from './b2b-company-payment-method-filter-transformer';
 import {
     LoadPaymentMethodAction,
     LoadPaymentMethodsAction,
@@ -18,8 +23,15 @@ const isPaymentMethod = (value: PaymentMethod | undefined): value is PaymentMeth
     return !!value;
 };
 
+export interface PaymentMethodsRequestOptions extends RequestOptions {
+    useCompanyAllowList?: boolean;
+}
+
 export default class PaymentMethodActionCreator {
-    constructor(private _requestSender: PaymentMethodRequestSender) {}
+    constructor(
+        private _requestSender: PaymentMethodRequestSender,
+        private _b2bCompanyPaymentMethodRequestSender: B2BCompanyPaymentMethodRequestSender,
+    ) {}
 
     loadPaymentMethodsById(
         methodIds: string[],
@@ -71,7 +83,7 @@ export default class PaymentMethodActionCreator {
     }
 
     loadPaymentMethods(
-        options?: RequestOptions,
+        options?: PaymentMethodsRequestOptions,
     ): ThunkAction<LoadPaymentMethodsAction, InternalCheckoutSelectors> {
         return (store) =>
             Observable.create((observer: Observer<LoadPaymentMethodsAction>) => {
@@ -85,12 +97,43 @@ export default class PaymentMethodActionCreator {
                         ...options,
                         params: { ...options?.params, cartId: cart.id },
                     })
-                    .then((response) => {
+                    .then(async (response) => {
                         const meta = {
                             deviceSessionId: response.headers['x-device-session-id'],
                             sessionHash: response.headers['x-session-hash'],
                         };
-                        const methods = response.body;
+                        let methods = response.body;
+
+                        if (options?.useCompanyAllowList) {
+                            const customer = state.customer.getCustomer();
+                            const b2bToken = state.b2bToken.getToken();
+                            const b2bBaseUrl = resolveB2bBaseUrl(
+                                state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
+                            );
+                            const companyId = state.cart.getCart()?.companyId;
+
+                            if (
+                                !customer ||
+                                customer.isGuest ||
+                                !b2bToken ||
+                                !b2bBaseUrl ||
+                                !companyId
+                            ) {
+                                throw new MissingDataError(
+                                    MissingDataErrorType.MissingCheckoutConfig,
+                                );
+                            }
+
+                            const { body: b2bBody } =
+                                await this._b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods(
+                                    companyId,
+                                    b2bToken,
+                                    b2bBaseUrl,
+                                    options,
+                                );
+
+                            methods = filterPaymentMethodsByB2BCompanyAllowList(methods, b2bBody);
+                        }
 
                         observer.next(
                             createAction(

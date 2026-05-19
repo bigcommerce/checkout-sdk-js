@@ -17,7 +17,11 @@ import { StripeScriptLoader } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
-import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
+import {
+    B2BCompanyPaymentMethodRequestSender,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
@@ -46,6 +50,7 @@ export default function createShippingStrategyRegistry(
     );
     const paymentMethodActionCreator = new PaymentMethodActionCreator(
         new PaymentMethodRequestSender(requestSender),
+        new B2BCompanyPaymentMethodRequestSender(requestSender),
     );
     const scriptLoader = getScriptLoader();
     const subscriptionsActionCreator = new SubscriptionsActionCreator(
@@ -64,7 +69,10 @@ export default function createShippingStrategyRegistry(
             new AmazonPayV2ShippingStrategy(
                 store,
                 consignmentActionCreator,
-                new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+                new PaymentMethodActionCreator(
+                    new PaymentMethodRequestSender(requestSender),
+                    new B2BCompanyPaymentMethodRequestSender(requestSender),
+                ),
                 createAmazonPayV2PaymentProcessor(),
                 new ShippingStrategyActionCreator(registry),
             ),

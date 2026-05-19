@@ -37,11 +37,19 @@ export {
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
 } from './payment';
+export {
+    default as B2BCompanyPaymentMethodRequestSender,
+    B2BCompanyPaymentMethodsResponseBody,
+} from './b2b-company-payment-method-request-sender';
+export { default as filterPaymentMethodsByB2BCompanyAllowList } from './b2b-company-payment-method-filter-transformer';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';
 export { default as PaymentMethodConfig } from './payment-method-config';
 export { default as InitializationStrategy } from './payment-method-initialization-strategy';
-export { default as PaymentMethodActionCreator } from './payment-method-action-creator';
+export {
+    default as PaymentMethodActionCreator,
+    PaymentMethodsRequestOptions,
+} from './payment-method-action-creator';
 export { default as paymentMethodReducer } from './payment-method-reducer';
 export { default as PaymentMethodRequestSender } from './payment-method-request-sender';
 export {

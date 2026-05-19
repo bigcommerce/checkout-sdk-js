@@ -4,7 +4,11 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createCheckoutStore } from '../checkout';
 import { ConfigState } from '../config';
 import * as defaultCheckoutButtonStrategyFactories from '../generated/checkout-button-strategies';
-import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
+import {
+    B2BCompanyPaymentMethodRequestSender,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 
 import CheckoutButtonInitializer from './checkout-button-initializer';
@@ -64,7 +68,10 @@ export default function createCheckoutButtonInitializer(
         new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store, requestSender, formPoster, host),
             registryV2,
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+            new PaymentMethodActionCreator(
+                new PaymentMethodRequestSender(requestSender),
+                new B2BCompanyPaymentMethodRequestSender(requestSender),
+            ),
         ),
     );
 }
