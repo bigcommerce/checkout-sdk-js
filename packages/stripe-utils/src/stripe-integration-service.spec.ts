@@ -9,6 +9,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCheckout,
     getConfig,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -845,6 +846,30 @@ describe('StripeIntegrationService', () => {
 
         it('should return empty string if address is undefined', () => {
             expect(stripeIntegrationService.getShopperFullName(undefined)).toBe('');
+        });
+    });
+
+    describe('#verifyCheckoutSpamProtection', () => {
+        it('runs spam protection when shouldExecuteSpamCheck is true', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
+                ...getCheckout(),
+                shouldExecuteSpamCheck: true,
+            });
+
+            await stripeIntegrationService.verifyCheckoutSpamProtection();
+
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalledTimes(1);
+        });
+
+        it('skips spam protection when shouldExecuteSpamCheck is false', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
+                ...getCheckout(),
+                shouldExecuteSpamCheck: false,
+            });
+
+            await stripeIntegrationService.verifyCheckoutSpamProtection();
+
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).not.toHaveBeenCalled();
         });
     });
 });

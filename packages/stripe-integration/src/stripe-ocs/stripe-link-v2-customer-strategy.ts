@@ -264,6 +264,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             this._stripeClient &&
             this._stripeElements
         ) {
+            await this.stripeIntegrationService.verifyCheckoutSpamProtection();
             await this._updateShippingAndBillingAddress(event);
             await this.paymentIntegrationService.submitOrder();
 

@@ -55,4 +55,5 @@ export const getStripeIntegrationServiceMock = () =>
         getShopperFullName: jest.fn((address: Address) =>
             `${address?.firstName || ''} ${address?.lastName || ''}`.trim(),
         ),
+        verifyCheckoutSpamProtection: jest.fn(() => Promise.resolve()),
     } as unknown as StripeIntegrationService);

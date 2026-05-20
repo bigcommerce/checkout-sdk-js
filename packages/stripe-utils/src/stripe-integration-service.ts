@@ -271,4 +271,12 @@ export default class StripeIntegrationService {
 
         return `${firstName} ${lastName}`.trim();
     }
+
+    async verifyCheckoutSpamProtection(): Promise<void> {
+        const { shouldExecuteSpamCheck } = this.paymentIntegrationService.getState().getCheckoutOrThrow();
+
+        if (shouldExecuteSpamCheck) {
+            await this.paymentIntegrationService.verifyCheckoutSpamProtection();
+        }
+    }
 }
