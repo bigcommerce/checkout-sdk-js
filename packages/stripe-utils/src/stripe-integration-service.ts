@@ -273,7 +273,9 @@ export default class StripeIntegrationService {
     }
 
     async verifyCheckoutSpamProtection(): Promise<void> {
-        const { shouldExecuteSpamCheck } = this.paymentIntegrationService.getState().getCheckoutOrThrow();
+        const { shouldExecuteSpamCheck } = this.paymentIntegrationService
+            .getState()
+            .getCheckoutOrThrow();
 
         if (shouldExecuteSpamCheck) {
             await this.paymentIntegrationService.verifyCheckoutSpamProtection();
