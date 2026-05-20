@@ -8,9 +8,14 @@ export default interface Config {
     storeConfig: StoreConfig;
 }
 
+export interface B2BApiSettings {
+    clientId: string;
+    baseUrl: string;
+}
 export interface StoreConfig {
     cdnPath: string;
     checkoutSettings: CheckoutSettings;
+    b2bApiSettings?: B2BApiSettings;
     currency: StoreCurrency;
     displayDateFormat: string;
     displaySettings: DisplaySettings;

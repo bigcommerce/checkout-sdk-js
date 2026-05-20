@@ -25,7 +25,17 @@ export interface Capabilities {
         paymentMethodFiltering: boolean;
         b2bPaymentMethodFilter: boolean;
         poPaymentMethod: boolean;
+        poConfig: {
+            label: string;
+            required: boolean;
+            creditLimit: number;
+            currency: string;
+        } | null;
         additionalPaymentNotes: boolean;
+        additionalField: {
+            label: string;
+            required: boolean;
+        } | null;
         excludeOfflineForInvoice: boolean;
         excludePPSDK: boolean;
     };
