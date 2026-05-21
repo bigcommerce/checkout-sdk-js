@@ -102,7 +102,7 @@ describe('PaymentMethodActionCreator', () => {
             ]);
         });
 
-        describe('with useCompanyAllowList', () => {
+        describe('with B2B company allow-list filtering', () => {
             const companyId = 42;
             const b2bToken = 'b2b-token-value';
             const b2bBaseUrl = 'https://api-b2b.bigcommerce.com';
@@ -118,6 +118,25 @@ describe('PaymentMethodActionCreator', () => {
                 ],
             };
 
+            function setCapability(value: boolean): void {
+                const baseConfig = store.getState().config.getStoreConfig()!;
+
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                    ...baseConfig,
+                    checkoutSettings: {
+                        ...baseConfig.checkoutSettings,
+                        capabilities: {
+                            ...baseConfig.checkoutSettings.capabilities,
+                            payment: {
+                                ...baseConfig.checkoutSettings.capabilities?.payment,
+                                b2bPaymentMethodFilter: value,
+                            },
+                        },
+                    } as typeof baseConfig.checkoutSettings,
+                    b2bApiSettings: { baseUrl: b2bBaseUrl, clientId: 'cid' },
+                });
+            }
+
             beforeEach(() => {
                 const state = store.getState();
 
@@ -130,10 +149,7 @@ describe('PaymentMethodActionCreator', () => {
                     isGuest: false,
                 });
                 jest.spyOn(state.b2bToken, 'getToken').mockReturnValue(b2bToken);
-                jest.spyOn(state.config, 'getStoreConfig').mockReturnValue({
-                    ...state.config.getStoreConfig()!,
-                    b2bApiSettings: { baseUrl: b2bBaseUrl, clientId: 'cid' },
-                });
+                setCapability(true);
 
                 jest.spyOn(
                     b2bCompanyPaymentMethodRequestSender,
@@ -141,43 +157,16 @@ describe('PaymentMethodActionCreator', () => {
                 ).mockResolvedValue(getResponse(allowListResponseBody));
             });
 
-            it('does not call the B2B request sender when option is omitted', async () => {
-                await from(paymentMethodActionCreator.loadPaymentMethods()(store)).toPromise();
-
-                expect(
-                    b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
-                ).not.toHaveBeenCalled();
-            });
-
-            it('does not call the B2B request sender when option is false', async () => {
-                await from(
-                    paymentMethodActionCreator.loadPaymentMethods({
-                        useCompanyAllowList: false,
-                    })(store),
-                ).toPromise();
-
-                expect(
-                    b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
-                ).not.toHaveBeenCalled();
-            });
-
-            it('fetches the B2B allow-list and emits the filtered subset', async () => {
+            it('applies the filter automatically when the capability is enabled', async () => {
                 const actions = await from(
-                    paymentMethodActionCreator.loadPaymentMethods({
-                        useCompanyAllowList: true,
-                    })(store),
+                    paymentMethodActionCreator.loadPaymentMethods()(store),
                 )
                     .pipe(toArray())
                     .toPromise();
 
                 expect(
                     b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
-                ).toHaveBeenCalledWith(
-                    companyId,
-                    b2bToken,
-                    b2bBaseUrl,
-                    expect.objectContaining({ useCompanyAllowList: true }),
-                );
+                ).toHaveBeenCalledWith(companyId, b2bToken, b2bBaseUrl, undefined);
 
                 expect(actions).toEqual([
                     { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
@@ -192,6 +181,31 @@ describe('PaymentMethodActionCreator', () => {
                 ]);
             });
 
+            it('does not call the B2B request sender when the capability is disabled', async () => {
+                setCapability(false);
+
+                await from(paymentMethodActionCreator.loadPaymentMethods()(store)).toPromise();
+
+                expect(
+                    b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
+                ).not.toHaveBeenCalled();
+            });
+
+            it('fails with MissingDataError when the B2B token is missing from state', async () => {
+                jest.spyOn(store.getState().b2bToken, 'getToken').mockReturnValue(undefined);
+
+                const errorHandler = jest.fn((action) => of(action));
+                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
+                    .pipe(catchError(errorHandler), toArray())
+                    .toPromise();
+
+                expect(errorHandler).toHaveBeenCalled();
+                expect(
+                    b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
+                ).not.toHaveBeenCalled();
+                expect(actions[1].payload).toBeInstanceOf(MissingDataError);
+            });
+
             it('emits LoadPaymentMethodsFailed when the B2B fetch errors', async () => {
                 const b2bError = new Error('B2B endpoint unavailable');
 
@@ -201,11 +215,7 @@ describe('PaymentMethodActionCreator', () => {
                 ).mockRejectedValue(b2bError);
 
                 const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(
-                    paymentMethodActionCreator.loadPaymentMethods({
-                        useCompanyAllowList: true,
-                    })(store),
-                )
+                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
                     .pipe(catchError(errorHandler), toArray())
                     .toPromise();
 
@@ -220,32 +230,6 @@ describe('PaymentMethodActionCreator', () => {
                 ]);
             });
 
-            it('fails with MissingDataError when the B2B token is missing from state', async () => {
-                jest.spyOn(store.getState().b2bToken, 'getToken').mockReturnValue(undefined);
-
-                const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(
-                    paymentMethodActionCreator.loadPaymentMethods({
-                        useCompanyAllowList: true,
-                    })(store),
-                )
-                    .pipe(catchError(errorHandler), toArray())
-                    .toPromise();
-
-                expect(errorHandler).toHaveBeenCalled();
-                expect(
-                    b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
-                ).not.toHaveBeenCalled();
-                expect(actions[0]).toEqual({
-                    type: PaymentMethodActionType.LoadPaymentMethodsRequested,
-                });
-                expect(actions[1]).toMatchObject({
-                    type: PaymentMethodActionType.LoadPaymentMethodsFailed,
-                    error: true,
-                });
-                expect(actions[1].payload).toBeInstanceOf(MissingDataError);
-            });
-
             it('fails with MissingDataError when companyId is missing', async () => {
                 jest.spyOn(store.getState().cart, 'getCart').mockReturnValue({
                     ...getCheckout().cart,
@@ -253,11 +237,7 @@ describe('PaymentMethodActionCreator', () => {
                 });
 
                 const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(
-                    paymentMethodActionCreator.loadPaymentMethods({
-                        useCompanyAllowList: true,
-                    })(store),
-                )
+                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
                     .pipe(catchError(errorHandler), toArray())
                     .toPromise();
 
@@ -274,11 +254,7 @@ describe('PaymentMethodActionCreator', () => {
                 });
 
                 const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(
-                    paymentMethodActionCreator.loadPaymentMethods({
-                        useCompanyAllowList: true,
-                    })(store),
-                )
+                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
                     .pipe(catchError(errorHandler), toArray())
                     .toPromise();
 
@@ -289,17 +265,15 @@ describe('PaymentMethodActionCreator', () => {
             });
 
             it('fails with MissingDataError when the B2B base URL is unavailable', async () => {
+                const baseConfig = store.getState().config.getStoreConfig()!;
+
                 jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
-                    ...store.getState().config.getStoreConfig()!,
+                    ...baseConfig,
                     b2bApiSettings: { baseUrl: '', clientId: '' },
                 });
 
                 const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(
-                    paymentMethodActionCreator.loadPaymentMethods({
-                        useCompanyAllowList: true,
-                    })(store),
-                )
+                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
                     .pipe(catchError(errorHandler), toArray())
                     .toPromise();
 

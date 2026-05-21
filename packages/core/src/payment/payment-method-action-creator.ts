@@ -1,15 +1,12 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
-// TODO: CHECKOUT-9979 remove this import before delivery
-import { resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
-import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
+import applyB2bCompanyPaymentMethodFilter from './apply-b2b-company-payment-method-filter';
 import B2BCompanyPaymentMethodRequestSender from './b2b-company-payment-method-request-sender';
-import filterPaymentMethodsByB2BCompanyAllowList from './b2b-company-payment-method-filter-transformer';
 import {
     LoadPaymentMethodAction,
     LoadPaymentMethodsAction,
@@ -22,10 +19,6 @@ import { PaymentMethod } from '.';
 const isPaymentMethod = (value: PaymentMethod | undefined): value is PaymentMethod => {
     return !!value;
 };
-
-export interface PaymentMethodsRequestOptions extends RequestOptions {
-    useCompanyAllowList?: boolean;
-}
 
 export default class PaymentMethodActionCreator {
     constructor(
@@ -83,7 +76,7 @@ export default class PaymentMethodActionCreator {
     }
 
     loadPaymentMethods(
-        options?: PaymentMethodsRequestOptions,
+        options?: RequestOptions,
     ): ThunkAction<LoadPaymentMethodsAction, InternalCheckoutSelectors> {
         return (store) =>
             Observable.create((observer: Observer<LoadPaymentMethodsAction>) => {
@@ -104,35 +97,17 @@ export default class PaymentMethodActionCreator {
                         };
                         let methods = response.body;
 
-                        if (options?.useCompanyAllowList) {
-                            const customer = state.customer.getCustomer();
-                            const b2bToken = state.b2bToken.getToken();
-                            const b2bBaseUrl = resolveB2bBaseUrl(
-                                state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
+                        const isB2bPaymentMethodFilterEnabled =
+                            state.config.getStoreConfig()?.checkoutSettings.capabilities?.payment
+                                ?.b2bPaymentMethodFilter ?? false;
+
+                        if (isB2bPaymentMethodFilterEnabled) {
+                            methods = await applyB2bCompanyPaymentMethodFilter(
+                                methods,
+                                state,
+                                this._b2bCompanyPaymentMethodRequestSender,
+                                options,
                             );
-                            const companyId = state.cart.getCart()?.companyId;
-
-                            if (
-                                !customer ||
-                                customer.isGuest ||
-                                !b2bToken ||
-                                !b2bBaseUrl ||
-                                !companyId
-                            ) {
-                                throw new MissingDataError(
-                                    MissingDataErrorType.MissingCheckoutConfig,
-                                );
-                            }
-
-                            const { body: b2bBody } =
-                                await this._b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods(
-                                    companyId,
-                                    b2bToken,
-                                    b2bBaseUrl,
-                                    options,
-                                );
-
-                            methods = filterPaymentMethodsByB2BCompanyAllowList(methods, b2bBody);
                         }
 
                         observer.next(
