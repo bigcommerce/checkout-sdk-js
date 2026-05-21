@@ -4,7 +4,11 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { of } from 'rxjs';
 
 import { CheckoutStore, createCheckoutStore } from '../checkout';
-import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
+import {
+    B2BCompanyPaymentMethodRequestSender,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 
 import { CheckoutButtonActionType } from './checkout-button-actions';
@@ -27,7 +31,10 @@ describe('CheckoutButtonInitializer', () => {
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster()),
             createCheckoutButtonRegistryV2(createPaymentIntegrationService(store), {}),
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender())),
+            new PaymentMethodActionCreator(
+                new PaymentMethodRequestSender(createRequestSender()),
+                new B2BCompanyPaymentMethodRequestSender(createRequestSender()),
+            ),
         );
 
         jest.spyOn(store, 'dispatch');

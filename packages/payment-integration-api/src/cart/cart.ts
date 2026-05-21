@@ -8,6 +8,7 @@ import LineItemMap from './line-item-map';
 export default interface Cart {
     id: string;
     customerId: number;
+    companyId: number | null;
     currency: Currency;
     email: string;
     isTaxIncluded: boolean;

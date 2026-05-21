@@ -37,6 +37,7 @@ export {
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
 } from './payment';
+export { default as B2BCompanyPaymentMethodRequestSender } from './b2b-company-payment-method-request-sender';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';
 export { default as PaymentMethodConfig } from './payment-method-config';

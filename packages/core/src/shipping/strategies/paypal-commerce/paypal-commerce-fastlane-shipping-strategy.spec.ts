@@ -31,6 +31,7 @@ import BillingAddressRequestSender from '../../../billing/billing-address-reques
 import { CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import {
+    B2BCompanyPaymentMethodRequestSender,
     PaymentMethod,
     PaymentMethodActionCreator,
     PaymentMethodRequestSender,
@@ -120,6 +121,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(requestSender),
+            new B2BCompanyPaymentMethodRequestSender(requestSender),
         );
         paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
         paypalCommerceSdkScriptLoader = createPayPalSdkScriptLoader();

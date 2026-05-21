@@ -21,6 +21,7 @@ import { CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../..
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import {
+    B2BCompanyPaymentMethodRequestSender,
     PaymentMethod,
     PaymentMethodActionCreator,
     PaymentMethodRequestSender,
@@ -64,7 +65,10 @@ describe('AmazonPayV2ShippingStrategy', () => {
         const paymentMethodRequestSender: PaymentMethodRequestSender =
             new PaymentMethodRequestSender(requestSender);
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            paymentMethodRequestSender,
+            new B2BCompanyPaymentMethodRequestSender(requestSender),
+        );
         paymentMethodMock = getAmazonPayV2('us');
 
         container = document.createElement('div');

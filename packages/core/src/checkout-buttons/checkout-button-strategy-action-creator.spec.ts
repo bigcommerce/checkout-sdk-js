@@ -8,6 +8,7 @@ import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { Registry } from '../common/registry';
 import {
+    B2BCompanyPaymentMethodRequestSender,
     PaymentMethodActionCreator,
     PaymentMethodActionType,
     PaymentMethodRequestSender,
@@ -45,6 +46,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         registry = new Registry<CheckoutButtonStrategy>();
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(createRequestSender()),
+            new B2BCompanyPaymentMethodRequestSender(createRequestSender()),
         );
         strategy = new MockButtonStrategy();
         store = createCheckoutStore();

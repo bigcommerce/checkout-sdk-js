@@ -62,6 +62,7 @@ import { OrderActionCreator, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import {
+    B2BCompanyPaymentMethodRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistryV2,
     PaymentMethodActionCreator,
@@ -393,7 +394,10 @@ describe('CheckoutService', () => {
 
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            paymentMethodRequestSender,
+            new B2BCompanyPaymentMethodRequestSender(requestSender),
+        );
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,

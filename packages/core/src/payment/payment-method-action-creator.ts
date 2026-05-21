@@ -1,10 +1,14 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
+// TODO: CHECKOUT-9979 remove this import before delivery
+import { applyCapabilitiesOverride } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
 
+import applyB2bCompanyPaymentMethodFilter from './apply-b2b-company-payment-method-filter';
+import B2BCompanyPaymentMethodRequestSender from './b2b-company-payment-method-request-sender';
 import {
     LoadPaymentMethodAction,
     LoadPaymentMethodsAction,
@@ -19,7 +23,10 @@ const isPaymentMethod = (value: PaymentMethod | undefined): value is PaymentMeth
 };
 
 export default class PaymentMethodActionCreator {
-    constructor(private _requestSender: PaymentMethodRequestSender) {}
+    constructor(
+        private _requestSender: PaymentMethodRequestSender,
+        private _b2bCompanyPaymentMethodRequestSender: B2BCompanyPaymentMethodRequestSender,
+    ) {}
 
     loadPaymentMethodsById(
         methodIds: string[],
@@ -85,12 +92,26 @@ export default class PaymentMethodActionCreator {
                         ...options,
                         params: { ...options?.params, cartId: cart.id },
                     })
-                    .then((response) => {
+                    .then(async (response) => {
                         const meta = {
                             deviceSessionId: response.headers['x-device-session-id'],
                             sessionHash: response.headers['x-session-hash'],
                         };
-                        const methods = response.body;
+                        let methods = response.body;
+
+                        const isB2bPaymentMethodFilterEnabled =
+                            applyCapabilitiesOverride(
+                                state.config.getStoreConfig()?.checkoutSettings.capabilities,
+                            )?.payment?.b2bPaymentMethodFilter ?? false;
+
+                        if (isB2bPaymentMethodFilterEnabled) {
+                            methods = await applyB2bCompanyPaymentMethodFilter(
+                                methods,
+                                state,
+                                this._b2bCompanyPaymentMethodRequestSender,
+                                options,
+                            );
+                        }
 
                         observer.next(
                             createAction(
