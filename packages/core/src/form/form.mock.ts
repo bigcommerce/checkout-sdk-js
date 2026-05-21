@@ -198,3 +198,40 @@ export function getAddressExtraFields(): ExtraField[] {
         },
     ];
 }
+
+export function getOrderExtraFields(): ExtraField[] {
+    return [
+        {
+            id: '20001',
+            name: 'poNumber',
+            visibleToStorefront: true,
+            type: 'text',
+            isRequired: true,
+            config: { maxLength: 30 },
+        },
+        {
+            id: '20002',
+            name: 'deliveryInstructions',
+            visibleToStorefront: true,
+            type: 'multiline_text',
+            isRequired: false,
+            config: { numberOfRows: 4 },
+        },
+        {
+            id: '20003',
+            name: 'orderPriority',
+            visibleToStorefront: true,
+            type: 'dropdown',
+            isRequired: false,
+            config: { options: ['Low', 'Normal', 'High'] },
+        },
+        {
+            id: '20004',
+            name: 'maxBudget',
+            visibleToStorefront: true,
+            type: 'number',
+            isRequired: false,
+            config: { maxValue: 100000 },
+        },
+    ];
+}

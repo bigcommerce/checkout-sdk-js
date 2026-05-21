@@ -8,7 +8,12 @@ import { getShippingCountries } from '../shipping/shipping-countries.mock';
 
 import FormFieldsState from './form-fields-state';
 import FormSelector, { createFormSelectorFactory, FormSelectorFactory } from './form-selector';
-import { getAddressExtraFields, getAddressFormFields, getFormFields } from './form.mock';
+import {
+    getAddressExtraFields,
+    getAddressFormFields,
+    getFormFields,
+    getOrderExtraFields,
+} from './form.mock';
 
 // tslint:disable:no-non-null-assertion
 
@@ -237,6 +242,47 @@ describe('FormSelector', () => {
             const formSelector = createFormSelector(b2bState);
 
             expect(formSelector.getAddressExtraFields()).toEqual([]);
+        });
+    });
+
+    describe('#getOrderExtraFields()', () => {
+        it('returns all mapped B2B extra fields from order extra fields', () => {
+            const b2bState: FormFieldsState = {
+                data: getFormFields(),
+                extraFields: { address: [], order: getOrderExtraFields() },
+                errors: {},
+                statuses: {},
+            };
+
+            const formSelector = createFormSelector(b2bState);
+            const result = formSelector.getOrderExtraFields();
+
+            expect(result).toHaveLength(4);
+            expect(result[0].name).toBe('b2bExtraField_20001');
+            expect(result[0].required).toBe(true);
+            expect(result[0].fieldType).toBe('text');
+            expect(result[1].name).toBe('b2bExtraField_20002');
+            expect(result[1].fieldType).toBe('multiline');
+            expect(result[1].options).toEqual({ rows: 4 });
+            expect(result[2].name).toBe('b2bExtraField_20003');
+            expect(result[2].fieldType).toBe('dropdown');
+            expect(result[2].options?.items).toHaveLength(3);
+            expect(result[3].name).toBe('b2bExtraField_20004');
+            expect(result[3].type).toBe('integer');
+            expect(result[3].max).toBe(100000);
+        });
+
+        it('returns empty array when extraFields.order is an empty array', () => {
+            const b2bState: FormFieldsState = {
+                data: getFormFields(),
+                extraFields: { address: [], order: [] },
+                errors: {},
+                statuses: {},
+            };
+
+            const formSelector = createFormSelector(b2bState);
+
+            expect(formSelector.getOrderExtraFields()).toEqual([]);
         });
     });
 });

@@ -13,6 +13,7 @@ export default interface FormSelector {
     getBillingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getCustomerAccountFields(): FormField[];
     getAddressExtraFields(): FormField[];
+    getOrderExtraFields(): FormField[];
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
@@ -55,6 +56,17 @@ export function createFormSelectorFactory(): FormSelectorFactory {
             }
 
             return extraFields.address.map(mapExtraFieldToFormField);
+        },
+    );
+
+    const getOrderExtraFields = createSelector(
+        (state: FormFieldsState) => state.extraFields,
+        (extraFields) => () => {
+            if (!extraFields || !extraFields.order.length) {
+                return [];
+            }
+
+            return extraFields.order.map(mapExtraFieldToFormField);
         },
     );
 
@@ -155,6 +167,7 @@ export function createFormSelectorFactory(): FormSelectorFactory {
             getBillingAddressFields: getBillingAddressFields(state),
             getCustomerAccountFields: getCustomerAccountFields(state),
             getAddressExtraFields: getAddressExtraFields(state),
+            getOrderExtraFields: getOrderExtraFields(state),
             getLoadError: getLoadError(state),
             isLoading: isLoading(state),
         };
