@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.914.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.912.0...v1.914.0) (2026-05-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9821 Add Loading Company Payment Methods ([#3255](https://github.com/bigcommerce/checkout-sdk-js/issues/3255)) ([ee4581a](https://github.com/bigcommerce/checkout-sdk-js/commit/ee4581a66337cbbc6bcecc7ce6a6f22d4b8b1607))
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-9821 Remove applyCapabilitiesOverride ([#3259](https://github.com/bigcommerce/checkout-sdk-js/issues/3259)) ([d454d31](https://github.com/bigcommerce/checkout-sdk-js/commit/d454d3111c9db73d0577c61d03a7d7e79d1c53cf))
+
 ## [1.913.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.912.0...v1.913.0) (2026-05-21)
 
 
