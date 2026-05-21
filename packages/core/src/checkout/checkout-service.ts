@@ -389,23 +389,6 @@ export default class CheckoutService {
      * console.log(state.data.getPaymentMethods());
      * ```
      *
-     * When the store's `b2bPaymentMethodFilter` capability is enabled, the returned
-     * list is automatically filtered against the authenticated customer's B2B company
-     * allow-list. The caller **must** await `service.getB2BToken()` before this method
-     * so the token is in state.
-     *
-     * ```js
-     * await service.getB2BToken();
-     * await service.loadPaymentMethods();
-     * const methods = service.getState().data.getPaymentMethods();
-     * ```
-     *
-     * When filtering is active, the call fails with a `MissingDataError` if
-     * the customer is a guest, the B2B token is missing from state, the B2B
-     * API base URL is unavailable, or `cart.companyId` is missing. Any failure
-     * of the B2B endpoint itself also fails the whole `loadPaymentMethods`
-     * call (no fallback to the unfiltered list).
-     *
      * @param options - Options for loading the payment methods that are
      * available to the current customer.
      * @returns A promise that resolves to the current state.
