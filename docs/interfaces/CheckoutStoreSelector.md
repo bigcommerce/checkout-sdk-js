@@ -29,6 +29,7 @@ checkout information, such as shipping and billing details.
 - [getGiftCertificates](CheckoutStoreSelector.md#getgiftcertificates)
 - [getInstruments](CheckoutStoreSelector.md#getinstruments)
 - [getOrder](CheckoutStoreSelector.md#getorder)
+- [getOrderExtraFields](CheckoutStoreSelector.md#getorderextrafields)
 - [getPaymentMethod](CheckoutStoreSelector.md#getpaymentmethod)
 - [getPaymentMethods](CheckoutStoreSelector.md#getpaymentmethods)
 - [getPaymentProviderCustomer](CheckoutStoreSelector.md#getpaymentprovidercustomer)
@@ -335,6 +336,20 @@ Gets the current order.
 `undefined` \| [`Order`](Order.md)
 
 The current order if it is loaded, otherwise undefined.
+
+___
+
+### getOrderExtraFields
+
+▸ **getOrderExtraFields**(): [`FormField`](FormField.md)[]
+
+Gets order extra fields.
+
+#### Returns
+
+[`FormField`](FormField.md)[]
+
+The list of extra fields if available, otherwise an empty array.
 
 ___
 

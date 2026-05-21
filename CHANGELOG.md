@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.915.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.914.0...v1.915.0) (2026-05-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10010 Expose order extra fields ([#3260](https://github.com/bigcommerce/checkout-sdk-js/issues/3260)) ([4cc7375](https://github.com/bigcommerce/checkout-sdk-js/commit/4cc7375a316395c5f04470eae19fdf05c8b2965f))
+
 ## [1.914.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.912.0...v1.914.0) (2026-05-21)
 
 

@@ -100,4 +100,5 @@ ___
 | `disableStoreCredit` | `boolean` |
 | `hasAddressExtraFields` | `boolean` |
 | `hasCompanyAddressBook` | `boolean` |
+| `hasOrderExtraFields` | `boolean` |
 | `requiresB2BToken` | `boolean` |

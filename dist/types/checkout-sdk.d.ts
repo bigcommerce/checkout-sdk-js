@@ -2269,6 +2269,7 @@ declare interface Capabilities {
         disableStoreCredit: boolean;
         hasCompanyAddressBook: boolean;
         hasAddressExtraFields: boolean;
+        hasOrderExtraFields: boolean;
         requiresB2BToken: boolean;
     };
     customer: {
@@ -4386,6 +4387,12 @@ declare interface CheckoutStoreSelector {
      */
     getAddressExtraFields(): FormField[];
     /**
+     * Gets order extra fields.
+     *
+     * @returns The list of extra fields if available, otherwise an empty array.
+     */
+    getOrderExtraFields(): FormField[];
+    /**
      * Gets a list of pickup options for specified parameters.
      *
      * @param consignmentId - Id of consignment.
@@ -5545,6 +5552,7 @@ declare interface FormSelector {
     getBillingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getCustomerAccountFields(): FormField[];
     getAddressExtraFields(): FormField[];
+    getOrderExtraFields(): FormField[];
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }

@@ -10,6 +10,7 @@
 - [getBillingAddressFields](FormSelector.md#getbillingaddressfields)
 - [getCustomerAccountFields](FormSelector.md#getcustomeraccountfields)
 - [getLoadError](FormSelector.md#getloaderror)
+- [getOrderExtraFields](FormSelector.md#getorderextrafields)
 - [getShippingAddressFields](FormSelector.md#getshippingaddressfields)
 - [isLoading](FormSelector.md#isloading)
 
@@ -59,6 +60,16 @@ ___
 #### Returns
 
 `undefined` \| `Error`
+
+___
+
+### getOrderExtraFields
+
+▸ **getOrderExtraFields**(): [`FormField`](FormField.md)[]
+
+#### Returns
+
+[`FormField`](FormField.md)[]
 
 ___
 
