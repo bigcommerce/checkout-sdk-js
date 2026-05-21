@@ -273,6 +273,13 @@ export default interface CheckoutStoreSelector {
     getAddressExtraFields(): FormField[];
 
     /**
+     * Gets order extra fields.
+     *
+     * @returns The list of extra fields if available, otherwise an empty array.
+     */
+    getOrderExtraFields(): FormField[];
+
+    /**
      * Gets a list of pickup options for specified parameters.
      *
      * @param consignmentId - Id of consignment.
@@ -571,6 +578,11 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getAddressExtraFields) => clone(getAddressExtraFields),
     );
 
+    const getOrderExtraFields = createSelector(
+        ({ form }: InternalCheckoutSelectors) => form.getOrderExtraFields,
+        (getOrderExtraFields) => clone(getOrderExtraFields),
+    );
+
     const getFlashMessages = createSelector(
         ({ config }: InternalCheckoutSelectors) => config.getFlashMessages,
         (getFlashMessages) => clone(getFlashMessages),
@@ -642,6 +654,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getBillingAddressFields: getBillingAddressFields(state),
             getShippingAddressFields: getShippingAddressFields(state),
             getAddressExtraFields: getAddressExtraFields(state),
+            getOrderExtraFields: getOrderExtraFields(state),
             getPickupOptions: getPickupOptions(state),
             getUserExperienceSettings: getUserExperienceSettings(state),
             getPaymentProviderCustomer: getPaymentProviderCustomer(state),

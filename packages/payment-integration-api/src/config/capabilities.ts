@@ -7,6 +7,7 @@ export interface Capabilities {
         disableStoreCredit: boolean;
         hasCompanyAddressBook: boolean;
         hasAddressExtraFields: boolean;
+        hasOrderExtraFields: boolean;
         requiresB2BToken: boolean;
     };
     customer: {
