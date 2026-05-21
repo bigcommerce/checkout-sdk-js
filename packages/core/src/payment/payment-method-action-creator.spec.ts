@@ -158,9 +158,7 @@ describe('PaymentMethodActionCreator', () => {
             });
 
             it('applies the filter automatically when the capability is enabled', async () => {
-                const actions = await from(
-                    paymentMethodActionCreator.loadPaymentMethods()(store),
-                )
+                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
                     .pipe(toArray())
                     .toPromise();
 
