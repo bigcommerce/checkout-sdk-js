@@ -684,6 +684,42 @@ describe('StripeLinkV2CustomerStrategy', () => {
                 clearAllMocks();
             });
 
+            it('verifies spam protection before updating addresses on confirm', async () => {
+                const verifySpamMock = jest
+                    .spyOn(stripeIntegrationService, 'verifyCheckoutSpamProtection')
+                    .mockResolvedValue();
+
+                await strategy.initialize(initialiseOptions);
+
+                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(verifySpamMock).toHaveBeenCalledTimes(1);
+                expect(verifySpamMock.mock.invocationCallOrder[0]).toBeLessThan(
+                    (paymentIntegrationService.updateBillingAddress as jest.Mock).mock
+                        .invocationCallOrder[0],
+                );
+                expect(verifySpamMock.mock.invocationCallOrder[0]).toBeLessThan(
+                    (paymentIntegrationService.submitOrder as jest.Mock).mock
+                        .invocationCallOrder[0],
+                );
+            });
+
+            it('does not submit order if spam protection rejects', async () => {
+                jest.spyOn(
+                    stripeIntegrationService,
+                    'verifyCheckoutSpamProtection',
+                ).mockRejectedValue(new Error('spam check failed'));
+
+                await strategy.initialize(initialiseOptions);
+
+                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.updateBillingAddress).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+            });
+
             it('updates addresses when onConfirm callback event triggered', async () => {
                 await strategy.initialize(initialiseOptions);
 
