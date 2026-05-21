@@ -2,7 +2,10 @@ import {
     CheckoutButtonStrategy,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+import {
+    createWalletButtonIntegrationService,
+    WalletButtonIntegrationService,
+} from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 import createWalletButtonStrategyRegistry from './create-wallet-button-strategy-registry';
 
@@ -11,7 +14,7 @@ describe('createWalletButtonStrategyRegistry', () => {
     let testStrategy: CheckoutButtonStrategy;
 
     beforeEach(() => {
-        walletButtonIntegrationService = new WalletButtonIntegrationService('/graphql');
+        walletButtonIntegrationService = createWalletButtonIntegrationService('/graphql');
         testStrategy = {
             initialize: jest.fn(),
             deinitialize: jest.fn(),
@@ -29,7 +32,7 @@ describe('createWalletButtonStrategyRegistry', () => {
 
     it('skips non-resolvable modules', () => {
         const registry = createWalletButtonStrategyRegistry(walletButtonIntegrationService, {
-            notResolvable: (() => ({})) as any,
+            notResolvable: () => testStrategy,
         });
 
         expect(() => registry.get({ id: 'notResolvable' })).toThrow();
