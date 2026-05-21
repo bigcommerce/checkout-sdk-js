@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.916.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.915.0...v1.916.0) (2026-05-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9820 add capabilities for b2b checkout config for PO ([#3256](https://github.com/bigcommerce/checkout-sdk-js/issues/3256)) ([9270233](https://github.com/bigcommerce/checkout-sdk-js/commit/9270233d3d974edb2706a2faa504a418d0d0f396))
+
 ## [1.915.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.914.0...v1.915.0) (2026-05-21)
 
 

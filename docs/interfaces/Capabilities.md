@@ -64,11 +64,13 @@ ___
 
 | Name | Type |
 | :------ | :------ |
+| `additionalField` | ``null`` \| \{ `label`: `string` ; `required`: `boolean`  } |
 | `additionalPaymentNotes` | `boolean` |
 | `b2bPaymentMethodFilter` | `boolean` |
 | `excludeOfflineForInvoice` | `boolean` |
 | `excludePPSDK` | `boolean` |
 | `paymentMethodFiltering` | `boolean` |
+| `poConfig` | ``null`` \| \{ `creditLimit`: `number` ; `currency`: `string` ; `label`: `string` ; `required`: `boolean`  } |
 | `poPaymentMethod` | `boolean` |
 
 ___
