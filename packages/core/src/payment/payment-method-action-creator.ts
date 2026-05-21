@@ -1,6 +1,8 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
+// TODO: CHECKOUT-9979 remove this import before delivery
+import { applyCapabilitiesOverride } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
@@ -98,8 +100,9 @@ export default class PaymentMethodActionCreator {
                         let methods = response.body;
 
                         const isB2bPaymentMethodFilterEnabled =
-                            state.config.getStoreConfig()?.checkoutSettings.capabilities?.payment
-                                ?.b2bPaymentMethodFilter ?? false;
+                            applyCapabilitiesOverride(
+                                state.config.getStoreConfig()?.checkoutSettings.capabilities,
+                            )?.payment?.b2bPaymentMethodFilter ?? false;
 
                         if (isB2bPaymentMethodFilterEnabled) {
                             methods = await applyB2bCompanyPaymentMethodFilter(

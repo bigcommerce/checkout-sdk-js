@@ -69,10 +69,7 @@ export default function createShippingStrategyRegistry(
             new AmazonPayV2ShippingStrategy(
                 store,
                 consignmentActionCreator,
-                new PaymentMethodActionCreator(
-                    new PaymentMethodRequestSender(requestSender),
-                    new B2BCompanyPaymentMethodRequestSender(requestSender),
-                ),
+                paymentMethodActionCreator,
                 createAmazonPayV2PaymentProcessor(),
                 new ShippingStrategyActionCreator(registry),
             ),
