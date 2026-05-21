@@ -97,6 +97,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `disableEditCart` | `boolean` |
+| `disableStoreCredit` | `boolean` |
 | `hasAddressExtraFields` | `boolean` |
 | `hasCompanyAddressBook` | `boolean` |
 | `requiresB2BToken` | `boolean` |

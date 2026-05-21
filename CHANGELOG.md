@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.913.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.912.0...v1.913.0) (2026-05-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9821 Add Loading Company Payment Methods ([#3255](https://github.com/bigcommerce/checkout-sdk-js/issues/3255)) ([ee4581a](https://github.com/bigcommerce/checkout-sdk-js/commit/ee4581a66337cbbc6bcecc7ce6a6f22d4b8b1607))
+
 ## [1.912.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.911.0...v1.912.0) (2026-05-19)
 
 
