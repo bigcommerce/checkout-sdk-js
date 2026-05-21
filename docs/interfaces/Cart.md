@@ -8,6 +8,7 @@
 
 - [baseAmount](Cart.md#baseamount)
 - [cartAmount](Cart.md#cartamount)
+- [companyId](Cart.md#companyid)
 - [coupons](Cart.md#coupons)
 - [createdTime](Cart.md#createdtime)
 - [currency](Cart.md#currency)
@@ -33,6 +34,12 @@ ___
 ### cartAmount
 
 • **cartAmount**: `number`
+
+___
+
+### companyId
+
+• **companyId**: ``null`` \| `number`
 
 ___
 

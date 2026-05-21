@@ -63,6 +63,7 @@ declare interface CacheKeyResolverOptions {
 declare interface Cart {
     id: string;
     customerId: number;
+    companyId: number | null;
     currency: Currency;
     email: string;
     isTaxIncluded: boolean;

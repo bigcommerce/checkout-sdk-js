@@ -2266,6 +2266,7 @@ declare interface ButtonStyles extends BlockElementStyles {
 declare interface Capabilities {
     userJourney: {
         disableEditCart: boolean;
+        disableStoreCredit: boolean;
         hasCompanyAddressBook: boolean;
         hasAddressExtraFields: boolean;
         requiresB2BToken: boolean;
@@ -2390,6 +2391,7 @@ declare interface CardingProtectionActionData {
 declare interface Cart {
     id: string;
     customerId: number;
+    companyId: number | null;
     currency: Currency;
     email: string;
     isTaxIncluded: boolean;
