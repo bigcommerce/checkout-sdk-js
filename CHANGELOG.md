@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.917.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.916.1...v1.917.0) (2026-05-25)
+
+
+### Features
+
+* **payment:** PAYPAL-6439 fixed loading overlay for venmo ([#3262](https://github.com/bigcommerce/checkout-sdk-js/issues/3262)) ([762cfeb](https://github.com/bigcommerce/checkout-sdk-js/commit/762cfeb9e7271a6bfc292937301e44523552dd15))
+
 ### [1.916.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.916.0...v1.916.1) (2026-05-21)
 
 
