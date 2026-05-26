@@ -1,6 +1,6 @@
 export { createTimeout } from '@bigcommerce/request-sender';
 
-export { isExtraField } from '../form/map-extra-field-to-form-field';
+export { B2B_EXTRA_FIELD_PREFIX, isExtraField } from '../form/map-extra-field-to-form-field';
 export { createCheckoutService } from '../checkout';
 export { createCheckoutButtonInitializer } from '../checkout-buttons';
 export { embedCheckout } from '../embedded-checkout';
