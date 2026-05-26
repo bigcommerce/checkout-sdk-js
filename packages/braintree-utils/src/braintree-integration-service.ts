@@ -3,7 +3,6 @@ import { isEmpty } from 'lodash';
 
 import {
     Address,
-    CancellablePromise,
     CreditCardInstrument,
     LegacyAddress,
     NonceInstrument,
@@ -13,7 +12,6 @@ import {
     PaymentArgumentInvalidError,
     PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
-    PaymentMethodCancelledError,
     UnsupportedBrowserError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
@@ -503,47 +501,25 @@ export default class BraintreeIntegrationService {
     ): Promise<BraintreeVerifyPayload> {
         const { nonce, bin } = tokenizationPayload;
 
-        if (!this.threeDSecureOptions || !nonce) {
+        if (!nonce) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const {
-            addFrame,
-            removeFrame,
-            challengeRequested = true,
-            additionalInformation,
-        } = this.threeDSecureOptions;
-        const cancelVerifyCard = async () => {
-            const response = await threeDSecure.cancelVerifyCard();
-
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            verification.cancel(new PaymentMethodCancelledError());
-
-            return response;
-        };
+        const { challengeRequested = true, additionalInformation = undefined } =
+            this.threeDSecureOptions || {};
 
         const roundedAmount = amount.toFixed(2);
 
-        const verification = new CancellablePromise(
-            threeDSecure.verifyCard({
-                addFrame: (error, iframe) => {
-                    if (addFrame) {
-                        addFrame(error, iframe, cancelVerifyCard);
-                    }
-                },
-                amount: Number(roundedAmount),
-                bin,
-                challengeRequested,
-                nonce,
-                removeFrame,
-                onLookupComplete: (_data, next) => {
-                    next();
-                },
-                collectDeviceData: true,
-                additionalInformation,
-            }),
-        );
-
-        return verification.promise;
+        return threeDSecure.verifyCard({
+            amount: Number(roundedAmount),
+            bin,
+            challengeRequested,
+            nonce,
+            onLookupComplete: (_data, next) => {
+                next();
+            },
+            collectDeviceData: true,
+            additionalInformation,
+        });
     }
 }
