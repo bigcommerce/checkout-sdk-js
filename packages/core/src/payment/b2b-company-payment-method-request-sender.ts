@@ -34,7 +34,7 @@ export default class B2BCompanyPaymentMethodRequestSender {
         b2bBaseUrl: string,
         b2bToken: string,
         options?: RequestOptions,
-    ): Promise<Response<string[]>> {
+    ): Promise<Response<{ data: { allowedMethods: string[] } }>> {
         return this._requestSender.get(
             `${b2bBaseUrl}/api/v1/ip/storefront/payments/bigcommerce/allowed-methods`,
             {

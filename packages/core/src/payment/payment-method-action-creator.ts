@@ -2,6 +2,8 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { Observable, Observer } from 'rxjs';
 
 // TODO: CHECKOUT-9979 remove this import before delivery
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
@@ -100,11 +102,13 @@ export default class PaymentMethodActionCreator {
                         };
                         let methods = response.body;
 
-                        const isB2bPaymentMethodFilterEnabled =
-                            state.config.getStoreConfig()?.checkoutSettings.capabilities?.payment
-                                ?.b2bPaymentMethodFilter ?? false;
+                        console.log('filter methods for b2b');
 
-                        if (isB2bPaymentMethodFilterEnabled) {
+                        const filterMethodsforB2b = this._filterMethodsForB2b(state);
+
+                        console.log('do we filter methods for b2b', filterMethodsforB2b);
+
+                        if (filterMethodsforB2b) {
                             const params = this._getB2bFilterParams(state);
 
                             methods = await this._applyB2bCompanyPaymentMethodFilter(
@@ -175,30 +179,53 @@ export default class PaymentMethodActionCreator {
             });
     }
 
+    private _filterMethodsForB2b(state: InternalCheckoutSelectors) {
+        const config = state.config.getStoreConfigOrThrow();
+        const cart = state.cart.getCartOrThrow();
+
+        if (cart.source === CartSource.INVOICE) {
+            return true;
+        } else if (config.checkoutSettings?.capabilities?.payment.b2bPaymentMethodFilter) {
+            return true;
+        }
+
+        return false;
+    }
+
     private _getB2bFilterParams(state: InternalCheckoutSelectors): {
         companyId: number;
         b2bToken: string;
         baseUrl: string;
+        source?: string;
     } {
-        const customer = state.customer.getCustomer();
+        const customer = state.customer.getCustomerOrThrow();
         const b2bToken = state.b2bToken.getToken();
+        const cart = state.cart.getCartOrThrow();
         const baseUrl = resolveB2bBaseUrl(
             state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
         );
-        const companyId = state.cart.getCart()?.companyId;
+        const { companyId, source } = cart;
 
-        if (!customer || customer.isGuest || !b2bToken || !baseUrl || !companyId) {
+        if (customer.isGuest || !b2bToken || !baseUrl || !companyId) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
-        return { companyId, b2bToken, baseUrl };
+        return { companyId, b2bToken, baseUrl, source };
     }
 
     private async _applyB2bCompanyPaymentMethodFilter(
         methods: PaymentMethod[],
-        params: { companyId: number; b2bToken: string; baseUrl: string },
+        params: { companyId: number; b2bToken: string; baseUrl: string; source?: string },
         options?: RequestOptions,
     ): Promise<PaymentMethod[]> {
+        console.log('_applyB2bCompanyPaymentMethodFilter');
+
+        if (params.source === CartSource.INVOICE) {
+            console.log('_applyB2bCompanyPaymentMethodFilter get invoice');
+
+            return this._applyB2bInvoiceAllowedPaymentMethods(methods, params, options);
+        }
+
         const { body } =
             await this._b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods(
                 params.companyId,
@@ -208,5 +235,20 @@ export default class PaymentMethodActionCreator {
             );
 
         return filterPaymentMethodsByB2BCompanyAllowList(methods, body);
+    }
+
+    private async _applyB2bInvoiceAllowedPaymentMethods(
+        methods: PaymentMethod[],
+        params: { baseUrl: string; b2bToken: string },
+        options?: RequestOptions,
+    ): Promise<PaymentMethod[]> {
+        const { body } =
+            await this._b2bCompanyPaymentMethodRequestSender.getB2BInvoiceAllowedPaymentMethods(
+                params.baseUrl,
+                params.b2bToken,
+                options,
+            );
+
+        return methods.filter((method) => new Set(body.data.allowedMethods).has(method.id));
     }
 }
