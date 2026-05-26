@@ -24,4 +24,5 @@ export interface AddressRequestBody {
         fieldValue: string | number | string[];
     }>;
     extraFields?: AddressExtraFieldValue[];
+    label?: string;
 }

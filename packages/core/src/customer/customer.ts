@@ -24,6 +24,10 @@ export default interface Customer {
 export interface CustomerAddress extends Address {
     id: number;
     type: string;
+    isShipping?: boolean;
+    isBilling?: boolean;
+    isDefaultShipping?: boolean;
+    isDefaultBilling?: boolean;
 }
 
 export interface CustomerGroup {
