@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.918.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.917.0...v1.918.0) (2026-05-26)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9823 update customer address interface ([#3263](https://github.com/bigcommerce/checkout-sdk-js/issues/3263)) ([9101f12](https://github.com/bigcommerce/checkout-sdk-js/commit/9101f121789e4a1cf39de320e27b1a035e0edf8f))
+
 ## [1.917.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.916.1...v1.917.0) (2026-05-25)
 
 

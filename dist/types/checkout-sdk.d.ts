@@ -90,6 +90,7 @@ declare interface AddressRequestBody {
         fieldValue: string | number | string[];
     }>;
     extraFields?: AddressExtraFieldValue[];
+    label?: string;
 }
 
 declare interface AdyenAdditionalActionCallbacks {
@@ -675,6 +676,8 @@ declare interface B2BTokenSelector {
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
+
+export declare const B2B_EXTRA_FIELD_PREFIX = "b2bExtraField_";
 
 declare interface BankInstrument extends BaseAccountInstrument {
     accountNumber: string;
@@ -5156,6 +5159,10 @@ declare interface CustomerAccountRequestBody {
 declare interface CustomerAddress extends Address {
     id: number;
     type: string;
+    isShipping?: boolean;
+    isBilling?: boolean;
+    isDefaultShipping?: boolean;
+    isDefaultBilling?: boolean;
 }
 
 declare type CustomerAddressRequestBody = AddressRequestBody;

@@ -27,6 +27,7 @@
 - [customFields](Address.md#customfields)
 - [extraFields](Address.md#extrafields)
 - [firstName](Address.md#firstname)
+- [label](Address.md#label)
 - [lastName](Address.md#lastname)
 - [phone](Address.md#phone)
 - [postalCode](Address.md#postalcode)
@@ -119,6 +120,16 @@ ___
 #### Inherited from
 
 [AddressRequestBody](AddressRequestBody.md).[firstName](AddressRequestBody.md#firstname)
+
+___
+
+### label
+
+• `Optional` **label**: `string`
+
+#### Inherited from
+
+[AddressRequestBody](AddressRequestBody.md).[label](AddressRequestBody.md#label)
 
 ___
 

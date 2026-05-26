@@ -28,6 +28,7 @@ declare interface AddressRequestBody {
         fieldValue: string | number | string[];
     }>;
     extraFields?: AddressExtraFieldValue[];
+    label?: string;
 }
 
 declare interface Banner {
@@ -224,6 +225,10 @@ declare interface Customer {
 declare interface CustomerAddress extends Address {
     id: number;
     type: string;
+    isShipping?: boolean;
+    isBilling?: boolean;
+    isDefaultShipping?: boolean;
+    isDefaultBilling?: boolean;
 }
 
 declare interface CustomerGroup {

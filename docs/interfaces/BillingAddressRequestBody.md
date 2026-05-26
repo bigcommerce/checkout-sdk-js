@@ -21,6 +21,7 @@
 - [email](BillingAddressRequestBody.md#email)
 - [extraFields](BillingAddressRequestBody.md#extrafields)
 - [firstName](BillingAddressRequestBody.md#firstname)
+- [label](BillingAddressRequestBody.md#label)
 - [lastName](BillingAddressRequestBody.md#lastname)
 - [phone](BillingAddressRequestBody.md#phone)
 - [postalCode](BillingAddressRequestBody.md#postalcode)
@@ -112,6 +113,16 @@ ___
 #### Inherited from
 
 [AddressRequestBody](AddressRequestBody.md).[firstName](AddressRequestBody.md#firstname)
+
+___
+
+### label
+
+• `Optional` **label**: `string`
+
+#### Inherited from
+
+[AddressRequestBody](AddressRequestBody.md).[label](AddressRequestBody.md#label)
 
 ___
 

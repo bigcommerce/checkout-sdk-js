@@ -22,6 +22,7 @@
 - [email](OrderBillingAddress.md#email)
 - [extraFields](OrderBillingAddress.md#extrafields)
 - [firstName](OrderBillingAddress.md#firstname)
+- [label](OrderBillingAddress.md#label)
 - [lastName](OrderBillingAddress.md#lastname)
 - [phone](OrderBillingAddress.md#phone)
 - [postalCode](OrderBillingAddress.md#postalcode)
@@ -124,6 +125,16 @@ ___
 #### Inherited from
 
 [Address](Address.md).[firstName](Address.md#firstname)
+
+___
+
+### label
+
+• `Optional` **label**: `string`
+
+#### Inherited from
+
+[Address](Address.md).[label](Address.md#label)
 
 ___
 

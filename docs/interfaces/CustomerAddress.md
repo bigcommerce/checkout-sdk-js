@@ -22,6 +22,11 @@
 - [extraFields](CustomerAddress.md#extrafields)
 - [firstName](CustomerAddress.md#firstname)
 - [id](CustomerAddress.md#id)
+- [isBilling](CustomerAddress.md#isbilling)
+- [isDefaultBilling](CustomerAddress.md#isdefaultbilling)
+- [isDefaultShipping](CustomerAddress.md#isdefaultshipping)
+- [isShipping](CustomerAddress.md#isshipping)
+- [label](CustomerAddress.md#label)
 - [lastName](CustomerAddress.md#lastname)
 - [phone](CustomerAddress.md#phone)
 - [postalCode](CustomerAddress.md#postalcode)
@@ -125,6 +130,40 @@ ___
 ### id
 
 • **id**: `number`
+
+___
+
+### isBilling
+
+• `Optional` **isBilling**: `boolean`
+
+___
+
+### isDefaultBilling
+
+• `Optional` **isDefaultBilling**: `boolean`
+
+___
+
+### isDefaultShipping
+
+• `Optional` **isDefaultShipping**: `boolean`
+
+___
+
+### isShipping
+
+• `Optional` **isShipping**: `boolean`
+
+___
+
+### label
+
+• `Optional` **label**: `string`
+
+#### Inherited from
+
+[Address](Address.md).[label](Address.md#label)
 
 ___
 

@@ -23,6 +23,7 @@
 - [extraFields](BillingAddress.md#extrafields)
 - [firstName](BillingAddress.md#firstname)
 - [id](BillingAddress.md#id)
+- [label](BillingAddress.md#label)
 - [lastName](BillingAddress.md#lastname)
 - [phone](BillingAddress.md#phone)
 - [postalCode](BillingAddress.md#postalcode)
@@ -131,6 +132,16 @@ ___
 ### id
 
 • **id**: `string`
+
+___
+
+### label
+
+• `Optional` **label**: `string`
+
+#### Inherited from
+
+[Address](Address.md).[label](Address.md#label)
 
 ___
 

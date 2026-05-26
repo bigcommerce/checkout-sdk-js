@@ -579,6 +579,10 @@
 - [WithGooglePayCustomerInitializeOptions](README.md#withgooglepaycustomerinitializeoptions)
 - [WithGooglePayPaymentInitializeOptions](README.md#withgooglepaypaymentinitializeoptions)
 
+### Variables
+
+- [B2B\_EXTRA\_FIELD\_PREFIX](README.md#b2b_extra_field_prefix)
+
 ### Functions
 
 - [createBodlService](README.md#createbodlservice)
@@ -943,6 +947,12 @@ ___
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
+
+## Variables
+
+### B2B\_EXTRA\_FIELD\_PREFIX
+
+• `Const` **B2B\_EXTRA\_FIELD\_PREFIX**: ``"b2bExtraField_"``
 
 ## Functions
 

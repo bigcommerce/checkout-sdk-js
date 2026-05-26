@@ -22,6 +22,7 @@
 - [customFields](AddressRequestBody.md#customfields)
 - [extraFields](AddressRequestBody.md#extrafields)
 - [firstName](AddressRequestBody.md#firstname)
+- [label](AddressRequestBody.md#label)
 - [lastName](AddressRequestBody.md#lastname)
 - [phone](AddressRequestBody.md#phone)
 - [postalCode](AddressRequestBody.md#postalcode)
@@ -75,6 +76,12 @@ ___
 ### firstName
 
 • **firstName**: `string`
+
+___
+
+### label
+
+• `Optional` **label**: `string`
 
 ___
 
