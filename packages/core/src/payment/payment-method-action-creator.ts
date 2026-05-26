@@ -102,11 +102,7 @@ export default class PaymentMethodActionCreator {
                         };
                         let methods = response.body;
 
-                        console.log('filter methods for b2b');
-
                         const filterMethodsforB2b = this._filterMethodsForB2b(state);
-
-                        console.log('do we filter methods for b2b', filterMethodsforB2b);
 
                         if (filterMethodsforB2b) {
                             const params = this._getB2bFilterParams(state);
@@ -218,11 +214,7 @@ export default class PaymentMethodActionCreator {
         params: { companyId: number; b2bToken: string; baseUrl: string; source?: string },
         options?: RequestOptions,
     ): Promise<PaymentMethod[]> {
-        console.log('_applyB2bCompanyPaymentMethodFilter');
-
         if (params.source === CartSource.INVOICE) {
-            console.log('_applyB2bCompanyPaymentMethodFilter get invoice');
-
             return this._applyB2bInvoiceAllowedPaymentMethods(methods, params, options);
         }
 
