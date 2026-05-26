@@ -189,19 +189,16 @@ describe('PaymentMethodActionCreator', () => {
                 ).not.toHaveBeenCalled();
             });
 
-            it('fails with MissingDataError when the B2B token is missing from state', async () => {
-                jest.spyOn(store.getState().b2bToken, 'getToken').mockReturnValue(undefined);
+            it('forwards options to the B2B request sender', async () => {
+                const options = { timeout: createTimeout() };
 
-                const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
-                    .pipe(catchError(errorHandler), toArray())
-                    .toPromise();
+                await from(
+                    paymentMethodActionCreator.loadPaymentMethods(options)(store),
+                ).toPromise();
 
-                expect(errorHandler).toHaveBeenCalled();
                 expect(
                     b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
-                ).not.toHaveBeenCalled();
-                expect(actions[1].payload).toBeInstanceOf(MissingDataError);
+                ).toHaveBeenCalledWith(companyId, b2bToken, b2bBaseUrl, options);
             });
 
             it('emits LoadPaymentMethodsFailed when the B2B fetch errors', async () => {
@@ -227,59 +224,146 @@ describe('PaymentMethodActionCreator', () => {
                     },
                 ]);
             });
+        });
+    });
 
-            it('fails with MissingDataError when companyId is missing', async () => {
-                jest.spyOn(store.getState().cart, 'getCart').mockReturnValue({
-                    ...getCheckout().cart,
-                    companyId: null,
-                });
+    describe('#_getB2bFilterParams()', () => {
+        const companyId = 42;
+        const b2bToken = 'b2b-token-value';
+        const b2bBaseUrl = 'https://api-b2b.bigcommerce.com';
 
-                const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
-                    .pipe(catchError(errorHandler), toArray())
-                    .toPromise();
+        beforeEach(() => {
+            const state = store.getState();
 
-                expect(
-                    b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
-                ).not.toHaveBeenCalled();
-                expect(actions[1].payload).toBeInstanceOf(MissingDataError);
+            jest.spyOn(state.cart, 'getCart').mockReturnValue({
+                ...getCheckout().cart,
+                companyId,
+            });
+            jest.spyOn(state.customer, 'getCustomer').mockReturnValue({
+                ...getCheckout().customer,
+                isGuest: false,
+            });
+            jest.spyOn(state.b2bToken, 'getToken').mockReturnValue(b2bToken);
+            jest.spyOn(state.config, 'getStoreConfig').mockReturnValue({
+                ...state.config.getStoreConfig()!,
+                b2bApiSettings: { baseUrl: b2bBaseUrl, clientId: 'cid' },
+            });
+        });
+
+        it('returns extracted params when all required state is present', () => {
+            expect(
+                (paymentMethodActionCreator as any)._getB2bFilterParams(store.getState()),
+            ).toEqual({
+                companyId,
+                b2bToken,
+                baseUrl: b2bBaseUrl,
+            });
+        });
+
+        it('throws MissingDataError when the customer is missing', () => {
+            jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(undefined);
+
+            expect(() =>
+                (paymentMethodActionCreator as any)._getB2bFilterParams(store.getState()),
+            ).toThrow(MissingDataError);
+        });
+
+        it('throws MissingDataError when the customer is a guest', () => {
+            jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue({
+                ...getCheckout().customer,
+                isGuest: true,
             });
 
-            it('fails with MissingDataError when the customer is a guest', async () => {
-                jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue({
-                    ...getCheckout().customer,
-                    isGuest: true,
-                });
+            expect(() =>
+                (paymentMethodActionCreator as any)._getB2bFilterParams(store.getState()),
+            ).toThrow(MissingDataError);
+        });
 
-                const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
-                    .pipe(catchError(errorHandler), toArray())
-                    .toPromise();
+        it('throws MissingDataError when the B2B token is missing', () => {
+            jest.spyOn(store.getState().b2bToken, 'getToken').mockReturnValue(undefined);
 
-                expect(
-                    b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
-                ).not.toHaveBeenCalled();
-                expect(actions[1].payload).toBeInstanceOf(MissingDataError);
+            expect(() =>
+                (paymentMethodActionCreator as any)._getB2bFilterParams(store.getState()),
+            ).toThrow(MissingDataError);
+        });
+
+        it('throws MissingDataError when companyId is missing', () => {
+            jest.spyOn(store.getState().cart, 'getCart').mockReturnValue({
+                ...getCheckout().cart,
+                companyId: null,
             });
 
-            it('fails with MissingDataError when the B2B base URL is unavailable', async () => {
-                const baseConfig = store.getState().config.getStoreConfig()!;
+            expect(() =>
+                (paymentMethodActionCreator as any)._getB2bFilterParams(store.getState()),
+            ).toThrow(MissingDataError);
+        });
 
-                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
-                    ...baseConfig,
-                    b2bApiSettings: { baseUrl: '', clientId: '' },
-                });
+        it('throws MissingDataError when the resolved B2B base URL is empty', () => {
+            const baseConfig = store.getState().config.getStoreConfig()!;
 
-                const errorHandler = jest.fn((action) => of(action));
-                const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
-                    .pipe(catchError(errorHandler), toArray())
-                    .toPromise();
-
-                expect(
-                    b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
-                ).not.toHaveBeenCalled();
-                expect(actions[1].payload).toBeInstanceOf(MissingDataError);
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                ...baseConfig,
+                b2bApiSettings: { baseUrl: '', clientId: '' },
             });
+
+            expect(() =>
+                (paymentMethodActionCreator as any)._getB2bFilterParams(store.getState()),
+            ).toThrow(MissingDataError);
+        });
+    });
+
+    describe('#_applyB2bCompanyPaymentMethodFilter()', () => {
+        const params = {
+            companyId: 42,
+            b2bToken: 'b2b-token-value',
+            baseUrl: 'https://api-b2b.bigcommerce.com',
+        };
+
+        const allowListResponseBody: B2BCompanyPaymentMethodsResponseBody = {
+            data: [
+                {
+                    code: getPaymentMethod().id,
+                    name: getPaymentMethod().id,
+                    isEnabled: '1',
+                    paymentId: 1,
+                },
+            ],
+        };
+
+        beforeEach(() => {
+            jest.spyOn(
+                b2bCompanyPaymentMethodRequestSender,
+                'getB2BCompanyPaymentMethods',
+            ).mockResolvedValue(getResponse(allowListResponseBody));
+        });
+
+        it('fetches the allowlist and returns the filtered subset', async () => {
+            const methods = [getPaymentMethod()];
+
+            const result = await (
+                paymentMethodActionCreator as any
+            )._applyB2bCompanyPaymentMethodFilter(methods, params);
+
+            expect(
+                b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods,
+            ).toHaveBeenCalledWith(params.companyId, params.b2bToken, params.baseUrl, undefined);
+            expect(result).toEqual([getPaymentMethod()]);
+        });
+
+        it('propagates errors from the B2B request sender', async () => {
+            const b2bError = new Error('B2B endpoint unavailable');
+
+            jest.spyOn(
+                b2bCompanyPaymentMethodRequestSender,
+                'getB2BCompanyPaymentMethods',
+            ).mockRejectedValue(b2bError);
+
+            await expect(
+                (paymentMethodActionCreator as any)._applyB2bCompanyPaymentMethodFilter(
+                    [getPaymentMethod()],
+                    params,
+                ),
+            ).rejects.toBe(b2bError);
         });
     });
 
