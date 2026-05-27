@@ -5,7 +5,6 @@
 export enum B2BPaymentMethodFilterType {
     Standard = 'STANDARD',
     Invoice = 'INVOICE',
-    NULL = 'NULL',
 }
 
 export interface Capabilities {
@@ -32,7 +31,7 @@ export interface Capabilities {
     };
     payment: {
         paymentMethodFiltering: boolean;
-        b2bPaymentMethodFilterType: B2BPaymentMethodFilterType;
+        b2bPaymentMethodFilterType: B2BPaymentMethodFilterType | null;
         poPaymentMethod: boolean;
         poConfig: {
             label: string;

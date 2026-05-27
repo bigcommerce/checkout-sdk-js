@@ -121,7 +121,7 @@ describe('PaymentMethodActionCreator', () => {
                 ],
             };
 
-            function setFilterType(value: B2BPaymentMethodFilterType | undefined): void {
+            function setFilterType(value: B2BPaymentMethodFilterType | null): void {
                 const baseConfig = store.getState().config.getStoreConfig()!;
                 const nextConfig = {
                     ...baseConfig,
@@ -189,7 +189,7 @@ describe('PaymentMethodActionCreator', () => {
             });
 
             it('does not call the B2B request sender when the capability is disabled', async () => {
-                setFilterType(undefined);
+                setFilterType(null);
 
                 await from(paymentMethodActionCreator.loadPaymentMethods()(store)).toPromise();
 
@@ -349,7 +349,7 @@ describe('PaymentMethodActionCreator', () => {
         });
 
         describe('#_shouldFilterForB2b()', () => {
-            function mockFilterType(filterType: B2BPaymentMethodFilterType | undefined): void {
+            function mockFilterType(filterType: B2BPaymentMethodFilterType | null): void {
                 const state = store.getState();
                 const baseConfig = state.config.getStoreConfig()!;
 
@@ -385,7 +385,7 @@ describe('PaymentMethodActionCreator', () => {
             });
 
             it('returns false when b2bPaymentMethodFilterType is not set', () => {
-                mockFilterType(undefined);
+                mockFilterType(null);
 
                 expect(
                     (paymentMethodActionCreator as any)._shouldFilterForB2b(store.getState()),
