@@ -38,6 +38,15 @@ export {
     WithMollieIssuerInstrument,
 } from './payment';
 export { default as B2BCompanyPaymentMethodRequestSender } from './b2b-company-payment-method-request-sender';
+export { default as B2BPaymentsRefreshActionCreator } from './b2b-payments-refresh-action-creator';
+export {
+    B2BPaymentsRefreshActionType,
+    RefreshB2BPaymentMethodsAction,
+} from './b2b-payments-refresh-actions';
+export {
+    default as B2BPaymentsRefreshRequestSender,
+    B2BPaymentsRefreshPayment,
+} from './b2b-payments-refresh-request-sender';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';
 export { default as PaymentMethodConfig } from './payment-method-config';
