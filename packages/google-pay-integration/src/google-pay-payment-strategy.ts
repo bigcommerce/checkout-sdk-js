@@ -279,6 +279,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             this._completeCheckoutFlow();
         } catch (error) {
             await this._paymentIntegrationService.loadCheckout();
+
+            throw error;
         }
     }
 

@@ -818,14 +818,18 @@ describe('GooglePayPaymentStrategy', () => {
                 expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
             });
 
-            it('should call loadCheckout when execute() throws, to restore UI state', async () => {
-                jest.spyOn(strategy, 'execute').mockRejectedValueOnce(new Error('payment failed'));
+            it('should call loadCheckout and re-throw when execute() throws, to restore UI state', async () => {
+                const paymentError = new Error('payment failed');
+
+                jest.spyOn(strategy, 'execute').mockRejectedValueOnce(paymentError);
 
                 const strategyInternal = strategy as unknown as {
                     _interactWithPaymentSheetAndPay(): Promise<void>;
                 };
 
-                await strategyInternal._interactWithPaymentSheetAndPay();
+                await expect(strategyInternal._interactWithPaymentSheetAndPay()).rejects.toThrow(
+                    paymentError,
+                );
 
                 expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledTimes(1);
             });
@@ -1109,14 +1113,18 @@ describe('GooglePayPaymentStrategy', () => {
                 expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
             });
 
-            it('should call loadCheckout when execute() throws, to restore UI state', async () => {
-                jest.spyOn(strategy, 'execute').mockRejectedValueOnce(new Error('payment failed'));
+            it('should call loadCheckout, invoke onError, hide loading indicator, and re-throw when execute() throws', async () => {
+                const paymentError = new Error('payment failed');
 
-                brandedButton.click();
+                jest.spyOn(strategy, 'execute').mockRejectedValueOnce(paymentError);
 
-                await new Promise((resolve) => process.nextTick(resolve));
+                await expect(containerButtonOnClick(new MouseEvent('click'))).rejects.toThrow(
+                    paymentError,
+                );
 
                 expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledTimes(1);
+                expect(options.googlepayworldpayaccess?.onError).toHaveBeenCalled();
+                expect(LoadingHide).toHaveBeenCalled();
             });
 
             it('should call onError when initializeWidget throws', async () => {
