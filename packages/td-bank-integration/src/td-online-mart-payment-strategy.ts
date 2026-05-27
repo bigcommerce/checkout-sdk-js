@@ -108,7 +108,6 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
         const commonPaymentData = {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             browser_info: getBrowserInfo(),
             shouldSaveInstrument,
             shouldSetAsDefaultInstrument,

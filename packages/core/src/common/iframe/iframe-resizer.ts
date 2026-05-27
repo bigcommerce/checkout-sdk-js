@@ -27,7 +27,6 @@ export function iframeResizer(
     options: IFrameOptions,
     target: string | HTMLElement,
 ): IFrameComponent[] {
-    /* eslint-disable @typescript-eslint/no-var-requires */
     const { iframeResizer: originalIframeResizer } = require('iframe-resizer');
 
     return originalIframeResizer(options, target);

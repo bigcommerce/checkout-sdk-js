@@ -192,7 +192,6 @@ describe('TDOnlineMartPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: 'tdonlinemart',
                 paymentData: expect.objectContaining({
-                    /* eslint-disable @typescript-eslint/naming-convention */
                     browser_info: expect.objectContaining({
                         color_depth: expect.any(Number),
                         java_enabled: expect.any(Boolean),
@@ -203,7 +202,6 @@ describe('TDOnlineMartPaymentStrategy', () => {
                     }),
                     shouldSaveInstrument: false,
                     nonce: 'td-online-mart-token',
-                    /* eslint-enable @typescript-eslint/naming-convention */
                 }),
             });
         });
@@ -227,11 +225,9 @@ describe('TDOnlineMartPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: 'tdonlinemart',
                 paymentData: expect.objectContaining({
-                    /* eslint-disable @typescript-eslint/naming-convention */
                     browser_info: expect.any(Object),
                     shouldSaveInstrument: true,
                     nonce: 'td-online-mart-token',
-                    /* eslint-enable @typescript-eslint/naming-convention */
                 }),
             });
         });
@@ -341,7 +337,6 @@ describe('TDOnlineMartPaymentStrategy', () => {
                             instrumentId: 'testInstrumentId',
                             shouldSaveInstrument: false,
                             shouldSetAsDefaultInstrument: false,
-                            /* eslint-disable @typescript-eslint/naming-convention */
                             browser_info: expect.objectContaining({
                                 color_depth: expect.any(Number),
                                 java_enabled: expect.any(Boolean),
@@ -350,7 +345,6 @@ describe('TDOnlineMartPaymentStrategy', () => {
                                 screen_width: expect.any(Number),
                                 time_zone_offset: expect.any(String),
                             }),
-                            /* eslint-enable @typescript-eslint/naming-convention */
                         },
                     }),
                 );

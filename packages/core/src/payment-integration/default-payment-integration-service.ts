@@ -22,13 +22,13 @@ import { CustomerActionCreator, CustomerCredentials } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { PaymentAdditionalAction } from '../payment';
+import PaymentActionCreator from '../payment/payment-action-creator';
+import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
+import PaymentStrategyWidgetActionCreator from '../payment/payment-strategy-widget-action-creator';
 import {
     PaymentProviderCustomer,
     PaymentProviderCustomerActionCreator,
 } from '../payment-provider-customer';
-import PaymentActionCreator from '../payment/payment-action-creator';
-import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
-import PaymentStrategyWidgetActionCreator from '../payment/payment-strategy-widget-action-creator';
 import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { InitializePaymentOptions } from '../remote-checkout/remote-checkout-request-sender';
 import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';

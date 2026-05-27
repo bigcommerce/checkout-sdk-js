@@ -12,7 +12,6 @@ export interface AutoExportGeneratorOptions {
 export default async function autoExportGenerator(tree: Tree, options: AutoExportGeneratorOptions) {
     const libraryRoot = readProjectConfiguration(tree, options.projectName).root;
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const config = require(join(tree.root, libraryRoot, options.config));
 
     if (!isAutoExportConfig(config)) {

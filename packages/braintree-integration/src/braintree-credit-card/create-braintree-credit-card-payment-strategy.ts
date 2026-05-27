@@ -6,7 +6,6 @@ import {
     BraintreeScriptLoader,
     BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-
 import {
     PaymentStrategyFactory,
     toResolvableModule,

@@ -15,7 +15,6 @@ export default async function generateEnumGenerator(
 ) {
     const libraryRoot = readProjectConfiguration(tree, options.projectName).root;
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const config = require(join(tree.root, libraryRoot, options.config));
 
     if (!isCreateEnumConfig(config)) {

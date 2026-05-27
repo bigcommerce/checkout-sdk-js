@@ -24,7 +24,6 @@ export default class BlueSnapDirectScriptLoader {
             testMode ? BlueSnapDirectSdkEnv.SANDBOX : BlueSnapDirectSdkEnv.PRODUCTION,
         );
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!this._window.bluesnap) {
             throw new PaymentMethodClientUnavailableError();
         }

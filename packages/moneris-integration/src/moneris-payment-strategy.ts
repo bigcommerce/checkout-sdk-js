@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { isEmpty, map, omitBy } from 'lodash';
 
 import {

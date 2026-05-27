@@ -343,7 +343,6 @@ describe('MolliePaymentStrategy', () => {
                 await strategy.initialize(optionsMock);
 
                 expect(document.getElementById).toHaveBeenCalledWith(
-                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                     `${optionsMock.gatewayId}-${optionsMock.methodId}-paragraph`,
                 );
                 expect(container.remove).toHaveBeenCalled();
@@ -380,7 +379,6 @@ describe('MolliePaymentStrategy', () => {
                     methodId: 'credit_card',
                     paymentData: {
                         formattedPayload: {
-                            /* eslint-disable */
                             browser_info: {
                                 color_depth: 24,
                                 java_enabled: false,
@@ -395,7 +393,6 @@ describe('MolliePaymentStrategy', () => {
                             set_as_default_stored_instrument: false,
                             shopper_locale: 'en-US',
                             vault_payment_instrument: false,
-                            /* eslint-enable */
                         },
                     },
                 });
@@ -414,7 +411,6 @@ describe('MolliePaymentStrategy', () => {
                     methodId: 'credit_card',
                     paymentData: {
                         formattedPayload: {
-                            /* eslint-disable */
                             browser_info: {
                                 color_depth: 24,
                                 java_enabled: false,
@@ -429,7 +425,6 @@ describe('MolliePaymentStrategy', () => {
                             set_as_default_stored_instrument: true,
                             shopper_locale: 'en-US',
                             vault_payment_instrument: true,
-                            /* eslint-enable */
                         },
                     },
                 });
@@ -443,14 +438,12 @@ describe('MolliePaymentStrategy', () => {
                     gatewayId: 'mollie',
                     methodId: 'belfius',
                     paymentData: {
-                        /* eslint-disable */
                         formattedPayload: {
                             issuer: 'foo',
                             shopper_locale: 'en-US',
                         },
                         issuer: 'foo',
                         shopper_locale: 'en-US',
-                        /* eslint-enable */
                     },
                 });
             });

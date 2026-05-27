@@ -91,7 +91,6 @@ export default class HummPaymentStrategy implements PaymentStrategy {
         return (
             partialBody.status === 'additional_action_required' &&
             !!partialBody.additional_action_required &&
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             partialBody.additional_action_required.type === 'offsite_redirect' &&
             typeof partialBody.provider_data === 'string'
         );

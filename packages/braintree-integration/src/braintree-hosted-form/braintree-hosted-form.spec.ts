@@ -38,6 +38,7 @@ describe('BraintreeHostedForm', () => {
 
     function appendContainer(id: string): HTMLElement {
         const container = document.createElement('div');
+
         container.id = id;
         document.body.appendChild(container);
 
@@ -219,6 +220,7 @@ describe('BraintreeHostedForm', () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
                 BRAINTREE_SDK_DEFAULT_VERSION,
             );
+
             const createMock = jest.fn();
             const clientMock = {
                 ...getClientMock(),

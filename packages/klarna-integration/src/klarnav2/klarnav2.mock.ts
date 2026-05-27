@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import {
     Address,
     BillingAddress,
@@ -55,7 +54,6 @@ export function getEUBillingAddress(): BillingAddress {
 }
 
 export function getOCBillingAddress(): BillingAddress {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
         ...getEUBillingAddress(),
         countryCode: 'AU',

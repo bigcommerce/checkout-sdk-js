@@ -27,8 +27,8 @@ import {
     PaymentRequestSender,
     PaymentRequestTransformer,
 } from '../payment';
-import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import PaymentStrategyWidgetActionCreator from '../payment/payment-strategy-widget-action-creator';
+import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import {
     ConsignmentActionCreator,

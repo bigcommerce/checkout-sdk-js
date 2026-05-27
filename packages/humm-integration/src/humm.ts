@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 export interface OffsiteRedirectResponse {
     body: {
         additional_action_required: {

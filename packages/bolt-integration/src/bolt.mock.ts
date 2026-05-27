@@ -11,7 +11,6 @@ export function getBoltClientScriptMock(
     return {
         configure: jest.fn(
             (_cart: object, _hints: Record<string, unknown>, callbacks?: BoltCallbacks) => {
-                /* eslint-enable */
                 return getConfiguredBoltMock(
                     shouldSucceed,
                     isValidTransactionReference,

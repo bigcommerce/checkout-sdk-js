@@ -15,7 +15,6 @@ import {
 
 export function getAmazonPayV2SDKMock(): AmazonPayV2SDK {
     return {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         Pay: {
             renderButton: jest.fn().mockReturnValue({
                 onClick: jest.fn(),

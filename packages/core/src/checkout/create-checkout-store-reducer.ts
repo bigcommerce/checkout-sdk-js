@@ -13,8 +13,8 @@ import { countryReducer } from '../geography';
 import { orderReducer } from '../order';
 import { orderBillingAddressReducer } from '../order-billing-address';
 import { paymentMethodReducer, paymentReducer, paymentStrategyReducer } from '../payment';
-import { paymentProviderCustomerReducer } from '../payment-provider-customer';
 import { instrumentReducer } from '../payment/instrument';
+import { paymentProviderCustomerReducer } from '../payment-provider-customer';
 import { remoteCheckoutReducer } from '../remote-checkout';
 import {
     consignmentReducer,

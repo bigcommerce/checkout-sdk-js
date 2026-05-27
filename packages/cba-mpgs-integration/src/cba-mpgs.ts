@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export const THREE_D_SECURE_PROCEED = 'PROCEED';

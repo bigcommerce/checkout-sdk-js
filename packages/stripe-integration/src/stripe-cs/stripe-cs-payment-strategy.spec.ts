@@ -685,6 +685,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             it('should mount currency selector element when adaptivePricingEnabled is true', async () => {
                 mockPaymentMethodWithAdaptivePricing(true);
+
                 const { currencySelectorMountMock } = mockStripeCheckoutWithCurrencySelector();
 
                 await stripeCSPaymentStrategy.initialize(stripeOptions);
@@ -696,6 +697,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             it('should not mount currency selector element when adaptivePricingEnabled is false', async () => {
                 mockPaymentMethodWithAdaptivePricing(false);
+
                 const { currencySelectorMountMock } = mockStripeCheckoutWithCurrencySelector();
 
                 await stripeCSPaymentStrategy.initialize(stripeOptions);

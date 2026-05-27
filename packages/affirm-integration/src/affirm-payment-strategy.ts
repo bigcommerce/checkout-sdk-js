@@ -168,7 +168,6 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
         const consignment = consignments[0];
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         return consignment?.selectedShippingOption ? consignment.selectedShippingOption.type : '';
     }
 

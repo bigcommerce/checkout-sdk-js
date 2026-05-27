@@ -857,7 +857,7 @@ describe('StripeUPEPaymentStrategy', () => {
             it('throw error if stripe element was not initialized', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
                     async () => {
-                        // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
+                        // eslint-disable-next-line @typescript-eslint/dot-notation
                         strategy['_stripeElements'] = undefined;
 
                         return Promise.reject(getThreeDSecureRequiredErrorResponse());
@@ -1178,7 +1178,7 @@ describe('StripeUPEPaymentStrategy', () => {
             it('throw error if stripe element was not initialized', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
                     async () => {
-                        // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
+                        // eslint-disable-next-line @typescript-eslint/dot-notation
                         strategy['_stripeElements'] = undefined;
 
                         return Promise.reject(getAdditionalActionErrorResponse());
