@@ -763,6 +763,7 @@ describe('GooglePayPaymentStrategy', () => {
             };
 
             let interactWithPaymentSheetSpy: jest.SpyInstance;
+            let completeCheckoutFlowSpy: jest.SpyInstance;
 
             beforeEach(async () => {
                 jest.spyOn(
@@ -776,11 +777,16 @@ describe('GooglePayPaymentStrategy', () => {
                     .spyOn(Object.getPrototypeOf(strategy), '_interactWithPaymentSheet')
                     .mockResolvedValue(undefined);
 
+                completeCheckoutFlowSpy = jest
+                    .spyOn(Object.getPrototypeOf(strategy), '_completeCheckoutFlow')
+                    .mockImplementation(() => undefined);
+
                 await strategy.initialize(options);
             });
 
             afterEach(() => {
                 interactWithPaymentSheetSpy.mockRestore();
+                completeCheckoutFlowSpy.mockRestore();
             });
 
             it('should show loading indicator on button click', async () => {
