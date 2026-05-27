@@ -63,6 +63,8 @@ import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/inte
 import { getOrder } from '../order/orders.mock';
 import {
     B2BCompanyPaymentMethodRequestSender,
+    B2BPaymentsRefreshActionCreator,
+    B2BPaymentsRefreshRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistryV2,
     PaymentMethodActionCreator,
@@ -126,6 +128,8 @@ import { createCheckoutSelectorsFactory } from './create-checkout-selectors';
 import createCheckoutStore from './create-checkout-store';
 
 describe('CheckoutService', () => {
+    let b2bPaymentsRefreshActionCreator: B2BPaymentsRefreshActionCreator;
+    let b2bPaymentsRefreshRequestSender: B2BPaymentsRefreshRequestSender;
     let billingAddressActionCreator: BillingAddressActionCreator;
     let billingAddressRequestSender: BillingAddressRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
@@ -399,6 +403,14 @@ describe('CheckoutService', () => {
             new B2BCompanyPaymentMethodRequestSender(requestSender),
         );
 
+        b2bPaymentsRefreshRequestSender = new B2BPaymentsRefreshRequestSender(requestSender);
+
+        jest.spyOn(b2bPaymentsRefreshRequestSender, 'refresh').mockResolvedValue(getResponse({}));
+
+        b2bPaymentsRefreshActionCreator = new B2BPaymentsRefreshActionCreator(
+            b2bPaymentsRefreshRequestSender,
+        );
+
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,
             paymentStrategyRegistryV2,
@@ -455,6 +467,7 @@ describe('CheckoutService', () => {
             formFieldsActionCreator,
             extensionActionCreator,
             workerExtensionMessenger,
+            b2bPaymentsRefreshActionCreator,
         );
     });
 
@@ -604,6 +617,25 @@ describe('CheckoutService', () => {
             );
 
             expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
+        });
+    });
+
+    describe('#refreshB2BPaymentMethods()', () => {
+        it('exposes the method on the service', () => {
+            expect(typeof checkoutService.refreshB2BPaymentMethods).toBe('function');
+        });
+
+        it('dispatches the action creator and returns a promise', async () => {
+            jest.spyOn(b2bPaymentsRefreshActionCreator, 'refreshB2BPaymentMethods');
+
+            const result = checkoutService.refreshB2BPaymentMethods();
+
+            expect(result).toBeInstanceOf(Promise);
+            expect(b2bPaymentsRefreshActionCreator.refreshB2BPaymentMethods).toHaveBeenCalledWith(
+                undefined,
+            );
+
+            await result.catch(() => undefined);
         });
     });
 

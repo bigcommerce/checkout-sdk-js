@@ -36,6 +36,7 @@ import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import {
+    B2BPaymentsRefreshActionCreator,
     OrderFinalizeOptions,
     PaymentInitializeOptions,
     PaymentMethodActionCreator,
@@ -112,6 +113,7 @@ export default class CheckoutService {
         private _formFieldsActionCreator: FormFieldsActionCreator,
         private _extensionActionCreator: ExtensionActionCreator,
         private _workerExtensionMessenger: WorkerExtensionMessenger,
+        private _b2bPaymentsRefreshActionCreator: B2BPaymentsRefreshActionCreator,
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
     }
@@ -700,6 +702,22 @@ export default class CheckoutService {
         const action = this._b2bTokenActionCreator.loadB2BToken(options);
 
         return this._dispatch(action, { queueId: 'b2bToken' });
+    }
+
+    /**
+     * Refreshes the B2B payment methods cache for the current customer.
+     *
+     * ```js
+     * await service.refreshB2BPaymentMethods();
+     * ```
+     *
+     * @param options - Options for the request.
+     * @returns A promise that resolves to the current state.
+     */
+    refreshB2BPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._b2bPaymentsRefreshActionCreator.refreshB2BPaymentMethods(options);
+
+        return this._dispatch(action, { queueId: 'b2bPaymentsRefresh' });
     }
 
     /**
