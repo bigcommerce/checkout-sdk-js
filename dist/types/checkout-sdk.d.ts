@@ -2793,6 +2793,7 @@ declare class CheckoutService {
     private _formFieldsActionCreator;
     private _extensionActionCreator;
     private _workerExtensionMessenger;
+    private _b2bPaymentsRefreshActionCreator;
     private _errorTransformer;
     /**
      * Returns a snapshot of the current checkout state.
@@ -3241,6 +3242,17 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     getB2BToken(options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Refreshes the B2B payment methods cache for the current customer.
+     *
+     * ```js
+     * await service.refreshB2BPaymentMethods();
+     * ```
+     *
+     * @param options - Options for the request.
+     * @returns A promise that resolves to the current state.
+     */
+    refreshB2BPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Creates a customer account.
      *

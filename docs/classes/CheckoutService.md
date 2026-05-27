@@ -57,6 +57,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [loadShippingOptions](CheckoutService.md#loadshippingoptions)
 - [notifyState](CheckoutService.md#notifystate)
 - [postMessageToExtension](CheckoutService.md#postmessagetoextension)
+- [refreshB2BPaymentMethods](CheckoutService.md#refreshb2bpaymentmethods)
 - [removeCoupon](CheckoutService.md#removecoupon)
 - [removeGiftCertificate](CheckoutService.md#removegiftcertificate)
 - [renderExtension](CheckoutService.md#renderextension)
@@ -1340,6 +1341,30 @@ Posts a message to a checkout extension.
 #### Returns
 
 `void`
+
+___
+
+### refreshB2BPaymentMethods
+
+▸ **refreshB2BPaymentMethods**(`options?`): `Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+Refreshes the B2B payment methods cache for the current customer.
+
+```js
+await service.refreshB2BPaymentMethods();
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options?` | [`RequestOptions`](../interfaces/RequestOptions.md)\<`object`\> | Options for the request. |
+
+#### Returns
+
+`Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+A promise that resolves to the current state.
 
 ___
 

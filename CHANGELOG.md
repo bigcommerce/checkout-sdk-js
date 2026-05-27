@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.919.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.918.0...v1.919.0) (2026-05-27)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10038 Refresh B2B payment methods cache ([#3266](https://github.com/bigcommerce/checkout-sdk-js/issues/3266)) ([079f6bf](https://github.com/bigcommerce/checkout-sdk-js/commit/079f6bfee71a3608616a18c096dd3c720fffedea))
+
 ## [1.918.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.917.0...v1.918.0) (2026-05-26)
 
 
