@@ -265,7 +265,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         await this._googlePayPaymentProcessor.setExternalCheckoutXhr(methodId, response);
 
-        await this._paymentIntegrationService.loadCheckout();
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
 
         const freshPaymentMethod = this._paymentIntegrationService
@@ -274,9 +273,13 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         await this._googlePayPaymentProcessor.initialize(() => freshPaymentMethod);
 
-        await this.execute({ useStoreCredit: false, payment: { methodId } });
+        try {
+            await this.execute({ useStoreCredit: false, payment: { methodId } });
 
-        this._completeCheckoutFlow();
+            this._completeCheckoutFlow();
+        } catch (error) {
+            await this._paymentIntegrationService.loadCheckout();
+        }
     }
 
     protected _completeCheckoutFlow(): void {

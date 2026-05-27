@@ -762,6 +762,8 @@ describe('GooglePayPaymentStrategy', () => {
                 },
             };
 
+            let interactWithPaymentSheetSpy: jest.SpyInstance;
+
             beforeEach(async () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
@@ -770,7 +772,15 @@ describe('GooglePayPaymentStrategy', () => {
 
                 jest.spyOn(processor, 'mapToBillingAddressRequestBody').mockReturnValue(undefined);
 
+                interactWithPaymentSheetSpy = jest
+                    .spyOn(Object.getPrototypeOf(strategy), '_interactWithPaymentSheet')
+                    .mockResolvedValue(undefined);
+
                 await strategy.initialize(options);
+            });
+
+            afterEach(() => {
+                interactWithPaymentSheetSpy.mockRestore();
             });
 
             it('should show loading indicator on button click', async () => {
@@ -792,12 +802,22 @@ describe('GooglePayPaymentStrategy', () => {
                 );
             });
 
-            it('should load checkout after receiving payment sheet response', async () => {
+            it('should NOT call loadCheckout on the success path', async () => {
                 button.click();
 
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
+                expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
+            });
+
+            it('should call loadCheckout when execute() throws, to restore UI state', async () => {
+                jest.spyOn(strategy, 'execute').mockRejectedValueOnce(new Error('payment failed'));
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledTimes(1);
             });
 
             it('should load payment method with the correct methodId', async () => {
@@ -1069,6 +1089,24 @@ describe('GooglePayPaymentStrategy', () => {
                     useStoreCredit: false,
                     payment: { methodId: options.methodId },
                 });
+            });
+
+            it('should NOT call loadCheckout on the success path', async () => {
+                brandedButton.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
+            });
+
+            it('should call loadCheckout when execute() throws, to restore UI state', async () => {
+                jest.spyOn(strategy, 'execute').mockRejectedValueOnce(new Error('payment failed'));
+
+                brandedButton.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledTimes(1);
             });
 
             it('should call onError when initializeWidget throws', async () => {
