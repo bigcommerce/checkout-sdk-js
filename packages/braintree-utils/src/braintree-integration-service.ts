@@ -361,7 +361,6 @@ export default class BraintreeIntegrationService {
                 venmoCheckout.create(
                     venmoCheckoutConfig,
                     (error: BraintreeError, braintreeVenmoCheckout: BraintreeVenmoCheckout) => {
-                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                         if (error) {
                             return reject(error);
                         }

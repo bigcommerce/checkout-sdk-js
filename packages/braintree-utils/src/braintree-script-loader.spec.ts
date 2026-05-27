@@ -813,6 +813,7 @@ describe('BraintreeScriptLoader', () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValueOnce(
                 BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
             );
+
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -934,6 +935,7 @@ describe('BraintreeScriptLoader', () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
                 BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
             );
+
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,
@@ -1056,6 +1058,7 @@ describe('BraintreeScriptLoader', () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
                 BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
             );
+
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
                 mockWindow,

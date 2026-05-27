@@ -8,10 +8,10 @@ import { Country } from './geography';
 import { Order } from './order';
 import { OrderMetaState } from './order/order-state';
 import { InstrumentMeta } from './payment';
-import { PaymentProviderCustomer } from './payment-provider-customer';
 import PaymentInstrument, { CardInstrument } from './payment/instrument';
 import PaymentMethod from './payment/payment-method';
 import PaymentMethodMeta from './payment/payment-method-meta';
+import { PaymentProviderCustomer } from './payment-provider-customer';
 import { Consignment, ShippingAddress } from './shipping';
 
 export default interface PaymentIntegrationSelectors {

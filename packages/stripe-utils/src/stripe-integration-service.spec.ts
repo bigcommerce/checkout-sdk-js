@@ -117,7 +117,7 @@ describe('StripeIntegrationService', () => {
             stripeIntegrationService.deinitialize();
 
             expect(subscriptionMock).toHaveBeenCalled();
-            // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
+            // eslint-disable-next-line @typescript-eslint/dot-notation
             expect(stripeIntegrationService['isMounted']).toBe(false);
         });
 
@@ -132,7 +132,7 @@ describe('StripeIntegrationService', () => {
             );
             stripeIntegrationService.deinitialize();
 
-            // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
+            // eslint-disable-next-line @typescript-eslint/dot-notation
             expect(stripeIntegrationService['checkoutEventsUnsubscribe']).toBeUndefined();
         });
     });
@@ -214,7 +214,7 @@ describe('StripeIntegrationService', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(stripeElementMock.unmount).toHaveBeenCalled();
-            // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
+            // eslint-disable-next-line @typescript-eslint/dot-notation
             expect(stripeIntegrationService['isMounted']).toBe(false);
         });
 
@@ -251,7 +251,7 @@ describe('StripeIntegrationService', () => {
 
             expect(stripeElementsMock.fetchUpdates).not.toHaveBeenCalled();
             expect(stripeElementMock.mount).toHaveBeenCalledTimes(1);
-            // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
+            // eslint-disable-next-line @typescript-eslint/dot-notation
             expect(stripeIntegrationService['isMounted']).toBe(true);
         });
     });

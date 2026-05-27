@@ -2,6 +2,7 @@ import {
     OrderPaymentRequestBody,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { getOrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BillingAddress, {
     BillingAddressState,
@@ -26,8 +27,6 @@ import BillingAddress, {
 } from '../types';
 
 import { getVisaCheckoutTokenizedPayload } from './visacheckout.mock';
-
-import { getOrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 export function getBraintree(): PaymentMethod {
     return {
