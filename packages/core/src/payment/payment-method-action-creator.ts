@@ -1,14 +1,12 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
-// TODO: CHECKOUT-9979 remove this import before delivery
-import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
+import { B2BPaymentMethodFilterType } from '../config/capabilities';
 
 import filterPaymentMethodsByB2BCompanyAllowList from './b2b-company-payment-method-filter-transformer';
 import B2BCompanyPaymentMethodRequestSender from './b2b-company-payment-method-request-sender';
@@ -169,12 +167,8 @@ export default class PaymentMethodActionCreator {
 
     private _shouldFilterForB2b(state: InternalCheckoutSelectors): boolean {
         const config = state.config.getStoreConfigOrThrow();
-        const cart = state.cart.getCartOrThrow();
 
-        return (
-            cart.source === CartSource.INVOICE ||
-            !!config.checkoutSettings?.capabilities?.payment.b2bPaymentMethodFilter
-        );
+        return !!config.checkoutSettings?.capabilities?.payment.b2bPaymentMethodFilterType;
     }
 
     private async _applyB2bFilter(
@@ -182,6 +176,7 @@ export default class PaymentMethodActionCreator {
         state: InternalCheckoutSelectors,
         options?: RequestOptions,
     ): Promise<PaymentMethod[]> {
+        const config = state.config.getStoreConfigOrThrow();
         const customer = state.customer.getCustomerOrThrow();
         const cart = state.cart.getCartOrThrow();
         const b2bToken = state.b2bToken.getToken();
@@ -193,7 +188,10 @@ export default class PaymentMethodActionCreator {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
-        if (cart.source === CartSource.INVOICE) {
+        const b2bPaymentFilterType =
+            config.checkoutSettings?.capabilities?.payment.b2bPaymentMethodFilterType;
+
+        if (b2bPaymentFilterType === B2BPaymentMethodFilterType.Invoice) {
             return this._applyB2bInvoiceFilter(methods, baseUrl, b2bToken, options);
         }
 

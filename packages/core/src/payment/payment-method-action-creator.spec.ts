@@ -2,12 +2,13 @@ import { createRequestSender, createTimeout, Response } from '@bigcommerce/reque
 import { from, merge, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { CartSource, ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { B2BPaymentMethodFilterType } from '../config/capabilities';
 
 import B2BCompanyPaymentMethodRequestSender, {
     B2BCompanyPaymentMethodsResponseBody,
@@ -120,7 +121,7 @@ describe('PaymentMethodActionCreator', () => {
                 ],
             };
 
-            function setCapability(value: boolean): void {
+            function setFilterType(value: B2BPaymentMethodFilterType | undefined): void {
                 const baseConfig = store.getState().config.getStoreConfig()!;
                 const nextConfig = {
                     ...baseConfig,
@@ -130,7 +131,7 @@ describe('PaymentMethodActionCreator', () => {
                             ...baseConfig.checkoutSettings.capabilities,
                             payment: {
                                 ...baseConfig.checkoutSettings.capabilities?.payment,
-                                b2bPaymentMethodFilter: value,
+                                b2bPaymentMethodFilterType: value,
                             },
                         },
                     } as typeof baseConfig.checkoutSettings,
@@ -157,7 +158,7 @@ describe('PaymentMethodActionCreator', () => {
                     isGuest: false,
                 });
                 jest.spyOn(state.b2bToken, 'getToken').mockReturnValue(b2bToken);
-                setCapability(true);
+                setFilterType(B2BPaymentMethodFilterType.Standard);
 
                 jest.spyOn(
                     b2bCompanyPaymentMethodRequestSender,
@@ -188,7 +189,7 @@ describe('PaymentMethodActionCreator', () => {
             });
 
             it('does not call the B2B request sender when the capability is disabled', async () => {
-                setCapability(false);
+                setFilterType(undefined);
 
                 await from(paymentMethodActionCreator.loadPaymentMethods()(store)).toPromise();
 
@@ -247,7 +248,6 @@ describe('PaymentMethodActionCreator', () => {
                 const invoiceCart = {
                     ...getCheckout().cart,
                     companyId,
-                    source: CartSource.INVOICE,
                 };
                 const baseConfig = state.config.getStoreConfig()!;
                 const invoiceConfig = {
@@ -258,7 +258,7 @@ describe('PaymentMethodActionCreator', () => {
                             ...baseConfig.checkoutSettings.capabilities,
                             payment: {
                                 ...baseConfig.checkoutSettings.capabilities?.payment,
-                                b2bPaymentMethodFilter: false,
+                                b2bPaymentMethodFilterType: B2BPaymentMethodFilterType.Invoice,
                             },
                         },
                     } as typeof baseConfig.checkoutSettings,
@@ -286,7 +286,7 @@ describe('PaymentMethodActionCreator', () => {
                 jest.spyOn(b2bCompanyPaymentMethodRequestSender, 'getB2BCompanyPaymentMethods');
             });
 
-            it('applies the invoice filter when cart.source is INVOICE even if the capability is disabled', async () => {
+            it('applies the invoice filter when b2bPaymentMethodFilterType is Invoice', async () => {
                 const actions = await from(paymentMethodActionCreator.loadPaymentMethods()(store))
                     .pipe(toArray())
                     .toPromise();
@@ -349,20 +349,10 @@ describe('PaymentMethodActionCreator', () => {
         });
 
         describe('#_shouldFilterForB2b()', () => {
-            function mockState({
-                source,
-                capability,
-            }: {
-                source: CartSource | undefined;
-                capability: boolean;
-            }): void {
+            function mockFilterType(filterType: B2BPaymentMethodFilterType | undefined): void {
                 const state = store.getState();
                 const baseConfig = state.config.getStoreConfig()!;
 
-                jest.spyOn(state.cart, 'getCartOrThrow').mockReturnValue({
-                    ...getCheckout().cart,
-                    source,
-                });
                 jest.spyOn(state.config, 'getStoreConfigOrThrow').mockReturnValue({
                     ...baseConfig,
                     checkoutSettings: {
@@ -371,31 +361,31 @@ describe('PaymentMethodActionCreator', () => {
                             ...baseConfig.checkoutSettings.capabilities,
                             payment: {
                                 ...baseConfig.checkoutSettings.capabilities?.payment,
-                                b2bPaymentMethodFilter: capability,
+                                b2bPaymentMethodFilterType: filterType,
                             },
                         },
                     } as typeof baseConfig.checkoutSettings,
                 });
             }
 
-            it('returns true when cart.source is CartSource.INVOICE', () => {
-                mockState({ source: CartSource.INVOICE, capability: false });
+            it('returns true when b2bPaymentMethodFilterType is Standard', () => {
+                mockFilterType(B2BPaymentMethodFilterType.Standard);
 
                 expect(
                     (paymentMethodActionCreator as any)._shouldFilterForB2b(store.getState()),
                 ).toBe(true);
             });
 
-            it('returns true when the b2bPaymentMethodFilter capability is enabled', () => {
-                mockState({ source: undefined, capability: true });
+            it('returns true when b2bPaymentMethodFilterType is Invoice', () => {
+                mockFilterType(B2BPaymentMethodFilterType.Invoice);
 
                 expect(
                     (paymentMethodActionCreator as any)._shouldFilterForB2b(store.getState()),
                 ).toBe(true);
             });
 
-            it('returns false when neither the invoice source nor the capability applies', () => {
-                mockState({ source: undefined, capability: false });
+            it('returns false when b2bPaymentMethodFilterType is not set', () => {
+                mockFilterType(undefined);
 
                 expect(
                     (paymentMethodActionCreator as any)._shouldFilterForB2b(store.getState()),
@@ -422,10 +412,16 @@ describe('PaymentMethodActionCreator', () => {
                     isGuest: false,
                 });
                 jest.spyOn(state.b2bToken, 'getToken').mockReturnValue(b2bToken);
-                jest.spyOn(state.config, 'getStoreConfig').mockReturnValue({
+
+                const configWithBaseUrl = {
                     ...state.config.getStoreConfig()!,
                     b2bApiSettings: { baseUrl: b2bBaseUrl, clientId: 'cid' },
-                });
+                };
+
+                jest.spyOn(state.config, 'getStoreConfig').mockReturnValue(configWithBaseUrl);
+                jest.spyOn(state.config, 'getStoreConfigOrThrow').mockReturnValue(
+                    configWithBaseUrl,
+                );
 
                 jest.spyOn(
                     b2bCompanyPaymentMethodRequestSender,
@@ -529,15 +525,22 @@ describe('PaymentMethodActionCreator', () => {
                 ).rejects.toThrow(MissingDataError);
             });
 
-            it('delegates to the invoice filter when cart.source is CartSource.INVOICE', async () => {
-                const invoiceCart = {
-                    ...getCheckout().cart,
-                    companyId,
-                    source: CartSource.INVOICE,
-                };
+            it('delegates to the invoice filter when b2bPaymentMethodFilterType is Invoice', async () => {
+                const baseConfig = store.getState().config.getStoreConfig()!;
 
-                jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(invoiceCart);
-                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(invoiceCart);
+                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                    ...baseConfig,
+                    checkoutSettings: {
+                        ...baseConfig.checkoutSettings,
+                        capabilities: {
+                            ...baseConfig.checkoutSettings.capabilities,
+                            payment: {
+                                ...baseConfig.checkoutSettings.capabilities?.payment,
+                                b2bPaymentMethodFilterType: B2BPaymentMethodFilterType.Invoice,
+                            },
+                        },
+                    } as typeof baseConfig.checkoutSettings,
+                });
 
                 await (paymentMethodActionCreator as any)._applyB2bFilter(
                     [getPaymentMethod()],
@@ -552,7 +555,7 @@ describe('PaymentMethodActionCreator', () => {
                 ).not.toHaveBeenCalled();
             });
 
-            it('delegates to the company filter when cart.source is not CartSource.INVOICE', async () => {
+            it('delegates to the company filter when b2bPaymentMethodFilterType is not Invoice', async () => {
                 await (paymentMethodActionCreator as any)._applyB2bFilter(
                     [getPaymentMethod()],
                     store.getState(),
