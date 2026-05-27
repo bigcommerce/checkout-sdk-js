@@ -809,9 +809,11 @@ describe('GooglePayPaymentStrategy', () => {
             });
 
             it('should NOT call loadCheckout on the success path', async () => {
-                button.click();
+                const strategyInternal = strategy as unknown as {
+                    _interactWithPaymentSheetAndPay(): Promise<void>;
+                };
 
-                await new Promise((resolve) => process.nextTick(resolve));
+                await strategyInternal._interactWithPaymentSheetAndPay();
 
                 expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
             });
@@ -819,9 +821,11 @@ describe('GooglePayPaymentStrategy', () => {
             it('should call loadCheckout when execute() throws, to restore UI state', async () => {
                 jest.spyOn(strategy, 'execute').mockRejectedValueOnce(new Error('payment failed'));
 
-                button.click();
+                const strategyInternal = strategy as unknown as {
+                    _interactWithPaymentSheetAndPay(): Promise<void>;
+                };
 
-                await new Promise((resolve) => process.nextTick(resolve));
+                await strategyInternal._interactWithPaymentSheetAndPay();
 
                 expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledTimes(1);
             });
