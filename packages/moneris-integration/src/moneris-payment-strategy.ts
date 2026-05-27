@@ -276,7 +276,6 @@ export default class MonerisPaymentStrategy {
             cvd_label: initializationData.cvdLabel || 'CVD',
         };
 
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const queryString = map(monerisQueryParams, (value, key) => `${key}=${value}`).join('&');
 
         iframe.width = '100%';

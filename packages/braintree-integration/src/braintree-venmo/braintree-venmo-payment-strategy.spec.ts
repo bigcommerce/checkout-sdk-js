@@ -1,3 +1,12 @@
+import { getScriptLoader } from '@bigcommerce/script-loader';
+
+import {
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
+    BraintreeTokenizePayload,
+    BraintreeVenmoCheckout,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     MissingDataError,
     OrderFinalizationNotRequiredError,
@@ -10,22 +19,16 @@ import {
     PaymentMethodFailedError,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import BraintreeVenmoPaymentStrategy from './braintree-venmo-payment-strategy';
-import {
-    BraintreeIntegrationService,
-    BraintreeScriptLoader,
-    BraintreeSDKVersionManager,
-    BraintreeTokenizePayload,
-    BraintreeVenmoCheckout,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     getConfig,
     getOrderRequestBody,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { getScriptLoader } from '@bigcommerce/script-loader';
+
 import { getBraintreeVenmo } from '../mocks/braintree.mock';
+
+import BraintreeVenmoPaymentStrategy from './braintree-venmo-payment-strategy';
+
 import clearAllMocks = jest.clearAllMocks;
 
 describe('BraintreeVenmoPaymentStrategy', () => {
@@ -51,6 +54,7 @@ describe('BraintreeVenmoPaymentStrategy', () => {
             braintreeScriptLoader,
             window,
         );
+
         const braintreeTokenizePayload: BraintreeTokenizePayload = {
             nonce: 'sampleNonce',
             type: 'PaypalAccount',

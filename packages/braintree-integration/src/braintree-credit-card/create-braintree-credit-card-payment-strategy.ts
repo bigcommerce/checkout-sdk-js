@@ -11,8 +11,9 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 import BraintreeHostedForm from '../braintree-hosted-form/braintree-hosted-form';
+
+import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 
 const createBraintreeCreditCardPaymentStrategy: PaymentStrategyFactory<
     BraintreeCreditCardPaymentStrategy

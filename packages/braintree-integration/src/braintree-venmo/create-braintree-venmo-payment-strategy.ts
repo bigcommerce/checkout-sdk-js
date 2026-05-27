@@ -1,15 +1,17 @@
-import {
-    CheckoutButtonStrategyFactory,
-    toResolvableModule,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
-import BraintreeVenmoPaymentStrategy from './braintree-venmo-payment-strategy';
+import { getScriptLoader } from '@bigcommerce/script-loader';
+
 import {
     BraintreeHostWindow,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
     BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { getScriptLoader } from '@bigcommerce/script-loader';
+import {
+    CheckoutButtonStrategyFactory,
+    toResolvableModule,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import BraintreeVenmoPaymentStrategy from './braintree-venmo-payment-strategy';
 
 const createBraintreeVenmoPaymentStrategy: CheckoutButtonStrategyFactory<
     BraintreeVenmoPaymentStrategy

@@ -23,6 +23,7 @@ import {
     PaypalInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
+
 import BraintreeVenmoPaymentStrategyInitializeOptions, {
     WithBraintreeVenmoInitializeOptions,
 } from './braintree-venmo-payment-strategy-initialize-options';
@@ -42,6 +43,7 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         const { methodId } = options;
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
+
         const state = this.paymentIntegrationService.getState();
 
         this.venmoOptions = options.braintreevenmo;
@@ -60,6 +62,7 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
 
         try {
             const paymentData = await this.preparePaymentData(payment);
+
             await this.paymentIntegrationService.submitOrder(order);
             await this.paymentIntegrationService.submitPayment(paymentData);
         } catch (error) {
@@ -127,6 +130,7 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         if (nonce) {
             return { ...payment, paymentData: this.formattedPayload(nonce) };
         }
+
         const tokenizeResult = await this.braintreeVenmoTokenize();
         const sessionId = await this.braintreeIntegrationService.getSessionId();
 

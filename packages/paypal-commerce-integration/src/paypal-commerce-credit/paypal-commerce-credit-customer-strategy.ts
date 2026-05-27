@@ -76,6 +76,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         const paypalSdk = await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
         if (!paypalSdk || !paypalSdk.Buttons || typeof paypalSdk.Buttons !== 'function') {
+            // eslint-disable-next-line no-console
             console.error(
                 '[BC PayPal]: PayPal Button could not be rendered, due to issues with loading PayPal SDK',
             );

@@ -35,6 +35,7 @@ describe('isPaypalFastlaneRequestError', () => {
         const error = {
             message: 'Missing response',
         };
+
         expect(isPaypalFastlaneRequestError(error)).toBe(false);
     });
 
@@ -43,6 +44,7 @@ describe('isPaypalFastlaneRequestError', () => {
             message: 'No body',
             response: {},
         };
+
         expect(isPaypalFastlaneRequestError(error)).toBe(false);
     });
 
@@ -53,6 +55,7 @@ describe('isPaypalFastlaneRequestError', () => {
                 body: {},
             },
         };
+
         expect(isPaypalFastlaneRequestError(error)).toBe(false);
     });
 
@@ -64,6 +67,7 @@ describe('isPaypalFastlaneRequestError', () => {
                 },
             },
         };
+
         expect(isPaypalFastlaneRequestError(error)).toBe(false);
     });
 });

@@ -108,6 +108,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
             );
 
             if (!paypalMessages || typeof paypalMessages?.Messages !== 'function') {
+                // eslint-disable-next-line no-console
                 console.error(
                     '[BC PayPalCommerce PayLater]: banner could not be rendered, due to issues with loading PayPal SDK',
                 );

@@ -37,7 +37,6 @@ export function getPaymentMethodMockUndefinedMerchant(): PaymentMethod {
 export function getPaymentMethodMockUndefinedLedgerCurrency(): PaymentMethod {
     const amazonMock = getAmazonPayV2();
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     amazonMock.initializationData!.ledgerCurrency = undefined;
 
     return amazonMock;

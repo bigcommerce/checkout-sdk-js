@@ -93,7 +93,6 @@ describe('CreditCardPaymentStrategy', () => {
 
             expect(paymentIntegrationService.createHostedForm).toHaveBeenCalledWith(
                 'https://bigpay.integration.zone',
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 options.creditCard!.form,
             );
             expect(form.attach).toHaveBeenCalled();

@@ -257,7 +257,6 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                 ...paymentData,
                 formattedPayload: {
                     issuer,
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     shopper_locale: this.getShopperLocale(),
                 },
             },

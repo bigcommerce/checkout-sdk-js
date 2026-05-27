@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 export default interface KlarnaCredit {
     authorize(
         data: KlarnaUpdateSessionParams,

@@ -457,10 +457,8 @@ describe('MolliePaymentStrategy', () => {
                     methodId: 'belfius',
                     paymentData: {
                         formattedPayload: {
-                            /* eslint-disable */
                             issuer: '',
                             shopper_locale: 'en-US',
-                            /* eslint-enable */
                         },
                         shouldSaveInstrument: true,
                         shouldSetAsDefaultInstrument: false,

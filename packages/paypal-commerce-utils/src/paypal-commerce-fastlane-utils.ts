@@ -107,6 +107,7 @@ export default class PayPalCommerceFastlaneUtils {
      */
     updateStorageSessionId(sessionId: string): void {
         const expires = new Date();
+
         expires.setDate(expires.getDate() + 14); // 2 weeks expiry
 
         const cookiesOption = {

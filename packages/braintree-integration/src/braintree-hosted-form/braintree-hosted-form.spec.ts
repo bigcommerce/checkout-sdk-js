@@ -1,3 +1,4 @@
+import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
@@ -9,16 +10,12 @@ import {
     BraintreeSDKVersionManager,
     getClientMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-
 import {
     NotInitializedError,
     PaymentIntegrationService,
     PaymentInvalidFormError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
-import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { getBillingAddress } from '../mocks/braintree.mock';
 
@@ -110,6 +107,7 @@ describe('BraintreeHostedForm', () => {
             jest.spyOn(braintreeSDKVersionManager, 'getSDKVersion').mockReturnValue(
                 BRAINTREE_SDK_DEFAULT_VERSION,
             );
+
             const createMock = jest.fn();
             const clientMock = {
                 ...getClientMock(),
@@ -279,11 +277,13 @@ describe('BraintreeHostedForm', () => {
     describe('#isInitialized', () => {
         it('returns true if hosted form is initialized', async () => {
             await subject.initialize(formOptions, [], 'clientToken');
+
             expect(subject.isInitialized()).toBe(true);
         });
 
         it('returns false when no fields specified in form options', async () => {
             await subject.initialize({ fields: {} }, [], 'clientToken');
+
             expect(subject.isInitialized()).toBe(false);
         });
 
@@ -296,9 +296,11 @@ describe('BraintreeHostedForm', () => {
             });
 
             await subject.initialize(formOptions, [], 'clientToken');
+
             expect(subject.isInitialized()).toBe(true);
 
             await subject.deinitialize();
+
             expect(subject.isInitialized()).toBe(false);
         });
     });
@@ -341,6 +343,7 @@ describe('BraintreeHostedForm', () => {
             });
 
             await subject.initialize(formOptions, [], 'clientToken');
+
             const billingAddress = getBillingAddress();
 
             await subject.tokenize(billingAddress);
@@ -468,11 +471,13 @@ describe('BraintreeHostedForm', () => {
 
         it('notifies on focus', () => {
             cardFieldsEventEmitter.emit('focus', { emittedBy: 'cvv' });
+
             expect(handleFocus).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies on blur', () => {
             cardFieldsEventEmitter.emit('blur', { emittedBy: 'cvv' });
+
             expect(handleBlur).toHaveBeenCalledWith({ fieldType: 'cardCode', errors: {} });
         });
 
@@ -496,16 +501,19 @@ describe('BraintreeHostedForm', () => {
 
         it('notifies on enter key', () => {
             cardFieldsEventEmitter.emit('inputSubmitRequest', { emittedBy: 'cvv' });
+
             expect(handleEnter).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies on card type change', () => {
             cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'visa' }] });
+
             expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: 'visa' });
         });
 
         it('normalizes "master-card" to "mastercard"', () => {
             cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'master-card' }] });
+
             expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: 'mastercard' });
         });
 

@@ -126,7 +126,6 @@ export default class LoadingIndicator {
 
         style.id = ROTATION_ANIMATION;
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         document.head?.appendChild(style);
 
         if (style.sheet instanceof CSSStyleSheet) {

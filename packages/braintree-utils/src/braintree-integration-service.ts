@@ -451,7 +451,6 @@ export default class BraintreeIntegrationService {
             ];
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!ccExpiry) {
             errors.ccExpiry = [
                 {
