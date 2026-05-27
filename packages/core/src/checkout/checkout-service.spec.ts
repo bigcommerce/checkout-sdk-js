@@ -72,7 +72,6 @@ import {
     PaymentStrategyActionCreator,
     PaymentStrategyRegistry,
 } from '../payment';
-import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { InstrumentActionType } from '../payment/instrument/instrument-actions';
 import {
@@ -86,6 +85,7 @@ import {
     getPaymentMethods,
 } from '../payment/payment-methods.mock';
 import { PaymentStrategyActionType } from '../payment/payment-strategy-actions';
+import { createPaymentIntegrationService } from '../payment-integration';
 import {
     ConsignmentActionCreator,
     ConsignmentActionType,
