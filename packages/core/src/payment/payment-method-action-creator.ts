@@ -102,16 +102,8 @@ export default class PaymentMethodActionCreator {
                         };
                         let methods = response.body;
 
-                        const filterMethodsforB2b = this._filterMethodsForB2b(state);
-
-                        if (filterMethodsforB2b) {
-                            const params = this._getB2bFilterParams(state);
-
-                            methods = await this._applyB2bCompanyPaymentMethodFilter(
-                                methods,
-                                params,
-                                options,
-                            );
+                        if (this._shouldFilterForB2b(state)) {
+                            methods = await this._applyB2bFilter(methods, state, options);
                         }
 
                         observer.next(
@@ -175,69 +167,67 @@ export default class PaymentMethodActionCreator {
             });
     }
 
-    private _filterMethodsForB2b(state: InternalCheckoutSelectors) {
+    private _shouldFilterForB2b(state: InternalCheckoutSelectors): boolean {
         const config = state.config.getStoreConfigOrThrow();
         const cart = state.cart.getCartOrThrow();
 
-        if (cart.source === CartSource.INVOICE) {
-            return true;
-        } else if (config.checkoutSettings?.capabilities?.payment.b2bPaymentMethodFilter) {
-            return true;
-        }
-
-        return false;
+        return (
+            cart.source === CartSource.INVOICE ||
+            !!config.checkoutSettings?.capabilities?.payment.b2bPaymentMethodFilter
+        );
     }
 
-    private _getB2bFilterParams(state: InternalCheckoutSelectors): {
-        companyId: number;
-        b2bToken: string;
-        baseUrl: string;
-        source?: string;
-    } {
+    private async _applyB2bFilter(
+        methods: PaymentMethod[],
+        state: InternalCheckoutSelectors,
+        options?: RequestOptions,
+    ): Promise<PaymentMethod[]> {
         const customer = state.customer.getCustomerOrThrow();
-        const b2bToken = state.b2bToken.getToken();
         const cart = state.cart.getCartOrThrow();
+        const b2bToken = state.b2bToken.getToken();
         const baseUrl = resolveB2bBaseUrl(
             state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
         );
-        const { companyId, source } = cart;
 
-        if (customer.isGuest || !b2bToken || !baseUrl || !companyId) {
+        if (customer.isGuest || !b2bToken || !baseUrl || !cart.companyId) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
-        return { companyId, b2bToken, baseUrl, source };
-    }
-
-    private async _applyB2bCompanyPaymentMethodFilter(
-        methods: PaymentMethod[],
-        params: { companyId: number; b2bToken: string; baseUrl: string; source?: string },
-        options?: RequestOptions,
-    ): Promise<PaymentMethod[]> {
-        if (params.source === CartSource.INVOICE) {
-            return this._applyB2bInvoiceAllowedPaymentMethods(methods, params, options);
+        if (cart.source === CartSource.INVOICE) {
+            return this._applyB2bInvoiceFilter(methods, baseUrl, b2bToken, options);
         }
 
+        return this._applyB2bCompanyFilter(methods, cart.companyId, b2bToken, baseUrl, options);
+    }
+
+    private async _applyB2bCompanyFilter(
+        methods: PaymentMethod[],
+        companyId: number,
+        b2bToken: string,
+        baseUrl: string,
+        options?: RequestOptions,
+    ): Promise<PaymentMethod[]> {
         const { body } =
             await this._b2bCompanyPaymentMethodRequestSender.getB2BCompanyPaymentMethods(
-                params.companyId,
-                params.b2bToken,
-                params.baseUrl,
+                companyId,
+                b2bToken,
+                baseUrl,
                 options,
             );
 
         return filterPaymentMethodsByB2BCompanyAllowList(methods, body);
     }
 
-    private async _applyB2bInvoiceAllowedPaymentMethods(
+    private async _applyB2bInvoiceFilter(
         methods: PaymentMethod[],
-        params: { baseUrl: string; b2bToken: string },
+        baseUrl: string,
+        b2bToken: string,
         options?: RequestOptions,
     ): Promise<PaymentMethod[]> {
         const { body } =
             await this._b2bCompanyPaymentMethodRequestSender.getB2BInvoiceAllowedPaymentMethods(
-                params.baseUrl,
-                params.b2bToken,
+                baseUrl,
+                b2bToken,
                 options,
             );
 
