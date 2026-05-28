@@ -78,3 +78,11 @@ export { WithPayPalCommerceFastlaneCustomerInitializeOptions } from './paypal-co
 
 export { default as createPayPalCommerceFastlanePaymentStrategy } from './paypal-commerce-fastlane/create-paypal-commerce-fastlane-payment-strategy';
 export { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane/paypal-commerce-fastlane-payment-initialize-options';
+
+/**
+ *
+ * PayPalCommerce Wallet strategy (headless wallet button integration)
+ *
+ */
+export { default as createPayPalCommerceWalletStrategy } from './paypal-commerce/create-paypal-commerce-wallet-strategy';
+export { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce/paypal-commerce-wallet-initialize-options';
