@@ -1,6 +1,12 @@
 // This is an exact copy of packages/payment-integration-api/src/config/capabilities.ts
 // Duplication is needed for interface export
 // Please update both files if you want to make changes to the Capabilities interface
+
+export enum B2BPaymentMethodFilterType {
+    Standard = 'STANDARD',
+    Invoice = 'INVOICE',
+}
+
 export interface Capabilities {
     userJourney: {
         disableEditCart: boolean;
@@ -25,7 +31,7 @@ export interface Capabilities {
     };
     payment: {
         paymentMethodFiltering: boolean;
-        b2bPaymentMethodFilter: boolean;
+        b2bPaymentMethodFilterType: B2BPaymentMethodFilterType | null;
         poPaymentMethod: boolean;
         poConfig: {
             label: string;

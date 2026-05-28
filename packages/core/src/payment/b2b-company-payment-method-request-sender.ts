@@ -29,4 +29,22 @@ export default class B2BCompanyPaymentMethodRequestSender {
             },
         });
     }
+
+    async getB2BInvoiceAllowedPaymentMethods(
+        b2bBaseUrl: string,
+        b2bToken: string,
+        options?: RequestOptions,
+    ): Promise<Response<{ data: { allowedMethods: string[] } }>> {
+        return this._requestSender.get(
+            `${b2bBaseUrl}/api/v1/ip/storefront/payments/bigcommerce/allowed-methods`,
+            {
+                timeout: options?.timeout,
+                credentials: false,
+                headers: {
+                    authToken: b2bToken,
+                    Authorization: `Bearer ${b2bToken}`,
+                },
+            },
+        );
+    }
 }
