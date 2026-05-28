@@ -228,10 +228,13 @@ export interface StripeShippingEvent extends StripeEvent {
 }
 
 export interface StripePaymentEvent extends StripeEvent {
-    value: {
-        type: StripePaymentMethodType;
-    };
+    value: StripeSelectedPaymentMethod;
     collapsed?: boolean;
+}
+
+export interface StripeSelectedPaymentMethod {
+    type: StripePaymentMethodType;
+    savePaymentMethod?: boolean;
 }
 
 export interface StripeCurrencyEvent extends StripeEvent {
@@ -577,7 +580,7 @@ export interface StripeCheckoutSessionActions {
 
 export interface StripeSavedPaymentMethod {
     id: string;
-    type: string;
+    type: StripePaymentMethodType;
     billingDetails: BillingDetailsOptions;
     card?: StripeCardDetails;
     usBankAccount?: StripeUsBankAccountDetails;
