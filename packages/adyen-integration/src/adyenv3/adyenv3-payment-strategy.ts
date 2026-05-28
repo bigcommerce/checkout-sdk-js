@@ -115,7 +115,6 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 'es-PE': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
             },
         });
-
         this.paymentComponent = await this._mountPaymentComponent(paymentMethod);
 
         if (
@@ -145,11 +144,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         this._validateCardData();
 
-        if (
-            payment.methodId === 'klarna' ||
-            payment.methodId === 'klarna_account' ||
-            payment.methodId === 'klarna_paynow'
-        ) {
+        if (this._isKlarnaPaymentMethod(payment.methodId)) {
             this.paymentComponent?.submit();
         }
 
@@ -208,11 +203,16 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             }
         }
 
-        let paymentToken = JSON.stringify({
+        const tokenPayload = {
             ...componentState.data.paymentMethod,
             type: payment.methodId,
             origin: window.location.origin,
-        });
+        };
+        let paymentToken = JSON.stringify(
+            this._isKlarnaPaymentMethod(payment.methodId)
+                ? this._removeEmptyDetails(tokenPayload)
+                : tokenPayload,
+        );
 
         if (payment.methodId === 'boletobancario' && isBoletoState(componentState)) {
             paymentToken = JSON.stringify({
@@ -324,10 +324,16 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                     }
                 },
                 onAdditionalDetails: (additionalActionState: AdyenAdditionalActionState) => {
+                    const additionalActionData = this._isKlarnaPaymentMethod(
+                        adyenAction.paymentMethodType,
+                    )
+                        ? this._removeEmptyDetails(additionalActionState.data)
+                        : additionalActionState.data;
+
                     const paymentPayload = {
                         methodId: adyenAction.paymentMethodType,
                         paymentData: {
-                            nonce: JSON.stringify(additionalActionState.data),
+                            nonce: JSON.stringify(additionalActionData),
                         },
                     };
 
@@ -469,6 +475,18 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
     private _isOneyPaymentMethod(method: string): boolean {
         return method.startsWith('facilypay');
+    }
+
+    private _isKlarnaPaymentMethod(methodId?: string): boolean {
+        return (
+            methodId === 'klarna' || methodId === 'klarna_account' || methodId === 'klarna_paynow'
+        );
+    }
+
+    private _removeEmptyDetails(payload: object) {
+        const { details, ...rest } = payload as Record<string, unknown>;
+
+        return details && Object.keys(details).length ? payload : rest;
     }
 
     private async _processAdditionalAction(
