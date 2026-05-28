@@ -138,8 +138,6 @@ export function getThreeDSecureOptionsMock(): BraintreeThreeDSecureOptions {
     return {
         nonce: 'nonce',
         amount: 225,
-        addFrame: jest.fn(),
-        removeFrame: jest.fn(),
         additionalInformation: {
             acsWindowSize: '01',
         },

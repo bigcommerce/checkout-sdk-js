@@ -272,12 +272,6 @@ export interface BraintreeThreeDSecureOptions {
         acsWindowSize?: '01' | '02' | '03' | '04' | '05';
     };
     collectDeviceData?: boolean;
-    addFrame?(
-        error: Error | undefined,
-        iframe: HTMLIFrameElement,
-        cancel: () => Promise<BraintreeVerifyPayload> | undefined,
-    ): void;
-    removeFrame?(): void;
     onLookupComplete?(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
 
