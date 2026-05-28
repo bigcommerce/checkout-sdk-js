@@ -7,6 +7,7 @@
 ### Enumerations
 
 - [AdyenCardFields](enums/AdyenCardFields.md)
+- [B2BPaymentMethodFilterType](enums/B2BPaymentMethodFilterType.md)
 - [CheckoutButtonMethodType](enums/CheckoutButtonMethodType.md)
 - [CheckoutIncludes](enums/CheckoutIncludes.md)
 - [EmbeddedCheckoutEventType](enums/EmbeddedCheckoutEventType.md)

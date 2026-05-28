@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.920.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.919.0...v1.920.0) (2026-05-28)
+
+
+### Features
+
+* **payment:** CHECKOUT-9818 Add filtering for b2b invoice payment methods ([#3265](https://github.com/bigcommerce/checkout-sdk-js/issues/3265)) ([d06bc9c](https://github.com/bigcommerce/checkout-sdk-js/commit/d06bc9cf3cba4fdcf527cf0718cb184c075b86d1))
+* **payment:** PAYPAL-6469 wallet-button-integration package with core bundle integration ([f5c8390](https://github.com/bigcommerce/checkout-sdk-js/commit/f5c83904ee769452b1c3f436aca1e66d0ecf98df))
+
 ## [1.919.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.918.0...v1.919.0) (2026-05-27)
 
 

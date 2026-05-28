@@ -31,6 +31,8 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { VaultedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 declare interface AllowedPaymentMethods {
     type: string;
@@ -1669,6 +1671,24 @@ declare class PayPalCommerceVenmoPaymentStrategy implements PaymentStrategy {
     private toggleLoadingIndicator;
 }
 
+declare interface PayPalCommerceWalletInitializeOptions {
+    initializationData: string;
+}
+
+/**
+ * PayPal Commerce Wallet Button Strategy stub for headless wallet button integration.
+ *
+ * This is an empty stub class at this stage. Concrete implementation will be
+ * added in follow-up tickets.
+ */
+declare class PayPalCommerceWalletStrategy implements CheckoutButtonStrategy {
+    private walletButtonIntegrationService;
+    constructor(walletButtonIntegrationService: WalletButtonIntegrationService);
+    getWalletButtonIntegrationService(): WalletButtonIntegrationService;
+    initialize(_options: CheckoutButtonInitializeOptions & WithPayPalCommerceWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+}
+
 declare interface PayPalCreateOrderCardFieldsResponse {
     orderId: string;
     setupToken?: string;
@@ -2010,6 +2030,10 @@ declare interface WithPayPalCommerceVenmoPaymentInitializeOptions {
     paypalcommercevenmo?: PayPalCommerceVenmoPaymentInitializeOptions;
 }
 
+declare interface WithPayPalCommerceWalletInitializeOptions {
+    paypalcommercepaypal?: PayPalCommerceWalletInitializeOptions;
+}
+
 export declare const createPayPalCommerceAlternativeMethodsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PayPalCommerceAlternativeMethodsPaymentStrategy>, {
     gateway: string;
 }>;
@@ -2064,5 +2088,9 @@ export declare const createPayPalCommerceVenmoCustomerStrategy: import("../../..
 }>;
 
 export declare const createPayPalCommerceVenmoPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PayPalCommerceVenmoPaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createPayPalCommerceWalletStrategy: import("../../../payment-integration-api/src/resolvable-module").default<WalletPaymentButtonStrategyFactory<PayPalCommerceWalletStrategy>, {
     id: string;
 }>;

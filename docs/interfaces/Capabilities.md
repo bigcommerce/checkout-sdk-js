@@ -66,7 +66,7 @@ ___
 | :------ | :------ |
 | `additionalField` | ``null`` \| \{ `label`: `string` ; `required`: `boolean`  } |
 | `additionalPaymentNotes` | `boolean` |
-| `b2bPaymentMethodFilter` | `boolean` |
+| `b2bPaymentMethodFilterType` | ``null`` \| [`B2BPaymentMethodFilterType`](../enums/B2BPaymentMethodFilterType.md) |
 | `excludeOfflineForInvoice` | `boolean` |
 | `excludePPSDK` | `boolean` |
 | `paymentMethodFiltering` | `boolean` |

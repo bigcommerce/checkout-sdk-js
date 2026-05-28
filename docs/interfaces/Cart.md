@@ -117,7 +117,7 @@ ___
 
 ### source
 
-• `Optional` **source**: `BuyNow`
+• `Optional` **source**: `CartSource`
 
 ___
 

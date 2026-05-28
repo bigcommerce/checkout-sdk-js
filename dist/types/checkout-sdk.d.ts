@@ -671,6 +671,11 @@ declare interface B2BApiSettings {
     baseUrl: string;
 }
 
+declare enum B2BPaymentMethodFilterType {
+    Standard = "STANDARD",
+    Invoice = "INVOICE"
+}
+
 declare interface B2BTokenSelector {
     getToken(): string | undefined;
     getLoadError(): Error | undefined;
@@ -2290,7 +2295,7 @@ declare interface Capabilities {
     };
     payment: {
         paymentMethodFiltering: boolean;
-        b2bPaymentMethodFilter: boolean;
+        b2bPaymentMethodFilterType: B2BPaymentMethodFilterType | null;
         poPaymentMethod: boolean;
         poConfig: {
             label: string;
