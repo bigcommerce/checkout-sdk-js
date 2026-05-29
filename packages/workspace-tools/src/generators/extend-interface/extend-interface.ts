@@ -89,7 +89,7 @@ async function createImportDeclaration(
 
             return statement.exportClause.elements.filter(ts.isExportSpecifier);
         })
-        .map((element) => element.name.escapedText.toString())
+        .map((element) => element.name.text)
         .filter((memberName) => memberName?.match(new RegExp(memberPattern)));
 
     if (memberNames.length === 0) {

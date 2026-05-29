@@ -140,7 +140,7 @@
     "ts-loader": "^9.5.1",
     "typedoc": "^0.25.0",
     "typedoc-plugin-markdown": "^3.11.0",
-    "typescript": "~5.5.4",
+    "typescript": "~5.8.3",
     "webpack": "^5.101.3",
     "webpack-assets-manifest": "^5.1.0",
     "webpack-bundle-analyzer": "^4.5.0",

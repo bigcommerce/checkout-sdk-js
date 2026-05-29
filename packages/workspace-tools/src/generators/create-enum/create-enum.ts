@@ -55,9 +55,7 @@ async function getEnumMembers(filePath: string, memberPattern: string): Promise<
 
             return statement.exportClause.elements
                 .filter(ts.isExportSpecifier)
-                .find((element) =>
-                    element.name.escapedText.toString().match(new RegExp(memberPattern)),
-                );
+                .find((element) => element.name.text.match(new RegExp(memberPattern)));
         })
         .map((statement) => statement.moduleSpecifier?.getText(root)?.replace(/'|"/g, ''))
         .filter(exists);
