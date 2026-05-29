@@ -203,6 +203,10 @@ export default class StripeIntegrationService {
         return some(errors, { code: 'additional_action_required' });
     }
 
+    isSessionExpiredError(errors: Array<{ code: string }>): boolean {
+        return some(errors, { code: 'authorization_expired' });
+    }
+
     isRedirectAction(additionalAction: StripeAdditionalActionRequired): boolean {
         const {
             type,

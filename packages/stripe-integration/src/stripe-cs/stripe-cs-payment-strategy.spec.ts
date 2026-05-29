@@ -1249,6 +1249,102 @@ describe('StripeOCSPaymentStrategy', () => {
             ).rejects.toThrow(Error);
         });
 
+        describe('session expired error', () => {
+            let sessionExpiredErrorResponse: RequestError;
+            let initializeSpy: jest.SpyInstance;
+            let deinitializeSpy: jest.SpyInstance;
+
+            beforeEach(() => {
+                sessionExpiredErrorResponse = new RequestError(
+                    getResponse({
+                        ...getErrorPaymentResponseBody(),
+                        errors: [{ code: 'authorization_expired' }],
+                        status: 'error',
+                    }),
+                );
+
+                jest.spyOn(stripeIntegrationService, 'isAdditionalActionError').mockReturnValue(
+                    false,
+                );
+                jest.spyOn(stripeIntegrationService, 'isSessionExpiredError').mockReturnValue(true);
+
+                initializeSpy = jest.spyOn(stripeCSPaymentStrategy, 'initialize');
+                deinitializeSpy = jest.spyOn(stripeCSPaymentStrategy, 'deinitialize');
+            });
+
+            it('rethrows the original error when session is expired', async () => {
+                mockFirstPaymentRequest(sessionExpiredErrorResponse);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+                ).rejects.toBe(sessionExpiredErrorResponse);
+            });
+
+            it('triggers a background reinitialization (deinitialize then initialize) on session expiry', async () => {
+                mockFirstPaymentRequest(sessionExpiredErrorResponse);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+                initializeSpy.mockClear();
+                deinitializeSpy.mockClear();
+
+                await expect(
+                    stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+                ).rejects.toBe(sessionExpiredErrorResponse);
+
+                // Background reinit is fire-and-forget — flush microtasks before asserting.
+                await new Promise((resolve) => setImmediate(resolve));
+
+                expect(deinitializeSpy).toHaveBeenCalledTimes(1);
+                expect(initializeSpy).toHaveBeenCalledTimes(1);
+                expect(deinitializeSpy.mock.invocationCallOrder[0]).toBeLessThan(
+                    initializeSpy.mock.invocationCallOrder[0],
+                );
+            });
+
+            it('passes the cached stripe options (cloned) and current gateway/method ids on reinitialization', async () => {
+                mockFirstPaymentRequest(sessionExpiredErrorResponse);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+                initializeSpy.mockClear();
+
+                await expect(
+                    stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+                ).rejects.toBe(sessionExpiredErrorResponse);
+
+                await new Promise((resolve) => setImmediate(resolve));
+
+                expect(initializeSpy).toHaveBeenCalledWith({
+                    gatewayId,
+                    methodId,
+                    stripeocs: stripeOptions.stripeocs,
+                });
+
+                // Verify the stripeocs is cloned, not the same reference as what was captured during initial init.
+                const reinitArgs = initializeSpy.mock.calls[0][0];
+
+                expect(reinitArgs.stripeocs).not.toBe(stripeOptions.stripeocs);
+            });
+
+            it('does not invoke session-expired branch when error is not a RequestError', async () => {
+                mockFirstPaymentRequest(new Error('not a request error'));
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+                initializeSpy.mockClear();
+                deinitializeSpy.mockClear();
+
+                await expect(
+                    stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+                ).rejects.toThrow('not a request error');
+
+                await new Promise((resolve) => setImmediate(resolve));
+
+                expect(deinitializeSpy).not.toHaveBeenCalled();
+                expect(initializeSpy).not.toHaveBeenCalled();
+            });
+        });
+
         it('throws not initialized error', async () => {
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() => {
                 stripeCSPaymentStrategy.deinitialize();

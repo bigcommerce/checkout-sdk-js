@@ -37,6 +37,7 @@ export const getStripeIntegrationServiceMock = () =>
             },
         })),
         isAdditionalActionError: jest.fn(() => false),
+        isSessionExpiredError: jest.fn(() => false),
         isRedirectAction: jest.fn(() => false),
         isOnPageAdditionalAction: jest.fn(() => false),
         updateStripePaymentIntent: jest.fn(() => Promise.resolve()),
