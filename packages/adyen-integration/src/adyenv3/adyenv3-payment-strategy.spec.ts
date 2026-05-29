@@ -291,8 +291,8 @@ describe('AdyenV3PaymentStrategy', () => {
                 );
             });
 
-            it('throws an error when payment is not present', () => {
-                expect(strategy.execute(getOrderRequestBodyWithoutPayment())).rejects.toThrow(
+            it('throws an error when payment is not present', async () => {
+                await expect(strategy.execute(getOrderRequestBodyWithoutPayment())).rejects.toThrow(
                     PaymentArgumentInvalidError,
                 );
             });

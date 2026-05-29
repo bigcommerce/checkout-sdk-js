@@ -54,7 +54,7 @@ describe('GoogleRecaptchaScriptLoader', () => {
             }
         });
 
-        it('calls the callback after the script is loaded', () => {
+        it('calls the callback after the script is loaded', async () => {
             googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(scriptLoader, mockWindow);
 
             const loadPromise = googleRecaptchaScriptLoader.load();
@@ -62,7 +62,7 @@ describe('GoogleRecaptchaScriptLoader', () => {
             mockWindow.grecaptcha = getGoogleRecaptchaMock();
             mockWindow.initRecaptcha!();
 
-            expect(loadPromise).resolves.toEqual(mockWindow.grecaptcha);
+            await expect(loadPromise).resolves.toEqual(mockWindow.grecaptcha);
         });
     });
 });

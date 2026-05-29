@@ -55,7 +55,6 @@ function createTypeAliasDeclaration(
     mergableMemberNames: string[],
 ): ts.TypeAliasDeclaration {
     return ts.factory.createTypeAliasDeclaration(
-        undefined,
         [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
         ts.factory.createIdentifier(aliasMemberName),
         undefined,
@@ -98,7 +97,6 @@ async function createImportDeclaration(
     }
 
     return ts.factory.createImportDeclaration(
-        undefined,
         undefined,
         ts.factory.createImportClause(
             false,

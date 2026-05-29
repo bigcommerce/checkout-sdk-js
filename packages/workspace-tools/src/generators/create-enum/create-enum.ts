@@ -97,7 +97,6 @@ function deduplicateEnumMembers(enumMembers: ts.EnumMember[]): ts.EnumMember[] {
 function createEnumDeclaration(enumName: string, enumMembers: ts.EnumMember[]): ts.EnumDeclaration {
     return ts.factory.createEnumDeclaration(
         undefined,
-        undefined,
         ts.factory.createIdentifier(enumName),
         enumMembers,
     );
@@ -105,7 +104,6 @@ function createEnumDeclaration(enumName: string, enumMembers: ts.EnumMember[]): 
 
 function createExportAssignment(enumName: string): ts.ExportAssignment {
     return ts.factory.createExportAssignment(
-        undefined,
         undefined,
         undefined,
         ts.factory.createIdentifier(enumName),

@@ -332,8 +332,8 @@ describe('CheckoutActionCreator', () => {
 
             try {
                 await from(actionCreator.loadDefaultCheckout()(store)).toPromise();
-            } catch ({ payload }) {
-                expect(payload).toBeInstanceOf(StandardError);
+            } catch (error) {
+                expect((error as { payload: unknown }).payload).toBeInstanceOf(StandardError);
             }
         });
 

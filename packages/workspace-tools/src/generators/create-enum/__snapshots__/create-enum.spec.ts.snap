@@ -2,8 +2,8 @@
 
 exports[`createEnum() export matching members from files to another file 1`] = `
 "enum Type {
-    TYPEA = \\"typeA\\",
-    TYPEB = \\"typeB\\"
+    TYPEA = "typeA",
+    TYPEB = "typeB"
 }
 export default Type;
 "

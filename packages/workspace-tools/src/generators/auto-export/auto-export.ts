@@ -148,7 +148,6 @@ async function createExportDeclaration(
 
     const exportDeclaration = ts.factory.createExportDeclaration(
         undefined,
-        undefined,
         false,
         ts.factory.createNamedExports(
             memberNames.map((memberName) =>

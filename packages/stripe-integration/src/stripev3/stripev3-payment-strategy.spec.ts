@@ -76,7 +76,7 @@ describe('StripeV3PaymentStrategy', () => {
         stripeScriptLoader = new StripeV3ScriptLoader(scriptLoader);
         checkoutMock = getCheckout();
 
-        jest.useFakeTimers();
+        jest.useFakeTimers({ doNotFake: ['nextTick'] });
 
         jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
