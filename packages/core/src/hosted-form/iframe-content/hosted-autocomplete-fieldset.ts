@@ -33,7 +33,7 @@ export default class HostedAutocompleteFieldset {
     private _createInput(type: HostedFieldType): HTMLInputElement {
         const input = document.createElement('input');
 
-        input.autocomplete = mapToAutocompleteType(type);
+        input.autocomplete = mapToAutocompleteType(type) as AutoFill;
         input.id = this._getAutocompleteElementId(type);
         input.tabIndex = -1;
         input.style.position = 'absolute';
