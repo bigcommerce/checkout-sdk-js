@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.921.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.920.2...v1.921.0) (2026-06-01)
+
+
+### Features
+
+* **payment:** PI-5216 show full list of payment methods when GooglePay direct-pay flow payment is processed ([#3267](https://github.com/bigcommerce/checkout-sdk-js/issues/3267)) ([c797096](https://github.com/bigcommerce/checkout-sdk-js/commit/c79709607b187e319061b71bd67ec2f912ad2c61))
+
 ### [1.920.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.920.1...v1.920.2) (2026-06-01)
 
 ### [1.920.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.920.0...v1.920.1) (2026-05-28)
