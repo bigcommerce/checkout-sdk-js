@@ -96,10 +96,10 @@ describe('PaymentHumanVerificationHandler', () => {
             );
         });
 
-        it('rethrows error if error is not human verification error', () => {
+        it('rethrows error if error is not human verification error', async () => {
             const error = new Error('foobar');
 
-            expect(paymentHumanVerificationHandler.handle(error)).rejects.toThrow(error);
+            await expect(paymentHumanVerificationHandler.handle(error)).rejects.toThrow(error);
         });
     });
 });

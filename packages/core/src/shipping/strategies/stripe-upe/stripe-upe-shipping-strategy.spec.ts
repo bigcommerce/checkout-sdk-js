@@ -16,11 +16,7 @@ import {
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 
 import { CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    NotInitializedError,
-} from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { getGuestCustomer } from '../../../customer/customers.mock';
 import { getAddressFormFields } from '../../../form/form.mock';
 import {
@@ -198,13 +194,13 @@ describe('StripeUPEShippingStrategy', () => {
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 
-        it('does not load stripeUPE if initialization options are not provided', () => {
+        it('does not load stripeUPE if initialization options are not provided', async () => {
             const promise = strategy.initialize({ methodId: 'stripeupe' });
 
-            expect(promise).rejects.toThrow(NotInitializedError);
+            await expect(promise).rejects.toThrow(InvalidArgumentError);
         });
 
-        it('does not load stripeUPE if UPE options are not provided', () => {
+        it('does not load stripeUPE if UPE options are not provided', async () => {
             const promise = strategy.initialize({
                 methodId: 'stripeupe',
                 stripeupe: {
@@ -216,7 +212,7 @@ describe('StripeUPEShippingStrategy', () => {
                 },
             });
 
-            expect(promise).rejects.toThrow(InvalidArgumentError);
+            await expect(promise).rejects.toThrow(InvalidArgumentError);
         });
 
         it('does not load stripeUPE when styles is provided', async () => {
@@ -286,17 +282,17 @@ describe('StripeUPEShippingStrategy', () => {
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 
-        it('returns an error when methodId is not present', () => {
+        it('returns an error when methodId is not present', async () => {
             const promise = strategy.initialize({
                 ...getStripeUPEShippingInitializeOptionsMock(),
                 stripeupe: undefined,
                 methodId: '',
             });
 
-            expect(promise).rejects.toBeInstanceOf(InvalidArgumentError);
+            await expect(promise).rejects.toBeInstanceOf(InvalidArgumentError);
         });
 
-        it('returns an error when stripePublishableKey, or clientToken is not present', () => {
+        it('returns an error when stripePublishableKey, or clientToken is not present', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
                 ...getStripeUPE(),
                 initializationData: {},
@@ -304,7 +300,7 @@ describe('StripeUPEShippingStrategy', () => {
 
             const promise = strategy.initialize(shippingInitialization);
 
-            expect(promise).rejects.toBeInstanceOf(MissingDataError);
+            await expect(promise).rejects.toBeInstanceOf(MissingDataError);
         });
 
         it('loads a single instance of StripeUPEClient without first and last name fields', async () => {

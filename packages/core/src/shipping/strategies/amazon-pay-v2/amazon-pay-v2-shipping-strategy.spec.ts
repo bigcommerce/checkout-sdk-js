@@ -222,14 +222,16 @@ describe('AmazonPayV2ShippingStrategy', () => {
             );
         });
 
-        it('does not initialize the paymentProcessor if no options.methodId are provided', () => {
+        it('does not initialize the paymentProcessor if no options.methodId are provided', async () => {
             initializeOptions.methodId = '';
 
-            expect(strategy.initialize(initializeOptions)).rejects.toThrow(InvalidArgumentError);
+            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(
+                InvalidArgumentError,
+            );
             expect(amazonPayV2PaymentProcessor.initialize).not.toHaveBeenCalled();
         });
 
-        it('does not initialize the paymentProcessor if there is no payment method data', () => {
+        it('does not initialize the paymentProcessor if there is no payment method data', async () => {
             const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
             const state = { ...getCheckoutStoreState(), paymentMethods };
 
@@ -242,7 +244,7 @@ describe('AmazonPayV2ShippingStrategy', () => {
                 shippingStrategyActionCreator,
             );
 
-            expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
+            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
             expect(amazonPayV2PaymentProcessor.initialize).not.toHaveBeenCalled();
         });
 

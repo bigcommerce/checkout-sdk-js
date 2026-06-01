@@ -41,7 +41,7 @@ describe('SquareV2ScriptLoader', () => {
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(SquareV2WebPaymentsSdkEnv.SANDBOX);
         });
 
-        it('should fail to load the Web Payments SDK', () => {
+        it('should fail to load the Web Payments SDK', async () => {
             jest.spyOn(scriptLoader, 'loadScript').mockImplementationOnce(() => {
                 delete window.Square;
 
@@ -50,7 +50,7 @@ describe('SquareV2ScriptLoader', () => {
 
             const sdkPromise = squarev2ScriptLoader.load();
 
-            expect(sdkPromise).rejects.toThrow(PaymentMethodClientUnavailableError);
+            await expect(sdkPromise).rejects.toThrow(PaymentMethodClientUnavailableError);
         });
     });
 });

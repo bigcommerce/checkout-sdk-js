@@ -28,7 +28,7 @@ describe('getEnvironment', () => {
     });
 
     it('defaults to development if process is not defined', () => {
-        delete (global as Partial<NodeJS.Global>).process;
+        delete (global as Partial<typeof global>).process;
 
         expect(getEnvironment()).toBe('development');
     });

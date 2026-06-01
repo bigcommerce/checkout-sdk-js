@@ -192,7 +192,7 @@ describe('ApplePayPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
             applePaySession.oncancel();
 
-            expect(promise).rejects.toThrow(
+            await expect(promise).rejects.toThrow(
                 new PaymentMethodCancelledError('Continue with applepay'),
             );
         });

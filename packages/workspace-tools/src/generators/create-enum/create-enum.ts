@@ -55,9 +55,7 @@ async function getEnumMembers(filePath: string, memberPattern: string): Promise<
 
             return statement.exportClause.elements
                 .filter(ts.isExportSpecifier)
-                .find((element) =>
-                    element.name.escapedText.toString().match(new RegExp(memberPattern)),
-                );
+                .find((element) => element.name.text.match(new RegExp(memberPattern)));
         })
         .map((statement) => statement.moduleSpecifier?.getText(root)?.replace(/'|"/g, ''))
         .filter(exists);
@@ -97,7 +95,6 @@ function deduplicateEnumMembers(enumMembers: ts.EnumMember[]): ts.EnumMember[] {
 function createEnumDeclaration(enumName: string, enumMembers: ts.EnumMember[]): ts.EnumDeclaration {
     return ts.factory.createEnumDeclaration(
         undefined,
-        undefined,
         ts.factory.createIdentifier(enumName),
         enumMembers,
     );
@@ -105,7 +102,6 @@ function createEnumDeclaration(enumName: string, enumMembers: ts.EnumMember[]): 
 
 function createExportAssignment(enumName: string): ts.ExportAssignment {
     return ts.factory.createExportAssignment(
-        undefined,
         undefined,
         undefined,
         ts.factory.createIdentifier(enumName),

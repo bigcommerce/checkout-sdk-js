@@ -133,7 +133,7 @@ export default class HostedInput {
         this._input.style.width = '100%';
         this._input.id = kebabCase(this._type);
         this._input.placeholder = this._placeholder;
-        this._input.autocomplete = this._autocomplete;
+        this._input.autocomplete = this._autocomplete as AutoFill;
 
         this._input.setAttribute('aria-label', this._accessibilityLabel);
 

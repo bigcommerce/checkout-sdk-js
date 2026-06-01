@@ -139,7 +139,7 @@ async function createExportDeclaration(
 
             return statement.exportClause.elements.filter(ts.isExportSpecifier);
         })
-        .map((element) => element.name.escapedText.toString())
+        .map((element) => element.name.text)
         .filter((memberName) => memberName?.match(new RegExp(memberPattern)));
 
     if (memberNames.length === 0) {
@@ -147,7 +147,6 @@ async function createExportDeclaration(
     }
 
     const exportDeclaration = ts.factory.createExportDeclaration(
-        undefined,
         undefined,
         false,
         ts.factory.createNamedExports(
