@@ -762,6 +762,9 @@ describe('GooglePayPaymentStrategy', () => {
                 },
             };
 
+            let interactWithPaymentSheetSpy: jest.SpyInstance;
+            let completeCheckoutFlowSpy: jest.SpyInstance;
+
             beforeEach(async () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
@@ -770,7 +773,20 @@ describe('GooglePayPaymentStrategy', () => {
 
                 jest.spyOn(processor, 'mapToBillingAddressRequestBody').mockReturnValue(undefined);
 
+                interactWithPaymentSheetSpy = jest
+                    .spyOn(Object.getPrototypeOf(strategy), '_interactWithPaymentSheet')
+                    .mockResolvedValue(undefined);
+
+                completeCheckoutFlowSpy = jest
+                    .spyOn(Object.getPrototypeOf(strategy), '_completeCheckoutFlow')
+                    .mockImplementation(() => undefined);
+
                 await strategy.initialize(options);
+            });
+
+            afterEach(() => {
+                interactWithPaymentSheetSpy.mockRestore();
+                completeCheckoutFlowSpy.mockRestore();
             });
 
             it('should show loading indicator on button click', async () => {
@@ -792,12 +808,30 @@ describe('GooglePayPaymentStrategy', () => {
                 );
             });
 
-            it('should load checkout after receiving payment sheet response', async () => {
-                button.click();
+            it('should NOT call loadCheckout on the success path', async () => {
+                const strategyInternal = strategy as unknown as {
+                    _interactWithPaymentSheetAndPay(): Promise<void>;
+                };
 
-                await new Promise((resolve) => process.nextTick(resolve));
+                await strategyInternal._interactWithPaymentSheetAndPay();
 
-                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
+                expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
+            });
+
+            it('should call loadCheckout and re-throw when execute() throws, to restore UI state', async () => {
+                const paymentError = new Error('payment failed');
+
+                jest.spyOn(strategy, 'execute').mockRejectedValueOnce(paymentError);
+
+                const strategyInternal = strategy as unknown as {
+                    _interactWithPaymentSheetAndPay(): Promise<void>;
+                };
+
+                await expect(strategyInternal._interactWithPaymentSheetAndPay()).rejects.toThrow(
+                    paymentError,
+                );
+
+                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledTimes(1);
             });
 
             it('should load payment method with the correct methodId', async () => {
@@ -1069,6 +1103,28 @@ describe('GooglePayPaymentStrategy', () => {
                     useStoreCredit: false,
                     payment: { methodId: options.methodId },
                 });
+            });
+
+            it('should NOT call loadCheckout on the success path', async () => {
+                brandedButton.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
+            });
+
+            it('should call loadCheckout, invoke onError, hide loading indicator, and re-throw when execute() throws', async () => {
+                const paymentError = new Error('payment failed');
+
+                jest.spyOn(strategy, 'execute').mockRejectedValueOnce(paymentError);
+
+                await expect(containerButtonOnClick(new MouseEvent('click'))).rejects.toThrow(
+                    paymentError,
+                );
+
+                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledTimes(1);
+                expect(options.googlepayworldpayaccess?.onError).toHaveBeenCalled();
+                expect(LoadingHide).toHaveBeenCalled();
             });
 
             it('should call onError when initializeWidget throws', async () => {
