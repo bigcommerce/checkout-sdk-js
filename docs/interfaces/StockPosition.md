@@ -1,36 +1,31 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StockPosition
 
 # Interface: StockPosition
-
-## Table of contents
-
-### Properties
-
-- [backorderMessage](StockPosition.md#backordermessage)
-- [quantityBackordered](StockPosition.md#quantitybackordered)
-- [quantityOnHand](StockPosition.md#quantityonhand)
-- [quantityOutOfStock](StockPosition.md#quantityoutofstock)
 
 ## Properties
 
 ### backorderMessage
 
-• **backorderMessage**: ``null`` \| `string`
+> **backorderMessage**: `string` \| `null`
 
-___
+***
 
 ### quantityBackordered
 
-• **quantityBackordered**: `number`
+> **quantityBackordered**: `number`
 
-___
+***
 
 ### quantityOnHand
 
-• **quantityOnHand**: `number`
+> **quantityOnHand**: `number`
 
-___
+***
 
 ### quantityOutOfStock
 
-• **quantityOutOfStock**: `number`
+> **quantityOutOfStock**: `number`

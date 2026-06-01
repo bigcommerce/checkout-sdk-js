@@ -1,4 +1,3 @@
-/// <reference types="applepayjs" />
 import { BraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CheckoutButtonInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -228,14 +227,14 @@ declare interface WithApplePayPaymentInitializeOptions {
     applepay?: ApplePayPaymentInitializeOptions;
 }
 
-export declare const createApplePayButtonStrategy: import("../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<ApplePayButtonStrategy>, {
+export declare const createApplePayButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<ApplePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createApplePayCustomerStrategy: import("../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<ApplePayCustomerStrategy>, {
+export declare const createApplePayCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<ApplePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createApplePayPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<ApplePayPaymentStrategy>, {
+export declare const createApplePayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<ApplePayPaymentStrategy>, {
     id: string;
 }>;

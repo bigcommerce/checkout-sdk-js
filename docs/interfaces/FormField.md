@@ -1,127 +1,109 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / FormField
 
 # Interface: FormField
-
-## Table of contents
-
-### Properties
-
-- [custom](FormField.md#custom)
-- [default](FormField.md#default)
-- [fieldType](FormField.md#fieldtype)
-- [hidden](FormField.md#hidden)
-- [id](FormField.md#id)
-- [inputDateFormat](FormField.md#inputdateformat)
-- [itemtype](FormField.md#itemtype)
-- [label](FormField.md#label)
-- [max](FormField.md#max)
-- [maxLength](FormField.md#maxlength)
-- [min](FormField.md#min)
-- [name](FormField.md#name)
-- [options](FormField.md#options)
-- [required](FormField.md#required)
-- [requirements](FormField.md#requirements)
-- [secret](FormField.md#secret)
-- [type](FormField.md#type)
 
 ## Properties
 
 ### custom
 
-• **custom**: `boolean`
+> **custom**: `boolean`
 
-___
+***
 
-### default
+### default?
 
-• `Optional` **default**: `string`
+> `optional` **default?**: `string`
 
-___
+***
 
-### fieldType
+### fieldType?
 
-• `Optional` **fieldType**: [`FormFieldFieldType`](../README.md#formfieldfieldtype)
+> `optional` **fieldType?**: [`FormFieldFieldType`](../type-aliases/FormFieldFieldType.md)
 
-___
+***
 
-### hidden
+### hidden?
 
-• `Optional` **hidden**: `boolean`
+> `optional` **hidden?**: `boolean`
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
-### inputDateFormat
+### inputDateFormat?
 
-• `Optional` **inputDateFormat**: `string`
+> `optional` **inputDateFormat?**: `string`
 
-___
+***
 
-### itemtype
+### itemtype?
 
-• `Optional` **itemtype**: `string`
+> `optional` **itemtype?**: `string`
 
-___
+***
 
 ### label
 
-• **label**: `string`
+> **label**: `string`
 
-___
+***
 
-### max
+### max?
 
-• `Optional` **max**: `string` \| `number`
+> `optional` **max?**: `string` \| `number`
 
-___
+***
 
-### maxLength
+### maxLength?
 
-• `Optional` **maxLength**: `number`
+> `optional` **maxLength?**: `number`
 
-___
+***
 
-### min
+### min?
 
-• `Optional` **min**: `string` \| `number`
+> `optional` **min?**: `string` \| `number`
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
-___
+***
 
-### options
+### options?
 
-• `Optional` **options**: [`FormFieldOptions`](FormFieldOptions.md)
+> `optional` **options?**: [`FormFieldOptions`](FormFieldOptions.md)
 
-___
+***
 
 ### required
 
-• **required**: `boolean`
+> **required**: `boolean`
 
-___
+***
 
-### requirements
+### requirements?
 
-• `Optional` **requirements**: [`CustomerPasswordRequirements`](CustomerPasswordRequirements.md)
+> `optional` **requirements?**: [`CustomerPasswordRequirements`](CustomerPasswordRequirements.md)
 
-___
+***
 
-### secret
+### secret?
 
-• `Optional` **secret**: `boolean`
+> `optional` **secret?**: `boolean`
 
-___
+***
 
-### type
+### type?
 
-• `Optional` **type**: [`FormFieldType`](../README.md#formfieldtype)
+> `optional` **type?**: [`FormFieldType`](../type-aliases/FormFieldType.md)

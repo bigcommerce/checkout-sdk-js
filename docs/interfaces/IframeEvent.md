@@ -1,29 +1,29 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / IframeEvent
 
 # Interface: IframeEvent\<TType, TPayload\>
 
-## Type parameters
+## Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TType` | `string` |
-| `TPayload` | `any` |
+### TType
 
-## Table of contents
+`TType` = `string`
 
-### Properties
+### TPayload
 
-- [payload](IframeEvent.md#payload)
-- [type](IframeEvent.md#type)
+`TPayload` = `any`
 
 ## Properties
 
-### payload
+### payload?
 
-• `Optional` **payload**: `TPayload`
+> `optional` **payload?**: `TPayload`
 
-___
+***
 
 ### type
 
-• **type**: `TType`
+> **type**: `TType`

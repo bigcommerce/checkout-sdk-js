@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CustomerRequestOptions
 
 # Interface: CustomerRequestOptions
@@ -9,48 +13,38 @@ Some payment methods have their own sign-in or sign-out flow. Therefore, you
 need to indicate the method you want to use if you need to trigger a specific
 flow for signing in or out a customer. Otherwise, these options are not required.
 
-## Hierarchy
+## Extends
 
 - [`RequestOptions`](RequestOptions.md)
 
-  ↳ **`CustomerRequestOptions`**
+## Extended by
 
-  ↳↳ [`BaseCustomerInitializeOptions`](BaseCustomerInitializeOptions.md)
-
-  ↳↳ [`ExecutePaymentMethodCheckoutOptions`](ExecutePaymentMethodCheckoutOptions.md)
-
-## Table of contents
-
-### Properties
-
-- [methodId](CustomerRequestOptions.md#methodid)
-- [params](CustomerRequestOptions.md#params)
-- [timeout](CustomerRequestOptions.md#timeout)
-- [version](CustomerRequestOptions.md#version)
+- [`BaseCustomerInitializeOptions`](BaseCustomerInitializeOptions.md)
+- [`ExecutePaymentMethodCheckoutOptions`](ExecutePaymentMethodCheckoutOptions.md)
 
 ## Properties
 
-### methodId
+### methodId?
 
-• `Optional` **methodId**: `string`
+> `optional` **methodId?**: `string`
 
-___
+***
 
-### params
+### params?
 
-• `Optional` **params**: `object`
+> `optional` **params?**: `object`
 
 The parameters of the request, if required.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[params](RequestOptions.md#params)
+[`RequestOptions`](RequestOptions.md).[`params`](RequestOptions.md#params)
 
-___
+***
 
-### timeout
+### timeout?
 
-• `Optional` **timeout**: `default`
+> `optional` **timeout?**: `Timeout`
 
 Provide this option if you want to cancel or time out the request. If the
 timeout object completes before the request, the request will be
@@ -58,16 +52,16 @@ cancelled.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[timeout](RequestOptions.md#timeout)
+[`RequestOptions`](RequestOptions.md).[`timeout`](RequestOptions.md#timeout)
 
-___
+***
 
-### version
+### version?
 
-• `Optional` **version**: `number`
+> `optional` **version?**: `number`
 
 The version of the checkout, used for optimistic concurrency control.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[version](RequestOptions.md#version)
+[`RequestOptions`](RequestOptions.md).[`version`](RequestOptions.md#version)

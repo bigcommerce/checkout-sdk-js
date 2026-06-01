@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceFastlanePaymentInitializeOptions
 
 # Interface: PayPalCommerceFastlanePaymentInitializeOptions
@@ -47,88 +51,67 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [onChange](PayPalCommerceFastlanePaymentInitializeOptions.md#onchange)
-- [onError](PayPalCommerceFastlanePaymentInitializeOptions.md#onerror)
-- [onInit](PayPalCommerceFastlanePaymentInitializeOptions.md#oninit)
-- [styles](PayPalCommerceFastlanePaymentInitializeOptions.md#styles)
-
 ## Properties
 
-### onChange
+### onChange?
 
-• `Optional` **onChange**: (`showPayPalCardSelector`: () => `Promise`\<`undefined` \| `CardInstrument`\>) => `void`
+> `optional` **onChange?**: (`showPayPalCardSelector`) => `void`
 
 Is a callback that shows PayPal stored instruments
 when get triggered
 
-#### Type declaration
+#### Parameters
 
-▸ (`showPayPalCardSelector`): `void`
+##### showPayPalCardSelector
 
-##### Parameters
+() => `Promise`\<`CardInstrument` \| `undefined`\>
 
-| Name | Type |
-| :------ | :------ |
-| `showPayPalCardSelector` | () => `Promise`\<`undefined` \| `CardInstrument`\> |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### onError
+### onError?
 
-• `Optional` **onError**: (`error`: `unknown`) => `void`
+> `optional` **onError?**: (`error`) => `void`
 
 Callback that handles errors
 
-#### Type declaration
+#### Parameters
 
-▸ (`error`): `void`
+##### error
 
-##### Parameters
+`unknown`
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `unknown` |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### onInit
+### onInit?
 
-• `Optional` **onInit**: (`renderPayPalCardComponent`: (`container`: `string`) => `void`) => `void`
+> `optional` **onInit?**: (`renderPayPalCardComponent`) => `void`
 
 Is a callback that takes the CSS selector of a container
 where the PayPal Fastlane form should be inserted into.
 
-#### Type declaration
+#### Parameters
 
-▸ (`renderPayPalCardComponent`): `void`
+##### renderPayPalCardComponent
 
-##### Parameters
+(`container`) => `void`
 
-| Name | Type |
-| :------ | :------ |
-| `renderPayPalCardComponent` | (`container`: `string`) => `void` |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### styles
+### styles?
 
-• `Optional` **styles**: `PayPalFastlaneStylesOption`
+> `optional` **styles?**: `PayPalFastlaneStylesOption`
 
 Is a stylisation options for customizing PayPal Fastlane components
 

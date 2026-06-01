@@ -1,80 +1,71 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / InputDetail
 
 # Interface: InputDetail
 
-## Table of contents
-
-### Properties
-
-- [configuration](InputDetail.md#configuration)
-- [details](InputDetail.md#details)
-- [itemSearchUrl](InputDetail.md#itemsearchurl)
-- [items](InputDetail.md#items)
-- [key](InputDetail.md#key)
-- [optional](InputDetail.md#optional)
-- [type](InputDetail.md#type)
-- [value](InputDetail.md#value)
-
 ## Properties
 
-### configuration
+### configuration?
 
-• `Optional` **configuration**: `object`
+> `optional` **configuration?**: `object`
 
 Configuration parameters for the required input.
 
-___
+***
 
-### details
+### details?
 
-• `Optional` **details**: [`SubInputDetail`](SubInputDetail.md)[]
+> `optional` **details?**: [`SubInputDetail`](SubInputDetail.md)[]
 
 Input details can also be provided recursively.
 
-___
+***
 
-### itemSearchUrl
+### items?
 
-• `Optional` **itemSearchUrl**: `string`
-
-In case of a select, the URL from which to query the items.
-
-___
-
-### items
-
-• `Optional` **items**: [`Item_2`](Item_2.md)[]
+> `optional` **items?**: [`Item_2`](Item_2.md)[]
 
 In case of a select, the items to choose from.
 
-___
+***
 
-### key
+### itemSearchUrl?
 
-• `Optional` **key**: `string`
+> `optional` **itemSearchUrl?**: `string`
+
+In case of a select, the URL from which to query the items.
+
+***
+
+### key?
+
+> `optional` **key?**: `string`
 
 The value to provide in the result.
 
-___
+***
 
-### optional
+### optional?
 
-• `Optional` **optional**: `boolean`
+> `optional` **optional?**: `boolean`
 
 True if this input value is optional.
 
-___
+***
 
-### type
+### type?
 
-• `Optional` **type**: `string`
+> `optional` **type?**: `string`
 
 The type of the required input.
 
-___
+***
 
-### value
+### value?
 
-• `Optional` **value**: `string`
+> `optional` **value?**: `string`
 
 The value can be pre-filled, if available.

@@ -1,142 +1,127 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StoredCardHostedFormInstrumentFields
 
 # Interface: StoredCardHostedFormInstrumentFields
 
-## Hierarchy
+## Extends
 
 - [`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md)
-
-  ↳ **`StoredCardHostedFormInstrumentFields`**
-
-## Table of contents
-
-### Properties
-
-- [address1](StoredCardHostedFormInstrumentFields.md#address1)
-- [address2](StoredCardHostedFormInstrumentFields.md#address2)
-- [city](StoredCardHostedFormInstrumentFields.md#city)
-- [company](StoredCardHostedFormInstrumentFields.md#company)
-- [countryCode](StoredCardHostedFormInstrumentFields.md#countrycode)
-- [defaultInstrument](StoredCardHostedFormInstrumentFields.md#defaultinstrument)
-- [email](StoredCardHostedFormInstrumentFields.md#email)
-- [firstName](StoredCardHostedFormInstrumentFields.md#firstname)
-- [lastName](StoredCardHostedFormInstrumentFields.md#lastname)
-- [phone](StoredCardHostedFormInstrumentFields.md#phone)
-- [postalCode](StoredCardHostedFormInstrumentFields.md#postalcode)
-- [stateOrProvinceCode](StoredCardHostedFormInstrumentFields.md#stateorprovincecode)
 
 ## Properties
 
 ### address1
 
-• **address1**: `string`
+> **address1**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[address1](StoredCardHostedFormBillingAddress.md#address1)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`address1`](StoredCardHostedFormBillingAddress.md#address1)
 
-___
+***
 
-### address2
+### address2?
 
-• `Optional` **address2**: `string`
+> `optional` **address2?**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[address2](StoredCardHostedFormBillingAddress.md#address2)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`address2`](StoredCardHostedFormBillingAddress.md#address2)
 
-___
+***
 
 ### city
 
-• **city**: `string`
+> **city**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[city](StoredCardHostedFormBillingAddress.md#city)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`city`](StoredCardHostedFormBillingAddress.md#city)
 
-___
+***
 
-### company
+### company?
 
-• `Optional` **company**: `string`
+> `optional` **company?**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[company](StoredCardHostedFormBillingAddress.md#company)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`company`](StoredCardHostedFormBillingAddress.md#company)
 
-___
+***
 
 ### countryCode
 
-• **countryCode**: `string`
+> **countryCode**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[countryCode](StoredCardHostedFormBillingAddress.md#countrycode)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`countryCode`](StoredCardHostedFormBillingAddress.md#countrycode)
 
-___
+***
 
 ### defaultInstrument
 
-• **defaultInstrument**: `boolean`
+> **defaultInstrument**: `boolean`
 
-___
+***
 
 ### email
 
-• **email**: `string`
+> **email**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[email](StoredCardHostedFormBillingAddress.md#email)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`email`](StoredCardHostedFormBillingAddress.md#email)
 
-___
+***
 
 ### firstName
 
-• **firstName**: `string`
+> **firstName**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[firstName](StoredCardHostedFormBillingAddress.md#firstname)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`firstName`](StoredCardHostedFormBillingAddress.md#firstname)
 
-___
+***
 
 ### lastName
 
-• **lastName**: `string`
+> **lastName**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[lastName](StoredCardHostedFormBillingAddress.md#lastname)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`lastName`](StoredCardHostedFormBillingAddress.md#lastname)
 
-___
+***
 
-### phone
+### phone?
 
-• `Optional` **phone**: `string`
+> `optional` **phone?**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[phone](StoredCardHostedFormBillingAddress.md#phone)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`phone`](StoredCardHostedFormBillingAddress.md#phone)
 
-___
+***
 
 ### postalCode
 
-• **postalCode**: `string`
+> **postalCode**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[postalCode](StoredCardHostedFormBillingAddress.md#postalcode)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`postalCode`](StoredCardHostedFormBillingAddress.md#postalcode)
 
-___
+***
 
-### stateOrProvinceCode
+### stateOrProvinceCode?
 
-• `Optional` **stateOrProvinceCode**: `string`
+> `optional` **stateOrProvinceCode?**: `string`
 
 #### Inherited from
 
-[StoredCardHostedFormBillingAddress](StoredCardHostedFormBillingAddress.md).[stateOrProvinceCode](StoredCardHostedFormBillingAddress.md#stateorprovincecode)
+[`StoredCardHostedFormBillingAddress`](StoredCardHostedFormBillingAddress.md).[`stateOrProvinceCode`](StoredCardHostedFormBillingAddress.md#stateorprovincecode)

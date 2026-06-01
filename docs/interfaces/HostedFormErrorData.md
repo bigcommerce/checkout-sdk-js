@@ -1,29 +1,25 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedFormErrorData
 
 # Interface: HostedFormErrorData
-
-## Table of contents
-
-### Properties
-
-- [isEmpty](HostedFormErrorData.md#isempty)
-- [isPotentiallyValid](HostedFormErrorData.md#ispotentiallyvalid)
-- [isValid](HostedFormErrorData.md#isvalid)
 
 ## Properties
 
 ### isEmpty
 
-• **isEmpty**: `boolean`
+> **isEmpty**: `boolean`
 
-___
+***
 
 ### isPotentiallyValid
 
-• **isPotentiallyValid**: `boolean`
+> **isPotentiallyValid**: `boolean`
 
-___
+***
 
 ### isValid
 
-• **isValid**: `boolean`
+> **isValid**: `boolean`

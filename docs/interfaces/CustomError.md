@@ -1,43 +1,33 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CustomError
 
 # Interface: CustomError
 
-## Hierarchy
+## Extends
 
 - `Error`
-
-  ↳ **`CustomError`**
-
-## Implemented by
-
-- [`StandardError`](../classes/StandardError.md)
-
-## Table of contents
-
-### Properties
-
-- [message](CustomError.md#message)
-- [subtype](CustomError.md#subtype)
-- [type](CustomError.md#type)
 
 ## Properties
 
 ### message
 
-• **message**: `string`
+> **message**: `string`
 
 #### Overrides
 
-Error.message
+`Error.message`
 
-___
+***
 
-### subtype
+### subtype?
 
-• `Optional` **subtype**: `string`
+> `optional` **subtype?**: `string`
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`

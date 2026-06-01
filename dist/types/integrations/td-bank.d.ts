@@ -107,6 +107,6 @@ declare interface TdOnlineMartHostWindow extends Window {
     customcheckout?(): TDCustomCheckoutSDK;
 }
 
-export declare const createTDOnlineMartPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<TDOnlineMartPaymentStrategy>, {
+export declare const createTDOnlineMartPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<TDOnlineMartPaymentStrategy>, {
     id: string;
 }>;

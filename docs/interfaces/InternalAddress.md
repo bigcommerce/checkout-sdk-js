@@ -1,119 +1,111 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / InternalAddress
 
 # Interface: InternalAddress\<T\>
 
-## Type parameters
+## Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `T` | `string` |
+### T
 
-## Table of contents
-
-### Properties
-
-- [addressLine1](InternalAddress.md#addressline1)
-- [addressLine2](InternalAddress.md#addressline2)
-- [city](InternalAddress.md#city)
-- [company](InternalAddress.md#company)
-- [country](InternalAddress.md#country)
-- [countryCode](InternalAddress.md#countrycode)
-- [customFields](InternalAddress.md#customfields)
-- [firstName](InternalAddress.md#firstname)
-- [id](InternalAddress.md#id)
-- [lastName](InternalAddress.md#lastname)
-- [phone](InternalAddress.md#phone)
-- [postCode](InternalAddress.md#postcode)
-- [province](InternalAddress.md#province)
-- [provinceCode](InternalAddress.md#provincecode)
-- [type](InternalAddress.md#type)
+`T` = `string`
 
 ## Properties
 
 ### addressLine1
 
-• **addressLine1**: `string`
+> **addressLine1**: `string`
 
-___
+***
 
 ### addressLine2
 
-• **addressLine2**: `string`
+> **addressLine2**: `string`
 
-___
+***
 
 ### city
 
-• **city**: `string`
+> **city**: `string`
 
-___
+***
 
 ### company
 
-• **company**: `string`
+> **company**: `string`
 
-___
+***
 
 ### country
 
-• **country**: `string`
+> **country**: `string`
 
-___
+***
 
 ### countryCode
 
-• **countryCode**: `string`
+> **countryCode**: `string`
 
-___
+***
 
 ### customFields
 
-• **customFields**: \{ `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
+> **customFields**: `object`[]
 
-___
+#### fieldId
+
+> **fieldId**: `string`
+
+#### fieldValue
+
+> **fieldValue**: `string` \| `number` \| `string`[]
+
+***
 
 ### firstName
 
-• **firstName**: `string`
+> **firstName**: `string`
 
-___
+***
 
-### id
+### id?
 
-• `Optional` **id**: `T`
+> `optional` **id?**: `T`
 
-___
+***
 
 ### lastName
 
-• **lastName**: `string`
+> **lastName**: `string`
 
-___
+***
 
 ### phone
 
-• **phone**: `string`
+> **phone**: `string`
 
-___
+***
 
 ### postCode
 
-• **postCode**: `string`
+> **postCode**: `string`
 
-___
+***
 
 ### province
 
-• **province**: `string`
+> **province**: `string`
 
-___
+***
 
 ### provinceCode
 
-• **provinceCode**: `string`
+> **provinceCode**: `string`
 
-___
+***
 
-### type
+### type?
 
-• `Optional` **type**: `string`
+> `optional` **type?**: `string`

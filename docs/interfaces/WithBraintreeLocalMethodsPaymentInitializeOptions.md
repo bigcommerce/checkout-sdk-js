@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithBraintreeLocalMethodsPaymentInitializeOptions
 
 # Interface: WithBraintreeLocalMethodsPaymentInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [braintreelocalmethods](WithBraintreeLocalMethodsPaymentInitializeOptions.md#braintreelocalmethods)
-
 ## Properties
 
-### braintreelocalmethods
+### braintreelocalmethods?
 
-• `Optional` **braintreelocalmethods**: [`BraintreeLocalMethodsPaymentInitializeOptions`](BraintreeLocalMethodsPaymentInitializeOptions.md)
+> `optional` **braintreelocalmethods?**: [`BraintreeLocalMethodsPaymentInitializeOptions`](BraintreeLocalMethodsPaymentInitializeOptions.md)

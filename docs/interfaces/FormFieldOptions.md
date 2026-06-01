@@ -1,29 +1,25 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / FormFieldOptions
 
 # Interface: FormFieldOptions
 
-## Table of contents
-
-### Properties
-
-- [helperLabel](FormFieldOptions.md#helperlabel)
-- [items](FormFieldOptions.md#items)
-- [rows](FormFieldOptions.md#rows)
-
 ## Properties
 
-### helperLabel
+### helperLabel?
 
-• `Optional` **helperLabel**: `string`
+> `optional` **helperLabel?**: `string`
 
-___
+***
 
-### items
+### items?
 
-• `Optional` **items**: [`FormFieldItem`](FormFieldItem.md)[]
+> `optional` **items?**: [`FormFieldItem`](FormFieldItem.md)[]
 
-___
+***
 
-### rows
+### rows?
 
-• `Optional` **rows**: `number`
+> `optional` **rows?**: `number`

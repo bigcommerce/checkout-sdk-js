@@ -1,114 +1,104 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AddressRequestBody
 
 # Interface: AddressRequestBody
 
-## Hierarchy
+## Extended by
 
-- **`AddressRequestBody`**
-
-  ↳ [`Address`](Address.md)
-
-  ↳ [`BillingAddressRequestBody`](BillingAddressRequestBody.md)
-
-## Table of contents
-
-### Properties
-
-- [address1](AddressRequestBody.md#address1)
-- [address2](AddressRequestBody.md#address2)
-- [city](AddressRequestBody.md#city)
-- [company](AddressRequestBody.md#company)
-- [countryCode](AddressRequestBody.md#countrycode)
-- [customFields](AddressRequestBody.md#customfields)
-- [extraFields](AddressRequestBody.md#extrafields)
-- [firstName](AddressRequestBody.md#firstname)
-- [label](AddressRequestBody.md#label)
-- [lastName](AddressRequestBody.md#lastname)
-- [phone](AddressRequestBody.md#phone)
-- [postalCode](AddressRequestBody.md#postalcode)
-- [stateOrProvince](AddressRequestBody.md#stateorprovince)
-- [stateOrProvinceCode](AddressRequestBody.md#stateorprovincecode)
+- [`Address`](Address.md)
+- [`BillingAddressRequestBody`](BillingAddressRequestBody.md)
 
 ## Properties
 
 ### address1
 
-• **address1**: `string`
+> **address1**: `string`
 
-___
+***
 
 ### address2
 
-• **address2**: `string`
+> **address2**: `string`
 
-___
+***
 
 ### city
 
-• **city**: `string`
+> **city**: `string`
 
-___
+***
 
 ### company
 
-• **company**: `string`
+> **company**: `string`
 
-___
+***
 
 ### countryCode
 
-• **countryCode**: `string`
+> **countryCode**: `string`
 
-___
+***
 
 ### customFields
 
-• **customFields**: \{ `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
+> **customFields**: `object`[]
 
-___
+#### fieldId
 
-### extraFields
+> **fieldId**: `string`
 
-• `Optional` **extraFields**: [`AddressExtraFieldValue`](AddressExtraFieldValue.md)[]
+#### fieldValue
 
-___
+> **fieldValue**: `string` \| `number` \| `string`[]
+
+***
+
+### extraFields?
+
+> `optional` **extraFields?**: [`AddressExtraFieldValue`](AddressExtraFieldValue.md)[]
+
+***
 
 ### firstName
 
-• **firstName**: `string`
+> **firstName**: `string`
 
-___
+***
 
-### label
+### label?
 
-• `Optional` **label**: `string`
+> `optional` **label?**: `string`
 
-___
+***
 
 ### lastName
 
-• **lastName**: `string`
+> **lastName**: `string`
 
-___
+***
 
 ### phone
 
-• **phone**: `string`
+> **phone**: `string`
 
-___
+***
 
 ### postalCode
 
-• **postalCode**: `string`
+> **postalCode**: `string`
 
-___
+***
 
 ### stateOrProvince
 
-• **stateOrProvince**: `string`
+> **stateOrProvince**: `string`
 
-___
+***
 
 ### stateOrProvinceCode
 
-• **stateOrProvinceCode**: `string`
+> **stateOrProvinceCode**: `string`

@@ -1,21 +1,21 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / MutationObserverWindow
 
 # Interface: MutationObserverWindow
 
-## Hierarchy
+## Extends
 
 - `Window`
 
-  ↳ **`MutationObserverWindow`**
+## Indexable
 
-## Table of contents
-
-### Properties
-
-- [MutationObserver](MutationObserverWindow.md#mutationobserver)
+> \[`index`: `number`\]: `Window`
 
 ## Properties
 
 ### MutationObserver
 
-• **MutationObserver**: [`MutationObeserverCreator`](MutationObeserverCreator.md)
+> **MutationObserver**: [`MutationObeserverCreator`](MutationObeserverCreator.md)

@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutButtonErrorsState
 
 # Interface: CheckoutButtonErrorsState
 
-## Table of contents
-
-### Properties
-
-- [deinitializeError](CheckoutButtonErrorsState.md#deinitializeerror)
-- [initializeError](CheckoutButtonErrorsState.md#initializeerror)
-
 ## Properties
 
-### deinitializeError
+### deinitializeError?
 
-• `Optional` **deinitializeError**: `Error`
+> `optional` **deinitializeError?**: `Error`
 
-___
+***
 
-### initializeError
+### initializeError?
 
-• `Optional` **initializeError**: `Error`
+> `optional` **initializeError?**: `Error`

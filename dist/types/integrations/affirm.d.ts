@@ -125,6 +125,6 @@ declare interface AffirmSuccessResponse {
     created: string;
 }
 
-export declare const createAffirmPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<AffirmPaymentStrategy>, {
+export declare const createAffirmPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<AffirmPaymentStrategy>, {
     id: string;
 }>;

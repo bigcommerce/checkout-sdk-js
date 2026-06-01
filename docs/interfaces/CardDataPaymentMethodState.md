@@ -1,29 +1,27 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CardDataPaymentMethodState
 
 # Interface: CardDataPaymentMethodState
 
-## Table of contents
-
-### Properties
-
-- [installments](CardDataPaymentMethodState.md#installments)
-- [paymentMethod](CardDataPaymentMethodState.md#paymentmethod)
-
 ## Properties
 
-### installments
+### installments?
 
-• `Optional` **installments**: `Object`
+> `optional` **installments?**: `object`
 
-#### Type declaration
+#### plan?
 
-| Name | Type |
-| :------ | :------ |
-| `plan?` | ``"string"`` |
-| `value` | `number` |
+> `optional` **plan?**: `"string"`
 
-___
+#### value
+
+> **value**: `number`
+
+***
 
 ### paymentMethod
 
-• **paymentMethod**: [`CardPaymentMethodState`](CardPaymentMethodState.md)
+> **paymentMethod**: [`CardPaymentMethodState`](CardPaymentMethodState.md)

@@ -1,54 +1,61 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenPlaceholderData
 
 # Interface: AdyenPlaceholderData
 
-## Table of contents
-
-### Properties
-
-- [billingAddress](AdyenPlaceholderData.md#billingaddress)
-- [firstName](AdyenPlaceholderData.md#firstname)
-- [holderName](AdyenPlaceholderData.md#holdername)
-- [lastName](AdyenPlaceholderData.md#lastname)
-- [prefillCardHolderName](AdyenPlaceholderData.md#prefillcardholdername)
-
 ## Properties
 
-### billingAddress
+### billingAddress?
 
-• `Optional` **billingAddress**: `Object`
+> `optional` **billingAddress?**: `object`
 
-#### Type declaration
+#### city
 
-| Name | Type |
-| :------ | :------ |
-| `city` | `string` |
-| `country` | `string` |
-| `houseNumberOrName` | `string` |
-| `postalCode` | `string` |
-| `stateOrProvince` | `string` |
-| `street` | `string` |
+> **city**: `string`
 
-___
+#### country
 
-### firstName
+> **country**: `string`
 
-• `Optional` **firstName**: `string`
+#### houseNumberOrName
 
-___
+> **houseNumberOrName**: `string`
 
-### holderName
+#### postalCode
 
-• `Optional` **holderName**: `string`
+> **postalCode**: `string`
 
-___
+#### stateOrProvince
 
-### lastName
+> **stateOrProvince**: `string`
 
-• `Optional` **lastName**: `string`
+#### street
 
-___
+> **street**: `string`
 
-### prefillCardHolderName
+***
 
-• `Optional` **prefillCardHolderName**: `boolean`
+### firstName?
+
+> `optional` **firstName?**: `string`
+
+***
+
+### holderName?
+
+> `optional` **holderName?**: `string`
+
+***
+
+### lastName?
+
+> `optional` **lastName?**: `string`
+
+***
+
+### prefillCardHolderName?
+
+> `optional` **prefillCardHolderName?**: `boolean`

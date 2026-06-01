@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / VaultAccessToken
 
 # Interface: VaultAccessToken
-
-## Table of contents
-
-### Properties
-
-- [vaultAccessExpiry](VaultAccessToken.md#vaultaccessexpiry)
-- [vaultAccessToken](VaultAccessToken.md#vaultaccesstoken)
 
 ## Properties
 
 ### vaultAccessExpiry
 
-• **vaultAccessExpiry**: `number`
+> **vaultAccessExpiry**: `number`
 
-___
+***
 
 ### vaultAccessToken
 
-• **vaultAccessToken**: `string`
+> **vaultAccessToken**: `string`

@@ -1,287 +1,266 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ConsignmentSelector
 
 # Interface: ConsignmentSelector
 
-## Table of contents
-
-### Methods
-
-- [getConsignmentByAddress](ConsignmentSelector.md#getconsignmentbyaddress)
-- [getConsignmentById](ConsignmentSelector.md#getconsignmentbyid)
-- [getConsignments](ConsignmentSelector.md#getconsignments)
-- [getConsignmentsOrThrow](ConsignmentSelector.md#getconsignmentsorthrow)
-- [getCreateError](ConsignmentSelector.md#getcreateerror)
-- [getDeleteError](ConsignmentSelector.md#getdeleteerror)
-- [getItemAssignmentError](ConsignmentSelector.md#getitemassignmenterror)
-- [getLoadError](ConsignmentSelector.md#getloaderror)
-- [getLoadShippingOptionsError](ConsignmentSelector.md#getloadshippingoptionserror)
-- [getShippingOption](ConsignmentSelector.md#getshippingoption)
-- [getUnassignedItems](ConsignmentSelector.md#getunassigneditems)
-- [getUpdateError](ConsignmentSelector.md#getupdateerror)
-- [getUpdateShippingOptionError](ConsignmentSelector.md#getupdateshippingoptionerror)
-- [isAssigningItems](ConsignmentSelector.md#isassigningitems)
-- [isCreating](ConsignmentSelector.md#iscreating)
-- [isDeleting](ConsignmentSelector.md#isdeleting)
-- [isLoading](ConsignmentSelector.md#isloading)
-- [isLoadingShippingOptions](ConsignmentSelector.md#isloadingshippingoptions)
-- [isUpdating](ConsignmentSelector.md#isupdating)
-- [isUpdatingShippingOption](ConsignmentSelector.md#isupdatingshippingoption)
-
 ## Methods
 
-### getConsignmentByAddress
+### getConsignmentByAddress()
 
-▸ **getConsignmentByAddress**(`address`): `undefined` \| [`Consignment`](Consignment.md)
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `address` | [`AddressRequestBody`](AddressRequestBody.md) |
-
-#### Returns
-
-`undefined` \| [`Consignment`](Consignment.md)
-
-___
-
-### getConsignmentById
-
-▸ **getConsignmentById**(`id`): `undefined` \| [`Consignment`](Consignment.md)
+> **getConsignmentByAddress**(`address`): [`Consignment`](Consignment.md) \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` |
+##### address
+
+[`AddressRequestBody`](AddressRequestBody.md)
 
 #### Returns
 
-`undefined` \| [`Consignment`](Consignment.md)
+[`Consignment`](Consignment.md) \| `undefined`
 
-___
+***
 
-### getConsignments
+### getConsignmentById()
 
-▸ **getConsignments**(): `undefined` \| [`Consignment`](Consignment.md)[]
+> **getConsignmentById**(`id`): [`Consignment`](Consignment.md) \| `undefined`
+
+#### Parameters
+
+##### id
+
+`string`
 
 #### Returns
 
-`undefined` \| [`Consignment`](Consignment.md)[]
+[`Consignment`](Consignment.md) \| `undefined`
 
-___
+***
 
-### getConsignmentsOrThrow
+### getConsignments()
 
-▸ **getConsignmentsOrThrow**(): [`Consignment`](Consignment.md)[]
+> **getConsignments**(): [`Consignment`](Consignment.md)[] \| `undefined`
+
+#### Returns
+
+[`Consignment`](Consignment.md)[] \| `undefined`
+
+***
+
+### getConsignmentsOrThrow()
+
+> **getConsignmentsOrThrow**(): [`Consignment`](Consignment.md)[]
 
 #### Returns
 
 [`Consignment`](Consignment.md)[]
 
-___
+***
 
-### getCreateError
+### getCreateError()
 
-▸ **getCreateError**(): `undefined` \| `Error`
+> **getCreateError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getDeleteError
+### getDeleteError()
 
-▸ **getDeleteError**(`consignmentId?`): `undefined` \| `Error`
+> **getDeleteError**(`consignmentId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `consignmentId?` | `string` |
+##### consignmentId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getItemAssignmentError
+### getItemAssignmentError()
 
-▸ **getItemAssignmentError**(`address`): `undefined` \| `Error`
+> **getItemAssignmentError**(`address`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `address` | [`AddressRequestBody`](AddressRequestBody.md) |
+##### address
+
+[`AddressRequestBody`](AddressRequestBody.md)
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getLoadError
+### getLoadError()
 
-▸ **getLoadError**(): `undefined` \| `Error`
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getLoadShippingOptionsError
-
-▸ **getLoadShippingOptionsError**(): `undefined` \| `Error`
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getShippingOption
+### getLoadShippingOptionsError()
 
-▸ **getShippingOption**(): `undefined` \| [`ShippingOption`](ShippingOption.md)
+> **getLoadShippingOptionsError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| [`ShippingOption`](ShippingOption.md)
+`Error` \| `undefined`
 
-___
+***
 
-### getUnassignedItems
+### getShippingOption()
 
-▸ **getUnassignedItems**(): [`PhysicalItem`](PhysicalItem.md)[]
+> **getShippingOption**(): [`ShippingOption`](ShippingOption.md) \| `undefined`
+
+#### Returns
+
+[`ShippingOption`](ShippingOption.md) \| `undefined`
+
+***
+
+### getUnassignedItems()
+
+> **getUnassignedItems**(): [`PhysicalItem`](PhysicalItem.md)[]
 
 #### Returns
 
 [`PhysicalItem`](PhysicalItem.md)[]
 
-___
+***
 
-### getUpdateError
+### getUpdateError()
 
-▸ **getUpdateError**(`consignmentId?`): `undefined` \| `Error`
+> **getUpdateError**(`consignmentId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `consignmentId?` | `string` |
+##### consignmentId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getUpdateShippingOptionError
+### getUpdateShippingOptionError()
 
-▸ **getUpdateShippingOptionError**(`consignmentId?`): `undefined` \| `Error`
+> **getUpdateShippingOptionError**(`consignmentId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `consignmentId?` | `string` |
+##### consignmentId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### isAssigningItems
+### isAssigningItems()
 
-▸ **isAssigningItems**(`address`): `boolean`
+> **isAssigningItems**(`address`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `address` | [`AddressRequestBody`](AddressRequestBody.md) |
+##### address
+
+[`AddressRequestBody`](AddressRequestBody.md)
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isCreating
+### isCreating()
 
-▸ **isCreating**(): `boolean`
+> **isCreating**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isDeleting
+### isDeleting()
 
-▸ **isDeleting**(`consignmentId?`): `boolean`
+> **isDeleting**(`consignmentId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `consignmentId?` | `string` |
+##### consignmentId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isLoading
+### isLoading()
 
-▸ **isLoading**(): `boolean`
-
-#### Returns
-
-`boolean`
-
-___
-
-### isLoadingShippingOptions
-
-▸ **isLoadingShippingOptions**(): `boolean`
+> **isLoading**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isUpdating
+### isLoadingShippingOptions()
 
-▸ **isUpdating**(`consignmentId?`): `boolean`
+> **isLoadingShippingOptions**(): `boolean`
+
+#### Returns
+
+`boolean`
+
+***
+
+### isUpdating()
+
+> **isUpdating**(`consignmentId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `consignmentId?` | `string` |
+##### consignmentId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isUpdatingShippingOption
+### isUpdatingShippingOption()
 
-▸ **isUpdatingShippingOption**(`consignmentId?`): `boolean`
+> **isUpdatingShippingOption**(`consignmentId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `consignmentId?` | `string` |
+##### consignmentId?
+
+`string`
 
 #### Returns
 

@@ -108,6 +108,6 @@ declare interface WithCreditCardPaymentInitializeOptions {
     creditCard?: CreditCardPaymentInitializeOptions;
 }
 
-export declare const createCreditCardPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CreditCardPaymentStrategy>, {
+export declare const createCreditCardPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CreditCardPaymentStrategy>, {
     default: boolean;
 }>;

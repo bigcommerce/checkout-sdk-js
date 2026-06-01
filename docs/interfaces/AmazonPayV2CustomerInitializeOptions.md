@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AmazonPayV2CustomerInitializeOptions
 
 # Interface: AmazonPayV2CustomerInitializeOptions
@@ -23,16 +27,10 @@ service.initializeCustomer({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [container](AmazonPayV2CustomerInitializeOptions.md#container)
-
 ## Properties
 
 ### container
 
-• **container**: `string`
+> **container**: `string`
 
 The ID of a container which the sign-in button should insert into.

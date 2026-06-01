@@ -1,63 +1,58 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StepTracker
 
 # Interface: StepTracker
 
-## Table of contents
-
-### Methods
-
-- [trackCheckoutStarted](StepTracker.md#trackcheckoutstarted)
-- [trackOrderComplete](StepTracker.md#trackordercomplete)
-- [trackStepCompleted](StepTracker.md#trackstepcompleted)
-- [trackStepViewed](StepTracker.md#trackstepviewed)
-
 ## Methods
 
-### trackCheckoutStarted
+### trackCheckoutStarted()
 
-▸ **trackCheckoutStarted**(): `void`
-
-#### Returns
-
-`void`
-
-___
-
-### trackOrderComplete
-
-▸ **trackOrderComplete**(): `void`
+> **trackCheckoutStarted**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### trackStepCompleted
+### trackOrderComplete()
 
-▸ **trackStepCompleted**(`step`): `void`
+> **trackOrderComplete**(): `void`
+
+#### Returns
+
+`void`
+
+***
+
+### trackStepCompleted()
+
+> **trackStepCompleted**(`step`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `step` | `string` |
+##### step
+
+`string`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### trackStepViewed
+### trackStepViewed()
 
-▸ **trackStepViewed**(`step`): `void`
+> **trackStepViewed**(`step`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `step` | `string` |
+##### step
+
+`string`
 
 #### Returns
 

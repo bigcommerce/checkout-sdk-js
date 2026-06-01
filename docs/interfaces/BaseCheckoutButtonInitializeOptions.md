@@ -1,85 +1,75 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BaseCheckoutButtonInitializeOptions
 
 # Interface: BaseCheckoutButtonInitializeOptions
 
 The set of options for configuring the checkout button.
 
-## Hierarchy
+## Extends
 
 - [`CheckoutButtonOptions`](CheckoutButtonOptions.md)
 
-  ↳ **`BaseCheckoutButtonInitializeOptions`**
-
 ## Indexable
 
-▪ [key: `string`]: `unknown`
-
-## Table of contents
-
-### Properties
-
-- [containerId](BaseCheckoutButtonInitializeOptions.md#containerid)
-- [currencyCode](BaseCheckoutButtonInitializeOptions.md#currencycode)
-- [methodId](BaseCheckoutButtonInitializeOptions.md#methodid)
-- [params](BaseCheckoutButtonInitializeOptions.md#params)
-- [paypal](BaseCheckoutButtonInitializeOptions.md#paypal)
-- [timeout](BaseCheckoutButtonInitializeOptions.md#timeout)
-- [version](BaseCheckoutButtonInitializeOptions.md#version)
+> \[`key`: `string`\]: `unknown`
 
 ## Properties
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 The ID of a container which the checkout button should be inserted.
 
-___
+***
 
-### currencyCode
+### currencyCode?
 
-• `Optional` **currencyCode**: `string`
+> `optional` **currencyCode?**: `string`
 
 The option that is required to load payment method configuration for provided currency code in Buy Now flow.
 
-___
+***
 
 ### methodId
 
-• **methodId**: [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md)
+> **methodId**: [`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
 
 The identifier of the payment method.
 
 #### Inherited from
 
-[CheckoutButtonOptions](CheckoutButtonOptions.md).[methodId](CheckoutButtonOptions.md#methodid)
+[`CheckoutButtonOptions`](CheckoutButtonOptions.md).[`methodId`](CheckoutButtonOptions.md#methodid)
 
-___
+***
 
-### params
+### params?
 
-• `Optional` **params**: `object`
+> `optional` **params?**: `object`
 
 The parameters of the request, if required.
 
 #### Inherited from
 
-[CheckoutButtonOptions](CheckoutButtonOptions.md).[params](CheckoutButtonOptions.md#params)
+[`CheckoutButtonOptions`](CheckoutButtonOptions.md).[`params`](CheckoutButtonOptions.md#params)
 
-___
+***
 
-### paypal
+### paypal?
 
-• `Optional` **paypal**: [`PaypalButtonInitializeOptions`](PaypalButtonInitializeOptions.md)
+> `optional` **paypal?**: [`PaypalButtonInitializeOptions`](PaypalButtonInitializeOptions.md)
 
 The options that are required to facilitate PayPal. They can be omitted
 unless you need to support Paypal.
 
-___
+***
 
-### timeout
+### timeout?
 
-• `Optional` **timeout**: `default`
+> `optional` **timeout?**: `Timeout`
 
 Provide this option if you want to cancel or time out the request. If the
 timeout object completes before the request, the request will be
@@ -87,16 +77,16 @@ cancelled.
 
 #### Inherited from
 
-[CheckoutButtonOptions](CheckoutButtonOptions.md).[timeout](CheckoutButtonOptions.md#timeout)
+[`RequestOptions`](RequestOptions.md).[`timeout`](RequestOptions.md#timeout)
 
-___
+***
 
-### version
+### version?
 
-• `Optional` **version**: `number`
+> `optional` **version?**: `number`
 
 The version of the checkout, used for optimistic concurrency control.
 
 #### Inherited from
 
-[CheckoutButtonOptions](CheckoutButtonOptions.md).[version](CheckoutButtonOptions.md#version)
+[`RequestOptions`](RequestOptions.md).[`version`](RequestOptions.md#version)

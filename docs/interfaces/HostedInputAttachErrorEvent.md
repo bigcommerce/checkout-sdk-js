@@ -1,28 +1,23 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInputAttachErrorEvent
 
 # Interface: HostedInputAttachErrorEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](HostedInputAttachErrorEvent.md#payload)
-- [type](HostedInputAttachErrorEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### error
 
-| Name | Type |
-| :------ | :------ |
-| `error` | [`HostedInputInitializeErrorData`](HostedInputInitializeErrorData.md) |
+> **error**: [`HostedInputInitializeErrorData`](HostedInputInitializeErrorData.md)
 
-___
+***
 
 ### type
 
-• **type**: [`AttachFailed`](../enums/HostedInputEventType.md#attachfailed)
+> **type**: [`AttachFailed`](../enumerations/HostedInputEventType.md#attachfailed)

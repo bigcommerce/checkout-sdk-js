@@ -1,122 +1,107 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CardInstrument
 
 # Interface: CardInstrument
 
-## Hierarchy
+## Extends
 
 - [`BaseInstrument`](BaseInstrument.md)
-
-  ↳ **`CardInstrument`**
-
-## Table of contents
-
-### Properties
-
-- [bigpayToken](CardInstrument.md#bigpaytoken)
-- [brand](CardInstrument.md#brand)
-- [defaultInstrument](CardInstrument.md#defaultinstrument)
-- [expiryMonth](CardInstrument.md#expirymonth)
-- [expiryYear](CardInstrument.md#expiryyear)
-- [iin](CardInstrument.md#iin)
-- [last4](CardInstrument.md#last4)
-- [method](CardInstrument.md#method)
-- [provider](CardInstrument.md#provider)
-- [trustedShippingAddress](CardInstrument.md#trustedshippingaddress)
-- [type](CardInstrument.md#type)
-- [untrustedShippingCardVerificationMode](CardInstrument.md#untrustedshippingcardverificationmode)
 
 ## Properties
 
 ### bigpayToken
 
-• **bigpayToken**: `string`
+> **bigpayToken**: `string`
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[bigpayToken](BaseInstrument.md#bigpaytoken)
+[`BaseInstrument`](BaseInstrument.md).[`bigpayToken`](BaseInstrument.md#bigpaytoken)
 
-___
+***
 
 ### brand
 
-• **brand**: `string`
+> **brand**: `string`
 
-___
+***
 
 ### defaultInstrument
 
-• **defaultInstrument**: `boolean`
+> **defaultInstrument**: `boolean`
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[defaultInstrument](BaseInstrument.md#defaultinstrument)
+[`BaseInstrument`](BaseInstrument.md).[`defaultInstrument`](BaseInstrument.md#defaultinstrument)
 
-___
+***
 
 ### expiryMonth
 
-• **expiryMonth**: `string`
+> **expiryMonth**: `string`
 
-___
+***
 
 ### expiryYear
 
-• **expiryYear**: `string`
+> **expiryYear**: `string`
 
-___
+***
 
 ### iin
 
-• **iin**: `string`
+> **iin**: `string`
 
-___
+***
 
 ### last4
 
-• **last4**: `string`
+> **last4**: `string`
 
-___
+***
 
 ### method
 
-• **method**: `string`
+> **method**: `string`
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[method](BaseInstrument.md#method)
+[`BaseInstrument`](BaseInstrument.md).[`method`](BaseInstrument.md#method)
 
-___
+***
 
 ### provider
 
-• **provider**: `string`
+> **provider**: `string`
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[provider](BaseInstrument.md#provider)
+[`BaseInstrument`](BaseInstrument.md).[`provider`](BaseInstrument.md#provider)
 
-___
+***
 
 ### trustedShippingAddress
 
-• **trustedShippingAddress**: `boolean`
+> **trustedShippingAddress**: `boolean`
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[trustedShippingAddress](BaseInstrument.md#trustedshippingaddress)
+[`BaseInstrument`](BaseInstrument.md).[`trustedShippingAddress`](BaseInstrument.md#trustedshippingaddress)
 
-___
+***
 
 ### type
 
-• **type**: ``"card"``
+> **type**: `"card"`
 
 #### Overrides
 
-[BaseInstrument](BaseInstrument.md).[type](BaseInstrument.md#type)
+[`BaseInstrument`](BaseInstrument.md).[`type`](BaseInstrument.md#type)
 
-___
+***
 
 ### untrustedShippingCardVerificationMode
 
-• **untrustedShippingCardVerificationMode**: [`UntrustedShippingCardVerificationType`](../enums/UntrustedShippingCardVerificationType.md)
+> **untrustedShippingCardVerificationMode**: [`UntrustedShippingCardVerificationType`](../enumerations/UntrustedShippingCardVerificationType.md)

@@ -16,6 +16,6 @@ declare class ZipPaymentStrategy implements PaymentStrategy {
     private _prepareForReferredRegistration;
 }
 
-export declare const createZipPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<ZipPaymentStrategy>, {
+export declare const createZipPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<ZipPaymentStrategy>, {
     id: string;
 }>;

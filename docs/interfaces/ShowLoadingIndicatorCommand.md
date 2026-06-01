@@ -1,28 +1,23 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ShowLoadingIndicatorCommand
 
 # Interface: ShowLoadingIndicatorCommand
-
-## Table of contents
-
-### Properties
-
-- [payload](ShowLoadingIndicatorCommand.md#payload)
-- [type](ShowLoadingIndicatorCommand.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### show
 
-| Name | Type |
-| :------ | :------ |
-| `show` | `boolean` |
+> **show**: `boolean`
 
-___
+***
 
 ### type
 
-• **type**: [`ShowLoadingIndicator`](../enums/ExtensionCommandType.md#showloadingindicator)
+> **type**: [`ShowLoadingIndicator`](../enumerations/ExtensionCommandType.md#showloadingindicator)

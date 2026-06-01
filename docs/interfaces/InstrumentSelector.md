@@ -1,136 +1,126 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / InstrumentSelector
 
 # Interface: InstrumentSelector
 
-## Table of contents
-
-### Methods
-
-- [getCardInstrument](InstrumentSelector.md#getcardinstrument)
-- [getCardInstrumentOrThrow](InstrumentSelector.md#getcardinstrumentorthrow)
-- [getDeleteError](InstrumentSelector.md#getdeleteerror)
-- [getInstruments](InstrumentSelector.md#getinstruments)
-- [getInstrumentsByPaymentMethod](InstrumentSelector.md#getinstrumentsbypaymentmethod)
-- [getInstrumentsMeta](InstrumentSelector.md#getinstrumentsmeta)
-- [getLoadError](InstrumentSelector.md#getloaderror)
-- [isDeleting](InstrumentSelector.md#isdeleting)
-- [isLoading](InstrumentSelector.md#isloading)
-
 ## Methods
 
-### getCardInstrument
+### getCardInstrument()
 
-▸ **getCardInstrument**(`instrumentId`): `undefined` \| [`CardInstrument`](CardInstrument.md)
+> **getCardInstrument**(`instrumentId`): [`CardInstrument`](CardInstrument.md) \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `instrumentId` | `string` |
+##### instrumentId
+
+`string`
 
 #### Returns
 
-`undefined` \| [`CardInstrument`](CardInstrument.md)
+[`CardInstrument`](CardInstrument.md) \| `undefined`
 
-___
+***
 
-### getCardInstrumentOrThrow
+### getCardInstrumentOrThrow()
 
-▸ **getCardInstrumentOrThrow**(`instrumentId`): [`CardInstrument`](CardInstrument.md)
+> **getCardInstrumentOrThrow**(`instrumentId`): [`CardInstrument`](CardInstrument.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `instrumentId` | `string` |
+##### instrumentId
+
+`string`
 
 #### Returns
 
 [`CardInstrument`](CardInstrument.md)
 
-___
+***
 
-### getDeleteError
+### getDeleteError()
 
-▸ **getDeleteError**(`instrumentId?`): `undefined` \| `Error`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `instrumentId?` | `string` |
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getInstruments
-
-▸ **getInstruments**(): `undefined` \| [`PaymentInstrument`](../README.md#paymentinstrument)[]
-
-#### Returns
-
-`undefined` \| [`PaymentInstrument`](../README.md#paymentinstrument)[]
-
-___
-
-### getInstrumentsByPaymentMethod
-
-▸ **getInstrumentsByPaymentMethod**(`paymentMethod`): `undefined` \| [`PaymentInstrument`](../README.md#paymentinstrument)[]
+> **getDeleteError**(`instrumentId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `paymentMethod` | [`PaymentMethod`](PaymentMethod.md)\<`any`\> |
+##### instrumentId?
+
+`string`
 
 #### Returns
 
-`undefined` \| [`PaymentInstrument`](../README.md#paymentinstrument)[]
+`Error` \| `undefined`
 
-___
+***
 
-### getInstrumentsMeta
+### getInstruments()
 
-▸ **getInstrumentsMeta**(): `undefined` \| [`VaultAccessToken`](VaultAccessToken.md)
-
-#### Returns
-
-`undefined` \| [`VaultAccessToken`](VaultAccessToken.md)
-
-___
-
-### getLoadError
-
-▸ **getLoadError**(): `undefined` \| `Error`
+> **getInstruments**(): [`PaymentInstrument`](../type-aliases/PaymentInstrument.md)[] \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+[`PaymentInstrument`](../type-aliases/PaymentInstrument.md)[] \| `undefined`
 
-___
+***
 
-### isDeleting
+### getInstrumentsByPaymentMethod()
 
-▸ **isDeleting**(`instrumentId?`): `boolean`
+> **getInstrumentsByPaymentMethod**(`paymentMethod`): [`PaymentInstrument`](../type-aliases/PaymentInstrument.md)[] \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `instrumentId?` | `string` |
+##### paymentMethod
+
+[`PaymentMethod`](PaymentMethod.md)
+
+#### Returns
+
+[`PaymentInstrument`](../type-aliases/PaymentInstrument.md)[] \| `undefined`
+
+***
+
+### getInstrumentsMeta()
+
+> **getInstrumentsMeta**(): [`VaultAccessToken`](VaultAccessToken.md) \| `undefined`
+
+#### Returns
+
+[`VaultAccessToken`](VaultAccessToken.md) \| `undefined`
+
+***
+
+### getLoadError()
+
+> **getLoadError**(): `Error` \| `undefined`
+
+#### Returns
+
+`Error` \| `undefined`
+
+***
+
+### isDeleting()
+
+> **isDeleting**(`instrumentId?`): `boolean`
+
+#### Parameters
+
+##### instrumentId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isLoading
+### isLoading()
 
-▸ **isLoading**(): `boolean`
+> **isLoading**(): `boolean`
 
 #### Returns
 

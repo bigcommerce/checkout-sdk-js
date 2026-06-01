@@ -1,21 +1,17 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / InternalOrderMeta
 
 # Interface: InternalOrderMeta
 
-## Hierarchy
+## Extended by
 
-- **`InternalOrderMeta`**
-
-  ↳ [`OrderMetaState`](OrderMetaState.md)
-
-## Table of contents
-
-### Properties
-
-- [deviceFingerprint](InternalOrderMeta.md#devicefingerprint)
+- [`OrderMetaState`](OrderMetaState.md)
 
 ## Properties
 
-### deviceFingerprint
+### deviceFingerprint?
 
-• `Optional` **deviceFingerprint**: `string`
+> `optional` **deviceFingerprint?**: `string`

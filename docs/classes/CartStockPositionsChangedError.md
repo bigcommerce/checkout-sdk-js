@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CartStockPositionsChangedError
 
 # Class: CartStockPositionsChangedError
@@ -5,67 +9,56 @@
 This error is thrown when at least one cart item changed stock position (e.g. moved to a different warehouse)
 and the server returns type `cart_stock_positions_changed`.
 
-## Hierarchy
+## Extends
 
 - [`StandardError`](StandardError.md)
 
-  ↳ **`CartStockPositionsChangedError`**
-
-## Table of contents
-
-### Constructors
-
-- [constructor](CartStockPositionsChangedError.md#constructor)
-
-### Properties
-
-- [changedItemIds](CartStockPositionsChangedError.md#changeditemids)
-- [name](CartStockPositionsChangedError.md#name)
-- [type](CartStockPositionsChangedError.md#type)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new CartStockPositionsChangedError**(`changedItemIds`, `message?`): [`CartStockPositionsChangedError`](CartStockPositionsChangedError.md)
+> **new CartStockPositionsChangedError**(`changedItemIds`, `message?`): `CartStockPositionsChangedError`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `changedItemIds` | `string`[] |
-| `message?` | `string` |
+##### changedItemIds
+
+`string`[]
+
+##### message?
+
+`string`
 
 #### Returns
 
-[`CartStockPositionsChangedError`](CartStockPositionsChangedError.md)
+`CartStockPositionsChangedError`
 
 #### Overrides
 
-[StandardError](StandardError.md).[constructor](StandardError.md#constructor)
+[`StandardError`](StandardError.md).[`constructor`](StandardError.md#constructor)
 
 ## Properties
 
 ### changedItemIds
 
-• **changedItemIds**: `string`[]
+> **changedItemIds**: `string`[]
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
 #### Inherited from
 
-[StandardError](StandardError.md).[name](StandardError.md#name)
+[`StandardError`](StandardError.md).[`name`](StandardError.md#name)
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`
 
 #### Inherited from
 
-[StandardError](StandardError.md).[type](StandardError.md#type)
+[`StandardError`](StandardError.md).[`type`](StandardError.md#type)

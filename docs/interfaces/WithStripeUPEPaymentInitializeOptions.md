@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithStripeUPEPaymentInitializeOptions
 
 # Interface: WithStripeUPEPaymentInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [stripeupe](WithStripeUPEPaymentInitializeOptions.md#stripeupe)
-
 ## Properties
 
-### stripeupe
+### stripeupe?
 
-• `Optional` **stripeupe**: [`StripeUPEPaymentInitializeOptions`](StripeUPEPaymentInitializeOptions.md)
+> `optional` **stripeupe?**: [`StripeUPEPaymentInitializeOptions`](StripeUPEPaymentInitializeOptions.md)

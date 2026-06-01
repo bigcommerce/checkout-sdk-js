@@ -1,108 +1,100 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / EmbeddedCheckoutMessenger
 
 # Interface: EmbeddedCheckoutMessenger
 
-## Table of contents
-
-### Methods
-
-- [postComplete](EmbeddedCheckoutMessenger.md#postcomplete)
-- [postError](EmbeddedCheckoutMessenger.md#posterror)
-- [postFrameError](EmbeddedCheckoutMessenger.md#postframeerror)
-- [postFrameLoaded](EmbeddedCheckoutMessenger.md#postframeloaded)
-- [postLoaded](EmbeddedCheckoutMessenger.md#postloaded)
-- [postSignedOut](EmbeddedCheckoutMessenger.md#postsignedout)
-- [receiveStyles](EmbeddedCheckoutMessenger.md#receivestyles)
-
 ## Methods
 
-### postComplete
+### postComplete()
 
-▸ **postComplete**(): `void`
+> **postComplete**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### postError
+### postError()
 
-▸ **postError**(`payload`): `void`
+> **postError**(`payload`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `payload` | `Error` \| [`CustomError`](CustomError.md) |
+##### payload
+
+`Error` \| [`CustomError`](CustomError.md)
 
 #### Returns
 
 `void`
 
-___
+***
 
-### postFrameError
+### postFrameError()
 
-▸ **postFrameError**(`payload`): `void`
+> **postFrameError**(`payload`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `payload` | `Error` \| [`CustomError`](CustomError.md) |
+##### payload
+
+`Error` \| [`CustomError`](CustomError.md)
 
 #### Returns
 
 `void`
 
-___
+***
 
-### postFrameLoaded
+### postFrameLoaded()
 
-▸ **postFrameLoaded**(`payload?`): `void`
+> **postFrameLoaded**(`payload?`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `payload?` | [`EmbeddedContentOptions`](EmbeddedContentOptions.md) |
+##### payload?
+
+[`EmbeddedContentOptions`](EmbeddedContentOptions.md)
 
 #### Returns
 
 `void`
 
-___
+***
 
-### postLoaded
+### postLoaded()
 
-▸ **postLoaded**(): `void`
-
-#### Returns
-
-`void`
-
-___
-
-### postSignedOut
-
-▸ **postSignedOut**(): `void`
+> **postLoaded**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### receiveStyles
+### postSignedOut()
 
-▸ **receiveStyles**(`handler`): `void`
+> **postSignedOut**(): `void`
+
+#### Returns
+
+`void`
+
+***
+
+### receiveStyles()
+
+> **receiveStyles**(`handler`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `handler` | (`styles`: [`EmbeddedCheckoutStyles`](EmbeddedCheckoutStyles.md)) => `void` |
+##### handler
+
+(`styles`) => `void`
 
 #### Returns
 

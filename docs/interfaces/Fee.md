@@ -1,50 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Fee
 
 # Interface: Fee
-
-## Table of contents
-
-### Properties
-
-- [cost](Fee.md#cost)
-- [displayName](Fee.md#displayname)
-- [id](Fee.md#id)
-- [name](Fee.md#name)
-- [source](Fee.md#source)
-- [type](Fee.md#type)
 
 ## Properties
 
 ### cost
 
-• **cost**: `number`
+> **cost**: `number`
 
-___
+***
 
 ### displayName
 
-• **displayName**: `string`
+> **displayName**: `string`
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
-___
+***
 
 ### source
 
-• **source**: `string`
+> **source**: `string`
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`

@@ -1,160 +1,150 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaymentStrategySelector
 
 # Interface: PaymentStrategySelector
 
-## Table of contents
-
-### Methods
-
-- [getExecuteError](PaymentStrategySelector.md#getexecuteerror)
-- [getFinalizeError](PaymentStrategySelector.md#getfinalizeerror)
-- [getInitializeError](PaymentStrategySelector.md#getinitializeerror)
-- [getWidgetInteractingError](PaymentStrategySelector.md#getwidgetinteractingerror)
-- [isExecuting](PaymentStrategySelector.md#isexecuting)
-- [isFinalizing](PaymentStrategySelector.md#isfinalizing)
-- [isInitialized](PaymentStrategySelector.md#isinitialized)
-- [isInitializing](PaymentStrategySelector.md#isinitializing)
-- [isWidgetInteracting](PaymentStrategySelector.md#iswidgetinteracting)
-
 ## Methods
 
-### getExecuteError
+### getExecuteError()
 
-▸ **getExecuteError**(`methodId?`): `undefined` \| `Error`
+> **getExecuteError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getFinalizeError
+### getFinalizeError()
 
-▸ **getFinalizeError**(`methodId?`): `undefined` \| `Error`
+> **getFinalizeError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getInitializeError
+### getInitializeError()
 
-▸ **getInitializeError**(`methodId?`): `undefined` \| `Error`
+> **getInitializeError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getWidgetInteractingError
+### getWidgetInteractingError()
 
-▸ **getWidgetInteractingError**(`methodId?`): `undefined` \| `Error`
+> **getWidgetInteractingError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### isExecuting
+### isExecuting()
 
-▸ **isExecuting**(`methodId?`): `boolean`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
-
-#### Returns
-
-`boolean`
-
-___
-
-### isFinalizing
-
-▸ **isFinalizing**(`methodId?`): `boolean`
+> **isExecuting**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isInitialized
+### isFinalizing()
 
-▸ **isInitialized**(`query`): `boolean`
+> **isFinalizing**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `query` | [`InitiaizedQuery`](InitiaizedQuery.md) |
+##### methodId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isInitializing
+### isInitialized()
 
-▸ **isInitializing**(`methodId?`): `boolean`
+> **isInitialized**(`query`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### query
+
+[`InitiaizedQuery`](InitiaizedQuery.md)
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isWidgetInteracting
+### isInitializing()
 
-▸ **isWidgetInteracting**(`methodId?`): `boolean`
+> **isInitializing**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
+
+#### Returns
+
+`boolean`
+
+***
+
+### isWidgetInteracting()
+
+> **isWidgetInteracting**(`methodId?`): `boolean`
+
+#### Parameters
+
+##### methodId?
+
+`string`
 
 #### Returns
 

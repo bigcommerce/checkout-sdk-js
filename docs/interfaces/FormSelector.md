@@ -1,98 +1,96 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / FormSelector
 
 # Interface: FormSelector
 
-## Table of contents
-
-### Methods
-
-- [getAddressExtraFields](FormSelector.md#getaddressextrafields)
-- [getBillingAddressFields](FormSelector.md#getbillingaddressfields)
-- [getCustomerAccountFields](FormSelector.md#getcustomeraccountfields)
-- [getLoadError](FormSelector.md#getloaderror)
-- [getOrderExtraFields](FormSelector.md#getorderextrafields)
-- [getShippingAddressFields](FormSelector.md#getshippingaddressfields)
-- [isLoading](FormSelector.md#isloading)
-
 ## Methods
 
-### getAddressExtraFields
+### getAddressExtraFields()
 
-▸ **getAddressExtraFields**(): [`FormField`](FormField.md)[]
+> **getAddressExtraFields**(): [`FormField`](FormField.md)[]
 
 #### Returns
 
 [`FormField`](FormField.md)[]
 
-___
+***
 
-### getBillingAddressFields
+### getBillingAddressFields()
 
-▸ **getBillingAddressFields**(`countries`, `countryCode`): [`FormField`](FormField.md)[]
+> **getBillingAddressFields**(`countries`, `countryCode`): [`FormField`](FormField.md)[]
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `countries` | `undefined` \| [`Country`](Country.md)[] |
-| `countryCode` | `string` |
+##### countries
+
+[`Country`](Country.md)[] \| `undefined`
+
+##### countryCode
+
+`string`
 
 #### Returns
 
 [`FormField`](FormField.md)[]
 
-___
+***
 
-### getCustomerAccountFields
+### getCustomerAccountFields()
 
-▸ **getCustomerAccountFields**(): [`FormField`](FormField.md)[]
-
-#### Returns
-
-[`FormField`](FormField.md)[]
-
-___
-
-### getLoadError
-
-▸ **getLoadError**(): `undefined` \| `Error`
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getOrderExtraFields
-
-▸ **getOrderExtraFields**(): [`FormField`](FormField.md)[]
+> **getCustomerAccountFields**(): [`FormField`](FormField.md)[]
 
 #### Returns
 
 [`FormField`](FormField.md)[]
 
-___
+***
 
-### getShippingAddressFields
+### getLoadError()
 
-▸ **getShippingAddressFields**(`countries`, `countryCode`): [`FormField`](FormField.md)[]
+> **getLoadError**(): `Error` \| `undefined`
+
+#### Returns
+
+`Error` \| `undefined`
+
+***
+
+### getOrderExtraFields()
+
+> **getOrderExtraFields**(): [`FormField`](FormField.md)[]
+
+#### Returns
+
+[`FormField`](FormField.md)[]
+
+***
+
+### getShippingAddressFields()
+
+> **getShippingAddressFields**(`countries`, `countryCode`): [`FormField`](FormField.md)[]
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `countries` | `undefined` \| [`Country`](Country.md)[] |
-| `countryCode` | `string` |
+##### countries
+
+[`Country`](Country.md)[] \| `undefined`
+
+##### countryCode
+
+`string`
 
 #### Returns
 
 [`FormField`](FormField.md)[]
 
-___
+***
 
-### isLoading
+### isLoading()
 
-▸ **isLoading**(): `boolean`
+> **isLoading**(): `boolean`
 
 #### Returns
 

@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / SignInEmail
 
 # Interface: SignInEmail
-
-## Table of contents
-
-### Properties
-
-- [expiry](SignInEmail.md#expiry)
-- [sent\_email](SignInEmail.md#sent_email)
 
 ## Properties
 
 ### expiry
 
-• **expiry**: `number`
+> **expiry**: `number`
 
-___
+***
 
 ### sent\_email
 
-• **sent\_email**: `string`
+> **sent\_email**: `string`

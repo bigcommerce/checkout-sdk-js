@@ -1,29 +1,26 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / InitCallbackActions
 
 # Interface: InitCallbackActions
 
-## Table of contents
-
-### Methods
-
-- [disable](InitCallbackActions.md#disable)
-- [enable](InitCallbackActions.md#enable)
-
 ## Methods
 
-### disable
+### disable()
 
-▸ **disable**(): `void`
+> **disable**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### enable
+### enable()
 
-▸ **enable**(): `void`
+> **enable**(): `void`
 
 #### Returns
 

@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BoltButtonStyleOptions
 
 # Interface: BoltButtonStyleOptions
 
-## Table of contents
-
-### Properties
-
-- [shape](BoltButtonStyleOptions.md#shape)
-- [size](BoltButtonStyleOptions.md#size)
-
 ## Properties
 
-### shape
+### shape?
 
-• `Optional` **shape**: [`StyleButtonShape_2`](../enums/StyleButtonShape_2.md)
+> `optional` **shape?**: [`StyleButtonShape_2`](../enumerations/StyleButtonShape_2.md)
 
-___
+***
 
-### size
+### size?
 
-• `Optional` **size**: [`StyleButtonSize`](../enums/StyleButtonSize.md)
+> `optional` **size?**: [`StyleButtonSize`](../enumerations/StyleButtonSize.md)

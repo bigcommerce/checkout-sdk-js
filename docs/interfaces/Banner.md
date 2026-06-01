@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Banner
 
 # Interface: Banner
-
-## Table of contents
-
-### Properties
-
-- [text](Banner.md#text)
-- [type](Banner.md#type)
 
 ## Properties
 
 ### text
 
-• **text**: `string`
+> **text**: `string`
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`

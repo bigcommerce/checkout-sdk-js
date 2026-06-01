@@ -1,73 +1,66 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CustomerSelector
 
 # Interface: CustomerSelector
 
-## Table of contents
-
-### Methods
-
-- [getCreateAccountError](CustomerSelector.md#getcreateaccounterror)
-- [getCreateAddressError](CustomerSelector.md#getcreateaddresserror)
-- [getCustomer](CustomerSelector.md#getcustomer)
-- [getCustomerOrThrow](CustomerSelector.md#getcustomerorthrow)
-- [isCreatingCustomerAccount](CustomerSelector.md#iscreatingcustomeraccount)
-- [isCreatingCustomerAddress](CustomerSelector.md#iscreatingcustomeraddress)
-
 ## Methods
 
-### getCreateAccountError
+### getCreateAccountError()
 
-▸ **getCreateAccountError**(): `undefined` \| `Error`
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getCreateAddressError
-
-▸ **getCreateAddressError**(): `undefined` \| `Error`
+> **getCreateAccountError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getCustomer
+### getCreateAddressError()
 
-▸ **getCustomer**(): `undefined` \| [`Customer`](Customer.md)
+> **getCreateAddressError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| [`Customer`](Customer.md)
+`Error` \| `undefined`
 
-___
+***
 
-### getCustomerOrThrow
+### getCustomer()
 
-▸ **getCustomerOrThrow**(): [`Customer`](Customer.md)
+> **getCustomer**(): [`Customer`](Customer.md) \| `undefined`
+
+#### Returns
+
+[`Customer`](Customer.md) \| `undefined`
+
+***
+
+### getCustomerOrThrow()
+
+> **getCustomerOrThrow**(): [`Customer`](Customer.md)
 
 #### Returns
 
 [`Customer`](Customer.md)
 
-___
+***
 
-### isCreatingCustomerAccount
+### isCreatingCustomerAccount()
 
-▸ **isCreatingCustomerAccount**(): `boolean`
+> **isCreatingCustomerAccount**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isCreatingCustomerAddress
+### isCreatingCustomerAddress()
 
-▸ **isCreatingCustomerAddress**(): `boolean`
+> **isCreatingCustomerAddress**(): `boolean`
 
 #### Returns
 

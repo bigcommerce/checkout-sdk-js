@@ -1,71 +1,61 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StoreProfile
 
 # Interface: StoreProfile
-
-## Table of contents
-
-### Properties
-
-- [orderEmail](StoreProfile.md#orderemail)
-- [shopPath](StoreProfile.md#shoppath)
-- [storeCountry](StoreProfile.md#storecountry)
-- [storeCountryCode](StoreProfile.md#storecountrycode)
-- [storeHash](StoreProfile.md#storehash)
-- [storeId](StoreProfile.md#storeid)
-- [storeLanguage](StoreProfile.md#storelanguage)
-- [storeName](StoreProfile.md#storename)
-- [storePhoneNumber](StoreProfile.md#storephonenumber)
 
 ## Properties
 
 ### orderEmail
 
-• **orderEmail**: `string`
+> **orderEmail**: `string`
 
-___
+***
 
 ### shopPath
 
-• **shopPath**: `string`
+> **shopPath**: `string`
 
-___
+***
 
 ### storeCountry
 
-• **storeCountry**: `string`
+> **storeCountry**: `string`
 
-___
+***
 
 ### storeCountryCode
 
-• **storeCountryCode**: `string`
+> **storeCountryCode**: `string`
 
-___
+***
 
 ### storeHash
 
-• **storeHash**: `string`
+> **storeHash**: `string`
 
-___
+***
 
 ### storeId
 
-• **storeId**: `string`
+> **storeId**: `string`
 
-___
+***
 
 ### storeLanguage
 
-• **storeLanguage**: `string`
+> **storeLanguage**: `string`
 
-___
+***
 
 ### storeName
 
-• **storeName**: `string`
+> **storeName**: `string`
 
-___
+***
 
 ### storePhoneNumber
 
-• **storePhoneNumber**: `string`
+> **storePhoneNumber**: `string`

@@ -1,63 +1,56 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StripeElementClasses
 
 # Interface: StripeElementClasses
 
-## Table of contents
-
-### Properties
-
-- [base](StripeElementClasses.md#base)
-- [complete](StripeElementClasses.md#complete)
-- [empty](StripeElementClasses.md#empty)
-- [focus](StripeElementClasses.md#focus)
-- [invalid](StripeElementClasses.md#invalid)
-- [webkitAutoFill](StripeElementClasses.md#webkitautofill)
-
 ## Properties
 
-### base
+### base?
 
-• `Optional` **base**: `string`
+> `optional` **base?**: `string`
 
 The base class applied to the container. Defaults to StripeElement.
 
-___
+***
 
-### complete
+### complete?
 
-• `Optional` **complete**: `string`
+> `optional` **complete?**: `string`
 
 The class name to apply when the Element is complete. Defaults to StripeElement--complete.
 
-___
+***
 
-### empty
+### empty?
 
-• `Optional` **empty**: `string`
+> `optional` **empty?**: `string`
 
 The class name to apply when the Element is empty. Defaults to StripeElement--empty.
 
-___
+***
 
-### focus
+### focus?
 
-• `Optional` **focus**: `string`
+> `optional` **focus?**: `string`
 
 The class name to apply when the Element is focused. Defaults to StripeElement--focus.
 
-___
+***
 
-### invalid
+### invalid?
 
-• `Optional` **invalid**: `string`
+> `optional` **invalid?**: `string`
 
 The class name to apply when the Element is invalid. Defaults to StripeElement--invalid.
 
-___
+***
 
-### webkitAutoFill
+### webkitAutoFill?
 
-• `Optional` **webkitAutoFill**: `string`
+> `optional` **webkitAutoFill?**: `string`
 
 The class name to apply when the Element has its value autofilled by the browser
 (only on Chrome and Safari). Defaults to StripeElement--webkit-autofill.

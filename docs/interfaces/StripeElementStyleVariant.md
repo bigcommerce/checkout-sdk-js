@@ -1,94 +1,74 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StripeElementStyleVariant
 
 # Interface: StripeElementStyleVariant
 
 CSS properties supported by Stripe.js.
 
-## Hierarchy
+## Extends
 
 - [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
 
-  ↳ **`StripeElementStyleVariant`**
-
-## Table of contents
-
-### Properties
-
-- [:-webkit-autofill](StripeElementStyleVariant.md#:-webkit-autofill)
-- [::-ms-clear](StripeElementStyleVariant.md#::-ms-clear)
-- [::placeholder](StripeElementStyleVariant.md#::placeholder)
-- [::selection](StripeElementStyleVariant.md#::selection)
-- [:disabled](StripeElementStyleVariant.md#:disabled)
-- [:focus](StripeElementStyleVariant.md#:focus)
-- [:hover](StripeElementStyleVariant.md#:hover)
-- [backgroundColor](StripeElementStyleVariant.md#backgroundcolor)
-- [color](StripeElementStyleVariant.md#color)
-- [fontFamily](StripeElementStyleVariant.md#fontfamily)
-- [fontSize](StripeElementStyleVariant.md#fontsize)
-- [fontSmoothing](StripeElementStyleVariant.md#fontsmoothing)
-- [fontStyle](StripeElementStyleVariant.md#fontstyle)
-- [fontVariant](StripeElementStyleVariant.md#fontvariant)
-- [fontWeight](StripeElementStyleVariant.md#fontweight)
-- [iconColor](StripeElementStyleVariant.md#iconcolor)
-- [letterSpacing](StripeElementStyleVariant.md#letterspacing)
-- [lineHeight](StripeElementStyleVariant.md#lineheight)
-- [padding](StripeElementStyleVariant.md#padding)
-- [textAlign](StripeElementStyleVariant.md#textalign)
-- [textDecoration](StripeElementStyleVariant.md#textdecoration)
-- [textShadow](StripeElementStyleVariant.md#textshadow)
-- [textTransform](StripeElementStyleVariant.md#texttransform)
-
 ## Properties
 
-### :-webkit-autofill
+### :-webkit-autofill?
 
-• `Optional` **:-webkit-autofill**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
+> `optional` **:-webkit-autofill?**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
 
-___
+***
 
-### ::-ms-clear
+### ::-ms-clear?
 
-• `Optional` **::-ms-clear**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md) & \{ `display`: `string`  }
+> `optional` **::-ms-clear?**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md) & `object`
 
 Available for the `cardNumber`, `cardExpiry`, and `cardCvc` elements.
 
-___
+#### Type Declaration
 
-### ::placeholder
+##### display
 
-• `Optional` **::placeholder**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
+> **display**: `string`
 
-___
+***
 
-### ::selection
+### ::placeholder?
 
-• `Optional` **::selection**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
+> `optional` **::placeholder?**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
 
-___
+***
 
-### :disabled
+### ::selection?
 
-• `Optional` **:disabled**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
+> `optional` **::selection?**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
+
+***
+
+### :disabled?
+
+> `optional` **:disabled?**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
 
 Available for all elements except the `paymentRequestButton` element
 
-___
+***
 
-### :focus
+### :focus?
 
-• `Optional` **:focus**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
+> `optional` **:focus?**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
 
-___
+***
 
-### :hover
+### :hover?
 
-• `Optional` **:hover**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
+> `optional` **:hover?**: [`StripeElementCSSProperties`](StripeElementCSSProperties.md)
 
-___
+***
 
-### backgroundColor
+### backgroundColor?
 
-• `Optional` **backgroundColor**: `string`
+> `optional` **backgroundColor?**: `string`
 
 The [background-color](https://developer.mozilla.org/en-US/docs/Web/CSS/background-color) CSS property.
 
@@ -97,121 +77,121 @@ In other cases, consider setting the background color on the element's container
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[backgroundColor](StripeElementCSSProperties.md#backgroundcolor)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`backgroundColor`](StripeElementCSSProperties.md#backgroundcolor)
 
-___
+***
 
-### color
+### color?
 
-• `Optional` **color**: `string`
+> `optional` **color?**: `string`
 
 The [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[color](StripeElementCSSProperties.md#color)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`color`](StripeElementCSSProperties.md#color)
 
-___
+***
 
-### fontFamily
+### fontFamily?
 
-• `Optional` **fontFamily**: `string`
+> `optional` **fontFamily?**: `string`
 
 The [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[fontFamily](StripeElementCSSProperties.md#fontfamily)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`fontFamily`](StripeElementCSSProperties.md#fontfamily)
 
-___
+***
 
-### fontSize
+### fontSize?
 
-• `Optional` **fontSize**: `string`
+> `optional` **fontSize?**: `string`
 
 The [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[fontSize](StripeElementCSSProperties.md#fontsize)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`fontSize`](StripeElementCSSProperties.md#fontsize)
 
-___
+***
 
-### fontSmoothing
+### fontSmoothing?
 
-• `Optional` **fontSmoothing**: `string`
+> `optional` **fontSmoothing?**: `string`
 
 The [font-smoothing](https://developer.mozilla.org/en-US/docs/Web/CSS/font-smoothing) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[fontSmoothing](StripeElementCSSProperties.md#fontsmoothing)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`fontSmoothing`](StripeElementCSSProperties.md#fontsmoothing)
 
-___
+***
 
-### fontStyle
+### fontStyle?
 
-• `Optional` **fontStyle**: `string`
+> `optional` **fontStyle?**: `string`
 
 The [font-style](https://developer.mozilla.org/en-US/docs/Web/CSS/font-style) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[fontStyle](StripeElementCSSProperties.md#fontstyle)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`fontStyle`](StripeElementCSSProperties.md#fontstyle)
 
-___
+***
 
-### fontVariant
+### fontVariant?
 
-• `Optional` **fontVariant**: `string`
+> `optional` **fontVariant?**: `string`
 
 The [font-variant](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[fontVariant](StripeElementCSSProperties.md#fontvariant)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`fontVariant`](StripeElementCSSProperties.md#fontvariant)
 
-___
+***
 
-### fontWeight
+### fontWeight?
 
-• `Optional` **fontWeight**: `string`
+> `optional` **fontWeight?**: `string`
 
 The [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[fontWeight](StripeElementCSSProperties.md#fontweight)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`fontWeight`](StripeElementCSSProperties.md#fontweight)
 
-___
+***
 
-### iconColor
+### iconColor?
 
-• `Optional` **iconColor**: `string`
+> `optional` **iconColor?**: `string`
 
 A custom property, used to set the color of the icons that are rendered in an element.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[iconColor](StripeElementCSSProperties.md#iconcolor)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`iconColor`](StripeElementCSSProperties.md#iconcolor)
 
-___
+***
 
-### letterSpacing
+### letterSpacing?
 
-• `Optional` **letterSpacing**: `string`
+> `optional` **letterSpacing?**: `string`
 
 The [letter-spacing](https://developer.mozilla.org/en-US/docs/Web/CSS/letter-spacing) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[letterSpacing](StripeElementCSSProperties.md#letterspacing)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`letterSpacing`](StripeElementCSSProperties.md#letterspacing)
 
-___
+***
 
-### lineHeight
+### lineHeight?
 
-• `Optional` **lineHeight**: `string`
+> `optional` **lineHeight?**: `string`
 
 The [line-height](https://developer.mozilla.org/en-US/docs/Web/CSS/line-height) CSS property.
 
@@ -219,13 +199,13 @@ To avoid cursors being rendered inconsistently across browsers, consider using a
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[lineHeight](StripeElementCSSProperties.md#lineheight)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`lineHeight`](StripeElementCSSProperties.md#lineheight)
 
-___
+***
 
-### padding
+### padding?
 
-• `Optional` **padding**: `string`
+> `optional` **padding?**: `string`
 
 The [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) CSS property.
 
@@ -234,13 +214,13 @@ Accepts integer `px` values.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[padding](StripeElementCSSProperties.md#padding)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`padding`](StripeElementCSSProperties.md#padding)
 
-___
+***
 
-### textAlign
+### textAlign?
 
-• `Optional` **textAlign**: `string`
+> `optional` **textAlign?**: `string`
 
 The [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align) CSS property.
 
@@ -248,40 +228,40 @@ Available for the `cardNumber`, `cardExpiry`, and `cardCvc` elements.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[textAlign](StripeElementCSSProperties.md#textalign)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`textAlign`](StripeElementCSSProperties.md#textalign)
 
-___
+***
 
-### textDecoration
+### textDecoration?
 
-• `Optional` **textDecoration**: `string`
+> `optional` **textDecoration?**: `string`
 
 The [text-decoration](https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[textDecoration](StripeElementCSSProperties.md#textdecoration)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`textDecoration`](StripeElementCSSProperties.md#textdecoration)
 
-___
+***
 
-### textShadow
+### textShadow?
 
-• `Optional` **textShadow**: `string`
+> `optional` **textShadow?**: `string`
 
 The [text-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/text-shadow) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[textShadow](StripeElementCSSProperties.md#textshadow)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`textShadow`](StripeElementCSSProperties.md#textshadow)
 
-___
+***
 
-### textTransform
+### textTransform?
 
-• `Optional` **textTransform**: `string`
+> `optional` **textTransform?**: `string`
 
 The [text-transform](https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform) CSS property.
 
 #### Inherited from
 
-[StripeElementCSSProperties](StripeElementCSSProperties.md).[textTransform](StripeElementCSSProperties.md#texttransform)
+[`StripeElementCSSProperties`](StripeElementCSSProperties.md).[`textTransform`](StripeElementCSSProperties.md#texttransform)

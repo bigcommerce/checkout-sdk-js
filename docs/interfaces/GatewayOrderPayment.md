@@ -1,109 +1,107 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GatewayOrderPayment
 
 # Interface: GatewayOrderPayment
 
-## Hierarchy
+## Extends
 
 - [`OrderPayment`](OrderPayment.md)
-
-  ↳ **`GatewayOrderPayment`**
-
-## Table of contents
-
-### Properties
-
-- [amount](GatewayOrderPayment.md#amount)
-- [description](GatewayOrderPayment.md#description)
-- [detail](GatewayOrderPayment.md#detail)
-- [gatewayId](GatewayOrderPayment.md#gatewayid)
-- [mandate](GatewayOrderPayment.md#mandate)
-- [methodId](GatewayOrderPayment.md#methodid)
-- [paymentId](GatewayOrderPayment.md#paymentid)
-- [providerId](GatewayOrderPayment.md#providerid)
 
 ## Properties
 
 ### amount
 
-• **amount**: `number`
+> **amount**: `number`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[amount](OrderPayment.md#amount)
+[`OrderPayment`](OrderPayment.md).[`amount`](OrderPayment.md#amount)
 
-___
+***
 
 ### description
 
-• **description**: `string`
+> **description**: `string`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[description](OrderPayment.md#description)
+[`OrderPayment`](OrderPayment.md).[`description`](OrderPayment.md#description)
 
-___
+***
 
 ### detail
 
-• **detail**: `Object`
+> **detail**: `object`
 
-#### Type declaration
+#### instructions
 
-| Name | Type |
-| :------ | :------ |
-| `instructions` | `string` |
-| `step` | `string` |
+> **instructions**: `string`
 
-___
+#### step
 
-### gatewayId
+> **step**: `string`
 
-• `Optional` **gatewayId**: `string`
+***
 
-#### Inherited from
+### gatewayId?
 
-[OrderPayment](OrderPayment.md).[gatewayId](OrderPayment.md#gatewayid)
-
-___
-
-### mandate
-
-• `Optional` **mandate**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` |
-| `mandateText?` | \{ `[key: string]`: `string`;  } |
-| `url?` | `string` |
-
-___
-
-### methodId
-
-• `Optional` **methodId**: `string`
+> `optional` **gatewayId?**: `string`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[methodId](OrderPayment.md#methodid)
+[`OrderPayment`](OrderPayment.md).[`gatewayId`](OrderPayment.md#gatewayid)
 
-___
+***
 
-### paymentId
+### mandate?
 
-• `Optional` **paymentId**: `string`
+> `optional` **mandate?**: `object`
+
+#### id
+
+> **id**: `string`
+
+#### mandateText?
+
+> `optional` **mandateText?**: `object`
+
+##### Index Signature
+
+\[`key`: `string`\]: `string`
+
+#### url?
+
+> `optional` **url?**: `string`
+
+***
+
+### methodId?
+
+> `optional` **methodId?**: `string`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[paymentId](OrderPayment.md#paymentid)
+[`OrderPayment`](OrderPayment.md).[`methodId`](OrderPayment.md#methodid)
 
-___
+***
+
+### paymentId?
+
+> `optional` **paymentId?**: `string`
+
+#### Inherited from
+
+[`OrderPayment`](OrderPayment.md).[`paymentId`](OrderPayment.md#paymentid)
+
+***
 
 ### providerId
 
-• **providerId**: `string`
+> **providerId**: `string`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[providerId](OrderPayment.md#providerid)
+[`OrderPayment`](OrderPayment.md).[`providerId`](OrderPayment.md#providerid)

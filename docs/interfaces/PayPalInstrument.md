@@ -1,87 +1,77 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalInstrument
 
 # Interface: PayPalInstrument
 
-## Hierarchy
+## Extends
 
 - [`BaseAccountInstrument`](BaseAccountInstrument.md)
-
-  ↳ **`PayPalInstrument`**
-
-## Table of contents
-
-### Properties
-
-- [bigpayToken](PayPalInstrument.md#bigpaytoken)
-- [defaultInstrument](PayPalInstrument.md#defaultinstrument)
-- [externalId](PayPalInstrument.md#externalid)
-- [method](PayPalInstrument.md#method)
-- [provider](PayPalInstrument.md#provider)
-- [trustedShippingAddress](PayPalInstrument.md#trustedshippingaddress)
-- [type](PayPalInstrument.md#type)
 
 ## Properties
 
 ### bigpayToken
 
-• **bigpayToken**: `string`
+> **bigpayToken**: `string`
 
 #### Inherited from
 
-[BaseAccountInstrument](BaseAccountInstrument.md).[bigpayToken](BaseAccountInstrument.md#bigpaytoken)
+[`BaseAccountInstrument`](BaseAccountInstrument.md).[`bigpayToken`](BaseAccountInstrument.md#bigpaytoken)
 
-___
+***
 
 ### defaultInstrument
 
-• **defaultInstrument**: `boolean`
+> **defaultInstrument**: `boolean`
 
 #### Inherited from
 
-[BaseAccountInstrument](BaseAccountInstrument.md).[defaultInstrument](BaseAccountInstrument.md#defaultinstrument)
+[`BaseAccountInstrument`](BaseAccountInstrument.md).[`defaultInstrument`](BaseAccountInstrument.md#defaultinstrument)
 
-___
+***
 
 ### externalId
 
-• **externalId**: `string`
+> **externalId**: `string`
 
-___
+***
 
 ### method
 
-• **method**: ``"paypal"``
+> **method**: `"paypal"`
 
 #### Overrides
 
-[BaseAccountInstrument](BaseAccountInstrument.md).[method](BaseAccountInstrument.md#method)
+[`BaseAccountInstrument`](BaseAccountInstrument.md).[`method`](BaseAccountInstrument.md#method)
 
-___
+***
 
 ### provider
 
-• **provider**: `string`
+> **provider**: `string`
 
 #### Inherited from
 
-[BaseAccountInstrument](BaseAccountInstrument.md).[provider](BaseAccountInstrument.md#provider)
+[`BaseAccountInstrument`](BaseAccountInstrument.md).[`provider`](BaseAccountInstrument.md#provider)
 
-___
+***
 
 ### trustedShippingAddress
 
-• **trustedShippingAddress**: `boolean`
+> **trustedShippingAddress**: `boolean`
 
 #### Inherited from
 
-[BaseAccountInstrument](BaseAccountInstrument.md).[trustedShippingAddress](BaseAccountInstrument.md#trustedshippingaddress)
+[`BaseAccountInstrument`](BaseAccountInstrument.md).[`trustedShippingAddress`](BaseAccountInstrument.md#trustedshippingaddress)
 
-___
+***
 
 ### type
 
-• **type**: ``"account"`` \| ``"bank"``
+> **type**: `"account"` \| `"bank"`
 
 #### Inherited from
 
-[BaseAccountInstrument](BaseAccountInstrument.md).[type](BaseAccountInstrument.md#type)
+[`BaseAccountInstrument`](BaseAccountInstrument.md).[`type`](BaseAccountInstrument.md#type)

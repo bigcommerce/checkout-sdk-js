@@ -1,95 +1,86 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BillingAddressSelector
 
 # Interface: BillingAddressSelector
 
-## Table of contents
-
-### Methods
-
-- [getBillingAddress](BillingAddressSelector.md#getbillingaddress)
-- [getBillingAddressOrThrow](BillingAddressSelector.md#getbillingaddressorthrow)
-- [getContinueAsGuestError](BillingAddressSelector.md#getcontinueasguesterror)
-- [getLoadError](BillingAddressSelector.md#getloaderror)
-- [getUpdateError](BillingAddressSelector.md#getupdateerror)
-- [isContinuingAsGuest](BillingAddressSelector.md#iscontinuingasguest)
-- [isLoading](BillingAddressSelector.md#isloading)
-- [isUpdating](BillingAddressSelector.md#isupdating)
-
 ## Methods
 
-### getBillingAddress
+### getBillingAddress()
 
-▸ **getBillingAddress**(): `undefined` \| [`BillingAddress`](BillingAddress.md)
+> **getBillingAddress**(): [`BillingAddress`](BillingAddress.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| [`BillingAddress`](BillingAddress.md)
+[`BillingAddress`](BillingAddress.md) \| `undefined`
 
-___
+***
 
-### getBillingAddressOrThrow
+### getBillingAddressOrThrow()
 
-▸ **getBillingAddressOrThrow**(): [`BillingAddress`](BillingAddress.md)
+> **getBillingAddressOrThrow**(): [`BillingAddress`](BillingAddress.md)
 
 #### Returns
 
 [`BillingAddress`](BillingAddress.md)
 
-___
+***
 
-### getContinueAsGuestError
+### getContinueAsGuestError()
 
-▸ **getContinueAsGuestError**(): `undefined` \| `Error`
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getLoadError
-
-▸ **getLoadError**(): `undefined` \| `Error`
+> **getContinueAsGuestError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getUpdateError
+### getLoadError()
 
-▸ **getUpdateError**(): `undefined` \| `Error`
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### isContinuingAsGuest
-
-▸ **isContinuingAsGuest**(): `boolean`
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`boolean`
+`Error` \| `undefined`
 
-___
+***
 
-### isLoading
+### getUpdateError()
 
-▸ **isLoading**(): `boolean`
+> **getUpdateError**(): `Error` \| `undefined`
+
+#### Returns
+
+`Error` \| `undefined`
+
+***
+
+### isContinuingAsGuest()
+
+> **isContinuingAsGuest**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isUpdating
+### isLoading()
 
-▸ **isUpdating**(): `boolean`
+> **isLoading**(): `boolean`
+
+#### Returns
+
+`boolean`
+
+***
+
+### isUpdating()
+
+> **isUpdating**(): `boolean`
 
 #### Returns
 

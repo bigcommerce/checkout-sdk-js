@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutParams
 
 # Interface: CheckoutParams
 
-## Table of contents
-
-### Properties
-
-- [include](CheckoutParams.md#include)
-
 ## Properties
 
-### include
+### include?
 
-• `Optional` **include**: [`CheckoutIncludes`](../enums/CheckoutIncludes.md)[] \| [`CheckoutIncludeParam`](../README.md#checkoutincludeparam)
+> `optional` **include?**: [`CheckoutIncludes`](../enumerations/CheckoutIncludes.md)[] \| [`CheckoutIncludeParam`](../type-aliases/CheckoutIncludeParam.md)

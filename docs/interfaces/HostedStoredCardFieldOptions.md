@@ -1,54 +1,47 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedStoredCardFieldOptions
 
 # Interface: HostedStoredCardFieldOptions
 
-## Hierarchy
+## Extends
 
 - [`HostedCardFieldOptions`](HostedCardFieldOptions.md)
 
-  ↳ **`HostedStoredCardFieldOptions`**
-
-## Table of contents
-
-### Properties
-
-- [accessibilityLabel](HostedStoredCardFieldOptions.md#accessibilitylabel)
-- [containerId](HostedStoredCardFieldOptions.md#containerid)
-- [instrumentId](HostedStoredCardFieldOptions.md#instrumentid)
-- [placeholder](HostedStoredCardFieldOptions.md#placeholder)
-
 ## Properties
 
-### accessibilityLabel
+### accessibilityLabel?
 
-• `Optional` **accessibilityLabel**: `string`
+> `optional` **accessibilityLabel?**: `string`
 
 #### Inherited from
 
-[HostedCardFieldOptions](HostedCardFieldOptions.md).[accessibilityLabel](HostedCardFieldOptions.md#accessibilitylabel)
+[`HostedCardFieldOptions`](HostedCardFieldOptions.md).[`accessibilityLabel`](HostedCardFieldOptions.md#accessibilitylabel)
 
-___
+***
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 #### Inherited from
 
-[HostedCardFieldOptions](HostedCardFieldOptions.md).[containerId](HostedCardFieldOptions.md#containerid)
+[`HostedCardFieldOptions`](HostedCardFieldOptions.md).[`containerId`](HostedCardFieldOptions.md#containerid)
 
-___
+***
 
 ### instrumentId
 
-• **instrumentId**: `string`
+> **instrumentId**: `string`
 
-___
+***
 
-### placeholder
+### placeholder?
 
-• `Optional` **placeholder**: `string`
+> `optional` **placeholder?**: `string`
 
 #### Inherited from
 
-[HostedCardFieldOptions](HostedCardFieldOptions.md).[placeholder](HostedCardFieldOptions.md#placeholder)
+[`HostedCardFieldOptions`](HostedCardFieldOptions.md).[`placeholder`](HostedCardFieldOptions.md#placeholder)

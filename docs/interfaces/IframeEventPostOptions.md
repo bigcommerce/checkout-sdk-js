@@ -1,29 +1,29 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / IframeEventPostOptions
 
 # Interface: IframeEventPostOptions\<TSuccessEvent, TErrorEvent\>
 
-## Type parameters
+## Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TSuccessEvent` | extends [`IframeEvent`](IframeEvent.md) |
-| `TErrorEvent` | extends [`IframeEvent`](IframeEvent.md) |
+### TSuccessEvent
 
-## Table of contents
+`TSuccessEvent` *extends* [`IframeEvent`](IframeEvent.md)
 
-### Properties
+### TErrorEvent
 
-- [errorType](IframeEventPostOptions.md#errortype)
-- [successType](IframeEventPostOptions.md#successtype)
+`TErrorEvent` *extends* [`IframeEvent`](IframeEvent.md)
 
 ## Properties
 
-### errorType
+### errorType?
 
-• `Optional` **errorType**: `TErrorEvent`[``"type"``]
+> `optional` **errorType?**: `TErrorEvent`\[`"type"`\]
 
-___
+***
 
-### successType
+### successType?
 
-• `Optional` **successType**: `TSuccessEvent`[``"type"``]
+> `optional` **successType?**: `TSuccessEvent`\[`"type"`\]

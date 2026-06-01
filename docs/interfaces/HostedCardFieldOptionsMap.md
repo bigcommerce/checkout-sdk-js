@@ -1,36 +1,31 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedCardFieldOptionsMap
 
 # Interface: HostedCardFieldOptionsMap
 
-## Table of contents
-
-### Properties
-
-- [cardCode](HostedCardFieldOptionsMap.md#cardcode)
-- [cardExpiry](HostedCardFieldOptionsMap.md#cardexpiry)
-- [cardName](HostedCardFieldOptionsMap.md#cardname)
-- [cardNumber](HostedCardFieldOptionsMap.md#cardnumber)
-
 ## Properties
 
-### cardCode
+### cardCode?
 
-• `Optional` **cardCode**: [`HostedCardFieldOptions`](HostedCardFieldOptions.md)
+> `optional` **cardCode?**: [`HostedCardFieldOptions`](HostedCardFieldOptions.md)
 
-___
+***
 
 ### cardExpiry
 
-• **cardExpiry**: [`HostedCardFieldOptions`](HostedCardFieldOptions.md)
+> **cardExpiry**: [`HostedCardFieldOptions`](HostedCardFieldOptions.md)
 
-___
+***
 
 ### cardName
 
-• **cardName**: [`HostedCardFieldOptions`](HostedCardFieldOptions.md)
+> **cardName**: [`HostedCardFieldOptions`](HostedCardFieldOptions.md)
 
-___
+***
 
 ### cardNumber
 
-• **cardNumber**: [`HostedCardFieldOptions`](HostedCardFieldOptions.md)
+> **cardNumber**: [`HostedCardFieldOptions`](HostedCardFieldOptions.md)

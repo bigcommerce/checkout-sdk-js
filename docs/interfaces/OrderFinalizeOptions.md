@@ -1,47 +1,42 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / OrderFinalizeOptions
 
 # Interface: OrderFinalizeOptions
 
 A set of options for configuring an asynchronous request.
 
-## Hierarchy
+## Extends
 
 - [`RequestOptions`](RequestOptions.md)
 
-  ↳ **`OrderFinalizeOptions`**
-
-## Table of contents
-
-### Properties
-
-- [integrations](OrderFinalizeOptions.md#integrations)
-- [params](OrderFinalizeOptions.md#params)
-- [timeout](OrderFinalizeOptions.md#timeout)
-- [version](OrderFinalizeOptions.md#version)
-
 ## Properties
 
-### integrations
+### integrations?
 
-• `Optional` **integrations**: `PaymentStrategyFactory`\<`default`\>[]
+> `optional` **integrations?**: `PaymentStrategyFactory`\<`PaymentStrategy`\>[]
 
-___
+**`Alpha`**
 
-### params
+***
 
-• `Optional` **params**: `object`
+### params?
+
+> `optional` **params?**: `object`
 
 The parameters of the request, if required.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[params](RequestOptions.md#params)
+[`RequestOptions`](RequestOptions.md).[`params`](RequestOptions.md#params)
 
-___
+***
 
-### timeout
+### timeout?
 
-• `Optional` **timeout**: `default`
+> `optional` **timeout?**: `Timeout`
 
 Provide this option if you want to cancel or time out the request. If the
 timeout object completes before the request, the request will be
@@ -49,16 +44,16 @@ cancelled.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[timeout](RequestOptions.md#timeout)
+[`RequestOptions`](RequestOptions.md).[`timeout`](RequestOptions.md#timeout)
 
-___
+***
 
-### version
+### version?
 
-• `Optional` **version**: `number`
+> `optional` **version?**: `number`
 
 The version of the checkout, used for optimistic concurrency control.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[version](RequestOptions.md#version)
+[`RequestOptions`](RequestOptions.md).[`version`](RequestOptions.md#version)

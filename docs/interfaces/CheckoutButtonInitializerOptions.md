@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutButtonInitializerOptions
 
 # Interface: CheckoutButtonInitializerOptions
 
-## Table of contents
-
-### Properties
-
-- [host](CheckoutButtonInitializerOptions.md#host)
-- [locale](CheckoutButtonInitializerOptions.md#locale)
-
 ## Properties
 
-### host
+### host?
 
-• `Optional` **host**: `string`
+> `optional` **host?**: `string`
 
-___
+***
 
-### locale
+### locale?
 
-• `Optional` **locale**: `string`
+> `optional` **locale?**: `string`

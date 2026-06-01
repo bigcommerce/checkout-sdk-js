@@ -154,7 +154,7 @@ declare interface WithMolliePaymentInitializeOptions {
     mollie?: MolliePaymentInitializeOptions;
 }
 
-export declare const createMolliePaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<MolliePaymentStrategy>, {
+export declare const createMolliePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<MolliePaymentStrategy>, {
     gateway: string;
     id?: undefined;
 } | {

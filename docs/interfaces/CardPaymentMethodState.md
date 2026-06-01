@@ -1,60 +1,51 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CardPaymentMethodState
 
 # Interface: CardPaymentMethodState
 
-## Hierarchy
+## Extends
 
 - [`AdyenPaymentMethodState`](AdyenPaymentMethodState.md)
-
-  ↳ **`CardPaymentMethodState`**
-
-## Table of contents
-
-### Properties
-
-- [encryptedCardNumber](CardPaymentMethodState.md#encryptedcardnumber)
-- [encryptedExpiryMonth](CardPaymentMethodState.md#encryptedexpirymonth)
-- [encryptedExpiryYear](CardPaymentMethodState.md#encryptedexpiryyear)
-- [encryptedSecurityCode](CardPaymentMethodState.md#encryptedsecuritycode)
-- [holderName](CardPaymentMethodState.md#holdername)
-- [type](CardPaymentMethodState.md#type)
 
 ## Properties
 
 ### encryptedCardNumber
 
-• **encryptedCardNumber**: `string`
+> **encryptedCardNumber**: `string`
 
-___
+***
 
 ### encryptedExpiryMonth
 
-• **encryptedExpiryMonth**: `string`
+> **encryptedExpiryMonth**: `string`
 
-___
+***
 
 ### encryptedExpiryYear
 
-• **encryptedExpiryYear**: `string`
+> **encryptedExpiryYear**: `string`
 
-___
+***
 
 ### encryptedSecurityCode
 
-• **encryptedSecurityCode**: `string`
+> **encryptedSecurityCode**: `string`
 
-___
+***
 
 ### holderName
 
-• **holderName**: `string`
+> **holderName**: `string`
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`
 
 #### Inherited from
 
-[AdyenPaymentMethodState](AdyenPaymentMethodState.md).[type](AdyenPaymentMethodState.md#type)
+[`AdyenPaymentMethodState`](AdyenPaymentMethodState.md).[`type`](AdyenPaymentMethodState.md#type)

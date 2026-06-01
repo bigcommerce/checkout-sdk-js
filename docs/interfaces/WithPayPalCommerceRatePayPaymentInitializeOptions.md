@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithPayPalCommerceRatePayPaymentInitializeOptions
 
 # Interface: WithPayPalCommerceRatePayPaymentInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [paypalcommerceratepay](WithPayPalCommerceRatePayPaymentInitializeOptions.md#paypalcommerceratepay)
-
 ## Properties
 
-### paypalcommerceratepay
+### paypalcommerceratepay?
 
-• `Optional` **paypalcommerceratepay**: [`PaypalCommerceRatePay`](PaypalCommerceRatePay.md)
+> `optional` **paypalcommerceratepay?**: [`PaypalCommerceRatePay`](PaypalCommerceRatePay.md)

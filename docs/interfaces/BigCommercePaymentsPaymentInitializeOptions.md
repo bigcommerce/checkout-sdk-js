@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsPaymentInitializeOptions
 
 # Interface: BigCommercePaymentsPaymentInitializeOptions
@@ -45,53 +49,36 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [bannerContainerId](BigCommercePaymentsPaymentInitializeOptions.md#bannercontainerid)
-- [container](BigCommercePaymentsPaymentInitializeOptions.md#container)
-- [shouldRenderPayPalButtonOnInitialization](BigCommercePaymentsPaymentInitializeOptions.md#shouldrenderpaypalbuttononinitialization)
-
-### Methods
-
-- [getFieldsValues](BigCommercePaymentsPaymentInitializeOptions.md#getfieldsvalues)
-- [onError](BigCommercePaymentsPaymentInitializeOptions.md#onerror)
-- [onInit](BigCommercePaymentsPaymentInitializeOptions.md#oninit)
-- [onRenderButton](BigCommercePaymentsPaymentInitializeOptions.md#onrenderbutton)
-- [onValidate](BigCommercePaymentsPaymentInitializeOptions.md#onvalidate)
-- [submitForm](BigCommercePaymentsPaymentInitializeOptions.md#submitform)
-
 ## Properties
 
-### bannerContainerId
+### bannerContainerId?
 
-• `Optional` **bannerContainerId**: `string`
+> `optional` **bannerContainerId?**: `string`
 
 The location to insert the Pay Later Messages.
 
-___
+***
 
-### container
+### container?
 
-• `Optional` **container**: `string`
+> `optional` **container?**: `string`
 
 The CSS selector of a container where the payment widget should be inserted into.
 
-___
+***
 
-### shouldRenderPayPalButtonOnInitialization
+### shouldRenderPayPalButtonOnInitialization?
 
-• `Optional` **shouldRenderPayPalButtonOnInitialization**: `boolean`
+> `optional` **shouldRenderPayPalButtonOnInitialization?**: `boolean`
 
 If there is no need to initialize the Smart Payment Button, simply pass false as the option value.
 The default value is true
 
 ## Methods
 
-### getFieldsValues
+### getFieldsValues()?
 
-▸ **getFieldsValues**(): `HostedInstrument`
+> `optional` **getFieldsValues**(): `HostedInstrument`
 
 A callback for getting form fields values.
 
@@ -99,47 +86,49 @@ A callback for getting form fields values.
 
 `HostedInstrument`
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`error`): `void`
+> `optional` **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `unknown` |
+##### error
+
+`unknown`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onInit
+### onInit()?
 
-▸ **onInit**(`callback`): `void`
+> `optional` **onInit**(`callback`): `void`
 
 A callback that gets called when strategy is in the process of initialization before rendering Smart Payment Button.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `callback` | () => `void` | A function, that calls the method to render the Smart Payment Button. |
+##### callback
+
+() => `void`
+
+A function, that calls the method to render the Smart Payment Button.
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onRenderButton
+### onRenderButton()?
 
-▸ **onRenderButton**(): `void`
+> `optional` **onRenderButton**(): `void`
 
 A callback right before render Smart Payment Button that gets called when
 Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
@@ -148,21 +137,28 @@ Smart Payment Button is eligible. This callback can be used to hide the standard
 
 `void`
 
-___
+***
 
-### onValidate
+### onValidate()?
 
-▸ **onValidate**(`resolve`, `reject`): `Promise`\<`void`\>
+> `optional` **onValidate**(`resolve`, `reject`): `Promise`\<`void`\>
 
 A callback that gets called when a buyer click on Smart Payment Button
 and should validate payment form.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `resolve` | () => `void` | A function, that gets called if form is valid. |
-| `reject` | () => `void` | A function, that gets called if form is not valid. |
+##### resolve
+
+() => `void`
+
+A function, that gets called if form is valid.
+
+##### reject
+
+() => `void`
+
+A function, that gets called if form is not valid.
 
 #### Returns
 
@@ -170,11 +166,11 @@ and should validate payment form.
 
 reject() or resolve()
 
-___
+***
 
-### submitForm
+### submitForm()?
 
-▸ **submitForm**(): `void`
+> `optional` **submitForm**(): `void`
 
 A callback for submitting payment form that gets called
 when buyer approves PayPal payment.

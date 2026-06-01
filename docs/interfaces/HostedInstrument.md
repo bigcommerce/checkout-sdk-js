@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInstrument
 
 # Interface: HostedInstrument
 
-## Table of contents
-
-### Properties
-
-- [shouldSaveInstrument](HostedInstrument.md#shouldsaveinstrument)
-- [shouldSetAsDefaultInstrument](HostedInstrument.md#shouldsetasdefaultinstrument)
-
 ## Properties
 
-### shouldSaveInstrument
+### shouldSaveInstrument?
 
-• `Optional` **shouldSaveInstrument**: `boolean`
+> `optional` **shouldSaveInstrument?**: `boolean`
 
-___
+***
 
-### shouldSetAsDefaultInstrument
+### shouldSetAsDefaultInstrument?
 
-• `Optional` **shouldSetAsDefaultInstrument**: `boolean`
+> `optional` **shouldSetAsDefaultInstrument?**: `boolean`

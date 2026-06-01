@@ -1,43 +1,37 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PickupMethod
 
 # Interface: PickupMethod
-
-## Table of contents
-
-### Properties
-
-- [collectionInstructions](PickupMethod.md#collectioninstructions)
-- [collectionTimeDescription](PickupMethod.md#collectiontimedescription)
-- [displayName](PickupMethod.md#displayname)
-- [id](PickupMethod.md#id)
-- [locationId](PickupMethod.md#locationid)
 
 ## Properties
 
 ### collectionInstructions
 
-• **collectionInstructions**: `string`
+> **collectionInstructions**: `string`
 
-___
+***
 
 ### collectionTimeDescription
 
-• **collectionTimeDescription**: `string`
+> **collectionTimeDescription**: `string`
 
-___
+***
 
 ### displayName
 
-• **displayName**: `string`
+> **displayName**: `string`
 
-___
+***
 
 ### id
 
-• **id**: `number`
+> **id**: `number`
 
-___
+***
 
 ### locationId
 
-• **locationId**: `number`
+> **locationId**: `number`

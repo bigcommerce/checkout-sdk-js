@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StripeUPEShippingInitializeOptions
 
 # Interface: StripeUPEShippingInitializeOptions
@@ -8,120 +12,110 @@ checkout in order to support StripeUpe.
 When StripeUpe is initialized, an iframe will be inserted into the DOM. The
 iframe has a list of shipping addresses for the customer to choose from.
 
-## Table of contents
-
-### Properties
-
-- [availableCountries](StripeUPEShippingInitializeOptions.md#availablecountries)
-- [container](StripeUPEShippingInitializeOptions.md#container)
-- [gatewayId](StripeUPEShippingInitializeOptions.md#gatewayid)
-- [methodId](StripeUPEShippingInitializeOptions.md#methodid)
-
-### Methods
-
-- [getStripeState](StripeUPEShippingInitializeOptions.md#getstripestate)
-- [getStyles](StripeUPEShippingInitializeOptions.md#getstyles)
-- [onChangeShipping](StripeUPEShippingInitializeOptions.md#onchangeshipping)
-- [setStripeExperiments](StripeUPEShippingInitializeOptions.md#setstripeexperiments)
-
 ## Properties
 
 ### availableCountries
 
-• **availableCountries**: `string`
+> **availableCountries**: `string`
 
 Available countries configured on BC shipping setup.
 
-___
+***
 
-### container
+### container?
 
-• `Optional` **container**: `string`
+> `optional` **container?**: `string`
 
 The ID of a container which the stripe iframe should be inserted.
 
-___
+***
 
 ### gatewayId
 
-• **gatewayId**: `string`
+> **gatewayId**: `string`
 
 The identifier of the payment provider providing the payment method. This
 option is only required if the provider offers multiple payment options.
 i.e.: Stripeupe and Klarna.
 
-___
+***
 
 ### methodId
 
-• **methodId**: `string`
+> **methodId**: `string`
 
 The identifier of the payment method.
 
 ## Methods
 
-### getStripeState
+### getStripeState()
 
-▸ **getStripeState**(`country`, `state`, `isStripeStateMappingDisabledForES?`): `string`
+> **getStripeState**(`country`, `state`, `isStripeStateMappingDisabledForES?`): `string`
 
 get the state code needed for shipping stripe element
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `country` | `string` |
-| `state` | `string` |
-| `isStripeStateMappingDisabledForES?` | `boolean` |
+##### country
+
+`string`
+
+##### state
+
+`string`
+
+##### isStripeStateMappingDisabledForES?
+
+`boolean`
 
 #### Returns
 
 `string`
 
-___
+***
 
-### getStyles
+### getStyles()?
 
-▸ **getStyles**(): `Object`
+> `optional` **getStyles**(): `object`
 
 get styles from store theme
 
 #### Returns
 
-`Object`
+`object`
 
-___
+***
 
-### onChangeShipping
+### onChangeShipping()
 
-▸ **onChangeShipping**(`shipping`): `void`
+> **onChangeShipping**(`shipping`): `void`
 
 A callback that gets called whenever the Stripe Link Shipping Element's object is completed.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `shipping` | `StripeEventType` |
+##### shipping
+
+`StripeEventType`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### setStripeExperiments
+### setStripeExperiments()?
 
-▸ **setStripeExperiments**(`experiments`): `void`
+> `optional` **setStripeExperiments**(`experiments`): `void`
 
 Set the Stripe experiments to be used in checkout-js components;
 Stripe specific experiments broadcasts to SDK from payment provider configs request.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `experiments` | `Record`\<`string`, `boolean`\> |
+##### experiments
+
+`Record`\<`string`, `boolean`\>
 
 #### Returns
 

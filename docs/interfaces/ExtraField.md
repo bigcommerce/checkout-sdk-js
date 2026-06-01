@@ -1,50 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ExtraField
 
 # Interface: ExtraField
-
-## Table of contents
-
-### Properties
-
-- [config](ExtraField.md#config)
-- [id](ExtraField.md#id)
-- [isRequired](ExtraField.md#isrequired)
-- [name](ExtraField.md#name)
-- [type](ExtraField.md#type)
-- [visibleToStorefront](ExtraField.md#visibletostorefront)
 
 ## Properties
 
 ### config
 
-• **config**: [`ExtraFieldConfig`](ExtraFieldConfig.md)
+> **config**: [`ExtraFieldConfig`](ExtraFieldConfig.md)
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
 ### isRequired
 
-• **isRequired**: `boolean`
+> **isRequired**: `boolean`
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
-___
+***
 
 ### type
 
-• **type**: [`ExtraFieldType`](../README.md#extrafieldtype)
+> **type**: [`ExtraFieldType`](../type-aliases/ExtraFieldType.md)
 
-___
+***
 
 ### visibleToStorefront
 
-• **visibleToStorefront**: `boolean`
+> **visibleToStorefront**: `boolean`

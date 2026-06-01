@@ -13,6 +13,6 @@ declare class LegacyPaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void>;
 }
 
-export declare const createLegacyPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<LegacyPaymentStrategy>, {
+export declare const createLegacyPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<LegacyPaymentStrategy>, {
     id: string;
 }>;

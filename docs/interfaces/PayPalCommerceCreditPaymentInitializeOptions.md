@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceCreditPaymentInitializeOptions
 
 # Interface: PayPalCommerceCreditPaymentInitializeOptions
@@ -45,59 +49,45 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [bannerContainerId](PayPalCommerceCreditPaymentInitializeOptions.md#bannercontainerid)
-- [container](PayPalCommerceCreditPaymentInitializeOptions.md#container)
-
-### Methods
-
-- [onError](PayPalCommerceCreditPaymentInitializeOptions.md#onerror)
-- [onRenderButton](PayPalCommerceCreditPaymentInitializeOptions.md#onrenderbutton)
-- [onValidate](PayPalCommerceCreditPaymentInitializeOptions.md#onvalidate)
-- [submitForm](PayPalCommerceCreditPaymentInitializeOptions.md#submitform)
-
 ## Properties
 
-### bannerContainerId
+### bannerContainerId?
 
-• `Optional` **bannerContainerId**: `string`
+> `optional` **bannerContainerId?**: `string`
 
 The location to insert the Pay Later Messages.
 
-___
+***
 
-### container
+### container?
 
-• `Optional` **container**: `string`
+> `optional` **container?**: `string`
 
 The CSS selector of a container where the payment widget should be inserted into.
 
 ## Methods
 
-### onError
+### onError()?
 
-▸ **onError**(`error`): `void`
+> `optional` **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `Error` |
+##### error
+
+`Error`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onRenderButton
+### onRenderButton()?
 
-▸ **onRenderButton**(): `void`
+> `optional` **onRenderButton**(): `void`
 
 A callback right before render Smart Payment Button that gets called when
 Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
@@ -106,21 +96,28 @@ Smart Payment Button is eligible. This callback can be used to hide the standard
 
 `void`
 
-___
+***
 
-### onValidate
+### onValidate()?
 
-▸ **onValidate**(`resolve`, `reject`): `Promise`\<`void`\>
+> `optional` **onValidate**(`resolve`, `reject`): `Promise`\<`void`\>
 
 A callback that gets called when a buyer click on Smart Payment Button
 and should validate payment form.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `resolve` | () => `void` | A function, that gets called if form is valid. |
-| `reject` | () => `void` | A function, that gets called if form is not valid. |
+##### resolve
+
+() => `void`
+
+A function, that gets called if form is valid.
+
+##### reject
+
+() => `void`
+
+A function, that gets called if form is not valid.
 
 #### Returns
 
@@ -128,11 +125,11 @@ and should validate payment form.
 
 reject() or resolve()
 
-___
+***
 
-### submitForm
+### submitForm()?
 
-▸ **submitForm**(): `void`
+> `optional` **submitForm**(): `void`
 
 A callback for submitting payment form that gets called
 when buyer approved PayPal account.

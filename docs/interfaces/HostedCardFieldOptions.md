@@ -1,35 +1,29 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedCardFieldOptions
 
 # Interface: HostedCardFieldOptions
 
-## Hierarchy
+## Extended by
 
-- **`HostedCardFieldOptions`**
-
-  ↳ [`HostedStoredCardFieldOptions`](HostedStoredCardFieldOptions.md)
-
-## Table of contents
-
-### Properties
-
-- [accessibilityLabel](HostedCardFieldOptions.md#accessibilitylabel)
-- [containerId](HostedCardFieldOptions.md#containerid)
-- [placeholder](HostedCardFieldOptions.md#placeholder)
+- [`HostedStoredCardFieldOptions`](HostedStoredCardFieldOptions.md)
 
 ## Properties
 
-### accessibilityLabel
+### accessibilityLabel?
 
-• `Optional` **accessibilityLabel**: `string`
+> `optional` **accessibilityLabel?**: `string`
 
-___
+***
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
-___
+***
 
-### placeholder
+### placeholder?
 
-• `Optional` **placeholder**: `string`
+> `optional` **placeholder?**: `string`

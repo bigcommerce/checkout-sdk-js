@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaymentInstrumentMeta
 
 # Interface: PaymentInstrumentMeta
 
-## Table of contents
-
-### Properties
-
-- [deviceSessionId](PaymentInstrumentMeta.md#devicesessionid)
-
 ## Properties
 
-### deviceSessionId
+### deviceSessionId?
 
-• `Optional` **deviceSessionId**: `string`
+> `optional` **deviceSessionId?**: `string`

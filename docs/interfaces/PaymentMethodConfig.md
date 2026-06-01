@@ -1,127 +1,109 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaymentMethodConfig
 
 # Interface: PaymentMethodConfig
 
-## Table of contents
-
-### Properties
-
-- [cardCode](PaymentMethodConfig.md#cardcode)
-- [displayName](PaymentMethodConfig.md#displayname)
-- [enablePaypal](PaymentMethodConfig.md#enablepaypal)
-- [hasDefaultStoredInstrument](PaymentMethodConfig.md#hasdefaultstoredinstrument)
-- [helpText](PaymentMethodConfig.md#helptext)
-- [is3dsEnabled](PaymentMethodConfig.md#is3dsenabled)
-- [isHostedFormEnabled](PaymentMethodConfig.md#ishostedformenabled)
-- [isVaultingCvvEnabled](PaymentMethodConfig.md#isvaultingcvvenabled)
-- [isVaultingEnabled](PaymentMethodConfig.md#isvaultingenabled)
-- [isVisaCheckoutEnabled](PaymentMethodConfig.md#isvisacheckoutenabled)
-- [logo](PaymentMethodConfig.md#logo)
-- [merchantId](PaymentMethodConfig.md#merchantid)
-- [redirectUrl](PaymentMethodConfig.md#redirecturl)
-- [requireCustomerCode](PaymentMethodConfig.md#requirecustomercode)
-- [returnUrl](PaymentMethodConfig.md#returnurl)
-- [showCardHolderName](PaymentMethodConfig.md#showcardholdername)
-- [testMode](PaymentMethodConfig.md#testmode)
-
 ## Properties
 
-### cardCode
+### cardCode?
 
-• `Optional` **cardCode**: `boolean`
+> `optional` **cardCode?**: `boolean`
 
-___
+***
 
-### displayName
+### displayName?
 
-• `Optional` **displayName**: `string`
+> `optional` **displayName?**: `string`
 
-___
+***
 
-### enablePaypal
+### enablePaypal?
 
-• `Optional` **enablePaypal**: `boolean`
+> `optional` **enablePaypal?**: `boolean`
 
-___
+***
 
-### hasDefaultStoredInstrument
+### hasDefaultStoredInstrument?
 
-• `Optional` **hasDefaultStoredInstrument**: `boolean`
+> `optional` **hasDefaultStoredInstrument?**: `boolean`
 
-___
+***
 
-### helpText
+### helpText?
 
-• `Optional` **helpText**: `string`
+> `optional` **helpText?**: `string`
 
-___
+***
 
-### is3dsEnabled
+### is3dsEnabled?
 
-• `Optional` **is3dsEnabled**: `boolean`
+> `optional` **is3dsEnabled?**: `boolean`
 
-___
+***
 
-### isHostedFormEnabled
+### isHostedFormEnabled?
 
-• `Optional` **isHostedFormEnabled**: `boolean`
+> `optional` **isHostedFormEnabled?**: `boolean`
 
-___
+***
 
-### isVaultingCvvEnabled
+### isVaultingCvvEnabled?
 
-• `Optional` **isVaultingCvvEnabled**: `boolean`
+> `optional` **isVaultingCvvEnabled?**: `boolean`
 
-___
+***
 
-### isVaultingEnabled
+### isVaultingEnabled?
 
-• `Optional` **isVaultingEnabled**: `boolean`
+> `optional` **isVaultingEnabled?**: `boolean`
 
-___
+***
 
-### isVisaCheckoutEnabled
+### isVisaCheckoutEnabled?
 
-• `Optional` **isVisaCheckoutEnabled**: `boolean`
+> `optional` **isVisaCheckoutEnabled?**: `boolean`
 
-___
+***
 
-### logo
+### logo?
 
-• `Optional` **logo**: `string`
+> `optional` **logo?**: `string`
 
-___
+***
 
-### merchantId
+### merchantId?
 
-• `Optional` **merchantId**: `string`
+> `optional` **merchantId?**: `string`
 
-___
+***
 
-### redirectUrl
+### redirectUrl?
 
-• `Optional` **redirectUrl**: `string`
+> `optional` **redirectUrl?**: `string`
 
-___
+***
 
-### requireCustomerCode
+### requireCustomerCode?
 
-• `Optional` **requireCustomerCode**: `boolean`
+> `optional` **requireCustomerCode?**: `boolean`
 
-___
+***
 
-### returnUrl
+### returnUrl?
 
-• `Optional` **returnUrl**: `string`
+> `optional` **returnUrl?**: `string`
 
-___
+***
 
-### showCardHolderName
+### showCardHolderName?
 
-• `Optional` **showCardHolderName**: `boolean`
+> `optional` **showCardHolderName?**: `boolean`
 
-___
+***
 
-### testMode
+### testMode?
 
-• `Optional` **testMode**: `boolean`
+> `optional` **testMode?**: `boolean`

@@ -1,28 +1,25 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GooglePayButtonInitializeOptions
 
 # Interface: GooglePayButtonInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [buttonColor](GooglePayButtonInitializeOptions.md#buttoncolor)
-- [buttonType](GooglePayButtonInitializeOptions.md#buttontype)
-
 ## Properties
 
-### buttonColor
+### buttonColor?
 
-• `Optional` **buttonColor**: [`GooglePayButtonColor`](../README.md#googlepaybuttoncolor)
+> `optional` **buttonColor?**: [`GooglePayButtonColor`](../type-aliases/GooglePayButtonColor.md)
 
 All Google Pay payment buttons exist in two styles: dark (default) and light.
 To provide contrast, use dark buttons on light backgrounds and light buttons on dark or colorful backgrounds.
 
-___
+***
 
-### buttonType
+### buttonType?
 
-• `Optional` **buttonType**: [`GooglePayButtonType`](../README.md#googlepaybuttontype)
+> `optional` **buttonType?**: [`GooglePayButtonType`](../type-aliases/GooglePayButtonType.md)
 
 Variant buttons:
 book: The "Book with Google Pay" payment button.

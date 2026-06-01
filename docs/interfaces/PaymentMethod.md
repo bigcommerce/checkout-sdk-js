@@ -1,105 +1,91 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaymentMethod
 
 # Interface: PaymentMethod\<T\>
 
-## Type parameters
+## Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `T` | `any` |
+### T
 
-## Table of contents
-
-### Properties
-
-- [clientToken](PaymentMethod.md#clienttoken)
-- [config](PaymentMethod.md#config)
-- [gateway](PaymentMethod.md#gateway)
-- [id](PaymentMethod.md#id)
-- [initializationData](PaymentMethod.md#initializationdata)
-- [initializationStrategy](PaymentMethod.md#initializationstrategy)
-- [logoUrl](PaymentMethod.md#logourl)
-- [method](PaymentMethod.md#method)
-- [nonce](PaymentMethod.md#nonce)
-- [returnUrl](PaymentMethod.md#returnurl)
-- [skipRedirectConfirmationAlert](PaymentMethod.md#skipredirectconfirmationalert)
-- [supportedCards](PaymentMethod.md#supportedcards)
-- [type](PaymentMethod.md#type)
+`T` = `any`
 
 ## Properties
 
-### clientToken
+### clientToken?
 
-• `Optional` **clientToken**: `string`
+> `optional` **clientToken?**: `string`
 
-___
+***
 
 ### config
 
-• **config**: [`PaymentMethodConfig`](PaymentMethodConfig.md)
+> **config**: [`PaymentMethodConfig`](PaymentMethodConfig.md)
 
-___
+***
 
-### gateway
+### gateway?
 
-• `Optional` **gateway**: `string`
+> `optional` **gateway?**: `string`
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
-### initializationData
+### initializationData?
 
-• `Optional` **initializationData**: `T`
+> `optional` **initializationData?**: `T`
 
-___
+***
 
-### initializationStrategy
+### initializationStrategy?
 
-• `Optional` **initializationStrategy**: [`InitializationStrategy`](InitializationStrategy.md)
+> `optional` **initializationStrategy?**: [`InitializationStrategy`](InitializationStrategy.md)
 
-___
+***
 
-### logoUrl
+### logoUrl?
 
-• `Optional` **logoUrl**: `string`
+> `optional` **logoUrl?**: `string`
 
-___
+***
 
 ### method
 
-• **method**: `string`
+> **method**: `string`
 
-___
+***
 
-### nonce
+### nonce?
 
-• `Optional` **nonce**: `string`
+> `optional` **nonce?**: `string`
 
-___
+***
 
-### returnUrl
+### returnUrl?
 
-• `Optional` **returnUrl**: `string`
+> `optional` **returnUrl?**: `string`
 
-___
+***
 
 ### skipRedirectConfirmationAlert
 
-• **skipRedirectConfirmationAlert**: `boolean`
+> **skipRedirectConfirmationAlert**: `boolean`
 
-___
+***
 
 ### supportedCards
 
-• **supportedCards**: `string`[]
+> **supportedCards**: `string`[]
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`

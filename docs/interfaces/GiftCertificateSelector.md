@@ -1,62 +1,56 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GiftCertificateSelector
 
 # Interface: GiftCertificateSelector
 
-## Table of contents
-
-### Methods
-
-- [getApplyError](GiftCertificateSelector.md#getapplyerror)
-- [getGiftCertificates](GiftCertificateSelector.md#getgiftcertificates)
-- [getRemoveError](GiftCertificateSelector.md#getremoveerror)
-- [isApplying](GiftCertificateSelector.md#isapplying)
-- [isRemoving](GiftCertificateSelector.md#isremoving)
-
 ## Methods
 
-### getApplyError
+### getApplyError()
 
-▸ **getApplyError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\>
-
-#### Returns
-
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\>
-
-___
-
-### getGiftCertificates
-
-▸ **getGiftCertificates**(): `undefined` \| [`GiftCertificate`](GiftCertificate.md)[]
+> **getApplyError**(): [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\> \| `undefined`
 
 #### Returns
 
-`undefined` \| [`GiftCertificate`](GiftCertificate.md)[]
+[`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\> \| `undefined`
 
-___
+***
 
-### getRemoveError
+### getGiftCertificates()
 
-▸ **getRemoveError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\>
+> **getGiftCertificates**(): [`GiftCertificate`](GiftCertificate.md)[] \| `undefined`
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\>
+[`GiftCertificate`](GiftCertificate.md)[] \| `undefined`
 
-___
+***
 
-### isApplying
+### getRemoveError()
 
-▸ **isApplying**(): `boolean`
+> **getRemoveError**(): [`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\> \| `undefined`
+
+#### Returns
+
+[`RequestError`](../classes/RequestError.md)\<`StorefrontErrorResponseBody`\> \| `undefined`
+
+***
+
+### isApplying()
+
+> **isApplying**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isRemoving
+### isRemoving()
 
-▸ **isRemoving**(): `boolean`
+> **isRemoving**(): `boolean`
 
 #### Returns
 

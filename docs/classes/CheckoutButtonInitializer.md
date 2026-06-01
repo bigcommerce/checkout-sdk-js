@@ -1,35 +1,26 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutButtonInitializer
 
 # Class: CheckoutButtonInitializer
 
-## Table of contents
-
-### Constructors
-
-- [constructor](CheckoutButtonInitializer.md#constructor)
-
-### Methods
-
-- [deinitializeButton](CheckoutButtonInitializer.md#deinitializebutton)
-- [getState](CheckoutButtonInitializer.md#getstate)
-- [initializeButton](CheckoutButtonInitializer.md#initializebutton)
-- [subscribe](CheckoutButtonInitializer.md#subscribe)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new CheckoutButtonInitializer**(): [`CheckoutButtonInitializer`](CheckoutButtonInitializer.md)
+> **new CheckoutButtonInitializer**(): `CheckoutButtonInitializer`
 
 #### Returns
 
-[`CheckoutButtonInitializer`](CheckoutButtonInitializer.md)
+`CheckoutButtonInitializer`
 
 ## Methods
 
-### deinitializeButton
+### deinitializeButton()
 
-▸ **deinitializeButton**(`options`): `Promise`\<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
+> **deinitializeButton**(`options`): `Promise`\<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
 
 De-initializes the checkout button by performing any necessary clean-ups.
 
@@ -41,9 +32,11 @@ await service.deinitializeButton({
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `options` | [`CheckoutButtonOptions`](../interfaces/CheckoutButtonOptions.md) | Options for deinitializing the checkout button. |
+##### options
+
+[`CheckoutButtonOptions`](../interfaces/CheckoutButtonOptions.md)
+
+Options for deinitializing the checkout button.
 
 #### Returns
 
@@ -51,11 +44,11 @@ await service.deinitializeButton({
 
 A promise that resolves to the current state.
 
-___
+***
 
-### getState
+### getState()
 
-▸ **getState**(): [`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)
+> **getState**(): [`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)
 
 Returns a snapshot of the current state.
 
@@ -75,11 +68,11 @@ console.log(state.statuses.isInitializingButton());
 
 The current customer's checkout state
 
-___
+***
 
-### initializeButton
+### initializeButton()
 
-▸ **initializeButton**(`options`): `Promise`\<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
+> **initializeButton**(`options`): `Promise`\<[`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)\>
 
 Initializes the checkout button of a payment method.
 
@@ -97,9 +90,11 @@ initializer.initializeButton({
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `options` | [`CheckoutButtonInitializeOptions`](../README.md#checkoutbuttoninitializeoptions) | Options for initializing the checkout button. |
+##### options
+
+[`CheckoutButtonInitializeOptions`](../type-aliases/CheckoutButtonInitializeOptions.md)
+
+Options for initializing the checkout button.
 
 #### Returns
 
@@ -107,11 +102,11 @@ initializer.initializeButton({
 
 A promise that resolves to the current state.
 
-___
+***
 
-### subscribe
+### subscribe()
 
-▸ **subscribe**(`subscriber`, `...filters`): () => `void`
+> **subscribe**(`subscriber`, ...`filters`): () => `void`
 
 Subscribes to any changes to the current state.
 
@@ -138,19 +133,22 @@ service.subscribe(state => {
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `subscriber` | (`state`: [`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)) => `void` | The function to subscribe to state changes. |
-| `...filters` | (`state`: [`CheckoutButtonSelectors`](../interfaces/CheckoutButtonSelectors.md)) => `any`[] | One or more functions to filter out irrelevant state changes. If more than one function is provided, the subscriber will only be triggered if all conditions are met. |
+##### subscriber
+
+(`state`) => `void`
+
+The function to subscribe to state changes.
+
+##### filters
+
+...(`state`) => `any`[]
+
+One or more functions to filter out irrelevant state
+changes. If more than one function is provided, the subscriber will only
+be triggered if all conditions are met.
 
 #### Returns
 
-`fn`
-
 A function, if called, will unsubscribe the subscriber.
 
-▸ (): `void`
-
-##### Returns
-
-`void`
+() => `void`

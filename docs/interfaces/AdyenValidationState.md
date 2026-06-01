@@ -1,57 +1,49 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenValidationState
 
 # Interface: AdyenValidationState
 
-## Table of contents
-
-### Properties
-
-- [encryptedFieldName](AdyenValidationState.md#encryptedfieldname)
-- [endDigits](AdyenValidationState.md#enddigits)
-- [error](AdyenValidationState.md#error)
-- [errorKey](AdyenValidationState.md#errorkey)
-- [fieldType](AdyenValidationState.md#fieldtype)
-- [i18n](AdyenValidationState.md#i18n)
-- [valid](AdyenValidationState.md#valid)
-
 ## Properties
 
-### encryptedFieldName
+### encryptedFieldName?
 
-• `Optional` **encryptedFieldName**: `string`
+> `optional` **encryptedFieldName?**: `string`
 
-___
+***
 
-### endDigits
+### endDigits?
 
-• `Optional` **endDigits**: `string`
+> `optional` **endDigits?**: `string`
 
-___
+***
 
-### error
+### error?
 
-• `Optional` **error**: `string`
+> `optional` **error?**: `string`
 
-___
+***
 
-### errorKey
+### errorKey?
 
-• `Optional` **errorKey**: `string`
+> `optional` **errorKey?**: `string`
 
-___
+***
 
-### fieldType
+### fieldType?
 
-• `Optional` **fieldType**: [`AdyenCardFields`](../enums/AdyenCardFields.md)
+> `optional` **fieldType?**: [`AdyenCardFields`](../enumerations/AdyenCardFields.md)
 
-___
+***
 
-### i18n
+### i18n?
 
-• `Optional` **i18n**: `string`
+> `optional` **i18n?**: `string`
 
-___
+***
 
 ### valid
 
-• **valid**: `boolean`
+> **valid**: `boolean`

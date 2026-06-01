@@ -1,51 +1,48 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / DetachmentObserver
 
 # Class: DetachmentObserver
 
-## Table of contents
-
-### Constructors
-
-- [constructor](DetachmentObserver.md#constructor)
-
-### Methods
-
-- [ensurePresence](DetachmentObserver.md#ensurepresence)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new DetachmentObserver**(`_mutationObserver`): [`DetachmentObserver`](DetachmentObserver.md)
+> **new DetachmentObserver**(`_mutationObserver`): `DetachmentObserver`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_mutationObserver` | [`MutationObserverFactory`](MutationObserverFactory.md) |
+##### \_mutationObserver
+
+[`MutationObserverFactory`](MutationObserverFactory.md)
 
 #### Returns
 
-[`DetachmentObserver`](DetachmentObserver.md)
+`DetachmentObserver`
 
 ## Methods
 
-### ensurePresence
+### ensurePresence()
 
-▸ **ensurePresence**\<`T`\>(`targets`, `promise`): `Promise`\<`T`\>
+> **ensurePresence**\<`T`\>(`targets`, `promise`): `Promise`\<`T`\>
 
-#### Type parameters
+#### Type Parameters
 
-| Name |
-| :------ |
-| `T` |
+##### T
+
+`T`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `targets` | `Node`[] |
-| `promise` | `Promise`\<`T`\> |
+##### targets
+
+`Node`[]
+
+##### promise
+
+`Promise`\<`T`\>
 
 #### Returns
 

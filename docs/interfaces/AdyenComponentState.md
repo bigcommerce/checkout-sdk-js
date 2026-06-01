@@ -1,47 +1,41 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenComponentState
 
 # Interface: AdyenComponentState
 
-## Table of contents
-
-### Properties
-
-- [data](AdyenComponentState.md#data)
-- [errors](AdyenComponentState.md#errors)
-- [isValid](AdyenComponentState.md#isvalid)
-- [issuer](AdyenComponentState.md#issuer)
-- [valid](AdyenComponentState.md#valid)
-
 ## Properties
 
-### data
+### data?
 
-• `Optional` **data**: [`CardStateData`](CardStateData.md) \| [`IdealStateData`](IdealStateData.md) \| [`SepaStateData`](SepaStateData.md)
+> `optional` **data?**: [`CardStateData`](CardStateData.md) \| [`IdealStateData`](IdealStateData.md) \| [`SepaStateData`](SepaStateData.md)
 
-___
+***
 
-### errors
+### errors?
 
-• `Optional` **errors**: [`CardStateErrors`](CardStateErrors.md)
+> `optional` **errors?**: [`CardStateErrors`](CardStateErrors.md)
 
-___
+***
 
-### isValid
+### issuer?
 
-• `Optional` **isValid**: `boolean`
+> `optional` **issuer?**: `string`
 
-___
+***
 
-### issuer
+### isValid?
 
-• `Optional` **issuer**: `string`
+> `optional` **isValid?**: `boolean`
 
-___
+***
 
-### valid
+### valid?
 
-• `Optional` **valid**: `Object`
+> `optional` **valid?**: `object`
 
-#### Index signature
+#### Index Signature
 
-▪ [key: `string`]: `boolean`
+\[`key`: `string`\]: `boolean`

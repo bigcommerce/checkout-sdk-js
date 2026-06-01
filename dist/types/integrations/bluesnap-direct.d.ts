@@ -344,15 +344,15 @@ declare interface WithBlueSnapV2PaymentInitializeOptions {
     bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
 }
 
-export declare const createBlueSnapDirectAPMPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BlueSnapDirectAPMPaymentStrategy>, {
+export declare const createBlueSnapDirectAPMPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BlueSnapDirectAPMPaymentStrategy>, {
     gateway: string;
 }>;
 
-export declare const createBlueSnapDirectCreditCardPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BlueSnapDirectCreditCardPaymentStrategy>, {
+export declare const createBlueSnapDirectCreditCardPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BlueSnapDirectCreditCardPaymentStrategy>, {
     id: string;
     gateway: string;
 }>;
 
-export declare const createBlueSnapV2PaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BlueSnapV2PaymentStrategy>, {
+export declare const createBlueSnapV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BlueSnapV2PaymentStrategy>, {
     gateway: string;
 }>;

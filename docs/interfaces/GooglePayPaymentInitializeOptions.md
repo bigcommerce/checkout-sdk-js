@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GooglePayPaymentInitializeOptions
 
 # Interface: GooglePayPaymentInitializeOptions
@@ -59,55 +63,38 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [buttonColor](GooglePayPaymentInitializeOptions.md#buttoncolor)
-- [buttonSizeMode](GooglePayPaymentInitializeOptions.md#buttonsizemode)
-- [buttonType](GooglePayPaymentInitializeOptions.md#buttontype)
-- [container](GooglePayPaymentInitializeOptions.md#container)
-- [loadingContainerId](GooglePayPaymentInitializeOptions.md#loadingcontainerid)
-- [walletButton](GooglePayPaymentInitializeOptions.md#walletbutton)
-
-### Methods
-
-- [onError](GooglePayPaymentInitializeOptions.md#onerror)
-- [onInit](GooglePayPaymentInitializeOptions.md#oninit)
-- [onPaymentSelect](GooglePayPaymentInitializeOptions.md#onpaymentselect)
-
 ## Properties
 
-### buttonColor
+### buttonColor?
 
-• `Optional` **buttonColor**: [`GooglePayButtonColor`](../README.md#googlepaybuttoncolor)
+> `optional` **buttonColor?**: [`GooglePayButtonColor`](../type-aliases/GooglePayButtonColor.md)
 
 The color of the Google Pay button rendered into `container`.
 Defaults to `'default'`.
 
-___
+***
 
-### buttonSizeMode
+### buttonSizeMode?
 
-• `Optional` **buttonSizeMode**: [`GooglePayButtonSizeMode`](../README.md#googlepaybuttonsizemode)
+> `optional` **buttonSizeMode?**: [`GooglePayButtonSizeMode`](../type-aliases/GooglePayButtonSizeMode.md)
 
 The size mode of the Google Pay button rendered into `container`.
 Defaults to `'fill'`.
 
-___
+***
 
-### buttonType
+### buttonType?
 
-• `Optional` **buttonType**: [`GooglePayButtonType`](../README.md#googlepaybuttontype)
+> `optional` **buttonType?**: [`GooglePayButtonType`](../type-aliases/GooglePayButtonType.md)
 
 The type/label of the Google Pay button rendered into `container`.
 Defaults to `'pay'`.
 
-___
+***
 
-### container
+### container?
 
-• `Optional` **container**: `string`
+> `optional` **container?**: `string`
 
 The ID of the container element where the Google Pay button will be rendered.
 When provided, a branded Google Pay button is created inside this container.
@@ -115,19 +102,19 @@ Clicking the button opens the Google Pay payment sheet and, on success, submits
 the order and redirects to the order confirmation page directly — no separate
 "Place Order" step is needed.
 
-___
+***
 
-### loadingContainerId
+### loadingContainerId?
 
-• `Optional` **loadingContainerId**: `string`
+> `optional` **loadingContainerId?**: `string`
 
 A container for loading spinner.
 
-___
+***
 
-### walletButton
+### walletButton?
 
-• `Optional` **walletButton**: `string`
+> `optional` **walletButton?**: `string`
 
 This walletButton is used to set an event listener, provide an element ID if you want
 users to be able to launch the GooglePay wallet modal by clicking on a button.
@@ -135,28 +122,30 @@ It should be an HTML element.
 
 ## Methods
 
-### onError
+### onError()?
 
-▸ **onError**(`error`): `void`
+> `optional` **onError**(`error`): `void`
 
 A callback that gets called when GooglePay fails to initialize or
 selects a payment option.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | `Error` | The error object describing the failure. |
+##### error
+
+`Error`
+
+The error object describing the failure.
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onInit
+### onInit()?
 
-▸ **onInit**(`renderButton`): `void`
+> `optional` **onInit**(`renderButton`): `void`
 
 Called after the Google Pay processor is fully initialized, with a
 `renderButton` function that — when invoked — creates the Google Pay
@@ -168,19 +157,19 @@ Only used when `container` is provided.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `renderButton` | () => `void` |
+##### renderButton
+
+() => `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onPaymentSelect
+### onPaymentSelect()?
 
-▸ **onPaymentSelect**(): `void`
+> `optional` **onPaymentSelect**(): `void`
 
 A callback that gets called when the customer selects a payment option.
 

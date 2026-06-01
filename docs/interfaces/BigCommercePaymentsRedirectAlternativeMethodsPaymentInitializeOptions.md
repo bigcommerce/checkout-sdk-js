@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions
 
 # Interface: BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions
@@ -25,25 +29,19 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Methods
-
-- [onError](BigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions.md#onerror)
-
 ## Methods
 
-### onError
+### onError()?
 
-▸ **onError**(`error`): `void`
+> `optional` **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `unknown` |
+##### error
+
+`unknown`
 
 #### Returns
 

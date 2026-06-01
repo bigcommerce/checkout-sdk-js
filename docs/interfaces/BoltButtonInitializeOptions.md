@@ -1,24 +1,21 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BoltButtonInitializeOptions
 
 # Interface: BoltButtonInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [buyNowInitializeOptions](BoltButtonInitializeOptions.md#buynowinitializeoptions)
-- [style](BoltButtonInitializeOptions.md#style)
-
 ## Properties
 
-### buyNowInitializeOptions
+### buyNowInitializeOptions?
 
-• `Optional` **buyNowInitializeOptions**: [`BoltBuyNowInitializeOptions`](BoltBuyNowInitializeOptions.md)
+> `optional` **buyNowInitializeOptions?**: [`BoltBuyNowInitializeOptions`](BoltBuyNowInitializeOptions.md)
 
 The options that are required to initialize Buy Now functionality.
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: [`BoltButtonStyleOptions`](BoltButtonStyleOptions.md)
+> `optional` **style?**: [`BoltButtonStyleOptions`](BoltButtonStyleOptions.md)

@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / EmbeddedContentOptions
 
 # Interface: EmbeddedContentOptions
 
-## Table of contents
-
-### Properties
-
-- [contentId](EmbeddedContentOptions.md#contentid)
-
 ## Properties
 
-### contentId
+### contentId?
 
-• `Optional` **contentId**: `string`
+> `optional` **contentId?**: `string`

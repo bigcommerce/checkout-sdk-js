@@ -1,58 +1,48 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BaseInstrument
 
 # Interface: BaseInstrument
 
-## Hierarchy
+## Extended by
 
-- **`BaseInstrument`**
-
-  ↳ [`BaseAccountInstrument`](BaseAccountInstrument.md)
-
-  ↳ [`CardInstrument`](CardInstrument.md)
-
-## Table of contents
-
-### Properties
-
-- [bigpayToken](BaseInstrument.md#bigpaytoken)
-- [defaultInstrument](BaseInstrument.md#defaultinstrument)
-- [method](BaseInstrument.md#method)
-- [provider](BaseInstrument.md#provider)
-- [trustedShippingAddress](BaseInstrument.md#trustedshippingaddress)
-- [type](BaseInstrument.md#type)
+- [`BaseAccountInstrument`](BaseAccountInstrument.md)
+- [`CardInstrument`](CardInstrument.md)
 
 ## Properties
 
 ### bigpayToken
 
-• **bigpayToken**: `string`
+> **bigpayToken**: `string`
 
-___
+***
 
 ### defaultInstrument
 
-• **defaultInstrument**: `boolean`
+> **defaultInstrument**: `boolean`
 
-___
+***
 
 ### method
 
-• **method**: `string`
+> **method**: `string`
 
-___
+***
 
 ### provider
 
-• **provider**: `string`
+> **provider**: `string`
 
-___
+***
 
 ### trustedShippingAddress
 
-• **trustedShippingAddress**: `boolean`
+> **trustedShippingAddress**: `boolean`
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`

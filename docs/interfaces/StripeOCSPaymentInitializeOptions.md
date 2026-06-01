@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StripeOCSPaymentInitializeOptions
 
 # Interface: StripeOCSPaymentInitializeOptions
@@ -23,144 +27,93 @@ service.initializePayment({
 });
 ```
 
-## Hierarchy
+## Extends
 
 - `default`
 
-  ↳ **`StripeOCSPaymentInitializeOptions`**
-
-## Table of contents
-
-### Properties
-
-- [appearance](StripeOCSPaymentInitializeOptions.md#appearance)
-- [containerId](StripeOCSPaymentInitializeOptions.md#containerid)
-- [currencySelectorContainerId](StripeOCSPaymentInitializeOptions.md#currencyselectorcontainerid)
-- [fonts](StripeOCSPaymentInitializeOptions.md#fonts)
-- [layout](StripeOCSPaymentInitializeOptions.md#layout)
-- [style](StripeOCSPaymentInitializeOptions.md#style)
-
-### Methods
-
-- [handleClosePaymentMethod](StripeOCSPaymentInitializeOptions.md#handleclosepaymentmethod)
-- [onError](StripeOCSPaymentInitializeOptions.md#onerror)
-- [paymentMethodSelect](StripeOCSPaymentInitializeOptions.md#paymentmethodselect)
-- [render](StripeOCSPaymentInitializeOptions.md#render)
-- [togglePreloader](StripeOCSPaymentInitializeOptions.md#togglepreloader)
-
 ## Properties
 
-### appearance
+### appearance?
 
-• `Optional` **appearance**: `StripeAppearanceOptions`
+> `optional` **appearance?**: `StripeAppearanceOptions`
 
 Stripe OCS appearance options for styling the accordion.
 
-___
+***
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 The location to insert the credit card number form field.
 
 #### Overrides
 
-StripePaymentInitializeOptions.containerId
+`StripePaymentInitializeOptions.containerId`
 
-___
+***
 
-### currencySelectorContainerId
+### currencySelectorContainerId?
 
-• `Optional` **currencySelectorContainerId**: `string`
+> `optional` **currencySelectorContainerId?**: `string`
 
 The location to insert the currency selector form field.
 
-___
+***
 
-### fonts
+### fonts?
 
-• `Optional` **fonts**: `StripeCustomFont`[]
+> `optional` **fonts?**: `StripeCustomFont`[]
 
 Stripe OCS fonts options for styling the accordion.
 
-___
+***
 
-### layout
+### layout?
 
-• `Optional` **layout**: `Record`\<`string`, `string` \| `number` \| `boolean`\>
+> `optional` **layout?**: `Record`\<`string`, `string` \| `number` \| `boolean`\>
 
 Stripe OCS layout options
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: `Record`\<`string`, `StripeAppearanceValues`\>
+> `optional` **style?**: `Record`\<`string`, `StripeAppearanceValues`\>
 
 Checkout styles from store theme
 
 #### Overrides
 
-StripePaymentInitializeOptions.style
+`StripePaymentInitializeOptions.style`
 
 ## Methods
 
-### handleClosePaymentMethod
+### handleClosePaymentMethod()?
 
-▸ **handleClosePaymentMethod**(`collapseElement`): `void`
+> `optional` **handleClosePaymentMethod**(`collapseElement`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `collapseElement` | () => `void` |
+##### collapseElement
+
+() => `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`error?`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `error?` | `Error` |
-
-#### Returns
-
-`void`
-
-#### Overrides
-
-StripePaymentInitializeOptions.onError
-
-___
-
-### paymentMethodSelect
-
-▸ **paymentMethodSelect**(`id`): `void`
+> `optional` **onError**(`error?`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` |
+##### error?
 
-#### Returns
-
-`void`
-
-___
-
-### render
-
-▸ **render**(): `void`
+`Error`
 
 #### Returns
 
@@ -168,19 +121,49 @@ ___
 
 #### Overrides
 
-StripePaymentInitializeOptions.render
+`StripePaymentInitializeOptions.onError`
 
-___
+***
 
-### togglePreloader
+### paymentMethodSelect()?
 
-▸ **togglePreloader**(`showLoader`): `void`
+> `optional` **paymentMethodSelect**(`id`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `showLoader` | `boolean` |
+##### id
+
+`string`
+
+#### Returns
+
+`void`
+
+***
+
+### render()
+
+> **render**(): `void`
+
+#### Returns
+
+`void`
+
+#### Overrides
+
+`StripePaymentInitializeOptions.render`
+
+***
+
+### togglePreloader()?
+
+> `optional` **togglePreloader**(`showLoader`): `void`
+
+#### Parameters
+
+##### showLoader
+
+`boolean`
 
 #### Returns
 

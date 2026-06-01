@@ -1,38 +1,30 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BraintreePaypalCustomerInitializeOptions
 
 # Interface: BraintreePaypalCustomerInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [buttonHeight](BraintreePaypalCustomerInitializeOptions.md#buttonheight)
-- [container](BraintreePaypalCustomerInitializeOptions.md#container)
-
-### Methods
-
-- [onClick](BraintreePaypalCustomerInitializeOptions.md#onclick)
-- [onError](BraintreePaypalCustomerInitializeOptions.md#onerror)
-
 ## Properties
 
-### buttonHeight
+### buttonHeight?
 
-• `Optional` **buttonHeight**: `number`
+> `optional` **buttonHeight?**: `number`
 
-___
+***
 
 ### container
 
-• **container**: `string`
+> **container**: `string`
 
 The ID of a container which the checkout button should be inserted into.
 
 ## Methods
 
-### onClick
+### onClick()?
 
-▸ **onClick**(): `void`
+> `optional` **onClick**(): `void`
 
 A callback that gets called when wallet button clicked
 
@@ -40,19 +32,21 @@ A callback that gets called when wallet button clicked
 
 `void`
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`error`): `void`
+> `optional` **onError**(`error`): `void`
 
 A callback that gets called on any error instead of submit payment or authorization errors.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
+##### error
+
+`StandardError` \| `BraintreeError`
+
+The error object describing the failure.
 
 #### Returns
 

@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenV2PaymentInitializeOptions
 
 # Interface: AdyenV2PaymentInitializeOptions
@@ -63,101 +67,84 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [additionalActionOptions](AdyenV2PaymentInitializeOptions.md#additionalactionoptions)
-- [cardVerificationContainerId](AdyenV2PaymentInitializeOptions.md#cardverificationcontainerid)
-- [containerId](AdyenV2PaymentInitializeOptions.md#containerid)
-- [hasVaultedInstruments](AdyenV2PaymentInitializeOptions.md#hasvaultedinstruments)
-- [options](AdyenV2PaymentInitializeOptions.md#options)
-- [shouldShowNumberField](AdyenV2PaymentInitializeOptions.md#shouldshownumberfield)
-- [threeDS2ContainerId](AdyenV2PaymentInitializeOptions.md#threeds2containerid)
-- [threeDS2Options](AdyenV2PaymentInitializeOptions.md#threeds2options)
-
-### Methods
-
-- [validateCardFields](AdyenV2PaymentInitializeOptions.md#validatecardfields)
-
 ## Properties
 
 ### additionalActionOptions
 
-• **additionalActionOptions**: [`AdyenAdditionalActionOptions`](AdyenAdditionalActionOptions.md)
+> **additionalActionOptions**: [`AdyenAdditionalActionOptions`](AdyenAdditionalActionOptions.md)
 
 A set of options that are required to initialize additional payment actions.
 
-___
+***
 
-### cardVerificationContainerId
+### cardVerificationContainerId?
 
-• `Optional` **cardVerificationContainerId**: `string`
+> `optional` **cardVerificationContainerId?**: `string`
 
 The location to insert the Adyen custom card component
 
-___
+***
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 The location to insert the Adyen component.
 
-___
+***
 
-### hasVaultedInstruments
+### hasVaultedInstruments?
 
-• `Optional` **hasVaultedInstruments**: `boolean`
+> `optional` **hasVaultedInstruments?**: `boolean`
 
 True if the Adyen component has some Vaulted instrument
 
-___
+***
 
-### options
+### options?
 
-• `Optional` **options**: [`AdyenIdealComponentOptions`](AdyenIdealComponentOptions.md) \| `Omit`\<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"onChange"``\>
+> `optional` **options?**: [`AdyenIdealComponentOptions`](AdyenIdealComponentOptions.md) \| `Omit`\<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), `"onChange"`\>
 
 Optional. Overwriting the default options
 
-___
+***
 
-### shouldShowNumberField
+### shouldShowNumberField?
 
-• `Optional` **shouldShowNumberField**: `boolean`
+> `optional` **shouldShowNumberField?**: `boolean`
 
-___
+***
 
-### threeDS2ContainerId
+### ~~threeDS2ContainerId~~
 
-• **threeDS2ContainerId**: `string`
+> **threeDS2ContainerId**: `string`
 
-**`Deprecated`**
+#### Deprecated
 
 The location to insert the Adyen 3DS V2 component.
 Use additionalActionOptions instead as this property will be removed in the future
 
-___
+***
 
-### threeDS2Options
+### ~~threeDS2Options?~~
 
-• `Optional` **threeDS2Options**: [`AdyenThreeDS2Options`](AdyenThreeDS2Options.md)
+> `optional` **threeDS2Options?**: [`AdyenThreeDS2Options`](AdyenThreeDS2Options.md)
 
-**`Deprecated`**
+#### Deprecated
 
 Use additionalActionOptions instead as this property will be removed in the future
 
 ## Methods
 
-### validateCardFields
+### validateCardFields()
 
-▸ **validateCardFields**(`validateState`): `void`
+> **validateCardFields**(`validateState`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `validateState` | [`AdyenValidationState`](AdyenValidationState.md) |
+##### validateState
+
+[`AdyenValidationState`](AdyenValidationState.md)
 
 #### Returns
 

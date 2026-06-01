@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithBoltCustomerInitializeOptions
 
 # Interface: WithBoltCustomerInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [bolt](WithBoltCustomerInitializeOptions.md#bolt)
-
 ## Properties
 
-### bolt
+### bolt?
 
-• `Optional` **bolt**: [`BoltCustomerInitializeOptions`](BoltCustomerInitializeOptions.md)
+> `optional` **bolt?**: [`BoltCustomerInitializeOptions`](BoltCustomerInitializeOptions.md)

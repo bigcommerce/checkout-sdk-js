@@ -1,50 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Coupon
 
 # Interface: Coupon
-
-## Table of contents
-
-### Properties
-
-- [code](Coupon.md#code)
-- [couponType](Coupon.md#coupontype)
-- [discountedAmount](Coupon.md#discountedamount)
-- [displayName](Coupon.md#displayname)
-- [hasMaxLimitReached](Coupon.md#hasmaxlimitreached)
-- [id](Coupon.md#id)
 
 ## Properties
 
 ### code
 
-• **code**: `string`
+> **code**: `string`
 
-___
+***
 
 ### couponType
 
-• **couponType**: `string`
+> **couponType**: `string`
 
-___
+***
 
 ### discountedAmount
 
-• **discountedAmount**: `number`
+> **discountedAmount**: `number`
 
-___
+***
 
 ### displayName
 
-• **displayName**: `string`
+> **displayName**: `string`
 
-___
+***
 
-### hasMaxLimitReached
+### hasMaxLimitReached?
 
-• `Optional` **hasMaxLimitReached**: `boolean`
+> `optional` **hasMaxLimitReached?**: `boolean`
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`

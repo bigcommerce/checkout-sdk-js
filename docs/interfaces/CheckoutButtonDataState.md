@@ -1,19 +1,17 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutButtonDataState
 
 # Interface: CheckoutButtonDataState
-
-## Table of contents
-
-### Properties
-
-- [initializedContainers](CheckoutButtonDataState.md#initializedcontainers)
 
 ## Properties
 
 ### initializedContainers
 
-• **initializedContainers**: `Object`
+> **initializedContainers**: `object`
 
-#### Index signature
+#### Index Signature
 
-▪ [key: `string`]: `boolean`
+\[`key`: `string`\]: `boolean`

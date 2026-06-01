@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BraintreeFastlanePaymentInitializeOptions
 
 # Interface: BraintreeFastlanePaymentInitializeOptions
@@ -48,86 +52,65 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [onChange](BraintreeFastlanePaymentInitializeOptions.md#onchange)
-- [onError](BraintreeFastlanePaymentInitializeOptions.md#onerror)
-- [onInit](BraintreeFastlanePaymentInitializeOptions.md#oninit)
-- [styles](BraintreeFastlanePaymentInitializeOptions.md#styles)
-
 ## Properties
 
-### onChange
+### onChange?
 
-• `Optional` **onChange**: (`showPayPalCardSelector`: () => `Promise`\<`undefined` \| `CardInstrument`\>) => `void`
+> `optional` **onChange?**: (`showPayPalCardSelector`) => `void`
 
 Is a callback that shows Braintree stored instruments
 when get triggered
 
-#### Type declaration
+#### Parameters
 
-▸ (`showPayPalCardSelector`): `void`
+##### showPayPalCardSelector
 
-##### Parameters
+() => `Promise`\<`CardInstrument` \| `undefined`\>
 
-| Name | Type |
-| :------ | :------ |
-| `showPayPalCardSelector` | () => `Promise`\<`undefined` \| `CardInstrument`\> |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### onError
+### onError?
 
-• `Optional` **onError**: (`error`: `Error`) => `void`
+> `optional` **onError?**: (`error`) => `void`
 
-#### Type declaration
+#### Parameters
 
-▸ (`error`): `void`
+##### error
 
-##### Parameters
+`Error`
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `Error` |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### onInit
+### onInit?
 
-• `Optional` **onInit**: (`renderPayPalComponentMethod`: (`container`: `string`) => `void`) => `void`
+> `optional` **onInit?**: (`renderPayPalComponentMethod`) => `void`
 
 Is a callback that takes the CSS selector of a container
 where the Braintree Fastlane form should be inserted into.
 
-#### Type declaration
+#### Parameters
 
-▸ (`renderPayPalComponentMethod`): `void`
+##### renderPayPalComponentMethod
 
-##### Parameters
+(`container`) => `void`
 
-| Name | Type |
-| :------ | :------ |
-| `renderPayPalComponentMethod` | (`container`: `string`) => `void` |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### styles
+### styles?
 
-• `Optional` **styles**: `BraintreeFastlaneStylesOption`
+> `optional` **styles?**: `BraintreeFastlaneStylesOption`
 
 Is a stylisation options for customizing Braintree Fastlane components
 

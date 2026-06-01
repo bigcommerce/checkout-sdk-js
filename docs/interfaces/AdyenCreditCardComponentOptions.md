@@ -1,147 +1,128 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenCreditCardComponentOptions
 
 # Interface: AdyenCreditCardComponentOptions
 
-## Hierarchy
+## Extends
 
-- [`AdyenBaseCardComponentOptions`](AdyenBaseCardComponentOptions.md)
-
-- [`AdyenComponentEvents`](AdyenComponentEvents.md)
-
-  ↳ **`AdyenCreditCardComponentOptions`**
-
-## Table of contents
-
-### Properties
-
-- [brands](AdyenCreditCardComponentOptions.md#brands)
-- [data](AdyenCreditCardComponentOptions.md#data)
-- [details](AdyenCreditCardComponentOptions.md#details)
-- [enableStoreDetails](AdyenCreditCardComponentOptions.md#enablestoredetails)
-- [groupTypes](AdyenCreditCardComponentOptions.md#grouptypes)
-- [hasHolderName](AdyenCreditCardComponentOptions.md#hasholdername)
-- [holderNameRequired](AdyenCreditCardComponentOptions.md#holdernamerequired)
-- [placeholders](AdyenCreditCardComponentOptions.md#placeholders)
-- [showBrandsUnderCardNumber](AdyenCreditCardComponentOptions.md#showbrandsundercardnumber)
-- [styles](AdyenCreditCardComponentOptions.md#styles)
-
-### Methods
-
-- [onChange](AdyenCreditCardComponentOptions.md#onchange)
-- [onError](AdyenCreditCardComponentOptions.md#onerror)
-- [onFieldValid](AdyenCreditCardComponentOptions.md#onfieldvalid)
-- [onSubmit](AdyenCreditCardComponentOptions.md#onsubmit)
+- [`AdyenBaseCardComponentOptions`](AdyenBaseCardComponentOptions.md).[`AdyenComponentEvents`](AdyenComponentEvents.md)
 
 ## Properties
 
-### brands
+### brands?
 
-• `Optional` **brands**: `string`[]
+> `optional` **brands?**: `string`[]
 
 Array of card brands that will be recognized by the component.
 
 #### Inherited from
 
-[AdyenBaseCardComponentOptions](AdyenBaseCardComponentOptions.md).[brands](AdyenBaseCardComponentOptions.md#brands)
+[`AdyenBaseCardComponentOptions`](AdyenBaseCardComponentOptions.md).[`brands`](AdyenBaseCardComponentOptions.md#brands)
 
-___
+***
 
-### data
+### data?
 
-• `Optional` **data**: [`AdyenPlaceholderData`](AdyenPlaceholderData.md)
+> `optional` **data?**: [`AdyenPlaceholderData`](AdyenPlaceholderData.md)
 
 Information to prefill fields.
 
-___
+***
 
-### details
+### details?
 
-• `Optional` **details**: [`InputDetail`](InputDetail.md)[]
+> `optional` **details?**: [`InputDetail`](InputDetail.md)[]
 
 Set an object containing the details array for type: scheme from
 the /paymentMethods response.
 
-___
+***
 
-### enableStoreDetails
+### enableStoreDetails?
 
-• `Optional` **enableStoreDetails**: `boolean`
+> `optional` **enableStoreDetails?**: `boolean`
 
 Set to true to show the checkbox to save card details for the next payment.
 
-___
+***
 
-### groupTypes
+### groupTypes?
 
-• `Optional` **groupTypes**: `string`[]
+> `optional` **groupTypes?**: `string`[]
 
 Defaults to ['mc','visa','amex']. Configure supported card types to
 facilitate brand recognition used in the Secured Fields onBrand callback.
 See list of available card types. If a shopper enters a card type not
 specified in the GroupTypes configuration, the onBrand callback will not be invoked.
 
-___
+***
 
-### hasHolderName
+### hasHolderName?
 
-• `Optional` **hasHolderName**: `boolean`
+> `optional` **hasHolderName?**: `boolean`
 
 Set to true to request the name of the card holder.
 
-___
+***
 
-### holderNameRequired
+### holderNameRequired?
 
-• `Optional` **holderNameRequired**: `boolean`
+> `optional` **holderNameRequired?**: `boolean`
 
 Set to true to require the card holder name.
 
-___
+***
 
-### placeholders
+### placeholders?
 
-• `Optional` **placeholders**: [`CreditCardPlaceHolder`](CreditCardPlaceHolder.md) \| [`SepaPlaceHolder`](SepaPlaceHolder.md)
+> `optional` **placeholders?**: [`CreditCardPlaceHolder`](CreditCardPlaceHolder.md) \| [`SepaPlaceHolder`](SepaPlaceHolder.md)
 
 Specify the sample values you want to appear for card detail input fields.
 
-___
+***
 
-### showBrandsUnderCardNumber
+### showBrandsUnderCardNumber?
 
-• `Optional` **showBrandsUnderCardNumber**: `boolean`
+> `optional` **showBrandsUnderCardNumber?**: `boolean`
 
 #### Inherited from
 
-[AdyenBaseCardComponentOptions](AdyenBaseCardComponentOptions.md).[showBrandsUnderCardNumber](AdyenBaseCardComponentOptions.md#showbrandsundercardnumber)
+[`AdyenBaseCardComponentOptions`](AdyenBaseCardComponentOptions.md).[`showBrandsUnderCardNumber`](AdyenBaseCardComponentOptions.md#showbrandsundercardnumber)
 
-___
+***
 
-### styles
+### styles?
 
-• `Optional` **styles**: [`StyleOptions`](StyleOptions.md)
+> `optional` **styles?**: [`StyleOptions`](StyleOptions.md)
 
 Set a style object to customize the input fields. See Styling Secured Fields
 for a list of supported properties.
 
 #### Inherited from
 
-[AdyenBaseCardComponentOptions](AdyenBaseCardComponentOptions.md).[styles](AdyenBaseCardComponentOptions.md#styles)
+[`AdyenBaseCardComponentOptions`](AdyenBaseCardComponentOptions.md).[`styles`](AdyenBaseCardComponentOptions.md#styles)
 
 ## Methods
 
-### onChange
+### onChange()?
 
-▸ **onChange**(`state`, `component`): `void`
+> `optional` **onChange**(`state`, `component`): `void`
 
 Called when the shopper enters data in the card input fields.
 Here you have the option to override your main Adyen Checkout configuration.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `state` | [`AdyenComponentEventState`](../README.md#adyencomponenteventstate) |
-| `component` | [`AdyenComponent`](AdyenComponent.md) |
+##### state
+
+[`AdyenComponentEventState`](../type-aliases/AdyenComponentEventState.md)
+
+##### component
+
+[`AdyenComponent`](AdyenComponent.md)
 
 #### Returns
 
@@ -149,23 +130,26 @@ Here you have the option to override your main Adyen Checkout configuration.
 
 #### Inherited from
 
-[AdyenComponentEvents](AdyenComponentEvents.md).[onChange](AdyenComponentEvents.md#onchange)
+[`AdyenComponentEvents`](AdyenComponentEvents.md).[`onChange`](AdyenComponentEvents.md#onchange)
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`state`, `component`): `void`
+> `optional` **onError**(`state`, `component`): `void`
 
 Called in case of an invalid card number, invalid expiry date, or
  incomplete field. Called again when errors are cleared.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `state` | [`AdyenValidationState`](AdyenValidationState.md) |
-| `component` | [`AdyenComponent`](AdyenComponent.md) |
+##### state
+
+[`AdyenValidationState`](AdyenValidationState.md)
+
+##### component
+
+[`AdyenComponent`](AdyenComponent.md)
 
 #### Returns
 
@@ -173,20 +157,23 @@ Called in case of an invalid card number, invalid expiry date, or
 
 #### Inherited from
 
-[AdyenComponentEvents](AdyenComponentEvents.md).[onError](AdyenComponentEvents.md#onerror)
+[`AdyenComponentEvents`](AdyenComponentEvents.md).[`onError`](AdyenComponentEvents.md#onerror)
 
-___
+***
 
-### onFieldValid
+### onFieldValid()?
 
-▸ **onFieldValid**(`state`, `component`): `void`
+> `optional` **onFieldValid**(`state`, `component`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `state` | [`AdyenValidationState`](AdyenValidationState.md) |
-| `component` | [`AdyenComponent`](AdyenComponent.md) |
+##### state
+
+[`AdyenValidationState`](AdyenValidationState.md)
+
+##### component
+
+[`AdyenComponent`](AdyenComponent.md)
 
 #### Returns
 
@@ -194,22 +181,25 @@ ___
 
 #### Inherited from
 
-[AdyenComponentEvents](AdyenComponentEvents.md).[onFieldValid](AdyenComponentEvents.md#onfieldvalid)
+[`AdyenComponentEvents`](AdyenComponentEvents.md).[`onFieldValid`](AdyenComponentEvents.md#onfieldvalid)
 
-___
+***
 
-### onSubmit
+### onSubmit()?
 
-▸ **onSubmit**(`state`, `component`): `void`
+> `optional` **onSubmit**(`state`, `component`): `void`
 
 Called when the shopper selects the Pay button and payment details are valid.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `state` | [`AdyenComponentEventState`](../README.md#adyencomponenteventstate) |
-| `component` | [`AdyenComponent`](AdyenComponent.md) |
+##### state
+
+[`AdyenComponentEventState`](../type-aliases/AdyenComponentEventState.md)
+
+##### component
+
+[`AdyenComponent`](AdyenComponent.md)
 
 #### Returns
 
@@ -217,4 +207,4 @@ Called when the shopper selects the Pay button and payment details are valid.
 
 #### Inherited from
 
-[AdyenComponentEvents](AdyenComponentEvents.md).[onSubmit](AdyenComponentEvents.md#onsubmit)
+[`AdyenComponentEvents`](AdyenComponentEvents.md).[`onSubmit`](AdyenComponentEvents.md#onsubmit)

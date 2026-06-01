@@ -1,55 +1,48 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutButtonStatusSelector
 
 # Class: CheckoutButtonStatusSelector
 
-## Table of contents
-
-### Constructors
-
-- [constructor](CheckoutButtonStatusSelector.md#constructor)
-
-### Methods
-
-- [isDeinitializingButton](CheckoutButtonStatusSelector.md#isdeinitializingbutton)
-- [isInitializingButton](CheckoutButtonStatusSelector.md#isinitializingbutton)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new CheckoutButtonStatusSelector**(): [`CheckoutButtonStatusSelector`](CheckoutButtonStatusSelector.md)
+> **new CheckoutButtonStatusSelector**(): `CheckoutButtonStatusSelector`
 
 #### Returns
 
-[`CheckoutButtonStatusSelector`](CheckoutButtonStatusSelector.md)
+`CheckoutButtonStatusSelector`
 
 ## Methods
 
-### isDeinitializingButton
+### isDeinitializingButton()
 
-▸ **isDeinitializingButton**(`methodId?`): `boolean`
+> **isDeinitializingButton**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
+##### methodId?
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isInitializingButton
+### isInitializingButton()
 
-▸ **isInitializingButton**(`methodId?`): `boolean`
+> **isInitializingButton**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
+##### methodId?
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
 
 #### Returns
 

@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / RecaptchaResult
 
 # Interface: RecaptchaResult
 
-## Table of contents
-
-### Properties
-
-- [error](RecaptchaResult.md#error)
-- [token](RecaptchaResult.md#token)
-
 ## Properties
 
-### error
+### error?
 
-• `Optional` **error**: `Error`
+> `optional` **error?**: `Error`
 
-___
+***
 
-### token
+### token?
 
-• `Optional` **token**: `string`
+> `optional` **token?**: `string`

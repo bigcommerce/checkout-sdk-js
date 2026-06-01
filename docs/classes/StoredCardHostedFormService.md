@@ -1,74 +1,72 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StoredCardHostedFormService
 
 # Class: StoredCardHostedFormService
 
-## Table of contents
-
-### Constructors
-
-- [constructor](StoredCardHostedFormService.md#constructor)
-
-### Methods
-
-- [deinitialize](StoredCardHostedFormService.md#deinitialize)
-- [initialize](StoredCardHostedFormService.md#initialize)
-- [submitStoredCard](StoredCardHostedFormService.md#submitstoredcard)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new StoredCardHostedFormService**(`_host`, `_hostedFormFactory`): [`StoredCardHostedFormService`](StoredCardHostedFormService.md)
+> **new StoredCardHostedFormService**(`_host`, `_hostedFormFactory`): `StoredCardHostedFormService`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_host` | `string` |
-| `_hostedFormFactory` | [`HostedFormFactory`](HostedFormFactory.md) |
+##### \_host
+
+`string`
+
+##### \_hostedFormFactory
+
+[`HostedFormFactory`](HostedFormFactory.md)
 
 #### Returns
 
-[`StoredCardHostedFormService`](StoredCardHostedFormService.md)
+`StoredCardHostedFormService`
 
 ## Methods
 
-### deinitialize
+### deinitialize()
 
-▸ **deinitialize**(): `void`
+> **deinitialize**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### initialize
+### initialize()
 
-▸ **initialize**(`options`): `Promise`\<`void`\>
+> **initialize**(`options`): `Promise`\<`void`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | [`LegacyHostedFormOptions`](../interfaces/LegacyHostedFormOptions.md) |
+##### options
+
+[`LegacyHostedFormOptions`](../interfaces/LegacyHostedFormOptions.md)
 
 #### Returns
 
 `Promise`\<`void`\>
 
-___
+***
 
-### submitStoredCard
+### submitStoredCard()
 
-▸ **submitStoredCard**(`fields`, `data`): `Promise`\<`void`\>
+> **submitStoredCard**(`fields`, `data`): `Promise`\<`void`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `fields` | [`StoredCardHostedFormInstrumentFields`](../interfaces/StoredCardHostedFormInstrumentFields.md) |
-| `data` | [`StoredCardHostedFormData`](../interfaces/StoredCardHostedFormData.md) |
+##### fields
+
+[`StoredCardHostedFormInstrumentFields`](../interfaces/StoredCardHostedFormInstrumentFields.md)
+
+##### data
+
+[`StoredCardHostedFormData`](../interfaces/StoredCardHostedFormData.md)
 
 #### Returns
 

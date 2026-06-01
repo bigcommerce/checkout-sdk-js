@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithCreditCardPaymentInitializeOptions
 
 # Interface: WithCreditCardPaymentInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [creditCard](WithCreditCardPaymentInitializeOptions.md#creditcard)
-
 ## Properties
 
-### creditCard
+### creditCard?
 
-• `Optional` **creditCard**: [`CreditCardPaymentInitializeOptions_2`](CreditCardPaymentInitializeOptions_2.md)
+> `optional` **creditCard?**: [`CreditCardPaymentInitializeOptions_2`](CreditCardPaymentInitializeOptions_2.md)

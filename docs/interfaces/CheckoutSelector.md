@@ -1,101 +1,92 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutSelector
 
 # Interface: CheckoutSelector
 
-## Table of contents
-
-### Methods
-
-- [getCheckout](CheckoutSelector.md#getcheckout)
-- [getCheckoutOrThrow](CheckoutSelector.md#getcheckoutorthrow)
-- [getLoadError](CheckoutSelector.md#getloaderror)
-- [getOutstandingBalance](CheckoutSelector.md#getoutstandingbalance)
-- [getUpdateError](CheckoutSelector.md#getupdateerror)
-- [isExecutingSpamCheck](CheckoutSelector.md#isexecutingspamcheck)
-- [isLoading](CheckoutSelector.md#isloading)
-- [isUpdating](CheckoutSelector.md#isupdating)
-
 ## Methods
 
-### getCheckout
+### getCheckout()
 
-▸ **getCheckout**(): `undefined` \| [`Checkout`](Checkout.md)
+> **getCheckout**(): [`Checkout`](Checkout.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| [`Checkout`](Checkout.md)
+[`Checkout`](Checkout.md) \| `undefined`
 
-___
+***
 
-### getCheckoutOrThrow
+### getCheckoutOrThrow()
 
-▸ **getCheckoutOrThrow**(): [`Checkout`](Checkout.md)
+> **getCheckoutOrThrow**(): [`Checkout`](Checkout.md)
 
 #### Returns
 
 [`Checkout`](Checkout.md)
 
-___
+***
 
-### getLoadError
+### getLoadError()
 
-▸ **getLoadError**(): `undefined` \| `Error`
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getOutstandingBalance
+### getOutstandingBalance()
 
-▸ **getOutstandingBalance**(`useStoreCredit?`): `undefined` \| `number`
+> **getOutstandingBalance**(`useStoreCredit?`): `number` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `useStoreCredit?` | `boolean` |
+##### useStoreCredit?
+
+`boolean`
 
 #### Returns
 
-`undefined` \| `number`
+`number` \| `undefined`
 
-___
+***
 
-### getUpdateError
+### getUpdateError()
 
-▸ **getUpdateError**(): `undefined` \| `Error`
+> **getUpdateError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### isExecutingSpamCheck
+### isExecutingSpamCheck()
 
-▸ **isExecutingSpamCheck**(): `boolean`
+> **isExecutingSpamCheck**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isLoading
+### isLoading()
 
-▸ **isLoading**(): `boolean`
+> **isLoading**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isUpdating
+### isUpdating()
 
-▸ **isUpdating**(): `boolean`
+> **isUpdating**(): `boolean`
 
 #### Returns
 

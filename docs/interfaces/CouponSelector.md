@@ -1,62 +1,56 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CouponSelector
 
 # Interface: CouponSelector
 
-## Table of contents
-
-### Methods
-
-- [getApplyError](CouponSelector.md#getapplyerror)
-- [getCoupons](CouponSelector.md#getcoupons)
-- [getRemoveError](CouponSelector.md#getremoveerror)
-- [isApplying](CouponSelector.md#isapplying)
-- [isRemoving](CouponSelector.md#isremoving)
-
 ## Methods
 
-### getApplyError
+### getApplyError()
 
-▸ **getApplyError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
-
-#### Returns
-
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
-
-___
-
-### getCoupons
-
-▸ **getCoupons**(): `undefined` \| [`Coupon`](Coupon.md)[]
+> **getApplyError**(): [`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 #### Returns
 
-`undefined` \| [`Coupon`](Coupon.md)[]
+[`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
-___
+***
 
-### getRemoveError
+### getCoupons()
 
-▸ **getRemoveError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+> **getCoupons**(): [`Coupon`](Coupon.md)[] \| `undefined`
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+[`Coupon`](Coupon.md)[] \| `undefined`
 
-___
+***
 
-### isApplying
+### getRemoveError()
 
-▸ **isApplying**(): `boolean`
+> **getRemoveError**(): [`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
+
+#### Returns
+
+[`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
+
+***
+
+### isApplying()
+
+> **isApplying**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isRemoving
+### isRemoving()
 
-▸ **isRemoving**(): `boolean`
+> **isRemoving**(): `boolean`
 
 #### Returns
 

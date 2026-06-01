@@ -1,29 +1,27 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedFieldStoredCardRequestEvent
 
 # Interface: HostedFieldStoredCardRequestEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](HostedFieldStoredCardRequestEvent.md#payload)
-- [type](HostedFieldStoredCardRequestEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### data
 
-| Name | Type |
-| :------ | :------ |
-| `data` | [`StoredCardHostedFormData`](StoredCardHostedFormData.md) |
-| `fields` | [`StoredCardHostedFormInstrumentFields`](StoredCardHostedFormInstrumentFields.md) |
+> **data**: [`StoredCardHostedFormData`](StoredCardHostedFormData.md)
 
-___
+#### fields
+
+> **fields**: [`StoredCardHostedFormInstrumentFields`](StoredCardHostedFormInstrumentFields.md)
+
+***
 
 ### type
 
-• **type**: [`StoredCardRequested`](../enums/HostedFieldEventType.md#storedcardrequested)
+> **type**: [`StoredCardRequested`](../enumerations/HostedFieldEventType.md#storedcardrequested)

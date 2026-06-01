@@ -1,134 +1,126 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaymentSelector
 
 # Interface: PaymentSelector
 
-## Table of contents
-
-### Methods
-
-- [getPaymentId](PaymentSelector.md#getpaymentid)
-- [getPaymentIdOrThrow](PaymentSelector.md#getpaymentidorthrow)
-- [getPaymentRedirectUrl](PaymentSelector.md#getpaymentredirecturl)
-- [getPaymentRedirectUrlOrThrow](PaymentSelector.md#getpaymentredirecturlorthrow)
-- [getPaymentStatus](PaymentSelector.md#getpaymentstatus)
-- [getPaymentStatusOrThrow](PaymentSelector.md#getpaymentstatusorthrow)
-- [getPaymentToken](PaymentSelector.md#getpaymenttoken)
-- [getPaymentTokenOrThrow](PaymentSelector.md#getpaymenttokenorthrow)
-- [isPaymentDataRequired](PaymentSelector.md#ispaymentdatarequired)
-- [isPaymentDataSubmitted](PaymentSelector.md#ispaymentdatasubmitted)
-
 ## Methods
 
-### getPaymentId
+### getPaymentId()
 
-▸ **getPaymentId**(): `undefined` \| \{ `gatewayId?`: `string` ; `providerId`: `string`  }
-
-#### Returns
-
-`undefined` \| \{ `gatewayId?`: `string` ; `providerId`: `string`  }
-
-___
-
-### getPaymentIdOrThrow
-
-▸ **getPaymentIdOrThrow**(): `Object`
+> **getPaymentId**(): \{ `gatewayId?`: `string`; `providerId`: `string`; \} \| `undefined`
 
 #### Returns
 
-`Object`
+\{ `gatewayId?`: `string`; `providerId`: `string`; \} \| `undefined`
 
-| Name | Type |
-| :------ | :------ |
-| `gatewayId?` | `string` |
-| `providerId` | `string` |
+***
 
-___
+### getPaymentIdOrThrow()
 
-### getPaymentRedirectUrl
-
-▸ **getPaymentRedirectUrl**(): `undefined` \| `string`
+> **getPaymentIdOrThrow**(): `object`
 
 #### Returns
 
-`undefined` \| `string`
+`object`
 
-___
+##### gatewayId?
 
-### getPaymentRedirectUrlOrThrow
+> `optional` **gatewayId?**: `string`
 
-▸ **getPaymentRedirectUrlOrThrow**(): `string`
+##### providerId
 
-#### Returns
+> **providerId**: `string`
 
-`string`
+***
 
-___
+### getPaymentRedirectUrl()
 
-### getPaymentStatus
-
-▸ **getPaymentStatus**(): `undefined` \| `string`
+> **getPaymentRedirectUrl**(): `string` \| `undefined`
 
 #### Returns
 
-`undefined` \| `string`
+`string` \| `undefined`
 
-___
+***
 
-### getPaymentStatusOrThrow
+### getPaymentRedirectUrlOrThrow()
 
-▸ **getPaymentStatusOrThrow**(): `string`
+> **getPaymentRedirectUrlOrThrow**(): `string`
 
 #### Returns
 
 `string`
 
-___
+***
 
-### getPaymentToken
+### getPaymentStatus()
 
-▸ **getPaymentToken**(): `undefined` \| `string`
+> **getPaymentStatus**(): `string` \| `undefined`
 
 #### Returns
 
-`undefined` \| `string`
+`string` \| `undefined`
 
-___
+***
 
-### getPaymentTokenOrThrow
+### getPaymentStatusOrThrow()
 
-▸ **getPaymentTokenOrThrow**(): `string`
+> **getPaymentStatusOrThrow**(): `string`
 
 #### Returns
 
 `string`
 
-___
+***
 
-### isPaymentDataRequired
+### getPaymentToken()
 
-▸ **isPaymentDataRequired**(`useStoreCredit?`): `boolean`
+> **getPaymentToken**(): `string` \| `undefined`
+
+#### Returns
+
+`string` \| `undefined`
+
+***
+
+### getPaymentTokenOrThrow()
+
+> **getPaymentTokenOrThrow**(): `string`
+
+#### Returns
+
+`string`
+
+***
+
+### isPaymentDataRequired()
+
+> **isPaymentDataRequired**(`useStoreCredit?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `useStoreCredit?` | `boolean` |
+##### useStoreCredit?
+
+`boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isPaymentDataSubmitted
+### isPaymentDataSubmitted()
 
-▸ **isPaymentDataSubmitted**(`paymentMethod?`): `boolean`
+> **isPaymentDataSubmitted**(`paymentMethod?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `paymentMethod?` | [`PaymentMethod`](PaymentMethod.md)\<`any`\> |
+##### paymentMethod?
+
+[`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
 #### Returns
 

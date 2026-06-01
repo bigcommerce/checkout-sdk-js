@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutButtonStatusesState
 
 # Interface: CheckoutButtonStatusesState
 
-## Table of contents
-
-### Properties
-
-- [isDeinitializing](CheckoutButtonStatusesState.md#isdeinitializing)
-- [isInitializing](CheckoutButtonStatusesState.md#isinitializing)
-
 ## Properties
 
-### isDeinitializing
+### isDeinitializing?
 
-• `Optional` **isDeinitializing**: `boolean`
+> `optional` **isDeinitializing?**: `boolean`
 
-___
+***
 
-### isInitializing
+### isInitializing?
 
-• `Optional` **isInitializing**: `boolean`
+> `optional` **isInitializing?**: `boolean`

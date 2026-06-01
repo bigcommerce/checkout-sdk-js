@@ -1,29 +1,21 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenAdditionalActionCallbacks
 
 # Interface: AdyenAdditionalActionCallbacks
 
-## Hierarchy
+## Extended by
 
-- **`AdyenAdditionalActionCallbacks`**
-
-  ↳ [`AdyenAdditionalActionOptions`](AdyenAdditionalActionOptions.md)
-
-  ↳ [`AdyenThreeDS2Options`](AdyenThreeDS2Options.md)
-
-## Table of contents
-
-### Methods
-
-- [onActionHandled](AdyenAdditionalActionCallbacks.md#onactionhandled)
-- [onBeforeLoad](AdyenAdditionalActionCallbacks.md#onbeforeload)
-- [onComplete](AdyenAdditionalActionCallbacks.md#oncomplete)
-- [onLoad](AdyenAdditionalActionCallbacks.md#onload)
+- [`AdyenAdditionalActionOptions`](AdyenAdditionalActionOptions.md)
+- [`AdyenThreeDS2Options`](AdyenThreeDS2Options.md)
 
 ## Methods
 
-### onActionHandled
+### onActionHandled()?
 
-▸ **onActionHandled**(): `void`
+> `optional` **onActionHandled**(): `void`
 
 A callback that gets called when an action, for example a QR code or 3D Secure 2 authentication screen, is shown to the shopper
 
@@ -31,29 +23,29 @@ A callback that gets called when an action, for example a QR code or 3D Secure 2
 
 `void`
 
-___
+***
 
-### onBeforeLoad
+### onBeforeLoad()?
 
-▸ **onBeforeLoad**(`shopperInteraction?`): `void`
+> `optional` **onBeforeLoad**(`shopperInteraction?`): `void`
 
 A callback that gets called before adyen component is loaded
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `shopperInteraction?` | `boolean` |
+##### shopperInteraction?
+
+`boolean`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onComplete
+### onComplete()?
 
-▸ **onComplete**(): `void`
+> `optional` **onComplete**(): `void`
 
 A callback that gets called when adyen component verification
 is completed
@@ -62,19 +54,19 @@ is completed
 
 `void`
 
-___
+***
 
-### onLoad
+### onLoad()?
 
-▸ **onLoad**(`cancel?`): `void`
+> `optional` **onLoad**(`cancel?`): `void`
 
 A callback that gets called when adyen component is loaded
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `cancel?` | () => `void` |
+##### cancel?
+
+() => `void`
 
 #### Returns
 

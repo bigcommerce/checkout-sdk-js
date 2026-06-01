@@ -1,85 +1,75 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CreditCardInstrument
 
 # Interface: CreditCardInstrument
 
-## Table of contents
-
-### Properties
-
-- [browser\_info](CreditCardInstrument.md#browser_info)
-- [ccCustomerCode](CreditCardInstrument.md#cccustomercode)
-- [ccCvv](CreditCardInstrument.md#cccvv)
-- [ccExpiry](CreditCardInstrument.md#ccexpiry)
-- [ccName](CreditCardInstrument.md#ccname)
-- [ccNumber](CreditCardInstrument.md#ccnumber)
-- [extraData](CreditCardInstrument.md#extradata)
-- [shouldSaveInstrument](CreditCardInstrument.md#shouldsaveinstrument)
-- [shouldSetAsDefaultInstrument](CreditCardInstrument.md#shouldsetasdefaultinstrument)
-- [threeDSecure](CreditCardInstrument.md#threedsecure)
-
 ## Properties
 
-### browser\_info
+### browser\_info?
 
-• `Optional` **browser\_info**: [`BrowserInfo`](BrowserInfo.md)
+> `optional` **browser\_info?**: [`BrowserInfo`](BrowserInfo.md)
 
-___
+***
 
-### ccCustomerCode
+### ccCustomerCode?
 
-• `Optional` **ccCustomerCode**: `string`
+> `optional` **ccCustomerCode?**: `string`
 
-___
+***
 
-### ccCvv
+### ccCvv?
 
-• `Optional` **ccCvv**: `string`
+> `optional` **ccCvv?**: `string`
 
-___
+***
 
 ### ccExpiry
 
-• **ccExpiry**: `Object`
+> **ccExpiry**: `object`
 
-#### Type declaration
+#### month
 
-| Name | Type |
-| :------ | :------ |
-| `month` | `string` |
-| `year` | `string` |
+> **month**: `string`
 
-___
+#### year
+
+> **year**: `string`
+
+***
 
 ### ccName
 
-• **ccName**: `string`
+> **ccName**: `string`
 
-___
+***
 
 ### ccNumber
 
-• **ccNumber**: `string`
+> **ccNumber**: `string`
 
-___
+***
 
-### extraData
+### extraData?
 
-• `Optional` **extraData**: `any`
+> `optional` **extraData?**: `any`
 
-___
+***
 
-### shouldSaveInstrument
+### shouldSaveInstrument?
 
-• `Optional` **shouldSaveInstrument**: `boolean`
+> `optional` **shouldSaveInstrument?**: `boolean`
 
-___
+***
 
-### shouldSetAsDefaultInstrument
+### shouldSetAsDefaultInstrument?
 
-• `Optional` **shouldSetAsDefaultInstrument**: `boolean`
+> `optional` **shouldSetAsDefaultInstrument?**: `boolean`
 
-___
+***
 
-### threeDSecure
+### threeDSecure?
 
-• `Optional` **threeDSecure**: [`ThreeDSecure`](ThreeDSecure.md) \| [`ThreeDSecureToken`](ThreeDSecureToken.md)
+> `optional` **threeDSecure?**: [`ThreeDSecure`](ThreeDSecure.md) \| [`ThreeDSecureToken`](ThreeDSecureToken.md)

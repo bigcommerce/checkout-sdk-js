@@ -1,21 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalBuyNowInitializeOptions\_2
 
 # Interface: PayPalBuyNowInitializeOptions\_2
 
 PayPal Commerce BuyNow
 
-## Table of contents
-
-### Methods
-
-- [getBuyNowCartRequestBody](PayPalBuyNowInitializeOptions_2.md#getbuynowcartrequestbody)
-
 ## Methods
 
-### getBuyNowCartRequestBody
+### getBuyNowCartRequestBody()
 
-▸ **getBuyNowCartRequestBody**(): `default`
+> **getBuyNowCartRequestBody**(): `BuyNowCartRequestBody`
 
 #### Returns
 
-`default`
+`BuyNowCartRequestBody`

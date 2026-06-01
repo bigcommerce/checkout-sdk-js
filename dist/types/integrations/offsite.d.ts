@@ -14,6 +14,6 @@ declare class OffsitePaymentStrategy implements PaymentStrategy {
     private _shouldSubmitFullPayload;
 }
 
-export declare const createOffsitePaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<OffsitePaymentStrategy>, {
+export declare const createOffsitePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<OffsitePaymentStrategy>, {
     type: string;
 }>;

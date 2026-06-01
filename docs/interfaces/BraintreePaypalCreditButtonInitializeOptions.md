@@ -1,85 +1,77 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BraintreePaypalCreditButtonInitializeOptions
 
 # Interface: BraintreePaypalCreditButtonInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [buyNowInitializeOptions](BraintreePaypalCreditButtonInitializeOptions.md#buynowinitializeoptions)
-- [currencyCode](BraintreePaypalCreditButtonInitializeOptions.md#currencycode)
-- [shippingAddress](BraintreePaypalCreditButtonInitializeOptions.md#shippingaddress)
-- [style](BraintreePaypalCreditButtonInitializeOptions.md#style)
-
-### Methods
-
-- [onAuthorizeError](BraintreePaypalCreditButtonInitializeOptions.md#onauthorizeerror)
-- [onEligibilityFailure](BraintreePaypalCreditButtonInitializeOptions.md#oneligibilityfailure)
-- [onError](BraintreePaypalCreditButtonInitializeOptions.md#onerror)
-- [onPaymentError](BraintreePaypalCreditButtonInitializeOptions.md#onpaymenterror)
-
 ## Properties
 
-### buyNowInitializeOptions
+### buyNowInitializeOptions?
 
-• `Optional` **buyNowInitializeOptions**: `Object`
+> `optional` **buyNowInitializeOptions?**: `object`
 
 The options that are required to initialize Buy Now functionality.
 
-#### Type declaration
+#### getBuyNowCartRequestBody()?
 
-| Name | Type |
-| :------ | :------ |
-| `getBuyNowCartRequestBody?` | () => `void` \| `default` |
+> `optional` **getBuyNowCartRequestBody**(): `void` \| `BuyNowCartRequestBody`
 
-___
+##### Returns
 
-### currencyCode
+`void` \| `BuyNowCartRequestBody`
 
-• `Optional` **currencyCode**: `string`
+***
+
+### currencyCode?
+
+> `optional` **currencyCode?**: `string`
 
 The option that used to initialize a PayPal script with provided currency code.
 
-___
+***
 
-### shippingAddress
+### shippingAddress?
 
-• `Optional` **shippingAddress**: ``null`` \| `default`
+> `optional` **shippingAddress?**: `Address` \| `null`
 
 Address to be used for shipping.
 If not provided, it will use the first saved address from the active customer.
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: `Pick`\<`PaypalStyleOptions`, ``"label"`` \| ``"color"`` \| ``"height"`` \| ``"layout"`` \| ``"shape"`` \| ``"size"`` \| ``"fundingicons"`` \| ``"tagline"``\>
+> `optional` **style?**: `Pick`\<`PaypalStyleOptions`, `"label"` \| `"color"` \| `"height"` \| `"layout"` \| `"shape"` \| `"size"` \| `"fundingicons"` \| `"tagline"`\>
 
 A set of styling options for the checkout button.
 
 ## Methods
 
-### onAuthorizeError
+### onAuthorizeError()?
 
-▸ **onAuthorizeError**(`error`): `void`
+> `optional` **onAuthorizeError**(`error`): `void`
 
 A callback that gets called if unable to authorize and tokenize payment.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
+##### error
+
+`StandardError` \| `BraintreeError`
+
+The error object describing the failure.
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onEligibilityFailure
+### onEligibilityFailure()?
 
-▸ **onEligibilityFailure**(): `void`
+> `optional` **onEligibilityFailure**(): `void`
 
 A callback that gets called when Braintree SDK restricts to render PayPal component.
 
@@ -87,37 +79,41 @@ A callback that gets called when Braintree SDK restricts to render PayPal compon
 
 `void`
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`error`): `void`
+> `optional` **onError**(`error`): `void`
 
 A callback that gets called on any error instead of submit payment or authorization errors.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
+##### error
+
+`StandardError` \| `BraintreeError`
+
+The error object describing the failure.
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onPaymentError
+### onPaymentError()?
 
-▸ **onPaymentError**(`error`): `void`
+> `optional` **onPaymentError**(`error`): `void`
 
 A callback that gets called if unable to submit payment.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
+##### error
+
+`StandardError` \| `BraintreeError`
+
+The error object describing the failure.
 
 #### Returns
 

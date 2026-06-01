@@ -1,31 +1,29 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / RemoteCheckoutSelector
 
 # Interface: RemoteCheckoutSelector
 
-## Table of contents
-
-### Methods
-
-- [getCheckout](RemoteCheckoutSelector.md#getcheckout)
-
 ## Methods
 
-### getCheckout
+### getCheckout()
 
-▸ **getCheckout**\<`TMethodId`\>(`methodId`): `undefined` \| [`RemoteCheckoutStateData`](RemoteCheckoutStateData.md)[`TMethodId`]
+> **getCheckout**\<`TMethodId`\>(`methodId`): [`RemoteCheckoutStateData`](RemoteCheckoutStateData.md)\[`TMethodId`\] \| `undefined`
 
-#### Type parameters
+#### Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TMethodId` | extends ``"amazon"`` |
+##### TMethodId
+
+`TMethodId` *extends* `"amazon"`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId` | `TMethodId` |
+##### methodId
+
+`TMethodId`
 
 #### Returns
 
-`undefined` \| [`RemoteCheckoutStateData`](RemoteCheckoutStateData.md)[`TMethodId`]
+[`RemoteCheckoutStateData`](RemoteCheckoutStateData.md)\[`TMethodId`\] \| `undefined`

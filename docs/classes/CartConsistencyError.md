@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CartConsistencyError
 
 # Class: CartConsistencyError
@@ -5,59 +9,46 @@
 This error is thrown when the server detects inconsistency in cart data since it is last requested,
 for example, product prices or eligible discounts have changed.
 
-## Hierarchy
+## Extends
 
 - [`StandardError`](StandardError.md)
 
-  ↳ **`CartConsistencyError`**
-
-## Table of contents
-
-### Constructors
-
-- [constructor](CartConsistencyError.md#constructor)
-
-### Properties
-
-- [name](CartConsistencyError.md#name)
-- [type](CartConsistencyError.md#type)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new CartConsistencyError**(`message?`): [`CartConsistencyError`](CartConsistencyError.md)
+> **new CartConsistencyError**(`message?`): `CartConsistencyError`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `message?` | `string` |
+##### message?
+
+`string`
 
 #### Returns
 
-[`CartConsistencyError`](CartConsistencyError.md)
+`CartConsistencyError`
 
 #### Overrides
 
-[StandardError](StandardError.md).[constructor](StandardError.md#constructor)
+[`StandardError`](StandardError.md).[`constructor`](StandardError.md#constructor)
 
 ## Properties
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
 #### Inherited from
 
-[StandardError](StandardError.md).[name](StandardError.md#name)
+[`StandardError`](StandardError.md).[`name`](StandardError.md#name)
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`
 
 #### Inherited from
 
-[StandardError](StandardError.md).[type](StandardError.md#type)
+[`StandardError`](StandardError.md).[`type`](StandardError.md#type)

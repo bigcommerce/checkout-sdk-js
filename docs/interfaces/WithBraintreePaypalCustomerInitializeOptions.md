@@ -1,18 +1,16 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithBraintreePaypalCustomerInitializeOptions
 
 # Interface: WithBraintreePaypalCustomerInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [braintreepaypal](WithBraintreePaypalCustomerInitializeOptions.md#braintreepaypal)
-
 ## Properties
 
-### braintreepaypal
+### braintreepaypal?
 
-• `Optional` **braintreepaypal**: [`BraintreePaypalCustomerInitializeOptions`](BraintreePaypalCustomerInitializeOptions.md)
+> `optional` **braintreepaypal?**: [`BraintreePaypalCustomerInitializeOptions`](BraintreePaypalCustomerInitializeOptions.md)
 
 The options that are required to initialize the customer step of checkout
 when using Braintree PayPal.

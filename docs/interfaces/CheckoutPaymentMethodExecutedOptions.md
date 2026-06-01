@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutPaymentMethodExecutedOptions
 
 # Interface: CheckoutPaymentMethodExecutedOptions
 
-## Table of contents
-
-### Properties
-
-- [hasBoltAccount](CheckoutPaymentMethodExecutedOptions.md#hasboltaccount)
-
 ## Properties
 
-### hasBoltAccount
+### hasBoltAccount?
 
-• `Optional` **hasBoltAccount**: `boolean`
+> `optional` **hasBoltAccount?**: `boolean`

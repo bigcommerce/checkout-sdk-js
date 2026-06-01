@@ -1,246 +1,211 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Order
 
 # Interface: Order
-
-## Table of contents
-
-### Properties
-
-- [baseAmount](Order.md#baseamount)
-- [billingAddress](Order.md#billingaddress)
-- [cartId](Order.md#cartid)
-- [channelId](Order.md#channelid)
-- [comparisonShippingCost](Order.md#comparisonshippingcost)
-- [consignments](Order.md#consignments)
-- [coupons](Order.md#coupons)
-- [currency](Order.md#currency)
-- [customerCanBeCreated](Order.md#customercanbecreated)
-- [customerId](Order.md#customerid)
-- [customerMessage](Order.md#customermessage)
-- [discountAmount](Order.md#discountamount)
-- [displayDiscountTotal](Order.md#displaydiscounttotal)
-- [fees](Order.md#fees)
-- [giftWrappingCostTotal](Order.md#giftwrappingcosttotal)
-- [handlingCostTotal](Order.md#handlingcosttotal)
-- [hasDigitalItems](Order.md#hasdigitalitems)
-- [isComplete](Order.md#iscomplete)
-- [isDownloadable](Order.md#isdownloadable)
-- [isTaxIncluded](Order.md#istaxincluded)
-- [lineItems](Order.md#lineitems)
-- [manualDiscountTotal](Order.md#manualdiscounttotal)
-- [orderAmount](Order.md#orderamount)
-- [orderAmountAsInteger](Order.md#orderamountasinteger)
-- [orderBasedAutoDiscountTotal](Order.md#orderbasedautodiscounttotal)
-- [orderId](Order.md#orderid)
-- [payments](Order.md#payments)
-- [productAutoDiscountedSubtotal](Order.md#productautodiscountedsubtotal)
-- [shippingCostBeforeDiscount](Order.md#shippingcostbeforediscount)
-- [shippingCostTotal](Order.md#shippingcosttotal)
-- [status](Order.md#status)
-- [taxTotal](Order.md#taxtotal)
-- [taxes](Order.md#taxes)
-- [totalDiscount](Order.md#totaldiscount)
 
 ## Properties
 
 ### baseAmount
 
-• **baseAmount**: `number`
+> **baseAmount**: `number`
 
-___
+***
 
 ### billingAddress
 
-• **billingAddress**: [`OrderBillingAddress`](OrderBillingAddress.md)
+> **billingAddress**: [`OrderBillingAddress`](OrderBillingAddress.md)
 
-___
+***
 
 ### cartId
 
-• **cartId**: `string`
+> **cartId**: `string`
 
-___
+***
 
 ### channelId
 
-• **channelId**: `number`
+> **channelId**: `number`
 
-___
+***
 
 ### comparisonShippingCost
 
-• **comparisonShippingCost**: `number`
+> **comparisonShippingCost**: `number`
 
-___
+***
 
 ### consignments
 
-• **consignments**: [`OrderConsignment`](OrderConsignment.md)
+> **consignments**: [`OrderConsignment`](OrderConsignment.md)
 
-___
+***
 
 ### coupons
 
-• **coupons**: [`Coupon`](Coupon.md)[]
+> **coupons**: [`Coupon`](Coupon.md)[]
 
-___
+***
 
 ### currency
 
-• **currency**: `default`
+> **currency**: `Currency`
 
-___
+***
 
 ### customerCanBeCreated
 
-• **customerCanBeCreated**: `boolean`
+> **customerCanBeCreated**: `boolean`
 
-___
+***
 
 ### customerId
 
-• **customerId**: `number`
+> **customerId**: `number`
 
-___
+***
 
 ### customerMessage
 
-• **customerMessage**: `string`
+> **customerMessage**: `string`
 
-___
+***
 
 ### discountAmount
 
-• **discountAmount**: `number`
+> **discountAmount**: `number`
 
-___
+***
 
 ### displayDiscountTotal
 
-• **displayDiscountTotal**: `number`
+> **displayDiscountTotal**: `number`
 
-___
+***
 
 ### fees
 
-• **fees**: [`OrderFee`](OrderFee.md)[]
+> **fees**: [`OrderFee`](OrderFee.md)[]
 
-___
+***
 
 ### giftWrappingCostTotal
 
-• **giftWrappingCostTotal**: `number`
+> **giftWrappingCostTotal**: `number`
 
-___
+***
 
 ### handlingCostTotal
 
-• **handlingCostTotal**: `number`
+> **handlingCostTotal**: `number`
 
-___
+***
 
 ### hasDigitalItems
 
-• **hasDigitalItems**: `boolean`
+> **hasDigitalItems**: `boolean`
 
-___
+***
 
 ### isComplete
 
-• **isComplete**: `boolean`
+> **isComplete**: `boolean`
 
-___
+***
 
 ### isDownloadable
 
-• **isDownloadable**: `boolean`
+> **isDownloadable**: `boolean`
 
-___
+***
 
 ### isTaxIncluded
 
-• **isTaxIncluded**: `boolean`
+> **isTaxIncluded**: `boolean`
 
-___
+***
 
 ### lineItems
 
-• **lineItems**: [`LineItemMap`](LineItemMap.md)
+> **lineItems**: [`LineItemMap`](LineItemMap.md)
 
-___
+***
 
 ### manualDiscountTotal
 
-• **manualDiscountTotal**: `number`
+> **manualDiscountTotal**: `number`
 
-___
+***
 
 ### orderAmount
 
-• **orderAmount**: `number`
+> **orderAmount**: `number`
 
-___
+***
 
 ### orderAmountAsInteger
 
-• **orderAmountAsInteger**: `number`
+> **orderAmountAsInteger**: `number`
 
-___
+***
 
 ### orderBasedAutoDiscountTotal
 
-• **orderBasedAutoDiscountTotal**: `number`
+> **orderBasedAutoDiscountTotal**: `number`
 
-___
+***
 
 ### orderId
 
-• **orderId**: `number`
+> **orderId**: `number`
 
-___
+***
 
-### payments
+### payments?
 
-• `Optional` **payments**: [`OrderPayments`](../README.md#orderpayments)
+> `optional` **payments?**: [`OrderPayments`](../type-aliases/OrderPayments.md)
 
-___
+***
 
 ### productAutoDiscountedSubtotal
 
-• **productAutoDiscountedSubtotal**: `number`
+> **productAutoDiscountedSubtotal**: `number`
 
-___
+***
 
 ### shippingCostBeforeDiscount
 
-• **shippingCostBeforeDiscount**: `number`
+> **shippingCostBeforeDiscount**: `number`
 
-___
+***
 
 ### shippingCostTotal
 
-• **shippingCostTotal**: `number`
+> **shippingCostTotal**: `number`
 
-___
+***
 
 ### status
 
-• **status**: `string`
+> **status**: `string`
 
-___
-
-### taxTotal
-
-• **taxTotal**: `number`
-
-___
+***
 
 ### taxes
 
-• **taxes**: [`Tax`](Tax.md)[]
+> **taxes**: [`Tax`](Tax.md)[]
 
-___
+***
+
+### taxTotal
+
+> **taxTotal**: `number`
+
+***
 
 ### totalDiscount
 
-• **totalDiscount**: `number`
+> **totalDiscount**: `number`

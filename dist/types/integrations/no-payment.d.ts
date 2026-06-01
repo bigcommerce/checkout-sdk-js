@@ -13,6 +13,6 @@ declare class NoPaymentDataRequiredPaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void>;
 }
 
-export declare const createNoPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<NoPaymentDataRequiredPaymentStrategy>, {
+export declare const createNoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<NoPaymentDataRequiredPaymentStrategy>, {
     id: string;
 }>;

@@ -1,43 +1,37 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ExtraFieldConfig
 
 # Interface: ExtraFieldConfig
 
-## Table of contents
-
-### Properties
-
-- [defaultValue](ExtraFieldConfig.md#defaultvalue)
-- [maxLength](ExtraFieldConfig.md#maxlength)
-- [maxValue](ExtraFieldConfig.md#maxvalue)
-- [numberOfRows](ExtraFieldConfig.md#numberofrows)
-- [options](ExtraFieldConfig.md#options)
-
 ## Properties
 
-### defaultValue
+### defaultValue?
 
-• `Optional` **defaultValue**: `string` \| `number`
+> `optional` **defaultValue?**: `string` \| `number`
 
-___
+***
 
-### maxLength
+### maxLength?
 
-• `Optional` **maxLength**: `number`
+> `optional` **maxLength?**: `number`
 
-___
+***
 
-### maxValue
+### maxValue?
 
-• `Optional` **maxValue**: `number`
+> `optional` **maxValue?**: `number`
 
-___
+***
 
-### numberOfRows
+### numberOfRows?
 
-• `Optional` **numberOfRows**: `number`
+> `optional` **numberOfRows?**: `number`
 
-___
+***
 
-### options
+### options?
 
-• `Optional` **options**: `string`[]
+> `optional` **options?**: `string`[]

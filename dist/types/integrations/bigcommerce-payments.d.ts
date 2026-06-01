@@ -2053,64 +2053,64 @@ declare interface WithBigCommercePaymentsVenmoPaymentInitializeOptions {
     bigcommerce_payments_venmo?: BigCommercePaymentsVenmoPaymentInitializeOptions;
 }
 
-export declare const createBigCommercePaymentsAlternativeMethodsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsAlternativeMethodsPaymentStrategy>, {
+export declare const createBigCommercePaymentsAlternativeMethodsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsAlternativeMethodsPaymentStrategy>, {
     gateway: string;
 }>;
 
-export declare const createBigCommercePaymentsButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BigCommercePaymentsButtonStrategy>, {
+export declare const createBigCommercePaymentsButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BigCommercePaymentsButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsCreditCardsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsCreditCardsPaymentStrategy>, {
+export declare const createBigCommercePaymentsCreditCardsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsCreditCardsPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BigCommercePaymentsCustomerStrategy>, {
+export declare const createBigCommercePaymentsCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BigCommercePaymentsCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsFastlaneCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BigCommercePaymentsFastlaneCustomerStrategy>, {
+export declare const createBigCommercePaymentsFastlaneCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BigCommercePaymentsFastlaneCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsFastlanePaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsFastlanePaymentStrategy>, {
+export declare const createBigCommercePaymentsFastlanePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsFastlanePaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsPayLaterButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BigCommercePaymentsPayLaterButtonStrategy>, {
+export declare const createBigCommercePaymentsPayLaterButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BigCommercePaymentsPayLaterButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsPayLaterCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BigCommercePaymentsPayLaterCustomerStrategy>, {
+export declare const createBigCommercePaymentsPayLaterCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BigCommercePaymentsPayLaterCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsPayLaterPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsPayLaterPaymentStrategy>, {
+export declare const createBigCommercePaymentsPayLaterPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsPayLaterPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsPaymentStrategy>, {
+export declare const createBigCommercePaymentsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsRatePayPayPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsRatePayPaymentStrategy>, {
-    gateway: string;
-    id: string;
-}>;
-
-export declare const createBigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy>, {
+export declare const createBigCommercePaymentsRatePayPayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsRatePayPaymentStrategy>, {
     gateway: string;
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsVenmoButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BigCommercePaymentsVenmoButtonStrategy>, {
+export declare const createBigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy>, {
+    gateway: string;
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsVenmoCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BigCommercePaymentsVenmoCustomerStrategy>, {
+export declare const createBigCommercePaymentsVenmoButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BigCommercePaymentsVenmoButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createBigCommercePaymentsVenmoPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BigCommercePaymentsVenmoPaymentStrategy>, {
+export declare const createBigCommercePaymentsVenmoCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BigCommercePaymentsVenmoCustomerStrategy>, {
+    id: string;
+}>;
+
+export declare const createBigCommercePaymentsVenmoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsVenmoPaymentStrategy>, {
     id: string;
 }>;

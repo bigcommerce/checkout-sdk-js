@@ -47,7 +47,7 @@ declare interface AfterpaySdk {
     redirect(options: AfterpayDisplayOptions): void;
 }
 
-export declare const createAfterpayPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<AfterpayPaymentStrategy>, {
+export declare const createAfterpayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<AfterpayPaymentStrategy>, {
     gateway: string;
     id?: undefined;
 } | {

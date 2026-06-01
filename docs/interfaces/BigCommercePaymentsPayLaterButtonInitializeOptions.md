@@ -1,49 +1,40 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsPayLaterButtonInitializeOptions
 
 # Interface: BigCommercePaymentsPayLaterButtonInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [buyNowInitializeOptions](BigCommercePaymentsPayLaterButtonInitializeOptions.md#buynowinitializeoptions)
-- [currencyCode](BigCommercePaymentsPayLaterButtonInitializeOptions.md#currencycode)
-- [style](BigCommercePaymentsPayLaterButtonInitializeOptions.md#style)
-
-### Methods
-
-- [onComplete](BigCommercePaymentsPayLaterButtonInitializeOptions.md#oncomplete)
-- [onEligibilityFailure](BigCommercePaymentsPayLaterButtonInitializeOptions.md#oneligibilityfailure)
-
 ## Properties
 
-### buyNowInitializeOptions
+### buyNowInitializeOptions?
 
-• `Optional` **buyNowInitializeOptions**: [`PayPalBuyNowInitializeOptions`](PayPalBuyNowInitializeOptions.md)
+> `optional` **buyNowInitializeOptions?**: [`PayPalBuyNowInitializeOptions`](PayPalBuyNowInitializeOptions.md)
 
 The options that are required to initialize Buy Now functionality.
 
-___
+***
 
-### currencyCode
+### currencyCode?
 
-• `Optional` **currencyCode**: `string`
+> `optional` **currencyCode?**: `string`
 
 The option that used to initialize a PayPal script with provided currency code.
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: [`PayPalButtonStyleOptions`](PayPalButtonStyleOptions.md)
+> `optional` **style?**: [`PayPalButtonStyleOptions`](PayPalButtonStyleOptions.md)
 
 A set of styling options for the checkout button.
 
 ## Methods
 
-### onComplete
+### onComplete()?
 
-▸ **onComplete**(): `void`
+> `optional` **onComplete**(): `void`
 
 A callback that gets called when payment complete on paypal side.
 
@@ -51,11 +42,11 @@ A callback that gets called when payment complete on paypal side.
 
 `void`
 
-___
+***
 
-### onEligibilityFailure
+### onEligibilityFailure()?
 
-▸ **onEligibilityFailure**(): `void`
+> `optional` **onEligibilityFailure**(): `void`
 
 A callback that gets called when PayPal SDK restricts to render PayPal component.
 

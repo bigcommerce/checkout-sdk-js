@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StepTrackerConfig
 
 # Interface: StepTrackerConfig
 
-## Table of contents
-
-### Properties
-
-- [checkoutSteps](StepTrackerConfig.md#checkoutsteps)
-
 ## Properties
 
-### checkoutSteps
+### checkoutSteps?
 
-• `Optional` **checkoutSteps**: [`AnalyticStepType`](../README.md#analyticsteptype)[]
+> `optional` **checkoutSteps?**: [`AnalyticStepType`](../type-aliases/AnalyticStepType.md)[]

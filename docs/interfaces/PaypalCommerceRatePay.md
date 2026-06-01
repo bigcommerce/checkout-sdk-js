@@ -1,86 +1,82 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaypalCommerceRatePay
 
 # Interface: PaypalCommerceRatePay
-
-## Table of contents
-
-### Properties
-
-- [container](PaypalCommerceRatePay.md#container)
-- [legalTextContainer](PaypalCommerceRatePay.md#legaltextcontainer)
-- [loadingContainerId](PaypalCommerceRatePay.md#loadingcontainerid)
-
-### Methods
-
-- [getFieldsValues](PaypalCommerceRatePay.md#getfieldsvalues)
-- [onError](PaypalCommerceRatePay.md#onerror)
-- [onRenderButton](PaypalCommerceRatePay.md#onrenderbutton)
 
 ## Properties
 
 ### container
 
-• **container**: `string`
+> **container**: `string`
 
 The CSS selector of a container where the payment widget should be inserted into.
 
-___
+***
 
 ### legalTextContainer
 
-• **legalTextContainer**: `string`
+> **legalTextContainer**: `string`
 
 The CSS selector of a container where the legal text should be inserted into.
 
-___
+***
 
 ### loadingContainerId
 
-• **loadingContainerId**: `string`
+> **loadingContainerId**: `string`
 
 The CSS selector of a container where loading indicator should be rendered
 
 ## Methods
 
-### getFieldsValues
+### getFieldsValues()?
 
-▸ **getFieldsValues**(): `Object`
+> `optional` **getFieldsValues**(): `object`
 
 A callback that gets form values
 
 #### Returns
 
-`Object`
+`object`
 
-| Name | Type |
-| :------ | :------ |
-| `ratepayBirthDate` | [`BirthDate_2`](BirthDate_2.md) |
-| `ratepayPhoneCountryCode` | `string` |
-| `ratepayPhoneNumber` | `string` |
+##### ratepayBirthDate
 
-___
+> **ratepayBirthDate**: [`BirthDate_2`](BirthDate_2.md)
 
-### onError
+##### ratepayPhoneCountryCode
 
-▸ **onError**(`error`): `void`
+> **ratepayPhoneCountryCode**: `string`
+
+##### ratepayPhoneNumber
+
+> **ratepayPhoneNumber**: `string`
+
+***
+
+### onError()?
+
+> `optional` **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `unknown` |
+##### error
+
+`unknown`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onRenderButton
+### onRenderButton()?
 
-▸ **onRenderButton**(): `void`
+> `optional` **onRenderButton**(): `void`
 
 A callback right before render Smart Payment Button that gets called when
 Smart Payment Button is eligible. This callback can be used to hide the standard submit button.

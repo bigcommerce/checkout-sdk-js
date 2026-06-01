@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StripeUPEPaymentInitializeOptions
 
 # Interface: StripeUPEPaymentInitializeOptions
@@ -22,76 +26,61 @@ service.initializePayment({
 });
 ```
 
-## Hierarchy
+## Extends
 
 - `default`
-
-  ↳ **`StripeUPEPaymentInitializeOptions`**
-
-## Table of contents
-
-### Properties
-
-- [containerId](StripeUPEPaymentInitializeOptions.md#containerid)
-- [style](StripeUPEPaymentInitializeOptions.md#style)
-
-### Methods
-
-- [initStripeElementUpdateTrigger](StripeUPEPaymentInitializeOptions.md#initstripeelementupdatetrigger)
-- [onError](StripeUPEPaymentInitializeOptions.md#onerror)
-- [render](StripeUPEPaymentInitializeOptions.md#render)
 
 ## Properties
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 The location to insert the credit card number form field.
 
 #### Overrides
 
-StripePaymentInitializeOptions.containerId
+`StripePaymentInitializeOptions.containerId`
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: `Record`\<`string`, `StripeAppearanceValues`\>
+> `optional` **style?**: `Record`\<`string`, `StripeAppearanceValues`\>
 
 Checkout styles from store theme
 
 #### Overrides
 
-StripePaymentInitializeOptions.style
+`StripePaymentInitializeOptions.style`
 
 ## Methods
 
-### initStripeElementUpdateTrigger
+### initStripeElementUpdateTrigger()?
 
-▸ **initStripeElementUpdateTrigger**(`updateTriggerFn`): `void`
+> `optional` **initStripeElementUpdateTrigger**(`updateTriggerFn`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `updateTriggerFn` | (`payload`: `StripeElementUpdateOptions`) => `void` |
+##### updateTriggerFn
+
+(`payload`) => `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`error?`): `void`
+> `optional` **onError**(`error?`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `error?` | `Error` |
+##### error?
+
+`Error`
 
 #### Returns
 
@@ -99,13 +88,13 @@ ___
 
 #### Overrides
 
-StripePaymentInitializeOptions.onError
+`StripePaymentInitializeOptions.onError`
 
-___
+***
 
-### render
+### render()
 
-▸ **render**(): `void`
+> **render**(): `void`
 
 #### Returns
 
@@ -113,4 +102,4 @@ ___
 
 #### Overrides
 
-StripePaymentInitializeOptions.render
+`StripePaymentInitializeOptions.render`

@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / InitiaizedQuery
 
 # Interface: InitiaizedQuery
 
-## Table of contents
-
-### Properties
-
-- [gatewayId](InitiaizedQuery.md#gatewayid)
-- [methodId](InitiaizedQuery.md#methodid)
-
 ## Properties
 
-### gatewayId
+### gatewayId?
 
-• `Optional` **gatewayId**: `string`
+> `optional` **gatewayId?**: `string`
 
-___
+***
 
 ### methodId
 
-• **methodId**: `string`
+> **methodId**: `string`

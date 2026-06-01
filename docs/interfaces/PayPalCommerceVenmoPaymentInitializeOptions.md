@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceVenmoPaymentInitializeOptions
 
 # Interface: PayPalCommerceVenmoPaymentInitializeOptions
@@ -45,50 +49,37 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [container](PayPalCommerceVenmoPaymentInitializeOptions.md#container)
-
-### Methods
-
-- [onError](PayPalCommerceVenmoPaymentInitializeOptions.md#onerror)
-- [onRenderButton](PayPalCommerceVenmoPaymentInitializeOptions.md#onrenderbutton)
-- [onValidate](PayPalCommerceVenmoPaymentInitializeOptions.md#onvalidate)
-- [submitForm](PayPalCommerceVenmoPaymentInitializeOptions.md#submitform)
-
 ## Properties
 
 ### container
 
-• **container**: `string`
+> **container**: `string`
 
 The CSS selector of a container where the payment widget should be inserted into.
 
 ## Methods
 
-### onError
+### onError()?
 
-▸ **onError**(`error`): `void`
+> `optional` **onError**(`error`): `void`
 
 A callback for displaying error popup. This callback requires error object as parameter.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `Error` |
+##### error
+
+`Error`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onRenderButton
+### onRenderButton()?
 
-▸ **onRenderButton**(): `void`
+> `optional` **onRenderButton**(): `void`
 
 A callback right before render Smart Payment Button that gets called when
 Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
@@ -97,21 +88,28 @@ Smart Payment Button is eligible. This callback can be used to hide the standard
 
 `void`
 
-___
+***
 
-### onValidate
+### onValidate()
 
-▸ **onValidate**(`resolve`, `reject`): `Promise`\<`void`\>
+> **onValidate**(`resolve`, `reject`): `Promise`\<`void`\>
 
 A callback that gets called when a buyer click on Smart Payment Button
 and should validate payment form.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `resolve` | () => `void` | A function, that gets called if form is valid. |
-| `reject` | () => `void` | A function, that gets called if form is not valid. |
+##### resolve
+
+() => `void`
+
+A function, that gets called if form is valid.
+
+##### reject
+
+() => `void`
+
+A function, that gets called if form is not valid.
 
 #### Returns
 
@@ -119,11 +117,11 @@ and should validate payment form.
 
 reject() or resolve()
 
-___
+***
 
-### submitForm
+### submitForm()
 
-▸ **submitForm**(): `void`
+> **submitForm**(): `void`
 
 A callback for submitting payment form that gets called
 when buyer approved PayPal account.

@@ -13,6 +13,6 @@ declare class OfflinePaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void>;
 }
 
-export declare const createOfflinePaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<OfflinePaymentStrategy>, {
+export declare const createOfflinePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<OfflinePaymentStrategy>, {
     type: string;
 }>;

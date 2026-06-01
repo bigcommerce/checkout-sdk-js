@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithPayPalCommerceVenmoCustomerInitializeOptions
 
 # Interface: WithPayPalCommerceVenmoCustomerInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [paypalcommercevenmo](WithPayPalCommerceVenmoCustomerInitializeOptions.md#paypalcommercevenmo)
-
 ## Properties
 
-### paypalcommercevenmo
+### paypalcommercevenmo?
 
-• `Optional` **paypalcommercevenmo**: [`PayPalCommerceVenmoCustomerInitializeOptions`](PayPalCommerceVenmoCustomerInitializeOptions.md)
+> `optional` **paypalcommercevenmo?**: [`PayPalCommerceVenmoCustomerInitializeOptions`](PayPalCommerceVenmoCustomerInitializeOptions.md)

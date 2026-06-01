@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StripeV3PaymentInitializeOptions
 
 # Interface: StripeV3PaymentInitializeOptions
@@ -45,32 +49,24 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [containerId](StripeV3PaymentInitializeOptions.md#containerid)
-- [form](StripeV3PaymentInitializeOptions.md#form)
-- [options](StripeV3PaymentInitializeOptions.md#options)
-
 ## Properties
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 The location to insert the credit card number form field.
 
-___
+***
 
-### form
+### form?
 
-• `Optional` **form**: `default`
+> `optional` **form?**: `HostedFormOptions`
 
 Hosted Form Validation Options
 
-___
+***
 
-### options
+### options?
 
-• `Optional` **options**: [`IndividualCardElementOptions`](IndividualCardElementOptions.md) \| [`StripeElementOptions`](../README.md#stripeelementoptions)
+> `optional` **options?**: [`IndividualCardElementOptions`](IndividualCardElementOptions.md) \| [`StripeElementOptions`](../type-aliases/StripeElementOptions.md)

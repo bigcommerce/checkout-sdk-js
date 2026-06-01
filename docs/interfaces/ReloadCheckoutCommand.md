@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ReloadCheckoutCommand
 
 # Interface: ReloadCheckoutCommand
-
-## Table of contents
-
-### Properties
-
-- [type](ReloadCheckoutCommand.md#type)
 
 ## Properties
 
 ### type
 
-• **type**: [`ReloadCheckout`](../enums/ExtensionCommandType.md#reloadcheckout)
+> **type**: [`ReloadCheckout`](../enumerations/ExtensionCommandType.md#reloadcheckout)

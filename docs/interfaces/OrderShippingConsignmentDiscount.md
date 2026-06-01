@@ -1,29 +1,25 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / OrderShippingConsignmentDiscount
 
 # Interface: OrderShippingConsignmentDiscount
-
-## Table of contents
-
-### Properties
-
-- [amount](OrderShippingConsignmentDiscount.md#amount)
-- [code](OrderShippingConsignmentDiscount.md#code)
-- [id](OrderShippingConsignmentDiscount.md#id)
 
 ## Properties
 
 ### amount
 
-• **amount**: `number`
+> **amount**: `number`
 
-___
+***
 
 ### code
 
-• **code**: ``null`` \| `string`
+> **code**: `string` \| `null`
 
-___
+***
 
 ### id
 
-• **id**: `number`
+> **id**: `number`

@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceFastlaneCustomerInitializeOptions
 
 # Interface: PayPalCommerceFastlaneCustomerInitializeOptions
@@ -40,17 +44,11 @@ service.initializeCustomer({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [styles](PayPalCommerceFastlaneCustomerInitializeOptions.md#styles)
-
 ## Properties
 
-### styles
+### styles?
 
-• `Optional` **styles**: `PayPalFastlaneStylesOption`
+> `optional` **styles?**: `PayPalFastlaneStylesOption`
 
 Is a stylisation options for customizing PayPal Fastlane components
 

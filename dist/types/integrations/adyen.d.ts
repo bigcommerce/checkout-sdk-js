@@ -66,10 +66,10 @@ declare class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _waitForMountContainer;
 }
 
-export declare const createAdyenV2PaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<AdyenV2PaymentStrategy>, {
+export declare const createAdyenV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<AdyenV2PaymentStrategy>, {
     gateway: string;
 }>;
 
-export declare const createAdyenV3PaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<Adyenv3PaymentStrategy>, {
+export declare const createAdyenV3PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<Adyenv3PaymentStrategy>, {
     gateway: string;
 }>;

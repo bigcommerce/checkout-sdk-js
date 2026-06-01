@@ -1,91 +1,77 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StoredCardHostedFormBillingAddress
 
 # Interface: StoredCardHostedFormBillingAddress
 
-## Hierarchy
+## Extended by
 
-- **`StoredCardHostedFormBillingAddress`**
-
-  ↳ [`StoredCardHostedFormInstrumentFields`](StoredCardHostedFormInstrumentFields.md)
-
-## Table of contents
-
-### Properties
-
-- [address1](StoredCardHostedFormBillingAddress.md#address1)
-- [address2](StoredCardHostedFormBillingAddress.md#address2)
-- [city](StoredCardHostedFormBillingAddress.md#city)
-- [company](StoredCardHostedFormBillingAddress.md#company)
-- [countryCode](StoredCardHostedFormBillingAddress.md#countrycode)
-- [email](StoredCardHostedFormBillingAddress.md#email)
-- [firstName](StoredCardHostedFormBillingAddress.md#firstname)
-- [lastName](StoredCardHostedFormBillingAddress.md#lastname)
-- [phone](StoredCardHostedFormBillingAddress.md#phone)
-- [postalCode](StoredCardHostedFormBillingAddress.md#postalcode)
-- [stateOrProvinceCode](StoredCardHostedFormBillingAddress.md#stateorprovincecode)
+- [`StoredCardHostedFormInstrumentFields`](StoredCardHostedFormInstrumentFields.md)
 
 ## Properties
 
 ### address1
 
-• **address1**: `string`
+> **address1**: `string`
 
-___
+***
 
-### address2
+### address2?
 
-• `Optional` **address2**: `string`
+> `optional` **address2?**: `string`
 
-___
+***
 
 ### city
 
-• **city**: `string`
+> **city**: `string`
 
-___
+***
 
-### company
+### company?
 
-• `Optional` **company**: `string`
+> `optional` **company?**: `string`
 
-___
+***
 
 ### countryCode
 
-• **countryCode**: `string`
+> **countryCode**: `string`
 
-___
+***
 
 ### email
 
-• **email**: `string`
+> **email**: `string`
 
-___
+***
 
 ### firstName
 
-• **firstName**: `string`
+> **firstName**: `string`
 
-___
+***
 
 ### lastName
 
-• **lastName**: `string`
+> **lastName**: `string`
 
-___
+***
 
-### phone
+### phone?
 
-• `Optional` **phone**: `string`
+> `optional` **phone?**: `string`
 
-___
+***
 
 ### postalCode
 
-• **postalCode**: `string`
+> **postalCode**: `string`
 
-___
+***
 
-### stateOrProvinceCode
+### stateOrProvinceCode?
 
-• `Optional` **stateOrProvinceCode**: `string`
+> `optional` **stateOrProvinceCode?**: `string`

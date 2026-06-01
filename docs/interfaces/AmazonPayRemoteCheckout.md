@@ -1,59 +1,63 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AmazonPayRemoteCheckout
 
 # Interface: AmazonPayRemoteCheckout
 
-## Table of contents
-
-### Properties
-
-- [billing](AmazonPayRemoteCheckout.md#billing)
-- [referenceId](AmazonPayRemoteCheckout.md#referenceid)
-- [settings](AmazonPayRemoteCheckout.md#settings)
-- [shipping](AmazonPayRemoteCheckout.md#shipping)
-
 ## Properties
 
-### billing
+### billing?
 
-• `Optional` **billing**: `Object`
+> `optional` **billing?**: `object`
 
-#### Type declaration
+#### address?
 
-| Name | Type |
-| :------ | :------ |
-| `address?` | ``false`` \| [`InternalAddress`](InternalAddress.md)\<`string`\> |
+> `optional` **address?**: `false` \| [`InternalAddress`](InternalAddress.md)\<`string`\>
 
-___
+***
 
-### referenceId
+### referenceId?
 
-• `Optional` **referenceId**: `string`
+> `optional` **referenceId?**: `string`
 
-___
+***
 
-### settings
+### settings?
 
-• `Optional` **settings**: `Object`
+> `optional` **settings?**: `object`
 
-#### Type declaration
+#### billing
 
-| Name | Type |
-| :------ | :------ |
-| `billing` | `string` |
-| `billingMessage` | `string` |
-| `customer` | `string` |
-| `payment` | `string` |
-| `provider` | `string` |
-| `shipping` | `string` |
+> **billing**: `string`
 
-___
+#### billingMessage
 
-### shipping
+> **billingMessage**: `string`
 
-• `Optional` **shipping**: `Object`
+#### customer
 
-#### Type declaration
+> **customer**: `string`
 
-| Name | Type |
-| :------ | :------ |
-| `address?` | ``false`` \| [`InternalAddress`](InternalAddress.md)\<`string`\> |
+#### payment
+
+> **payment**: `string`
+
+#### provider
+
+> **provider**: `string`
+
+#### shipping
+
+> **shipping**: `string`
+
+***
+
+### shipping?
+
+> `optional` **shipping?**: `object`
+
+#### address?
+
+> `optional` **address?**: `false` \| [`InternalAddress`](InternalAddress.md)\<`string`\>

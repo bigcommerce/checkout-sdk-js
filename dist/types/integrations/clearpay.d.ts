@@ -46,7 +46,7 @@ declare interface ClearpayWindow extends Window {
     AfterPay?: ClearpaySdk;
 }
 
-export declare const createClearpayPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<ClearpayPaymentStrategy>, {
+export declare const createClearpayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<ClearpayPaymentStrategy>, {
     gateway: string;
     id?: undefined;
 } | {

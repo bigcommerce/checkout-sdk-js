@@ -1,58 +1,59 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaymentHumanVerificationHandler
 
 # Class: PaymentHumanVerificationHandler
 
-## Table of contents
-
-### Constructors
-
-- [constructor](PaymentHumanVerificationHandler.md#constructor)
-
-### Methods
-
-- [handle](PaymentHumanVerificationHandler.md#handle)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new PaymentHumanVerificationHandler**(`_googleRecaptcha`): [`PaymentHumanVerificationHandler`](PaymentHumanVerificationHandler.md)
+> **new PaymentHumanVerificationHandler**(`_googleRecaptcha`): `PaymentHumanVerificationHandler`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_googleRecaptcha` | [`GoogleRecaptcha`](GoogleRecaptcha.md) |
+##### \_googleRecaptcha
+
+[`GoogleRecaptcha`](GoogleRecaptcha.md)
 
 #### Returns
 
-[`PaymentHumanVerificationHandler`](PaymentHumanVerificationHandler.md)
+`PaymentHumanVerificationHandler`
 
 ## Methods
 
-### handle
+### handle()
 
-▸ **handle**(`error`): `Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
+#### Call Signature
 
-#### Parameters
+> **handle**(`error`): `Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `any` |
+##### Parameters
 
-#### Returns
+###### error
+
+`any`
+
+##### Returns
 
 `Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
 
-▸ **handle**(`id`, `key`): `Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
+#### Call Signature
 
-#### Parameters
+> **handle**(`id`, `key`): `Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` |
-| `key` | `string` |
+##### Parameters
 
-#### Returns
+###### id
+
+`string`
+
+###### key
+
+`string`
+
+##### Returns
 
 `Promise`\<[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)\>

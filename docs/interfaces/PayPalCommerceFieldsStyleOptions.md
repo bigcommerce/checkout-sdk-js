@@ -1,46 +1,83 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceFieldsStyleOptions
 
 # Interface: PayPalCommerceFieldsStyleOptions
 
-## Table of contents
-
-### Properties
-
-- [rules](PayPalCommerceFieldsStyleOptions.md#rules)
-- [variables](PayPalCommerceFieldsStyleOptions.md#variables)
-
 ## Properties
 
-### rules
+### rules?
 
-• `Optional` **rules**: `Object`
+> `optional` **rules?**: `object`
 
-#### Index signature
+#### Index Signature
 
-▪ [key: `string`]: `any`
+\[`key`: `string`\]: `any`
 
-___
+***
 
-### variables
+### variables?
 
-• `Optional` **variables**: `Object`
+> `optional` **variables?**: `object`
 
-#### Type declaration
+#### borderColor?
 
-| Name | Type |
-| :------ | :------ |
-| `borderColor?` | `string` |
-| `borderFocusColor?` | `string` |
-| `borderRadius?` | `string` |
-| `borderWidth?` | `string` |
-| `colorBackground?` | `string` |
-| `colorDanger?` | `string` |
-| `colorInfo?` | `string` |
-| `colorTextPlaceholder?` | `string` |
-| `fontFamily?` | `string` |
-| `fontSizeBase?` | `string` |
-| `fontSizeLg?` | `string` |
-| `fontSizeM?` | `string` |
-| `fontSizeSm?` | `string` |
-| `spacingUnit?` | `string` |
-| `textColor?` | `string` |
+> `optional` **borderColor?**: `string`
+
+#### borderFocusColor?
+
+> `optional` **borderFocusColor?**: `string`
+
+#### borderRadius?
+
+> `optional` **borderRadius?**: `string`
+
+#### borderWidth?
+
+> `optional` **borderWidth?**: `string`
+
+#### colorBackground?
+
+> `optional` **colorBackground?**: `string`
+
+#### colorDanger?
+
+> `optional` **colorDanger?**: `string`
+
+#### colorInfo?
+
+> `optional` **colorInfo?**: `string`
+
+#### colorTextPlaceholder?
+
+> `optional` **colorTextPlaceholder?**: `string`
+
+#### fontFamily?
+
+> `optional` **fontFamily?**: `string`
+
+#### fontSizeBase?
+
+> `optional` **fontSizeBase?**: `string`
+
+#### fontSizeLg?
+
+> `optional` **fontSizeLg?**: `string`
+
+#### fontSizeM?
+
+> `optional` **fontSizeM?**: `string`
+
+#### fontSizeSm?
+
+> `optional` **fontSizeSm?**: `string`
+
+#### spacingUnit?
+
+> `optional` **spacingUnit?**: `string`
+
+#### textColor?
+
+> `optional` **textColor?**: `string`

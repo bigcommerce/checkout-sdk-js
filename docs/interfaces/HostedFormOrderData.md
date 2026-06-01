@@ -1,71 +1,61 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedFormOrderData
 
 # Interface: HostedFormOrderData
 
-## Table of contents
-
-### Properties
-
-- [additionalAction](HostedFormOrderData.md#additionalaction)
-- [authToken](HostedFormOrderData.md#authtoken)
-- [checkout](HostedFormOrderData.md#checkout)
-- [config](HostedFormOrderData.md#config)
-- [order](HostedFormOrderData.md#order)
-- [orderMeta](HostedFormOrderData.md#ordermeta)
-- [payment](HostedFormOrderData.md#payment)
-- [paymentMethod](HostedFormOrderData.md#paymentmethod)
-- [paymentMethodMeta](HostedFormOrderData.md#paymentmethodmeta)
-
 ## Properties
 
-### additionalAction
+### additionalAction?
 
-• `Optional` **additionalAction**: [`PaymentAdditionalAction`](PaymentAdditionalAction.md)
+> `optional` **additionalAction?**: [`PaymentAdditionalAction`](PaymentAdditionalAction.md)
 
-___
+***
 
 ### authToken
 
-• **authToken**: `string`
+> **authToken**: `string`
 
-___
+***
 
-### checkout
+### checkout?
 
-• `Optional` **checkout**: [`Checkout`](Checkout.md)
+> `optional` **checkout?**: [`Checkout`](Checkout.md)
 
-___
+***
 
-### config
+### config?
 
-• `Optional` **config**: [`Config`](Config.md)
+> `optional` **config?**: [`Config`](Config.md)
 
-___
+***
 
-### order
+### order?
 
-• `Optional` **order**: [`Order`](Order.md)
+> `optional` **order?**: [`Order`](Order.md)
 
-___
+***
 
-### orderMeta
+### orderMeta?
 
-• `Optional` **orderMeta**: [`OrderMetaState`](OrderMetaState.md)
+> `optional` **orderMeta?**: [`OrderMetaState`](OrderMetaState.md)
 
-___
+***
 
-### payment
+### payment?
 
-• `Optional` **payment**: (HostedCreditCardInstrument \| HostedVaultedInstrument) & PaymentInstrumentMeta
+> `optional` **payment?**: (HostedCreditCardInstrument \| HostedVaultedInstrument) & PaymentInstrumentMeta
 
-___
+***
 
-### paymentMethod
+### paymentMethod?
 
-• `Optional` **paymentMethod**: [`PaymentMethod`](PaymentMethod.md)\<`any`\>
+> `optional` **paymentMethod?**: [`PaymentMethod`](PaymentMethod.md)\<`any`\>
 
-___
+***
 
-### paymentMethodMeta
+### paymentMethodMeta?
 
-• `Optional` **paymentMethodMeta**: [`PaymentMethodMeta`](PaymentMethodMeta.md)
+> `optional` **paymentMethodMeta?**: [`PaymentMethodMeta`](PaymentMethodMeta.md)

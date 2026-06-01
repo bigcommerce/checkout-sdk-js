@@ -49,12 +49,12 @@ declare class WorldpayAccessPaymentStrategy extends CreditCardPaymentStrategy {
     private _isValidJsonWithSessionId;
 }
 
-export declare const createWorldpayAccessOpenBankingPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<WorldpayAccessOpenBankingPaymentStrategy>, {
+export declare const createWorldpayAccessOpenBankingPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<WorldpayAccessOpenBankingPaymentStrategy>, {
     id: string;
     gateway: string;
 }>;
 
-export declare const createWorldpayAccessPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<WorldpayAccessPaymentStrategy>, {
+export declare const createWorldpayAccessPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<WorldpayAccessPaymentStrategy>, {
     gateway: string;
     id: string;
 } | {

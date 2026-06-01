@@ -1,40 +1,28 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenAdditionalActionOptions
 
 # Interface: AdyenAdditionalActionOptions
 
-## Hierarchy
+## Extends
 
 - [`AdyenAdditionalActionCallbacks`](AdyenAdditionalActionCallbacks.md)
-
-  ↳ **`AdyenAdditionalActionOptions`**
-
-## Table of contents
-
-### Properties
-
-- [containerId](AdyenAdditionalActionOptions.md#containerid)
-- [widgetSize](AdyenAdditionalActionOptions.md#widgetsize)
-
-### Methods
-
-- [onActionHandled](AdyenAdditionalActionOptions.md#onactionhandled)
-- [onBeforeLoad](AdyenAdditionalActionOptions.md#onbeforeload)
-- [onComplete](AdyenAdditionalActionOptions.md#oncomplete)
-- [onLoad](AdyenAdditionalActionOptions.md#onload)
 
 ## Properties
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 The location to insert the additional action component.
 
-___
+***
 
-### widgetSize
+### widgetSize?
 
-• `Optional` **widgetSize**: `string`
+> `optional` **widgetSize?**: `string`
 
 Specify Three3DS2Challenge Widget Size
 
@@ -47,9 +35,9 @@ Values
 
 ## Methods
 
-### onActionHandled
+### onActionHandled()?
 
-▸ **onActionHandled**(): `void`
+> `optional` **onActionHandled**(): `void`
 
 A callback that gets called when an action, for example a QR code or 3D Secure 2 authentication screen, is shown to the shopper
 
@@ -59,21 +47,21 @@ A callback that gets called when an action, for example a QR code or 3D Secure 2
 
 #### Inherited from
 
-[AdyenAdditionalActionCallbacks](AdyenAdditionalActionCallbacks.md).[onActionHandled](AdyenAdditionalActionCallbacks.md#onactionhandled)
+[`AdyenAdditionalActionCallbacks`](AdyenAdditionalActionCallbacks.md).[`onActionHandled`](AdyenAdditionalActionCallbacks.md#onactionhandled)
 
-___
+***
 
-### onBeforeLoad
+### onBeforeLoad()?
 
-▸ **onBeforeLoad**(`shopperInteraction?`): `void`
+> `optional` **onBeforeLoad**(`shopperInteraction?`): `void`
 
 A callback that gets called before adyen component is loaded
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `shopperInteraction?` | `boolean` |
+##### shopperInteraction?
+
+`boolean`
 
 #### Returns
 
@@ -81,13 +69,13 @@ A callback that gets called before adyen component is loaded
 
 #### Inherited from
 
-[AdyenAdditionalActionCallbacks](AdyenAdditionalActionCallbacks.md).[onBeforeLoad](AdyenAdditionalActionCallbacks.md#onbeforeload)
+[`AdyenAdditionalActionCallbacks`](AdyenAdditionalActionCallbacks.md).[`onBeforeLoad`](AdyenAdditionalActionCallbacks.md#onbeforeload)
 
-___
+***
 
-### onComplete
+### onComplete()?
 
-▸ **onComplete**(): `void`
+> `optional` **onComplete**(): `void`
 
 A callback that gets called when adyen component verification
 is completed
@@ -98,21 +86,21 @@ is completed
 
 #### Inherited from
 
-[AdyenAdditionalActionCallbacks](AdyenAdditionalActionCallbacks.md).[onComplete](AdyenAdditionalActionCallbacks.md#oncomplete)
+[`AdyenAdditionalActionCallbacks`](AdyenAdditionalActionCallbacks.md).[`onComplete`](AdyenAdditionalActionCallbacks.md#oncomplete)
 
-___
+***
 
-### onLoad
+### onLoad()?
 
-▸ **onLoad**(`cancel?`): `void`
+> `optional` **onLoad**(`cancel?`): `void`
 
 A callback that gets called when adyen component is loaded
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `cancel?` | () => `void` |
+##### cancel?
+
+() => `void`
 
 #### Returns
 
@@ -120,4 +108,4 @@ A callback that gets called when adyen component is loaded
 
 #### Inherited from
 
-[AdyenAdditionalActionCallbacks](AdyenAdditionalActionCallbacks.md).[onLoad](AdyenAdditionalActionCallbacks.md#onload)
+[`AdyenAdditionalActionCallbacks`](AdyenAdditionalActionCallbacks.md).[`onLoad`](AdyenAdditionalActionCallbacks.md#onload)

@@ -1,120 +1,107 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StepStyles
 
 # Interface: StepStyles
 
-## Hierarchy
+## Extends
 
 - [`BlockElementStyles`](BlockElementStyles.md)
 
-  ↳ **`StepStyles`**
-
-## Table of contents
-
-### Properties
-
-- [backgroundColor](StepStyles.md#backgroundcolor)
-- [borderColor](StepStyles.md#bordercolor)
-- [borderWidth](StepStyles.md#borderwidth)
-- [boxShadow](StepStyles.md#boxshadow)
-- [color](StepStyles.md#color)
-- [fontFamily](StepStyles.md#fontfamily)
-- [fontWeight](StepStyles.md#fontweight)
-- [icon](StepStyles.md#icon)
-- [letterSpacing](StepStyles.md#letterspacing)
-- [lineHeight](StepStyles.md#lineheight)
-
 ## Properties
 
-### backgroundColor
+### backgroundColor?
 
-• `Optional` **backgroundColor**: `string`
-
-#### Inherited from
-
-[BlockElementStyles](BlockElementStyles.md).[backgroundColor](BlockElementStyles.md#backgroundcolor)
-
-___
-
-### borderColor
-
-• `Optional` **borderColor**: `string`
+> `optional` **backgroundColor?**: `string`
 
 #### Inherited from
 
-[BlockElementStyles](BlockElementStyles.md).[borderColor](BlockElementStyles.md#bordercolor)
+[`BlockElementStyles`](BlockElementStyles.md).[`backgroundColor`](BlockElementStyles.md#backgroundcolor)
 
-___
+***
 
-### borderWidth
+### borderColor?
 
-• `Optional` **borderWidth**: `string`
-
-#### Inherited from
-
-[BlockElementStyles](BlockElementStyles.md).[borderWidth](BlockElementStyles.md#borderwidth)
-
-___
-
-### boxShadow
-
-• `Optional` **boxShadow**: `string`
+> `optional` **borderColor?**: `string`
 
 #### Inherited from
 
-[BlockElementStyles](BlockElementStyles.md).[boxShadow](BlockElementStyles.md#boxshadow)
+[`BlockElementStyles`](BlockElementStyles.md).[`borderColor`](BlockElementStyles.md#bordercolor)
 
-___
+***
 
-### color
+### borderWidth?
 
-• `Optional` **color**: `string`
-
-#### Inherited from
-
-[BlockElementStyles](BlockElementStyles.md).[color](BlockElementStyles.md#color)
-
-___
-
-### fontFamily
-
-• `Optional` **fontFamily**: `string`
+> `optional` **borderWidth?**: `string`
 
 #### Inherited from
 
-[BlockElementStyles](BlockElementStyles.md).[fontFamily](BlockElementStyles.md#fontfamily)
+[`BlockElementStyles`](BlockElementStyles.md).[`borderWidth`](BlockElementStyles.md#borderwidth)
 
-___
+***
 
-### fontWeight
+### boxShadow?
 
-• `Optional` **fontWeight**: `string`
-
-#### Inherited from
-
-[BlockElementStyles](BlockElementStyles.md).[fontWeight](BlockElementStyles.md#fontweight)
-
-___
-
-### icon
-
-• `Optional` **icon**: [`BlockElementStyles`](BlockElementStyles.md)
-
-___
-
-### letterSpacing
-
-• `Optional` **letterSpacing**: `string`
+> `optional` **boxShadow?**: `string`
 
 #### Inherited from
 
-[BlockElementStyles](BlockElementStyles.md).[letterSpacing](BlockElementStyles.md#letterspacing)
+[`BlockElementStyles`](BlockElementStyles.md).[`boxShadow`](BlockElementStyles.md#boxshadow)
 
-___
+***
 
-### lineHeight
+### color?
 
-• `Optional` **lineHeight**: `string`
+> `optional` **color?**: `string`
 
 #### Inherited from
 
-[BlockElementStyles](BlockElementStyles.md).[lineHeight](BlockElementStyles.md#lineheight)
+[`BlockElementStyles`](BlockElementStyles.md).[`color`](BlockElementStyles.md#color)
+
+***
+
+### fontFamily?
+
+> `optional` **fontFamily?**: `string`
+
+#### Inherited from
+
+[`BlockElementStyles`](BlockElementStyles.md).[`fontFamily`](BlockElementStyles.md#fontfamily)
+
+***
+
+### fontWeight?
+
+> `optional` **fontWeight?**: `string`
+
+#### Inherited from
+
+[`BlockElementStyles`](BlockElementStyles.md).[`fontWeight`](BlockElementStyles.md#fontweight)
+
+***
+
+### icon?
+
+> `optional` **icon?**: [`BlockElementStyles`](BlockElementStyles.md)
+
+***
+
+### letterSpacing?
+
+> `optional` **letterSpacing?**: `string`
+
+#### Inherited from
+
+[`BlockElementStyles`](BlockElementStyles.md).[`letterSpacing`](BlockElementStyles.md#letterspacing)
+
+***
+
+### lineHeight?
+
+> `optional` **lineHeight?**: `string`
+
+#### Inherited from
+
+[`BlockElementStyles`](BlockElementStyles.md).[`lineHeight`](BlockElementStyles.md#lineheight)

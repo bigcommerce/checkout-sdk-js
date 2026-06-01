@@ -1,64 +1,55 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaypalStyleOptions
 
 # Interface: PaypalStyleOptions
 
-## Table of contents
-
-### Properties
-
-- [color](PaypalStyleOptions.md#color)
-- [fundingicons](PaypalStyleOptions.md#fundingicons)
-- [height](PaypalStyleOptions.md#height)
-- [label](PaypalStyleOptions.md#label)
-- [layout](PaypalStyleOptions.md#layout)
-- [shape](PaypalStyleOptions.md#shape)
-- [size](PaypalStyleOptions.md#size)
-- [tagline](PaypalStyleOptions.md#tagline)
-
 ## Properties
 
-### color
+### color?
 
-• `Optional` **color**: [`PaypalButtonStyleColorOption`](../enums/PaypalButtonStyleColorOption.md)
+> `optional` **color?**: [`PaypalButtonStyleColorOption`](../enumerations/PaypalButtonStyleColorOption.md)
 
-___
+***
 
-### fundingicons
+### fundingicons?
 
-• `Optional` **fundingicons**: `boolean`
+> `optional` **fundingicons?**: `boolean`
 
-___
+***
 
-### height
+### height?
 
-• `Optional` **height**: `number`
+> `optional` **height?**: `number`
 
-___
+***
 
-### label
+### label?
 
-• `Optional` **label**: [`PaypalButtonStyleLabelOption`](../enums/PaypalButtonStyleLabelOption.md)
+> `optional` **label?**: [`PaypalButtonStyleLabelOption`](../enumerations/PaypalButtonStyleLabelOption.md)
 
-___
+***
 
-### layout
+### layout?
 
-• `Optional` **layout**: [`PaypalButtonStyleLayoutOption`](../enums/PaypalButtonStyleLayoutOption.md)
+> `optional` **layout?**: [`PaypalButtonStyleLayoutOption`](../enumerations/PaypalButtonStyleLayoutOption.md)
 
-___
+***
 
-### shape
+### shape?
 
-• `Optional` **shape**: [`PaypalButtonStyleShapeOption`](../enums/PaypalButtonStyleShapeOption.md)
+> `optional` **shape?**: [`PaypalButtonStyleShapeOption`](../enumerations/PaypalButtonStyleShapeOption.md)
 
-___
+***
 
-### size
+### size?
 
-• `Optional` **size**: [`PaypalButtonStyleSizeOption`](../enums/PaypalButtonStyleSizeOption.md)
+> `optional` **size?**: [`PaypalButtonStyleSizeOption`](../enumerations/PaypalButtonStyleSizeOption.md)
 
-___
+***
 
-### tagline
+### tagline?
 
-• `Optional` **tagline**: `boolean`
+> `optional` **tagline?**: `boolean`

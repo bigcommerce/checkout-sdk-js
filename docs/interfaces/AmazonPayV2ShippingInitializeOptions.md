@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AmazonPayV2ShippingInitializeOptions
 
 # Interface: AmazonPayV2ShippingInitializeOptions
@@ -23,17 +27,11 @@ service.initializeShipping({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [editAddressButtonId](AmazonPayV2ShippingInitializeOptions.md#editaddressbuttonid)
-
 ## Properties
 
-### editAddressButtonId
+### editAddressButtonId?
 
-• `Optional` **editAddressButtonId**: `string`
+> `optional` **editAddressButtonId?**: `string`
 
 This editAddressButtonId is used to set an event listener, provide an
 element ID if you want users to be able to select a different shipping

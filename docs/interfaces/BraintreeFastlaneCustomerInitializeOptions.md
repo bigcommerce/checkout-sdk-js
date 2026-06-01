@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BraintreeFastlaneCustomerInitializeOptions
 
 # Interface: BraintreeFastlaneCustomerInitializeOptions
@@ -40,17 +44,11 @@ service.initializeCustomer({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [styles](BraintreeFastlaneCustomerInitializeOptions.md#styles)
-
 ## Properties
 
-### styles
+### styles?
 
-• `Optional` **styles**: `BraintreeFastlaneStylesOption`
+> `optional` **styles?**: `BraintreeFastlaneStylesOption`
 
 Is a stylisation options for customizing PayPal Fastlane components
 

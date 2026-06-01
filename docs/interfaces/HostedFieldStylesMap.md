@@ -1,29 +1,25 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedFieldStylesMap
 
 # Interface: HostedFieldStylesMap
 
-## Table of contents
-
-### Properties
-
-- [default](HostedFieldStylesMap.md#default)
-- [error](HostedFieldStylesMap.md#error)
-- [focus](HostedFieldStylesMap.md#focus)
-
 ## Properties
 
-### default
+### default?
 
-• `Optional` **default**: `Partial`\<`Pick`\<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
+> `optional` **default?**: `Partial`\<`Pick`\<`CSSStyleDeclaration`, `"color"` \| `"fontFamily"` \| `"fontSize"` \| `"fontWeight"`\>\>
 
-___
+***
 
-### error
+### error?
 
-• `Optional` **error**: `Partial`\<`Pick`\<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
+> `optional` **error?**: `Partial`\<`Pick`\<`CSSStyleDeclaration`, `"color"` \| `"fontFamily"` \| `"fontSize"` \| `"fontWeight"`\>\>
 
-___
+***
 
-### focus
+### focus?
 
-• `Optional` **focus**: `Partial`\<`Pick`\<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
+> `optional` **focus?**: `Partial`\<`Pick`\<`CSSStyleDeclaration`, `"color"` \| `"fontFamily"` \| `"fontSize"` \| `"fontWeight"`\>\>

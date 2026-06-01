@@ -1,114 +1,118 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / IframeEventPoster
 
 # Class: IframeEventPoster\<TEvent, TContext\>
 
-## Type parameters
+## Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TEvent` | `TEvent` |
-| `TContext` | `undefined` |
+### TEvent
 
-## Table of contents
+`TEvent`
 
-### Constructors
+### TContext
 
-- [constructor](IframeEventPoster.md#constructor)
-
-### Methods
-
-- [post](IframeEventPoster.md#post)
-- [setContext](IframeEventPoster.md#setcontext)
-- [setTarget](IframeEventPoster.md#settarget)
+`TContext` = `undefined`
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new IframeEventPoster**\<`TEvent`, `TContext`\>(`targetOrigin`, `_targetWindow?`, `_context?`): [`IframeEventPoster`](IframeEventPoster.md)\<`TEvent`, `TContext`\>
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `TEvent` | `TEvent` |
-| `TContext` | `undefined` |
+> **new IframeEventPoster**\<`TEvent`, `TContext`\>(`targetOrigin`, `_targetWindow?`, `_context?`): `IframeEventPoster`\<`TEvent`, `TContext`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `targetOrigin` | `string` |
-| `_targetWindow?` | `Window` |
-| `_context?` | `TContext` |
+##### targetOrigin
+
+`string`
+
+##### \_targetWindow?
+
+`Window`
+
+##### \_context?
+
+`TContext`
 
 #### Returns
 
-[`IframeEventPoster`](IframeEventPoster.md)\<`TEvent`, `TContext`\>
+`IframeEventPoster`\<`TEvent`, `TContext`\>
 
 ## Methods
 
-### post
+### post()
 
-▸ **post**(`event`): `void`
+#### Call Signature
 
-#### Parameters
+> **post**(`event`): `void`
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `TEvent` |
+##### Parameters
 
-#### Returns
+###### event
+
+`TEvent`
+
+##### Returns
 
 `void`
 
-▸ **post**\<`TSuccessEvent`, `TErrorEvent`\>(`event`, `options`): `Promise`\<`TSuccessEvent`\>
+#### Call Signature
 
-#### Type parameters
+> **post**\<`TSuccessEvent`, `TErrorEvent`\>(`event`, `options`): `Promise`\<`TSuccessEvent`\>
 
-| Name | Type |
-| :------ | :------ |
-| `TSuccessEvent` | extends [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`, `TSuccessEvent`\> = [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`\> |
-| `TErrorEvent` | extends [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`, `TErrorEvent`\> = [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`\> |
+##### Type Parameters
 
-#### Parameters
+###### TSuccessEvent
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `TEvent` |
-| `options` | [`IframeEventPostOptions`](../interfaces/IframeEventPostOptions.md)\<`TSuccessEvent`, `TErrorEvent`\> |
+`TSuccessEvent` *extends* [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`\> = [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`\>
 
-#### Returns
+###### TErrorEvent
+
+`TErrorEvent` *extends* [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`\> = [`IframeEvent`](../interfaces/IframeEvent.md)\<`string`, `any`\>
+
+##### Parameters
+
+###### event
+
+`TEvent`
+
+###### options
+
+[`IframeEventPostOptions`](../interfaces/IframeEventPostOptions.md)\<`TSuccessEvent`, `TErrorEvent`\>
+
+##### Returns
 
 `Promise`\<`TSuccessEvent`\>
 
-___
+***
 
-### setContext
+### setContext()
 
-▸ **setContext**(`context`): `void`
+> **setContext**(`context`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `context` | `TContext` |
+##### context
+
+`TContext`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### setTarget
+### setTarget()
 
-▸ **setTarget**(`window`): `void`
+> **setTarget**(`window`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `window` | `Window` |
+##### window
+
+`Window`
 
 #### Returns
 

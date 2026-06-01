@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / SquareV2PaymentInitializeOptions
 
 # Interface: SquareV2PaymentInitializeOptions
@@ -8,7 +12,7 @@ Once Square payment is initialized, an iframed payment element will be
 inserted into the current page. These options provide a location, styling,
 and a callback function that advises when it's safe to pay.
 
-**`Example`**
+## Example
 
 ```html
 <!-- These container is where the hosted (iframed) payment method element will be inserted -->
@@ -38,50 +42,38 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [containerId](SquareV2PaymentInitializeOptions.md#containerid)
-- [onValidationChange](SquareV2PaymentInitializeOptions.md#onvalidationchange)
-- [style](SquareV2PaymentInitializeOptions.md#style)
-
 ## Properties
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 The ID of a container which the payment widget should insert into.
 
-___
+***
 
-### onValidationChange
+### onValidationChange?
 
-• `Optional` **onValidationChange**: (`isReadyToPay`: `boolean`) => `void`
+> `optional` **onValidationChange?**: (`isReadyToPay`) => `void`
 
 A callback that gets called when the validity of the
 payment component changes.
 
-#### Type declaration
+#### Parameters
 
-▸ (`isReadyToPay`): `void`
+##### isReadyToPay
 
-##### Parameters
+`boolean`
 
-| Name | Type |
-| :------ | :------ |
-| `isReadyToPay` | `boolean` |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: `CardClassSelectors`
+> `optional` **style?**: `CardClassSelectors`
 
 A map of .css classes and values that customize the style of the
 input fields from the card element.

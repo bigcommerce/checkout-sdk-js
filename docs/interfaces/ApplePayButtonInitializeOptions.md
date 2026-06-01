@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ApplePayButtonInitializeOptions
 
 # Interface: ApplePayButtonInitializeOptions
@@ -7,44 +11,35 @@ A set of options that are required to initialize ApplePay in cart.
 When ApplePay is initialized, an ApplePay button will be inserted into the
 DOM. When a customer clicks on it, it will trigger Apple sheet.
 
-## Table of contents
-
-### Properties
-
-- [buyNowInitializeOptions](ApplePayButtonInitializeOptions.md#buynowinitializeoptions)
-- [requiresShipping](ApplePayButtonInitializeOptions.md#requiresshipping)
-
-### Methods
-
-- [onPaymentAuthorize](ApplePayButtonInitializeOptions.md#onpaymentauthorize)
-
 ## Properties
 
-### buyNowInitializeOptions
+### buyNowInitializeOptions?
 
-• `Optional` **buyNowInitializeOptions**: `Object`
+> `optional` **buyNowInitializeOptions?**: `object`
 
 The options that are required to initialize Buy Now functionality.
 
-#### Type declaration
+#### getBuyNowCartRequestBody()?
 
-| Name | Type |
-| :------ | :------ |
-| `getBuyNowCartRequestBody?` | () => `void` \| `default` |
+> `optional` **getBuyNowCartRequestBody**(): `void` \| `BuyNowCartRequestBody`
 
-___
+##### Returns
 
-### requiresShipping
+`void` \| `BuyNowCartRequestBody`
 
-• `Optional` **requiresShipping**: `boolean`
+***
+
+### requiresShipping?
+
+> `optional` **requiresShipping?**: `boolean`
 
 This option indicates if product requires shipping
 
 ## Methods
 
-### onPaymentAuthorize
+### onPaymentAuthorize()
 
-▸ **onPaymentAuthorize**(): `void`
+> **onPaymentAuthorize**(): `void`
 
 A callback that gets called when a payment is successfully completed.
 

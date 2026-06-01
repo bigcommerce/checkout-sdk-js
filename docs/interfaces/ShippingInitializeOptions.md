@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ShippingInitializeOptions
 
 # Interface: ShippingInitializeOptions\<T\>
@@ -11,65 +15,48 @@ their shipping address using their address book widget. As a result, you may
 need to provide additional information in order to initialize the shipping
 step of checkout.
 
-## Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `T` | `object` |
-
-## Hierarchy
+## Extends
 
 - [`ShippingRequestOptions`](ShippingRequestOptions.md)\<`T`\>
 
-  ↳ **`ShippingInitializeOptions`**
+## Type Parameters
 
-## Table of contents
+### T
 
-### Properties
-
-- [amazonpay](ShippingInitializeOptions.md#amazonpay)
-- [bigcommerce\_payments\_fastlane](ShippingInitializeOptions.md#bigcommerce_payments_fastlane)
-- [braintreefastlane](ShippingInitializeOptions.md#braintreefastlane)
-- [fastlane](ShippingInitializeOptions.md#fastlane)
-- [methodId](ShippingInitializeOptions.md#methodid)
-- [params](ShippingInitializeOptions.md#params)
-- [paypalcommercefastlane](ShippingInitializeOptions.md#paypalcommercefastlane)
-- [stripeupe](ShippingInitializeOptions.md#stripeupe)
-- [timeout](ShippingInitializeOptions.md#timeout)
-- [version](ShippingInitializeOptions.md#version)
+`T` = `object`
 
 ## Properties
 
-### amazonpay
+### amazonpay?
 
-• `Optional` **amazonpay**: [`AmazonPayV2ShippingInitializeOptions`](AmazonPayV2ShippingInitializeOptions.md)
+> `optional` **amazonpay?**: [`AmazonPayV2ShippingInitializeOptions`](AmazonPayV2ShippingInitializeOptions.md)
 
 The options that are required to initialize the shipping step of checkout
 when using AmazonPayV2.
 
-___
+***
 
-### bigcommerce\_payments\_fastlane
+### bigcommerce\_payments\_fastlane?
 
-• `Optional` **bigcommerce\_payments\_fastlane**: [`BigCommercePaymentsFastlaneShippingInitializeOptions`](BigCommercePaymentsFastlaneShippingInitializeOptions.md)
+> `optional` **bigcommerce\_payments\_fastlane?**: [`BigCommercePaymentsFastlaneShippingInitializeOptions`](BigCommercePaymentsFastlaneShippingInitializeOptions.md)
 
 The options that are required to initialize the shipping step of checkout
 when using BigCommercePayments Fastlane.
 
-___
+***
 
-### braintreefastlane
+### braintreefastlane?
 
-• `Optional` **braintreefastlane**: [`BraintreeFastlaneShippingInitializeOptions`](BraintreeFastlaneShippingInitializeOptions.md)
+> `optional` **braintreefastlane?**: [`BraintreeFastlaneShippingInitializeOptions`](BraintreeFastlaneShippingInitializeOptions.md)
 
 The options that are required to initialize the shipping step of checkout
 when using Braintree Fastlane.
 
-___
+***
 
-### fastlane
+### fastlane?
 
-• `Optional` **fastlane**: [`FastlaneShippingInitializeOptions`](FastlaneShippingInitializeOptions.md)
+> `optional` **fastlane?**: [`FastlaneShippingInitializeOptions`](FastlaneShippingInitializeOptions.md)
 
 The options that are required to initialize the shipping step of checkout
 when using Fastlane (PayPal Commerce, BigCommerce Payments, or Braintree).
@@ -77,51 +64,51 @@ when using Fastlane (PayPal Commerce, BigCommerce Payments, or Braintree).
 This is a unified option that works across all Fastlane implementations,
 simplifying integration and avoiding provider-specific checks.
 
-___
+***
 
-### methodId
+### methodId?
 
-• `Optional` **methodId**: `string`
+> `optional` **methodId?**: `string`
 
 #### Inherited from
 
-[ShippingRequestOptions](ShippingRequestOptions.md).[methodId](ShippingRequestOptions.md#methodid)
+[`ShippingRequestOptions`](ShippingRequestOptions.md).[`methodId`](ShippingRequestOptions.md#methodid)
 
-___
+***
 
-### params
+### params?
 
-• `Optional` **params**: `T`
+> `optional` **params?**: `T`
 
 The parameters of the request, if required.
 
 #### Inherited from
 
-[ShippingRequestOptions](ShippingRequestOptions.md).[params](ShippingRequestOptions.md#params)
+[`ShippingRequestOptions`](ShippingRequestOptions.md).[`params`](ShippingRequestOptions.md#params)
 
-___
+***
 
-### paypalcommercefastlane
+### paypalcommercefastlane?
 
-• `Optional` **paypalcommercefastlane**: [`PayPalCommerceFastlaneShippingInitializeOptions`](PayPalCommerceFastlaneShippingInitializeOptions.md)
+> `optional` **paypalcommercefastlane?**: [`PayPalCommerceFastlaneShippingInitializeOptions`](PayPalCommerceFastlaneShippingInitializeOptions.md)
 
 The options that are required to initialize the shipping step of checkout
 when using PayPal Commerce Fastlane.
 
-___
+***
 
-### stripeupe
+### stripeupe?
 
-• `Optional` **stripeupe**: [`StripeUPEShippingInitializeOptions`](StripeUPEShippingInitializeOptions.md)
+> `optional` **stripeupe?**: [`StripeUPEShippingInitializeOptions`](StripeUPEShippingInitializeOptions.md)
 
 The options that are required to initialize the shipping step of checkout
 when using Stripe Upe Link.
 
-___
+***
 
-### timeout
+### timeout?
 
-• `Optional` **timeout**: `default`
+> `optional` **timeout?**: `Timeout`
 
 Provide this option if you want to cancel or time out the request. If the
 timeout object completes before the request, the request will be
@@ -129,16 +116,16 @@ cancelled.
 
 #### Inherited from
 
-[ShippingRequestOptions](ShippingRequestOptions.md).[timeout](ShippingRequestOptions.md#timeout)
+[`ShippingRequestOptions`](ShippingRequestOptions.md).[`timeout`](ShippingRequestOptions.md#timeout)
 
-___
+***
 
-### version
+### version?
 
-• `Optional` **version**: `number`
+> `optional` **version?**: `number`
 
 The version of the checkout, used for optimistic concurrency control.
 
 #### Inherited from
 
-[ShippingRequestOptions](ShippingRequestOptions.md).[version](ShippingRequestOptions.md#version)
+[`ShippingRequestOptions`](ShippingRequestOptions.md).[`version`](ShippingRequestOptions.md#version)

@@ -1,104 +1,100 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutButtonSelector
 
 # Interface: CheckoutButtonSelector
 
-## Table of contents
-
-### Methods
-
-- [getDeinitializeError](CheckoutButtonSelector.md#getdeinitializeerror)
-- [getInitializeError](CheckoutButtonSelector.md#getinitializeerror)
-- [getState](CheckoutButtonSelector.md#getstate)
-- [isDeinitializing](CheckoutButtonSelector.md#isdeinitializing)
-- [isInitialized](CheckoutButtonSelector.md#isinitialized)
-- [isInitializing](CheckoutButtonSelector.md#isinitializing)
-
 ## Methods
 
-### getDeinitializeError
+### getDeinitializeError()
 
-▸ **getDeinitializeError**(`methodId?`): `undefined` \| `Error`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getInitializeError
-
-▸ **getInitializeError**(`methodId?`): `undefined` \| `Error`
+> **getDeinitializeError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
+##### methodId?
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getState
+### getInitializeError()
 
-▸ **getState**(): [`CheckoutButtonState`](CheckoutButtonState.md)
+> **getInitializeError**(`methodId?`): `Error` \| `undefined`
+
+#### Parameters
+
+##### methodId?
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
+
+#### Returns
+
+`Error` \| `undefined`
+
+***
+
+### getState()
+
+> **getState**(): [`CheckoutButtonState`](CheckoutButtonState.md)
 
 #### Returns
 
 [`CheckoutButtonState`](CheckoutButtonState.md)
 
-___
+***
 
-### isDeinitializing
+### isDeinitializing()
 
-▸ **isDeinitializing**(`methodId?`): `boolean`
+> **isDeinitializing**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
+##### methodId?
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isInitialized
+### isInitialized()
 
-▸ **isInitialized**(`methodId`, `containerId?`): `boolean`
+> **isInitialized**(`methodId`, `containerId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
-| `containerId?` | `string` |
+##### methodId
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
+
+##### containerId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isInitializing
+### isInitializing()
 
-▸ **isInitializing**(`methodId?`): `boolean`
+> **isInitializing**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
+##### methodId?
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
 
 #### Returns
 

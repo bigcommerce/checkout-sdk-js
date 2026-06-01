@@ -1,63 +1,53 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StoreCurrency
 
 # Interface: StoreCurrency
 
-## Hierarchy
+## Extended by
 
-- **`StoreCurrency`**
-
-  ↳ [`ShopperCurrency`](ShopperCurrency.md)
-
-## Table of contents
-
-### Properties
-
-- [code](StoreCurrency.md#code)
-- [decimalPlaces](StoreCurrency.md#decimalplaces)
-- [decimalSeparator](StoreCurrency.md#decimalseparator)
-- [isTransactional](StoreCurrency.md#istransactional)
-- [symbol](StoreCurrency.md#symbol)
-- [symbolLocation](StoreCurrency.md#symbollocation)
-- [thousandsSeparator](StoreCurrency.md#thousandsseparator)
+- [`ShopperCurrency`](ShopperCurrency.md)
 
 ## Properties
 
 ### code
 
-• **code**: `string`
+> **code**: `string`
 
-___
+***
 
 ### decimalPlaces
 
-• **decimalPlaces**: `string`
+> **decimalPlaces**: `string`
 
-___
+***
 
 ### decimalSeparator
 
-• **decimalSeparator**: `string`
+> **decimalSeparator**: `string`
 
-___
+***
 
 ### isTransactional
 
-• **isTransactional**: `boolean`
+> **isTransactional**: `boolean`
 
-___
+***
 
 ### symbol
 
-• **symbol**: `string`
+> **symbol**: `string`
 
-___
+***
 
 ### symbolLocation
 
-• **symbolLocation**: `string`
+> **symbolLocation**: `string`
 
-___
+***
 
 ### thousandsSeparator
 
-• **thousandsSeparator**: `string`
+> **thousandsSeparator**: `string`

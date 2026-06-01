@@ -1,78 +1,71 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GiftCertificateItem
 
 # Interface: GiftCertificateItem
-
-## Table of contents
-
-### Properties
-
-- [amount](GiftCertificateItem.md#amount)
-- [id](GiftCertificateItem.md#id)
-- [message](GiftCertificateItem.md#message)
-- [name](GiftCertificateItem.md#name)
-- [recipient](GiftCertificateItem.md#recipient)
-- [sender](GiftCertificateItem.md#sender)
-- [taxable](GiftCertificateItem.md#taxable)
-- [theme](GiftCertificateItem.md#theme)
 
 ## Properties
 
 ### amount
 
-• **amount**: `number`
+> **amount**: `number`
 
-___
+***
 
 ### id
 
-• **id**: `string` \| `number`
+> **id**: `string` \| `number`
 
-___
+***
 
 ### message
 
-• **message**: `string`
+> **message**: `string`
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
-___
+***
 
 ### recipient
 
-• **recipient**: `Object`
+> **recipient**: `object`
 
-#### Type declaration
+#### email
 
-| Name | Type |
-| :------ | :------ |
-| `email` | `string` |
-| `name` | `string` |
+> **email**: `string`
 
-___
+#### name
+
+> **name**: `string`
+
+***
 
 ### sender
 
-• **sender**: `Object`
+> **sender**: `object`
 
-#### Type declaration
+#### email
 
-| Name | Type |
-| :------ | :------ |
-| `email` | `string` |
-| `name` | `string` |
+> **email**: `string`
 
-___
+#### name
+
+> **name**: `string`
+
+***
 
 ### taxable
 
-• **taxable**: `boolean`
+> **taxable**: `boolean`
 
-___
+***
 
 ### theme
 
-• **theme**: `string`
+> **theme**: `string`

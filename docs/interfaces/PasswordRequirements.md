@@ -1,36 +1,31 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PasswordRequirements
 
 # Interface: PasswordRequirements
-
-## Table of contents
-
-### Properties
-
-- [alpha](PasswordRequirements.md#alpha)
-- [error](PasswordRequirements.md#error)
-- [minlength](PasswordRequirements.md#minlength)
-- [numeric](PasswordRequirements.md#numeric)
 
 ## Properties
 
 ### alpha
 
-• **alpha**: `string`
+> **alpha**: `string`
 
-___
+***
 
 ### error
 
-• **error**: `string`
+> **error**: `string`
 
-___
+***
 
 ### minlength
 
-• **minlength**: `number`
+> **minlength**: `number`
 
-___
+***
 
 ### numeric
 
-• **numeric**: `string`
+> **numeric**: `string`

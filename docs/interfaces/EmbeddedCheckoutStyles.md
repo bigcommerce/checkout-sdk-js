@@ -1,141 +1,121 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / EmbeddedCheckoutStyles
 
 # Interface: EmbeddedCheckoutStyles
 
-## Table of contents
-
-### Properties
-
-- [body](EmbeddedCheckoutStyles.md#body)
-- [button](EmbeddedCheckoutStyles.md#button)
-- [checkbox](EmbeddedCheckoutStyles.md#checkbox)
-- [checklist](EmbeddedCheckoutStyles.md#checklist)
-- [discountBanner](EmbeddedCheckoutStyles.md#discountbanner)
-- [heading](EmbeddedCheckoutStyles.md#heading)
-- [input](EmbeddedCheckoutStyles.md#input)
-- [label](EmbeddedCheckoutStyles.md#label)
-- [link](EmbeddedCheckoutStyles.md#link)
-- [loadingBanner](EmbeddedCheckoutStyles.md#loadingbanner)
-- [loadingIndicator](EmbeddedCheckoutStyles.md#loadingindicator)
-- [orderSummary](EmbeddedCheckoutStyles.md#ordersummary)
-- [radio](EmbeddedCheckoutStyles.md#radio)
-- [secondaryButton](EmbeddedCheckoutStyles.md#secondarybutton)
-- [secondaryHeading](EmbeddedCheckoutStyles.md#secondaryheading)
-- [secondaryText](EmbeddedCheckoutStyles.md#secondarytext)
-- [select](EmbeddedCheckoutStyles.md#select)
-- [step](EmbeddedCheckoutStyles.md#step)
-- [text](EmbeddedCheckoutStyles.md#text)
-
 ## Properties
 
-### body
+### body?
 
-• `Optional` **body**: [`BodyStyles`](BodyStyles.md)
+> `optional` **body?**: [`BodyStyles`](BodyStyles.md)
 
-___
+***
 
-### button
+### button?
 
-• `Optional` **button**: [`ButtonStyles`](ButtonStyles.md)
+> `optional` **button?**: [`ButtonStyles`](ButtonStyles.md)
 
-___
+***
 
-### checkbox
+### checkbox?
 
-• `Optional` **checkbox**: [`CheckableInputStyles`](CheckableInputStyles.md)
+> `optional` **checkbox?**: [`CheckableInputStyles`](CheckableInputStyles.md)
 
-___
+***
 
-### checklist
+### checklist?
 
-• `Optional` **checklist**: [`ChecklistStyles`](ChecklistStyles.md)
+> `optional` **checklist?**: [`ChecklistStyles`](ChecklistStyles.md)
 
-___
+***
 
-### discountBanner
+### discountBanner?
 
-• `Optional` **discountBanner**: [`BlockElementStyles`](BlockElementStyles.md)
+> `optional` **discountBanner?**: [`BlockElementStyles`](BlockElementStyles.md)
 
-___
+***
 
-### heading
+### heading?
 
-• `Optional` **heading**: [`BlockElementStyles`](BlockElementStyles.md)
+> `optional` **heading?**: [`BlockElementStyles`](BlockElementStyles.md)
 
-___
+***
 
-### input
+### input?
 
-• `Optional` **input**: [`TextInputStyles`](TextInputStyles.md)
+> `optional` **input?**: [`TextInputStyles`](TextInputStyles.md)
 
-___
+***
 
-### label
+### label?
 
-• `Optional` **label**: [`LabelStyles`](LabelStyles.md)
+> `optional` **label?**: [`LabelStyles`](LabelStyles.md)
 
-___
+***
 
-### link
+### link?
 
-• `Optional` **link**: [`LinkStyles`](LinkStyles.md)
+> `optional` **link?**: [`LinkStyles`](LinkStyles.md)
 
-___
+***
 
-### loadingBanner
+### loadingBanner?
 
-• `Optional` **loadingBanner**: [`BlockElementStyles`](BlockElementStyles.md)
+> `optional` **loadingBanner?**: [`BlockElementStyles`](BlockElementStyles.md)
 
-___
+***
 
-### loadingIndicator
+### loadingIndicator?
 
-• `Optional` **loadingIndicator**: `LoadingIndicatorStyles`
+> `optional` **loadingIndicator?**: `LoadingIndicatorStyles`
 
-___
+***
 
-### orderSummary
+### orderSummary?
 
-• `Optional` **orderSummary**: [`BlockElementStyles`](BlockElementStyles.md)
+> `optional` **orderSummary?**: [`BlockElementStyles`](BlockElementStyles.md)
 
-___
+***
 
-### radio
+### radio?
 
-• `Optional` **radio**: [`CheckableInputStyles`](CheckableInputStyles.md)
+> `optional` **radio?**: [`CheckableInputStyles`](CheckableInputStyles.md)
 
-___
+***
 
-### secondaryButton
+### secondaryButton?
 
-• `Optional` **secondaryButton**: [`ButtonStyles`](ButtonStyles.md)
+> `optional` **secondaryButton?**: [`ButtonStyles`](ButtonStyles.md)
 
-___
+***
 
-### secondaryHeading
+### secondaryHeading?
 
-• `Optional` **secondaryHeading**: [`BlockElementStyles`](BlockElementStyles.md)
+> `optional` **secondaryHeading?**: [`BlockElementStyles`](BlockElementStyles.md)
 
-___
+***
 
-### secondaryText
+### secondaryText?
 
-• `Optional` **secondaryText**: [`InlineElementStyles`](InlineElementStyles.md)
+> `optional` **secondaryText?**: [`InlineElementStyles`](InlineElementStyles.md)
 
-___
+***
 
-### select
+### select?
 
-• `Optional` **select**: [`InputStyles`](InputStyles.md)
+> `optional` **select?**: [`InputStyles`](InputStyles.md)
 
-___
+***
 
-### step
+### step?
 
-• `Optional` **step**: [`StepStyles`](StepStyles.md)
+> `optional` **step?**: [`StepStyles`](StepStyles.md)
 
-___
+***
 
-### text
+### text?
 
-• `Optional` **text**: [`InlineElementStyles`](InlineElementStyles.md)
+> `optional` **text?**: [`InlineElementStyles`](InlineElementStyles.md)

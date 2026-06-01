@@ -1,18 +1,16 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithWorldpayAccessPaymentInitializeOptions
 
 # Interface: WithWorldpayAccessPaymentInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [worldpay](WithWorldpayAccessPaymentInitializeOptions.md#worldpay)
-
 ## Properties
 
-### worldpay
+### worldpay?
 
-• `Optional` **worldpay**: [`WorldpayAccessPaymentInitializeOptions`](WorldpayAccessPaymentInitializeOptions.md)
+> `optional` **worldpay?**: [`WorldpayAccessPaymentInitializeOptions`](WorldpayAccessPaymentInitializeOptions.md)
 
 The options that are required to initialize the Apple Pay payment
 method. They can be omitted unless you need to support Apple Pay.

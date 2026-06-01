@@ -1,57 +1,52 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ExtensionSelector
 
 # Interface: ExtensionSelector
 
-## Table of contents
-
-### Methods
-
-- [getExtensionByRegion](ExtensionSelector.md#getextensionbyregion)
-- [getExtensions](ExtensionSelector.md#getextensions)
-- [getLoadError](ExtensionSelector.md#getloaderror)
-- [isLoading](ExtensionSelector.md#isloading)
-
 ## Methods
 
-### getExtensionByRegion
+### getExtensionByRegion()
 
-▸ **getExtensionByRegion**(`region`): `undefined` \| [`Extension`](Extension.md)
+> **getExtensionByRegion**(`region`): [`Extension`](Extension.md) \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `region` | [`ExtensionRegion`](../enums/ExtensionRegion.md) |
+##### region
+
+[`ExtensionRegion`](../enumerations/ExtensionRegion.md)
 
 #### Returns
 
-`undefined` \| [`Extension`](Extension.md)
+[`Extension`](Extension.md) \| `undefined`
 
-___
+***
 
-### getExtensions
+### getExtensions()
 
-▸ **getExtensions**(): `undefined` \| [`Extension`](Extension.md)[]
-
-#### Returns
-
-`undefined` \| [`Extension`](Extension.md)[]
-
-___
-
-### getLoadError
-
-▸ **getLoadError**(): `undefined` \| `Error`
+> **getExtensions**(): [`Extension`](Extension.md)[] \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+[`Extension`](Extension.md)[] \| `undefined`
 
-___
+***
 
-### isLoading
+### getLoadError()
 
-▸ **isLoading**(): `boolean`
+> **getLoadError**(): `Error` \| `undefined`
+
+#### Returns
+
+`Error` \| `undefined`
+
+***
+
+### isLoading()
+
+> **isLoading**(): `boolean`
 
 #### Returns
 

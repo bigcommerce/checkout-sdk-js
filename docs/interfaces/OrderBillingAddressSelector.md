@@ -1,19 +1,17 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / OrderBillingAddressSelector
 
 # Interface: OrderBillingAddressSelector
 
-## Table of contents
-
-### Methods
-
-- [getOrderBillingAddress](OrderBillingAddressSelector.md#getorderbillingaddress)
-
 ## Methods
 
-### getOrderBillingAddress
+### getOrderBillingAddress()
 
-▸ **getOrderBillingAddress**(): `undefined` \| [`OrderBillingAddress`](OrderBillingAddress.md)
+> **getOrderBillingAddress**(): [`OrderBillingAddress`](OrderBillingAddress.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| [`OrderBillingAddress`](OrderBillingAddress.md)
+[`OrderBillingAddress`](OrderBillingAddress.md) \| `undefined`

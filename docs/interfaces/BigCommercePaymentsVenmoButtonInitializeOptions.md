@@ -1,48 +1,40 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BigCommercePaymentsVenmoButtonInitializeOptions
 
 # Interface: BigCommercePaymentsVenmoButtonInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [buyNowInitializeOptions](BigCommercePaymentsVenmoButtonInitializeOptions.md#buynowinitializeoptions)
-- [currencyCode](BigCommercePaymentsVenmoButtonInitializeOptions.md#currencycode)
-- [style](BigCommercePaymentsVenmoButtonInitializeOptions.md#style)
-
-### Methods
-
-- [onEligibilityFailure](BigCommercePaymentsVenmoButtonInitializeOptions.md#oneligibilityfailure)
-
 ## Properties
 
-### buyNowInitializeOptions
+### buyNowInitializeOptions?
 
-• `Optional` **buyNowInitializeOptions**: [`PayPalBuyNowInitializeOptions`](PayPalBuyNowInitializeOptions.md)
+> `optional` **buyNowInitializeOptions?**: [`PayPalBuyNowInitializeOptions`](PayPalBuyNowInitializeOptions.md)
 
 The options that required to initialize Buy Now functionality.
 
-___
+***
 
-### currencyCode
+### currencyCode?
 
-• `Optional` **currencyCode**: `string`
+> `optional` **currencyCode?**: `string`
 
 The option that used to initialize a PayPal script with provided currency code.
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: [`PayPalButtonStyleOptions`](PayPalButtonStyleOptions.md)
+> `optional` **style?**: [`PayPalButtonStyleOptions`](PayPalButtonStyleOptions.md)
 
 A set of styling options for the checkout button.
 
 ## Methods
 
-### onEligibilityFailure
+### onEligibilityFailure()?
 
-▸ **onEligibilityFailure**(): `void`
+> `optional` **onEligibilityFailure**(): `void`
 
 A callback that gets called when PayPal SDK restricts to render PayPal component.
 

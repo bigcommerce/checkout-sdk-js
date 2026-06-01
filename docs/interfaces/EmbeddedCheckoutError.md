@@ -1,29 +1,25 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / EmbeddedCheckoutError
 
 # Interface: EmbeddedCheckoutError
-
-## Table of contents
-
-### Properties
-
-- [message](EmbeddedCheckoutError.md#message)
-- [subtype](EmbeddedCheckoutError.md#subtype)
-- [type](EmbeddedCheckoutError.md#type)
 
 ## Properties
 
 ### message
 
-• **message**: `string`
+> **message**: `string`
 
-___
+***
 
-### subtype
+### subtype?
 
-• `Optional` **subtype**: `string`
+> `optional` **subtype?**: `string`
 
-___
+***
 
-### type
+### type?
 
-• `Optional` **type**: `string`
+> `optional` **type?**: `string`

@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CartChangedError
 
 # Class: CartChangedError
@@ -5,78 +9,70 @@
 This error type should not be constructed directly. It is a base class for
 all custom errors thrown in this library.
 
-## Hierarchy
+## Extends
 
 - [`StandardError`](StandardError.md)
 
-  ↳ **`CartChangedError`**
-
-## Table of contents
-
-### Constructors
-
-- [constructor](CartChangedError.md#constructor)
-
-### Properties
-
-- [data](CartChangedError.md#data)
-- [name](CartChangedError.md#name)
-- [type](CartChangedError.md#type)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new CartChangedError**(`previous`, `updated`): [`CartChangedError`](CartChangedError.md)
+> **new CartChangedError**(`previous`, `updated`): `CartChangedError`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `previous` | [`ComparableCheckout`](../README.md#comparablecheckout) |
-| `updated` | [`ComparableCheckout`](../README.md#comparablecheckout) |
+##### previous
+
+[`ComparableCheckout`](../type-aliases/ComparableCheckout.md)
+
+##### updated
+
+[`ComparableCheckout`](../type-aliases/ComparableCheckout.md)
 
 #### Returns
 
-[`CartChangedError`](CartChangedError.md)
+`CartChangedError`
 
 #### Overrides
 
-[StandardError](StandardError.md).[constructor](StandardError.md#constructor)
+[`StandardError`](StandardError.md).[`constructor`](StandardError.md#constructor)
 
 ## Properties
 
 ### data
 
-• **data**: `Object`
+> **data**: `object`
+
+**`Alpha`**
 
 Please note that this option is currently in an early stage of
 development. Therefore the API is unstable and not ready for public
 consumption.
 
-#### Type declaration
+#### previous
 
-| Name | Type |
-| :------ | :------ |
-| `previous` | [`ComparableCheckout`](../README.md#comparablecheckout) |
-| `updated` | [`ComparableCheckout`](../README.md#comparablecheckout) |
+> **previous**: [`ComparableCheckout`](../type-aliases/ComparableCheckout.md)
 
-___
+#### updated
+
+> **updated**: [`ComparableCheckout`](../type-aliases/ComparableCheckout.md)
+
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
 #### Inherited from
 
-[StandardError](StandardError.md).[name](StandardError.md#name)
+[`StandardError`](StandardError.md).[`name`](StandardError.md#name)
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`
 
 #### Inherited from
 
-[StandardError](StandardError.md).[type](StandardError.md#type)
+[`StandardError`](StandardError.md).[`type`](StandardError.md#type)

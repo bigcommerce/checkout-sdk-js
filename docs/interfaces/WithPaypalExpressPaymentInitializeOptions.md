@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithPaypalExpressPaymentInitializeOptions
 
 # Interface: WithPaypalExpressPaymentInitializeOptions
@@ -23,20 +27,12 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [paypalexpress](WithPaypalExpressPaymentInitializeOptions.md#paypalexpress)
-
 ## Properties
 
-### paypalexpress
+### paypalexpress?
 
-• `Optional` **paypalexpress**: `Object`
+> `optional` **paypalexpress?**: `object`
 
-#### Type declaration
+#### useRedirectFlow?
 
-| Name | Type |
-| :------ | :------ |
-| `useRedirectFlow?` | `boolean` |
+> `optional` **useRedirectFlow?**: `boolean`

@@ -1,40 +1,37 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GoogleRecaptchaScriptLoader
 
 # Class: GoogleRecaptchaScriptLoader
 
-## Table of contents
-
-### Constructors
-
-- [constructor](GoogleRecaptchaScriptLoader.md#constructor)
-
-### Methods
-
-- [load](GoogleRecaptchaScriptLoader.md#load)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new GoogleRecaptchaScriptLoader**(`_scriptLoader`, `_window?`): [`GoogleRecaptchaScriptLoader`](GoogleRecaptchaScriptLoader.md)
+> **new GoogleRecaptchaScriptLoader**(`_scriptLoader`, `_window?`): `GoogleRecaptchaScriptLoader`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_scriptLoader` | `default` |
-| `_window?` | [`GoogleRecaptchaWindow`](../interfaces/GoogleRecaptchaWindow.md) |
+##### \_scriptLoader
+
+`ScriptLoader`
+
+##### \_window?
+
+[`GoogleRecaptchaWindow`](../interfaces/GoogleRecaptchaWindow.md)
 
 #### Returns
 
-[`GoogleRecaptchaScriptLoader`](GoogleRecaptchaScriptLoader.md)
+`GoogleRecaptchaScriptLoader`
 
 ## Methods
 
-### load
+### load()
 
-▸ **load**(): `Promise`\<`undefined` \| `ReCaptcha`\>
+> **load**(): `Promise`\<`ReCaptcha` \| `undefined`\>
 
 #### Returns
 
-`Promise`\<`undefined` \| `ReCaptcha`\>
+`Promise`\<`ReCaptcha` \| `undefined`\>

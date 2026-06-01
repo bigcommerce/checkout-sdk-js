@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CreditCardPaymentInitializeOptions\_2
 
 # Interface: CreditCardPaymentInitializeOptions\_2
@@ -78,21 +82,14 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [bigpayToken](CreditCardPaymentInitializeOptions_2.md#bigpaytoken)
-- [form](CreditCardPaymentInitializeOptions_2.md#form)
-
 ## Properties
 
-### bigpayToken
+### bigpayToken?
 
-• `Optional` **bigpayToken**: `string`
+> `optional` **bigpayToken?**: `string`
 
-___
+***
 
 ### form
 
-• **form**: `default`
+> **form**: `HostedFormOptions`

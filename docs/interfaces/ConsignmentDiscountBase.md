@@ -1,41 +1,35 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ConsignmentDiscountBase
 
 # Interface: ConsignmentDiscountBase\<T\>
 
-## Type parameters
+## Extended by
 
-| Name |
-| :------ |
-| `T` |
+- [`ConsignmentCouponDiscount`](ConsignmentCouponDiscount.md)
 
-## Hierarchy
+## Type Parameters
 
-- **`ConsignmentDiscountBase`**
+### T
 
-  ↳ [`ConsignmentCouponDiscount`](ConsignmentCouponDiscount.md)
-
-## Table of contents
-
-### Properties
-
-- [amount](ConsignmentDiscountBase.md#amount)
-- [id](ConsignmentDiscountBase.md#id)
-- [type](ConsignmentDiscountBase.md#type)
+`T`
 
 ## Properties
 
 ### amount
 
-• **amount**: `number`
+> **amount**: `number`
 
-___
+***
 
 ### id
 
-• **id**: `number`
+> **id**: `number`
 
-___
+***
 
 ### type
 
-• **type**: `T`
+> **type**: `T`

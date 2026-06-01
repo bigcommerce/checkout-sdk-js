@@ -39,26 +39,26 @@ declare class CheckoutComiDealPaymentStrategy extends CheckoutComCustomPaymentSt
     private _createFormattedPayload;
 }
 
-export declare const createCheckoutComAPMPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CheckoutComCustomPaymentStrategy>, {
+export declare const createCheckoutComAPMPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComCustomPaymentStrategy>, {
     gateway: string;
 }>;
 
-export declare const createCheckoutComCreditCardPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CheckoutComCreditCardPaymentStrategy>, {
-    gateway: string;
-    id: string;
-}>;
-
-export declare const createCheckoutComFawryPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CheckoutComFawryPaymentStrategy>, {
+export declare const createCheckoutComCreditCardPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComCreditCardPaymentStrategy>, {
     gateway: string;
     id: string;
 }>;
 
-export declare const createCheckoutComIdealPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CheckoutComiDealPaymentStrategy>, {
+export declare const createCheckoutComFawryPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComFawryPaymentStrategy>, {
     gateway: string;
     id: string;
 }>;
 
-export declare const createCheckoutComSepaPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CheckoutComSEPAPaymentStrategy>, {
+export declare const createCheckoutComIdealPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComiDealPaymentStrategy>, {
+    gateway: string;
+    id: string;
+}>;
+
+export declare const createCheckoutComSepaPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComSEPAPaymentStrategy>, {
     gateway: string;
     id: string;
 }>;

@@ -1,43 +1,37 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / OrderFee
 
 # Interface: OrderFee
-
-## Table of contents
-
-### Properties
-
-- [cost](OrderFee.md#cost)
-- [customerDisplayName](OrderFee.md#customerdisplayname)
-- [id](OrderFee.md#id)
-- [source](OrderFee.md#source)
-- [type](OrderFee.md#type)
 
 ## Properties
 
 ### cost
 
-• **cost**: `number`
+> **cost**: `number`
 
-___
+***
 
 ### customerDisplayName
 
-• **customerDisplayName**: `string`
+> **customerDisplayName**: `string`
 
-___
+***
 
 ### id
 
-• **id**: `number`
+> **id**: `number`
 
-___
+***
 
 ### source
 
-• **source**: `string`
+> **source**: `string`
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`

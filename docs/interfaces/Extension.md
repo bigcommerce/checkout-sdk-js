@@ -1,43 +1,37 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Extension
 
 # Interface: Extension
-
-## Table of contents
-
-### Properties
-
-- [id](Extension.md#id)
-- [name](Extension.md#name)
-- [region](Extension.md#region)
-- [type](Extension.md#type)
-- [url](Extension.md#url)
 
 ## Properties
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
-___
+***
 
 ### region
 
-• **region**: [`ExtensionRegion`](../enums/ExtensionRegion.md)
+> **region**: [`ExtensionRegion`](../enumerations/ExtensionRegion.md)
 
-___
+***
 
 ### type
 
-• **type**: [`ExtensionType`](../enums/ExtensionType.md)
+> **type**: [`ExtensionType`](../enumerations/ExtensionType.md)
 
-___
+***
 
 ### url
 
-• **url**: `string`
+> **url**: `string`

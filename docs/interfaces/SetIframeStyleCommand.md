@@ -1,28 +1,27 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / SetIframeStyleCommand
 
 # Interface: SetIframeStyleCommand
-
-## Table of contents
-
-### Properties
-
-- [payload](SetIframeStyleCommand.md#payload)
-- [type](SetIframeStyleCommand.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### style
 
-| Name | Type |
-| :------ | :------ |
-| `style` | \{ `[key: string]`: `string` \| `number` \| ``null``;  } |
+> **style**: `object`
 
-___
+##### Index Signature
+
+\[`key`: `string`\]: `string` \| `number` \| `null`
+
+***
 
 ### type
 
-• **type**: [`SetIframeStyle`](../enums/ExtensionCommandType.md#setiframestyle)
+> **type**: [`SetIframeStyle`](../enumerations/ExtensionCommandType.md#setiframestyle)

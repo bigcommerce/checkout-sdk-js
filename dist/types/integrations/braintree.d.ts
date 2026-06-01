@@ -1019,62 +1019,62 @@ declare interface WithBraintreeVisaCheckoutPaymentInitializeOptions {
     braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
 }
 
-export declare const createBraintreeAchPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BraintreeAchPaymentStrategy>, {
+export declare const createBraintreeAchPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeAchPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeCreditCardPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BraintreeCreditCardPaymentStrategy>, {
+export declare const createBraintreeCreditCardPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeCreditCardPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeFastlaneCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BraintreeFastlaneCustomerStrategy>, {
+export declare const createBraintreeFastlaneCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreeFastlaneCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeFastlanePaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BraintreeFastlanePaymentStrategy>, {
+export declare const createBraintreeFastlanePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeFastlanePaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeLocalMethodsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BraintreeLocalMethodsPaymentStrategy>, {
+export declare const createBraintreeLocalMethodsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeLocalMethodsPaymentStrategy>, {
     gateway: string;
 }>;
 
-export declare const createBraintreePaypalButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BraintreePaypalButtonStrategy>, {
+export declare const createBraintreePaypalButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreePaypalButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreePaypalCreditButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BraintreePaypalCreditButtonStrategy>, {
+export declare const createBraintreePaypalCreditButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreePaypalCreditButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreePaypalCreditCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BraintreePaypalCreditCustomerStrategy>, {
+export declare const createBraintreePaypalCreditCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreePaypalCreditCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreePaypalCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BraintreePaypalCustomerStrategy>, {
+export declare const createBraintreePaypalCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreePaypalCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreePaypalPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BraintreePaypalPaymentStrategy>, {
+export declare const createBraintreePaypalPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreePaypalPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeVenmoButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BraintreeVenmoButtonStrategy>, {
+export declare const createBraintreeVenmoButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVenmoButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeVenmoPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BraintreeVenmoPaymentStrategy>, {
+export declare const createBraintreeVenmoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVenmoPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeVisaCheckoutButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BraintreeVisaCheckoutButtonStrategy>, {
+export declare const createBraintreeVisaCheckoutButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVisaCheckoutButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeVisaCheckoutCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BraintreeVisaCheckoutCustomerStrategy>, {
+export declare const createBraintreeVisaCheckoutCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreeVisaCheckoutCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createBraintreeVisaCheckoutPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BraintreeVisaCheckoutPaymentStrategy>, {
+export declare const createBraintreeVisaCheckoutPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeVisaCheckoutPaymentStrategy>, {
     id: string;
 }>;

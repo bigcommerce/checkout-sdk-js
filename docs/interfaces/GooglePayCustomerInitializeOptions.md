@@ -1,34 +1,25 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GooglePayCustomerInitializeOptions
 
 # Interface: GooglePayCustomerInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [buttonColor](GooglePayCustomerInitializeOptions.md#buttoncolor)
-- [buttonType](GooglePayCustomerInitializeOptions.md#buttontype)
-- [container](GooglePayCustomerInitializeOptions.md#container)
-
-### Methods
-
-- [onClick](GooglePayCustomerInitializeOptions.md#onclick)
-- [onError](GooglePayCustomerInitializeOptions.md#onerror)
-
 ## Properties
 
-### buttonColor
+### buttonColor?
 
-• `Optional` **buttonColor**: [`GooglePayButtonColor`](../README.md#googlepaybuttoncolor)
+> `optional` **buttonColor?**: [`GooglePayButtonColor`](../type-aliases/GooglePayButtonColor.md)
 
 All Google Pay payment buttons exist in two styles: dark (default) and light.
 To provide contrast, use dark buttons on light backgrounds and light buttons on dark or colorful backgrounds.
 
-___
+***
 
-### buttonType
+### buttonType?
 
-• `Optional` **buttonType**: [`GooglePayButtonType`](../README.md#googlepaybuttontype)
+> `optional` **buttonType?**: [`GooglePayButtonType`](../type-aliases/GooglePayButtonType.md)
 
 Variant buttons:
 book: The "Book with Google Pay" payment button.
@@ -43,20 +34,20 @@ subscribe: The "Subscribe with Google Pay" payment button.
 Note: "long" and "short" button types have been renamed to "buy" and "plain", but are still valid button types
 for backwards compatability.
 
-___
+***
 
 ### container
 
-• **container**: `string`
+> **container**: `string`
 
 This container is used to set an event listener, provide an element ID if you want users to be able to launch
 the GooglePay wallet modal by clicking on a button. It should be an HTML element.
 
 ## Methods
 
-### onClick
+### onClick()?
 
-▸ **onClick**(): `void`
+> `optional` **onClick**(): `void`
 
 Callback that get called on wallet button click
 
@@ -64,20 +55,22 @@ Callback that get called on wallet button click
 
 `void`
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`error`): `void`
+> `optional` **onError**(`error`): `void`
 
 A callback that gets called when GooglePay fails to initialize or
 selects a payment option.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | `Error` | The error object describing the failure. |
+##### error
+
+`Error`
+
+The error object describing the failure.
 
 #### Returns
 

@@ -1,50 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StoredCardHostedFormData
 
 # Interface: StoredCardHostedFormData
-
-## Table of contents
-
-### Properties
-
-- [currencyCode](StoredCardHostedFormData.md#currencycode)
-- [paymentsUrl](StoredCardHostedFormData.md#paymentsurl)
-- [providerId](StoredCardHostedFormData.md#providerid)
-- [shopperId](StoredCardHostedFormData.md#shopperid)
-- [storeHash](StoredCardHostedFormData.md#storehash)
-- [vaultToken](StoredCardHostedFormData.md#vaulttoken)
 
 ## Properties
 
 ### currencyCode
 
-• **currencyCode**: `string`
+> **currencyCode**: `string`
 
-___
+***
 
 ### paymentsUrl
 
-• **paymentsUrl**: `string`
+> **paymentsUrl**: `string`
 
-___
+***
 
 ### providerId
 
-• **providerId**: `string`
+> **providerId**: `string`
 
-___
+***
 
 ### shopperId
 
-• **shopperId**: `string`
+> **shopperId**: `string`
 
-___
+***
 
 ### storeHash
 
-• **storeHash**: `string`
+> **storeHash**: `string`
 
-___
+***
 
 ### vaultToken
 
-• **vaultToken**: `string`
+> **vaultToken**: `string`

@@ -1,50 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInputValidateErrorDataMap
 
 # Interface: HostedInputValidateErrorDataMap
 
-## Table of contents
-
-### Properties
-
-- [cardCode](HostedInputValidateErrorDataMap.md#cardcode)
-- [cardCodeVerification](HostedInputValidateErrorDataMap.md#cardcodeverification)
-- [cardExpiry](HostedInputValidateErrorDataMap.md#cardexpiry)
-- [cardName](HostedInputValidateErrorDataMap.md#cardname)
-- [cardNumber](HostedInputValidateErrorDataMap.md#cardnumber)
-- [cardNumberVerification](HostedInputValidateErrorDataMap.md#cardnumberverification)
-
 ## Properties
 
-### cardCode
+### cardCode?
 
-• `Optional` **cardCode**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
+> `optional` **cardCode?**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
 
-___
+***
 
-### cardCodeVerification
+### cardCodeVerification?
 
-• `Optional` **cardCodeVerification**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
+> `optional` **cardCodeVerification?**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
 
-___
+***
 
-### cardExpiry
+### cardExpiry?
 
-• `Optional` **cardExpiry**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
+> `optional` **cardExpiry?**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
 
-___
+***
 
-### cardName
+### cardName?
 
-• `Optional` **cardName**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
+> `optional` **cardName?**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
 
-___
+***
 
-### cardNumber
+### cardNumber?
 
-• `Optional` **cardNumber**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
+> `optional` **cardNumber?**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
 
-___
+***
 
-### cardNumberVerification
+### cardNumberVerification?
 
-• `Optional` **cardNumberVerification**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]
+> `optional` **cardNumberVerification?**: [`HostedInputValidateErrorData`](HostedInputValidateErrorData.md)[]

@@ -1,90 +1,79 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / LinkStyles
 
 # Interface: LinkStyles
 
-## Hierarchy
+## Extends
 
 - [`InlineElementStyles`](InlineElementStyles.md)
 
-  ↳ **`LinkStyles`**
-
-## Table of contents
-
-### Properties
-
-- [active](LinkStyles.md#active)
-- [color](LinkStyles.md#color)
-- [focus](LinkStyles.md#focus)
-- [fontFamily](LinkStyles.md#fontfamily)
-- [fontWeight](LinkStyles.md#fontweight)
-- [hover](LinkStyles.md#hover)
-- [letterSpacing](LinkStyles.md#letterspacing)
-- [lineHeight](LinkStyles.md#lineheight)
-
 ## Properties
 
-### active
+### active?
 
-• `Optional` **active**: [`InlineElementStyles`](InlineElementStyles.md)
+> `optional` **active?**: [`InlineElementStyles`](InlineElementStyles.md)
 
-___
+***
 
-### color
+### color?
 
-• `Optional` **color**: `string`
-
-#### Inherited from
-
-[InlineElementStyles](InlineElementStyles.md).[color](InlineElementStyles.md#color)
-
-___
-
-### focus
-
-• `Optional` **focus**: [`InlineElementStyles`](InlineElementStyles.md)
-
-___
-
-### fontFamily
-
-• `Optional` **fontFamily**: `string`
+> `optional` **color?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[fontFamily](InlineElementStyles.md#fontfamily)
+[`InlineElementStyles`](InlineElementStyles.md).[`color`](InlineElementStyles.md#color)
 
-___
+***
 
-### fontWeight
+### focus?
 
-• `Optional` **fontWeight**: `string`
+> `optional` **focus?**: [`InlineElementStyles`](InlineElementStyles.md)
 
-#### Inherited from
+***
 
-[InlineElementStyles](InlineElementStyles.md).[fontWeight](InlineElementStyles.md#fontweight)
+### fontFamily?
 
-___
-
-### hover
-
-• `Optional` **hover**: [`InlineElementStyles`](InlineElementStyles.md)
-
-___
-
-### letterSpacing
-
-• `Optional` **letterSpacing**: `string`
+> `optional` **fontFamily?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[letterSpacing](InlineElementStyles.md#letterspacing)
+[`InlineElementStyles`](InlineElementStyles.md).[`fontFamily`](InlineElementStyles.md#fontfamily)
 
-___
+***
 
-### lineHeight
+### fontWeight?
 
-• `Optional` **lineHeight**: `string`
+> `optional` **fontWeight?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[lineHeight](InlineElementStyles.md#lineheight)
+[`InlineElementStyles`](InlineElementStyles.md).[`fontWeight`](InlineElementStyles.md#fontweight)
+
+***
+
+### hover?
+
+> `optional` **hover?**: [`InlineElementStyles`](InlineElementStyles.md)
+
+***
+
+### letterSpacing?
+
+> `optional` **letterSpacing?**: `string`
+
+#### Inherited from
+
+[`InlineElementStyles`](InlineElementStyles.md).[`letterSpacing`](InlineElementStyles.md#letterspacing)
+
+***
+
+### lineHeight?
+
+> `optional` **lineHeight?**: `string`
+
+#### Inherited from
+
+[`InlineElementStyles`](InlineElementStyles.md).[`lineHeight`](InlineElementStyles.md#lineheight)

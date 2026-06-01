@@ -1,57 +1,49 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / LanguageConfig
 
 # Interface: LanguageConfig
 
-## Table of contents
-
-### Properties
-
-- [defaultLocale](LanguageConfig.md#defaultlocale)
-- [defaultTranslations](LanguageConfig.md#defaulttranslations)
-- [fallbackLocale](LanguageConfig.md#fallbacklocale)
-- [fallbackTranslations](LanguageConfig.md#fallbacktranslations)
-- [locale](LanguageConfig.md#locale)
-- [locales](LanguageConfig.md#locales)
-- [translations](LanguageConfig.md#translations)
-
 ## Properties
 
-### defaultLocale
+### defaultLocale?
 
-• `Optional` **defaultLocale**: `string`
+> `optional` **defaultLocale?**: `string`
 
-___
+***
 
 ### defaultTranslations
 
-• **defaultTranslations**: [`Translations`](Translations.md)
+> **defaultTranslations**: [`Translations`](Translations.md)
 
-___
+***
 
-### fallbackLocale
+### fallbackLocale?
 
-• `Optional` **fallbackLocale**: `string`
+> `optional` **fallbackLocale?**: `string`
 
-___
+***
 
-### fallbackTranslations
+### fallbackTranslations?
 
-• `Optional` **fallbackTranslations**: [`Translations`](Translations.md)
+> `optional` **fallbackTranslations?**: [`Translations`](Translations.md)
 
-___
+***
 
 ### locale
 
-• **locale**: `string`
+> **locale**: `string`
 
-___
+***
 
 ### locales
 
-• **locales**: [`Locales`](Locales.md)
+> **locales**: [`Locales`](Locales.md)
 
-___
+***
 
 ### translations
 
-• **translations**: [`Translations`](Translations.md)
+> **translations**: [`Translations`](Translations.md)

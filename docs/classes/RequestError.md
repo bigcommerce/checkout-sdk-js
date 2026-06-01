@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / RequestError
 
 # Class: RequestError\<TBody\>
@@ -5,106 +9,98 @@
 Throw this error if we are unable to make a request to the server. It wraps
 any server response into a JS error object.
 
-## Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `TBody` | `any` |
-
-## Hierarchy
+## Extends
 
 - [`StandardError`](StandardError.md)
 
-  ↳ **`RequestError`**
+## Type Parameters
 
-## Table of contents
+### TBody
 
-### Constructors
-
-- [constructor](RequestError.md#constructor)
-
-### Properties
-
-- [body](RequestError.md#body)
-- [errors](RequestError.md#errors)
-- [headers](RequestError.md#headers)
-- [name](RequestError.md#name)
-- [status](RequestError.md#status)
-- [type](RequestError.md#type)
+`TBody` = `any`
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new RequestError**\<`TBody`\>(`response?`, `«destructured»?`): [`RequestError`](RequestError.md)\<`TBody`\>
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `TBody` | `any` |
+> **new RequestError**\<`TBody`\>(`response?`, `__namedParameters?`): `RequestError`\<`TBody`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `response?` | `default`\<`object` \| `TBody`\> |
-| `«destructured»` | `Object` |
-| › `errors?` | \{ `code`: `string` ; `message?`: `string`  }[] |
-| › `message?` | `string` |
+##### response?
+
+`Response`\<`object` \| `TBody`\>
+
+##### \_\_namedParameters?
+
+###### errors?
+
+`object`[]
+
+###### message?
+
+`string`
 
 #### Returns
 
-[`RequestError`](RequestError.md)\<`TBody`\>
+`RequestError`\<`TBody`\>
 
 #### Overrides
 
-[StandardError](StandardError.md).[constructor](StandardError.md#constructor)
+[`StandardError`](StandardError.md).[`constructor`](StandardError.md#constructor)
 
 ## Properties
 
 ### body
 
-• **body**: `object` \| `TBody`
+> **body**: `object` \| `TBody`
 
-___
+***
 
 ### errors
 
-• **errors**: \{ `code`: `string` ; `message?`: `string`  }[]
+> **errors**: `object`[]
 
-___
+#### code
+
+> **code**: `string`
+
+#### message?
+
+> `optional` **message?**: `string`
+
+***
 
 ### headers
 
-• **headers**: `Object`
+> **headers**: `object`
 
-#### Index signature
+#### Index Signature
 
-▪ [key: `string`]: `any`
+\[`key`: `string`\]: `any`
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
 #### Inherited from
 
-[StandardError](StandardError.md).[name](StandardError.md#name)
+[`StandardError`](StandardError.md).[`name`](StandardError.md#name)
 
-___
+***
 
 ### status
 
-• **status**: `number`
+> **status**: `number`
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`
 
 #### Inherited from
 
-[StandardError](StandardError.md).[type](StandardError.md#type)
+[`StandardError`](StandardError.md).[`type`](StandardError.md#type)

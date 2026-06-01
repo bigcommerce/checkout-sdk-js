@@ -1,75 +1,58 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StoreConfig
 
 # Interface: StoreConfig
 
-## Table of contents
-
-### Properties
-
-- [b2bApiSettings](StoreConfig.md#b2bapisettings)
-- [cdnPath](StoreConfig.md#cdnpath)
-- [checkoutSettings](StoreConfig.md#checkoutsettings)
-- [currency](StoreConfig.md#currency)
-- [displayDateFormat](StoreConfig.md#displaydateformat)
-- [displaySettings](StoreConfig.md#displaysettings)
-- [formFields](StoreConfig.md#formfields)
-- [imageDirectory](StoreConfig.md#imagedirectory)
-- [inputDateFormat](StoreConfig.md#inputdateformat)
-- [inventorySettings](StoreConfig.md#inventorysettings)
-- [isAngularDebuggingEnabled](StoreConfig.md#isangulardebuggingenabled)
-- [links](StoreConfig.md#links)
-- [paymentSettings](StoreConfig.md#paymentsettings)
-- [shopperConfig](StoreConfig.md#shopperconfig)
-- [shopperCurrency](StoreConfig.md#shoppercurrency)
-- [storeProfile](StoreConfig.md#storeprofile)
-
 ## Properties
 
-### b2bApiSettings
+### b2bApiSettings?
 
-• `Optional` **b2bApiSettings**: [`B2BApiSettings`](B2BApiSettings.md)
+> `optional` **b2bApiSettings?**: [`B2BApiSettings`](B2BApiSettings.md)
 
-___
+***
 
 ### cdnPath
 
-• **cdnPath**: `string`
+> **cdnPath**: `string`
 
-___
+***
 
 ### checkoutSettings
 
-• **checkoutSettings**: [`CheckoutSettings`](CheckoutSettings.md)
+> **checkoutSettings**: [`CheckoutSettings`](CheckoutSettings.md)
 
-___
+***
 
 ### currency
 
-• **currency**: [`StoreCurrency`](StoreCurrency.md)
+> **currency**: [`StoreCurrency`](StoreCurrency.md)
 
-___
+***
 
 ### displayDateFormat
 
-• **displayDateFormat**: `string`
+> **displayDateFormat**: `string`
 
-___
+***
 
 ### displaySettings
 
-• **displaySettings**: [`DisplaySettings`](DisplaySettings.md)
+> **displaySettings**: [`DisplaySettings`](DisplaySettings.md)
 
-___
+***
 
-### formFields
+### ~~formFields~~
 
-• **formFields**: [`FormFields`](FormFields.md)
+> **formFields**: [`FormFields`](FormFields.md)
 
-**`Deprecated`**
+#### Deprecated
 
 Please use instead the data selectors
 
-**`Remarks`**
+#### Remarks
 
 ```js
 const data = CheckoutService.getState().data;
@@ -78,56 +61,56 @@ const billingAddressFields = data.getBillingAddressFields('US');
 const customerAccountFields = data.getCustomerAccountFields();
 ```
 
-___
+***
 
 ### imageDirectory
 
-• **imageDirectory**: `string`
+> **imageDirectory**: `string`
 
-___
+***
 
 ### inputDateFormat
 
-• **inputDateFormat**: `string`
+> **inputDateFormat**: `string`
 
-___
+***
 
-### inventorySettings
+### inventorySettings?
 
-• `Optional` **inventorySettings**: [`InventorySettings`](InventorySettings.md)
+> `optional` **inventorySettings?**: [`InventorySettings`](InventorySettings.md)
 
-___
+***
 
 ### isAngularDebuggingEnabled
 
-• **isAngularDebuggingEnabled**: `boolean`
+> **isAngularDebuggingEnabled**: `boolean`
 
-___
+***
 
 ### links
 
-• **links**: [`StoreLinks`](StoreLinks.md)
+> **links**: [`StoreLinks`](StoreLinks.md)
 
-___
+***
 
 ### paymentSettings
 
-• **paymentSettings**: [`PaymentSettings`](PaymentSettings.md)
+> **paymentSettings**: [`PaymentSettings`](PaymentSettings.md)
 
-___
+***
 
 ### shopperConfig
 
-• **shopperConfig**: [`ShopperConfig`](ShopperConfig.md)
+> **shopperConfig**: [`ShopperConfig`](ShopperConfig.md)
 
-___
+***
 
 ### shopperCurrency
 
-• **shopperCurrency**: [`ShopperCurrency`](ShopperCurrency.md)
+> **shopperCurrency**: [`ShopperCurrency`](ShopperCurrency.md)
 
-___
+***
 
 ### storeProfile
 
-• **storeProfile**: [`StoreProfile`](StoreProfile.md)
+> **storeProfile**: [`StoreProfile`](StoreProfile.md)

@@ -14,6 +14,6 @@ declare class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     private _isThreeDSTwoExperimentOn;
 }
 
-export declare const createSagePayPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<SagePayPaymentStrategy>, {
+export declare const createSagePayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<SagePayPaymentStrategy>, {
     id: string;
 }>;

@@ -1,36 +1,33 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BoletoDataPaymentMethodState
 
 # Interface: BoletoDataPaymentMethodState
-
-## Table of contents
-
-### Properties
-
-- [paymentMethod](BoletoDataPaymentMethodState.md#paymentmethod)
-- [shopperName](BoletoDataPaymentMethodState.md#shoppername)
-- [socialSecurityNumber](BoletoDataPaymentMethodState.md#socialsecuritynumber)
 
 ## Properties
 
 ### paymentMethod
 
-• **paymentMethod**: [`AdyenPaymentMethodState`](AdyenPaymentMethodState.md)
+> **paymentMethod**: [`AdyenPaymentMethodState`](AdyenPaymentMethodState.md)
 
-___
+***
 
-### shopperName
+### shopperName?
 
-• `Optional` **shopperName**: `Object`
+> `optional` **shopperName?**: `object`
 
-#### Type declaration
+#### firstName?
 
-| Name | Type |
-| :------ | :------ |
-| `firstName?` | `string` |
-| `lastName?` | `string` |
+> `optional` **firstName?**: `string`
 
-___
+#### lastName?
 
-### socialSecurityNumber
+> `optional` **lastName?**: `string`
 
-• `Optional` **socialSecurityNumber**: `string`
+***
+
+### socialSecurityNumber?
+
+> `optional` **socialSecurityNumber?**: `string`

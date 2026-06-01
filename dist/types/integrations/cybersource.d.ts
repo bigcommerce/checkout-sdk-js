@@ -21,10 +21,10 @@ declare class CyberSourceV2PaymentStrategy extends CreditCardPaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
 }
 
-export declare const createCyberSourcePaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CyberSourcePaymentStrategy>, {
+export declare const createCyberSourcePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CyberSourcePaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createCyberSourceV2PaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CyberSourceV2PaymentStrategy>, {
+export declare const createCyberSourceV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CyberSourceV2PaymentStrategy>, {
     id: string;
 }>;

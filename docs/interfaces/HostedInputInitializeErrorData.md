@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInputInitializeErrorData
 
 # Interface: HostedInputInitializeErrorData
-
-## Table of contents
-
-### Properties
-
-- [message](HostedInputInitializeErrorData.md#message)
-- [redirectUrl](HostedInputInitializeErrorData.md#redirecturl)
 
 ## Properties
 
 ### message
 
-• **message**: `string`
+> **message**: `string`
 
-___
+***
 
 ### redirectUrl
 
-• **redirectUrl**: `string`
+> **redirectUrl**: `string`

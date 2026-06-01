@@ -1,28 +1,22 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / MutationObeserverCreator
 
 # Interface: MutationObeserverCreator
 
-## Table of contents
-
-### Constructors
-
-- [constructor](MutationObeserverCreator.md#constructor)
-
-### Properties
-
-- [prototype](MutationObeserverCreator.md#prototype)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new MutationObeserverCreator**(`callback`): `MutationObserver`
+> **new MutationObeserverCreator**(`callback`): `MutationObserver`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `callback` | `MutationCallback` |
+##### callback
+
+`MutationCallback`
 
 #### Returns
 
@@ -32,4 +26,4 @@
 
 ### prototype
 
-• **prototype**: `MutationObserver`
+> **prototype**: `MutationObserver`

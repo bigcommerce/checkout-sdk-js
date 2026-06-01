@@ -1,50 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutInitialState
 
 # Interface: CheckoutInitialState
 
-## Table of contents
-
-### Properties
-
-- [b2bApiSettings](CheckoutInitialState.md#b2bapisettings)
-- [checkout](CheckoutInitialState.md#checkout)
-- [config](CheckoutInitialState.md#config)
-- [extensions](CheckoutInitialState.md#extensions)
-- [extraFields](CheckoutInitialState.md#extrafields)
-- [formFields](CheckoutInitialState.md#formfields)
-
 ## Properties
 
-### b2bApiSettings
+### b2bApiSettings?
 
-• `Optional` **b2bApiSettings**: [`B2BApiSettings`](B2BApiSettings.md)
+> `optional` **b2bApiSettings?**: [`B2BApiSettings`](B2BApiSettings.md)
 
-___
+***
 
-### checkout
+### checkout?
 
-• `Optional` **checkout**: [`Checkout`](Checkout.md)
+> `optional` **checkout?**: [`Checkout`](Checkout.md)
 
-___
+***
 
-### config
+### config?
 
-• `Optional` **config**: [`Config`](Config.md)
+> `optional` **config?**: [`Config`](Config.md)
 
-___
+***
 
-### extensions
+### extensions?
 
-• `Optional` **extensions**: [`Extension`](Extension.md)[]
+> `optional` **extensions?**: [`Extension`](Extension.md)[]
 
-___
+***
 
-### extraFields
+### extraFields?
 
-• `Optional` **extraFields**: [`ExtraFields`](ExtraFields.md)
+> `optional` **extraFields?**: [`ExtraFields`](ExtraFields.md)
 
-___
+***
 
-### formFields
+### formFields?
 
-• `Optional` **formFields**: [`FormFields`](FormFields.md)
+> `optional` **formFields?**: [`FormFields`](FormFields.md)

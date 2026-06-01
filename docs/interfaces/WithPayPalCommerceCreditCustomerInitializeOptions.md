@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithPayPalCommerceCreditCustomerInitializeOptions
 
 # Interface: WithPayPalCommerceCreditCustomerInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [paypalcommercecredit](WithPayPalCommerceCreditCustomerInitializeOptions.md#paypalcommercecredit)
-
 ## Properties
 
-### paypalcommercecredit
+### paypalcommercecredit?
 
-• `Optional` **paypalcommercecredit**: [`PayPalCommerceCreditCustomerInitializeOptions`](PayPalCommerceCreditCustomerInitializeOptions.md)
+> `optional` **paypalcommercecredit?**: [`PayPalCommerceCreditCustomerInitializeOptions`](PayPalCommerceCreditCustomerInitializeOptions.md)

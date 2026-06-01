@@ -1,28 +1,23 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GetConsignmentsQuery
 
 # Interface: GetConsignmentsQuery
 
-## Table of contents
-
-### Properties
-
-- [payload](GetConsignmentsQuery.md#payload)
-- [type](GetConsignmentsQuery.md#type)
-
 ## Properties
 
-### payload
+### payload?
 
-• `Optional` **payload**: `Object`
+> `optional` **payload?**: `object`
 
-#### Type declaration
+#### useCache?
 
-| Name | Type |
-| :------ | :------ |
-| `useCache?` | `boolean` |
+> `optional` **useCache?**: `boolean`
 
-___
+***
 
 ### type
 
-• **type**: [`GetConsignments`](../enums/ExtensionQueryType.md#getconsignments)
+> **type**: [`GetConsignments`](../enumerations/ExtensionQueryType.md#getconsignments)

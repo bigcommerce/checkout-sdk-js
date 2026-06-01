@@ -1,82 +1,72 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenComponent
 
 # Interface: AdyenComponent
 
-## Table of contents
-
-### Properties
-
-- [componentRef](AdyenComponent.md#componentref)
-- [props](AdyenComponent.md#props)
-- [state](AdyenComponent.md#state)
-
-### Methods
-
-- [mount](AdyenComponent.md#mount)
-- [submit](AdyenComponent.md#submit)
-- [unmount](AdyenComponent.md#unmount)
-
 ## Properties
 
-### componentRef
+### componentRef?
 
-• `Optional` **componentRef**: `Object`
+> `optional` **componentRef?**: `object`
 
-#### Type declaration
+#### showValidation()
 
-| Name | Type |
-| :------ | :------ |
-| `showValidation` | () => `void` |
+> **showValidation**(): `void`
 
-___
+##### Returns
 
-### props
+`void`
 
-• `Optional` **props**: `Object`
+***
 
-#### Type declaration
+### props?
 
-| Name | Type |
-| :------ | :------ |
-| `type?` | `string` |
+> `optional` **props?**: `object`
 
-___
+#### type?
 
-### state
+> `optional` **type?**: `string`
 
-• `Optional` **state**: [`AdyenComponentState`](AdyenComponentState.md)
+***
+
+### state?
+
+> `optional` **state?**: [`AdyenComponentState`](AdyenComponentState.md)
 
 ## Methods
 
-### mount
+### mount()
 
-▸ **mount**(`containerId`): `HTMLElement`
+> **mount**(`containerId`): `HTMLElement`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `containerId` | `string` |
+##### containerId
+
+`string`
 
 #### Returns
 
 `HTMLElement`
 
-___
+***
 
-### submit
+### submit()
 
-▸ **submit**(): `void`
+> **submit**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### unmount
+### unmount()
 
-▸ **unmount**(): `void`
+> **unmount**(): `void`
 
 #### Returns
 

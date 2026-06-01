@@ -1,355 +1,333 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PhysicalItem
 
 # Interface: PhysicalItem
 
-## Hierarchy
+## Extends
 
 - [`LineItem`](LineItem.md)
-
-  ↳ **`PhysicalItem`**
-
-## Table of contents
-
-### Properties
-
-- [addedByPromotion](PhysicalItem.md#addedbypromotion)
-- [backorderMessage](PhysicalItem.md#backordermessage)
-- [brand](PhysicalItem.md#brand)
-- [categories](PhysicalItem.md#categories)
-- [categoryNames](PhysicalItem.md#categorynames)
-- [comparisonPrice](PhysicalItem.md#comparisonprice)
-- [couponAmount](PhysicalItem.md#couponamount)
-- [discountAmount](PhysicalItem.md#discountamount)
-- [discounts](PhysicalItem.md#discounts)
-- [extendedComparisonPrice](PhysicalItem.md#extendedcomparisonprice)
-- [extendedListPrice](PhysicalItem.md#extendedlistprice)
-- [extendedSalePrice](PhysicalItem.md#extendedsaleprice)
-- [giftWrapping](PhysicalItem.md#giftwrapping)
-- [id](PhysicalItem.md#id)
-- [imageUrl](PhysicalItem.md#imageurl)
-- [isShippingRequired](PhysicalItem.md#isshippingrequired)
-- [isTaxable](PhysicalItem.md#istaxable)
-- [listPrice](PhysicalItem.md#listprice)
-- [name](PhysicalItem.md#name)
-- [options](PhysicalItem.md#options)
-- [parentId](PhysicalItem.md#parentid)
-- [productId](PhysicalItem.md#productid)
-- [quantity](PhysicalItem.md#quantity)
-- [quantityBackordered](PhysicalItem.md#quantitybackordered)
-- [retailPrice](PhysicalItem.md#retailprice)
-- [salePrice](PhysicalItem.md#saleprice)
-- [sku](PhysicalItem.md#sku)
-- [socialMedia](PhysicalItem.md#socialmedia)
-- [stockPosition](PhysicalItem.md#stockposition)
-- [url](PhysicalItem.md#url)
-- [variantId](PhysicalItem.md#variantid)
 
 ## Properties
 
 ### addedByPromotion
 
-• **addedByPromotion**: `boolean`
+> **addedByPromotion**: `boolean`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[addedByPromotion](LineItem.md#addedbypromotion)
+[`LineItem`](LineItem.md).[`addedByPromotion`](LineItem.md#addedbypromotion)
 
-___
+***
 
-### backorderMessage
+### backorderMessage?
 
-• `Optional` **backorderMessage**: ``null`` \| `string`
+> `optional` **backorderMessage?**: `string` \| `null`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[backorderMessage](LineItem.md#backordermessage)
+[`LineItem`](LineItem.md).[`backorderMessage`](LineItem.md#backordermessage)
 
-___
+***
 
 ### brand
 
-• **brand**: `string`
+> **brand**: `string`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[brand](LineItem.md#brand)
+[`LineItem`](LineItem.md).[`brand`](LineItem.md#brand)
 
-___
+***
 
-### categories
+### categories?
 
-• `Optional` **categories**: [`LineItemCategory`](LineItemCategory.md)[][]
-
-#### Inherited from
-
-[LineItem](LineItem.md).[categories](LineItem.md#categories)
-
-___
-
-### categoryNames
-
-• `Optional` **categoryNames**: `string`[]
+> `optional` **categories?**: [`LineItemCategory`](LineItemCategory.md)[][]
 
 #### Inherited from
 
-[LineItem](LineItem.md).[categoryNames](LineItem.md#categorynames)
+[`LineItem`](LineItem.md).[`categories`](LineItem.md#categories)
 
-___
+***
+
+### categoryNames?
+
+> `optional` **categoryNames?**: `string`[]
+
+#### Inherited from
+
+[`LineItem`](LineItem.md).[`categoryNames`](LineItem.md#categorynames)
+
+***
 
 ### comparisonPrice
 
-• **comparisonPrice**: `number`
+> **comparisonPrice**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[comparisonPrice](LineItem.md#comparisonprice)
+[`LineItem`](LineItem.md).[`comparisonPrice`](LineItem.md#comparisonprice)
 
-___
+***
 
 ### couponAmount
 
-• **couponAmount**: `number`
+> **couponAmount**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[couponAmount](LineItem.md#couponamount)
+[`LineItem`](LineItem.md).[`couponAmount`](LineItem.md#couponamount)
 
-___
+***
 
 ### discountAmount
 
-• **discountAmount**: `number`
+> **discountAmount**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[discountAmount](LineItem.md#discountamount)
+[`LineItem`](LineItem.md).[`discountAmount`](LineItem.md#discountamount)
 
-___
+***
 
 ### discounts
 
-• **discounts**: \{ `discountedAmount`: `number` ; `name`: `string`  }[]
+> **discounts**: `object`[]
+
+#### discountedAmount
+
+> **discountedAmount**: `number`
+
+#### name
+
+> **name**: `string`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[discounts](LineItem.md#discounts)
+[`LineItem`](LineItem.md).[`discounts`](LineItem.md#discounts)
 
-___
+***
 
 ### extendedComparisonPrice
 
-• **extendedComparisonPrice**: `number`
+> **extendedComparisonPrice**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[extendedComparisonPrice](LineItem.md#extendedcomparisonprice)
+[`LineItem`](LineItem.md).[`extendedComparisonPrice`](LineItem.md#extendedcomparisonprice)
 
-___
+***
 
 ### extendedListPrice
 
-• **extendedListPrice**: `number`
+> **extendedListPrice**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[extendedListPrice](LineItem.md#extendedlistprice)
+[`LineItem`](LineItem.md).[`extendedListPrice`](LineItem.md#extendedlistprice)
 
-___
+***
 
 ### extendedSalePrice
 
-• **extendedSalePrice**: `number`
+> **extendedSalePrice**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[extendedSalePrice](LineItem.md#extendedsaleprice)
+[`LineItem`](LineItem.md).[`extendedSalePrice`](LineItem.md#extendedsaleprice)
 
-___
+***
 
-### giftWrapping
+### giftWrapping?
 
-• `Optional` **giftWrapping**: `Object`
+> `optional` **giftWrapping?**: `object`
 
-#### Type declaration
+#### amount
 
-| Name | Type |
-| :------ | :------ |
-| `amount` | `number` |
-| `message` | `string` |
-| `name` | `string` |
+> **amount**: `number`
 
-___
+#### message
+
+> **message**: `string`
+
+#### name
+
+> **name**: `string`
+
+***
 
 ### id
 
-• **id**: `string` \| `number`
+> **id**: `string` \| `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[id](LineItem.md#id)
+[`LineItem`](LineItem.md).[`id`](LineItem.md#id)
 
-___
+***
 
 ### imageUrl
 
-• **imageUrl**: `string`
+> **imageUrl**: `string`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[imageUrl](LineItem.md#imageurl)
+[`LineItem`](LineItem.md).[`imageUrl`](LineItem.md#imageurl)
 
-___
+***
 
 ### isShippingRequired
 
-• **isShippingRequired**: `boolean`
+> **isShippingRequired**: `boolean`
 
-___
+***
 
 ### isTaxable
 
-• **isTaxable**: `boolean`
+> **isTaxable**: `boolean`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[isTaxable](LineItem.md#istaxable)
+[`LineItem`](LineItem.md).[`isTaxable`](LineItem.md#istaxable)
 
-___
+***
 
 ### listPrice
 
-• **listPrice**: `number`
+> **listPrice**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[listPrice](LineItem.md#listprice)
+[`LineItem`](LineItem.md).[`listPrice`](LineItem.md#listprice)
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[name](LineItem.md#name)
+[`LineItem`](LineItem.md).[`name`](LineItem.md#name)
 
-___
+***
 
-### options
+### options?
 
-• `Optional` **options**: [`LineItemOption`](LineItemOption.md)[]
-
-#### Inherited from
-
-[LineItem](LineItem.md).[options](LineItem.md#options)
-
-___
-
-### parentId
-
-• `Optional` **parentId**: ``null`` \| `string`
+> `optional` **options?**: [`LineItemOption`](LineItemOption.md)[]
 
 #### Inherited from
 
-[LineItem](LineItem.md).[parentId](LineItem.md#parentid)
+[`LineItem`](LineItem.md).[`options`](LineItem.md#options)
 
-___
+***
+
+### parentId?
+
+> `optional` **parentId?**: `string` \| `null`
+
+#### Inherited from
+
+[`LineItem`](LineItem.md).[`parentId`](LineItem.md#parentid)
+
+***
 
 ### productId
 
-• **productId**: `number`
+> **productId**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[productId](LineItem.md#productid)
+[`LineItem`](LineItem.md).[`productId`](LineItem.md#productid)
 
-___
+***
 
 ### quantity
 
-• **quantity**: `number`
+> **quantity**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[quantity](LineItem.md#quantity)
+[`LineItem`](LineItem.md).[`quantity`](LineItem.md#quantity)
 
-___
+***
 
-### quantityBackordered
+### quantityBackordered?
 
-• `Optional` **quantityBackordered**: `number`
+> `optional` **quantityBackordered?**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[quantityBackordered](LineItem.md#quantitybackordered)
+[`LineItem`](LineItem.md).[`quantityBackordered`](LineItem.md#quantitybackordered)
 
-___
+***
 
 ### retailPrice
 
-• **retailPrice**: `number`
+> **retailPrice**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[retailPrice](LineItem.md#retailprice)
+[`LineItem`](LineItem.md).[`retailPrice`](LineItem.md#retailprice)
 
-___
+***
 
 ### salePrice
 
-• **salePrice**: `number`
+> **salePrice**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[salePrice](LineItem.md#saleprice)
+[`LineItem`](LineItem.md).[`salePrice`](LineItem.md#saleprice)
 
-___
+***
 
 ### sku
 
-• **sku**: `string`
+> **sku**: `string`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[sku](LineItem.md#sku)
+[`LineItem`](LineItem.md).[`sku`](LineItem.md#sku)
 
-___
+***
 
-### socialMedia
+### socialMedia?
 
-• `Optional` **socialMedia**: [`LineItemSocialData`](LineItemSocialData.md)[]
-
-#### Inherited from
-
-[LineItem](LineItem.md).[socialMedia](LineItem.md#socialmedia)
-
-___
-
-### stockPosition
-
-• `Optional` **stockPosition**: [`StockPosition`](StockPosition.md)
+> `optional` **socialMedia?**: [`LineItemSocialData`](LineItemSocialData.md)[]
 
 #### Inherited from
 
-[LineItem](LineItem.md).[stockPosition](LineItem.md#stockposition)
+[`LineItem`](LineItem.md).[`socialMedia`](LineItem.md#socialmedia)
 
-___
+***
+
+### stockPosition?
+
+> `optional` **stockPosition?**: [`StockPosition`](StockPosition.md)
+
+#### Inherited from
+
+[`LineItem`](LineItem.md).[`stockPosition`](LineItem.md#stockposition)
+
+***
 
 ### url
 
-• **url**: `string`
+> **url**: `string`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[url](LineItem.md#url)
+[`LineItem`](LineItem.md).[`url`](LineItem.md#url)
 
-___
+***
 
 ### variantId
 
-• **variantId**: `number`
+> **variantId**: `number`
 
 #### Inherited from
 
-[LineItem](LineItem.md).[variantId](LineItem.md#variantid)
+[`LineItem`](LineItem.md).[`variantId`](LineItem.md#variantid)

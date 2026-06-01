@@ -1,45 +1,42 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedFormOrderDataTransformer
 
 # Class: HostedFormOrderDataTransformer
 
-## Table of contents
-
-### Constructors
-
-- [constructor](HostedFormOrderDataTransformer.md#constructor)
-
-### Methods
-
-- [transform](HostedFormOrderDataTransformer.md#transform)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new HostedFormOrderDataTransformer**(`_store`): [`HostedFormOrderDataTransformer`](HostedFormOrderDataTransformer.md)
+> **new HostedFormOrderDataTransformer**(`_store`): `HostedFormOrderDataTransformer`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_store` | [`ReadableCheckoutStore`](../README.md#readablecheckoutstore) |
+##### \_store
+
+[`ReadableCheckoutStore`](../type-aliases/ReadableCheckoutStore.md)
 
 #### Returns
 
-[`HostedFormOrderDataTransformer`](HostedFormOrderDataTransformer.md)
+`HostedFormOrderDataTransformer`
 
 ## Methods
 
-### transform
+### transform()
 
-▸ **transform**(`payload`, `additionalAction?`): [`HostedFormOrderData`](../interfaces/HostedFormOrderData.md)
+> **transform**(`payload`, `additionalAction?`): [`HostedFormOrderData`](../interfaces/HostedFormOrderData.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `payload` | [`OrderPaymentRequestBody`](../interfaces/OrderPaymentRequestBody.md) |
-| `additionalAction?` | [`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md) |
+##### payload
+
+[`OrderPaymentRequestBody`](../interfaces/OrderPaymentRequestBody.md)
+
+##### additionalAction?
+
+[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)
 
 #### Returns
 

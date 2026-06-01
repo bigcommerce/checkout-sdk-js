@@ -14,6 +14,6 @@ declare class PaypalProPaymentStrategy extends CreditCardPaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
 }
 
-export declare const createPayPalProPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<PaypalProPaymentStrategy>, {
+export declare const createPayPalProPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PaypalProPaymentStrategy>, {
     id: string;
 }>;

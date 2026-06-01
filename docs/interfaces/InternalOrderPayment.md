@@ -1,50 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / InternalOrderPayment
 
 # Interface: InternalOrderPayment
 
-## Table of contents
-
-### Properties
-
-- [gateway](InternalOrderPayment.md#gateway)
-- [helpText](InternalOrderPayment.md#helptext)
-- [id](InternalOrderPayment.md#id)
-- [redirectUrl](InternalOrderPayment.md#redirecturl)
-- [returnUrl](InternalOrderPayment.md#returnurl)
-- [status](InternalOrderPayment.md#status)
-
 ## Properties
 
-### gateway
+### gateway?
 
-• `Optional` **gateway**: `string`
+> `optional` **gateway?**: `string`
 
-___
+***
 
-### helpText
+### helpText?
 
-• `Optional` **helpText**: `string`
+> `optional` **helpText?**: `string`
 
-___
+***
 
-### id
+### id?
 
-• `Optional` **id**: `string`
+> `optional` **id?**: `string`
 
-___
+***
 
-### redirectUrl
+### redirectUrl?
 
-• `Optional` **redirectUrl**: `string`
+> `optional` **redirectUrl?**: `string`
 
-___
+***
 
-### returnUrl
+### returnUrl?
 
-• `Optional` **returnUrl**: `string`
+> `optional` **returnUrl?**: `string`
 
-___
+***
 
-### status
+### status?
 
-• `Optional` **status**: `string`
+> `optional` **status?**: `string`

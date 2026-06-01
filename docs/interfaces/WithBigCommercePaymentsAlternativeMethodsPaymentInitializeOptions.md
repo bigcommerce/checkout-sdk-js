@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions
 
 # Interface: WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [bigcommerce\_payments\_apms](WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions.md#bigcommerce_payments_apms)
-
 ## Properties
 
-### bigcommerce\_payments\_apms
+### bigcommerce\_payments\_apms?
 
-• `Optional` **bigcommerce\_payments\_apms**: [`BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions`](BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions.md)
+> `optional` **bigcommerce\_payments\_apms?**: [`BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions`](BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions.md)

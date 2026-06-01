@@ -1,40 +1,36 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / SignInEmailSelector
 
 # Interface: SignInEmailSelector
 
-## Table of contents
-
-### Methods
-
-- [getEmail](SignInEmailSelector.md#getemail)
-- [getSendError](SignInEmailSelector.md#getsenderror)
-- [isSending](SignInEmailSelector.md#issending)
-
 ## Methods
 
-### getEmail
+### getEmail()
 
-▸ **getEmail**(): `undefined` \| [`SignInEmail`](SignInEmail.md)
-
-#### Returns
-
-`undefined` \| [`SignInEmail`](SignInEmail.md)
-
-___
-
-### getSendError
-
-▸ **getSendError**(): `undefined` \| `Error`
+> **getEmail**(): [`SignInEmail`](SignInEmail.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+[`SignInEmail`](SignInEmail.md) \| `undefined`
 
-___
+***
 
-### isSending
+### getSendError()
 
-▸ **isSending**(): `boolean`
+> **getSendError**(): `Error` \| `undefined`
+
+#### Returns
+
+`Error` \| `undefined`
+
+***
+
+### isSending()
+
+> **isSending**(): `boolean`
 
 #### Returns
 

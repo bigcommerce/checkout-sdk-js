@@ -1,29 +1,25 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CustomerCredentials
 
 # Interface: CustomerCredentials
 
-## Table of contents
-
-### Properties
-
-- [cartId](CustomerCredentials.md#cartid)
-- [email](CustomerCredentials.md#email)
-- [password](CustomerCredentials.md#password)
-
 ## Properties
 
-### cartId
+### cartId?
 
-• `Optional` **cartId**: `string`
+> `optional` **cartId?**: `string`
 
-___
+***
 
 ### email
 
-• **email**: `string`
+> **email**: `string`
 
-___
+***
 
 ### password
 
-• **password**: `string`
+> **password**: `string`

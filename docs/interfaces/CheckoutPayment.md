@@ -1,42 +1,35 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutPayment
 
 # Interface: CheckoutPayment
-
-## Table of contents
-
-### Properties
-
-- [detail](CheckoutPayment.md#detail)
-- [gatewayId](CheckoutPayment.md#gatewayid)
-- [providerId](CheckoutPayment.md#providerid)
-- [providerType](CheckoutPayment.md#providertype)
 
 ## Properties
 
 ### detail
 
-• **detail**: `Object`
+> **detail**: `object`
 
-#### Type declaration
+#### step
 
-| Name | Type |
-| :------ | :------ |
-| `step` | `string` |
+> **step**: `string`
 
-___
+***
 
-### gatewayId
+### gatewayId?
 
-• `Optional` **gatewayId**: `string`
+> `optional` **gatewayId?**: `string`
 
-___
+***
 
 ### providerId
 
-• **providerId**: `string`
+> **providerId**: `string`
 
-___
+***
 
 ### providerType
 
-• **providerType**: `string`
+> **providerType**: `string`

@@ -298,14 +298,14 @@ declare interface WithBoltPaymentInitializeOptions {
     bolt?: BoltPaymentInitializeOptions;
 }
 
-export declare const createBoltButtonStrategy: import("../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<BoltButtonStrategy>, {
+export declare const createBoltButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BoltButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createBoltCustomerStrategy: import("../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<BoltCustomerStrategy>, {
+export declare const createBoltCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BoltCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createBoltPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<BoltPaymentStrategy>, {
+export declare const createBoltPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BoltPaymentStrategy>, {
     id: string;
 }>;

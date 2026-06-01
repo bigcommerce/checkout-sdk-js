@@ -1,43 +1,39 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ContextConfig
 
 # Interface: ContextConfig
 
-## Table of contents
-
-### Properties
-
-- [checkoutId](ContextConfig.md#checkoutid)
-- [flashMessages](ContextConfig.md#flashmessages)
-- [geoCountryCode](ContextConfig.md#geocountrycode)
-- [payment](ContextConfig.md#payment)
-
 ## Properties
 
-### checkoutId
+### checkoutId?
 
-• `Optional` **checkoutId**: `string`
+> `optional` **checkoutId?**: `string`
 
-___
+***
 
 ### flashMessages
 
-• **flashMessages**: [`FlashMessage`](FlashMessage.md)[]
+> **flashMessages**: [`FlashMessage`](FlashMessage.md)[]
 
-___
+***
 
 ### geoCountryCode
 
-• **geoCountryCode**: `string`
+> **geoCountryCode**: `string`
 
-___
+***
 
 ### payment
 
-• **payment**: `Object`
+> **payment**: `object`
 
-#### Type declaration
+#### formId?
 
-| Name | Type |
-| :------ | :------ |
-| `formId?` | `string` |
-| `token?` | `string` |
+> `optional` **formId?**: `string`
+
+#### token?
+
+> `optional` **token?**: `string`

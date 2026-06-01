@@ -1,29 +1,27 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedFieldSubmitRequestEvent
 
 # Interface: HostedFieldSubmitRequestEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](HostedFieldSubmitRequestEvent.md#payload)
-- [type](HostedFieldSubmitRequestEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### data
 
-| Name | Type |
-| :------ | :------ |
-| `data` | [`HostedFormOrderData`](HostedFormOrderData.md) |
-| `fields` | [`HostedFieldType`](../enums/HostedFieldType.md)[] |
+> **data**: [`HostedFormOrderData`](HostedFormOrderData.md)
 
-___
+#### fields
+
+> **fields**: [`HostedFieldType`](../enumerations/HostedFieldType.md)[]
+
+***
 
 ### type
 
-• **type**: [`SubmitRequested`](../enums/HostedFieldEventType.md#submitrequested)
+> **type**: [`SubmitRequested`](../enumerations/HostedFieldEventType.md#submitrequested)

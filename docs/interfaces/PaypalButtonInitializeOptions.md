@@ -1,75 +1,70 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaypalButtonInitializeOptions
 
 # Interface: PaypalButtonInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [allowCredit](PaypalButtonInitializeOptions.md#allowcredit)
-- [clientId](PaypalButtonInitializeOptions.md#clientid)
-- [style](PaypalButtonInitializeOptions.md#style)
-
-### Methods
-
-- [onAuthorizeError](PaypalButtonInitializeOptions.md#onauthorizeerror)
-- [onPaymentError](PaypalButtonInitializeOptions.md#onpaymenterror)
-
 ## Properties
 
-### allowCredit
+### allowCredit?
 
-• `Optional` **allowCredit**: `boolean`
+> `optional` **allowCredit?**: `boolean`
 
 Whether or not to show a credit button.
 
-___
+***
 
 ### clientId
 
-• **clientId**: `string`
+> **clientId**: `string`
 
 The Client ID of the Paypal App
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: `Pick`\<[`PaypalStyleOptions`](PaypalStyleOptions.md), ``"label"`` \| ``"color"`` \| ``"layout"`` \| ``"shape"`` \| ``"size"`` \| ``"fundingicons"`` \| ``"tagline"``\>
+> `optional` **style?**: `Pick`\<[`PaypalStyleOptions`](PaypalStyleOptions.md), `"label"` \| `"color"` \| `"layout"` \| `"shape"` \| `"size"` \| `"fundingicons"` \| `"tagline"`\>
 
 A set of styling options for the checkout button.
 
 ## Methods
 
-### onAuthorizeError
+### onAuthorizeError()?
 
-▸ **onAuthorizeError**(`error`): `void`
+> `optional` **onAuthorizeError**(`error`): `void`
 
 A callback that gets called if unable to authorize and tokenize payment.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
+##### error
+
+[`StandardError`](../classes/StandardError.md)
+
+The error object describing the failure.
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onPaymentError
+### onPaymentError()?
 
-▸ **onPaymentError**(`error`): `void`
+> `optional` **onPaymentError**(`error`): `void`
 
 A callback that gets called if unable to submit payment.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error` | [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
+##### error
+
+[`StandardError`](../classes/StandardError.md)
+
+The error object describing the failure.
 
 #### Returns
 

@@ -1,43 +1,37 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / NonceInstrument
 
 # Interface: NonceInstrument
 
-## Table of contents
-
-### Properties
-
-- [deviceSessionId](NonceInstrument.md#devicesessionid)
-- [nonce](NonceInstrument.md#nonce)
-- [shouldSaveInstrument](NonceInstrument.md#shouldsaveinstrument)
-- [shouldSetAsDefaultInstrument](NonceInstrument.md#shouldsetasdefaultinstrument)
-- [tokenType](NonceInstrument.md#tokentype)
-
 ## Properties
 
-### deviceSessionId
+### deviceSessionId?
 
-• `Optional` **deviceSessionId**: `string`
+> `optional` **deviceSessionId?**: `string`
 
-___
+***
 
 ### nonce
 
-• **nonce**: `string`
+> **nonce**: `string`
 
-___
+***
 
-### shouldSaveInstrument
+### shouldSaveInstrument?
 
-• `Optional` **shouldSaveInstrument**: `boolean`
+> `optional` **shouldSaveInstrument?**: `boolean`
 
-___
+***
 
-### shouldSetAsDefaultInstrument
+### shouldSetAsDefaultInstrument?
 
-• `Optional` **shouldSetAsDefaultInstrument**: `boolean`
+> `optional` **shouldSetAsDefaultInstrument?**: `boolean`
 
-___
+***
 
-### tokenType
+### tokenType?
 
-• `Optional` **tokenType**: `string`
+> `optional` **tokenType?**: `string`

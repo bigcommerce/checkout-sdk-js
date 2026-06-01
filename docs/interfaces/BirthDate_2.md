@@ -1,40 +1,36 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BirthDate\_2
 
 # Interface: BirthDate\_2
 
-## Table of contents
-
-### Methods
-
-- [getDate](BirthDate_2.md#getdate)
-- [getFullYear](BirthDate_2.md#getfullyear)
-- [getMonth](BirthDate_2.md#getmonth)
-
 ## Methods
 
-### getDate
+### getDate()
 
-▸ **getDate**(): `number`
-
-#### Returns
-
-`number`
-
-___
-
-### getFullYear
-
-▸ **getFullYear**(): `number`
+> **getDate**(): `number`
 
 #### Returns
 
 `number`
 
-___
+***
 
-### getMonth
+### getFullYear()
 
-▸ **getMonth**(): `number`
+> **getFullYear**(): `number`
+
+#### Returns
+
+`number`
+
+***
+
+### getMonth()
+
+> **getMonth**(): `number`
 
 #### Returns
 

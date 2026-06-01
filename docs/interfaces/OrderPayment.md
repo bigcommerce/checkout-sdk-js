@@ -1,58 +1,48 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / OrderPayment
 
 # Interface: OrderPayment
 
-## Hierarchy
+## Extended by
 
-- **`OrderPayment`**
-
-  ↳ [`GatewayOrderPayment`](GatewayOrderPayment.md)
-
-  ↳ [`GiftCertificateOrderPayment`](GiftCertificateOrderPayment.md)
-
-## Table of contents
-
-### Properties
-
-- [amount](OrderPayment.md#amount)
-- [description](OrderPayment.md#description)
-- [gatewayId](OrderPayment.md#gatewayid)
-- [methodId](OrderPayment.md#methodid)
-- [paymentId](OrderPayment.md#paymentid)
-- [providerId](OrderPayment.md#providerid)
+- [`GatewayOrderPayment`](GatewayOrderPayment.md)
+- [`GiftCertificateOrderPayment`](GiftCertificateOrderPayment.md)
 
 ## Properties
 
 ### amount
 
-• **amount**: `number`
+> **amount**: `number`
 
-___
+***
 
 ### description
 
-• **description**: `string`
+> **description**: `string`
 
-___
+***
 
-### gatewayId
+### gatewayId?
 
-• `Optional` **gatewayId**: `string`
+> `optional` **gatewayId?**: `string`
 
-___
+***
 
-### methodId
+### methodId?
 
-• `Optional` **methodId**: `string`
+> `optional` **methodId?**: `string`
 
-___
+***
 
-### paymentId
+### paymentId?
 
-• `Optional` **paymentId**: `string`
+> `optional` **paymentId?**: `string`
 
-___
+***
 
 ### providerId
 
-• **providerId**: `string`
+> **providerId**: `string`

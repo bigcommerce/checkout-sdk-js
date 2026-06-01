@@ -1,170 +1,151 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StripeElementCSSProperties
 
 # Interface: StripeElementCSSProperties
 
 CSS properties supported by Stripe.js.
 
-## Hierarchy
+## Extended by
 
-- **`StripeElementCSSProperties`**
-
-  ↳ [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
-
-## Table of contents
-
-### Properties
-
-- [backgroundColor](StripeElementCSSProperties.md#backgroundcolor)
-- [color](StripeElementCSSProperties.md#color)
-- [fontFamily](StripeElementCSSProperties.md#fontfamily)
-- [fontSize](StripeElementCSSProperties.md#fontsize)
-- [fontSmoothing](StripeElementCSSProperties.md#fontsmoothing)
-- [fontStyle](StripeElementCSSProperties.md#fontstyle)
-- [fontVariant](StripeElementCSSProperties.md#fontvariant)
-- [fontWeight](StripeElementCSSProperties.md#fontweight)
-- [iconColor](StripeElementCSSProperties.md#iconcolor)
-- [letterSpacing](StripeElementCSSProperties.md#letterspacing)
-- [lineHeight](StripeElementCSSProperties.md#lineheight)
-- [padding](StripeElementCSSProperties.md#padding)
-- [textAlign](StripeElementCSSProperties.md#textalign)
-- [textDecoration](StripeElementCSSProperties.md#textdecoration)
-- [textShadow](StripeElementCSSProperties.md#textshadow)
-- [textTransform](StripeElementCSSProperties.md#texttransform)
+- [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
 
 ## Properties
 
-### backgroundColor
+### backgroundColor?
 
-• `Optional` **backgroundColor**: `string`
+> `optional` **backgroundColor?**: `string`
 
 The [background-color](https://developer.mozilla.org/en-US/docs/Web/CSS/background-color) CSS property.
 
 This property works best with the `::selection` pseudo-class.
 In other cases, consider setting the background color on the element's container instaed.
 
-___
+***
 
-### color
+### color?
 
-• `Optional` **color**: `string`
+> `optional` **color?**: `string`
 
 The [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) CSS property.
 
-___
+***
 
-### fontFamily
+### fontFamily?
 
-• `Optional` **fontFamily**: `string`
+> `optional` **fontFamily?**: `string`
 
 The [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) CSS property.
 
-___
+***
 
-### fontSize
+### fontSize?
 
-• `Optional` **fontSize**: `string`
+> `optional` **fontSize?**: `string`
 
 The [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) CSS property.
 
-___
+***
 
-### fontSmoothing
+### fontSmoothing?
 
-• `Optional` **fontSmoothing**: `string`
+> `optional` **fontSmoothing?**: `string`
 
 The [font-smoothing](https://developer.mozilla.org/en-US/docs/Web/CSS/font-smoothing) CSS property.
 
-___
+***
 
-### fontStyle
+### fontStyle?
 
-• `Optional` **fontStyle**: `string`
+> `optional` **fontStyle?**: `string`
 
 The [font-style](https://developer.mozilla.org/en-US/docs/Web/CSS/font-style) CSS property.
 
-___
+***
 
-### fontVariant
+### fontVariant?
 
-• `Optional` **fontVariant**: `string`
+> `optional` **fontVariant?**: `string`
 
 The [font-variant](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant) CSS property.
 
-___
+***
 
-### fontWeight
+### fontWeight?
 
-• `Optional` **fontWeight**: `string`
+> `optional` **fontWeight?**: `string`
 
 The [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) CSS property.
 
-___
+***
 
-### iconColor
+### iconColor?
 
-• `Optional` **iconColor**: `string`
+> `optional` **iconColor?**: `string`
 
 A custom property, used to set the color of the icons that are rendered in an element.
 
-___
+***
 
-### letterSpacing
+### letterSpacing?
 
-• `Optional` **letterSpacing**: `string`
+> `optional` **letterSpacing?**: `string`
 
 The [letter-spacing](https://developer.mozilla.org/en-US/docs/Web/CSS/letter-spacing) CSS property.
 
-___
+***
 
-### lineHeight
+### lineHeight?
 
-• `Optional` **lineHeight**: `string`
+> `optional` **lineHeight?**: `string`
 
 The [line-height](https://developer.mozilla.org/en-US/docs/Web/CSS/line-height) CSS property.
 
 To avoid cursors being rendered inconsistently across browsers, consider using a padding on the element's container instead.
 
-___
+***
 
-### padding
+### padding?
 
-• `Optional` **padding**: `string`
+> `optional` **padding?**: `string`
 
 The [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) CSS property.
 
 Available for the `idealBank` element.
 Accepts integer `px` values.
 
-___
+***
 
-### textAlign
+### textAlign?
 
-• `Optional` **textAlign**: `string`
+> `optional` **textAlign?**: `string`
 
 The [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align) CSS property.
 
 Available for the `cardNumber`, `cardExpiry`, and `cardCvc` elements.
 
-___
+***
 
-### textDecoration
+### textDecoration?
 
-• `Optional` **textDecoration**: `string`
+> `optional` **textDecoration?**: `string`
 
 The [text-decoration](https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration) CSS property.
 
-___
+***
 
-### textShadow
+### textShadow?
 
-• `Optional` **textShadow**: `string`
+> `optional` **textShadow?**: `string`
 
 The [text-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/text-shadow) CSS property.
 
-___
+***
 
-### textTransform
+### textTransform?
 
-• `Optional` **textTransform**: `string`
+> `optional` **textTransform?**: `string`
 
 The [text-transform](https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform) CSS property.

@@ -1,74 +1,72 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GoogleRecaptcha
 
 # Class: GoogleRecaptcha
 
-## Table of contents
-
-### Constructors
-
-- [constructor](GoogleRecaptcha.md#constructor)
-
-### Methods
-
-- [execute](GoogleRecaptcha.md#execute)
-- [load](GoogleRecaptcha.md#load)
-- [reset](GoogleRecaptcha.md#reset)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new GoogleRecaptcha**(`googleRecaptchaScriptLoader`, `mutationObserverFactory`): [`GoogleRecaptcha`](GoogleRecaptcha.md)
+> **new GoogleRecaptcha**(`googleRecaptchaScriptLoader`, `mutationObserverFactory`): `GoogleRecaptcha`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `googleRecaptchaScriptLoader` | [`GoogleRecaptchaScriptLoader`](GoogleRecaptchaScriptLoader.md) |
-| `mutationObserverFactory` | [`MutationObserverFactory`](MutationObserverFactory.md) |
+##### googleRecaptchaScriptLoader
+
+[`GoogleRecaptchaScriptLoader`](GoogleRecaptchaScriptLoader.md)
+
+##### mutationObserverFactory
+
+[`MutationObserverFactory`](MutationObserverFactory.md)
 
 #### Returns
 
-[`GoogleRecaptcha`](GoogleRecaptcha.md)
+`GoogleRecaptcha`
 
 ## Methods
 
-### execute
+### execute()
 
-▸ **execute**(): `Observable`\<[`RecaptchaResult`](../interfaces/RecaptchaResult.md)\>
+> **execute**(): `Observable`\<[`RecaptchaResult`](../interfaces/RecaptchaResult.md)\>
 
 #### Returns
 
 `Observable`\<[`RecaptchaResult`](../interfaces/RecaptchaResult.md)\>
 
-___
+***
 
-### load
+### load()
 
-▸ **load**(`containerId`, `sitekey`): `Promise`\<`void`\>
+> **load**(`containerId`, `sitekey`): `Promise`\<`void`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `containerId` | `string` |
-| `sitekey` | `string` |
+##### containerId
+
+`string`
+
+##### sitekey
+
+`string`
 
 #### Returns
 
 `Promise`\<`void`\>
 
-___
+***
 
-### reset
+### reset()
 
-▸ **reset**(`containerId`): `void`
+> **reset**(`containerId`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `containerId` | `string` |
+##### containerId
+
+`string`
 
 #### Returns
 

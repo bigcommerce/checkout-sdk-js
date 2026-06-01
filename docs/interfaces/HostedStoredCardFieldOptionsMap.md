@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedStoredCardFieldOptionsMap
 
 # Interface: HostedStoredCardFieldOptionsMap
 
-## Table of contents
-
-### Properties
-
-- [cardCodeVerification](HostedStoredCardFieldOptionsMap.md#cardcodeverification)
-- [cardNumberVerification](HostedStoredCardFieldOptionsMap.md#cardnumberverification)
-
 ## Properties
 
-### cardCodeVerification
+### cardCodeVerification?
 
-• `Optional` **cardCodeVerification**: [`HostedStoredCardFieldOptions`](HostedStoredCardFieldOptions.md)
+> `optional` **cardCodeVerification?**: [`HostedStoredCardFieldOptions`](HostedStoredCardFieldOptions.md)
 
-___
+***
 
-### cardNumberVerification
+### cardNumberVerification?
 
-• `Optional` **cardNumberVerification**: [`HostedStoredCardFieldOptions`](HostedStoredCardFieldOptions.md)
+> `optional` **cardNumberVerification?**: [`HostedStoredCardFieldOptions`](HostedStoredCardFieldOptions.md)

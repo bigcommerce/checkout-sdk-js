@@ -1,29 +1,26 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaymentProviderCustomerSelector
 
 # Interface: PaymentProviderCustomerSelector
 
-## Table of contents
-
-### Methods
-
-- [getPaymentProviderCustomer](PaymentProviderCustomerSelector.md#getpaymentprovidercustomer)
-- [getPaymentProviderCustomerOrThrow](PaymentProviderCustomerSelector.md#getpaymentprovidercustomerorthrow)
-
 ## Methods
 
-### getPaymentProviderCustomer
+### getPaymentProviderCustomer()
 
-▸ **getPaymentProviderCustomer**(): `undefined` \| `PaymentProviderCustomer`
+> **getPaymentProviderCustomer**(): `PaymentProviderCustomer` \| `undefined`
 
 #### Returns
 
-`undefined` \| `PaymentProviderCustomer`
+`PaymentProviderCustomer` \| `undefined`
 
-___
+***
 
-### getPaymentProviderCustomerOrThrow
+### getPaymentProviderCustomerOrThrow()
 
-▸ **getPaymentProviderCustomerOrThrow**(): `PaymentProviderCustomer`
+> **getPaymentProviderCustomerOrThrow**(): `PaymentProviderCustomer`
 
 #### Returns
 

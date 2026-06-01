@@ -1,29 +1,26 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StoreCreditSelector
 
 # Interface: StoreCreditSelector
 
-## Table of contents
-
-### Methods
-
-- [getApplyError](StoreCreditSelector.md#getapplyerror)
-- [isApplying](StoreCreditSelector.md#isapplying)
-
 ## Methods
 
-### getApplyError
+### getApplyError()
 
-▸ **getApplyError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+> **getApplyError**(): [`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+[`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
-___
+***
 
-### isApplying
+### isApplying()
 
-▸ **isApplying**(): `boolean`
+> **isApplying**(): `boolean`
 
 #### Returns
 

@@ -159,14 +159,14 @@ declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
     };
 }
 
-export declare const createAmazonPayV2ButtonStrategy: import("../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<AmazonPayV2ButtonStrategy>, {
+export declare const createAmazonPayV2ButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<AmazonPayV2ButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createAmazonPayV2CustomerStrategy: import("../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<AmazonPayV2CustomerStrategy>, {
+export declare const createAmazonPayV2CustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<AmazonPayV2CustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createAmazonPayV2PaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<AmazonPayV2PaymentStrategy>, {
+export declare const createAmazonPayV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<AmazonPayV2PaymentStrategy>, {
     id: string;
 }>;

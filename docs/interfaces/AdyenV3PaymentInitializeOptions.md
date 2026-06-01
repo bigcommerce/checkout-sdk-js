@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / AdyenV3PaymentInitializeOptions
 
 # Interface: AdyenV3PaymentInitializeOptions
@@ -60,78 +64,63 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [additionalActionOptions](AdyenV3PaymentInitializeOptions.md#additionalactionoptions)
-- [cardVerificationContainerId](AdyenV3PaymentInitializeOptions.md#cardverificationcontainerid)
-- [containerId](AdyenV3PaymentInitializeOptions.md#containerid)
-- [hasVaultedInstruments](AdyenV3PaymentInitializeOptions.md#hasvaultedinstruments)
-- [options](AdyenV3PaymentInitializeOptions.md#options)
-- [shouldShowNumberField](AdyenV3PaymentInitializeOptions.md#shouldshownumberfield)
-
-### Methods
-
-- [validateCardFields](AdyenV3PaymentInitializeOptions.md#validatecardfields)
-
 ## Properties
 
 ### additionalActionOptions
 
-• **additionalActionOptions**: [`AdyenAdditionalActionOptions`](AdyenAdditionalActionOptions.md)
+> **additionalActionOptions**: [`AdyenAdditionalActionOptions`](AdyenAdditionalActionOptions.md)
 
 A set of options that are required to initialize additional payment actions.
 
-___
+***
 
-### cardVerificationContainerId
+### cardVerificationContainerId?
 
-• `Optional` **cardVerificationContainerId**: `string`
+> `optional` **cardVerificationContainerId?**: `string`
 
 The location to insert the Adyen custom card component
 
-___
+***
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 The location to insert the Adyen component.
 
-___
+***
 
-### hasVaultedInstruments
+### hasVaultedInstruments?
 
-• `Optional` **hasVaultedInstruments**: `boolean`
+> `optional` **hasVaultedInstruments?**: `boolean`
 
 True if the Adyen component has some Vaulted instrument
 
-___
+***
 
-### options
+### options?
 
-• `Optional` **options**: `Omit`\<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"onChange"``\>
+> `optional` **options?**: `Omit`\<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), `"onChange"`\>
 
 Optional. Overwriting the default options
 
-___
+***
 
-### shouldShowNumberField
+### shouldShowNumberField?
 
-• `Optional` **shouldShowNumberField**: `boolean`
+> `optional` **shouldShowNumberField?**: `boolean`
 
 ## Methods
 
-### validateCardFields
+### validateCardFields()
 
-▸ **validateCardFields**(`validateState`): `void`
+> **validateCardFields**(`validateState`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `validateState` | [`AdyenValidationState`](AdyenValidationState.md) |
+##### validateState
+
+[`AdyenValidationState`](AdyenValidationState.md)
 
 #### Returns
 

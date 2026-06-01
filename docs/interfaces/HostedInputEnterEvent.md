@@ -1,28 +1,23 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInputEnterEvent
 
 # Interface: HostedInputEnterEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](HostedInputEnterEvent.md#payload)
-- [type](HostedInputEnterEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### fieldType
 
-| Name | Type |
-| :------ | :------ |
-| `fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
+> **fieldType**: [`HostedFieldType`](../enumerations/HostedFieldType.md)
 
-___
+***
 
 ### type
 
-• **type**: [`Entered`](../enums/HostedInputEventType.md#entered)
+> **type**: [`Entered`](../enumerations/HostedInputEventType.md#entered)

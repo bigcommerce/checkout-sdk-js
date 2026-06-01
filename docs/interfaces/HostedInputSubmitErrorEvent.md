@@ -1,29 +1,27 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInputSubmitErrorEvent
 
 # Interface: HostedInputSubmitErrorEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](HostedInputSubmitErrorEvent.md#payload)
-- [type](HostedInputSubmitErrorEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### error
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `PaymentErrorData` |
-| `response?` | `default`\<`PaymentErrorResponseBody`\> |
+> **error**: `PaymentErrorData`
 
-___
+#### response?
+
+> `optional` **response?**: `Response`\<`PaymentErrorResponseBody`\>
+
+***
 
 ### type
 
-• **type**: [`SubmitFailed`](../enums/HostedInputEventType.md#submitfailed)
+> **type**: [`SubmitFailed`](../enumerations/HostedInputEventType.md#submitfailed)

@@ -1,44 +1,38 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / MutationObserverFactory
 
 # Class: MutationObserverFactory
 
-## Table of contents
-
-### Constructors
-
-- [constructor](MutationObserverFactory.md#constructor)
-
-### Methods
-
-- [create](MutationObserverFactory.md#create)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new MutationObserverFactory**(`_window?`): [`MutationObserverFactory`](MutationObserverFactory.md)
+> **new MutationObserverFactory**(`_window?`): `MutationObserverFactory`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_window?` | [`MutationObserverWindow`](../interfaces/MutationObserverWindow.md) |
+##### \_window?
+
+[`MutationObserverWindow`](../interfaces/MutationObserverWindow.md)
 
 #### Returns
 
-[`MutationObserverFactory`](MutationObserverFactory.md)
+`MutationObserverFactory`
 
 ## Methods
 
-### create
+### create()
 
-▸ **create**(`callback`): `MutationObserver`
+> **create**(`callback`): `MutationObserver`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `callback` | `MutationCallback` |
+##### callback
+
+`MutationCallback`
 
 #### Returns
 

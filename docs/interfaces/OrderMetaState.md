@@ -1,53 +1,45 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / OrderMetaState
 
 # Interface: OrderMetaState
 
-## Hierarchy
+## Extends
 
 - [`InternalOrderMeta`](InternalOrderMeta.md)
 
-  ↳ **`OrderMetaState`**
-
-## Table of contents
-
-### Properties
-
-- [callbackUrl](OrderMetaState.md#callbackurl)
-- [deviceFingerprint](OrderMetaState.md#devicefingerprint)
-- [orderToken](OrderMetaState.md#ordertoken)
-- [payment](OrderMetaState.md#payment)
-- [token](OrderMetaState.md#token)
-
 ## Properties
 
-### callbackUrl
+### callbackUrl?
 
-• `Optional` **callbackUrl**: `string`
+> `optional` **callbackUrl?**: `string`
 
-___
+***
 
-### deviceFingerprint
+### deviceFingerprint?
 
-• `Optional` **deviceFingerprint**: `string`
+> `optional` **deviceFingerprint?**: `string`
 
 #### Inherited from
 
-[InternalOrderMeta](InternalOrderMeta.md).[deviceFingerprint](InternalOrderMeta.md#devicefingerprint)
+[`InternalOrderMeta`](InternalOrderMeta.md).[`deviceFingerprint`](InternalOrderMeta.md#devicefingerprint)
 
-___
+***
 
-### orderToken
+### orderToken?
 
-• `Optional` **orderToken**: `string`
+> `optional` **orderToken?**: `string`
 
-___
+***
 
-### payment
+### payment?
 
-• `Optional` **payment**: [`InternalOrderPayment`](InternalOrderPayment.md)
+> `optional` **payment?**: [`InternalOrderPayment`](InternalOrderPayment.md)
 
-___
+***
 
-### token
+### token?
 
-• `Optional` **token**: `string`
+> `optional` **token?**: `string`

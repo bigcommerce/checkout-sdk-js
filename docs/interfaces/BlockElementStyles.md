@@ -1,105 +1,92 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BlockElementStyles
 
 # Interface: BlockElementStyles
 
-## Hierarchy
+## Extends
 
 - [`InlineElementStyles`](InlineElementStyles.md)
 
-  ↳ **`BlockElementStyles`**
+## Extended by
 
-  ↳↳ [`ButtonStyles`](ButtonStyles.md)
-
-  ↳↳ [`ChecklistStyles`](ChecklistStyles.md)
-
-  ↳↳ [`InputStyles`](InputStyles.md)
-
-  ↳↳ [`StepStyles`](StepStyles.md)
-
-## Table of contents
-
-### Properties
-
-- [backgroundColor](BlockElementStyles.md#backgroundcolor)
-- [borderColor](BlockElementStyles.md#bordercolor)
-- [borderWidth](BlockElementStyles.md#borderwidth)
-- [boxShadow](BlockElementStyles.md#boxshadow)
-- [color](BlockElementStyles.md#color)
-- [fontFamily](BlockElementStyles.md#fontfamily)
-- [fontWeight](BlockElementStyles.md#fontweight)
-- [letterSpacing](BlockElementStyles.md#letterspacing)
-- [lineHeight](BlockElementStyles.md#lineheight)
+- [`ButtonStyles`](ButtonStyles.md)
+- [`ChecklistStyles`](ChecklistStyles.md)
+- [`InputStyles`](InputStyles.md)
+- [`StepStyles`](StepStyles.md)
 
 ## Properties
 
-### backgroundColor
+### backgroundColor?
 
-• `Optional` **backgroundColor**: `string`
+> `optional` **backgroundColor?**: `string`
 
-___
+***
 
-### borderColor
+### borderColor?
 
-• `Optional` **borderColor**: `string`
+> `optional` **borderColor?**: `string`
 
-___
+***
 
-### borderWidth
+### borderWidth?
 
-• `Optional` **borderWidth**: `string`
+> `optional` **borderWidth?**: `string`
 
-___
+***
 
-### boxShadow
+### boxShadow?
 
-• `Optional` **boxShadow**: `string`
+> `optional` **boxShadow?**: `string`
 
-___
+***
 
-### color
+### color?
 
-• `Optional` **color**: `string`
-
-#### Inherited from
-
-[InlineElementStyles](InlineElementStyles.md).[color](InlineElementStyles.md#color)
-
-___
-
-### fontFamily
-
-• `Optional` **fontFamily**: `string`
+> `optional` **color?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[fontFamily](InlineElementStyles.md#fontfamily)
+[`InlineElementStyles`](InlineElementStyles.md).[`color`](InlineElementStyles.md#color)
 
-___
+***
 
-### fontWeight
+### fontFamily?
 
-• `Optional` **fontWeight**: `string`
-
-#### Inherited from
-
-[InlineElementStyles](InlineElementStyles.md).[fontWeight](InlineElementStyles.md#fontweight)
-
-___
-
-### letterSpacing
-
-• `Optional` **letterSpacing**: `string`
+> `optional` **fontFamily?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[letterSpacing](InlineElementStyles.md#letterspacing)
+[`InlineElementStyles`](InlineElementStyles.md).[`fontFamily`](InlineElementStyles.md#fontfamily)
 
-___
+***
 
-### lineHeight
+### fontWeight?
 
-• `Optional` **lineHeight**: `string`
+> `optional` **fontWeight?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[lineHeight](InlineElementStyles.md#lineheight)
+[`InlineElementStyles`](InlineElementStyles.md).[`fontWeight`](InlineElementStyles.md#fontweight)
+
+***
+
+### letterSpacing?
+
+> `optional` **letterSpacing?**: `string`
+
+#### Inherited from
+
+[`InlineElementStyles`](InlineElementStyles.md).[`letterSpacing`](InlineElementStyles.md#letterspacing)
+
+***
+
+### lineHeight?
+
+> `optional` **lineHeight?**: `string`
+
+#### Inherited from
+
+[`InlineElementStyles`](InlineElementStyles.md).[`lineHeight`](InlineElementStyles.md#lineheight)

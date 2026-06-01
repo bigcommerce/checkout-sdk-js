@@ -1,134 +1,122 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ConfigSelector
 
 # Interface: ConfigSelector
 
-## Table of contents
-
-### Methods
-
-- [getConfig](ConfigSelector.md#getconfig)
-- [getContextConfig](ConfigSelector.md#getcontextconfig)
-- [getExternalSource](ConfigSelector.md#getexternalsource)
-- [getFlashMessages](ConfigSelector.md#getflashmessages)
-- [getHost](ConfigSelector.md#gethost)
-- [getLoadError](ConfigSelector.md#getloaderror)
-- [getLocale](ConfigSelector.md#getlocale)
-- [getStoreConfig](ConfigSelector.md#getstoreconfig)
-- [getStoreConfigOrThrow](ConfigSelector.md#getstoreconfigorthrow)
-- [getVariantIdentificationToken](ConfigSelector.md#getvariantidentificationtoken)
-- [isLoading](ConfigSelector.md#isloading)
-
 ## Methods
 
-### getConfig
+### getConfig()
 
-▸ **getConfig**(): `undefined` \| [`Config`](Config.md)
-
-#### Returns
-
-`undefined` \| [`Config`](Config.md)
-
-___
-
-### getContextConfig
-
-▸ **getContextConfig**(): `undefined` \| [`ContextConfig`](ContextConfig.md)
+> **getConfig**(): [`Config`](Config.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| [`ContextConfig`](ContextConfig.md)
+[`Config`](Config.md) \| `undefined`
 
-___
+***
 
-### getExternalSource
+### getContextConfig()
 
-▸ **getExternalSource**(): `undefined` \| `string`
+> **getContextConfig**(): [`ContextConfig`](ContextConfig.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| `string`
+[`ContextConfig`](ContextConfig.md) \| `undefined`
 
-___
+***
 
-### getFlashMessages
+### getExternalSource()
 
-▸ **getFlashMessages**(`type?`): `undefined` \| [`FlashMessage`](FlashMessage.md)[]
+> **getExternalSource**(): `string` \| `undefined`
+
+#### Returns
+
+`string` \| `undefined`
+
+***
+
+### getFlashMessages()
+
+> **getFlashMessages**(`type?`): [`FlashMessage`](FlashMessage.md)[] \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `type?` | [`FlashMessageType`](../README.md#flashmessagetype) |
+##### type?
+
+[`FlashMessageType`](../type-aliases/FlashMessageType.md)
 
 #### Returns
 
-`undefined` \| [`FlashMessage`](FlashMessage.md)[]
+[`FlashMessage`](FlashMessage.md)[] \| `undefined`
 
-___
+***
 
-### getHost
+### getHost()
 
-▸ **getHost**(): `undefined` \| `string`
-
-#### Returns
-
-`undefined` \| `string`
-
-___
-
-### getLoadError
-
-▸ **getLoadError**(): `undefined` \| `Error`
+> **getHost**(): `string` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`string` \| `undefined`
 
-___
+***
 
-### getLocale
+### getLoadError()
 
-▸ **getLocale**(): `undefined` \| `string`
-
-#### Returns
-
-`undefined` \| `string`
-
-___
-
-### getStoreConfig
-
-▸ **getStoreConfig**(): `undefined` \| [`StoreConfig`](StoreConfig.md)
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| [`StoreConfig`](StoreConfig.md)
+`Error` \| `undefined`
 
-___
+***
 
-### getStoreConfigOrThrow
+### getLocale()
 
-▸ **getStoreConfigOrThrow**(): [`StoreConfig`](StoreConfig.md)
+> **getLocale**(): `string` \| `undefined`
+
+#### Returns
+
+`string` \| `undefined`
+
+***
+
+### getStoreConfig()
+
+> **getStoreConfig**(): [`StoreConfig`](StoreConfig.md) \| `undefined`
+
+#### Returns
+
+[`StoreConfig`](StoreConfig.md) \| `undefined`
+
+***
+
+### getStoreConfigOrThrow()
+
+> **getStoreConfigOrThrow**(): [`StoreConfig`](StoreConfig.md)
 
 #### Returns
 
 [`StoreConfig`](StoreConfig.md)
 
-___
+***
 
-### getVariantIdentificationToken
+### getVariantIdentificationToken()
 
-▸ **getVariantIdentificationToken**(): `undefined` \| `string`
+> **getVariantIdentificationToken**(): `string` \| `undefined`
 
 #### Returns
 
-`undefined` \| `string`
+`string` \| `undefined`
 
-___
+***
 
-### isLoading
+### isLoading()
 
-▸ **isLoading**(): `boolean`
+> **isLoading**(): `boolean`
 
 #### Returns
 

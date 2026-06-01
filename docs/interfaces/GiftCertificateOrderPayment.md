@@ -1,94 +1,85 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GiftCertificateOrderPayment
 
 # Interface: GiftCertificateOrderPayment
 
-## Hierarchy
+## Extends
 
 - [`OrderPayment`](OrderPayment.md)
-
-  ↳ **`GiftCertificateOrderPayment`**
-
-## Table of contents
-
-### Properties
-
-- [amount](GiftCertificateOrderPayment.md#amount)
-- [description](GiftCertificateOrderPayment.md#description)
-- [detail](GiftCertificateOrderPayment.md#detail)
-- [gatewayId](GiftCertificateOrderPayment.md#gatewayid)
-- [methodId](GiftCertificateOrderPayment.md#methodid)
-- [paymentId](GiftCertificateOrderPayment.md#paymentid)
-- [providerId](GiftCertificateOrderPayment.md#providerid)
 
 ## Properties
 
 ### amount
 
-• **amount**: `number`
+> **amount**: `number`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[amount](OrderPayment.md#amount)
+[`OrderPayment`](OrderPayment.md).[`amount`](OrderPayment.md#amount)
 
-___
+***
 
 ### description
 
-• **description**: `string`
+> **description**: `string`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[description](OrderPayment.md#description)
+[`OrderPayment`](OrderPayment.md).[`description`](OrderPayment.md#description)
 
-___
+***
 
 ### detail
 
-• **detail**: `Object`
+> **detail**: `object`
 
-#### Type declaration
+#### code
 
-| Name | Type |
-| :------ | :------ |
-| `code` | `string` |
-| `remaining` | `number` |
+> **code**: `string`
 
-___
+#### remaining
 
-### gatewayId
+> **remaining**: `number`
 
-• `Optional` **gatewayId**: `string`
+***
 
-#### Inherited from
+### gatewayId?
 
-[OrderPayment](OrderPayment.md).[gatewayId](OrderPayment.md#gatewayid)
-
-___
-
-### methodId
-
-• `Optional` **methodId**: `string`
+> `optional` **gatewayId?**: `string`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[methodId](OrderPayment.md#methodid)
+[`OrderPayment`](OrderPayment.md).[`gatewayId`](OrderPayment.md#gatewayid)
 
-___
+***
 
-### paymentId
+### methodId?
 
-• `Optional` **paymentId**: `string`
+> `optional` **methodId?**: `string`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[paymentId](OrderPayment.md#paymentid)
+[`OrderPayment`](OrderPayment.md).[`methodId`](OrderPayment.md#methodid)
 
-___
+***
+
+### paymentId?
+
+> `optional` **paymentId?**: `string`
+
+#### Inherited from
+
+[`OrderPayment`](OrderPayment.md).[`paymentId`](OrderPayment.md#paymentid)
+
+***
 
 ### providerId
 
-• **providerId**: `string`
+> **providerId**: `string`
 
 #### Inherited from
 
-[OrderPayment](OrderPayment.md).[providerId](OrderPayment.md#providerid)
+[`OrderPayment`](OrderPayment.md).[`providerId`](OrderPayment.md#providerid)

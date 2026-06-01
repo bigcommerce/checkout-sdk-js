@@ -1,92 +1,79 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Consignment
 
 # Interface: Consignment
-
-## Table of contents
-
-### Properties
-
-- [address](Consignment.md#address)
-- [availableShippingOptions](Consignment.md#availableshippingoptions)
-- [comparisonShippingCost](Consignment.md#comparisonshippingcost)
-- [discounts](Consignment.md#discounts)
-- [handlingCost](Consignment.md#handlingcost)
-- [id](Consignment.md#id)
-- [lineItemIds](Consignment.md#lineitemids)
-- [selectedPickupOption](Consignment.md#selectedpickupoption)
-- [selectedShippingOption](Consignment.md#selectedshippingoption)
-- [shippingAddress](Consignment.md#shippingaddress)
-- [shippingCost](Consignment.md#shippingcost)
-- [shippingCostBeforeDiscount](Consignment.md#shippingcostbeforediscount)
 
 ## Properties
 
 ### address
 
-• **address**: [`Address`](Address.md)
+> **address**: [`Address`](Address.md)
 
-___
+***
 
-### availableShippingOptions
+### availableShippingOptions?
 
-• `Optional` **availableShippingOptions**: [`ShippingOption`](ShippingOption.md)[]
+> `optional` **availableShippingOptions?**: [`ShippingOption`](ShippingOption.md)[]
 
-___
+***
 
 ### comparisonShippingCost
 
-• **comparisonShippingCost**: `number`
+> **comparisonShippingCost**: `number`
 
-___
+***
 
 ### discounts
 
-• **discounts**: [`ConsignmentDiscount`](../README.md#consignmentdiscount)[]
+> **discounts**: [`ConsignmentDiscount`](../type-aliases/ConsignmentDiscount.md)[]
 
-___
+***
 
 ### handlingCost
 
-• **handlingCost**: `number`
+> **handlingCost**: `number`
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
 ### lineItemIds
 
-• **lineItemIds**: `string`[]
+> **lineItemIds**: `string`[]
 
-___
+***
 
-### selectedPickupOption
+### selectedPickupOption?
 
-• `Optional` **selectedPickupOption**: [`ConsignmentPickupOption`](ConsignmentPickupOption.md)
+> `optional` **selectedPickupOption?**: [`ConsignmentPickupOption`](ConsignmentPickupOption.md)
 
-___
+***
 
-### selectedShippingOption
+### selectedShippingOption?
 
-• `Optional` **selectedShippingOption**: [`ShippingOption`](ShippingOption.md)
+> `optional` **selectedShippingOption?**: [`ShippingOption`](ShippingOption.md)
 
-___
+***
 
 ### shippingAddress
 
-• **shippingAddress**: [`Address`](Address.md)
+> **shippingAddress**: [`Address`](Address.md)
 
-___
+***
 
 ### shippingCost
 
-• **shippingCost**: `number`
+> **shippingCost**: `number`
 
-___
+***
 
 ### shippingCostBeforeDiscount
 
-• **shippingCostBeforeDiscount**: `number`
+> **shippingCostBeforeDiscount**: `number`

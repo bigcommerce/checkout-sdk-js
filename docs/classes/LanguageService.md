@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / LanguageService
 
 # Class: LanguageService
@@ -10,33 +14,21 @@ appropriate for a given locale.
 The language strings provided to the object should follow [ICU
 MessageFormat](http://userguide.icu-project.org/formatparse/messages) syntax.
 
-## Table of contents
-
-### Constructors
-
-- [constructor](LanguageService.md#constructor)
-
-### Methods
-
-- [getLocale](LanguageService.md#getlocale)
-- [mapKeys](LanguageService.md#mapkeys)
-- [translate](LanguageService.md#translate)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new LanguageService**(): [`LanguageService`](LanguageService.md)
+> **new LanguageService**(): `LanguageService`
 
 #### Returns
 
-[`LanguageService`](LanguageService.md)
+`LanguageService`
 
 ## Methods
 
-### getLocale
+### getLocale()
 
-▸ **getLocale**(): `string`
+> **getLocale**(): `string`
 
 Gets the preferred locale of the current customer.
 
@@ -46,11 +38,11 @@ Gets the preferred locale of the current customer.
 
 The preferred locale code.
 
-___
+***
 
-### mapKeys
+### mapKeys()
 
-▸ **mapKeys**(`maps`): `void`
+> **mapKeys**(`maps`): `void`
 
 Remaps a set of language strings with a different set of keys.
 
@@ -64,19 +56,19 @@ console.log(service.translate('new_key'));
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `maps` | `Object` | The set of language strings. |
+##### maps
+
+The set of language strings.
 
 #### Returns
 
 `void`
 
-___
+***
 
-### translate
+### translate()
 
-▸ **translate**(`key`, `data?`): `string`
+> **translate**(`key`, `data?`): `string`
 
 Gets a language string by a key.
 
@@ -93,10 +85,17 @@ service.translate('language_key', { placeholder: 'Hello' });
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `key` | `string` | The language key. |
-| `data?` | [`TranslationData`](../interfaces/TranslationData.md) | Data for replacing placeholders in the language string. |
+##### key
+
+`string`
+
+The language key.
+
+##### data?
+
+[`TranslationData`](../interfaces/TranslationData.md)
+
+Data for replacing placeholders in the language string.
 
 #### Returns
 

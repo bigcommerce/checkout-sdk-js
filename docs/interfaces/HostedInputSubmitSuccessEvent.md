@@ -1,28 +1,23 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInputSubmitSuccessEvent
 
 # Interface: HostedInputSubmitSuccessEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](HostedInputSubmitSuccessEvent.md#payload)
-- [type](HostedInputSubmitSuccessEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### response
 
-| Name | Type |
-| :------ | :------ |
-| `response` | `default`\<`unknown`\> |
+> **response**: `Response`\<`unknown`\>
 
-___
+***
 
 ### type
 
-• **type**: [`SubmitSucceeded`](../enums/HostedInputEventType.md#submitsucceeded)
+> **type**: [`SubmitSucceeded`](../enumerations/HostedInputEventType.md#submitsucceeded)

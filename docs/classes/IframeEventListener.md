@@ -1,135 +1,130 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / IframeEventListener
 
 # Class: IframeEventListener\<TEventMap, TContext\>
 
-## Type parameters
+## Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TEventMap` | extends [`IframeEventMap`](../README.md#iframeeventmap)\<keyof `TEventMap`\> |
-| `TContext` | `undefined` |
+### TEventMap
 
-## Table of contents
+`TEventMap` *extends* [`IframeEventMap`](../type-aliases/IframeEventMap.md)\<keyof `TEventMap`\>
 
-### Constructors
+### TContext
 
-- [constructor](IframeEventListener.md#constructor)
-
-### Methods
-
-- [addListener](IframeEventListener.md#addlistener)
-- [listen](IframeEventListener.md#listen)
-- [removeListener](IframeEventListener.md#removelistener)
-- [stopListen](IframeEventListener.md#stoplisten)
-- [trigger](IframeEventListener.md#trigger)
+`TContext` = `undefined`
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new IframeEventListener**\<`TEventMap`, `TContext`\>(`sourceOrigin`): [`IframeEventListener`](IframeEventListener.md)\<`TEventMap`, `TContext`\>
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `TEventMap` | extends [`IframeEventMap`](../README.md#iframeeventmap)\<keyof `TEventMap`\> |
-| `TContext` | `undefined` |
+> **new IframeEventListener**\<`TEventMap`, `TContext`\>(`sourceOrigin`): `IframeEventListener`\<`TEventMap`, `TContext`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `sourceOrigin` | `string` |
+##### sourceOrigin
+
+`string`
 
 #### Returns
 
-[`IframeEventListener`](IframeEventListener.md)\<`TEventMap`, `TContext`\>
+`IframeEventListener`\<`TEventMap`, `TContext`\>
 
 ## Methods
 
-### addListener
+### addListener()
 
-▸ **addListener**\<`TType`\>(`type`, `listener`): `void`
+> **addListener**\<`TType`\>(`type`, `listener`): `void`
 
-#### Type parameters
+#### Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TType` | extends `string` \| `number` \| `symbol` |
+##### TType
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `type` | `TType` |
-| `listener` | (`event`: `TEventMap`[`TType`], `context?`: `TContext`) => `void` |
-
-#### Returns
-
-`void`
-
-___
-
-### listen
-
-▸ **listen**(): `void`
-
-#### Returns
-
-`void`
-
-___
-
-### removeListener
-
-▸ **removeListener**\<`TType`\>(`type`, `listener`): `void`
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `TType` | extends `string` \| `number` \| `symbol` |
+`TType` *extends* `string` \| `number` \| `symbol`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `type` | `TType` |
-| `listener` | (`event`: `TEventMap`[`TType`], `context?`: `TContext`) => `void` |
+##### type
+
+`TType`
+
+##### listener
+
+(`event`, `context?`) => `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### stopListen
+### listen()
 
-▸ **stopListen**(): `void`
+> **listen**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### trigger
+### removeListener()
 
-▸ **trigger**\<`TType`\>(`event`, `context?`): `void`
+> **removeListener**\<`TType`\>(`type`, `listener`): `void`
 
-#### Type parameters
+#### Type Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TType` | extends `string` \| `number` \| `symbol` |
+##### TType
+
+`TType` *extends* `string` \| `number` \| `symbol`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `TEventMap`[`TType`] |
-| `context?` | `TContext` |
+##### type
+
+`TType`
+
+##### listener
+
+(`event`, `context?`) => `void`
+
+#### Returns
+
+`void`
+
+***
+
+### stopListen()
+
+> **stopListen**(): `void`
+
+#### Returns
+
+`void`
+
+***
+
+### trigger()
+
+> **trigger**\<`TType`\>(`event`, `context?`): `void`
+
+#### Type Parameters
+
+##### TType
+
+`TType` *extends* `string` \| `number` \| `symbol`
+
+#### Parameters
+
+##### event
+
+`TEventMap`\[`TType`\]
+
+##### context?
+
+`TContext`
 
 #### Returns
 

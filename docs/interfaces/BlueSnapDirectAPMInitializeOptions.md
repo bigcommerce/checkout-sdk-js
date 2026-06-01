@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BlueSnapDirectAPMInitializeOptions
 
 # Interface: BlueSnapDirectAPMInitializeOptions
@@ -33,29 +37,19 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [style](BlueSnapDirectAPMInitializeOptions.md#style)
-
-### Methods
-
-- [onLoad](BlueSnapDirectAPMInitializeOptions.md#onload)
-
 ## Properties
 
-### style
+### style?
 
-• `Optional` **style**: [`BlueSnapDirectStyleProps`](BlueSnapDirectStyleProps.md)
+> `optional` **style?**: [`BlueSnapDirectStyleProps`](BlueSnapDirectStyleProps.md)
 
 A set of CSS properties to apply to the iframe.
 
 ## Methods
 
-### onLoad
+### onLoad()
 
-▸ **onLoad**(`iframe`, `cancel`): `void`
+> **onLoad**(`iframe`, `cancel`): `void`
 
 A callback that gets called when the iframe is ready to be added to the
 current page. It is responsible for determining where the iframe should
@@ -63,10 +57,19 @@ be inserted in the DOM.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `iframe` | `HTMLIFrameElement` | The iframe element containing the payment web page provided by the strategy. |
-| `cancel` | () => `void` | A function, when called, will cancel the payment process and remove the iframe. |
+##### iframe
+
+`HTMLIFrameElement`
+
+The iframe element containing the payment web page
+provided by the strategy.
+
+##### cancel
+
+() => `void`
+
+A function, when called, will cancel the payment
+process and remove the iframe.
 
 #### Returns
 

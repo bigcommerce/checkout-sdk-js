@@ -1,36 +1,31 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / LineItemSocialData
 
 # Interface: LineItemSocialData
-
-## Table of contents
-
-### Properties
-
-- [channel](LineItemSocialData.md#channel)
-- [code](LineItemSocialData.md#code)
-- [link](LineItemSocialData.md#link)
-- [text](LineItemSocialData.md#text)
 
 ## Properties
 
 ### channel
 
-• **channel**: `string`
+> **channel**: `string`
 
-___
+***
 
 ### code
 
-• **code**: `string`
+> **code**: `string`
 
-___
+***
 
 ### link
 
-• **link**: `string`
+> **link**: `string`
 
-___
+***
 
 ### text
 
-• **text**: `string`
+> **text**: `string`

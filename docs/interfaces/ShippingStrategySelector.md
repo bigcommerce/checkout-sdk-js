@@ -1,160 +1,150 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ShippingStrategySelector
 
 # Interface: ShippingStrategySelector
 
-## Table of contents
-
-### Methods
-
-- [getInitializeError](ShippingStrategySelector.md#getinitializeerror)
-- [getSelectOptionError](ShippingStrategySelector.md#getselectoptionerror)
-- [getUpdateAddressError](ShippingStrategySelector.md#getupdateaddresserror)
-- [getWidgetInteractionError](ShippingStrategySelector.md#getwidgetinteractionerror)
-- [isInitialized](ShippingStrategySelector.md#isinitialized)
-- [isInitializing](ShippingStrategySelector.md#isinitializing)
-- [isSelectingOption](ShippingStrategySelector.md#isselectingoption)
-- [isUpdatingAddress](ShippingStrategySelector.md#isupdatingaddress)
-- [isWidgetInteracting](ShippingStrategySelector.md#iswidgetinteracting)
-
 ## Methods
 
-### getInitializeError
+### getInitializeError()
 
-▸ **getInitializeError**(`methodId?`): `undefined` \| `Error`
+> **getInitializeError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getSelectOptionError
+### getSelectOptionError()
 
-▸ **getSelectOptionError**(`methodId?`): `undefined` \| `Error`
+> **getSelectOptionError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getUpdateAddressError
+### getUpdateAddressError()
 
-▸ **getUpdateAddressError**(`methodId?`): `undefined` \| `Error`
+> **getUpdateAddressError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getWidgetInteractionError
+### getWidgetInteractionError()
 
-▸ **getWidgetInteractionError**(`methodId?`): `undefined` \| `Error`
+> **getWidgetInteractionError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### isInitialized
+### isInitialized()
 
-▸ **isInitialized**(`methodId`): `boolean`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `methodId` | `string` |
-
-#### Returns
-
-`boolean`
-
-___
-
-### isInitializing
-
-▸ **isInitializing**(`methodId?`): `boolean`
+> **isInitialized**(`methodId`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isSelectingOption
+### isInitializing()
 
-▸ **isSelectingOption**(`methodId?`): `boolean`
+> **isInitializing**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isUpdatingAddress
+### isSelectingOption()
 
-▸ **isUpdatingAddress**(`methodId?`): `boolean`
+> **isSelectingOption**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isWidgetInteracting
+### isUpdatingAddress()
 
-▸ **isWidgetInteracting**(`methodId?`): `boolean`
+> **isUpdatingAddress**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
+
+#### Returns
+
+`boolean`
+
+***
+
+### isWidgetInteracting()
+
+> **isWidgetInteracting**(`methodId?`): `boolean`
+
+#### Parameters
+
+##### methodId?
+
+`string`
 
 #### Returns
 

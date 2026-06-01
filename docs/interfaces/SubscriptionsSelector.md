@@ -1,29 +1,26 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / SubscriptionsSelector
 
 # Interface: SubscriptionsSelector
 
-## Table of contents
-
-### Methods
-
-- [getUpdateError](SubscriptionsSelector.md#getupdateerror)
-- [isUpdating](SubscriptionsSelector.md#isupdating)
-
 ## Methods
 
-### getUpdateError
+### getUpdateError()
 
-▸ **getUpdateError**(): `undefined` \| `Error`
+> **getUpdateError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### isUpdating
+### isUpdating()
 
-▸ **isUpdating**(): `boolean`
+> **isUpdating**(): `boolean`
 
 #### Returns
 

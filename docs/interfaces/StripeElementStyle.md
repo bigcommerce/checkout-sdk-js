@@ -1,44 +1,39 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StripeElementStyle
 
 # Interface: StripeElementStyle
 
-## Table of contents
-
-### Properties
-
-- [base](StripeElementStyle.md#base)
-- [complete](StripeElementStyle.md#complete)
-- [empty](StripeElementStyle.md#empty)
-- [invalid](StripeElementStyle.md#invalid)
-
 ## Properties
 
-### base
+### base?
 
-• `Optional` **base**: [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
+> `optional` **base?**: [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
 
 Base variant—all other variants inherit from these styles.
 
-___
+***
 
-### complete
+### complete?
 
-• `Optional` **complete**: [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
+> `optional` **complete?**: [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
 
 Applied when the element has valid input.
 
-___
+***
 
-### empty
+### empty?
 
-• `Optional` **empty**: [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
+> `optional` **empty?**: [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
 
 Applied when the element has no customer input.
 
-___
+***
 
-### invalid
+### invalid?
 
-• `Optional` **invalid**: [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
+> `optional` **invalid?**: [`StripeElementStyleVariant`](StripeElementStyleVariant.md)
 
 Applied when the element has invalid input.

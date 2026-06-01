@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithCheckoutcomFawryInstrument
 
 # Interface: WithCheckoutcomFawryInstrument
-
-## Table of contents
-
-### Properties
-
-- [customerEmail](WithCheckoutcomFawryInstrument.md#customeremail)
-- [customerMobile](WithCheckoutcomFawryInstrument.md#customermobile)
 
 ## Properties
 
 ### customerEmail
 
-• **customerEmail**: `string`
+> **customerEmail**: `string`
 
-___
+***
 
 ### customerMobile
 
-• **customerMobile**: `string`
+> **customerMobile**: `string`

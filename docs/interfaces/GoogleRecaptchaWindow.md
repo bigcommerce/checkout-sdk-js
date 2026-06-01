@@ -1,34 +1,30 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GoogleRecaptchaWindow
 
 # Interface: GoogleRecaptchaWindow
 
-## Hierarchy
+## Extends
 
 - `Window`
 
-  ↳ **`GoogleRecaptchaWindow`**
+## Indexable
 
-## Table of contents
-
-### Properties
-
-- [grecaptcha](GoogleRecaptchaWindow.md#grecaptcha)
-
-### Methods
-
-- [initRecaptcha](GoogleRecaptchaWindow.md#initrecaptcha)
+> \[`index`: `number`\]: `Window`
 
 ## Properties
 
-### grecaptcha
+### grecaptcha?
 
-• `Optional` **grecaptcha**: `ReCaptcha`
+> `optional` **grecaptcha?**: `ReCaptcha`
 
 ## Methods
 
-### initRecaptcha
+### initRecaptcha()?
 
-▸ **initRecaptcha**(): `void`
+> `optional` **initRecaptcha**(): `void`
 
 #### Returns
 

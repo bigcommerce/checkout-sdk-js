@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithBraintreeFastlaneCustomerInitializeOptions
 
 # Interface: WithBraintreeFastlaneCustomerInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [braintreefastlane](WithBraintreeFastlaneCustomerInitializeOptions.md#braintreefastlane)
-
 ## Properties
 
-### braintreefastlane
+### braintreefastlane?
 
-• `Optional` **braintreefastlane**: [`BraintreeFastlaneCustomerInitializeOptions`](BraintreeFastlaneCustomerInitializeOptions.md)
+> `optional` **braintreefastlane?**: [`BraintreeFastlaneCustomerInitializeOptions`](BraintreeFastlaneCustomerInitializeOptions.md)

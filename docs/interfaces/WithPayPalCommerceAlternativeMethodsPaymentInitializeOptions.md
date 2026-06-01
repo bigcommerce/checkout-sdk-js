@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions
 
 # Interface: WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [paypalcommerce](WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md#paypalcommerce)
-- [paypalcommercealternativemethods](WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md#paypalcommercealternativemethods)
-
 ## Properties
 
-### paypalcommerce
+### paypalcommerce?
 
-• `Optional` **paypalcommerce**: [`PayPalCommerceAlternativeMethodsPaymentOptions`](PayPalCommerceAlternativeMethodsPaymentOptions.md)
+> `optional` **paypalcommerce?**: [`PayPalCommerceAlternativeMethodsPaymentOptions`](PayPalCommerceAlternativeMethodsPaymentOptions.md)
 
-___
+***
 
-### paypalcommercealternativemethods
+### paypalcommercealternativemethods?
 
-• `Optional` **paypalcommercealternativemethods**: [`PayPalCommerceAlternativeMethodsPaymentOptions`](PayPalCommerceAlternativeMethodsPaymentOptions.md)
+> `optional` **paypalcommercealternativemethods?**: [`PayPalCommerceAlternativeMethodsPaymentOptions`](PayPalCommerceAlternativeMethodsPaymentOptions.md)

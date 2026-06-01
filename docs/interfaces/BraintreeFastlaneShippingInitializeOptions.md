@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BraintreeFastlaneShippingInitializeOptions
 
 # Interface: BraintreeFastlaneShippingInitializeOptions
@@ -5,41 +9,30 @@
 A set of options that are required to initialize the shipping step of
 checkout in order to support Braintree Fastlane.
 
-## Table of contents
-
-### Properties
-
-- [onPayPalFastlaneAddressChange](BraintreeFastlaneShippingInitializeOptions.md#onpaypalfastlaneaddresschange)
-- [styles](BraintreeFastlaneShippingInitializeOptions.md#styles)
-
 ## Properties
 
-### onPayPalFastlaneAddressChange
+### onPayPalFastlaneAddressChange?
 
-• `Optional` **onPayPalFastlaneAddressChange**: (`showBraintreeFastlaneAddressSelector`: () => `Promise`\<`undefined` \| `CustomerAddress`\>) => `void`
+> `optional` **onPayPalFastlaneAddressChange?**: (`showBraintreeFastlaneAddressSelector`) => `void`
 
 Is a callback that shows Braintree Fastlane popup with customer addresses
 when get triggered
 
-#### Type declaration
+#### Parameters
 
-▸ (`showBraintreeFastlaneAddressSelector`): `void`
+##### showBraintreeFastlaneAddressSelector
 
-##### Parameters
+() => `Promise`\<`CustomerAddress` \| `undefined`\>
 
-| Name | Type |
-| :------ | :------ |
-| `showBraintreeFastlaneAddressSelector` | () => `Promise`\<`undefined` \| `CustomerAddress`\> |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### styles
+### styles?
 
-• `Optional` **styles**: `BraintreeFastlaneStylesOption`
+> `optional` **styles?**: `BraintreeFastlaneStylesOption`
 
 Is a stylisation options for customizing PayPal Fastlane components
 

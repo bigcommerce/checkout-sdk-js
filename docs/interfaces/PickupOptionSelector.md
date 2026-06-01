@@ -1,47 +1,46 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PickupOptionSelector
 
 # Interface: PickupOptionSelector
 
-## Table of contents
-
-### Methods
-
-- [getLoadError](PickupOptionSelector.md#getloaderror)
-- [getPickupOptions](PickupOptionSelector.md#getpickupoptions)
-- [isLoading](PickupOptionSelector.md#isloading)
-
 ## Methods
 
-### getLoadError
+### getLoadError()
 
-▸ **getLoadError**(): `undefined` \| `Error`
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getPickupOptions
+### getPickupOptions()
 
-▸ **getPickupOptions**(`consignmentId`, `searchArea`): `undefined` \| [`PickupOptionResult`](PickupOptionResult.md)[]
+> **getPickupOptions**(`consignmentId`, `searchArea`): [`PickupOptionResult`](PickupOptionResult.md)[] \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `consignmentId` | `string` |
-| `searchArea` | [`SearchArea`](SearchArea.md) |
+##### consignmentId
+
+`string`
+
+##### searchArea
+
+[`SearchArea`](SearchArea.md)
 
 #### Returns
 
-`undefined` \| [`PickupOptionResult`](PickupOptionResult.md)[]
+[`PickupOptionResult`](PickupOptionResult.md)[] \| `undefined`
 
-___
+***
 
-### isLoading
+### isLoading()
 
-▸ **isLoading**(): `boolean`
+> **isLoading**(): `boolean`
 
 #### Returns
 

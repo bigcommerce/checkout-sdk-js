@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / MolliePaymentInitializeOptions
 
 # Interface: MolliePaymentInitializeOptions
@@ -26,98 +30,81 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [cardCvcId](MolliePaymentInitializeOptions.md#cardcvcid)
-- [cardExpiryId](MolliePaymentInitializeOptions.md#cardexpiryid)
-- [cardHolderId](MolliePaymentInitializeOptions.md#cardholderid)
-- [cardNumberId](MolliePaymentInitializeOptions.md#cardnumberid)
-- [containerId](MolliePaymentInitializeOptions.md#containerid)
-- [form](MolliePaymentInitializeOptions.md#form)
-- [styles](MolliePaymentInitializeOptions.md#styles)
-- [unsupportedMethodMessage](MolliePaymentInitializeOptions.md#unsupportedmethodmessage)
-
-### Methods
-
-- [disableButton](MolliePaymentInitializeOptions.md#disablebutton)
-
 ## Properties
 
 ### cardCvcId
 
-• **cardCvcId**: `string`
+> **cardCvcId**: `string`
 
 The location to insert Mollie Component
 
-___
+***
 
 ### cardExpiryId
 
-• **cardExpiryId**: `string`
+> **cardExpiryId**: `string`
 
 The location to insert Mollie Component
 
-___
+***
 
 ### cardHolderId
 
-• **cardHolderId**: `string`
+> **cardHolderId**: `string`
 
 The location to insert Mollie Component
 
-___
+***
 
 ### cardNumberId
 
-• **cardNumberId**: `string`
+> **cardNumberId**: `string`
 
 The location to insert Mollie Component
 
-___
+***
 
-### containerId
+### containerId?
 
-• `Optional` **containerId**: `string`
+> `optional` **containerId?**: `string`
 
 ContainerId is use in Mollie for determined either its showing or not the
 container, because when Mollie has Vaulted Instruments it gets hide,
 and shows an error because can't mount Provider Components
 
-___
+***
 
-### form
+### form?
 
-• `Optional` **form**: `default`
+> `optional` **form?**: `HostedFormOptions`
 
 Hosted Form Validation Options
 
-___
+***
 
 ### styles
 
-• **styles**: `object`
+> **styles**: `object`
 
 A set of styles required for the mollie components
 
-___
+***
 
-### unsupportedMethodMessage
+### unsupportedMethodMessage?
 
-• `Optional` **unsupportedMethodMessage**: `string`
+> `optional` **unsupportedMethodMessage?**: `string`
 
 ## Methods
 
-### disableButton
+### disableButton()
 
-▸ **disableButton**(`disabled`): `void`
+> **disableButton**(`disabled`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `disabled` | `boolean` |
+##### disabled
+
+`boolean`
 
 #### Returns
 

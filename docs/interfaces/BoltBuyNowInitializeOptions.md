@@ -1,29 +1,23 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BoltBuyNowInitializeOptions
 
 # Interface: BoltBuyNowInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [storefrontApiToken](BoltBuyNowInitializeOptions.md#storefrontapitoken)
-
-### Methods
-
-- [getBuyNowCartRequestBody](BoltBuyNowInitializeOptions.md#getbuynowcartrequestbody)
-
 ## Properties
 
-### storefrontApiToken
+### storefrontApiToken?
 
-• `Optional` **storefrontApiToken**: `string`
+> `optional` **storefrontApiToken?**: `string`
 
 ## Methods
 
-### getBuyNowCartRequestBody
+### getBuyNowCartRequestBody()
 
-▸ **getBuyNowCartRequestBody**(): `default`
+> **getBuyNowCartRequestBody**(): `BuyNowCartRequestBody`
 
 #### Returns
 
-`default`
+`BuyNowCartRequestBody`

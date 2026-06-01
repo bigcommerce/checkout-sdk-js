@@ -1,50 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ThreeDSecure
 
 # Interface: ThreeDSecure
-
-## Table of contents
-
-### Properties
-
-- [cavv](ThreeDSecure.md#cavv)
-- [eci](ThreeDSecure.md#eci)
-- [status](ThreeDSecure.md#status)
-- [vendor](ThreeDSecure.md#vendor)
-- [version](ThreeDSecure.md#version)
-- [xid](ThreeDSecure.md#xid)
 
 ## Properties
 
 ### cavv
 
-• **cavv**: `string`
+> **cavv**: `string`
 
-___
+***
 
 ### eci
 
-• **eci**: `string`
+> **eci**: `string`
 
-___
+***
 
 ### status
 
-• **status**: `string`
+> **status**: `string`
 
-___
+***
 
 ### vendor
 
-• **vendor**: `string`
+> **vendor**: `string`
 
-___
+***
 
 ### version
 
-• **version**: `string`
+> **version**: `string`
 
-___
+***
 
 ### xid
 
-• **xid**: `string`
+> **xid**: `string`

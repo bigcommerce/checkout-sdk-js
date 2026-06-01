@@ -1,62 +1,56 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CartSelector
 
 # Interface: CartSelector
 
-## Table of contents
-
-### Methods
-
-- [getCart](CartSelector.md#getcart)
-- [getCartOrThrow](CartSelector.md#getcartorthrow)
-- [getLoadError](CartSelector.md#getloaderror)
-- [getLocale](CartSelector.md#getlocale)
-- [isLoading](CartSelector.md#isloading)
-
 ## Methods
 
-### getCart
+### getCart()
 
-▸ **getCart**(): `undefined` \| [`Cart`](Cart.md)
+> **getCart**(): [`Cart`](Cart.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| [`Cart`](Cart.md)
+[`Cart`](Cart.md) \| `undefined`
 
-___
+***
 
-### getCartOrThrow
+### getCartOrThrow()
 
-▸ **getCartOrThrow**(): [`Cart`](Cart.md)
+> **getCartOrThrow**(): [`Cart`](Cart.md)
 
 #### Returns
 
 [`Cart`](Cart.md)
 
-___
+***
 
-### getLoadError
+### getLoadError()
 
-▸ **getLoadError**(): `undefined` \| `Error`
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getLocale
-
-▸ **getLocale**(): `undefined` \| `string`
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `string`
+`Error` \| `undefined`
 
-___
+***
 
-### isLoading
+### getLocale()
 
-▸ **isLoading**(): `boolean`
+> **getLocale**(): `string` \| `undefined`
+
+#### Returns
+
+`string` \| `undefined`
+
+***
+
+### isLoading()
+
+> **isLoading**(): `boolean`
 
 #### Returns
 

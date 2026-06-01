@@ -1,106 +1,147 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Capabilities
 
 # Interface: Capabilities
-
-## Table of contents
-
-### Properties
-
-- [billing](Capabilities.md#billing)
-- [customer](Capabilities.md#customer)
-- [orderConfirmation](Capabilities.md#orderconfirmation)
-- [payment](Capabilities.md#payment)
-- [shipping](Capabilities.md#shipping)
-- [userJourney](Capabilities.md#userjourney)
 
 ## Properties
 
 ### billing
 
-• **billing**: `Object`
+> **billing**: `object`
 
-#### Type declaration
+#### hideSaveToAddressBookCheck
 
-| Name | Type |
-| :------ | :------ |
-| `hideSaveToAddressBookCheck` | `boolean` |
-| `restrictManualAddressEntry` | `boolean` |
+> **hideSaveToAddressBookCheck**: `boolean`
 
-___
+#### restrictManualAddressEntry
+
+> **restrictManualAddressEntry**: `boolean`
+
+***
 
 ### customer
 
-• **customer**: `Object`
+> **customer**: `object`
 
-#### Type declaration
+#### superAdminCompanySelector
 
-| Name | Type |
-| :------ | :------ |
-| `superAdminCompanySelector` | `boolean` |
+> **superAdminCompanySelector**: `boolean`
 
-___
+***
 
 ### orderConfirmation
 
-• **orderConfirmation**: `Object`
+> **orderConfirmation**: `object`
 
-#### Type declaration
+#### invoiceRedirect
 
-| Name | Type |
-| :------ | :------ |
-| `invoiceRedirect` | `boolean` |
-| `orderSummary` | `boolean` |
-| `persistB2BMetadata` | `boolean` |
-| `storeInvoiceReference` | `boolean` |
-| `storeQuoteId` | `boolean` |
+> **invoiceRedirect**: `boolean`
 
-___
+#### orderSummary
+
+> **orderSummary**: `boolean`
+
+#### persistB2BMetadata
+
+> **persistB2BMetadata**: `boolean`
+
+#### storeInvoiceReference
+
+> **storeInvoiceReference**: `boolean`
+
+#### storeQuoteId
+
+> **storeQuoteId**: `boolean`
+
+***
 
 ### payment
 
-• **payment**: `Object`
+> **payment**: `object`
 
-#### Type declaration
+#### additionalField
 
-| Name | Type |
-| :------ | :------ |
-| `additionalField` | ``null`` \| \{ `label`: `string` ; `required`: `boolean`  } |
-| `additionalPaymentNotes` | `boolean` |
-| `b2bPaymentMethodFilterType` | ``null`` \| [`B2BPaymentMethodFilterType`](../enums/B2BPaymentMethodFilterType.md) |
-| `excludeOfflineForInvoice` | `boolean` |
-| `excludePPSDK` | `boolean` |
-| `paymentMethodFiltering` | `boolean` |
-| `poConfig` | ``null`` \| \{ `creditLimit`: `number` ; `currency`: `string` ; `label`: `string` ; `required`: `boolean`  } |
-| `poPaymentMethod` | `boolean` |
+> **additionalField**: \{ `label`: `string`; `required`: `boolean`; \} \| `null`
 
-___
+#### additionalPaymentNotes
+
+> **additionalPaymentNotes**: `boolean`
+
+#### b2bPaymentMethodFilterType
+
+> **b2bPaymentMethodFilterType**: [`B2BPaymentMethodFilterType`](../enumerations/B2BPaymentMethodFilterType.md) \| `null`
+
+#### excludeOfflineForInvoice
+
+> **excludeOfflineForInvoice**: `boolean`
+
+#### excludePPSDK
+
+> **excludePPSDK**: `boolean`
+
+#### paymentMethodFiltering
+
+> **paymentMethodFiltering**: `boolean`
+
+#### poConfig
+
+> **poConfig**: \{ `creditLimit`: `number`; `currency`: `string`; `label`: `string`; `required`: `boolean`; \} \| `null`
+
+#### poPaymentMethod
+
+> **poPaymentMethod**: `boolean`
+
+***
 
 ### shipping
 
-• **shipping**: `Object`
+> **shipping**: `object`
 
-#### Type declaration
+#### hideBillingSameAsShippingCheck
 
-| Name | Type |
-| :------ | :------ |
-| `hideBillingSameAsShippingCheck` | `boolean` |
-| `hideSaveToAddressBookCheck` | `boolean` |
-| `prefillCompanyAddress` | `boolean` |
-| `restrictManualAddressEntry` | `boolean` |
+> **hideBillingSameAsShippingCheck**: `boolean`
 
-___
+#### hideSaveToAddressBookCheck
+
+> **hideSaveToAddressBookCheck**: `boolean`
+
+#### prefillCompanyAddress
+
+> **prefillCompanyAddress**: `boolean`
+
+#### restrictManualAddressEntry
+
+> **restrictManualAddressEntry**: `boolean`
+
+***
 
 ### userJourney
 
-• **userJourney**: `Object`
+> **userJourney**: `object`
 
-#### Type declaration
+#### disableEditCart
 
-| Name | Type |
-| :------ | :------ |
-| `disableEditCart` | `boolean` |
-| `disableStoreCredit` | `boolean` |
-| `hasAddressExtraFields` | `boolean` |
-| `hasCompanyAddressBook` | `boolean` |
-| `hasOrderExtraFields` | `boolean` |
-| `requiresB2BToken` | `boolean` |
+> **disableEditCart**: `boolean`
+
+#### disableStoreCredit
+
+> **disableStoreCredit**: `boolean`
+
+#### hasAddressExtraFields
+
+> **hasAddressExtraFields**: `boolean`
+
+#### hasCompanyAddressBook
+
+> **hasCompanyAddressBook**: `boolean`
+
+#### hasOrderExtraFields
+
+> **hasOrderExtraFields**: `boolean`
+
+#### requiresB2BToken
+
+> **requiresB2BToken**: `boolean`

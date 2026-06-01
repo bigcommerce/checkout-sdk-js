@@ -295,11 +295,11 @@ declare interface WithPaypalExpressPaymentInitializeOptions {
     };
 }
 
-export declare const createPaypalExpressButtonStrategy: import("../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<PaypalButtonStrategy>, {
+export declare const createPaypalExpressButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PaypalButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createPaypalExpressPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PaypalExpressPaymentStrategy>, {
+export declare const createPaypalExpressPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PaypalExpressPaymentStrategy>, {
     id: string;
     type: string;
 }>;

@@ -1,22 +1,19 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / SepaPlaceHolder
 
 # Interface: SepaPlaceHolder
 
-## Table of contents
-
-### Properties
-
-- [ibanNumber](SepaPlaceHolder.md#ibannumber)
-- [ownerName](SepaPlaceHolder.md#ownername)
-
 ## Properties
 
-### ibanNumber
+### ibanNumber?
 
-• `Optional` **ibanNumber**: `string`
+> `optional` **ibanNumber?**: `string`
 
-___
+***
 
-### ownerName
+### ownerName?
 
-• `Optional` **ownerName**: `string`
+> `optional` **ownerName?**: `string`

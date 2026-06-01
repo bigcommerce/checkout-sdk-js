@@ -1,36 +1,31 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalButtonStyleOptions\_2
 
 # Interface: PayPalButtonStyleOptions\_2
 
-## Table of contents
-
-### Properties
-
-- [color](PayPalButtonStyleOptions_2.md#color)
-- [height](PayPalButtonStyleOptions_2.md#height)
-- [label](PayPalButtonStyleOptions_2.md#label)
-- [shape](PayPalButtonStyleOptions_2.md#shape)
-
 ## Properties
 
-### color
+### color?
 
-• `Optional` **color**: [`StyleButtonColor_2`](../enums/StyleButtonColor_2.md)
+> `optional` **color?**: [`StyleButtonColor_2`](../enumerations/StyleButtonColor_2.md)
 
-___
+***
 
-### height
+### height?
 
-• `Optional` **height**: `number`
+> `optional` **height?**: `number`
 
-___
+***
 
-### label
+### label?
 
-• `Optional` **label**: [`StyleButtonLabel_2`](../enums/StyleButtonLabel_2.md)
+> `optional` **label?**: [`StyleButtonLabel_2`](../enumerations/StyleButtonLabel_2.md)
 
-___
+***
 
-### shape
+### shape?
 
-• `Optional` **shape**: [`StyleButtonShape_3`](../enums/StyleButtonShape_3.md)
+> `optional` **shape?**: [`StyleButtonShape_3`](../enumerations/StyleButtonShape_3.md)

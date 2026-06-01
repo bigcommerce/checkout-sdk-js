@@ -1,6 +1,3 @@
-/// <reference types="applepayjs" />
-/// <reference types="grecaptcha" />
-/// <reference types="lodash" />
 import { Address as Address_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';

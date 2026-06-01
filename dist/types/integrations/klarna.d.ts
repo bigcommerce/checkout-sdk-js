@@ -294,10 +294,10 @@ declare interface WithKlarnaV2PaymentInitializeOptions {
     klarnav2?: KlarnaV2PaymentInitializeOptions;
 }
 
-export declare const createKlarnaPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<KlarnaPaymentStrategy>, {
+export declare const createKlarnaPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<KlarnaPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createKlarnaV2PaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<KlarnaV2PaymentStrategy>, {
+export declare const createKlarnaV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<KlarnaV2PaymentStrategy>, {
     gateway: string;
 }>;

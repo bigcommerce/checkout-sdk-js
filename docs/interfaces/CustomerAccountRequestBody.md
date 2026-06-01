@@ -1,50 +1,51 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CustomerAccountRequestBody
 
 # Interface: CustomerAccountRequestBody
 
-## Table of contents
-
-### Properties
-
-- [acceptsMarketingEmails](CustomerAccountRequestBody.md#acceptsmarketingemails)
-- [customFields](CustomerAccountRequestBody.md#customfields)
-- [email](CustomerAccountRequestBody.md#email)
-- [firstName](CustomerAccountRequestBody.md#firstname)
-- [lastName](CustomerAccountRequestBody.md#lastname)
-- [password](CustomerAccountRequestBody.md#password)
-
 ## Properties
 
-### acceptsMarketingEmails
+### acceptsMarketingEmails?
 
-• `Optional` **acceptsMarketingEmails**: `boolean`
+> `optional` **acceptsMarketingEmails?**: `boolean`
 
-___
+***
 
-### customFields
+### customFields?
 
-• `Optional` **customFields**: \{ `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
+> `optional` **customFields?**: `object`[]
 
-___
+#### fieldId
+
+> **fieldId**: `string`
+
+#### fieldValue
+
+> **fieldValue**: `string` \| `number` \| `string`[]
+
+***
 
 ### email
 
-• **email**: `string`
+> **email**: `string`
 
-___
+***
 
 ### firstName
 
-• **firstName**: `string`
+> **firstName**: `string`
 
-___
+***
 
 ### lastName
 
-• **lastName**: `string`
+> **lastName**: `string`
 
-___
+***
 
 ### password
 
-• **password**: `string`
+> **password**: `string`

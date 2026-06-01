@@ -1,52 +1,47 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ShippingAddressSelector
 
 # Interface: ShippingAddressSelector
 
-## Table of contents
-
-### Methods
-
-- [getShippingAddress](ShippingAddressSelector.md#getshippingaddress)
-- [getShippingAddressOrThrow](ShippingAddressSelector.md#getshippingaddressorthrow)
-- [getShippingAddresses](ShippingAddressSelector.md#getshippingaddresses)
-- [getShippingAddressesOrThrow](ShippingAddressSelector.md#getshippingaddressesorthrow)
-
 ## Methods
 
-### getShippingAddress
+### getShippingAddress()
 
-▸ **getShippingAddress**(): `undefined` \| [`Address`](Address.md)
+> **getShippingAddress**(): [`Address`](Address.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| [`Address`](Address.md)
+[`Address`](Address.md) \| `undefined`
 
-___
+***
 
-### getShippingAddressOrThrow
+### getShippingAddresses()
 
-▸ **getShippingAddressOrThrow**(): [`Address`](Address.md)
+> **getShippingAddresses**(): [`Address`](Address.md)[]
+
+#### Returns
+
+[`Address`](Address.md)[]
+
+***
+
+### getShippingAddressesOrThrow()
+
+> **getShippingAddressesOrThrow**(): [`Address`](Address.md)[]
+
+#### Returns
+
+[`Address`](Address.md)[]
+
+***
+
+### getShippingAddressOrThrow()
+
+> **getShippingAddressOrThrow**(): [`Address`](Address.md)
 
 #### Returns
 
 [`Address`](Address.md)
-
-___
-
-### getShippingAddresses
-
-▸ **getShippingAddresses**(): [`Address`](Address.md)[]
-
-#### Returns
-
-[`Address`](Address.md)[]
-
-___
-
-### getShippingAddressesOrThrow
-
-▸ **getShippingAddressesOrThrow**(): [`Address`](Address.md)[]
-
-#### Returns
-
-[`Address`](Address.md)[]

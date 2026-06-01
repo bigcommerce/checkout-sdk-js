@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ExecutePaymentMethodCheckoutOptions
 
 # Interface: ExecutePaymentMethodCheckoutOptions
@@ -11,53 +15,37 @@ their custom checkout with prefilled form values. As a result, you
 may need to provide additional information, error handler or callback
 to execution method.
 
-## Hierarchy
+## Extends
 
 - [`CustomerRequestOptions`](CustomerRequestOptions.md)
 
-  ↳ **`ExecutePaymentMethodCheckoutOptions`**
-
-## Table of contents
-
-### Properties
-
-- [methodId](ExecutePaymentMethodCheckoutOptions.md#methodid)
-- [params](ExecutePaymentMethodCheckoutOptions.md#params)
-- [timeout](ExecutePaymentMethodCheckoutOptions.md#timeout)
-- [version](ExecutePaymentMethodCheckoutOptions.md#version)
-
-### Methods
-
-- [checkoutPaymentMethodExecuted](ExecutePaymentMethodCheckoutOptions.md#checkoutpaymentmethodexecuted)
-- [continueWithCheckoutCallback](ExecutePaymentMethodCheckoutOptions.md#continuewithcheckoutcallback)
-
 ## Properties
 
-### methodId
+### methodId?
 
-• `Optional` **methodId**: `string`
+> `optional` **methodId?**: `string`
 
 #### Inherited from
 
-[CustomerRequestOptions](CustomerRequestOptions.md).[methodId](CustomerRequestOptions.md#methodid)
+[`CustomerRequestOptions`](CustomerRequestOptions.md).[`methodId`](CustomerRequestOptions.md#methodid)
 
-___
+***
 
-### params
+### params?
 
-• `Optional` **params**: `object`
+> `optional` **params?**: `object`
 
 The parameters of the request, if required.
 
 #### Inherited from
 
-[CustomerRequestOptions](CustomerRequestOptions.md).[params](CustomerRequestOptions.md#params)
+[`CustomerRequestOptions`](CustomerRequestOptions.md).[`params`](CustomerRequestOptions.md#params)
 
-___
+***
 
-### timeout
+### timeout?
 
-• `Optional` **timeout**: `default`
+> `optional` **timeout?**: `Timeout`
 
 Provide this option if you want to cancel or time out the request. If the
 timeout object completes before the request, the request will be
@@ -65,41 +53,41 @@ cancelled.
 
 #### Inherited from
 
-[CustomerRequestOptions](CustomerRequestOptions.md).[timeout](CustomerRequestOptions.md#timeout)
+[`CustomerRequestOptions`](CustomerRequestOptions.md).[`timeout`](CustomerRequestOptions.md#timeout)
 
-___
+***
 
-### version
+### version?
 
-• `Optional` **version**: `number`
+> `optional` **version?**: `number`
 
 The version of the checkout, used for optimistic concurrency control.
 
 #### Inherited from
 
-[CustomerRequestOptions](CustomerRequestOptions.md).[version](CustomerRequestOptions.md#version)
+[`CustomerRequestOptions`](CustomerRequestOptions.md).[`version`](CustomerRequestOptions.md#version)
 
 ## Methods
 
-### checkoutPaymentMethodExecuted
+### checkoutPaymentMethodExecuted()?
 
-▸ **checkoutPaymentMethodExecuted**(`data?`): `void`
+> `optional` **checkoutPaymentMethodExecuted**(`data?`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data?` | [`CheckoutPaymentMethodExecutedOptions`](CheckoutPaymentMethodExecutedOptions.md) |
+##### data?
+
+[`CheckoutPaymentMethodExecutedOptions`](CheckoutPaymentMethodExecutedOptions.md)
 
 #### Returns
 
 `void`
 
-___
+***
 
-### continueWithCheckoutCallback
+### continueWithCheckoutCallback()?
 
-▸ **continueWithCheckoutCallback**(): `void`
+> `optional` **continueWithCheckoutCallback**(): `void`
 
 #### Returns
 

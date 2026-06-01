@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithAmazonPayV2ButtonInitializeOptions
 
 # Interface: WithAmazonPayV2ButtonInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [amazonpay](WithAmazonPayV2ButtonInitializeOptions.md#amazonpay)
-
 ## Properties
 
-### amazonpay
+### amazonpay?
 
-• `Optional` **amazonpay**: [`AmazonPayV2ButtonInitializeOptions`](../README.md#amazonpayv2buttoninitializeoptions)
+> `optional` **amazonpay?**: [`AmazonPayV2ButtonInitializeOptions`](../type-aliases/AmazonPayV2ButtonInitializeOptions.md)

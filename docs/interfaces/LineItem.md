@@ -1,219 +1,194 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / LineItem
 
 # Interface: LineItem
 
-## Hierarchy
+## Extended by
 
-- **`LineItem`**
-
-  ↳ [`DigitalItem`](DigitalItem.md)
-
-  ↳ [`PhysicalItem`](PhysicalItem.md)
-
-## Table of contents
-
-### Properties
-
-- [addedByPromotion](LineItem.md#addedbypromotion)
-- [backorderMessage](LineItem.md#backordermessage)
-- [brand](LineItem.md#brand)
-- [categories](LineItem.md#categories)
-- [categoryNames](LineItem.md#categorynames)
-- [comparisonPrice](LineItem.md#comparisonprice)
-- [couponAmount](LineItem.md#couponamount)
-- [discountAmount](LineItem.md#discountamount)
-- [discounts](LineItem.md#discounts)
-- [extendedComparisonPrice](LineItem.md#extendedcomparisonprice)
-- [extendedListPrice](LineItem.md#extendedlistprice)
-- [extendedSalePrice](LineItem.md#extendedsaleprice)
-- [id](LineItem.md#id)
-- [imageUrl](LineItem.md#imageurl)
-- [isTaxable](LineItem.md#istaxable)
-- [listPrice](LineItem.md#listprice)
-- [name](LineItem.md#name)
-- [options](LineItem.md#options)
-- [parentId](LineItem.md#parentid)
-- [productId](LineItem.md#productid)
-- [quantity](LineItem.md#quantity)
-- [quantityBackordered](LineItem.md#quantitybackordered)
-- [retailPrice](LineItem.md#retailprice)
-- [salePrice](LineItem.md#saleprice)
-- [sku](LineItem.md#sku)
-- [socialMedia](LineItem.md#socialmedia)
-- [stockPosition](LineItem.md#stockposition)
-- [url](LineItem.md#url)
-- [variantId](LineItem.md#variantid)
+- [`DigitalItem`](DigitalItem.md)
+- [`PhysicalItem`](PhysicalItem.md)
 
 ## Properties
 
 ### addedByPromotion
 
-• **addedByPromotion**: `boolean`
+> **addedByPromotion**: `boolean`
 
-___
+***
 
-### backorderMessage
+### backorderMessage?
 
-• `Optional` **backorderMessage**: ``null`` \| `string`
+> `optional` **backorderMessage?**: `string` \| `null`
 
-___
+***
 
 ### brand
 
-• **brand**: `string`
+> **brand**: `string`
 
-___
+***
 
-### categories
+### categories?
 
-• `Optional` **categories**: [`LineItemCategory`](LineItemCategory.md)[][]
+> `optional` **categories?**: [`LineItemCategory`](LineItemCategory.md)[][]
 
-___
+***
 
-### categoryNames
+### categoryNames?
 
-• `Optional` **categoryNames**: `string`[]
+> `optional` **categoryNames?**: `string`[]
 
-___
+***
 
 ### comparisonPrice
 
-• **comparisonPrice**: `number`
+> **comparisonPrice**: `number`
 
-___
+***
 
 ### couponAmount
 
-• **couponAmount**: `number`
+> **couponAmount**: `number`
 
-___
+***
 
 ### discountAmount
 
-• **discountAmount**: `number`
+> **discountAmount**: `number`
 
-___
+***
 
 ### discounts
 
-• **discounts**: \{ `discountedAmount`: `number` ; `name`: `string`  }[]
+> **discounts**: `object`[]
 
-___
+#### discountedAmount
+
+> **discountedAmount**: `number`
+
+#### name
+
+> **name**: `string`
+
+***
 
 ### extendedComparisonPrice
 
-• **extendedComparisonPrice**: `number`
+> **extendedComparisonPrice**: `number`
 
-___
+***
 
 ### extendedListPrice
 
-• **extendedListPrice**: `number`
+> **extendedListPrice**: `number`
 
-___
+***
 
 ### extendedSalePrice
 
-• **extendedSalePrice**: `number`
+> **extendedSalePrice**: `number`
 
-___
+***
 
 ### id
 
-• **id**: `string` \| `number`
+> **id**: `string` \| `number`
 
-___
+***
 
 ### imageUrl
 
-• **imageUrl**: `string`
+> **imageUrl**: `string`
 
-___
+***
 
 ### isTaxable
 
-• **isTaxable**: `boolean`
+> **isTaxable**: `boolean`
 
-___
+***
 
 ### listPrice
 
-• **listPrice**: `number`
+> **listPrice**: `number`
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
-___
+***
 
-### options
+### options?
 
-• `Optional` **options**: [`LineItemOption`](LineItemOption.md)[]
+> `optional` **options?**: [`LineItemOption`](LineItemOption.md)[]
 
-___
+***
 
-### parentId
+### parentId?
 
-• `Optional` **parentId**: ``null`` \| `string`
+> `optional` **parentId?**: `string` \| `null`
 
-___
+***
 
 ### productId
 
-• **productId**: `number`
+> **productId**: `number`
 
-___
+***
 
 ### quantity
 
-• **quantity**: `number`
+> **quantity**: `number`
 
-___
+***
 
-### quantityBackordered
+### quantityBackordered?
 
-• `Optional` **quantityBackordered**: `number`
+> `optional` **quantityBackordered?**: `number`
 
-___
+***
 
 ### retailPrice
 
-• **retailPrice**: `number`
+> **retailPrice**: `number`
 
-___
+***
 
 ### salePrice
 
-• **salePrice**: `number`
+> **salePrice**: `number`
 
-___
+***
 
 ### sku
 
-• **sku**: `string`
+> **sku**: `string`
 
-___
+***
 
-### socialMedia
+### socialMedia?
 
-• `Optional` **socialMedia**: [`LineItemSocialData`](LineItemSocialData.md)[]
+> `optional` **socialMedia?**: [`LineItemSocialData`](LineItemSocialData.md)[]
 
-___
+***
 
-### stockPosition
+### stockPosition?
 
-• `Optional` **stockPosition**: [`StockPosition`](StockPosition.md)
+> `optional` **stockPosition?**: [`StockPosition`](StockPosition.md)
 
-___
+***
 
 ### url
 
-• **url**: `string`
+> **url**: `string`
 
-___
+***
 
 ### variantId
 
-• **variantId**: `number`
+> **variantId**: `number`

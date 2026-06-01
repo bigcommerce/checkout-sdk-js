@@ -1,28 +1,23 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInputBinChangeEvent
 
 # Interface: HostedInputBinChangeEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](HostedInputBinChangeEvent.md#payload)
-- [type](HostedInputBinChangeEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### bin?
 
-| Name | Type |
-| :------ | :------ |
-| `bin?` | `string` |
+> `optional` **bin?**: `string`
 
-___
+***
 
 ### type
 
-• **type**: [`BinChanged`](../enums/HostedInputEventType.md#binchanged)
+> **type**: [`BinChanged`](../enumerations/HostedInputEventType.md#binchanged)

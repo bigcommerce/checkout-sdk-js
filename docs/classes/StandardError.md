@@ -1,79 +1,69 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / StandardError
 
-# Class: StandardError
+# Abstract Class: StandardError
 
 This error type should not be constructed directly. It is a base class for
 all custom errors thrown in this library.
 
-## Hierarchy
+## Extends
 
 - `Error`
 
-  ↳ **`StandardError`**
+## Extended by
 
-  ↳↳ [`CartChangedError`](CartChangedError.md)
-
-  ↳↳ [`CartConsistencyError`](CartConsistencyError.md)
-
-  ↳↳ [`CartStockPositionsChangedError`](CartStockPositionsChangedError.md)
-
-  ↳↳ [`RequestError`](RequestError.md)
+- [`CartChangedError`](CartChangedError.md)
+- [`CartConsistencyError`](CartConsistencyError.md)
+- [`CartStockPositionsChangedError`](CartStockPositionsChangedError.md)
+- [`RequestError`](RequestError.md)
 
 ## Implements
 
 - [`CustomError`](../interfaces/CustomError.md)
 
-## Table of contents
-
-### Constructors
-
-- [constructor](StandardError.md#constructor)
-
-### Properties
-
-- [name](StandardError.md#name)
-- [type](StandardError.md#type)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new StandardError**(`message?`): [`StandardError`](StandardError.md)
+> **new StandardError**(`message?`): `StandardError`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `message?` | `string` |
+##### message?
+
+`string`
 
 #### Returns
 
-[`StandardError`](StandardError.md)
+`StandardError`
 
 #### Overrides
 
-Error.constructor
+`Error.constructor`
 
 ## Properties
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
 #### Implementation of
 
-CustomError.name
+`CustomError.name`
 
 #### Overrides
 
-Error.name
+`Error.name`
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`
 
 #### Implementation of
 
-[CustomError](../interfaces/CustomError.md).[type](../interfaces/CustomError.md#type)
+[`CustomError`](../interfaces/CustomError.md).[`type`](../interfaces/CustomError.md#type)

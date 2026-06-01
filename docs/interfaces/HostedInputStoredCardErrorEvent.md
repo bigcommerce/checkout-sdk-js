@@ -1,30 +1,31 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedInputStoredCardErrorEvent
 
 # Interface: HostedInputStoredCardErrorEvent
 
-## Table of contents
-
-### Properties
-
-- [payload](HostedInputStoredCardErrorEvent.md#payload)
-- [type](HostedInputStoredCardErrorEvent.md#type)
-
 ## Properties
 
-### payload
+### payload?
 
-• `Optional` **payload**: `Object`
+> `optional` **payload?**: `object`
 
-#### Type declaration
+#### error?
 
-| Name | Type |
-| :------ | :------ |
-| `error?` | `PaymentErrorData` |
-| `errors?` | `string`[] |
-| `response?` | `default`\<`PaymentErrorResponseBody`\> |
+> `optional` **error?**: `PaymentErrorData`
 
-___
+#### errors?
+
+> `optional` **errors?**: `string`[]
+
+#### response?
+
+> `optional` **response?**: `Response`\<`PaymentErrorResponseBody`\>
+
+***
 
 ### type
 
-• **type**: [`StoredCardFailed`](../enums/HostedInputEventType.md#storedcardfailed)
+> **type**: [`StoredCardFailed`](../enumerations/HostedInputEventType.md#storedcardfailed)

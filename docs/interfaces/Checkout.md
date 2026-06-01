@@ -1,258 +1,222 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Checkout
 
 # Interface: Checkout
-
-## Table of contents
-
-### Properties
-
-- [balanceDue](Checkout.md#balancedue)
-- [billingAddress](Checkout.md#billingaddress)
-- [cart](Checkout.md#cart)
-- [channelId](Checkout.md#channelid)
-- [comparisonShippingCost](Checkout.md#comparisonshippingcost)
-- [consignments](Checkout.md#consignments)
-- [coupons](Checkout.md#coupons)
-- [createdTime](Checkout.md#createdtime)
-- [customer](Checkout.md#customer)
-- [customerMessage](Checkout.md#customermessage)
-- [discounts](Checkout.md#discounts)
-- [displayDiscountTotal](Checkout.md#displaydiscounttotal)
-- [fees](Checkout.md#fees)
-- [giftCertificates](Checkout.md#giftcertificates)
-- [giftWrappingCostTotal](Checkout.md#giftwrappingcosttotal)
-- [grandTotal](Checkout.md#grandtotal)
-- [handlingCostTotal](Checkout.md#handlingcosttotal)
-- [hasOrderLevelAutoDiscountMaxLimitReached](Checkout.md#hasorderlevelautodiscountmaxlimitreached)
-- [id](Checkout.md#id)
-- [isStoreCreditApplied](Checkout.md#isstorecreditapplied)
-- [manualDiscountTotal](Checkout.md#manualdiscounttotal)
-- [orderBasedAutoDiscountTotal](Checkout.md#orderbasedautodiscounttotal)
-- [orderId](Checkout.md#orderid)
-- [outstandingBalance](Checkout.md#outstandingbalance)
-- [payments](Checkout.md#payments)
-- [promotions](Checkout.md#promotions)
-- [shippingCostBeforeDiscount](Checkout.md#shippingcostbeforediscount)
-- [shippingCostTotal](Checkout.md#shippingcosttotal)
-- [shouldExecuteSpamCheck](Checkout.md#shouldexecutespamcheck)
-- [subtotal](Checkout.md#subtotal)
-- [taxTotal](Checkout.md#taxtotal)
-- [taxes](Checkout.md#taxes)
-- [totalDiscount](Checkout.md#totaldiscount)
-- [updatedTime](Checkout.md#updatedtime)
-- [version](Checkout.md#version)
 
 ## Properties
 
 ### balanceDue
 
-• **balanceDue**: `number`
+> **balanceDue**: `number`
 
-___
+***
 
-### billingAddress
+### billingAddress?
 
-• `Optional` **billingAddress**: [`BillingAddress`](BillingAddress.md)
+> `optional` **billingAddress?**: [`BillingAddress`](BillingAddress.md)
 
-___
+***
 
 ### cart
 
-• **cart**: [`Cart`](Cart.md)
+> **cart**: [`Cart`](Cart.md)
 
-___
+***
 
 ### channelId
 
-• **channelId**: `number`
+> **channelId**: `number`
 
-___
+***
 
 ### comparisonShippingCost
 
-• **comparisonShippingCost**: `number`
+> **comparisonShippingCost**: `number`
 
-___
+***
 
 ### consignments
 
-• **consignments**: [`Consignment`](Consignment.md)[]
+> **consignments**: [`Consignment`](Consignment.md)[]
 
-___
+***
 
 ### coupons
 
-• **coupons**: [`Coupon`](Coupon.md)[]
+> **coupons**: [`Coupon`](Coupon.md)[]
 
-___
+***
 
 ### createdTime
 
-• **createdTime**: `string`
+> **createdTime**: `string`
 
-___
+***
 
 ### customer
 
-• **customer**: [`Customer`](Customer.md)
+> **customer**: [`Customer`](Customer.md)
 
-___
+***
 
 ### customerMessage
 
-• **customerMessage**: `string`
+> **customerMessage**: `string`
 
-___
+***
 
 ### discounts
 
-• **discounts**: [`Discount`](Discount.md)[]
+> **discounts**: [`Discount`](Discount.md)[]
 
-___
+***
 
 ### displayDiscountTotal
 
-• **displayDiscountTotal**: `number`
+> **displayDiscountTotal**: `number`
 
-___
+***
 
 ### fees
 
-• **fees**: [`Fee`](Fee.md)[]
+> **fees**: [`Fee`](Fee.md)[]
 
-___
+***
 
 ### giftCertificates
 
-• **giftCertificates**: [`GiftCertificate`](GiftCertificate.md)[]
+> **giftCertificates**: [`GiftCertificate`](GiftCertificate.md)[]
 
-___
+***
 
 ### giftWrappingCostTotal
 
-• **giftWrappingCostTotal**: `number`
+> **giftWrappingCostTotal**: `number`
 
-___
+***
 
 ### grandTotal
 
-• **grandTotal**: `number`
+> **grandTotal**: `number`
 
-___
+***
 
 ### handlingCostTotal
 
-• **handlingCostTotal**: `number`
+> **handlingCostTotal**: `number`
 
-___
+***
 
-### hasOrderLevelAutoDiscountMaxLimitReached
+### hasOrderLevelAutoDiscountMaxLimitReached?
 
-• `Optional` **hasOrderLevelAutoDiscountMaxLimitReached**: `boolean`
+> `optional` **hasOrderLevelAutoDiscountMaxLimitReached?**: `boolean`
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
 ### isStoreCreditApplied
 
-• **isStoreCreditApplied**: `boolean`
+> **isStoreCreditApplied**: `boolean`
 
-___
+***
 
 ### manualDiscountTotal
 
-• **manualDiscountTotal**: `number`
+> **manualDiscountTotal**: `number`
 
-___
+***
 
 ### orderBasedAutoDiscountTotal
 
-• **orderBasedAutoDiscountTotal**: `number`
+> **orderBasedAutoDiscountTotal**: `number`
 
-___
+***
 
-### orderId
+### orderId?
 
-• `Optional` **orderId**: `number`
+> `optional` **orderId?**: `number`
 
-___
+***
 
 ### outstandingBalance
 
-• **outstandingBalance**: `number`
+> **outstandingBalance**: `number`
 
-___
+***
 
-### payments
+### payments?
 
-• `Optional` **payments**: [`CheckoutPayment`](CheckoutPayment.md)[]
+> `optional` **payments?**: [`CheckoutPayment`](CheckoutPayment.md)[]
 
-___
+***
 
-### promotions
+### promotions?
 
-• `Optional` **promotions**: [`Promotion`](Promotion.md)[]
+> `optional` **promotions?**: [`Promotion`](Promotion.md)[]
 
-___
+***
 
 ### shippingCostBeforeDiscount
 
-• **shippingCostBeforeDiscount**: `number`
+> **shippingCostBeforeDiscount**: `number`
 
-___
+***
 
 ### shippingCostTotal
 
-• **shippingCostTotal**: `number`
+> **shippingCostTotal**: `number`
 
-___
+***
 
 ### shouldExecuteSpamCheck
 
-• **shouldExecuteSpamCheck**: `boolean`
+> **shouldExecuteSpamCheck**: `boolean`
 
 Whether the current checkout must execute spam protection
 before placing the order.
 
 Note: You need to enable Google ReCAPTCHA bot protection in your Checkout Settings.
 
-___
+***
 
 ### subtotal
 
-• **subtotal**: `number`
+> **subtotal**: `number`
 
-___
-
-### taxTotal
-
-• **taxTotal**: `number`
-
-___
+***
 
 ### taxes
 
-• **taxes**: [`Tax`](Tax.md)[]
+> **taxes**: [`Tax`](Tax.md)[]
 
-___
+***
+
+### taxTotal
+
+> **taxTotal**: `number`
+
+***
 
 ### totalDiscount
 
-• **totalDiscount**: `number`
+> **totalDiscount**: `number`
 
-___
+***
 
 ### updatedTime
 
-• **updatedTime**: `string`
+> **updatedTime**: `string`
 
-___
+***
 
 ### version
 
-• **version**: `number`
+> **version**: `number`

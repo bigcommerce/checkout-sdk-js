@@ -831,155 +831,155 @@ declare type WithGooglePayPaymentInitializeOptions = {
     [k in GooglePayKey]?: GooglePayPaymentInitializeOptions;
 };
 
-export declare const createGooglePayAdyenV2ButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayAdyenV2ButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayAdyenV2CustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayAdyenV2CustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayAdyenV2PaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayAdyenV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayAdyenV3ButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayAdyenV3ButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayAdyenV3CustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayAdyenV3CustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayAdyenV3PaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayAdyenV3PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayAuthorizeDotNetButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayAuthorizeDotNetButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayAuthorizeDotNetCustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayAuthorizeDotNetCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayAuthorizeNetPaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayAuthorizeNetPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayBigCommercePaymentsButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayBigCommercePaymentsButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayBigCommercePaymentsCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayBigCommercePaymentsCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayBigCommercePaymentsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayBigCommercePaymentsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayBnzCustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayBnzCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayBraintreeButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayBraintreeButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayBraintreeCustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayBraintreeCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayBraintreePaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayBraintreePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayCheckoutComButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayCheckoutComButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayCheckoutComCustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayCheckoutComCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayCheckoutComPaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayCheckoutComPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayCybersourceButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayCybersourceButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayCybersourceCustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayCybersourceCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayCybersourcePaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayCybersourcePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayOrbitalButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayOrbitalButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayOrbitalCustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayOrbitalCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayOrbitalPaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayOrbitalPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayPPCPPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayPPCPPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayPayPalCommerceButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayPayPalCommerceButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayPayPalCommerceCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayPayPalCommerceCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayStripeButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayStripeButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayStripeCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayStripeCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayStripePaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayStripePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayStripeUpeCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayStripeUpeCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayTdOnlineMartButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayTdOnlineMartButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayTdOnlineMartCustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayTdOnlineMartCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayTdOnlineMartPaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayTdOnlineMartPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayWorldpayAccessButtonStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+export declare const createGooglePayWorldpayAccessButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayWorldpayAccessCustomerStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+export declare const createGooglePayWorldpayAccessCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createGooglePayWorldpayAccessPaymentStrategy: import("../../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+export declare const createGooglePayWorldpayAccessPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
     id: string;
 }>;
 

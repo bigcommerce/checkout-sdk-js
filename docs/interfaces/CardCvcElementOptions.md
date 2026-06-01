@@ -1,72 +1,64 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CardCvcElementOptions
 
 # Interface: CardCvcElementOptions
 
-## Hierarchy
+## Extends
 
 - [`BaseIndividualElementOptions`](BaseIndividualElementOptions.md)
 
-  ↳ **`CardCvcElementOptions`**
-
-## Table of contents
-
-### Properties
-
-- [classes](CardCvcElementOptions.md#classes)
-- [containerId](CardCvcElementOptions.md#containerid)
-- [disabled](CardCvcElementOptions.md#disabled)
-- [placeholder](CardCvcElementOptions.md#placeholder)
-- [style](CardCvcElementOptions.md#style)
-
 ## Properties
 
-### classes
+### classes?
 
-• `Optional` **classes**: [`StripeElementClasses`](StripeElementClasses.md)
+> `optional` **classes?**: [`StripeElementClasses`](StripeElementClasses.md)
 
 Set custom class names on the container DOM element when the Stripe element is in a particular state.
 
 #### Inherited from
 
-[BaseIndividualElementOptions](BaseIndividualElementOptions.md).[classes](BaseIndividualElementOptions.md#classes)
+[`BaseIndividualElementOptions`](BaseIndividualElementOptions.md).[`classes`](BaseIndividualElementOptions.md#classes)
 
-___
+***
 
 ### containerId
 
-• **containerId**: `string`
+> **containerId**: `string`
 
 #### Inherited from
 
-[BaseIndividualElementOptions](BaseIndividualElementOptions.md).[containerId](BaseIndividualElementOptions.md#containerid)
+[`BaseIndividualElementOptions`](BaseIndividualElementOptions.md).[`containerId`](BaseIndividualElementOptions.md#containerid)
 
-___
+***
 
-### disabled
+### disabled?
 
-• `Optional` **disabled**: `boolean`
+> `optional` **disabled?**: `boolean`
 
 Applies a disabled state to the Element such that user input is not accepted. Default is false.
 
 #### Inherited from
 
-[BaseIndividualElementOptions](BaseIndividualElementOptions.md).[disabled](BaseIndividualElementOptions.md#disabled)
+[`BaseIndividualElementOptions`](BaseIndividualElementOptions.md).[`disabled`](BaseIndividualElementOptions.md#disabled)
 
-___
+***
 
-### placeholder
+### placeholder?
 
-• `Optional` **placeholder**: `string`
+> `optional` **placeholder?**: `string`
 
-___
+***
 
-### style
+### style?
 
-• `Optional` **style**: [`StripeElementStyle`](StripeElementStyle.md)
+> `optional` **style?**: [`StripeElementStyle`](StripeElementStyle.md)
 
 Customize the appearance of an element using CSS properties passed in a [Style](https://stripe.com/docs/js/appendix/style) object,
 which consists of CSS properties nested under objects for each variant.
 
 #### Inherited from
 
-[BaseIndividualElementOptions](BaseIndividualElementOptions.md).[style](BaseIndividualElementOptions.md#style)
+[`BaseIndividualElementOptions`](BaseIndividualElementOptions.md).[`style`](BaseIndividualElementOptions.md#style)

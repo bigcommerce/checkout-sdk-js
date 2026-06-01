@@ -1,194 +1,182 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CustomerStrategySelector
 
 # Interface: CustomerStrategySelector
 
-## Table of contents
-
-### Methods
-
-- [getExecutePaymentMethodCheckoutError](CustomerStrategySelector.md#getexecutepaymentmethodcheckouterror)
-- [getInitializeError](CustomerStrategySelector.md#getinitializeerror)
-- [getSignInError](CustomerStrategySelector.md#getsigninerror)
-- [getSignOutError](CustomerStrategySelector.md#getsignouterror)
-- [getWidgetInteractionError](CustomerStrategySelector.md#getwidgetinteractionerror)
-- [isExecutingPaymentMethodCheckout](CustomerStrategySelector.md#isexecutingpaymentmethodcheckout)
-- [isInitialized](CustomerStrategySelector.md#isinitialized)
-- [isInitializing](CustomerStrategySelector.md#isinitializing)
-- [isSigningIn](CustomerStrategySelector.md#issigningin)
-- [isSigningOut](CustomerStrategySelector.md#issigningout)
-- [isWidgetInteracting](CustomerStrategySelector.md#iswidgetinteracting)
-
 ## Methods
 
-### getExecutePaymentMethodCheckoutError
+### getExecutePaymentMethodCheckoutError()
 
-▸ **getExecutePaymentMethodCheckoutError**(`methodId?`): `undefined` \| `Error`
+> **getExecutePaymentMethodCheckoutError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getInitializeError
+### getInitializeError()
 
-▸ **getInitializeError**(`methodId?`): `undefined` \| `Error`
+> **getInitializeError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getSignInError
+### getSignInError()
 
-▸ **getSignInError**(`methodId?`): `undefined` \| `Error`
+> **getSignInError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getSignOutError
+### getSignOutError()
 
-▸ **getSignOutError**(`methodId?`): `undefined` \| `Error`
+> **getSignOutError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getWidgetInteractionError
+### getWidgetInteractionError()
 
-▸ **getWidgetInteractionError**(`methodId?`): `undefined` \| `Error`
+> **getWidgetInteractionError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### isExecutingPaymentMethodCheckout
+### isExecutingPaymentMethodCheckout()
 
-▸ **isExecutingPaymentMethodCheckout**(`methodId?`): `boolean`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
-
-#### Returns
-
-`boolean`
-
-___
-
-### isInitialized
-
-▸ **isInitialized**(`methodId`): `boolean`
+> **isExecutingPaymentMethodCheckout**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isInitializing
+### isInitialized()
 
-▸ **isInitializing**(`methodId?`): `boolean`
+> **isInitialized**(`methodId`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isSigningIn
+### isInitializing()
 
-▸ **isSigningIn**(`methodId?`): `boolean`
+> **isInitializing**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isSigningOut
+### isSigningIn()
 
-▸ **isSigningOut**(`methodId?`): `boolean`
+> **isSigningIn**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isWidgetInteracting
+### isSigningOut()
 
-▸ **isWidgetInteracting**(`methodId?`): `boolean`
+> **isSigningOut**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
+
+#### Returns
+
+`boolean`
+
+***
+
+### isWidgetInteracting()
+
+> **isWidgetInteracting**(`methodId?`): `boolean`
+
+#### Parameters
+
+##### methodId?
+
+`string`
 
 #### Returns
 

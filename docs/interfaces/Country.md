@@ -1,43 +1,37 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Country
 
 # Interface: Country
-
-## Table of contents
-
-### Properties
-
-- [code](Country.md#code)
-- [hasPostalCodes](Country.md#haspostalcodes)
-- [name](Country.md#name)
-- [requiresState](Country.md#requiresstate)
-- [subdivisions](Country.md#subdivisions)
 
 ## Properties
 
 ### code
 
-• **code**: `string`
+> **code**: `string`
 
-___
+***
 
 ### hasPostalCodes
 
-• **hasPostalCodes**: `boolean`
+> **hasPostalCodes**: `boolean`
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
-___
+***
 
 ### requiresState
 
-• **requiresState**: `boolean`
+> **requiresState**: `boolean`
 
-___
+***
 
 ### subdivisions
 
-• **subdivisions**: [`Region`](Region.md)[]
+> **subdivisions**: [`Region`](Region.md)[]

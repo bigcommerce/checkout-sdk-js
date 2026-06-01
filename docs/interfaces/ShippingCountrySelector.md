@@ -1,40 +1,36 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ShippingCountrySelector
 
 # Interface: ShippingCountrySelector
 
-## Table of contents
-
-### Methods
-
-- [getLoadError](ShippingCountrySelector.md#getloaderror)
-- [getShippingCountries](ShippingCountrySelector.md#getshippingcountries)
-- [isLoading](ShippingCountrySelector.md#isloading)
-
 ## Methods
 
-### getLoadError
+### getLoadError()
 
-▸ **getLoadError**(): `undefined` \| `Error`
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getShippingCountries
-
-▸ **getShippingCountries**(): `undefined` \| [`Country`](Country.md)[]
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| [`Country`](Country.md)[]
+`Error` \| `undefined`
 
-___
+***
 
-### isLoading
+### getShippingCountries()
 
-▸ **isLoading**(): `boolean`
+> **getShippingCountries**(): [`Country`](Country.md)[] \| `undefined`
+
+#### Returns
+
+[`Country`](Country.md)[] \| `undefined`
+
+***
+
+### isLoading()
+
+> **isLoading**(): `boolean`
 
 #### Returns
 

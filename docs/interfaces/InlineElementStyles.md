@@ -1,53 +1,43 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / InlineElementStyles
 
 # Interface: InlineElementStyles
 
-## Hierarchy
+## Extended by
 
-- **`InlineElementStyles`**
-
-  ↳ [`BlockElementStyles`](BlockElementStyles.md)
-
-  ↳ [`LabelStyles`](LabelStyles.md)
-
-  ↳ [`LinkStyles`](LinkStyles.md)
-
-## Table of contents
-
-### Properties
-
-- [color](InlineElementStyles.md#color)
-- [fontFamily](InlineElementStyles.md#fontfamily)
-- [fontWeight](InlineElementStyles.md#fontweight)
-- [letterSpacing](InlineElementStyles.md#letterspacing)
-- [lineHeight](InlineElementStyles.md#lineheight)
+- [`BlockElementStyles`](BlockElementStyles.md)
+- [`LabelStyles`](LabelStyles.md)
+- [`LinkStyles`](LinkStyles.md)
 
 ## Properties
 
-### color
+### color?
 
-• `Optional` **color**: `string`
+> `optional` **color?**: `string`
 
-___
+***
 
-### fontFamily
+### fontFamily?
 
-• `Optional` **fontFamily**: `string`
+> `optional` **fontFamily?**: `string`
 
-___
+***
 
-### fontWeight
+### fontWeight?
 
-• `Optional` **fontWeight**: `string`
+> `optional` **fontWeight?**: `string`
 
-___
+***
 
-### letterSpacing
+### letterSpacing?
 
-• `Optional` **letterSpacing**: `string`
+> `optional` **letterSpacing?**: `string`
 
-___
+***
 
-### lineHeight
+### lineHeight?
 
-• `Optional` **lineHeight**: `string`
+> `optional` **lineHeight?**: `string`

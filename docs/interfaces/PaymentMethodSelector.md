@@ -1,121 +1,118 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PaymentMethodSelector
 
 # Interface: PaymentMethodSelector
 
-## Table of contents
-
-### Methods
-
-- [getLoadError](PaymentMethodSelector.md#getloaderror)
-- [getLoadMethodError](PaymentMethodSelector.md#getloadmethoderror)
-- [getPaymentMethod](PaymentMethodSelector.md#getpaymentmethod)
-- [getPaymentMethodOrThrow](PaymentMethodSelector.md#getpaymentmethodorthrow)
-- [getPaymentMethods](PaymentMethodSelector.md#getpaymentmethods)
-- [getPaymentMethodsMeta](PaymentMethodSelector.md#getpaymentmethodsmeta)
-- [isLoading](PaymentMethodSelector.md#isloading)
-- [isLoadingMethod](PaymentMethodSelector.md#isloadingmethod)
-
 ## Methods
 
-### getLoadError
+### getLoadError()
 
-▸ **getLoadError**(): `undefined` \| `Error`
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getLoadMethodError
+### getLoadMethodError()
 
-▸ **getLoadMethodError**(`methodId?`): `undefined` \| `Error`
+> **getLoadMethodError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getPaymentMethod
+### getPaymentMethod()
 
-▸ **getPaymentMethod**(`methodId`, `gatewayId?`): `undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>
+> **getPaymentMethod**(`methodId`, `gatewayId?`): [`PaymentMethod`](PaymentMethod.md)\<`any`\> \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId` | `string` |
-| `gatewayId?` | `string` |
+##### methodId
+
+`string`
+
+##### gatewayId?
+
+`string`
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>
+[`PaymentMethod`](PaymentMethod.md)\<`any`\> \| `undefined`
 
-___
+***
 
-### getPaymentMethodOrThrow
+### getPaymentMethodOrThrow()
 
-▸ **getPaymentMethodOrThrow**(`methodId`, `gatewayId?`): [`PaymentMethod`](PaymentMethod.md)\<`any`\>
+> **getPaymentMethodOrThrow**(`methodId`, `gatewayId?`): [`PaymentMethod`](PaymentMethod.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId` | `string` |
-| `gatewayId?` | `string` |
+##### methodId
+
+`string`
+
+##### gatewayId?
+
+`string`
 
 #### Returns
 
-[`PaymentMethod`](PaymentMethod.md)\<`any`\>
+[`PaymentMethod`](PaymentMethod.md)
 
-___
+***
 
-### getPaymentMethods
+### getPaymentMethods()
 
-▸ **getPaymentMethods**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>[]
-
-#### Returns
-
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)\<`any`\>[]
-
-___
-
-### getPaymentMethodsMeta
-
-▸ **getPaymentMethodsMeta**(): `undefined` \| [`PaymentMethodMeta`](PaymentMethodMeta.md)
+> **getPaymentMethods**(): [`PaymentMethod`](PaymentMethod.md)\<`any`\>[] \| `undefined`
 
 #### Returns
 
-`undefined` \| [`PaymentMethodMeta`](PaymentMethodMeta.md)
+[`PaymentMethod`](PaymentMethod.md)\<`any`\>[] \| `undefined`
 
-___
+***
 
-### isLoading
+### getPaymentMethodsMeta()
 
-▸ **isLoading**(): `boolean`
+> **getPaymentMethodsMeta**(): [`PaymentMethodMeta`](PaymentMethodMeta.md) \| `undefined`
+
+#### Returns
+
+[`PaymentMethodMeta`](PaymentMethodMeta.md) \| `undefined`
+
+***
+
+### isLoading()
+
+> **isLoading**(): `boolean`
 
 #### Returns
 
 `boolean`
 
-___
+***
 
-### isLoadingMethod
+### isLoadingMethod()
 
-▸ **isLoadingMethod**(`methodId?`): `boolean`
+> **isLoadingMethod**(`methodId?`): `boolean`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | `string` |
+##### methodId?
+
+`string`
 
 #### Returns
 

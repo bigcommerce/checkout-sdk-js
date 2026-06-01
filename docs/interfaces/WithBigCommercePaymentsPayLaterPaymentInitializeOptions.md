@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithBigCommercePaymentsPayLaterPaymentInitializeOptions
 
 # Interface: WithBigCommercePaymentsPayLaterPaymentInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [bigcommerce\_payments\_paylater](WithBigCommercePaymentsPayLaterPaymentInitializeOptions.md#bigcommerce_payments_paylater)
-
 ## Properties
 
-### bigcommerce\_payments\_paylater
+### bigcommerce\_payments\_paylater?
 
-• `Optional` **bigcommerce\_payments\_paylater**: [`BigCommercePaymentsPayLaterPaymentInitializeOptions`](BigCommercePaymentsPayLaterPaymentInitializeOptions.md)
+> `optional` **bigcommerce\_payments\_paylater?**: [`BigCommercePaymentsPayLaterPaymentInitializeOptions`](BigCommercePaymentsPayLaterPaymentInitializeOptions.md)

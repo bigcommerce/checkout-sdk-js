@@ -1,34 +1,47 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedFieldAttachEvent
 
 # Interface: HostedFieldAttachEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](HostedFieldAttachEvent.md#payload)
-- [type](HostedFieldAttachEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### accessibilityLabel?
 
-| Name | Type |
-| :------ | :------ |
-| `accessibilityLabel?` | `string` |
-| `cardInstrument?` | [`CardInstrument`](CardInstrument.md) |
-| `fontUrls?` | `string`[] |
-| `origin?` | `string` |
-| `placeholder?` | `string` |
-| `styles?` | [`HostedFieldStylesMap`](HostedFieldStylesMap.md) |
-| `type` | [`HostedFieldType`](../enums/HostedFieldType.md) |
+> `optional` **accessibilityLabel?**: `string`
 
-___
+#### cardInstrument?
+
+> `optional` **cardInstrument?**: [`CardInstrument`](CardInstrument.md)
+
+#### fontUrls?
+
+> `optional` **fontUrls?**: `string`[]
+
+#### origin?
+
+> `optional` **origin?**: `string`
+
+#### placeholder?
+
+> `optional` **placeholder?**: `string`
+
+#### styles?
+
+> `optional` **styles?**: [`HostedFieldStylesMap`](HostedFieldStylesMap.md)
+
+#### type
+
+> **type**: [`HostedFieldType`](../enumerations/HostedFieldType.md)
+
+***
 
 ### type
 
-• **type**: [`AttachRequested`](../enums/HostedFieldEventType.md#attachrequested)
+> **type**: [`AttachRequested`](../enumerations/HostedFieldEventType.md#attachrequested)

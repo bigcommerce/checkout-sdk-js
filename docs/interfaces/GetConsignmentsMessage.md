@@ -1,28 +1,23 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / GetConsignmentsMessage
 
 # Interface: GetConsignmentsMessage
-
-## Table of contents
-
-### Properties
-
-- [payload](GetConsignmentsMessage.md#payload)
-- [type](GetConsignmentsMessage.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### consignments
 
-| Name | Type |
-| :------ | :------ |
-| `consignments` | [`Consignment`](Consignment.md)[] |
+> **consignments**: [`Consignment`](Consignment.md)[]
 
-___
+***
 
 ### type
 
-• **type**: [`GetConsignments`](../enums/ExtensionMessageType.md#getconsignments)
+> **type**: [`GetConsignments`](../enumerations/ExtensionMessageType.md#getconsignments)

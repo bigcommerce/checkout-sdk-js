@@ -1,40 +1,35 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CardState
 
 # Interface: CardState
-
-## Table of contents
-
-### Properties
-
-- [data](CardState.md#data)
-- [errors](CardState.md#errors)
-- [isValid](CardState.md#isvalid)
-- [valid](CardState.md#valid)
 
 ## Properties
 
 ### data
 
-• **data**: [`CardDataPaymentMethodState`](CardDataPaymentMethodState.md)
+> **data**: [`CardDataPaymentMethodState`](CardDataPaymentMethodState.md)
 
-___
+***
 
-### errors
+### errors?
 
-• `Optional` **errors**: [`CardStateErrors`](CardStateErrors.md)
+> `optional` **errors?**: [`CardStateErrors`](CardStateErrors.md)
 
-___
+***
 
-### isValid
+### isValid?
 
-• `Optional` **isValid**: `boolean`
+> `optional` **isValid?**: `boolean`
 
-___
+***
 
-### valid
+### valid?
 
-• `Optional` **valid**: `Object`
+> `optional` **valid?**: `object`
 
-#### Index signature
+#### Index Signature
 
-▪ [key: `string`]: `boolean`
+\[`key`: `string`\]: `boolean`

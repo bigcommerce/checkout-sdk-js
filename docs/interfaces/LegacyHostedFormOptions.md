@@ -1,114 +1,110 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / LegacyHostedFormOptions
 
 # Interface: LegacyHostedFormOptions
-
-## Table of contents
-
-### Properties
-
-- [fields](LegacyHostedFormOptions.md#fields)
-- [styles](LegacyHostedFormOptions.md#styles)
-
-### Methods
-
-- [onBlur](LegacyHostedFormOptions.md#onblur)
-- [onCardTypeChange](LegacyHostedFormOptions.md#oncardtypechange)
-- [onEnter](LegacyHostedFormOptions.md#onenter)
-- [onFocus](LegacyHostedFormOptions.md#onfocus)
-- [onValidate](LegacyHostedFormOptions.md#onvalidate)
 
 ## Properties
 
 ### fields
 
-• **fields**: [`HostedFieldOptionsMap`](../README.md#hostedfieldoptionsmap)
+> **fields**: [`HostedFieldOptionsMap`](../type-aliases/HostedFieldOptionsMap.md)
 
-___
+***
 
-### styles
+### styles?
 
-• `Optional` **styles**: [`HostedFieldStylesMap`](HostedFieldStylesMap.md)
+> `optional` **styles?**: [`HostedFieldStylesMap`](HostedFieldStylesMap.md)
 
 ## Methods
 
-### onBlur
+### onBlur()?
 
-▸ **onBlur**(`data`): `void`
+> `optional` **onBlur**(`data`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | `Object` |
-| `data.errors?` | `Partial`\<`Record`\<[`HostedFormErrorDataKeys`](../README.md#hostedformerrordatakeys), [`HostedFormErrorData`](HostedFormErrorData.md)\>\> |
-| `data.fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
+##### data
+
+###### errors?
+
+`Partial`\<`Record`\<[`HostedFormErrorDataKeys`](../type-aliases/HostedFormErrorDataKeys.md), [`HostedFormErrorData`](HostedFormErrorData.md)\>\>
+
+###### fieldType
+
+[`HostedFieldType`](../enumerations/HostedFieldType.md)
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onCardTypeChange
+### onCardTypeChange()?
 
-▸ **onCardTypeChange**(`data`): `void`
+> `optional` **onCardTypeChange**(`data`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | `Object` |
-| `data.cardType?` | `string` |
+##### data
+
+###### cardType?
+
+`string`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onEnter
+### onEnter()?
 
-▸ **onEnter**(`data`): `void`
+> `optional` **onEnter**(`data`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | `Object` |
-| `data.fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
+##### data
+
+###### fieldType
+
+[`HostedFieldType`](../enumerations/HostedFieldType.md)
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onFocus
+### onFocus()?
 
-▸ **onFocus**(`data`): `void`
+> `optional` **onFocus**(`data`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | `Object` |
-| `data.fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
+##### data
+
+###### fieldType
+
+[`HostedFieldType`](../enumerations/HostedFieldType.md)
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onValidate
+### onValidate()?
 
-▸ **onValidate**(`data`): `void`
+> `optional` **onValidate**(`data`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | [`HostedInputValidateResults`](HostedInputValidateResults.md) |
+##### data
+
+[`HostedInputValidateResults`](HostedInputValidateResults.md)
 
 #### Returns
 

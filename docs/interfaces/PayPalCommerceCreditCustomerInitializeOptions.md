@@ -1,32 +1,24 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceCreditCustomerInitializeOptions
 
 # Interface: PayPalCommerceCreditCustomerInitializeOptions
-
-## Table of contents
-
-### Properties
-
-- [container](PayPalCommerceCreditCustomerInitializeOptions.md#container)
-
-### Methods
-
-- [onClick](PayPalCommerceCreditCustomerInitializeOptions.md#onclick)
-- [onComplete](PayPalCommerceCreditCustomerInitializeOptions.md#oncomplete)
-- [onError](PayPalCommerceCreditCustomerInitializeOptions.md#onerror)
 
 ## Properties
 
 ### container
 
-• **container**: `string`
+> **container**: `string`
 
 The ID of a container which the checkout button should be inserted into.
 
 ## Methods
 
-### onClick
+### onClick()?
 
-▸ **onClick**(): `void`
+> `optional` **onClick**(): `void`
 
 A callback that gets called when paypal button clicked.
 
@@ -34,11 +26,11 @@ A callback that gets called when paypal button clicked.
 
 `void`
 
-___
+***
 
-### onComplete
+### onComplete()?
 
-▸ **onComplete**(): `void`
+> `optional` **onComplete**(): `void`
 
 A callback that gets called when payment complete on paypal side.
 
@@ -46,20 +38,22 @@ A callback that gets called when payment complete on paypal side.
 
 `void`
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`error?`): `void`
+> `optional` **onError**(`error?`): `void`
 
 A callback that gets called if unable to initialize the widget or select
 one of the address options provided by the widget.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error?` | `Error` | The error object describing the failure. |
+##### error?
+
+`Error`
+
+The error object describing the failure.
 
 #### Returns
 

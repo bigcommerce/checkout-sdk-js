@@ -1,225 +1,205 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / OrderShippingConsignment
 
 # Interface: OrderShippingConsignment
-
-## Table of contents
-
-### Properties
-
-- [address1](OrderShippingConsignment.md#address1)
-- [address2](OrderShippingConsignment.md#address2)
-- [baseCost](OrderShippingConsignment.md#basecost)
-- [baseHandlingCost](OrderShippingConsignment.md#basehandlingcost)
-- [city](OrderShippingConsignment.md#city)
-- [company](OrderShippingConsignment.md#company)
-- [costExTax](OrderShippingConsignment.md#costextax)
-- [costIncTax](OrderShippingConsignment.md#costinctax)
-- [costTax](OrderShippingConsignment.md#costtax)
-- [costTaxClassId](OrderShippingConsignment.md#costtaxclassid)
-- [country](OrderShippingConsignment.md#country)
-- [countryCode](OrderShippingConsignment.md#countrycode)
-- [customFields](OrderShippingConsignment.md#customfields)
-- [discounts](OrderShippingConsignment.md#discounts)
-- [email](OrderShippingConsignment.md#email)
-- [firstName](OrderShippingConsignment.md#firstname)
-- [handlingCostExTax](OrderShippingConsignment.md#handlingcostextax)
-- [handlingCostIncTax](OrderShippingConsignment.md#handlingcostinctax)
-- [handlingCostTax](OrderShippingConsignment.md#handlingcosttax)
-- [handlingCostTaxClassId](OrderShippingConsignment.md#handlingcosttaxclassid)
-- [itemsShipped](OrderShippingConsignment.md#itemsshipped)
-- [itemsTotal](OrderShippingConsignment.md#itemstotal)
-- [lastName](OrderShippingConsignment.md#lastname)
-- [lineItems](OrderShippingConsignment.md#lineitems)
-- [phone](OrderShippingConsignment.md#phone)
-- [postalCode](OrderShippingConsignment.md#postalcode)
-- [shippingAddressId](OrderShippingConsignment.md#shippingaddressid)
-- [shippingMethod](OrderShippingConsignment.md#shippingmethod)
-- [shippingZoneId](OrderShippingConsignment.md#shippingzoneid)
-- [shippingZoneName](OrderShippingConsignment.md#shippingzonename)
-- [stateOrProvince](OrderShippingConsignment.md#stateorprovince)
 
 ## Properties
 
 ### address1
 
-• **address1**: `string`
+> **address1**: `string`
 
-___
+***
 
 ### address2
 
-• **address2**: `string`
+> **address2**: `string`
 
-___
+***
 
 ### baseCost
 
-• **baseCost**: `number`
+> **baseCost**: `number`
 
-___
+***
 
 ### baseHandlingCost
 
-• **baseHandlingCost**: `number`
+> **baseHandlingCost**: `number`
 
-___
+***
 
 ### city
 
-• **city**: `string`
+> **city**: `string`
 
-___
+***
 
 ### company
 
-• **company**: `string`
+> **company**: `string`
 
-___
+***
 
 ### costExTax
 
-• **costExTax**: `number`
+> **costExTax**: `number`
 
-___
+***
 
 ### costIncTax
 
-• **costIncTax**: `number`
+> **costIncTax**: `number`
 
-___
+***
 
 ### costTax
 
-• **costTax**: `number`
+> **costTax**: `number`
 
-___
+***
 
 ### costTaxClassId
 
-• **costTaxClassId**: `number`
+> **costTaxClassId**: `number`
 
-___
+***
 
 ### country
 
-• **country**: `string`
+> **country**: `string`
 
-___
+***
 
 ### countryCode
 
-• **countryCode**: `string`
+> **countryCode**: `string`
 
-___
+***
 
 ### customFields
 
-• **customFields**: \{ `name`: `string` ; `value`: ``null`` \| `string`  }[]
+> **customFields**: `object`[]
 
-___
+#### name
+
+> **name**: `string`
+
+#### value
+
+> **value**: `string` \| `null`
+
+***
 
 ### discounts
 
-• **discounts**: [`OrderShippingConsignmentDiscount`](OrderShippingConsignmentDiscount.md)[]
+> **discounts**: [`OrderShippingConsignmentDiscount`](OrderShippingConsignmentDiscount.md)[]
 
-___
+***
 
 ### email
 
-• **email**: `string`
+> **email**: `string`
 
-___
+***
 
 ### firstName
 
-• **firstName**: `string`
+> **firstName**: `string`
 
-___
+***
 
 ### handlingCostExTax
 
-• **handlingCostExTax**: `number`
+> **handlingCostExTax**: `number`
 
-___
+***
 
 ### handlingCostIncTax
 
-• **handlingCostIncTax**: `number`
+> **handlingCostIncTax**: `number`
 
-___
+***
 
 ### handlingCostTax
 
-• **handlingCostTax**: `number`
+> **handlingCostTax**: `number`
 
-___
+***
 
 ### handlingCostTaxClassId
 
-• **handlingCostTaxClassId**: `number`
+> **handlingCostTaxClassId**: `number`
 
-___
+***
 
 ### itemsShipped
 
-• **itemsShipped**: `number`
+> **itemsShipped**: `number`
 
-___
+***
 
 ### itemsTotal
 
-• **itemsTotal**: `number`
+> **itemsTotal**: `number`
 
-___
+***
 
 ### lastName
 
-• **lastName**: `string`
+> **lastName**: `string`
 
-___
+***
 
 ### lineItems
 
-• **lineItems**: \{ `id`: `number`  }[]
+> **lineItems**: `object`[]
 
-___
+#### id
+
+> **id**: `number`
+
+***
 
 ### phone
 
-• **phone**: `string`
+> **phone**: `string`
 
-___
+***
 
 ### postalCode
 
-• **postalCode**: `string`
+> **postalCode**: `string`
 
-___
+***
 
 ### shippingAddressId
 
-• **shippingAddressId**: `number`
+> **shippingAddressId**: `number`
 
-___
+***
 
 ### shippingMethod
 
-• **shippingMethod**: `string`
+> **shippingMethod**: `string`
 
-___
+***
 
 ### shippingZoneId
 
-• **shippingZoneId**: `number`
+> **shippingZoneId**: `number`
 
-___
+***
 
 ### shippingZoneName
 
-• **shippingZoneName**: `string`
+> **shippingZoneName**: `string`
 
-___
+***
 
 ### stateOrProvince
 
-• **stateOrProvince**: `string`
+> **stateOrProvince**: `string`

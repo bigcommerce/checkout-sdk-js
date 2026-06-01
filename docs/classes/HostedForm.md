@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedForm
 
 # Class: HostedForm
@@ -6,47 +10,43 @@
 
 - `HostedForm`
 
-## Table of contents
-
-### Constructors
-
-- [constructor](HostedForm.md#constructor)
-
-### Methods
-
-- [attach](HostedForm.md#attach)
-- [detach](HostedForm.md#detach)
-- [getBin](HostedForm.md#getbin)
-- [getCardType](HostedForm.md#getcardtype)
-- [submit](HostedForm.md#submit)
-- [submitStoredCard](HostedForm.md#submitstoredcard)
-- [validate](HostedForm.md#validate)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new HostedForm**(`_fields`, `_eventListener`, `_payloadTransformer`, `_eventCallbacks`, `_paymentHumanVerificationHandler`): [`HostedForm`](HostedForm.md)
+> **new HostedForm**(`_fields`, `_eventListener`, `_payloadTransformer`, `_eventCallbacks`, `_paymentHumanVerificationHandler`): `HostedForm`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_fields` | [`HostedField`](HostedField.md)[] |
-| `_eventListener` | [`IframeEventListener`](IframeEventListener.md)\<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md), `undefined`\> |
-| `_payloadTransformer` | [`HostedFormOrderDataTransformer`](HostedFormOrderDataTransformer.md) |
-| `_eventCallbacks` | [`HostedFormEventCallbacks`](../README.md#hostedformeventcallbacks) |
-| `_paymentHumanVerificationHandler` | [`PaymentHumanVerificationHandler`](PaymentHumanVerificationHandler.md) |
+##### \_fields
+
+[`HostedField`](HostedField.md)[]
+
+##### \_eventListener
+
+[`IframeEventListener`](IframeEventListener.md)\<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md)\>
+
+##### \_payloadTransformer
+
+[`HostedFormOrderDataTransformer`](HostedFormOrderDataTransformer.md)
+
+##### \_eventCallbacks
+
+[`HostedFormEventCallbacks`](../type-aliases/HostedFormEventCallbacks.md)
+
+##### \_paymentHumanVerificationHandler
+
+[`PaymentHumanVerificationHandler`](PaymentHumanVerificationHandler.md)
 
 #### Returns
 
-[`HostedForm`](HostedForm.md)
+`HostedForm`
 
 ## Methods
 
-### attach
+### attach()
 
-▸ **attach**(): `Promise`\<`void`\>
+> **attach**(): `Promise`\<`void`\>
 
 #### Returns
 
@@ -54,13 +54,13 @@
 
 #### Implementation of
 
-HostedFormInterface.attach
+`HostedFormInterface.attach`
 
-___
+***
 
-### detach
+### detach()
 
-▸ **detach**(): `void`
+> **detach**(): `void`
 
 #### Returns
 
@@ -68,48 +68,51 @@ ___
 
 #### Implementation of
 
-HostedFormInterface.detach
+`HostedFormInterface.detach`
 
-___
+***
 
-### getBin
+### getBin()
 
-▸ **getBin**(): `undefined` \| `string`
-
-#### Returns
-
-`undefined` \| `string`
-
-#### Implementation of
-
-HostedFormInterface.getBin
-
-___
-
-### getCardType
-
-▸ **getCardType**(): `undefined` \| `string`
+> **getBin**(): `string` \| `undefined`
 
 #### Returns
 
-`undefined` \| `string`
+`string` \| `undefined`
 
 #### Implementation of
 
-HostedFormInterface.getCardType
+`HostedFormInterface.getBin`
 
-___
+***
 
-### submit
+### getCardType()
 
-▸ **submit**(`payload`, `additionalActionData?`): `Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
+> **getCardType**(): `string` \| `undefined`
+
+#### Returns
+
+`string` \| `undefined`
+
+#### Implementation of
+
+`HostedFormInterface.getCardType`
+
+***
+
+### submit()
+
+> **submit**(`payload`, `additionalActionData?`): `Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `payload` | [`OrderPaymentRequestBody`](../interfaces/OrderPaymentRequestBody.md) |
-| `additionalActionData?` | [`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md) |
+##### payload
+
+[`OrderPaymentRequestBody`](../interfaces/OrderPaymentRequestBody.md)
+
+##### additionalActionData?
+
+[`PaymentAdditionalAction`](../interfaces/PaymentAdditionalAction.md)
 
 #### Returns
 
@@ -117,31 +120,35 @@ ___
 
 #### Implementation of
 
-HostedFormInterface.submit
+`HostedFormInterface.submit`
 
-___
+***
 
-### submitStoredCard
+### submitStoredCard()
 
-▸ **submitStoredCard**(`payload`): `Promise`\<`void` \| [`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
+> **submitStoredCard**(`payload`): `Promise`\<`void` \| [`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `payload` | `Object` |
-| `payload.data` | [`StoredCardHostedFormData`](../interfaces/StoredCardHostedFormData.md) |
-| `payload.fields` | [`StoredCardHostedFormInstrumentFields`](../interfaces/StoredCardHostedFormInstrumentFields.md) |
+##### payload
+
+###### data
+
+[`StoredCardHostedFormData`](../interfaces/StoredCardHostedFormData.md)
+
+###### fields
+
+[`StoredCardHostedFormInstrumentFields`](../interfaces/StoredCardHostedFormInstrumentFields.md)
 
 #### Returns
 
 `Promise`\<`void` \| [`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
 
-___
+***
 
-### validate
+### validate()
 
-▸ **validate**(): `Promise`\<`void`\>
+> **validate**(): `Promise`\<`void`\>
 
 #### Returns
 
@@ -149,4 +156,4 @@ ___
 
 #### Implementation of
 
-HostedFormInterface.validate
+`HostedFormInterface.validate`

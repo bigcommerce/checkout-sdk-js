@@ -1,79 +1,72 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / OrderSelector
 
 # Interface: OrderSelector
 
-## Table of contents
-
-### Methods
-
-- [getLoadError](OrderSelector.md#getloaderror)
-- [getOrder](OrderSelector.md#getorder)
-- [getOrderMeta](OrderSelector.md#getordermeta)
-- [getOrderOrThrow](OrderSelector.md#getorderorthrow)
-- [getPaymentId](OrderSelector.md#getpaymentid)
-- [isLoading](OrderSelector.md#isloading)
-
 ## Methods
 
-### getLoadError
+### getLoadError()
 
-▸ **getLoadError**(): `undefined` \| `Error`
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getOrder
-
-▸ **getOrder**(): `undefined` \| [`Order`](Order.md)
+> **getLoadError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| [`Order`](Order.md)
+`Error` \| `undefined`
 
-___
+***
 
-### getOrderMeta
+### getOrder()
 
-▸ **getOrderMeta**(): `undefined` \| [`OrderMetaState`](OrderMetaState.md)
+> **getOrder**(): [`Order`](Order.md) \| `undefined`
 
 #### Returns
 
-`undefined` \| [`OrderMetaState`](OrderMetaState.md)
+[`Order`](Order.md) \| `undefined`
 
-___
+***
 
-### getOrderOrThrow
+### getOrderMeta()
 
-▸ **getOrderOrThrow**(): [`Order`](Order.md)
+> **getOrderMeta**(): [`OrderMetaState`](OrderMetaState.md) \| `undefined`
+
+#### Returns
+
+[`OrderMetaState`](OrderMetaState.md) \| `undefined`
+
+***
+
+### getOrderOrThrow()
+
+> **getOrderOrThrow**(): [`Order`](Order.md)
 
 #### Returns
 
 [`Order`](Order.md)
 
-___
+***
 
-### getPaymentId
+### getPaymentId()
 
-▸ **getPaymentId**(`methodId`): `undefined` \| `string`
+> **getPaymentId**(`methodId`): `string` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId` | `string` |
+##### methodId
+
+`string`
 
 #### Returns
 
-`undefined` \| `string`
+`string` \| `undefined`
 
-___
+***
 
-### isLoading
+### isLoading()
 
-▸ **isLoading**(): `boolean`
+> **isLoading**(): `boolean`
 
 #### Returns
 

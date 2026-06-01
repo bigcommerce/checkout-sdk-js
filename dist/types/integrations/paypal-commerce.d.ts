@@ -2034,63 +2034,63 @@ declare interface WithPayPalCommerceWalletInitializeOptions {
     paypalcommercepaypal?: PayPalCommerceWalletInitializeOptions;
 }
 
-export declare const createPayPalCommerceAlternativeMethodsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PayPalCommerceAlternativeMethodsPaymentStrategy>, {
+export declare const createPayPalCommerceAlternativeMethodsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceAlternativeMethodsPaymentStrategy>, {
     gateway: string;
 }>;
 
-export declare const createPayPalCommerceButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<PayPalCommerceButtonStrategy>, {
+export declare const createPayPalCommerceButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceCreditButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<PayPalCommerceCreditButtonStrategy>, {
+export declare const createPayPalCommerceCreditButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceCreditButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceCreditCardsPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PayPalCommerceCreditCardsPaymentStrategy>, {
+export declare const createPayPalCommerceCreditCardsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceCreditCardsPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceCreditCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<PayPalCommerceCreditCustomerStrategy>, {
+export declare const createPayPalCommerceCreditCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<PayPalCommerceCreditCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceCreditPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PayPalCommerceCreditPaymentStrategy>, {
+export declare const createPayPalCommerceCreditPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceCreditPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<PayPalCommerceCustomerStrategy>, {
+export declare const createPayPalCommerceCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<PayPalCommerceCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceFastlaneCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<PayPalCommerceFastlaneCustomerStrategy>, {
+export declare const createPayPalCommerceFastlaneCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<PayPalCommerceFastlaneCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceFastlanePaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PaypalCommerceFastlanePaymentStrategy>, {
+export declare const createPayPalCommerceFastlanePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PaypalCommerceFastlanePaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommercePaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PayPalCommercePaymentStrategy>, {
+export declare const createPayPalCommercePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommercePaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceRatePayPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PaypalCommerceRatepayPaymentStrategy>, {
+export declare const createPayPalCommerceRatePayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PaypalCommerceRatepayPaymentStrategy>, {
     gateway: string;
     id: string;
 }>;
 
-export declare const createPayPalCommerceVenmoButtonStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CheckoutButtonStrategyFactory<PayPalCommerceVenmoButtonStrategy>, {
+export declare const createPayPalCommerceVenmoButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceVenmoButtonStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceVenmoCustomerStrategy: import("../../../payment-integration-api/src/resolvable-module").default<CustomerStrategyFactory<PayPalCommerceVenmoCustomerStrategy>, {
+export declare const createPayPalCommerceVenmoCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<PayPalCommerceVenmoCustomerStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceVenmoPaymentStrategy: import("../../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<PayPalCommerceVenmoPaymentStrategy>, {
+export declare const createPayPalCommerceVenmoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceVenmoPaymentStrategy>, {
     id: string;
 }>;
 
-export declare const createPayPalCommerceWalletStrategy: import("../../../payment-integration-api/src/resolvable-module").default<WalletPaymentButtonStrategyFactory<PayPalCommerceWalletStrategy>, {
+export declare const createPayPalCommerceWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<PayPalCommerceWalletStrategy>, {
     id: string;
 }>;

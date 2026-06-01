@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ApplePayCustomerInitializeOptions
 
 # Interface: ApplePayCustomerInitializeOptions
@@ -8,49 +12,35 @@ checkout in order to support ApplePay.
 When ApplePay is initialized, a sign-in button will be inserted into the
 DOM. When the customer clicks on it, it will trigger apple sheet
 
-## Table of contents
-
-### Properties
-
-- [container](ApplePayCustomerInitializeOptions.md#container)
-- [shippingLabel](ApplePayCustomerInitializeOptions.md#shippinglabel)
-- [subtotalLabel](ApplePayCustomerInitializeOptions.md#subtotallabel)
-
-### Methods
-
-- [onClick](ApplePayCustomerInitializeOptions.md#onclick)
-- [onError](ApplePayCustomerInitializeOptions.md#onerror)
-- [onPaymentAuthorize](ApplePayCustomerInitializeOptions.md#onpaymentauthorize)
-
 ## Properties
 
 ### container
 
-• **container**: `string`
+> **container**: `string`
 
 The ID of a container which the sign-in button should insert into.
 
-___
+***
 
-### shippingLabel
+### shippingLabel?
 
-• `Optional` **shippingLabel**: `string`
+> `optional` **shippingLabel?**: `string`
 
 Shipping label to be passed to apple sheet.
 
-___
+***
 
-### subtotalLabel
+### subtotalLabel?
 
-• `Optional` **subtotalLabel**: `string`
+> `optional` **subtotalLabel?**: `string`
 
 Sub total label to be passed to apple sheet.
 
 ## Methods
 
-### onClick
+### onClick()?
 
-▸ **onClick**(): `void`
+> `optional` **onClick**(): `void`
 
 A callback that gets called when wallet button clicked
 
@@ -58,30 +48,32 @@ A callback that gets called when wallet button clicked
 
 `void`
 
-___
+***
 
-### onError
+### onError()?
 
-▸ **onError**(`error?`): `void`
+> `optional` **onError**(`error?`): `void`
 
 A callback that gets called if unable to initialize the widget or select
 one of the address options provided by the widget.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `error?` | `Error` | The error object describing the failure. |
+##### error?
+
+`Error`
+
+The error object describing the failure.
 
 #### Returns
 
 `void`
 
-___
+***
 
-### onPaymentAuthorize
+### onPaymentAuthorize()
 
-▸ **onPaymentAuthorize**(): `void`
+> **onPaymentAuthorize**(): `void`
 
 A callback that gets called when a payment is successfully completed.
 

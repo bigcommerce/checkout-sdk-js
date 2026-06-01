@@ -1,76 +1,67 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / LabelStyles
 
 # Interface: LabelStyles
 
-## Hierarchy
+## Extends
 
 - [`InlineElementStyles`](InlineElementStyles.md)
 
-  ↳ **`LabelStyles`**
-
-## Table of contents
-
-### Properties
-
-- [color](LabelStyles.md#color)
-- [error](LabelStyles.md#error)
-- [fontFamily](LabelStyles.md#fontfamily)
-- [fontWeight](LabelStyles.md#fontweight)
-- [letterSpacing](LabelStyles.md#letterspacing)
-- [lineHeight](LabelStyles.md#lineheight)
-
 ## Properties
 
-### color
+### color?
 
-• `Optional` **color**: `string`
-
-#### Inherited from
-
-[InlineElementStyles](InlineElementStyles.md).[color](InlineElementStyles.md#color)
-
-___
-
-### error
-
-• `Optional` **error**: [`InlineElementStyles`](InlineElementStyles.md)
-
-___
-
-### fontFamily
-
-• `Optional` **fontFamily**: `string`
+> `optional` **color?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[fontFamily](InlineElementStyles.md#fontfamily)
+[`InlineElementStyles`](InlineElementStyles.md).[`color`](InlineElementStyles.md#color)
 
-___
+***
 
-### fontWeight
+### error?
 
-• `Optional` **fontWeight**: `string`
+> `optional` **error?**: [`InlineElementStyles`](InlineElementStyles.md)
 
-#### Inherited from
+***
 
-[InlineElementStyles](InlineElementStyles.md).[fontWeight](InlineElementStyles.md#fontweight)
+### fontFamily?
 
-___
-
-### letterSpacing
-
-• `Optional` **letterSpacing**: `string`
+> `optional` **fontFamily?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[letterSpacing](InlineElementStyles.md#letterspacing)
+[`InlineElementStyles`](InlineElementStyles.md).[`fontFamily`](InlineElementStyles.md#fontfamily)
 
-___
+***
 
-### lineHeight
+### fontWeight?
 
-• `Optional` **lineHeight**: `string`
+> `optional` **fontWeight?**: `string`
 
 #### Inherited from
 
-[InlineElementStyles](InlineElementStyles.md).[lineHeight](InlineElementStyles.md#lineheight)
+[`InlineElementStyles`](InlineElementStyles.md).[`fontWeight`](InlineElementStyles.md#fontweight)
+
+***
+
+### letterSpacing?
+
+> `optional` **letterSpacing?**: `string`
+
+#### Inherited from
+
+[`InlineElementStyles`](InlineElementStyles.md).[`letterSpacing`](InlineElementStyles.md#letterspacing)
+
+***
+
+### lineHeight?
+
+> `optional` **lineHeight?**: `string`
+
+#### Inherited from
+
+[`InlineElementStyles`](InlineElementStyles.md).[`lineHeight`](InlineElementStyles.md#lineheight)

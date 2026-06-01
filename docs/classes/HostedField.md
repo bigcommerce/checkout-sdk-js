@@ -1,116 +1,138 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / HostedField
 
 # Class: HostedField
 
-## Table of contents
-
-### Constructors
-
-- [constructor](HostedField.md#constructor)
-
-### Methods
-
-- [attach](HostedField.md#attach)
-- [detach](HostedField.md#detach)
-- [getType](HostedField.md#gettype)
-- [submitForm](HostedField.md#submitform)
-- [submitStoredCardForm](HostedField.md#submitstoredcardform)
-- [validateForm](HostedField.md#validateform)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new HostedField**(`_type`, `_containerId`, `_placeholder`, `_accessibilityLabel`, `_styles`, `_eventPoster`, `_eventListener`, `_detachmentObserver`, `_checkoutId?`, `_cardInstrument?`): [`HostedField`](HostedField.md)
+> **new HostedField**(`_type`, `_containerId`, `_placeholder`, `_accessibilityLabel`, `_styles`, `_eventPoster`, `_eventListener`, `_detachmentObserver`, `_checkoutId?`, `_cardInstrument?`): `HostedField`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_type` | [`HostedFieldType`](../enums/HostedFieldType.md) |
-| `_containerId` | `string` |
-| `_placeholder` | `string` |
-| `_accessibilityLabel` | `string` |
-| `_styles` | [`HostedFieldStylesMap`](../interfaces/HostedFieldStylesMap.md) |
-| `_eventPoster` | [`IframeEventPoster`](IframeEventPoster.md)\<[`HostedFieldEvent`](../README.md#hostedfieldevent), `undefined`\> |
-| `_eventListener` | [`IframeEventListener`](IframeEventListener.md)\<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md), `undefined`\> |
-| `_detachmentObserver` | [`DetachmentObserver`](DetachmentObserver.md) |
-| `_checkoutId?` | `string` |
-| `_cardInstrument?` | [`CardInstrument`](../interfaces/CardInstrument.md) |
+##### \_type
+
+[`HostedFieldType`](../enumerations/HostedFieldType.md)
+
+##### \_containerId
+
+`string`
+
+##### \_placeholder
+
+`string`
+
+##### \_accessibilityLabel
+
+`string`
+
+##### \_styles
+
+[`HostedFieldStylesMap`](../interfaces/HostedFieldStylesMap.md)
+
+##### \_eventPoster
+
+[`IframeEventPoster`](IframeEventPoster.md)\<[`HostedFieldEvent`](../type-aliases/HostedFieldEvent.md)\>
+
+##### \_eventListener
+
+[`IframeEventListener`](IframeEventListener.md)\<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md)\>
+
+##### \_detachmentObserver
+
+[`DetachmentObserver`](DetachmentObserver.md)
+
+##### \_checkoutId?
+
+`string`
+
+##### \_cardInstrument?
+
+[`CardInstrument`](../interfaces/CardInstrument.md)
 
 #### Returns
 
-[`HostedField`](HostedField.md)
+`HostedField`
 
 ## Methods
 
-### attach
+### attach()
 
-▸ **attach**(): `Promise`\<`void`\>
+> **attach**(): `Promise`\<`void`\>
 
 #### Returns
 
 `Promise`\<`void`\>
 
-___
+***
 
-### detach
+### detach()
 
-▸ **detach**(): `void`
+> **detach**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### getType
+### getType()
 
-▸ **getType**(): [`HostedFieldType`](../enums/HostedFieldType.md)
+> **getType**(): [`HostedFieldType`](../enumerations/HostedFieldType.md)
 
 #### Returns
 
-[`HostedFieldType`](../enums/HostedFieldType.md)
+[`HostedFieldType`](../enumerations/HostedFieldType.md)
 
-___
+***
 
-### submitForm
+### submitForm()
 
-▸ **submitForm**(`fields`, `data`): `Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
+> **submitForm**(`fields`, `data`): `Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `fields` | [`HostedFieldType`](../enums/HostedFieldType.md)[] |
-| `data` | [`HostedFormOrderData`](../interfaces/HostedFormOrderData.md) |
+##### fields
+
+[`HostedFieldType`](../enumerations/HostedFieldType.md)[]
+
+##### data
+
+[`HostedFormOrderData`](../interfaces/HostedFormOrderData.md)
 
 #### Returns
 
 `Promise`\<[`HostedInputSubmitSuccessEvent`](../interfaces/HostedInputSubmitSuccessEvent.md)\>
 
-___
+***
 
-### submitStoredCardForm
+### submitStoredCardForm()
 
-▸ **submitStoredCardForm**(`fields`, `data`): `Promise`\<[`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
+> **submitStoredCardForm**(`fields`, `data`): `Promise`\<[`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `fields` | [`StoredCardHostedFormInstrumentFields`](../interfaces/StoredCardHostedFormInstrumentFields.md) |
-| `data` | [`StoredCardHostedFormData`](../interfaces/StoredCardHostedFormData.md) |
+##### fields
+
+[`StoredCardHostedFormInstrumentFields`](../interfaces/StoredCardHostedFormInstrumentFields.md)
+
+##### data
+
+[`StoredCardHostedFormData`](../interfaces/StoredCardHostedFormData.md)
 
 #### Returns
 
 `Promise`\<[`HostedInputStoredCardSucceededEvent`](../interfaces/HostedInputStoredCardSucceededEvent.md)\>
 
-___
+***
 
-### validateForm
+### validateForm()
 
-▸ **validateForm**(): `Promise`\<`void`\>
+> **validateForm**(): `Promise`\<`void`\>
 
 #### Returns
 

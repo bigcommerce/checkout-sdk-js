@@ -1,15 +1,13 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithPayPalCommerceFastlaneCustomerInitializeOptions
 
 # Interface: WithPayPalCommerceFastlaneCustomerInitializeOptions
 
-## Table of contents
-
-### Properties
-
-- [paypalcommercefastlane](WithPayPalCommerceFastlaneCustomerInitializeOptions.md#paypalcommercefastlane)
-
 ## Properties
 
-### paypalcommercefastlane
+### paypalcommercefastlane?
 
-• `Optional` **paypalcommercefastlane**: [`PayPalCommerceFastlaneCustomerInitializeOptions`](PayPalCommerceFastlaneCustomerInitializeOptions.md)
+> `optional` **paypalcommercefastlane?**: [`PayPalCommerceFastlaneCustomerInitializeOptions`](PayPalCommerceFastlaneCustomerInitializeOptions.md)

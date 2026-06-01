@@ -1,40 +1,36 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CountrySelector
 
 # Interface: CountrySelector
 
-## Table of contents
-
-### Methods
-
-- [getCountries](CountrySelector.md#getcountries)
-- [getLoadError](CountrySelector.md#getloaderror)
-- [isLoading](CountrySelector.md#isloading)
-
 ## Methods
 
-### getCountries
+### getCountries()
 
-▸ **getCountries**(): `undefined` \| [`Country`](Country.md)[]
-
-#### Returns
-
-`undefined` \| [`Country`](Country.md)[]
-
-___
-
-### getLoadError
-
-▸ **getLoadError**(): `undefined` \| `Error`
+> **getCountries**(): [`Country`](Country.md)[] \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+[`Country`](Country.md)[] \| `undefined`
 
-___
+***
 
-### isLoading
+### getLoadError()
 
-▸ **isLoading**(): `boolean`
+> **getLoadError**(): `Error` \| `undefined`
+
+#### Returns
+
+`Error` \| `undefined`
+
+***
+
+### isLoading()
+
+> **isLoading**(): `boolean`
 
 #### Returns
 

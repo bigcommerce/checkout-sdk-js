@@ -1,36 +1,31 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ConsignmentCreateRequestBody
 
 # Interface: ConsignmentCreateRequestBody
 
-## Table of contents
-
-### Properties
-
-- [address](ConsignmentCreateRequestBody.md#address)
-- [lineItems](ConsignmentCreateRequestBody.md#lineitems)
-- [pickupOption](ConsignmentCreateRequestBody.md#pickupoption)
-- [shippingAddress](ConsignmentCreateRequestBody.md#shippingaddress)
-
 ## Properties
 
-### address
+### address?
 
-• `Optional` **address**: [`AddressRequestBody`](AddressRequestBody.md)
+> `optional` **address?**: [`AddressRequestBody`](AddressRequestBody.md)
 
-___
+***
 
 ### lineItems
 
-• **lineItems**: [`ConsignmentLineItem`](ConsignmentLineItem.md)[]
+> **lineItems**: [`ConsignmentLineItem`](ConsignmentLineItem.md)[]
 
-___
+***
 
-### pickupOption
+### pickupOption?
 
-• `Optional` **pickupOption**: [`ConsignmentPickupOption`](ConsignmentPickupOption.md)
+> `optional` **pickupOption?**: [`ConsignmentPickupOption`](ConsignmentPickupOption.md)
 
-___
+***
 
-### shippingAddress
+### shippingAddress?
 
-• `Optional` **shippingAddress**: [`AddressRequestBody`](AddressRequestBody.md)
+> `optional` **shippingAddress?**: [`AddressRequestBody`](AddressRequestBody.md)

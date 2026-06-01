@@ -1,56 +1,49 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutButtonErrorSelector
 
 # Class: CheckoutButtonErrorSelector
 
-## Table of contents
-
-### Constructors
-
-- [constructor](CheckoutButtonErrorSelector.md#constructor)
-
-### Methods
-
-- [getDeinitializeButtonError](CheckoutButtonErrorSelector.md#getdeinitializebuttonerror)
-- [getInitializeButtonError](CheckoutButtonErrorSelector.md#getinitializebuttonerror)
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new CheckoutButtonErrorSelector**(): [`CheckoutButtonErrorSelector`](CheckoutButtonErrorSelector.md)
+> **new CheckoutButtonErrorSelector**(): `CheckoutButtonErrorSelector`
 
 #### Returns
 
-[`CheckoutButtonErrorSelector`](CheckoutButtonErrorSelector.md)
+`CheckoutButtonErrorSelector`
 
 ## Methods
 
-### getDeinitializeButtonError
+### getDeinitializeButtonError()
 
-▸ **getDeinitializeButtonError**(`methodId?`): `undefined` \| `Error`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
-
-#### Returns
-
-`undefined` \| `Error`
-
-___
-
-### getInitializeButtonError
-
-▸ **getInitializeButtonError**(`methodId?`): `undefined` \| `Error`
+> **getDeinitializeButtonError**(`methodId?`): `Error` \| `undefined`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId?` | [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md) |
+##### methodId?
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
+
+***
+
+### getInitializeButtonError()
+
+> **getInitializeButtonError**(`methodId?`): `Error` \| `undefined`
+
+#### Parameters
+
+##### methodId?
+
+[`CheckoutButtonMethodType`](../enumerations/CheckoutButtonMethodType.md)
+
+#### Returns
+
+`Error` \| `undefined`

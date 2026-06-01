@@ -1,126 +1,109 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / Cart
 
 # Interface: Cart
-
-## Table of contents
-
-### Properties
-
-- [baseAmount](Cart.md#baseamount)
-- [cartAmount](Cart.md#cartamount)
-- [companyId](Cart.md#companyid)
-- [coupons](Cart.md#coupons)
-- [createdTime](Cart.md#createdtime)
-- [currency](Cart.md#currency)
-- [customerId](Cart.md#customerid)
-- [discountAmount](Cart.md#discountamount)
-- [discounts](Cart.md#discounts)
-- [email](Cart.md#email)
-- [id](Cart.md#id)
-- [isTaxIncluded](Cart.md#istaxincluded)
-- [lineItems](Cart.md#lineitems)
-- [locale](Cart.md#locale)
-- [source](Cart.md#source)
-- [updatedTime](Cart.md#updatedtime)
 
 ## Properties
 
 ### baseAmount
 
-• **baseAmount**: `number`
+> **baseAmount**: `number`
 
-___
+***
 
 ### cartAmount
 
-• **cartAmount**: `number`
+> **cartAmount**: `number`
 
-___
+***
 
 ### companyId
 
-• **companyId**: ``null`` \| `number`
+> **companyId**: `number` \| `null`
 
-___
+***
 
 ### coupons
 
-• **coupons**: [`Coupon`](Coupon.md)[]
+> **coupons**: [`Coupon`](Coupon.md)[]
 
 This is an array of all applied coupons.
 
-___
+***
 
 ### createdTime
 
-• **createdTime**: `string`
+> **createdTime**: `string`
 
-___
+***
 
 ### currency
 
-• **currency**: [`Currency`](Currency.md)
+> **currency**: [`Currency`](Currency.md)
 
-___
+***
 
 ### customerId
 
-• **customerId**: `number`
+> **customerId**: `number`
 
-___
+***
 
 ### discountAmount
 
-• **discountAmount**: `number`
+> **discountAmount**: `number`
 
 This is the total amount of discount applied on line_items.
 
-___
+***
 
 ### discounts
 
-• **discounts**: [`Discount`](Discount.md)[]
+> **discounts**: [`Discount`](Discount.md)[]
 
 This is the total amount of discount applied on cart including coupons and line_items discounts.
 
-___
+***
 
 ### email
 
-• **email**: `string`
+> **email**: `string`
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
 ### isTaxIncluded
 
-• **isTaxIncluded**: `boolean`
+> **isTaxIncluded**: `boolean`
 
-___
+***
 
 ### lineItems
 
-• **lineItems**: [`LineItemMap`](LineItemMap.md)
+> **lineItems**: [`LineItemMap`](LineItemMap.md)
 
-___
+***
 
 ### locale
 
-• **locale**: `string`
+> **locale**: `string`
 
-___
+***
 
-### source
+### source?
 
-• `Optional` **source**: `CartSource`
+> `optional` **source?**: `CartSource`
 
-___
+***
 
 ### updatedTime
 
-• **updatedTime**: `string`
+> **updatedTime**: `string`

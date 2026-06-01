@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutStoreErrorSelector
 
 # Interface: CheckoutStoreErrorSelector
@@ -9,97 +13,53 @@ This object has a set of getters that would return an error if an action is
 not executed successfully. For example, if you are unable to submit an order,
 you can use this object to retrieve the reason for the failure.
 
-## Table of contents
-
-### Methods
-
-- [getApplyCouponError](CheckoutStoreErrorSelector.md#getapplycouponerror)
-- [getApplyGiftCertificateError](CheckoutStoreErrorSelector.md#getapplygiftcertificateerror)
-- [getApplyStoreCreditError](CheckoutStoreErrorSelector.md#getapplystorecrediterror)
-- [getContinueAsGuestError](CheckoutStoreErrorSelector.md#getcontinueasguesterror)
-- [getCreateConsignmentsError](CheckoutStoreErrorSelector.md#getcreateconsignmentserror)
-- [getCreateCustomerAccountError](CheckoutStoreErrorSelector.md#getcreatecustomeraccounterror)
-- [getCreateCustomerAddressError](CheckoutStoreErrorSelector.md#getcreatecustomeraddresserror)
-- [getDeleteConsignmentError](CheckoutStoreErrorSelector.md#getdeleteconsignmenterror)
-- [getDeleteInstrumentError](CheckoutStoreErrorSelector.md#getdeleteinstrumenterror)
-- [getError](CheckoutStoreErrorSelector.md#geterror)
-- [getFinalizeOrderError](CheckoutStoreErrorSelector.md#getfinalizeordererror)
-- [getInitializeCustomerError](CheckoutStoreErrorSelector.md#getinitializecustomererror)
-- [getInitializePaymentError](CheckoutStoreErrorSelector.md#getinitializepaymenterror)
-- [getInitializeShippingError](CheckoutStoreErrorSelector.md#getinitializeshippingerror)
-- [getLoadB2BTokenError](CheckoutStoreErrorSelector.md#getloadb2btokenerror)
-- [getLoadBillingCountriesError](CheckoutStoreErrorSelector.md#getloadbillingcountrieserror)
-- [getLoadCartError](CheckoutStoreErrorSelector.md#getloadcarterror)
-- [getLoadCheckoutError](CheckoutStoreErrorSelector.md#getloadcheckouterror)
-- [getLoadConfigError](CheckoutStoreErrorSelector.md#getloadconfigerror)
-- [getLoadExtensionsError](CheckoutStoreErrorSelector.md#getloadextensionserror)
-- [getLoadInstrumentsError](CheckoutStoreErrorSelector.md#getloadinstrumentserror)
-- [getLoadOrderError](CheckoutStoreErrorSelector.md#getloadordererror)
-- [getLoadPaymentMethodError](CheckoutStoreErrorSelector.md#getloadpaymentmethoderror)
-- [getLoadPaymentMethodsError](CheckoutStoreErrorSelector.md#getloadpaymentmethodserror)
-- [getLoadShippingCountriesError](CheckoutStoreErrorSelector.md#getloadshippingcountrieserror)
-- [getLoadShippingOptionsError](CheckoutStoreErrorSelector.md#getloadshippingoptionserror)
-- [getPickupOptionsError](CheckoutStoreErrorSelector.md#getpickupoptionserror)
-- [getRemoveCouponError](CheckoutStoreErrorSelector.md#getremovecouponerror)
-- [getRemoveGiftCertificateError](CheckoutStoreErrorSelector.md#getremovegiftcertificateerror)
-- [getSelectShippingOptionError](CheckoutStoreErrorSelector.md#getselectshippingoptionerror)
-- [getSignInEmailError](CheckoutStoreErrorSelector.md#getsigninemailerror)
-- [getSignInError](CheckoutStoreErrorSelector.md#getsigninerror)
-- [getSignOutError](CheckoutStoreErrorSelector.md#getsignouterror)
-- [getSubmitOrderError](CheckoutStoreErrorSelector.md#getsubmitordererror)
-- [getUpdateBillingAddressError](CheckoutStoreErrorSelector.md#getupdatebillingaddresserror)
-- [getUpdateCheckoutError](CheckoutStoreErrorSelector.md#getupdatecheckouterror)
-- [getUpdateConsignmentError](CheckoutStoreErrorSelector.md#getupdateconsignmenterror)
-- [getUpdateShippingAddressError](CheckoutStoreErrorSelector.md#getupdateshippingaddresserror)
-- [getUpdateSubscriptionsError](CheckoutStoreErrorSelector.md#getupdatesubscriptionserror)
-
 ## Methods
 
-### getApplyCouponError
+### getApplyCouponError()
 
-▸ **getApplyCouponError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+> **getApplyCouponError**(): [`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 Returns an error if unable to apply a coupon code.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+[`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 The error object if unable to apply, otherwise undefined.
 
-___
+***
 
-### getApplyGiftCertificateError
+### getApplyGiftCertificateError()
 
-▸ **getApplyGiftCertificateError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+> **getApplyGiftCertificateError**(): [`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 Returns an error if unable to apply a gift certificate.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+[`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 The error object if unable to apply, otherwise undefined.
 
-___
+***
 
-### getApplyStoreCreditError
+### getApplyStoreCreditError()
 
-▸ **getApplyStoreCreditError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+> **getApplyStoreCreditError**(): [`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 Returns an error if unable to apply store credit.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+[`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 The error object if unable to apply, otherwise undefined.
 
-___
+***
 
-### getContinueAsGuestError
+### getContinueAsGuestError()
 
-▸ **getContinueAsGuestError**(): `undefined` \| `Error`
+> **getContinueAsGuestError**(): `Error` \| `undefined`
 
 Returns an error if unable to continue as guest.
 
@@ -116,57 +76,57 @@ For more information about status codes, check [Checkout Storefront API - Add Ch
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to continue, otherwise undefined.
 
-___
+***
 
-### getCreateConsignmentsError
+### getCreateConsignmentsError()
 
-▸ **getCreateConsignmentsError**(): `undefined` \| `Error`
+> **getCreateConsignmentsError**(): `Error` \| `undefined`
 
 Returns an error if unable to create consignments.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to create, otherwise undefined.
 
-___
+***
 
-### getCreateCustomerAccountError
+### getCreateCustomerAccountError()
 
-▸ **getCreateCustomerAccountError**(): `undefined` \| `Error`
+> **getCreateCustomerAccountError**(): `Error` \| `undefined`
 
 Returns an error if unable to create customer account.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to create account, otherwise undefined.
 
-___
+***
 
-### getCreateCustomerAddressError
+### getCreateCustomerAddressError()
 
-▸ **getCreateCustomerAddressError**(): `undefined` \| `Error`
+> **getCreateCustomerAddressError**(): `Error` \| `undefined`
 
 Returns an error if unable to create customer address.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to create address, otherwise undefined.
 
-___
+***
 
-### getDeleteConsignmentError
+### getDeleteConsignmentError()
 
-▸ **getDeleteConsignmentError**(`consignmentId?`): `undefined` \| `Error`
+> **getDeleteConsignmentError**(`consignmentId?`): `Error` \| `undefined`
 
 Returns an error if unable to delete a consignment.
 
@@ -175,343 +135,357 @@ specific consignment, otherwise it will check for all available consignments.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `consignmentId?` | `string` | The identifier of the consignment to be checked. |
+##### consignmentId?
+
+`string`
+
+The identifier of the consignment to be checked.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to delete, otherwise undefined.
 
-___
+***
 
-### getDeleteInstrumentError
+### getDeleteInstrumentError()
 
-▸ **getDeleteInstrumentError**(`instrumentId?`): `undefined` \| `Error`
+> **getDeleteInstrumentError**(`instrumentId?`): `Error` \| `undefined`
 
 Returns an error if unable to delete a payment instrument.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `instrumentId?` | `string` | The identifier of the payment instrument to delete. |
+##### instrumentId?
+
+`string`
+
+The identifier of the payment instrument to delete.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to delete, otherwise undefined.
 
-___
+***
 
-### getError
+### getError()
 
-▸ **getError**(): `undefined` \| `Error`
+> **getError**(): `Error` \| `undefined`
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
-___
+***
 
-### getFinalizeOrderError
+### getFinalizeOrderError()
 
-▸ **getFinalizeOrderError**(): `undefined` \| `Error`
+> **getFinalizeOrderError**(): `Error` \| `undefined`
 
 Returns an error if unable to finalize the current order.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to finalize, otherwise undefined.
 
-___
+***
 
-### getInitializeCustomerError
+### getInitializeCustomerError()
 
-▸ **getInitializeCustomerError**(`methodId?`): `undefined` \| `Error`
+> **getInitializeCustomerError**(`methodId?`): `Error` \| `undefined`
 
 Returns an error if unable to initialize the customer step of a checkout
 process.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `methodId?` | `string` | The identifer of the initialization method to execute. |
+##### methodId?
+
+`string`
+
+The identifer of the initialization method to execute.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to initialize, otherwise undefined.
 
-___
+***
 
-### getInitializePaymentError
+### getInitializePaymentError()
 
-▸ **getInitializePaymentError**(`methodId?`): `undefined` \| `Error`
+> **getInitializePaymentError**(`methodId?`): `Error` \| `undefined`
 
 Returns an error if unable to initialize a specific payment method.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `methodId?` | `string` | The identifier of the payment method to initialize. |
+##### methodId?
+
+`string`
+
+The identifier of the payment method to initialize.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to initialize, otherwise undefined.
 
-___
+***
 
-### getInitializeShippingError
+### getInitializeShippingError()
 
-▸ **getInitializeShippingError**(`methodId?`): `undefined` \| `Error`
+> **getInitializeShippingError**(`methodId?`): `Error` \| `undefined`
 
 Returns an error if unable to initialize the shipping step of a checkout
 process.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `methodId?` | `string` | The identifer of the initialization method to execute. |
+##### methodId?
+
+`string`
+
+The identifer of the initialization method to execute.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to initialize, otherwise undefined.
 
-___
+***
 
-### getLoadB2BTokenError
+### getLoadB2BTokenError()
 
-▸ **getLoadB2BTokenError**(): `undefined` \| `Error`
+> **getLoadB2BTokenError**(): `Error` \| `undefined`
 
 Returns an error if unable to load the B2B token.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load the B2B token, otherwise undefined.
 
-___
+***
 
-### getLoadBillingCountriesError
+### getLoadBillingCountriesError()
 
-▸ **getLoadBillingCountriesError**(): `undefined` \| `Error`
+> **getLoadBillingCountriesError**(): `Error` \| `undefined`
 
 Returns an error if unable to load billing countries.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadCartError
+### getLoadCartError()
 
-▸ **getLoadCartError**(): `undefined` \| `Error`
+> **getLoadCartError**(): `Error` \| `undefined`
 
 Returns an error if unable to load the current cart.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadCheckoutError
+### getLoadCheckoutError()
 
-▸ **getLoadCheckoutError**(): `undefined` \| `Error`
+> **getLoadCheckoutError**(): `Error` \| `undefined`
 
 Returns an error if unable to load the current checkout.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadConfigError
+### getLoadConfigError()
 
-▸ **getLoadConfigError**(): `undefined` \| `Error`
+> **getLoadConfigError**(): `Error` \| `undefined`
 
 Returns an error if unable to load the checkout configuration of a store.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadExtensionsError
+### getLoadExtensionsError()
 
-▸ **getLoadExtensionsError**(): `undefined` \| `Error`
+> **getLoadExtensionsError**(): `Error` \| `undefined`
+
+**`Alpha`**
 
 Returns an error if unable to fetch extensions.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to fetch extensions, otherwise undefined.
 
-___
+***
 
-### getLoadInstrumentsError
+### getLoadInstrumentsError()
 
-▸ **getLoadInstrumentsError**(): `undefined` \| `Error`
+> **getLoadInstrumentsError**(): `Error` \| `undefined`
 
 Returns an error if unable to load payment instruments.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadOrderError
+### getLoadOrderError()
 
-▸ **getLoadOrderError**(): `undefined` \| `Error`
+> **getLoadOrderError**(): `Error` \| `undefined`
 
 Returns an error if unable to load the current order.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadPaymentMethodError
+### getLoadPaymentMethodError()
 
-▸ **getLoadPaymentMethodError**(`methodId?`): `undefined` \| `Error`
+> **getLoadPaymentMethodError**(`methodId?`): `Error` \| `undefined`
 
 Returns an error if unable to load a specific payment method.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `methodId?` | `string` | The identifier of the payment method to load. |
+##### methodId?
+
+`string`
+
+The identifier of the payment method to load.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadPaymentMethodsError
+### getLoadPaymentMethodsError()
 
-▸ **getLoadPaymentMethodsError**(): `undefined` \| `Error`
+> **getLoadPaymentMethodsError**(): `Error` \| `undefined`
 
 Returns an error if unable to load payment methods.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadShippingCountriesError
+### getLoadShippingCountriesError()
 
-▸ **getLoadShippingCountriesError**(): `undefined` \| `Error`
+> **getLoadShippingCountriesError**(): `Error` \| `undefined`
 
 Returns an error if unable to load shipping countries.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getLoadShippingOptionsError
+### getLoadShippingOptionsError()
 
-▸ **getLoadShippingOptionsError**(): `undefined` \| `Error`
+> **getLoadShippingOptionsError**(): `Error` \| `undefined`
 
 Returns an error if unable to load shipping options.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to load, otherwise undefined.
 
-___
+***
 
-### getPickupOptionsError
+### getPickupOptionsError()
 
-▸ **getPickupOptionsError**(): `undefined` \| `Error`
+> **getPickupOptionsError**(): `Error` \| `undefined`
 
 Returns an error if unable to fetch pickup options.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to fetch pickup options, otherwise undefined.
 
-___
+***
 
-### getRemoveCouponError
+### getRemoveCouponError()
 
-▸ **getRemoveCouponError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+> **getRemoveCouponError**(): [`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 Returns an error if unable to remove a coupon code.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+[`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 The error object if unable to remove, otherwise undefined.
 
-___
+***
 
-### getRemoveGiftCertificateError
+### getRemoveGiftCertificateError()
 
-▸ **getRemoveGiftCertificateError**(): `undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+> **getRemoveGiftCertificateError**(): [`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 Returns an error if unable to remove a gift certificate.
 
 #### Returns
 
-`undefined` \| [`RequestError`](../classes/RequestError.md)\<`any`\>
+[`RequestError`](../classes/RequestError.md)\<`any`\> \| `undefined`
 
 The error object if unable to remove, otherwise undefined.
 
-___
+***
 
-### getSelectShippingOptionError
+### getSelectShippingOptionError()
 
-▸ **getSelectShippingOptionError**(`consignmentId?`): `undefined` \| `Error`
+> **getSelectShippingOptionError**(`consignmentId?`): `Error` \| `undefined`
 
 Returns an error if unable to select a shipping option.
 
@@ -520,105 +494,107 @@ specific consignment, otherwise it will check for all available consignments.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `consignmentId?` | `string` | The identifier of the consignment to be checked. |
+##### consignmentId?
+
+`string`
+
+The identifier of the consignment to be checked.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to select, otherwise undefined.
 
-___
+***
 
-### getSignInEmailError
+### getSignInEmailError()
 
-▸ **getSignInEmailError**(): `undefined` \| `Error`
+> **getSignInEmailError**(): `Error` \| `undefined`
 
 Returns an error if unable to send sign-in email.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to send email, otherwise undefined.
 
-___
+***
 
-### getSignInError
+### getSignInError()
 
-▸ **getSignInError**(): `undefined` \| `Error`
+> **getSignInError**(): `Error` \| `undefined`
 
 Returns an error if unable to sign in.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to sign in, otherwise undefined.
 
-___
+***
 
-### getSignOutError
+### getSignOutError()
 
-▸ **getSignOutError**(): `undefined` \| `Error`
+> **getSignOutError**(): `Error` \| `undefined`
 
 Returns an error if unable to sign out.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to sign out, otherwise undefined.
 
-___
+***
 
-### getSubmitOrderError
+### getSubmitOrderError()
 
-▸ **getSubmitOrderError**(): `undefined` \| `Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md) \| [`CartStockPositionsChangedError`](../classes/CartStockPositionsChangedError.md)
+> **getSubmitOrderError**(): `Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md) \| [`CartStockPositionsChangedError`](../classes/CartStockPositionsChangedError.md) \| `undefined`
 
 Returns an error if unable to submit the current order.
 
 #### Returns
 
-`undefined` \| `Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md) \| [`CartStockPositionsChangedError`](../classes/CartStockPositionsChangedError.md)
+`Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md) \| [`CartStockPositionsChangedError`](../classes/CartStockPositionsChangedError.md) \| `undefined`
 
 The error object if unable to submit, otherwise undefined.
 
-___
+***
 
-### getUpdateBillingAddressError
+### getUpdateBillingAddressError()
 
-▸ **getUpdateBillingAddressError**(): `undefined` \| `Error`
+> **getUpdateBillingAddressError**(): `Error` \| `undefined`
 
 Returns an error if unable to update billing address.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to update, otherwise undefined.
 
-___
+***
 
-### getUpdateCheckoutError
+### getUpdateCheckoutError()
 
-▸ **getUpdateCheckoutError**(): `undefined` \| `Error`
+> **getUpdateCheckoutError**(): `Error` \| `undefined`
 
 Returns an error if unable to update the current checkout.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to update, otherwise undefined.
 
-___
+***
 
-### getUpdateConsignmentError
+### getUpdateConsignmentError()
 
-▸ **getUpdateConsignmentError**(`consignmentId?`): `undefined` \| `Error`
+> **getUpdateConsignmentError**(`consignmentId?`): `Error` \| `undefined`
 
 Returns an error if unable to update a consignment.
 
@@ -627,40 +603,42 @@ specific consignment, otherwise it will check for all available consignments.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `consignmentId?` | `string` | The identifier of the consignment to be checked. |
+##### consignmentId?
+
+`string`
+
+The identifier of the consignment to be checked.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to update, otherwise undefined.
 
-___
+***
 
-### getUpdateShippingAddressError
+### getUpdateShippingAddressError()
 
-▸ **getUpdateShippingAddressError**(): `undefined` \| `Error`
+> **getUpdateShippingAddressError**(): `Error` \| `undefined`
 
 Returns an error if unable to update shipping address.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to update, otherwise undefined.
 
-___
+***
 
-### getUpdateSubscriptionsError
+### getUpdateSubscriptionsError()
 
-▸ **getUpdateSubscriptionsError**(): `undefined` \| `Error`
+> **getUpdateSubscriptionsError**(): `Error` \| `undefined`
 
 Returns an error if unable to update subscriptions.
 
 #### Returns
 
-`undefined` \| `Error`
+`Error` \| `undefined`
 
 The error object if unable to update, otherwise undefined.

@@ -1,43 +1,37 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / CheckoutServiceOptions
 
 # Interface: CheckoutServiceOptions
 
-## Table of contents
-
-### Properties
-
-- [errorLogger](CheckoutServiceOptions.md#errorlogger)
-- [externalSource](CheckoutServiceOptions.md#externalsource)
-- [host](CheckoutServiceOptions.md#host)
-- [locale](CheckoutServiceOptions.md#locale)
-- [shouldWarnMutation](CheckoutServiceOptions.md#shouldwarnmutation)
-
 ## Properties
 
-### errorLogger
+### errorLogger?
 
-• `Optional` **errorLogger**: [`ErrorLogger`](ErrorLogger.md)
+> `optional` **errorLogger?**: [`ErrorLogger`](ErrorLogger.md)
 
-___
+***
 
-### externalSource
+### externalSource?
 
-• `Optional` **externalSource**: `string`
+> `optional` **externalSource?**: `string`
 
-___
+***
 
-### host
+### host?
 
-• `Optional` **host**: `string`
+> `optional` **host?**: `string`
 
-___
+***
 
-### locale
+### locale?
 
-• `Optional` **locale**: `string`
+> `optional` **locale?**: `string`
 
-___
+***
 
-### shouldWarnMutation
+### shouldWarnMutation?
 
-• `Optional` **shouldWarnMutation**: `boolean`
+> `optional` **shouldWarnMutation?**: `boolean`

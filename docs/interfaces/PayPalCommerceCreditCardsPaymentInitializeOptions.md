@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceCreditCardsPaymentInitializeOptions
 
 # Interface: PayPalCommerceCreditCardsPaymentInitializeOptions
@@ -77,56 +81,40 @@ service.initializePayment({
 });
 ```
 
-## Table of contents
-
-### Properties
-
-- [form](PayPalCommerceCreditCardsPaymentInitializeOptions.md#form)
-- [onCreditCardFieldsRenderingError](PayPalCommerceCreditCardsPaymentInitializeOptions.md#oncreditcardfieldsrenderingerror)
-- [onLoadComplete](PayPalCommerceCreditCardsPaymentInitializeOptions.md#onloadcomplete)
-
 ## Properties
 
 ### form
 
-• **form**: `default`
+> **form**: `HostedFormOptions`
 
 The form is data for Credit Card Form
 
-___
+***
 
-### onCreditCardFieldsRenderingError
+### onCreditCardFieldsRenderingError?
 
-• `Optional` **onCreditCardFieldsRenderingError**: (`error`: `unknown`) => `void`
+> `optional` **onCreditCardFieldsRenderingError?**: (`error`) => `void`
 
 The callback that gets called when there is an issue with rendering credit card fields
 
-#### Type declaration
+#### Parameters
 
-▸ (`error`): `void`
+##### error
 
-##### Parameters
+`unknown`
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `unknown` |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### onLoadComplete
+### onLoadComplete?
 
-• `Optional` **onLoadComplete**: () => `void`
+> `optional` **onLoadComplete?**: () => `void`
 
 The callback that gets called when PayPal SDK load complete
 
-#### Type declaration
-
-▸ (): `void`
-
-##### Returns
+#### Returns
 
 `void`

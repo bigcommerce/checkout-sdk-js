@@ -1,29 +1,27 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / ConsignmentsChangedEvent
 
 # Interface: ConsignmentsChangedEvent
-
-## Table of contents
-
-### Properties
-
-- [payload](ConsignmentsChangedEvent.md#payload)
-- [type](ConsignmentsChangedEvent.md#type)
 
 ## Properties
 
 ### payload
 
-• **payload**: `Object`
+> **payload**: `object`
 
-#### Type declaration
+#### consignments
 
-| Name | Type |
-| :------ | :------ |
-| `consignments` | [`Consignment`](Consignment.md)[] |
-| `previousConsignments` | [`Consignment`](Consignment.md)[] |
+> **consignments**: [`Consignment`](Consignment.md)[]
 
-___
+#### previousConsignments
+
+> **previousConsignments**: [`Consignment`](Consignment.md)[]
+
+***
 
 ### type
 
-• **type**: [`ConsignmentsChanged`](../enums/ExtensionEventType.md#consignmentschanged)
+> **type**: [`ConsignmentsChanged`](../enumerations/ExtensionEventType.md#consignmentschanged)

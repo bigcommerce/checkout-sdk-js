@@ -1,204 +1,191 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BillingAddress
 
 # Interface: BillingAddress
 
-## Hierarchy
+## Extends
 
 - [`Address`](Address.md)
-
-  ↳ **`BillingAddress`**
-
-## Table of contents
-
-### Properties
-
-- [address1](BillingAddress.md#address1)
-- [address2](BillingAddress.md#address2)
-- [city](BillingAddress.md#city)
-- [company](BillingAddress.md#company)
-- [country](BillingAddress.md#country)
-- [countryCode](BillingAddress.md#countrycode)
-- [customFields](BillingAddress.md#customfields)
-- [email](BillingAddress.md#email)
-- [extraFields](BillingAddress.md#extrafields)
-- [firstName](BillingAddress.md#firstname)
-- [id](BillingAddress.md#id)
-- [label](BillingAddress.md#label)
-- [lastName](BillingAddress.md#lastname)
-- [phone](BillingAddress.md#phone)
-- [postalCode](BillingAddress.md#postalcode)
-- [shouldSaveAddress](BillingAddress.md#shouldsaveaddress)
-- [stateOrProvince](BillingAddress.md#stateorprovince)
-- [stateOrProvinceCode](BillingAddress.md#stateorprovincecode)
 
 ## Properties
 
 ### address1
 
-• **address1**: `string`
+> **address1**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[address1](Address.md#address1)
+[`Address`](Address.md).[`address1`](Address.md#address1)
 
-___
+***
 
 ### address2
 
-• **address2**: `string`
+> **address2**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[address2](Address.md#address2)
+[`Address`](Address.md).[`address2`](Address.md#address2)
 
-___
+***
 
 ### city
 
-• **city**: `string`
+> **city**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[city](Address.md#city)
+[`Address`](Address.md).[`city`](Address.md#city)
 
-___
+***
 
 ### company
 
-• **company**: `string`
+> **company**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[company](Address.md#company)
+[`Address`](Address.md).[`company`](Address.md#company)
 
-___
+***
 
 ### country
 
-• **country**: `string`
+> **country**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[country](Address.md#country)
+[`Address`](Address.md).[`country`](Address.md#country)
 
-___
+***
 
 ### countryCode
 
-• **countryCode**: `string`
+> **countryCode**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[countryCode](Address.md#countrycode)
+[`Address`](Address.md).[`countryCode`](Address.md#countrycode)
 
-___
+***
 
 ### customFields
 
-• **customFields**: \{ `fieldId`: `string` ; `fieldValue`: `string` \| `number` \| `string`[]  }[]
+> **customFields**: `object`[]
+
+#### fieldId
+
+> **fieldId**: `string`
+
+#### fieldValue
+
+> **fieldValue**: `string` \| `number` \| `string`[]
 
 #### Inherited from
 
-[Address](Address.md).[customFields](Address.md#customfields)
+[`Address`](Address.md).[`customFields`](Address.md#customfields)
 
-___
+***
 
-### email
+### email?
 
-• `Optional` **email**: `string`
+> `optional` **email?**: `string`
 
-___
+***
 
-### extraFields
+### extraFields?
 
-• `Optional` **extraFields**: [`AddressExtraFieldValue`](AddressExtraFieldValue.md)[]
+> `optional` **extraFields?**: [`AddressExtraFieldValue`](AddressExtraFieldValue.md)[]
 
 #### Inherited from
 
-[Address](Address.md).[extraFields](Address.md#extrafields)
+[`Address`](Address.md).[`extraFields`](Address.md#extrafields)
 
-___
+***
 
 ### firstName
 
-• **firstName**: `string`
+> **firstName**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[firstName](Address.md#firstname)
+[`Address`](Address.md).[`firstName`](Address.md#firstname)
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-___
+***
 
-### label
+### label?
 
-• `Optional` **label**: `string`
+> `optional` **label?**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[label](Address.md#label)
+[`Address`](Address.md).[`label`](Address.md#label)
 
-___
+***
 
 ### lastName
 
-• **lastName**: `string`
+> **lastName**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[lastName](Address.md#lastname)
+[`Address`](Address.md).[`lastName`](Address.md#lastname)
 
-___
+***
 
 ### phone
 
-• **phone**: `string`
+> **phone**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[phone](Address.md#phone)
+[`Address`](Address.md).[`phone`](Address.md#phone)
 
-___
+***
 
 ### postalCode
 
-• **postalCode**: `string`
+> **postalCode**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[postalCode](Address.md#postalcode)
+[`Address`](Address.md).[`postalCode`](Address.md#postalcode)
 
-___
+***
 
-### shouldSaveAddress
+### shouldSaveAddress?
 
-• `Optional` **shouldSaveAddress**: `boolean`
+> `optional` **shouldSaveAddress?**: `boolean`
 
 #### Inherited from
 
-[Address](Address.md).[shouldSaveAddress](Address.md#shouldsaveaddress)
+[`Address`](Address.md).[`shouldSaveAddress`](Address.md#shouldsaveaddress)
 
-___
+***
 
 ### stateOrProvince
 
-• **stateOrProvince**: `string`
+> **stateOrProvince**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[stateOrProvince](Address.md#stateorprovince)
+[`Address`](Address.md).[`stateOrProvince`](Address.md#stateorprovince)
 
-___
+***
 
 ### stateOrProvinceCode
 
-• **stateOrProvinceCode**: `string`
+> **stateOrProvinceCode**: `string`
 
 #### Inherited from
 
-[Address](Address.md).[stateOrProvinceCode](Address.md#stateorprovincecode)
+[`Address`](Address.md).[`stateOrProvinceCode`](Address.md#stateorprovincecode)

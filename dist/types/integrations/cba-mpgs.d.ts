@@ -73,6 +73,6 @@ declare interface ThreeDSjs {
     authenticatePayer(orderId: string, transactionId: string, callback: (data: ThreeDSAuthenticationResponse) => void, optionalParams?: AuthenticatePayerOptionalParams): void;
 }
 
-export declare const createCBAMPGSPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<CBAMPGSPaymentStrategy>, {
+export declare const createCBAMPGSPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CBAMPGSPaymentStrategy>, {
     id: string;
 }>;

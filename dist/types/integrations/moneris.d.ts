@@ -115,6 +115,6 @@ declare interface WithMonerisPaymentInitializeOptions {
     moneris?: MonerisPaymentInitializeOptions;
 }
 
-export declare const createMonerisPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<MonerisPaymentStrategy>, {
+export declare const createMonerisPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<MonerisPaymentStrategy>, {
     id: string;
 }>;

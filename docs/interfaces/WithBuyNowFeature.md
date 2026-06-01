@@ -1,134 +1,124 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / WithBuyNowFeature
 
 # Interface: WithBuyNowFeature
 
-## Hierarchy
+## Extends
 
 - `AmazonPayV2ButtonConfig`
 
-  ↳ **`WithBuyNowFeature`**
-
-## Table of contents
-
-### Properties
-
-- [buttonColor](WithBuyNowFeature.md#buttoncolor)
-- [buyNowInitializeOptions](WithBuyNowFeature.md#buynowinitializeoptions)
-- [checkoutLanguage](WithBuyNowFeature.md#checkoutlanguage)
-- [design](WithBuyNowFeature.md#design)
-- [ledgerCurrency](WithBuyNowFeature.md#ledgercurrency)
-- [merchantId](WithBuyNowFeature.md#merchantid)
-- [placement](WithBuyNowFeature.md#placement)
-- [productType](WithBuyNowFeature.md#producttype)
-- [sandbox](WithBuyNowFeature.md#sandbox)
-
 ## Properties
 
-### buttonColor
+### buttonColor?
 
-• `Optional` **buttonColor**: `AmazonPayV2ButtonColor`
+> `optional` **buttonColor?**: `AmazonPayV2ButtonColor`
 
 Color of the Amazon Pay button.
 
 #### Inherited from
 
-AmazonPayV2ButtonConfig.buttonColor
+`AmazonPayV2ButtonConfig.buttonColor`
 
-___
+***
 
-### buyNowInitializeOptions
+### buyNowInitializeOptions?
 
-• `Optional` **buyNowInitializeOptions**: `Object`
+> `optional` **buyNowInitializeOptions?**: `object`
 
 The options that are required to initialize Buy Now functionality.
 
-#### Type declaration
+#### getBuyNowCartRequestBody()?
 
-| Name | Type |
-| :------ | :------ |
-| `getBuyNowCartRequestBody?` | () => `void` \| `default` |
+> `optional` **getBuyNowCartRequestBody**(): `void` \| `BuyNowCartRequestBody`
 
-___
+##### Returns
 
-### checkoutLanguage
+`void` \| `BuyNowCartRequestBody`
 
-• `Optional` **checkoutLanguage**: `AmazonPayV2CheckoutLanguage`
+***
+
+### checkoutLanguage?
+
+> `optional` **checkoutLanguage?**: `AmazonPayV2CheckoutLanguage`
 
 Language used to render the button and text on Amazon Pay hosted pages.
 
 #### Inherited from
 
-AmazonPayV2ButtonConfig.checkoutLanguage
+`AmazonPayV2ButtonConfig.checkoutLanguage`
 
-___
+***
 
-### design
+### design?
 
-• `Optional` **design**: `C0001`
+> `optional` **design?**: `AmazonPayV2ButtonDesign`
 
 Sets Amazon Pay button design.
 
 #### Inherited from
 
-AmazonPayV2ButtonConfig.design
+`AmazonPayV2ButtonConfig.design`
 
-___
+***
 
 ### ledgerCurrency
 
-• **ledgerCurrency**: `AmazonPayV2LedgerCurrency`
+> **ledgerCurrency**: `AmazonPayV2LedgerCurrency`
 
 Ledger currency provided during registration for the given merchant identifier.
 
 #### Inherited from
 
-AmazonPayV2ButtonConfig.ledgerCurrency
+`AmazonPayV2ButtonConfig.ledgerCurrency`
 
-___
+***
 
 ### merchantId
 
-• **merchantId**: `string`
+> **merchantId**: `string`
 
 Amazon Pay merchant account identifier.
 
 #### Inherited from
 
-AmazonPayV2ButtonConfig.merchantId
+`AmazonPayV2ButtonConfig.merchantId`
 
-___
+***
 
 ### placement
 
-• **placement**: `AmazonPayV2Placement`
+> **placement**: `AmazonPayV2Placement`
 
 Placement of the Amazon Pay button on your website.
 
 #### Inherited from
 
-AmazonPayV2ButtonConfig.placement
+`AmazonPayV2ButtonConfig.placement`
 
-___
+***
 
-### productType
+### productType?
 
-• `Optional` **productType**: `AmazonPayV2PayOptions`
+> `optional` **productType?**: `AmazonPayV2PayOptions`
 
 Product type selected for checkout. Default is 'PayAndShip'.
 
 #### Inherited from
 
-AmazonPayV2ButtonConfig.productType
+`AmazonPayV2ButtonConfig.productType`
 
-___
+***
 
-### sandbox
+### sandbox?
 
-• `Optional` **sandbox**: `boolean`
+> `optional` **sandbox?**: `boolean`
 
 Sets button to Sandbox environment. You do not have to set this parameter
 if your `publicKeyId` has an environment prefix. Default is false.
 
 #### Inherited from
 
-AmazonPayV2ButtonConfig.sandbox
+`AmazonPayV2ButtonConfig.sandbox`

@@ -1,63 +1,58 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / BraintreeAnalyticTrackerService
 
 # Interface: BraintreeAnalyticTrackerService
 
-## Table of contents
-
-### Methods
-
-- [customerPaymentMethodExecuted](BraintreeAnalyticTrackerService.md#customerpaymentmethodexecuted)
-- [paymentComplete](BraintreeAnalyticTrackerService.md#paymentcomplete)
-- [selectedPaymentMethod](BraintreeAnalyticTrackerService.md#selectedpaymentmethod)
-- [walletButtonClick](BraintreeAnalyticTrackerService.md#walletbuttonclick)
-
 ## Methods
 
-### customerPaymentMethodExecuted
+### customerPaymentMethodExecuted()
 
-▸ **customerPaymentMethodExecuted**(): `void`
-
-#### Returns
-
-`void`
-
-___
-
-### paymentComplete
-
-▸ **paymentComplete**(): `void`
+> **customerPaymentMethodExecuted**(): `void`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### selectedPaymentMethod
+### paymentComplete()
 
-▸ **selectedPaymentMethod**(`methodId`): `void`
+> **paymentComplete**(): `void`
+
+#### Returns
+
+`void`
+
+***
+
+### selectedPaymentMethod()
+
+> **selectedPaymentMethod**(`methodId`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId` | `string` |
+##### methodId
+
+`string`
 
 #### Returns
 
 `void`
 
-___
+***
 
-### walletButtonClick
+### walletButtonClick()
 
-▸ **walletButtonClick**(`methodId`): `void`
+> **walletButtonClick**(`methodId`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `methodId` | `string` |
+##### methodId
+
+`string`
 
 #### Returns
 

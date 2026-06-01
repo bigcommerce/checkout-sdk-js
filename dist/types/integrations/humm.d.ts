@@ -17,6 +17,6 @@ declare class HummPaymentStrategy implements PaymentStrategy {
     private isOffsiteRedirectResponse;
 }
 
-export declare const createHummPaymentStrategy: import("../../payment-integration-api/src/resolvable-module").default<PaymentStrategyFactory<HummPaymentStrategy>, {
+export declare const createHummPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<HummPaymentStrategy>, {
     id: string;
 }>;

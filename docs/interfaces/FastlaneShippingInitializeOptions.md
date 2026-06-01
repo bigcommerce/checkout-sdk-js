@@ -1,3 +1,7 @@
+[**@bigcommerce/checkout-sdk**](../README.md)
+
+***
+
 [@bigcommerce/checkout-sdk](../README.md) / FastlaneShippingInitializeOptions
 
 # Interface: FastlaneShippingInitializeOptions
@@ -8,41 +12,30 @@ checkout in order to support Fastlane (PayPal Commerce, BigCommerce Payments, or
 This is a unified interface that can be used across all Fastlane implementations
 to simplify initialization and avoid provider-specific checks.
 
-## Table of contents
-
-### Properties
-
-- [onPayPalFastlaneAddressChange](FastlaneShippingInitializeOptions.md#onpaypalfastlaneaddresschange)
-- [styles](FastlaneShippingInitializeOptions.md#styles)
-
 ## Properties
 
-### onPayPalFastlaneAddressChange
+### onPayPalFastlaneAddressChange?
 
-• `Optional` **onPayPalFastlaneAddressChange**: (`showFastlaneAddressSelector`: () => `Promise`\<`undefined` \| `CustomerAddress`\>) => `void`
+> `optional` **onPayPalFastlaneAddressChange?**: (`showFastlaneAddressSelector`) => `void`
 
 A callback that shows the Fastlane popup with customer addresses
 when triggered
 
-#### Type declaration
+#### Parameters
 
-▸ (`showFastlaneAddressSelector`): `void`
+##### showFastlaneAddressSelector
 
-##### Parameters
+() => `Promise`\<`CustomerAddress` \| `undefined`\>
 
-| Name | Type |
-| :------ | :------ |
-| `showFastlaneAddressSelector` | () => `Promise`\<`undefined` \| `CustomerAddress`\> |
-
-##### Returns
+#### Returns
 
 `void`
 
-___
+***
 
-### styles
+### styles?
 
-• `Optional` **styles**: [`FastlaneStylesOption`](../README.md#fastlanestylesoption)
+> `optional` **styles?**: [`FastlaneStylesOption`](../type-aliases/FastlaneStylesOption.md)
 
 Styling options for customizing Fastlane components
 
