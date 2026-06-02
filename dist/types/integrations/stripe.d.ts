@@ -28,7 +28,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private readonly stripeIntegrationService;
     private stripeClient?;
     private stripeCheckout?;
-    private selectedMethodId?;
+    private selectedMethod?;
     constructor(paymentIntegrationService: PaymentIntegrationService, scriptLoader: StripeScriptLoader, stripeIntegrationService: StripeIntegrationService);
     initialize(options: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions): Promise<void>;
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
@@ -49,8 +49,6 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _updateStripeEmail;
     private _updateStripeShippingAddress;
     private _updateStripeBillingAddress;
-    private _getStripeSavedPaymentMethodsOrThrow;
-    private _getNewVaultedStripeInstrument;
     private _getTokenizedOptions;
     private _initializeAdaptivePricingElement;
     private _getCurrencySelectorElement;
