@@ -64,6 +64,7 @@ export interface LineItem {
     extendedComparisonPrice: number;
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
+    addedByAttributeId: string | null;
     addedByPromotion: boolean;
     parentId?: string | null;
     quantityBackordered?: number;
@@ -72,6 +73,7 @@ export interface LineItem {
 }
 
 export interface LineItemOption {
+    attributeId?: string;
     name: string;
     nameId: number;
     value: string;

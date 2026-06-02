@@ -33,6 +33,7 @@ export function getPhysicalItem(): PhysicalItem {
         extendedComparisonPrice: 200,
         isShippingRequired: true,
         addedByPromotion: false,
+        addedByAttributeId: null,
         options: [
             {
                 name: 'n',
@@ -73,6 +74,7 @@ export function getDigitalItem(): DigitalItem {
         extendedSalePrice: 200,
         extendedComparisonPrice: 200,
         addedByPromotion: false,
+        addedByAttributeId: null,
         options: [
             {
                 name: 'm',
