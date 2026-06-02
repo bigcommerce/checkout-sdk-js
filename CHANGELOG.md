@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.921.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.921.3...v1.921.4) (2026-06-02)
+
+
+### Bug Fixes
+
+* **payments:** reinitialize expired Stipe checkout session ([#3274](https://github.com/bigcommerce/checkout-sdk-js/issues/3274)) ([d3a0892](https://github.com/bigcommerce/checkout-sdk-js/commit/d3a08924400add628f037510c238581dbe2fc18c))
+
 ### [1.921.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.921.2...v1.921.3) (2026-06-02)
 
 

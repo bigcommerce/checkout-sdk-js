@@ -29,6 +29,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private stripeClient?;
     private stripeCheckout?;
     private selectedMethod?;
+    private stripeInitializationOptions?;
     constructor(paymentIntegrationService: PaymentIntegrationService, scriptLoader: StripeScriptLoader, stripeIntegrationService: StripeIntegrationService);
     initialize(options: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions): Promise<void>;
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
@@ -53,6 +54,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _initializeAdaptivePricingElement;
     private _getCurrencySelectorElement;
     private _initAdaptivePricingEvents;
+    private _reinitializeStrategy;
 }
 
 declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
