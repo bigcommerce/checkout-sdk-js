@@ -24,9 +24,9 @@ import {
 import { CustomerAddress } from '../../../customer';
 import { Country } from '../../../geography';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-customer';
 import { CardInstrument } from '../../../payment/instrument';
 import { UntrustedShippingCardVerificationType } from '../../../payment/instrument/instrument';
+import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-customer';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';

@@ -2,12 +2,11 @@ import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
 import {
     createPayPalIntegrationService,
     LOADING_INDICATOR_STYLES,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceVenmoPaymentStrategy from './paypal-commerce-venmo-payment-strategy';
 

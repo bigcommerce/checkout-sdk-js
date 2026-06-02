@@ -41,7 +41,6 @@ export interface CreateTokenError {
     message: string;
 }
 
-/* eslint-disable @typescript-eslint/naming-convention */
 export interface TdOnlineMartThreeDSErrorBody {
     errors?: Array<{ code: string }>;
     three_ds_result?: {
@@ -50,7 +49,6 @@ export interface TdOnlineMartThreeDSErrorBody {
         merchant_data: string;
     };
 }
-/* eslint-enable @typescript-eslint/naming-convention */
 
 export type TdOnlineMartAdditionalAction = RequestError<TdOnlineMartThreeDSErrorBody>;
 

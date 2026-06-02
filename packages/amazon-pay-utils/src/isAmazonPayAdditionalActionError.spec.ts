@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { isAmazonPayAdditionalActionErrorBody } from './isAmazonPayAdditionalActionError';
 
 describe('isAmazonPayAdditionalActionErrorBody', () => {

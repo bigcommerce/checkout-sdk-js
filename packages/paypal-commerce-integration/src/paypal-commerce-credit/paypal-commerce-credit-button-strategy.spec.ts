@@ -166,7 +166,6 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
 
             eventEmitter.on(
                 'onClick',
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
                     try {
                         if (options.onClick) {

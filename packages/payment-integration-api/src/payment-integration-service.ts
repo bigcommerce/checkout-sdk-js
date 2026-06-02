@@ -5,9 +5,9 @@ import { CustomerCredentials } from './customer';
 import { HostedForm, HostedFormOptions } from './hosted-form';
 import { OrderRequestBody } from './order';
 import { InitializeOffsitePaymentConfig, Payment, PaymentAdditionalAction } from './payment';
+import { InitializePaymentOptions } from './payment/payment-initialize-options';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 import { PaymentProviderCustomer } from './payment-provider-customer';
-import { InitializePaymentOptions } from './payment/payment-initialize-options';
 import { ShippingAddressRequestBody } from './shipping';
 import { RequestOptions } from './util-types';
 

@@ -45,8 +45,8 @@ import {
     PaymentMethodRequestSender,
     PaymentStrategyActionCreator,
 } from '../payment';
-import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
+import { createPaymentIntegrationService } from '../payment-integration';
 import {
     ConsignmentActionCreator,
     ConsignmentRequestSender,

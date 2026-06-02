@@ -1,5 +1,6 @@
-import isBraintreeError from './is-braintree-error';
 import { BraintreeHostedFormError } from '../types';
+
+import isBraintreeError from './is-braintree-error';
 
 function isValidInvalidFieldKeys(invalidFieldKeys: unknown): invalidFieldKeys is string[] {
     return (

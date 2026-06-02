@@ -13,7 +13,6 @@ export interface AmazonPayV2Options {
 }
 
 export interface AmazonPayV2SDK {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     Pay: AmazonPayV2Client;
 }
 
@@ -203,7 +202,6 @@ export const amazonPayV2Regions: { [key: string]: string } = {
     us: 'na',
 };
 
-/* eslint-disable @typescript-eslint/naming-convention */
 export enum AmazonPayV2CheckoutLanguage {
     en_US = 'en_US',
     en_GB = 'en_GB',
@@ -213,7 +211,6 @@ export enum AmazonPayV2CheckoutLanguage {
     es_ES = 'es_ES',
     ja_JP = 'ja_JP',
 }
-/* eslint-enable @typescript-eslint/naming-convention */
 
 /* eslint-disable @typescript-eslint/no-shadow */
 export enum AmazonPayV2Placement {
@@ -301,7 +298,6 @@ export interface AmazonPayV2ButtonRenderingOptions {
     isButtonMicroTextDisabled?: boolean;
 }
 
-/* eslint-disable @typescript-eslint/naming-convention */
 export interface AmazonPayAdditionalActionErrorBody {
     status: string;
     additional_action_required: {
@@ -310,4 +306,3 @@ export interface AmazonPayAdditionalActionErrorBody {
         };
     };
 }
-/* eslint-enable @typescript-eslint/naming-convention */

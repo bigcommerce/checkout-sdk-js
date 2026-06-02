@@ -1,5 +1,5 @@
-import loadPayPalSDKOnce, { resetLoadPayPalSDKOncePromise } from './load-paypal-sdk-once';
 import { BraintreePaypalCheckout } from './braintree';
+import loadPayPalSDKOnce, { resetLoadPayPalSDKOncePromise } from './load-paypal-sdk-once';
 import { BraintreeError } from './types';
 
 describe('loadPayPalSDKOnce', () => {
@@ -60,6 +60,7 @@ describe('loadPayPalSDKOnce', () => {
         expect(promise1).toBe(promise2);
 
         const result = await promise1;
+
         expect(result).toBe(paypalCheckout);
     });
 

@@ -15,7 +15,6 @@ import {
 
 export function getAmazonPayV2SDKMock(): AmazonPayV2SDK {
     return {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         Pay: {
             renderButton: jest.fn().mockReturnValue({
                 onClick: jest.fn(),
@@ -38,7 +37,6 @@ export function getPaymentMethodMockUndefinedMerchant(): PaymentMethod {
 export function getPaymentMethodMockUndefinedLedgerCurrency(): PaymentMethod {
     const amazonMock = getAmazonPayV2();
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     amazonMock.initializationData!.ledgerCurrency = undefined;
 
     return amazonMock;

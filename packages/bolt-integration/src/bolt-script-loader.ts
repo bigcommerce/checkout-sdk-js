@@ -45,7 +45,6 @@ export default class BoltScriptLoader {
             this.getScriptOptions('bolt-track', publishableKey),
         );
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!this.boltHostWindow.BoltCheckout) {
             throw new PaymentMethodClientUnavailableError();
         }

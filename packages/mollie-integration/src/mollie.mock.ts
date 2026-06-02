@@ -90,7 +90,6 @@ export function getOrderRequestBodyAPMs(): OrderRequestBody {
             gatewayId: 'mollie',
             paymentData: {
                 issuer: 'foo',
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 shopper_locale: 'en-US',
             },
         },

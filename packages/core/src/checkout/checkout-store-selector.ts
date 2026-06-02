@@ -14,8 +14,8 @@ import { FormField } from '../form';
 import { Country } from '../geography';
 import { Order } from '../order';
 import { PaymentMethod } from '../payment';
-import { PaymentProviderCustomer } from '../payment-provider-customer';
 import { CardInstrument, PaymentInstrument } from '../payment/instrument';
+import { PaymentProviderCustomer } from '../payment-provider-customer';
 import { Consignment, PickupOptionResult, SearchArea, ShippingOption } from '../shipping';
 import { SignInEmail } from '../signin-email';
 

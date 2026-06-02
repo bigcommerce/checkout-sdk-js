@@ -11,8 +11,8 @@ import { CountryState } from '../geography';
 import { OrderState } from '../order';
 import { OrderBillingAddressState } from '../order-billing-address';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
-import { PaymentProviderCustomerState } from '../payment-provider-customer';
 import { InstrumentState } from '../payment/instrument';
+import { PaymentProviderCustomerState } from '../payment-provider-customer';
 import { RemoteCheckoutState } from '../remote-checkout';
 import {
     ConsignmentState,

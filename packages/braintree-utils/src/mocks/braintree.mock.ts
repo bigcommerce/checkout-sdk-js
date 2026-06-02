@@ -2,6 +2,7 @@ import {
     OrderPaymentRequestBody,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { getOrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BillingAddress, {
     BillingAddressState,
@@ -26,7 +27,6 @@ import BillingAddress, {
 } from '../types';
 
 import { getVisaCheckoutTokenizedPayload } from './visacheckout.mock';
-import { getOrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 export function getBraintree(): PaymentMethod {
     return {
@@ -191,8 +191,7 @@ export function getHostedFieldsMock(): BraintreeHostedFields {
 export function getVenmoCheckoutMock(): BraintreeVenmoCheckout {
     return {
         teardown: jest.fn(() => Promise.resolve()),
-        // TODO: remove this rule and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        // TODO: update test with related type (PAYPAL-4383)
         tokenize: jest.fn(() => Promise.resolve()),
         isBrowserSupported: jest.fn(),
     };
@@ -286,7 +285,6 @@ export function getBraintreeLocalPaymentMock(
     startPaymentError: BraintreeLPMStartPaymentError | undefined = undefined,
 ): BraintreeLocalPayment {
     return {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         startPayment: jest.fn(
             async (
                 config: BraintreeLocalPaymentConfig,

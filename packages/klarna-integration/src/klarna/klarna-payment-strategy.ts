@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { includes } from 'lodash';
 
 import {
@@ -46,7 +45,6 @@ export default class KlarnaPaymentStrategy {
     ): Promise<void> {
         this.klarnaCredit = await this.klarnaScriptLoader.load();
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         this.unsubscribe = this.paymentIntegrationService.subscribe(
             (state) => {
                 if (

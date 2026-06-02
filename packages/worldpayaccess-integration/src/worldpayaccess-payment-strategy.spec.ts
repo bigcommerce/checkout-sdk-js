@@ -375,7 +375,6 @@ describe('WorldpayAccessPaymetStrategy', () => {
 
             merchant.name = 'MD';
             merchant.type = 'hidden';
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             merchant.value = `merchantSessionId=${threeDSecureRequiredErrorResponse.body.three_ds_result.merchant_data}`;
             form.appendChild(merchant);
 

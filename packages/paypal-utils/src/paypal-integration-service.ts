@@ -139,6 +139,7 @@ export default class PayPalIntegrationService {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         let consignment;
+
         if (!isServerSideShippingCallbacksEnabled) {
             consignment = state.getConsignmentsOrThrow()[0];
         }

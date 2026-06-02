@@ -143,9 +143,11 @@ export default class StripeScriptLoader {
     }
 
     private logErrorToConsole(error?: unknown) {
+        /* eslint-disable no-console */
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         error
             ? console.error(error)
             : console.error('No stripe checkout actions available on loadActions().');
+        /* eslint-enable no-console */
     }
 }

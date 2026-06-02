@@ -16,8 +16,8 @@ import {
     createPaymentSelectorFactory,
     createPaymentStrategySelectorFactory,
 } from '../payment';
-import { createPaymentProviderCustomerSelectorFactory } from '../payment-provider-customer';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
+import { createPaymentProviderCustomerSelectorFactory } from '../payment-provider-customer';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
 import {
     createConsignmentSelectorFactory,

@@ -13,8 +13,8 @@ import {
     PaymentMethodActionType,
     PaymentMethodRequestSender,
 } from '../payment';
-import { createPaymentIntegrationService } from '../payment-integration';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
+import { createPaymentIntegrationService } from '../payment-integration';
 
 import { CheckoutButtonActionType } from './checkout-button-actions';
 import { CheckoutButtonInitializeOptions } from './checkout-button-options';

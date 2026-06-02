@@ -19,6 +19,7 @@ export default function isBraintreePaymentRequest3DSError(
     if (typeof error !== 'object' || error === null) {
         return false;
     }
+
     /* eslint-disable @typescript-eslint/consistent-type-assertions */
     return (
         'name' in error &&

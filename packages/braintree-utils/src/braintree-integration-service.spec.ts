@@ -553,6 +553,7 @@ describe('BraintreeIntegrationService', () => {
             nonce: '3ds_nonce',
             amount: 122,
         };
+
         it('tokenizes the card with the right params', async () => {
             jest.spyOn(braintreeIntegrationService, 'tokenizeCard');
             jest.spyOn(braintreeIntegrationService, 'verifyCard');

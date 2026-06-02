@@ -1,5 +1,6 @@
-import { isBraintreeStoredCardFieldsMap } from './is-braintree-form-fields-map';
 import { BraintreeFormFieldType, BraintreeStoredCardFieldsMap } from '../index';
+
+import { isBraintreeStoredCardFieldsMap } from './is-braintree-form-fields-map';
 
 describe('isBraintreeStoredCardFieldsMap', () => {
     it('returns true if fields belong to stored card', () => {

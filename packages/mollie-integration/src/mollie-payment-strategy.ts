@@ -208,7 +208,6 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
         const { token, error } = await this.getMollieClient().createToken();
 
-        /* eslint-disable */
         if (error) {
             return Promise.reject(error);
         }
@@ -222,7 +221,6 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             browser_info: getBrowserInfo(),
             shopper_locale: this.getShopperLocale(),
         };
-        /* eslint-enable */
 
         await this.paymentIntegrationService.submitPayment({
             ...payment,
@@ -259,7 +257,6 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                 ...paymentData,
                 formattedPayload: {
                     issuer,
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     shopper_locale: this.getShopperLocale(),
                 },
             },

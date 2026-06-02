@@ -227,7 +227,6 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
             this.threeDSjs.authenticatePayer(
                 orderId,
                 transactionId,
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 async (data) => {
                     const error = data.error;
 

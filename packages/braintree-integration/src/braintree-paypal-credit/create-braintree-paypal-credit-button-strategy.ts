@@ -27,6 +27,7 @@ const createBraintreePaypalCreditButtonStrategy: CheckoutButtonStrategyFactory<
         ),
         braintreeHostWindow,
     );
+
     return new BraintreePaypalCreditButtonStrategy(
         paymentIntegrationService,
         createFormPoster(),

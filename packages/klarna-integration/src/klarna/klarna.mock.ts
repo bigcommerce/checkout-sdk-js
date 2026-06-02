@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { BillingAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { KlarnaUpdateSessionParams } from './klarna-credit';
