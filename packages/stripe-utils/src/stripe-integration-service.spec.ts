@@ -707,6 +707,35 @@ describe('StripeIntegrationService', () => {
         });
     });
 
+    describe('#isSessionExpiredError', () => {
+        it('should return true if any error has the authorization_expired code', () => {
+            expect(
+                stripeIntegrationService.isSessionExpiredError([{ code: 'authorization_expired' }]),
+            ).toBe(true);
+        });
+
+        it('should return true when authorization_expired is mixed with other codes', () => {
+            expect(
+                stripeIntegrationService.isSessionExpiredError([
+                    { code: 'something_else' },
+                    { code: 'authorization_expired' },
+                ]),
+            ).toBe(true);
+        });
+
+        it('should return false when no error matches the authorization_expired code', () => {
+            expect(
+                stripeIntegrationService.isSessionExpiredError([
+                    { code: 'additional_action_required' },
+                ]),
+            ).toBe(false);
+        });
+
+        it('should return false for an empty errors array', () => {
+            expect(stripeIntegrationService.isSessionExpiredError([])).toBe(false);
+        });
+    });
+
     describe('#isRedirectAction', () => {
         it('should return true if additional action is redirect action', () => {
             expect(

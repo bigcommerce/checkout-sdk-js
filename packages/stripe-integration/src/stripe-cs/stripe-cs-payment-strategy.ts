@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { cloneDeep, merge } from 'lodash';
 
 import {
     InvalidArgumentError,
@@ -48,6 +48,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     private stripeClient?: StripeClient;
     private stripeCheckout?: StripeCheckoutInstance;
     private selectedMethod?: StripeSelectedPaymentMethod;
+    private stripeInitializationOptions?: StripeOCSPaymentInitializeOptions;
 
     constructor(
         private readonly paymentIntegrationService: PaymentIntegrationService,
@@ -77,6 +78,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 .getState()
                 .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
         }
+
+        this.stripeInitializationOptions = stripeocs;
 
         try {
             await this._initStripeCheckoutSession(stripeocs, paymentMethod);
@@ -140,6 +143,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         this.stripeCheckout = undefined;
         this.stripeClient = undefined;
         this.selectedMethod = undefined;
+        this.stripeInitializationOptions = undefined;
 
         return Promise.resolve();
     }
@@ -319,10 +323,18 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         gatewayId: string,
         methodId: string,
     ): Promise<PaymentIntegrationSelectors | undefined> {
-        if (
-            !isRequestError(error) ||
-            !this.stripeIntegrationService.isAdditionalActionError(error.body.errors)
-        ) {
+        if (!isRequestError(error)) {
+            throw error;
+        } else if (this.stripeIntegrationService.isSessionExpiredError(error.body.errors)) {
+            // INFO: await is skipped here to not block error propagation and update checkout session in the background
+            this._reinitializeStrategy({
+                gatewayId,
+                methodId,
+                stripeocs: cloneDeep(this.stripeInitializationOptions),
+            });
+
+            throw error;
+        } else if (!this.stripeIntegrationService.isAdditionalActionError(error.body.errors)) {
             throw error;
         }
 
@@ -502,5 +514,12 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 customerCurrency: stripeCurrencyCode,
             });
         });
+    }
+
+    private async _reinitializeStrategy(
+        options: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions,
+    ): Promise<void> {
+        await this.deinitialize();
+        await this.initialize(options);
     }
 }
