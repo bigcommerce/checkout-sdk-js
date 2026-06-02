@@ -1,11 +1,23 @@
+const fs = require('fs');
 const path = require('path');
-const { projects } = require('../../workspace.json');
+
+const packagesDir = path.join(__dirname, '../../packages');
+const projects = Object.fromEntries(
+    fs
+        .readdirSync(packagesDir, { withFileTypes: true })
+        .filter(
+            (entry) =>
+                entry.isDirectory() &&
+                fs.existsSync(path.join(packagesDir, entry.name, 'project.json')),
+        )
+        .map((entry) => [entry.name, `packages/${entry.name}`]),
+);
 
 const tsSrcPackages = [];
 const aliasMap = {};
 
 for (const [packageName, packagePath] of Object.entries(projects)) {
-    const packageSrcPath =  path.join(__dirname, '../../', `${packagePath}/src`);
+    const packageSrcPath = path.join(__dirname, '../../', `${packagePath}/src`);
 
     tsSrcPackages.push({
         test: /\.[tj]s$/,
@@ -18,5 +30,5 @@ for (const [packageName, packagePath] of Object.entries(projects)) {
 
 module.exports = {
     aliasMap,
-    tsSrcPackages
+    tsSrcPackages,
 };
