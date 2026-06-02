@@ -39,7 +39,9 @@ export {
     StripeCheckoutSessionActions,
     StripeCheckoutSessionConfirmationError,
     StripeCheckoutSessionPaymentStatus,
+    StripeSelectedPaymentMethod,
     StripeSavedPaymentMethod,
+    StripePaymentEvent,
 } from './stripe';
 export {
     getStripeJsMock,

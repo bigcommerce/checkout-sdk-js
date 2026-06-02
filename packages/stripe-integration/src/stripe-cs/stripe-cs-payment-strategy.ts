@@ -22,7 +22,6 @@ import {
     isStripePaymentEvent,
     StripeAdditionalActionRequired,
     StripeCheckoutInstance,
-    StripeCheckoutSession,
     StripeCheckoutSessionActionResult,
     StripeCheckoutSessionActions,
     StripeCheckoutSessionPaymentStatus,
@@ -36,8 +35,8 @@ import {
     StripeIntegrationService,
     StripeJsVersion,
     StripePaymentMethodType,
-    StripeSavedPaymentMethod,
     StripeScriptLoader,
+    StripeSelectedPaymentMethod,
     StripeStringConstants,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
 
@@ -48,7 +47,7 @@ import StripeOCSPaymentInitializeOptions, {
 export default class StripeCSPaymentStrategy implements PaymentStrategy {
     private stripeClient?: StripeClient;
     private stripeCheckout?: StripeCheckoutInstance;
-    private selectedMethodId?: string;
+    private selectedMethod?: StripeSelectedPaymentMethod;
 
     constructor(
         private readonly paymentIntegrationService: PaymentIntegrationService,
@@ -140,7 +139,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         currencySelectorElement?.destroy();
         this.stripeCheckout = undefined;
         this.stripeClient = undefined;
-        this.selectedMethodId = undefined;
+        this.selectedMethod = undefined;
 
         return Promise.resolve();
     }
@@ -271,7 +270,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             return;
         }
 
-        this.selectedMethodId = event.value.type;
+        this.selectedMethod = event.value;
         paymentMethodSelect?.(`${gatewayId}-${methodId}`);
     }
 
@@ -293,16 +292,17 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     private _getPaymentPayload(
         methodId: string,
         token: string,
-        newVaultedStripeInstrument?: StripeSavedPaymentMethod,
+        isSecondPaymentRequest = false,
     ): Payment<StripeFormattedPaymentPayload> {
         const cartId = this.paymentIntegrationService.getState().getCart()?.id || '';
-        const tokenizedOptions = this._getTokenizedOptions(token, newVaultedStripeInstrument);
+        const tokenizedOptions = this._getTokenizedOptions(token, isSecondPaymentRequest);
 
         const formattedPayload = {
             cart_id: cartId,
             confirm: false,
-            method: this.selectedMethodId,
-            vault_payment_instrument: !!newVaultedStripeInstrument,
+            method: this.selectedMethod?.type,
+            vault_payment_instrument:
+                isSecondPaymentRequest && !!this.selectedMethod?.savePaymentMethod,
             ...tokenizedOptions,
         };
 
@@ -328,23 +328,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
         const { data: additionalActionData } = error.body?.additional_action_required || {};
         const { token } = additionalActionData || {};
-        const existingStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow();
         const { session: stripeCheckoutSession, error: stripeError } =
             await this._confirmStripePayment(additionalActionData);
-        const newStripeSavedPaymentMethods = await this._getStripeSavedPaymentMethodsOrThrow(
-            stripeCheckoutSession,
-        );
         const { id: checkoutSessionId, status: checkoutSessionStatus } =
             stripeCheckoutSession || {};
-        const newVaultedStripeInstrument = this._getNewVaultedStripeInstrument(
-            existingStripeSavedPaymentMethods,
-            newStripeSavedPaymentMethods,
-        );
-        const paymentPayload = this._getPaymentPayload(
-            methodId,
-            checkoutSessionId || token,
-            newVaultedStripeInstrument,
-        );
+        const paymentPayload = this._getPaymentPayload(methodId, checkoutSessionId || token, true);
         const { initializationData } = this.paymentIntegrationService
             .getState()
             .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
@@ -452,36 +440,14 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private async _getStripeSavedPaymentMethodsOrThrow(
-        stripeCheckoutSession?: StripeCheckoutSession,
-    ): Promise<StripeSavedPaymentMethod[]> {
-        if (stripeCheckoutSession?.savedPaymentMethods) {
-            return stripeCheckoutSession.savedPaymentMethods;
-        }
+    private _getTokenizedOptions(token: string, shouldTriggerVaultingFlow: boolean) {
+        const { type, savePaymentMethod } = this.selectedMethod || {};
 
-        const stripeActions = await this._getStripeActionsOrThrow();
-        const { savedPaymentMethods } = await stripeActions.getSession();
-
-        return savedPaymentMethods || [];
-    }
-
-    private _getNewVaultedStripeInstrument(
-        existingStripeSavedPaymentMethods: StripeSavedPaymentMethod[],
-        newStripeSavedPaymentMethods: StripeSavedPaymentMethod[],
-    ): StripeSavedPaymentMethod | undefined {
-        return newStripeSavedPaymentMethods.find(
-            (method: StripeSavedPaymentMethod) =>
-                !existingStripeSavedPaymentMethods.some(
-                    (existingMethod: StripeSavedPaymentMethod) => existingMethod.id === method.id,
-                ),
-        );
-    }
-
-    private _getTokenizedOptions(
-        token: string,
-        newVaultedStripeInstrument?: StripeSavedPaymentMethod,
-    ) {
-        if (newVaultedStripeInstrument?.type === StripePaymentMethodType.ACH) {
+        if (
+            shouldTriggerVaultingFlow &&
+            savePaymentMethod &&
+            type === StripePaymentMethodType.ACH
+        ) {
             return { tokenized_ach: { token } };
         }
 
