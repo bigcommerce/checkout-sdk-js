@@ -36,25 +36,17 @@
 
 > **orderConfirmation**: `object`
 
+#### canCreatePersonalAccount
+
+> **canCreatePersonalAccount**: `boolean`
+
 #### invoiceRedirect
 
 > **invoiceRedirect**: `boolean`
 
-#### orderSummary
-
-> **orderSummary**: `boolean`
-
 #### persistB2BMetadata
 
 > **persistB2BMetadata**: `boolean`
-
-#### storeInvoiceReference
-
-> **storeInvoiceReference**: `boolean`
-
-#### storeQuoteId
-
-> **storeQuoteId**: `boolean`
 
 ***
 
@@ -66,33 +58,17 @@
 
 > **additionalField**: \{ `label`: `string`; `required`: `boolean`; \} \| `null`
 
-#### additionalPaymentNotes
-
-> **additionalPaymentNotes**: `boolean`
-
 #### b2bPaymentMethodFilterType
 
 > **b2bPaymentMethodFilterType**: [`B2BPaymentMethodFilterType`](../enumerations/B2BPaymentMethodFilterType.md) \| `null`
 
-#### excludeOfflineForInvoice
+#### invoicePaymentComment
 
-> **excludeOfflineForInvoice**: `boolean`
-
-#### excludePPSDK
-
-> **excludePPSDK**: `boolean`
-
-#### paymentMethodFiltering
-
-> **paymentMethodFiltering**: `boolean`
+> **invoicePaymentComment**: `boolean`
 
 #### poConfig
 
 > **poConfig**: \{ `creditLimit`: `number`; `currency`: `string`; `label`: `string`; `required`: `boolean`; \} \| `null`
-
-#### poPaymentMethod
-
-> **poPaymentMethod**: `boolean`
 
 ***
 
@@ -108,10 +84,6 @@
 
 > **hideSaveToAddressBookCheck**: `boolean`
 
-#### prefillCompanyAddress
-
-> **prefillCompanyAddress**: `boolean`
-
 #### restrictManualAddressEntry
 
 > **restrictManualAddressEntry**: `boolean`
@@ -122,9 +94,17 @@
 
 > **userJourney**: `object`
 
+#### disableCoupon
+
+> **disableCoupon**: `boolean`
+
 #### disableEditCart
 
 > **disableEditCart**: `boolean`
+
+#### disableGiftCertificate
+
+> **disableGiftCertificate**: `boolean`
 
 #### disableStoreCredit
 
