@@ -14,6 +14,7 @@ export function getApplePay(): PaymentMethod {
             isVaultingEnabled: false,
             hasDefaultStoredInstrument: false,
             isHostedFormEnabled: false,
+            shouldVaultAllPayments: false,
         },
         type: 'PAYMENT_TYPE_WALLET',
         initializationStrategy: {
