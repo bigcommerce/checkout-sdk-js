@@ -1294,7 +1294,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 ).rejects.toBe(sessionExpiredErrorResponse);
 
                 // Background reinit is fire-and-forget — flush microtasks before asserting.
-                await new Promise((resolve) => setImmediate(resolve));
+                await new Promise((resolve) => setTimeout(resolve, 0));
 
                 expect(deinitializeSpy).toHaveBeenCalledTimes(1);
                 expect(initializeSpy).toHaveBeenCalledTimes(1);
@@ -1313,7 +1313,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
                 ).rejects.toBe(sessionExpiredErrorResponse);
 
-                await new Promise((resolve) => setImmediate(resolve));
+                await new Promise((resolve) => setTimeout(resolve, 0));
 
                 expect(initializeSpy).toHaveBeenCalledWith({
                     gatewayId,
@@ -1338,7 +1338,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
                 ).rejects.toThrow('not a request error');
 
-                await new Promise((resolve) => setImmediate(resolve));
+                await new Promise((resolve) => setTimeout(resolve, 0));
 
                 expect(deinitializeSpy).not.toHaveBeenCalled();
                 expect(initializeSpy).not.toHaveBeenCalled();

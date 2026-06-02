@@ -109,7 +109,15 @@ describe('StripeLinkV2ButtonStrategy', () => {
         element = {
             mount: jest.fn(),
             on: jest.fn((eventName, callback) => {
-                stripeEventEmitter.on(eventName, callback);
+                stripeEventEmitter.on(eventName, (event: unknown) => {
+                    const result = callback(event);
+
+                    if (result && typeof (result as Promise<unknown>).catch === 'function') {
+                        (result as Promise<unknown>).catch(() => undefined);
+                    }
+
+                    return result;
+                });
             }),
         } as any;
 
