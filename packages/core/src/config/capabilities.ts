@@ -9,7 +9,9 @@ export enum B2BPaymentMethodFilterType {
 
 export interface Capabilities {
     userJourney: {
+        disableCoupon: boolean;
         disableEditCart: boolean;
+        disableGiftCertificate: boolean;
         disableStoreCredit: boolean;
         hasCompanyAddressBook: boolean;
         hasAddressExtraFields: boolean;
@@ -21,7 +23,6 @@ export interface Capabilities {
     };
     shipping: {
         restrictManualAddressEntry: boolean;
-        prefillCompanyAddress: boolean;
         hideSaveToAddressBookCheck: boolean;
         hideBillingSameAsShippingCheck: boolean;
     };
@@ -30,28 +31,22 @@ export interface Capabilities {
         hideSaveToAddressBookCheck: boolean;
     };
     payment: {
-        paymentMethodFiltering: boolean;
         b2bPaymentMethodFilterType: B2BPaymentMethodFilterType | null;
-        poPaymentMethod: boolean;
+        invoicePaymentComment: boolean;
         poConfig: {
             label: string;
             required: boolean;
             creditLimit: number;
             currency: string;
         } | null;
-        additionalPaymentNotes: boolean;
         additionalField: {
             label: string;
             required: boolean;
         } | null;
-        excludeOfflineForInvoice: boolean;
-        excludePPSDK: boolean;
     };
     orderConfirmation: {
-        orderSummary: boolean;
         persistB2BMetadata: boolean;
-        storeQuoteId: boolean;
-        storeInvoiceReference: boolean;
         invoiceRedirect: boolean;
+        canCreatePersonalAccount: boolean;
     };
 }
