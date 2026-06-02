@@ -1,3 +1,5 @@
+import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 export interface AddressRequestBody {
     firstName: string;
     lastName: string;
@@ -14,7 +16,7 @@ export interface AddressRequestBody {
     shouldSaveAddress: boolean;
 }
 
-export interface BillingAddressResponse extends AddressRequestBody {
+export interface BillingAddressResponse extends Omit<AddressRequestBody, 'shouldSaveAddress'> {
     entityId: string;
 }
 
