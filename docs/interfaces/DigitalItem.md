@@ -12,6 +12,16 @@
 
 ## Properties
 
+### addedByAttributeId
+
+> **addedByAttributeId**: `string` \| `null`
+
+#### Inherited from
+
+[`LineItem`](LineItem.md).[`addedByAttributeId`](LineItem.md#addedbyattributeid)
+
+***
+
 ### addedByPromotion
 
 > **addedByPromotion**: `boolean`

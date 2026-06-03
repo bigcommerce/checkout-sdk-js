@@ -13,6 +13,12 @@
 
 ## Properties
 
+### addedByAttributeId
+
+> **addedByAttributeId**: `string` \| `null`
+
+***
+
 ### addedByPromotion
 
 > **addedByPromotion**: `boolean`

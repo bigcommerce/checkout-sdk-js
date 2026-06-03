@@ -6592,6 +6592,7 @@ declare interface LineItem {
     extendedComparisonPrice: number;
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
+    addedByAttributeId: string | null;
     addedByPromotion: boolean;
     parentId?: string | null;
     quantityBackordered?: number;
@@ -6611,6 +6612,7 @@ declare interface LineItemMap {
 }
 
 declare interface LineItemOption {
+    attributeId?: string;
     name: string;
     nameId: number;
     value: string;

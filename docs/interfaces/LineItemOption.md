@@ -8,6 +8,12 @@
 
 ## Properties
 
+### attributeId?
+
+> `optional` **attributeId?**: `string`
+
+***
+
 ### name
 
 > **name**: `string`
