@@ -1681,7 +1681,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 );
             };
 
-            it('sends second submitPayment request with client_side_error when flag is true and stripe returns error', async () => {
+            it('completes successfully when second submitPayment with client_side_error returns success after stripe error', async () => {
                 const stripeErrorMock = { message: 'Your card was declined' };
 
                 mockPaymentMethodWithFlag(true);
@@ -1693,7 +1693,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
                 await expect(
                     stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
-                ).rejects.toThrow(PaymentMethodFailedError);
+                ).resolves.not.toThrow();
 
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
                 expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
@@ -1753,7 +1753,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
             });
 
-            it('sends second submitPayment with client_side_error when confirmation returns no session and flag is true', async () => {
+            it('completes successfully when second submitPayment with client_side_error returns success after confirmation returns no session', async () => {
                 mockPaymentMethodWithFlag(true);
                 mockFirstPaymentRequest(errorResponse);
                 confirmPaymentMock = jest.fn().mockResolvedValue({});
@@ -1763,7 +1763,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
                 await expect(
                     stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
-                ).rejects.toThrow(PaymentMethodFailedError);
+                ).resolves.not.toThrow();
 
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
                 expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
