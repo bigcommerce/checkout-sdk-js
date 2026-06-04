@@ -34,7 +34,7 @@ export default class B2BPostOrderActionCreator {
             );
 
             if (!orderId || !b2bToken || !b2bBaseUrl) {
-                throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                throw new MissingDataError(MissingDataErrorType.MissingOrder);
             }
 
             return concat(
