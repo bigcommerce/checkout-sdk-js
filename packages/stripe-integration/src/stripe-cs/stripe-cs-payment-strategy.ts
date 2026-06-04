@@ -363,7 +363,9 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                         },
                     });
 
-                    await this.paymentIntegrationService.submitPayment(paymentPayloadWithError);
+                    return await this.paymentIntegrationService.submitPayment(
+                        paymentPayloadWithError,
+                    );
                 } catch {
                     // INFO: additional action should be ignored for this update status request.
                     // will throw Stripe error message to the shopper.
