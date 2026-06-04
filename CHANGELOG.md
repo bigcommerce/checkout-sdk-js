@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.921.7](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.921.6...v1.921.7) (2026-06-04)
+
+
+### Bug Fixes
+
+* **payments:** STRIPE-1517 continue success flow when second submitPayment succeeds after stripe error ([#3279](https://github.com/bigcommerce/checkout-sdk-js/issues/3279)) ([70058a6](https://github.com/bigcommerce/checkout-sdk-js/commit/70058a67b18e360a69a57fb57b63e5dbb20bc764))
+
 ### [1.921.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.921.5...v1.921.6) (2026-06-03)
 
 ### [1.921.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.921.4...v1.921.5) (2026-06-02)
