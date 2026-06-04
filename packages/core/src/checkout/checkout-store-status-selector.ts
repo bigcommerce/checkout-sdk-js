@@ -289,6 +289,13 @@ export default interface CheckoutStoreStatusSelector {
     isLoadingB2BToken(): boolean;
 
     /**
+     * Checks whether B2B order metadata is being persisted.
+     *
+     * @returns True if B2B order metadata is being persisted, otherwise false.
+     */
+    isPersistingB2BMetadata(): boolean;
+
+    /**
      * Checks whether the current customer is applying a gift certificate.
      *
      * @returns True if applying a gift certificate, otherwise false.
@@ -515,6 +522,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingConfig: state.config.isLoading,
             isSendingSignInEmail: state.signInEmail.isSending,
             isLoadingB2BToken: state.b2bToken.isLoading,
+            isPersistingB2BMetadata: state.b2bPostOrder.isPersisting,
             isCustomerStepPending: isCustomerStepPending(state),
             isShippingStepPending: isShippingStepPending(state),
             isPaymentStepPending: isPaymentStepPending(state),

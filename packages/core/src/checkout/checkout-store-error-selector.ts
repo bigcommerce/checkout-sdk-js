@@ -296,6 +296,13 @@ export default interface CheckoutStoreErrorSelector {
     getLoadB2BTokenError(): Error | undefined;
 
     /**
+     * Returns an error if unable to persist B2B order metadata.
+     *
+     * @returns The error object if unable to persist B2B metadata, otherwise undefined.
+     */
+    getPersistB2BMetadataError(): Error | undefined;
+
+    /**
      * Returns an error if unable to create customer account.
      *
      * @returns The error object if unable to create account, otherwise undefined.
@@ -390,6 +397,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getLoadConfigError: state.config.getLoadError,
             getSignInEmailError: state.signInEmail.getSendError,
             getLoadB2BTokenError: state.b2bToken.getLoadError,
+            getPersistB2BMetadataError: state.b2bPostOrder.getPersistError,
             getCreateCustomerAccountError: state.customer.getCreateAccountError,
             getCreateCustomerAddressError: state.customer.getCreateAddressError,
             getPickupOptionsError: state.pickupOptions.getLoadError,

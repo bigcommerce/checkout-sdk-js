@@ -12,7 +12,12 @@ import { formFieldsReducer } from '../form';
 import { countryReducer } from '../geography';
 import { orderReducer } from '../order';
 import { orderBillingAddressReducer } from '../order-billing-address';
-import { paymentMethodReducer, paymentReducer, paymentStrategyReducer } from '../payment';
+import {
+    b2bPostOrderReducer,
+    paymentMethodReducer,
+    paymentReducer,
+    paymentStrategyReducer,
+} from '../payment';
 import { instrumentReducer } from '../payment/instrument';
 import { paymentProviderCustomerReducer } from '../payment-provider-customer';
 import { remoteCheckoutReducer } from '../remote-checkout';
@@ -31,6 +36,7 @@ import CheckoutStoreState from './checkout-store-state';
 
 export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState, Action> {
     return combineReducers({
+        b2bPostOrder: b2bPostOrderReducer,
         b2bToken: b2bTokenReducer,
         billingAddress: billingAddressReducer,
         cart: cartReducer,

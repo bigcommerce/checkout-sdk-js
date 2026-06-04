@@ -38,6 +38,8 @@ import {
     B2BCompanyPaymentMethodRequestSender,
     B2BPaymentsRefreshActionCreator,
     B2BPaymentsRefreshRequestSender,
+    B2BPostOrderActionCreator,
+    B2BPostOrderRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistry,
     createPaymentStrategyRegistryV2,
@@ -233,6 +235,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         extensionActionCreator,
         workerExtensionMessenger,
         new B2BPaymentsRefreshActionCreator(new B2BPaymentsRefreshRequestSender(requestSender)),
+        new B2BPostOrderActionCreator(new B2BPostOrderRequestSender(requestSender)),
     );
 }
 
