@@ -27,6 +27,20 @@ The list of extra fields if available, otherwise an empty array.
 
 ***
 
+### getB2BReceiptId()
+
+> **getB2BReceiptId**(): `string` \| `undefined`
+
+Gets the B2B receipt id produced after persisting order metadata.
+
+#### Returns
+
+`string` \| `undefined`
+
+The B2B receipt id string if it has been persisted, otherwise undefined.
+
+***
+
 ### getB2BToken()
 
 > **getB2BToken**(): `string` \| `undefined`

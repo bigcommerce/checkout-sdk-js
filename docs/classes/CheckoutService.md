@@ -1419,6 +1419,32 @@ they have any filters applied.
 
 ***
 
+### persistB2BMetadata()
+
+> **persistB2BMetadata**(`PersistB2BMetadataOptions`): `Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+Persists B2B order metadata (e.g. invoice comment) after an order is placed
+
+```js
+const state = await service.persistB2BMetadata(comment);
+```
+
+#### Parameters
+
+##### PersistB2BMetadataOptions
+
+[`PersistB2BMetadataOptions`](../interfaces/PersistB2BMetadataOptions.md)
+
+Passing an object to prepare the payload for the request.
+
+#### Returns
+
+`Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+A promise that resolves to the current state.
+
+***
+
 ### postMessageToExtension()
 
 > **postMessageToExtension**(`extensionId`, `message`): `void`

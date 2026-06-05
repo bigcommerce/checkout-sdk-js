@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.922.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.921.7...v1.922.0) (2026-06-05)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9813 Add persistB2BMetadata Method ([#3280](https://github.com/bigcommerce/checkout-sdk-js/issues/3280)) ([00deebe](https://github.com/bigcommerce/checkout-sdk-js/commit/00deebecabd2de0b629c09460f91d4aab4e3b1bf))
+
 ### [1.921.7](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.921.6...v1.921.7) (2026-06-04)
 
 
