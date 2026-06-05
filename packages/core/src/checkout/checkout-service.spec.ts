@@ -65,6 +65,8 @@ import {
     B2BCompanyPaymentMethodRequestSender,
     B2BPaymentsRefreshActionCreator,
     B2BPaymentsRefreshRequestSender,
+    B2BPostOrderActionCreator,
+    B2BPostOrderRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistryV2,
     PaymentMethodActionCreator,
@@ -130,6 +132,8 @@ import createCheckoutStore from './create-checkout-store';
 describe('CheckoutService', () => {
     let b2bPaymentsRefreshActionCreator: B2BPaymentsRefreshActionCreator;
     let b2bPaymentsRefreshRequestSender: B2BPaymentsRefreshRequestSender;
+    let b2bPostOrderActionCreator: B2BPostOrderActionCreator;
+    let b2bPostOrderRequestSender: B2BPostOrderRequestSender;
     let billingAddressActionCreator: BillingAddressActionCreator;
     let billingAddressRequestSender: BillingAddressRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
@@ -411,6 +415,14 @@ describe('CheckoutService', () => {
             b2bPaymentsRefreshRequestSender,
         );
 
+        b2bPostOrderRequestSender = new B2BPostOrderRequestSender(requestSender);
+
+        jest.spyOn(b2bPostOrderRequestSender, 'submitInvoice').mockResolvedValue(
+            getResponse({ data: { paymentId: 'pay_1', receiptId: 'rcpt_1' }, code: 200 }),
+        );
+
+        b2bPostOrderActionCreator = new B2BPostOrderActionCreator(b2bPostOrderRequestSender);
+
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,
             paymentStrategyRegistryV2,
@@ -468,6 +480,7 @@ describe('CheckoutService', () => {
             extensionActionCreator,
             workerExtensionMessenger,
             b2bPaymentsRefreshActionCreator,
+            b2bPostOrderActionCreator,
         );
     });
 
@@ -634,6 +647,29 @@ describe('CheckoutService', () => {
             expect(b2bPaymentsRefreshActionCreator.refreshB2BPaymentMethods).toHaveBeenCalledWith(
                 undefined,
             );
+
+            await result.catch(() => undefined);
+        });
+    });
+
+    describe('#persistB2BMetadata()', () => {
+        it('exposes the method on the service', () => {
+            expect(typeof checkoutService.persistB2BMetadata).toBe('function');
+        });
+
+        it('dispatches the action creator and returns a promise', async () => {
+            jest.spyOn(b2bPostOrderActionCreator, 'persistB2BMetadata');
+
+            const result = checkoutService.persistB2BMetadata({
+                isInvoice: true,
+                invoiceComment: 'Invoice comment',
+            });
+
+            expect(result).toBeInstanceOf(Promise);
+            expect(b2bPostOrderActionCreator.persistB2BMetadata).toHaveBeenCalledWith({
+                isInvoice: true,
+                invoiceComment: 'Invoice comment',
+            });
 
             await result.catch(() => undefined);
         });

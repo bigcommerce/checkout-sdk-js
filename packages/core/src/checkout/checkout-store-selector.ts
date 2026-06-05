@@ -67,6 +67,13 @@ export default interface CheckoutStoreSelector {
     getB2BToken(): string | undefined;
 
     /**
+     * Gets the B2B receipt id produced after persisting order metadata.
+     *
+     * @returns The B2B receipt id string if it has been persisted, otherwise undefined.
+     */
+    getB2BReceiptId(): string | undefined;
+
+    /**
      * Gets the shipping address of the current checkout.
      *
      * If the address is partially complete, it may not have shipping options
@@ -514,6 +521,11 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getToken) => clone(getToken),
     );
 
+    const getB2BReceiptId = createSelector(
+        ({ b2bPostOrder }: InternalCheckoutSelectors) => b2bPostOrder.getReceiptId,
+        (getReceiptId) => clone(getReceiptId),
+    );
+
     const isPaymentDataRequired = createSelector(
         ({ payment }: InternalCheckoutSelectors) => payment.isPaymentDataRequired,
         (isPaymentDataRequired) => clone(isPaymentDataRequired),
@@ -649,6 +661,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             isPaymentDataSubmitted: isPaymentDataSubmitted(state),
             getSignInEmail: getSignInEmail(state),
             getB2BToken: getB2BToken(state),
+            getB2BReceiptId: getB2BReceiptId(state),
             getInstruments: getInstruments(state),
             getCustomerAccountFields: getCustomerAccountFields(state),
             getBillingAddressFields: getBillingAddressFields(state),

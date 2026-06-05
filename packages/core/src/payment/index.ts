@@ -47,6 +47,14 @@ export {
     default as B2BPaymentsRefreshRequestSender,
     B2BPaymentsRefreshPayment,
 } from './b2b-payments-refresh-request-sender';
+export { default as B2BPostOrderActionCreator } from './b2b-post-order-action-creator';
+export { default as B2BPostOrderRequestSender } from './b2b-post-order-request-sender';
+export { default as b2bPostOrderReducer } from './b2b-post-order-reducer';
+export {
+    default as B2BPostOrderSelector,
+    createB2BPostOrderSelectorFactory,
+} from './b2b-post-order-selector';
+export { default as B2BPostOrderState } from './b2b-post-order-state';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';
 export { default as PaymentMethodConfig } from './payment-method-config';
