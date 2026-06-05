@@ -46,7 +46,7 @@ describe('createB2BPostOrderSelectorFactory()', () => {
         const error = new Error('B2B metadata persist failed');
         const state: B2BPostOrderState = {
             ...DEFAULT_STATE,
-            errors: { persistError: error },
+            errors: { persistB2bMetadataError: error },
         };
         const selector = createSelector(state);
 

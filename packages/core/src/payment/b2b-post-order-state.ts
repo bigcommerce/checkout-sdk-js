@@ -9,7 +9,7 @@ export default interface B2BPostOrderState {
 }
 
 export interface B2BPostOrderErrorsState {
-    persistError?: Error;
+    persistB2bMetadataError?: Error;
 }
 
 export interface B2BPostOrderStatusesState {

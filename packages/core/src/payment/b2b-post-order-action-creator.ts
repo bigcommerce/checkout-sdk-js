@@ -27,7 +27,7 @@ export default class B2BPostOrderActionCreator {
     > {
         return (store) => {
             const state = store.getState();
-            const orderId = state.order.getOrder()?.orderId;
+            const orderId = state.order.getOrderOrThrow().orderId;
             const b2bToken = state.b2bToken.getToken();
             const b2bBaseUrl = resolveB2bBaseUrl(
                 state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
@@ -43,7 +43,7 @@ export default class B2BPostOrderActionCreator {
                     let payload = { receiptId: '' };
 
                     if (isInvoice) {
-                        const { body } = await this._requestSender.closeInvoice(
+                        const { body } = await this._requestSender.submitInvoice(
                             { orderId: `${orderId}`, comment: invoiceComment ?? '' },
                             b2bToken,
                             b2bBaseUrl,

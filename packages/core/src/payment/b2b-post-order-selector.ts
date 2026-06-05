@@ -19,7 +19,7 @@ export function createB2BPostOrderSelectorFactory(): B2BPostOrderSelectorFactory
     );
 
     const getPersistError = createSelector(
-        (state: B2BPostOrderState) => state.errors.persistError,
+        (state: B2BPostOrderState) => state.errors.persistB2bMetadataError,
         (error) => () => error,
     );
 

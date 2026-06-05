@@ -16,7 +16,7 @@ describe('b2bPostOrderReducer()', () => {
         const state = b2bPostOrderReducer(initialState, action);
 
         expect(state.statuses.isPersisting).toBe(true);
-        expect(state.errors.persistError).toBeUndefined();
+        expect(state.errors.persistB2bMetadataError).toBeUndefined();
     });
 
     it('stores receipt id and clears persisting state on success', () => {
@@ -26,7 +26,7 @@ describe('b2bPostOrderReducer()', () => {
 
         expect(state.data).toEqual(data);
         expect(state.statuses.isPersisting).toBe(false);
-        expect(state.errors.persistError).toBeUndefined();
+        expect(state.errors.persistB2bMetadataError).toBeUndefined();
     });
 
     it('stores error and clears persisting state on failure', () => {
@@ -34,7 +34,7 @@ describe('b2bPostOrderReducer()', () => {
         const action = createErrorAction(B2BPostOrderActionType.PersistB2BMetadataFailed, error);
         const state = b2bPostOrderReducer(initialState, action);
 
-        expect(state.errors.persistError).toBe(error);
+        expect(state.errors.persistB2bMetadataError).toBe(error);
         expect(state.statuses.isPersisting).toBe(false);
         expect(state.data).toBeUndefined();
     });

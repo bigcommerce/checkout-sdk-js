@@ -32,7 +32,7 @@ describe('B2BPostOrderActionCreator', () => {
 
         requestSender = new B2BPostOrderRequestSender(createRequestSender());
 
-        jest.spyOn(requestSender, 'closeInvoice').mockResolvedValue(
+        jest.spyOn(requestSender, 'submitInvoice').mockResolvedValue(
             getResponse({ data: { paymentId: 'pay_1', receiptId: 'rcpt_1' }, code: 200 }),
         );
 
@@ -62,7 +62,7 @@ describe('B2BPostOrderActionCreator', () => {
         it('calls closeInvoice with the order id, comment, token and base url', async () => {
             await from(actionCreator.persistB2BMetadata(invoiceOptions)(store)).toPromise();
 
-            expect(requestSender.closeInvoice).toHaveBeenCalledWith(
+            expect(requestSender.submitInvoice).toHaveBeenCalledWith(
                 { orderId: '295', comment },
                 'b2b-auth-token',
                 b2bApiSettings.baseUrl,
@@ -74,7 +74,7 @@ describe('B2BPostOrderActionCreator', () => {
                 .pipe(toArray())
                 .toPromise();
 
-            expect(requestSender.closeInvoice).not.toHaveBeenCalled();
+            expect(requestSender.submitInvoice).not.toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: B2BPostOrderActionType.PersistB2BMetadataRequested },
                 {
@@ -119,7 +119,7 @@ describe('B2BPostOrderActionCreator', () => {
         });
 
         it('emits failed action when the request rejects', async () => {
-            jest.spyOn(requestSender, 'closeInvoice').mockRejectedValue(getErrorResponse());
+            jest.spyOn(requestSender, 'submitInvoice').mockRejectedValue(getErrorResponse());
 
             const errorHandler = jest.fn((action) => of(action));
             const actions = await from(actionCreator.persistB2BMetadata(invoiceOptions)(store))

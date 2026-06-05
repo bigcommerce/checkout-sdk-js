@@ -417,7 +417,7 @@ describe('CheckoutService', () => {
 
         b2bPostOrderRequestSender = new B2BPostOrderRequestSender(requestSender);
 
-        jest.spyOn(b2bPostOrderRequestSender, 'closeInvoice').mockResolvedValue(
+        jest.spyOn(b2bPostOrderRequestSender, 'submitInvoice').mockResolvedValue(
             getResponse({ data: { paymentId: 'pay_1', receiptId: 'rcpt_1' }, code: 200 }),
         );
 

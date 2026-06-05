@@ -18,7 +18,7 @@ export interface CloseInvoiceResponseBody {
 export default class B2BPostOrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
-    async closeInvoice(
+    async submitInvoice(
         payload: CloseInvoicePayload,
         b2bToken: string,
         b2bBaseUrl: string,

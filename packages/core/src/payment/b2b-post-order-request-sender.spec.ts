@@ -25,7 +25,7 @@ describe('B2BPostOrderRequestSender', () => {
 
     describe('#persistMetadata()', () => {
         it('posts to the IP orders endpoint with auth headers and payload', async () => {
-            await b2bPostOrderRequestSender.closeInvoice(
+            await b2bPostOrderRequestSender.submitInvoice(
                 payload,
                 'b2b-token-value',
                 'https://api-b2b.bigcommerce.com',
@@ -49,7 +49,7 @@ describe('B2BPostOrderRequestSender', () => {
         it('forwards the request timeout', async () => {
             const timeout = createTimeout();
 
-            await b2bPostOrderRequestSender.closeInvoice(
+            await b2bPostOrderRequestSender.submitInvoice(
                 payload,
                 'b2b-token-value',
                 'https://api-b2b.bigcommerce.com',
@@ -66,7 +66,7 @@ describe('B2BPostOrderRequestSender', () => {
             jest.spyOn(requestSender, 'post').mockRejectedValue(getErrorResponse());
 
             await expect(
-                b2bPostOrderRequestSender.closeInvoice(
+                b2bPostOrderRequestSender.submitInvoice(
                     payload,
                     'b2b-token-value',
                     'https://api-b2b.bigcommerce.com',

@@ -44,10 +44,10 @@ function errorsReducer(
     switch (action.type) {
         case B2BPostOrderActionType.PersistB2BMetadataRequested:
         case B2BPostOrderActionType.PersistB2BMetadataSucceeded:
-            return objectSet(errors, 'persistError', undefined);
+            return objectSet(errors, 'persistB2bMetadataError', undefined);
 
         case B2BPostOrderActionType.PersistB2BMetadataFailed:
-            return objectSet(errors, 'persistError', action.payload);
+            return objectSet(errors, 'persistB2bMetadataError', action.payload);
 
         default:
             return errors;
