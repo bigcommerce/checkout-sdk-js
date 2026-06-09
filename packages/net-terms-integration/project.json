@@ -1,0 +1,23 @@
+{
+    "name": "net-terms-integration",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "packages/net-terms-integration/src",
+    "projectType": "library",
+    "tags": ["scope:shared"],
+    "targets": {
+        "lint": {
+            "executor": "@nx/eslint:lint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/net-terms-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/packages/net-terms-integration"],
+            "options": {
+                "jestConfig": "packages/net-terms-integration/jest.config.js"
+            }
+        }
+    }
+}
