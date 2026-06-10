@@ -349,10 +349,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 env: testMode ? 'sandbox' : 'production',
                 commit: false,
                 fundingSource,
-                onInit: ((_, actions) => {
+                onInit: (_, actions) => {
                     options?.onInitButton(actions);
-                }),
-                onClick: ((_, actions) => {
+                },
+                onClick: (_, actions) => {
                     const { resolve, reject } = actions;
 
                     const onValidationPassed = () => {
@@ -362,7 +362,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                     };
 
                     return options?.onValidate?.(onValidationPassed, reject);
-                }),
+                },
                 createOrder: () => this.setupPayment(braintreePaypalCheckout, id, onPaymentError),
                 onApprove: async (authorizeData: PaypalAuthorizeData) => {
                     this.braintreeTokenizePayload = await this.tokenizePaymentOrThrow(
