@@ -21,6 +21,10 @@ export default class B2BPostOrderActionCreator {
     persistB2BMetadata({
         isInvoice,
         invoiceComment,
+        poNumber,
+        referenceNumber,
+        extraFields,
+        extraInfo,
     }: PersistB2BMetadataOptions): ThunkAction<
         PersistB2BMetadataAction,
         InternalCheckoutSelectors
@@ -50,6 +54,18 @@ export default class B2BPostOrderActionCreator {
                         );
 
                         payload = { receiptId: body.data.receiptId };
+                    } else {
+                        await this._requestSender.addOrderExtraFields(
+                            {
+                                orderId: `${orderId}`,
+                                poNumber: poNumber ?? '',
+                                referenceNumber: referenceNumber ?? '',
+                                extraFields: extraFields ?? [],
+                                extraInfo: extraInfo ?? {},
+                            },
+                            b2bToken,
+                            b2bBaseUrl,
+                        );
                     }
 
                     return createAction(

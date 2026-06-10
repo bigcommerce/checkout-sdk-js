@@ -36,6 +36,8 @@ describe('B2BPostOrderActionCreator', () => {
             getResponse({ data: { paymentId: 'pay_1', receiptId: 'rcpt_1' }, code: 200 }),
         );
 
+        jest.spyOn(requestSender, 'addOrderExtraFields').mockResolvedValue(getResponse(undefined));
+
         jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
             ...getConfig().storeConfig,
             b2bApiSettings,
@@ -69,12 +71,23 @@ describe('B2BPostOrderActionCreator', () => {
             );
         });
 
-        it('does not call closeInvoice when isInvoice is false', async () => {
+        it('calls addOrderExtraFields and dispatches succeeded with empty receiptId when isInvoice is false', async () => {
             const actions = await from(actionCreator.persistB2BMetadata(nonInvoiceOptions)(store))
                 .pipe(toArray())
                 .toPromise();
 
             expect(requestSender.submitInvoice).not.toHaveBeenCalled();
+            expect(requestSender.addOrderExtraFields).toHaveBeenCalledWith(
+                {
+                    orderId: '295',
+                    poNumber: '',
+                    referenceNumber: '',
+                    extraFields: [],
+                    extraInfo: {},
+                },
+                'b2b-auth-token',
+                b2bApiSettings.baseUrl,
+            );
             expect(actions).toEqual([
                 { type: B2BPostOrderActionType.PersistB2BMetadataRequested },
                 {
@@ -82,6 +95,39 @@ describe('B2BPostOrderActionCreator', () => {
                     payload: { receiptId: '' },
                 },
             ]);
+        });
+
+        it('forwards po number, reference number, extra fields and extra info to addOrderExtraFields', async () => {
+            const extraFields = [{ fieldName: 'department', fieldValue: 'engineering' }];
+            const extraInfo = { billingAddressId: 12 };
+
+            await from(
+                actionCreator.persistB2BMetadata({
+                    isInvoice: false,
+                    poNumber: 'PO-123',
+                    referenceNumber: 'REF-456',
+                    extraFields,
+                    extraInfo,
+                })(store),
+            ).toPromise();
+
+            expect(requestSender.addOrderExtraFields).toHaveBeenCalledWith(
+                {
+                    orderId: '295',
+                    poNumber: 'PO-123',
+                    referenceNumber: 'REF-456',
+                    extraFields,
+                    extraInfo,
+                },
+                'b2b-auth-token',
+                b2bApiSettings.baseUrl,
+            );
+        });
+
+        it('does not call addOrderExtraFields when isInvoice is true', async () => {
+            await from(actionCreator.persistB2BMetadata(invoiceOptions)(store)).toPromise();
+
+            expect(requestSender.addOrderExtraFields).not.toHaveBeenCalled();
         });
 
         it('throws when the order id is missing', () => {

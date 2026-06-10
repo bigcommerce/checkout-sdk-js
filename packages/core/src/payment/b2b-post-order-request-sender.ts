@@ -15,6 +15,26 @@ export interface CloseInvoiceResponseBody {
     code: number;
 }
 
+export interface ExtraField {
+    fieldName: string;
+    fieldValue: string | number | boolean | string[];
+}
+
+export interface AddOrderExtraFieldsPayload {
+    orderId: string;
+    poNumber: string;
+    referenceNumber: string;
+    extraFields: ExtraField[];
+    extraInfo: {
+        addressExtraFields?: {
+            billingAddressExtraFields: ExtraField[];
+            shippingAddressExtraFields: ExtraField[];
+        };
+        billingAddressId?: number;
+        shipppingAddressId?: number; // triple-p is intentional — wire contract
+    };
+}
+
 export default class B2BPostOrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
@@ -37,5 +57,21 @@ export default class B2BPostOrderRequestSender {
                 body: payload,
             },
         );
+    }
+
+    async addOrderExtraFields(
+        payload: AddOrderExtraFieldsPayload,
+        b2bToken: string,
+        b2bBaseUrl: string,
+    ): Promise<Response<void>> {
+        return this._requestSender.post(`${b2bBaseUrl}/api/v2/orders`, {
+            credentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+                authToken: b2bToken,
+                Authorization: `Bearer ${b2bToken}`,
+            },
+            body: payload,
+        });
     }
 }

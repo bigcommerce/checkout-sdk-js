@@ -2,7 +2,10 @@ import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
-import B2BPostOrderRequestSender, { CloseInvoicePayload } from './b2b-post-order-request-sender';
+import B2BPostOrderRequestSender, {
+    AddOrderExtraFieldsPayload,
+    CloseInvoicePayload,
+} from './b2b-post-order-request-sender';
 
 describe('B2BPostOrderRequestSender', () => {
     let requestSender: RequestSender;
@@ -68,6 +71,56 @@ describe('B2BPostOrderRequestSender', () => {
             await expect(
                 b2bPostOrderRequestSender.submitInvoice(
                     payload,
+                    'b2b-token-value',
+                    'https://api-b2b.bigcommerce.com',
+                ),
+            ).rejects.toEqual(getErrorResponse());
+        });
+    });
+
+    describe('#addOrderExtraFields()', () => {
+        const extraFieldsPayload: AddOrderExtraFieldsPayload = {
+            orderId: '295',
+            poNumber: 'PO-123',
+            referenceNumber: 'REF-456',
+            extraFields: [{ fieldName: 'department', fieldValue: 'engineering' }],
+            extraInfo: {
+                billingAddressId: 12,
+                shipppingAddressId: 34,
+                addressExtraFields: {
+                    billingAddressExtraFields: [{ fieldName: 'floor', fieldValue: 3 }],
+                    shippingAddressExtraFields: [{ fieldName: 'gate', fieldValue: 'B' }],
+                },
+            },
+        };
+
+        it('posts to the B2B orders endpoint with auth headers and payload', async () => {
+            await b2bPostOrderRequestSender.addOrderExtraFields(
+                extraFieldsPayload,
+                'b2b-token-value',
+                'https://api-b2b.bigcommerce.com',
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                'https://api-b2b.bigcommerce.com/api/v2/orders',
+                {
+                    credentials: false,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        authToken: 'b2b-token-value',
+                        Authorization: 'Bearer b2b-token-value',
+                    },
+                    body: extraFieldsPayload,
+                },
+            );
+        });
+
+        it('rejects when the request sender rejects', async () => {
+            jest.spyOn(requestSender, 'post').mockRejectedValue(getErrorResponse());
+
+            await expect(
+                b2bPostOrderRequestSender.addOrderExtraFields(
+                    extraFieldsPayload,
                     'b2b-token-value',
                     'https://api-b2b.bigcommerce.com',
                 ),
