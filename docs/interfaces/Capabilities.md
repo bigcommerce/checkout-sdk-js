@@ -62,6 +62,10 @@
 
 > **b2bPaymentMethodFilterType**: [`B2BPaymentMethodFilterType`](../enumerations/B2BPaymentMethodFilterType.md) \| `null`
 
+#### hideCheckPaymentMethod
+
+> **hideCheckPaymentMethod**: `boolean`
+
 #### invoicePaymentComment
 
 > **invoicePaymentComment**: `boolean`

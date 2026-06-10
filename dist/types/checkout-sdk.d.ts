@@ -2310,6 +2310,7 @@ declare interface Capabilities {
             label: string;
             required: boolean;
         } | null;
+        hideCheckPaymentMethod: boolean;
     };
     orderConfirmation: {
         persistB2BMetadata: boolean;
