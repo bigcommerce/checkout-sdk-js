@@ -349,9 +349,20 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 env: testMode ? 'sandbox' : 'production',
                 commit: false,
                 fundingSource,
-                onClick: () => {
-                    this.toggleLoadingIndicator(true);
-                },
+                onInit: ((_, actions) => {
+                    options?.onInitButton(actions);
+                }),
+                onClick: ((_, actions) => {
+                    const { resolve, reject } = actions;
+
+                    const onValidationPassed = () => {
+                        this.toggleLoadingIndicator(true);
+
+                        return resolve();
+                    };
+
+                    return options?.onValidate?.(onValidationPassed, reject);
+                }),
                 createOrder: () => this.setupPayment(braintreePaypalCheckout, id, onPaymentError),
                 onApprove: async (authorizeData: PaypalAuthorizeData) => {
                     this.braintreeTokenizePayload = await this.tokenizePaymentOrThrow(

@@ -2,6 +2,7 @@ import {
     BraintreeError,
     BraintreeFormOptions,
     BraintreeThreeDSecureOptions,
+    ButtonActions,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -49,6 +50,22 @@ export interface BraintreePaypalPaymentInitializeOptions {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError?(error: unknown): void;
+
+    /**
+     * A callback for the Smart Payment Button initialization.
+     * Used to register button actions (enable/disable) in the `checkout-sdk-js`
+     *
+     * @param actions - The Braintree PayPal Button actions
+     */
+    onInitButton(actions: ButtonActions): void;
+
+    /**
+     * Callback for the Checkout form validation.
+     *
+     * @param resolve - Callback for the successful form validation
+     * @param reject - Callback for the failed form validation
+     */
+    onValidate(resolve: () => void, reject: () => void): Promise<void>;
 }
 
 export interface WithBraintreePaypalPaymentInitializeOptions {
