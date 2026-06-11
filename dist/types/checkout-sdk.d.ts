@@ -58,6 +58,21 @@ declare interface AchInstrument extends BaseAccountInstrument {
     method: 'ach' | 'ecp';
 }
 
+declare interface AddOrderExtraFieldsPayload {
+    orderId: string;
+    poNumber: string;
+    referenceNumber: string;
+    extraFields: B2BExtraField[];
+    extraInfo: {
+        addressExtraFields?: {
+            billingAddressExtraFields: B2BExtraField[];
+            shippingAddressExtraFields: B2BExtraField[];
+        };
+        billingAddressId?: number;
+        shipppingAddressId?: number;
+    };
+}
+
 declare interface Address extends AddressRequestBody {
     country: string;
     shouldSaveAddress?: boolean;
@@ -666,6 +681,11 @@ declare interface ApplePayPaymentInitializeOptions {
 declare interface B2BApiSettings {
     clientId: string;
     baseUrl: string;
+}
+
+declare interface B2BExtraField {
+    fieldName: string;
+    fieldValue: string | number | boolean | string[];
 }
 
 declare enum B2BPaymentMethodFilterType {
@@ -3268,7 +3288,7 @@ declare class CheckoutService {
      * @param PersistB2BMetadataOptions - Passing an object to prepare the payload for the request.
      * @returns A promise that resolves to the current state.
      */
-    persistB2BMetadata({ isInvoice, invoiceComment, }: PersistB2BMetadataOptions): Promise<CheckoutSelectors>;
+    persistB2BMetadata({ isInvoice, invoiceComment, poNumber, referenceNumber, extraFields, extraInfo, }: PersistB2BMetadataOptions): Promise<CheckoutSelectors>;
     /**
      * Creates a customer account.
      *
@@ -7998,7 +8018,11 @@ declare interface PaypalStyleOptions {
 
 declare interface PersistB2BMetadataOptions {
     isInvoice: boolean;
-    invoiceComment: string;
+    invoiceComment?: string;
+    poNumber?: string;
+    referenceNumber?: string;
+    extraFields?: B2BExtraField[];
+    extraInfo?: AddOrderExtraFieldsPayload['extraInfo'];
 }
 
 declare interface PhysicalItem extends LineItem {

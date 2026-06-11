@@ -68,6 +68,7 @@
 ## Interfaces
 
 - [AchInstrument](interfaces/AchInstrument.md)
+- [AddOrderExtraFieldsPayload](interfaces/AddOrderExtraFieldsPayload.md)
 - [Address](interfaces/Address.md)
 - [AddressExtraFieldValue](interfaces/AddressExtraFieldValue.md)
 - [AddressRequestBody](interfaces/AddressRequestBody.md)
@@ -93,6 +94,7 @@
 - [ApplePayCustomerInitializeOptions](interfaces/ApplePayCustomerInitializeOptions.md)
 - [ApplePayPaymentInitializeOptions](interfaces/ApplePayPaymentInitializeOptions.md)
 - [B2BApiSettings](interfaces/B2BApiSettings.md)
+- [B2BExtraField](interfaces/B2BExtraField.md)
 - [B2BPostOrderSelector](interfaces/B2BPostOrderSelector.md)
 - [B2BTokenSelector](interfaces/B2BTokenSelector.md)
 - [BankInstrument](interfaces/BankInstrument.md)
