@@ -10,10 +10,10 @@
 
 ### Invoice
 
-> **Invoice**: `"INVOICE"`
+> **Invoice**: `"invoice"`
 
 ***
 
 ### Standard
 
-> **Standard**: `"STANDARD"`
+> **Standard**: `"standard"`

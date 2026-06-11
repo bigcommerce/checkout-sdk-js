@@ -36,9 +36,9 @@
 
 > **orderConfirmation**: `object`
 
-#### canCreatePersonalAccount
+#### cannotCreatePersonalAccount
 
-> **canCreatePersonalAccount**: `boolean`
+> **cannotCreatePersonalAccount**: `boolean`
 
 #### invoiceRedirect
 
@@ -72,7 +72,7 @@
 
 #### poConfig
 
-> **poConfig**: \{ `creditLimit`: `number`; `currency`: `string`; `label`: `string`; `required`: `boolean`; \} \| `null`
+> **poConfig**: \{ `creditLimitCheck`: \{ `creditLimit`: `number`; `currency`: `string`; \} \| `null`; `field`: \{ `label`: `string`; `required`: `boolean`; \} \| `null`; \} \| `null`
 
 ***
 
@@ -118,6 +118,10 @@
 
 > **hasAddressExtraFields**: `boolean`
 
+#### hasAddressLabel
+
+> **hasAddressLabel**: `boolean`
+
 #### hasCompanyAddressBook
 
 > **hasCompanyAddressBook**: `boolean`
@@ -125,6 +129,10 @@
 #### hasOrderExtraFields
 
 > **hasOrderExtraFields**: `boolean`
+
+#### quoteConfig
+
+> **quoteConfig**: \{ `id`: `number`; \} \| `null`
 
 #### requiresB2BToken
 

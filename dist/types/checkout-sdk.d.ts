@@ -689,8 +689,8 @@ declare interface B2BExtraField {
 }
 
 declare enum B2BPaymentMethodFilterType {
-    Standard = "STANDARD",
-    Invoice = "INVOICE"
+    Standard = "standard",
+    Invoice = "invoice"
 }
 
 declare interface B2BPostOrderSelector {
@@ -2304,6 +2304,10 @@ declare interface Capabilities {
         hasAddressExtraFields: boolean;
         hasOrderExtraFields: boolean;
         requiresB2BToken: boolean;
+        hasAddressLabel: boolean;
+        quoteConfig: {
+            id: number;
+        } | null;
     };
     customer: {
         superAdminCompanySelector: boolean;
@@ -2321,10 +2325,14 @@ declare interface Capabilities {
         b2bPaymentMethodFilterType: B2BPaymentMethodFilterType | null;
         invoicePaymentComment: boolean;
         poConfig: {
-            label: string;
-            required: boolean;
-            creditLimit: number;
-            currency: string;
+            field: {
+                label: string;
+                required: boolean;
+            } | null;
+            creditLimitCheck: {
+                creditLimit: number;
+                currency: string;
+            } | null;
         } | null;
         additionalField: {
             label: string;
@@ -2335,7 +2343,7 @@ declare interface Capabilities {
     orderConfirmation: {
         persistB2BMetadata: boolean;
         invoiceRedirect: boolean;
-        canCreatePersonalAccount: boolean;
+        cannotCreatePersonalAccount: boolean;
     };
 }
 
