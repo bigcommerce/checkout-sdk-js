@@ -15,7 +15,7 @@ export interface CloseInvoiceResponseBody {
     code: number;
 }
 
-export interface ExtraField {
+export interface B2BExtraField {
     fieldName: string;
     fieldValue: string | number | boolean | string[];
 }
@@ -24,11 +24,11 @@ export interface AddOrderExtraFieldsPayload {
     orderId: string;
     poNumber: string;
     referenceNumber: string;
-    extraFields: ExtraField[];
+    extraFields: B2BExtraField[];
     extraInfo: {
         addressExtraFields?: {
-            billingAddressExtraFields: ExtraField[];
-            shippingAddressExtraFields: ExtraField[];
+            billingAddressExtraFields: B2BExtraField[];
+            shippingAddressExtraFields: B2BExtraField[];
         };
         billingAddressId?: number;
         shipppingAddressId?: number; // triple-p is intentional — wire contract
