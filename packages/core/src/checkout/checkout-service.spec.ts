@@ -669,6 +669,10 @@ describe('CheckoutService', () => {
             expect(b2bPostOrderActionCreator.persistB2BMetadata).toHaveBeenCalledWith({
                 isInvoice: true,
                 invoiceComment: 'Invoice comment',
+                poNumber: '',
+                referenceNumber: '',
+                extraFields: [],
+                extraInfo: {},
             });
 
             await result.catch(() => undefined);

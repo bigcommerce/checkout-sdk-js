@@ -736,10 +736,18 @@ export default class CheckoutService {
     persistB2BMetadata({
         isInvoice = false,
         invoiceComment = '',
+        poNumber = '',
+        referenceNumber = '',
+        extraFields = [],
+        extraInfo = {},
     }: PersistB2BMetadataOptions): Promise<CheckoutSelectors> {
         const action = this._b2bPostOrderActionCreator.persistB2BMetadata({
             isInvoice,
             invoiceComment,
+            poNumber,
+            referenceNumber,
+            extraFields,
+            extraInfo,
         });
 
         return this._dispatch(action, { queueId: 'b2bPostOrder' });
