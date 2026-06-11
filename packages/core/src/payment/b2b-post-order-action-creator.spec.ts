@@ -79,7 +79,7 @@ describe('B2BPostOrderActionCreator', () => {
             expect(requestSender.submitInvoice).not.toHaveBeenCalled();
             expect(requestSender.addOrderExtraFields).toHaveBeenCalledWith(
                 {
-                    orderId: '295',
+                    orderId: 295,
                     poNumber: '',
                     referenceNumber: '',
                     extraFields: [],
@@ -113,7 +113,7 @@ describe('B2BPostOrderActionCreator', () => {
 
             expect(requestSender.addOrderExtraFields).toHaveBeenCalledWith(
                 {
-                    orderId: '295',
+                    orderId: 295,
                     poNumber: 'PO-123',
                     referenceNumber: 'REF-456',
                     extraFields,

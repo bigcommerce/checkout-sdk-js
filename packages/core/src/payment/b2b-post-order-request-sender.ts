@@ -21,7 +21,7 @@ export interface B2BExtraField {
 }
 
 export interface AddOrderExtraFieldsPayload {
-    orderId: string;
+    orderId: number;
     poNumber: string;
     referenceNumber: string;
     extraFields: B2BExtraField[];

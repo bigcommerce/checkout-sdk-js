@@ -80,7 +80,7 @@ describe('B2BPostOrderRequestSender', () => {
 
     describe('#addOrderExtraFields()', () => {
         const extraFieldsPayload: AddOrderExtraFieldsPayload = {
-            orderId: '295',
+            orderId: 295,
             poNumber: 'PO-123',
             referenceNumber: 'REF-456',
             extraFields: [{ fieldName: 'department', fieldValue: 'engineering' }],
