@@ -3,8 +3,8 @@
 // Please update both files if you want to make changes to the Capabilities interface
 
 export enum B2BPaymentMethodFilterType {
-    Standard = 'STANDARD',
-    Invoice = 'INVOICE',
+    Standard = 'standard',
+    Invoice = 'invoice',
 }
 
 export interface Capabilities {
@@ -17,6 +17,10 @@ export interface Capabilities {
         hasAddressExtraFields: boolean;
         hasOrderExtraFields: boolean;
         requiresB2BToken: boolean;
+        hasAddressLabel: boolean;
+        quoteConfig: {
+            id: number;
+        } | null;
     };
     customer: {
         superAdminCompanySelector: boolean;
@@ -34,10 +38,14 @@ export interface Capabilities {
         b2bPaymentMethodFilterType: B2BPaymentMethodFilterType | null;
         invoicePaymentComment: boolean;
         poConfig: {
-            label: string;
-            required: boolean;
-            creditLimit: number;
-            currency: string;
+            field: {
+                label: string;
+                required: boolean;
+            } | null;
+            creditLimitCheck: {
+                creditLimit: number;
+                currency: string;
+            } | null;
         } | null;
         additionalField: {
             label: string;
@@ -48,6 +56,6 @@ export interface Capabilities {
     orderConfirmation: {
         persistB2BMetadata: boolean;
         invoiceRedirect: boolean;
-        canCreatePersonalAccount: boolean;
+        cannotCreatePersonalAccount: boolean;
     };
 }
