@@ -57,7 +57,7 @@ export interface BraintreePaypalPaymentInitializeOptions {
      *
      * @param actions - The Braintree PayPal Button actions
      */
-    onInitButton(actions: ButtonActions): void;
+    onInitButton?(actions: ButtonActions): void;
 
     /**
      * Callback for the Checkout form validation.
@@ -65,7 +65,7 @@ export interface BraintreePaypalPaymentInitializeOptions {
      * @param resolve - Callback for the successful form validation
      * @param reject - Callback for the failed form validation
      */
-    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    onValidate?(resolve: () => void, reject: () => void): Promise<void>;
 }
 
 export interface WithBraintreePaypalPaymentInitializeOptions {

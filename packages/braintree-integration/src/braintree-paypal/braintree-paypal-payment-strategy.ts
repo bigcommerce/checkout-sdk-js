@@ -350,7 +350,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 commit: false,
                 fundingSource,
                 onInit: (_, actions) => {
-                    options?.onInitButton(actions);
+                    options?.onInitButton?.(actions);
                 },
                 onClick: (_, actions) => {
                     const { resolve, reject } = actions;
