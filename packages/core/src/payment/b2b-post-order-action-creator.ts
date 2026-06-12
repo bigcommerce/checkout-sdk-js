@@ -57,7 +57,7 @@ export default class B2BPostOrderActionCreator {
                     } else {
                         await this._requestSender.addOrderExtraFields(
                             {
-                                orderId: `${orderId}`,
+                                orderId,
                                 poNumber: poNumber ?? '',
                                 referenceNumber: referenceNumber ?? '',
                                 extraFields: extraFields ?? [],
