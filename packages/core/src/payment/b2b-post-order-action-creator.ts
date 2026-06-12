@@ -36,6 +36,8 @@ export default class B2BPostOrderActionCreator {
             const b2bBaseUrl = resolveB2bBaseUrl(
                 state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
             );
+            const storeConfig = state.config.getStoreConfig();
+            const quoteId = storeConfig?.checkoutSettings.capabilities?.userJourney.quoteConfig?.id;
 
             if (!orderId || !b2bToken || !b2bBaseUrl) {
                 throw new MissingDataError(MissingDataErrorType.MissingOrder);
@@ -55,7 +57,7 @@ export default class B2BPostOrderActionCreator {
 
                         payload = { receiptId: body.data.receiptId };
                     } else {
-                        await this._requestSender.addOrderExtraFields(
+                        await this._requestSender.submitOrderExtraFields(
                             {
                                 orderId,
                                 poNumber: poNumber ?? '',
@@ -66,6 +68,36 @@ export default class B2BPostOrderActionCreator {
                             b2bToken,
                             b2bBaseUrl,
                         );
+
+                        if (typeof quoteId === 'number') {
+                            const checkout = state.checkout.getCheckoutOrThrow();
+                            const consignment = checkout.consignments[0];
+
+                            await this._requestSender.submitQuote(
+                                quoteId,
+                                {
+                                    orderId,
+                                    storeHash: storeConfig?.storeProfile.storeHash ?? '',
+                                    shippingTotal: consignment ? checkout.shippingCostTotal : null,
+                                    taxTotal: checkout.taxTotal,
+                                    shippingMethod: consignment?.selectedShippingOption ?? null,
+                                    shippingAddress: consignment
+                                        ? {
+                                              country: consignment.shippingAddress.country,
+                                              state: consignment.shippingAddress.stateOrProvince,
+                                              city: consignment.shippingAddress.city,
+                                              zipCode: consignment.shippingAddress.postalCode,
+                                              address: consignment.shippingAddress.address1,
+                                              apartment: consignment.shippingAddress.address2,
+                                              firstName: consignment.shippingAddress.firstName,
+                                              lastName: consignment.shippingAddress.lastName,
+                                          }
+                                        : null,
+                                },
+                                b2bToken,
+                                b2bBaseUrl,
+                            );
+                        }
                     }
 
                     return createAction(
