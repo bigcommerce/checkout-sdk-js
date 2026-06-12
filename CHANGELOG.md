@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.924.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.923.1...v1.924.0) (2026-06-12)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9819 update order id to be number ([#3287](https://github.com/bigcommerce/checkout-sdk-js/issues/3287)) ([c0a307e](https://github.com/bigcommerce/checkout-sdk-js/commit/c0a307e856d3d78233548e07799dbd4b7a351936))
+
 ### [1.923.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.923.0...v1.923.1) (2026-06-11)
 
 

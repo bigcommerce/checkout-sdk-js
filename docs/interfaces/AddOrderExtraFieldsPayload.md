@@ -42,7 +42,7 @@
 
 ### orderId
 
-> **orderId**: `string`
+> **orderId**: `number`
 
 ***
 

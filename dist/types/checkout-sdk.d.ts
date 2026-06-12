@@ -59,7 +59,7 @@ declare interface AchInstrument extends BaseAccountInstrument {
 }
 
 declare interface AddOrderExtraFieldsPayload {
-    orderId: string;
+    orderId: number;
     poNumber: string;
     referenceNumber: string;
     extraFields: B2BExtraField[];
