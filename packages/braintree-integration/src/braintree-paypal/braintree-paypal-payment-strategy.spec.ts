@@ -194,7 +194,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             eventEmitter.on('onClick', () => {
                 if (options.onClick) {
                     options.onClick(
-                        { fundingSource: paypalSdkMock.FUNDING.PAYPAL as string },
+                        { fundingSource: paypalSdkMock.FUNDING.PAYPAL! },
                         {
                             reject: jest.fn(),
                             resolve: jest.fn(),
