@@ -209,9 +209,10 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
             }
 
             if (hasPhysicalItems) {
-                await this.bigCommercePaymentsIntegrationService.updateOrder(
+                await this.bigCommercePaymentsIntegrationService.updateOrder({
+                    providerId: 'bigcommerce_payments',
                     isServerSideShippingCallbacksEnabled,
-                );
+                });
             }
 
             if (isServerSideShippingCallbacksEnabled) {
@@ -256,7 +257,9 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
                 this.bigCommercePaymentsIntegrationService.getShippingOptionOrThrow();
 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder({
+                providerId: 'bigcommerce_payments',
+            });
         } catch (error) {
             if (typeof error === 'string') {
                 throw new Error(error);
@@ -275,7 +278,9 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
 
         try {
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder({
+                providerId: 'bigcommerce_payments',
+            });
         } catch (error) {
             if (typeof error === 'string') {
                 throw new Error(error);
