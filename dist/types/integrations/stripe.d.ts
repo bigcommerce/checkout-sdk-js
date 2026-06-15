@@ -56,6 +56,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _getCurrencySelectorElement;
     private _initAdaptivePricingEvents;
     private _reinitializeStrategy;
+    private _rerenderPlaceholderButton;
 }
 
 declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {

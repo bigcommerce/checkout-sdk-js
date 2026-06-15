@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.927.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.927.1...v1.927.2) (2026-06-15)
+
+
+### Bug Fixes
+
+* **payments:** STRIPE-1513 re-render place order on currency change ([#3282](https://github.com/bigcommerce/checkout-sdk-js/issues/3282)) ([fd07878](https://github.com/bigcommerce/checkout-sdk-js/commit/fd078789d28ce22de77dd55ff09bfdb8318deaf8))
+
 ### [1.927.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.927.0...v1.927.1) (2026-06-15)
 
 
