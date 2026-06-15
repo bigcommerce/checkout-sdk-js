@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.925.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.924.0...v1.925.0) (2026-06-15)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9815 Add submitQuote ([#3290](https://github.com/bigcommerce/checkout-sdk-js/issues/3290)) ([feefc62](https://github.com/bigcommerce/checkout-sdk-js/commit/feefc6286694a3095a474c9fc18ed6af394a2120))
+
 ## [1.924.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.923.1...v1.924.0) (2026-06-12)
 
 
