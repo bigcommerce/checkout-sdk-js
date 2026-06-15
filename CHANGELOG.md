@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.927.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.926.0...v1.927.0) (2026-06-15)
+
+
+### Features
+
+* **payment:** PAYPAL-6640 removed the unnecessary request since it fires before strategy initialization ([795de6a](https://github.com/bigcommerce/checkout-sdk-js/commit/795de6a5c2e348796fefe3aa170af9278f0d8f3e))
+
 ## [1.926.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.925.0...v1.926.0) (2026-06-15)
 
 
