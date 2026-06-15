@@ -150,7 +150,7 @@ export default function getConfig(): Config {
                 showBackorderAvailabilityPrompt: false,
                 backorderAvailabilityPrompt: '',
                 defaultShippingExpectationPrompt: '',
-                shouldDisplayBackorderMessagesOnStorefront: false,
+                shouldDisplayBackorderMessages: false,
             },
         },
     };

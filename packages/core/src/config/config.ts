@@ -176,5 +176,5 @@ export interface InventorySettings {
     showBackorderAvailabilityPrompt: boolean;
     backorderAvailabilityPrompt: string | null;
     defaultShippingExpectationPrompt: string | null;
-    shouldDisplayBackorderMessagesOnStorefront: boolean;
+    shouldDisplayBackorderMessages: boolean;
 }
