@@ -2,9 +2,10 @@ import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { Address } from '../address';
 // TODO: CHECKOUT-9979 remove this import before delivery
 import { resolveB2bBaseUrl } from '../b2b-dev-tools';
-import { InternalCheckoutSelectors } from '../checkout';
+import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 
@@ -13,7 +14,41 @@ import {
     PersistB2BMetadataAction,
     PersistB2BMetadataOptions,
 } from './b2b-post-order-actions';
-import B2BPostOrderRequestSender from './b2b-post-order-request-sender';
+import B2BPostOrderRequestSender, { QuoteOrderedPayload } from './b2b-post-order-request-sender';
+
+function mapToQuoteShippingAddress(
+    address: Address,
+): NonNullable<QuoteOrderedPayload['shippingAddress']> {
+    return {
+        country: address.country,
+        state: address.stateOrProvince,
+        city: address.city,
+        zipCode: address.postalCode,
+        address: address.address1,
+        apartment: address.address2,
+        firstName: address.firstName,
+        lastName: address.lastName,
+    };
+}
+
+function mapToQuoteOrderedPayload(
+    checkout: Checkout,
+    orderId: number,
+    storeHash: string,
+): QuoteOrderedPayload {
+    const consignment = checkout.consignments[0];
+
+    return {
+        orderId,
+        storeHash,
+        shippingTotal: consignment ? checkout.shippingCostTotal : null,
+        taxTotal: checkout.taxTotal,
+        shippingMethod: consignment?.selectedShippingOption ?? null,
+        shippingAddress: consignment
+            ? mapToQuoteShippingAddress(consignment.shippingAddress)
+            : null,
+    };
+}
 
 export default class B2BPostOrderActionCreator {
     constructor(private _requestSender: B2BPostOrderRequestSender) {}
@@ -71,29 +106,14 @@ export default class B2BPostOrderActionCreator {
 
                         if (typeof quoteId === 'number') {
                             const checkout = state.checkout.getCheckoutOrThrow();
-                            const consignment = checkout.consignments[0];
 
                             await this._requestSender.submitQuote(
                                 quoteId,
-                                {
+                                mapToQuoteOrderedPayload(
+                                    checkout,
                                     orderId,
-                                    storeHash: storeConfig?.storeProfile.storeHash ?? '',
-                                    shippingTotal: consignment ? checkout.shippingCostTotal : null,
-                                    taxTotal: checkout.taxTotal,
-                                    shippingMethod: consignment?.selectedShippingOption ?? null,
-                                    shippingAddress: consignment
-                                        ? {
-                                              country: consignment.shippingAddress.country,
-                                              state: consignment.shippingAddress.stateOrProvince,
-                                              city: consignment.shippingAddress.city,
-                                              zipCode: consignment.shippingAddress.postalCode,
-                                              address: consignment.shippingAddress.address1,
-                                              apartment: consignment.shippingAddress.address2,
-                                              firstName: consignment.shippingAddress.firstName,
-                                              lastName: consignment.shippingAddress.lastName,
-                                          }
-                                        : null,
-                                },
+                                    storeConfig?.storeProfile.storeHash ?? '',
+                                ),
                                 b2bToken,
                                 b2bBaseUrl,
                             );
