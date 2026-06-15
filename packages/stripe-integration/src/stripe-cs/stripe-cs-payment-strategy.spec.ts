@@ -952,6 +952,83 @@ describe('StripeOCSPaymentStrategy', () => {
             });
         });
 
+        it('prefers live stripe checkout session id over clientToken on first submitPayment', async () => {
+            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                Promise.resolve({
+                    ...getStripeCheckoutInstanceMock(),
+                    loadActions: () =>
+                        Promise.resolve({
+                            type: StripeLoadActionsResultType.SUCCESS,
+                            actions: {
+                                ...getStripeCheckoutSessionActionsMock(),
+                                getSession: jest.fn(() =>
+                                    Promise.resolve({
+                                        id: 'cs_live_session_id',
+                                    } as StripeCheckoutSession),
+                                ),
+                            },
+                        }),
+                }),
+            );
+
+            await stripeCSPaymentStrategy.initialize(stripeOptions);
+            await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: {
+                        formattedPayload: expect.objectContaining({
+                            credit_card_token: { token: 'cs_live_session_id' },
+                        }),
+                    },
+                }),
+            );
+        });
+
+        it('reads clientToken from fresh state after loadPaymentMethod runs', async () => {
+            const staleMethod = { ...getStripeOCSMock(), clientToken: 'stale_token' };
+            const freshMethod = { ...getStripeOCSMock(), clientToken: 'fresh_token' };
+
+            const getPaymentMethodSpy = jest
+                .spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow')
+                .mockReturnValue(staleMethod);
+
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementation(() => {
+                getPaymentMethodSpy.mockReturnValue(freshMethod);
+
+                return Promise.resolve(paymentIntegrationService.getState());
+            });
+
+            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                Promise.resolve({
+                    ...getStripeCheckoutInstanceMock(),
+                    loadActions: () =>
+                        Promise.resolve({
+                            type: StripeLoadActionsResultType.SUCCESS,
+                            actions: {
+                                ...getStripeCheckoutSessionActionsMock(),
+                                getSession: jest.fn(() =>
+                                    Promise.resolve({ id: '' } as StripeCheckoutSession),
+                                ),
+                            },
+                        }),
+                }),
+            );
+
+            await stripeCSPaymentStrategy.initialize(stripeOptions);
+            await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: {
+                        formattedPayload: expect.objectContaining({
+                            credit_card_token: { token: 'fresh_token' },
+                        }),
+                    },
+                }),
+            );
+        });
+
         it('execute with selected payment method id without ui handled', async () => {
             const eventMock = {
                 ...StripeEventMock,
