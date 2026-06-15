@@ -1,5 +1,11 @@
 import { Response } from '@bigcommerce/request-sender';
 
+import {
+    AddressRequestBody,
+    BillingAddressResponse,
+    BillingAddressUpdateRequestBody,
+} from './billing/billing-address';
+import BillingAddressRequestSender from './billing/billing-address-request-sender';
 import { GraphQLRequestOptions } from './graphql-request-options';
 import {
     CreatePaymentOrderIntentInputData,
@@ -10,8 +16,35 @@ import { PaymentRequestSender } from './payment/payment-request-sender';
 export default class WalletButtonIntegrationService {
     constructor(
         private graphQLEndpoint: string,
+        private billingAddressRequestSender: BillingAddressRequestSender,
         private paymentRequestSender: PaymentRequestSender,
     ) {}
+
+    async addBillingAddress(
+        checkoutId: string,
+        address: AddressRequestBody,
+        options?: GraphQLRequestOptions,
+    ): Promise<Response<BillingAddressResponse>> {
+        return this.billingAddressRequestSender.addBillingAddress(
+            this.graphQLEndpoint,
+            checkoutId,
+            address,
+            options,
+        );
+    }
+
+    async updateBillingAddress(
+        checkoutId: string,
+        address: BillingAddressUpdateRequestBody,
+        options?: GraphQLRequestOptions,
+    ): Promise<Response<BillingAddressResponse>> {
+        return this.billingAddressRequestSender.updateBillingAddress(
+            this.graphQLEndpoint,
+            checkoutId,
+            address,
+            options,
+        );
+    }
 
     async createPaymentOrderIntent(
         inputData: CreatePaymentOrderIntentInputData,
