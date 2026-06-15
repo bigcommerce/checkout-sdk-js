@@ -54,6 +54,36 @@ export interface QuoteOrderedPayload {
     } | null;
 }
 
+export interface CreateCompanyAddressPayload {
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    label: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    zipCode: string;
+    country: {
+        countryCode: string;
+        countryName: string;
+    };
+    state: {
+        stateCode: string;
+        stateName: string;
+    };
+    isBilling: 0 | 1;
+    isCheckout: boolean;
+    isShipping: 0 | 1;
+    extraFields?: B2BExtraField[];
+}
+
+interface CreateCompanyAddressResponseBody {
+    data: {
+        addressId: string;
+    };
+    code: number;
+}
+
 export default class B2BPostOrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
@@ -101,6 +131,23 @@ export default class B2BPostOrderRequestSender {
         b2bBaseUrl: string,
     ): Promise<Response<void>> {
         return this._requestSender.post(`${b2bBaseUrl}/api/v2/orders`, {
+            credentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+                authToken: b2bToken,
+                Authorization: `Bearer ${b2bToken}`,
+            },
+            body: payload,
+        });
+    }
+
+    async submitCompanyAddress(
+        companyId: number,
+        payload: CreateCompanyAddressPayload,
+        b2bToken: string,
+        b2bBaseUrl: string,
+    ): Promise<Response<CreateCompanyAddressResponseBody>> {
+        return this._requestSender.post(`${b2bBaseUrl}/api/v2/companies/${companyId}/addresses`, {
             credentials: false,
             headers: {
                 'Content-Type': 'application/json',

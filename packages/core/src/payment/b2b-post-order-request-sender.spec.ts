@@ -6,6 +6,7 @@ import { getShippingOption } from '../shipping/shipping-options.mock';
 import B2BPostOrderRequestSender, {
     AddOrderExtraFieldsPayload,
     CloseInvoicePayload,
+    CreateCompanyAddressPayload,
     QuoteOrderedPayload,
 } from './b2b-post-order-request-sender';
 
@@ -178,6 +179,60 @@ describe('B2BPostOrderRequestSender', () => {
                 b2bPostOrderRequestSender.submitQuote(
                     123,
                     submitQuotePayload,
+                    'b2b-token-value',
+                    'https://api-b2b.bigcommerce.com',
+                ),
+            ).rejects.toEqual(getErrorResponse());
+        });
+    });
+
+    describe('#submitCompanyAddress()', () => {
+        const companyAddressPayload: CreateCompanyAddressPayload = {
+            addressLine1: '123 Market Street',
+            addressLine2: 'Suite 400',
+            city: 'San Francisco',
+            label: 'HQ',
+            firstName: 'Ada',
+            lastName: 'Lovelace',
+            phoneNumber: '+1-415-555-0100',
+            zipCode: '94103',
+            country: { countryCode: 'US', countryName: 'United States' },
+            state: { stateCode: 'CA', stateName: 'California' },
+            isShipping: 1,
+            isBilling: 0,
+            extraFields: [{ fieldName: 'Department', fieldValue: 'Procurement' }],
+            isCheckout: true,
+        };
+
+        it('posts to the company addresses endpoint with auth headers and payload', async () => {
+            await b2bPostOrderRequestSender.submitCompanyAddress(
+                12345,
+                companyAddressPayload,
+                'b2b-token-value',
+                'https://api-b2b.bigcommerce.com',
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                'https://api-b2b.bigcommerce.com/api/v2/companies/12345/addresses',
+                {
+                    credentials: false,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        authToken: 'b2b-token-value',
+                        Authorization: 'Bearer b2b-token-value',
+                    },
+                    body: companyAddressPayload,
+                },
+            );
+        });
+
+        it('rejects when the request sender rejects', async () => {
+            jest.spyOn(requestSender, 'post').mockRejectedValue(getErrorResponse());
+
+            await expect(
+                b2bPostOrderRequestSender.submitCompanyAddress(
+                    12345,
+                    companyAddressPayload,
                     'b2b-token-value',
                     'https://api-b2b.bigcommerce.com',
                 ),
