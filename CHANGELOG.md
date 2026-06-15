@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.927.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.927.0...v1.927.1) (2026-06-15)
+
+
+### Bug Fixes
+
+* **payments:** STRIPE-1511 use Stripe session id for submitPayment ([#3281](https://github.com/bigcommerce/checkout-sdk-js/issues/3281)) ([89db3f1](https://github.com/bigcommerce/checkout-sdk-js/commit/89db3f1fb9dbdc2192bb8e882695c4261742b7b0))
+
 ## [1.927.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.926.0...v1.927.0) (2026-06-15)
 
 

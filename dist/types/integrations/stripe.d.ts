@@ -38,6 +38,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _initStripeCheckoutSession;
     private _initializePaymentElement;
     private _loadStripeJs;
+    private _applyStoreCreditIfNeeded;
     private _getStripeActionsOrThrow;
     private _getStripeElement;
     private _onStripeElementChange;
