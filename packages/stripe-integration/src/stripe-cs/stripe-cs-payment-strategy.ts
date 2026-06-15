@@ -191,7 +191,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const {
             containerId,
             layout,
-            render,
             paymentMethodSelect,
             handleClosePaymentMethod,
             togglePreloader,
@@ -224,7 +223,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         });
 
         stripeElement.on(StripeElementEvent.READY, () => {
-            render();
+            this._rerenderPlaceholderButton();
         });
 
         stripeElement.on(StripeElementEvent.CHANGE, (event: StripeEventType) => {
@@ -536,6 +535,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
                 isCustomerCurrencySelected: currencyCode !== stripeCurrencyCode,
                 customerCurrency: stripeCurrencyCode,
             });
+
+            this._rerenderPlaceholderButton();
         });
     }
 
@@ -544,5 +545,10 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
     ): Promise<void> {
         await this.deinitialize();
         await this.initialize(options);
+    }
+
+    private _rerenderPlaceholderButton(): void {
+        const { render } = this.stripeInitializationOptions || {};
+        render?.();
     }
 }

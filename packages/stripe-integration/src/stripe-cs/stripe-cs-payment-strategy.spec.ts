@@ -221,6 +221,21 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
         });
 
+        it('should call render when payment element ready event fires', async () => {
+            const renderMock = jest.fn();
+
+            await stripeCSPaymentStrategy.initialize({
+                ...stripeOptions,
+                stripeocs: {
+                    ...stripeOptions.stripeocs,
+                    containerId: 'containerId',
+                    render: renderMock,
+                },
+            });
+
+            expect(renderMock).toHaveBeenCalled();
+        });
+
         it('Throws error if no stripe actions loaded', async () => {
             const onErrorMock = jest.fn();
             const renderMock = jest.fn();
@@ -807,6 +822,71 @@ describe('StripeOCSPaymentStrategy', () => {
                 expect(
                     paymentIntegrationService.updatePaymentProviderCustomer,
                 ).not.toHaveBeenCalled();
+            });
+
+            it('should call render after currency change updates the payment provider customer', async () => {
+                const renderMock = jest.fn();
+                const currencyEvent = {
+                    complete: false,
+                    elementType: 'currencySelector',
+                    empty: false,
+                    value: { currency: 'EUR' },
+                };
+                let currencyChangeHandled: Promise<unknown> | undefined;
+
+                mockPaymentMethodWithAdaptivePricing(true);
+                mockStripeCheckoutWithCurrencySelector(
+                    jest.fn((_, callback) => {
+                        currencyChangeHandled = callback(currencyEvent);
+                    }),
+                );
+
+                await stripeCSPaymentStrategy.initialize({
+                    ...stripeOptions,
+                    stripeocs: {
+                        ...stripeOptions.stripeocs,
+                        render: renderMock,
+                    },
+                });
+                await currencyChangeHandled;
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).toHaveBeenCalledWith({
+                    isCustomerCurrencySelected: true,
+                    customerCurrency: 'eur',
+                });
+                // One render fires for payment element READY, the second one
+                // is the STRIPE-1513 fix that re-displays the place order button.
+                expect(renderMock).toHaveBeenCalledTimes(2);
+            });
+
+            it('should not call render for currency change when event has no currency value', async () => {
+                const renderMock = jest.fn();
+                let currencyChangeHandled: Promise<unknown> | undefined;
+
+                mockPaymentMethodWithAdaptivePricing(true);
+                mockStripeCheckoutWithCurrencySelector(
+                    jest.fn((_, callback) => {
+                        currencyChangeHandled = callback(StripeEventMock);
+                    }),
+                );
+
+                await stripeCSPaymentStrategy.initialize({
+                    ...stripeOptions,
+                    stripeocs: {
+                        ...stripeOptions.stripeocs,
+                        render: renderMock,
+                    },
+                });
+                await currencyChangeHandled;
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).not.toHaveBeenCalled();
+                // Only the payment element READY render fires; the currency
+                // change handler short-circuits before reaching render.
+                expect(renderMock).toHaveBeenCalledTimes(1);
             });
         });
     });
