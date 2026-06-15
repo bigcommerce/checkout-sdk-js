@@ -1,10 +1,12 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { getShippingOption } from '../shipping/shipping-options.mock';
 
 import B2BPostOrderRequestSender, {
     AddOrderExtraFieldsPayload,
     CloseInvoicePayload,
+    QuoteOrderedPayload,
 } from './b2b-post-order-request-sender';
 
 describe('B2BPostOrderRequestSender', () => {
@@ -78,7 +80,7 @@ describe('B2BPostOrderRequestSender', () => {
         });
     });
 
-    describe('#addOrderExtraFields()', () => {
+    describe('#submitOrderExtraFields()', () => {
         const extraFieldsPayload: AddOrderExtraFieldsPayload = {
             orderId: 295,
             poNumber: 'PO-123',
@@ -95,7 +97,7 @@ describe('B2BPostOrderRequestSender', () => {
         };
 
         it('posts to the B2B orders endpoint with auth headers and payload', async () => {
-            await b2bPostOrderRequestSender.addOrderExtraFields(
+            await b2bPostOrderRequestSender.submitOrderExtraFields(
                 extraFieldsPayload,
                 'b2b-token-value',
                 'https://api-b2b.bigcommerce.com',
@@ -119,8 +121,63 @@ describe('B2BPostOrderRequestSender', () => {
             jest.spyOn(requestSender, 'post').mockRejectedValue(getErrorResponse());
 
             await expect(
-                b2bPostOrderRequestSender.addOrderExtraFields(
+                b2bPostOrderRequestSender.submitOrderExtraFields(
                     extraFieldsPayload,
+                    'b2b-token-value',
+                    'https://api-b2b.bigcommerce.com',
+                ),
+            ).rejects.toEqual(getErrorResponse());
+        });
+    });
+
+    describe('#submitQuote()', () => {
+        const submitQuotePayload: QuoteOrderedPayload = {
+            orderId: 295,
+            storeHash: 'k1drp8k8',
+            shippingTotal: 15,
+            taxTotal: 3,
+            shippingMethod: getShippingOption(),
+            shippingAddress: {
+                country: 'United States',
+                state: 'California',
+                city: 'Some City',
+                zipCode: '95555',
+                address: '12345 Testing Way',
+                apartment: '',
+                firstName: 'Test',
+                lastName: 'Tester',
+            },
+        };
+
+        it('posts to the RFQ ordered endpoint with auth headers and payload', async () => {
+            await b2bPostOrderRequestSender.submitQuote(
+                123,
+                submitQuotePayload,
+                'b2b-token-value',
+                'https://api-b2b.bigcommerce.com',
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                'https://api-b2b.bigcommerce.com/api/v2/rfq/123/ordered',
+                {
+                    credentials: false,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        authToken: 'b2b-token-value',
+                        Authorization: 'Bearer b2b-token-value',
+                    },
+                    body: submitQuotePayload,
+                },
+            );
+        });
+
+        it('rejects when the request sender rejects', async () => {
+            jest.spyOn(requestSender, 'post').mockRejectedValue(getErrorResponse());
+
+            await expect(
+                b2bPostOrderRequestSender.submitQuote(
+                    123,
+                    submitQuotePayload,
                     'b2b-token-value',
                     'https://api-b2b.bigcommerce.com',
                 ),

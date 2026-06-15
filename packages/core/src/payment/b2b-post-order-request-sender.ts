@@ -1,6 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { RequestOptions } from '../common/http-request';
+import { ShippingOption } from '../shipping';
 
 export interface CloseInvoicePayload {
     orderId: string;
@@ -35,6 +36,24 @@ export interface AddOrderExtraFieldsPayload {
     };
 }
 
+export interface QuoteOrderedPayload {
+    orderId: number;
+    storeHash: string;
+    shippingTotal: number | null;
+    taxTotal: number;
+    shippingMethod: ShippingOption | null;
+    shippingAddress: {
+        country: string;
+        state: string;
+        city: string;
+        zipCode: string;
+        address: string;
+        apartment: string;
+        firstName: string;
+        lastName: string;
+    } | null;
+}
+
 export default class B2BPostOrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
@@ -59,7 +78,24 @@ export default class B2BPostOrderRequestSender {
         );
     }
 
-    async addOrderExtraFields(
+    async submitQuote(
+        quoteId: number,
+        payload: QuoteOrderedPayload,
+        b2bToken: string,
+        b2bBaseUrl: string,
+    ): Promise<Response<void>> {
+        return this._requestSender.post(`${b2bBaseUrl}/api/v2/rfq/${quoteId}/ordered`, {
+            credentials: false,
+            headers: {
+                'Content-Type': 'application/json',
+                authToken: b2bToken,
+                Authorization: `Bearer ${b2bToken}`,
+            },
+            body: payload,
+        });
+    }
+
+    async submitOrderExtraFields(
         payload: AddOrderExtraFieldsPayload,
         b2bToken: string,
         b2bBaseUrl: string,

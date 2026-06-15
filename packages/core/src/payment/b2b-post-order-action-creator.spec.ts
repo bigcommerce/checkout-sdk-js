@@ -5,7 +5,10 @@ import { catchError, toArray } from 'rxjs/operators';
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { getCapabilities } from '../config/capabilities.mock';
 import { getConfig } from '../config/configs.mock';
+import { getConsignmentsState } from '../shipping/consignments.mock';
+import { getShippingOption } from '../shipping/shipping-options.mock';
 
 import B2BPostOrderActionCreator from './b2b-post-order-action-creator';
 import { B2BPostOrderActionType } from './b2b-post-order-actions';
@@ -24,6 +27,21 @@ describe('B2BPostOrderActionCreator', () => {
         baseUrl: 'https://api-b2b.bigcommerce.com',
     };
 
+    const mockStoreConfig = (quoteConfig?: { id: number } | null) => {
+        const storeConfig = getConfig().storeConfig;
+
+        jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+            ...storeConfig,
+            b2bApiSettings,
+            checkoutSettings: {
+                ...storeConfig.checkoutSettings,
+                ...(quoteConfig === undefined
+                    ? {}
+                    : { capabilities: getCapabilities({ userJourney: { quoteConfig } }) }),
+            },
+        });
+    };
+
     beforeEach(() => {
         store = createCheckoutStore({
             ...getCheckoutStoreStateWithOrder(),
@@ -36,12 +54,13 @@ describe('B2BPostOrderActionCreator', () => {
             getResponse({ data: { paymentId: 'pay_1', receiptId: 'rcpt_1' }, code: 200 }),
         );
 
-        jest.spyOn(requestSender, 'addOrderExtraFields').mockResolvedValue(getResponse(undefined));
+        jest.spyOn(requestSender, 'submitOrderExtraFields').mockResolvedValue(
+            getResponse(undefined),
+        );
 
-        jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
-            ...getConfig().storeConfig,
-            b2bApiSettings,
-        });
+        jest.spyOn(requestSender, 'submitQuote').mockResolvedValue(getResponse(undefined));
+
+        mockStoreConfig();
 
         actionCreator = new B2BPostOrderActionCreator(requestSender);
     });
@@ -71,13 +90,13 @@ describe('B2BPostOrderActionCreator', () => {
             );
         });
 
-        it('calls addOrderExtraFields and dispatches succeeded with empty receiptId when isInvoice is false', async () => {
+        it('calls submitOrderExtraFields and dispatches succeeded with empty receiptId when isInvoice is false', async () => {
             const actions = await from(actionCreator.persistB2BMetadata(nonInvoiceOptions)(store))
                 .pipe(toArray())
                 .toPromise();
 
             expect(requestSender.submitInvoice).not.toHaveBeenCalled();
-            expect(requestSender.addOrderExtraFields).toHaveBeenCalledWith(
+            expect(requestSender.submitOrderExtraFields).toHaveBeenCalledWith(
                 {
                     orderId: 295,
                     poNumber: '',
@@ -97,7 +116,7 @@ describe('B2BPostOrderActionCreator', () => {
             ]);
         });
 
-        it('forwards po number, reference number, extra fields and extra info to addOrderExtraFields', async () => {
+        it('forwards po number, reference number, extra fields and extra info to submitOrderExtraFields', async () => {
             const extraFields = [{ fieldName: 'department', fieldValue: 'engineering' }];
             const extraInfo = { billingAddressId: 12 };
 
@@ -111,7 +130,7 @@ describe('B2BPostOrderActionCreator', () => {
                 })(store),
             ).toPromise();
 
-            expect(requestSender.addOrderExtraFields).toHaveBeenCalledWith(
+            expect(requestSender.submitOrderExtraFields).toHaveBeenCalledWith(
                 {
                     orderId: 295,
                     poNumber: 'PO-123',
@@ -124,10 +143,10 @@ describe('B2BPostOrderActionCreator', () => {
             );
         });
 
-        it('does not call addOrderExtraFields when isInvoice is true', async () => {
+        it('does not call submitOrderExtraFields when isInvoice is true', async () => {
             await from(actionCreator.persistB2BMetadata(invoiceOptions)(store)).toPromise();
 
-            expect(requestSender.addOrderExtraFields).not.toHaveBeenCalled();
+            expect(requestSender.submitOrderExtraFields).not.toHaveBeenCalled();
         });
 
         it('throws when the order id is missing', () => {
@@ -180,6 +199,136 @@ describe('B2BPostOrderActionCreator', () => {
                     error: true,
                 }),
             ]);
+        });
+
+        describe('quote-to-checkout flow', () => {
+            it('calls submitQuote after submitOrderExtraFields with the payload mapped from checkout state', async () => {
+                mockStoreConfig({ id: 941 });
+
+                await from(actionCreator.persistB2BMetadata(nonInvoiceOptions)(store)).toPromise();
+
+                expect(requestSender.submitQuote).toHaveBeenCalledWith(
+                    941,
+                    {
+                        orderId: 295,
+                        storeHash: 'k1drp8k8',
+                        shippingTotal: 15,
+                        taxTotal: 3,
+                        shippingMethod: getShippingOption(),
+                        shippingAddress: {
+                            country: 'United States',
+                            state: 'California',
+                            city: 'Some City',
+                            zipCode: '95555',
+                            address: '12345 Testing Way',
+                            apartment: '',
+                            firstName: 'Test',
+                            lastName: 'Tester',
+                        },
+                    },
+                    'b2b-auth-token',
+                    b2bApiSettings.baseUrl,
+                );
+
+                const [addOrderCallOrder] = (requestSender.submitOrderExtraFields as jest.Mock).mock
+                    .invocationCallOrder;
+                const [submitQuoteCallOrder] = (requestSender.submitQuote as jest.Mock).mock
+                    .invocationCallOrder;
+
+                expect(submitQuoteCallOrder).toBeGreaterThan(addOrderCallOrder);
+            });
+
+            it('does not call submitQuote when quoteConfig is null', async () => {
+                mockStoreConfig(null);
+
+                await from(actionCreator.persistB2BMetadata(nonInvoiceOptions)(store)).toPromise();
+
+                expect(requestSender.submitQuote).not.toHaveBeenCalled();
+            });
+
+            it('does not call submitQuote when capabilities are undefined', async () => {
+                await from(actionCreator.persistB2BMetadata(nonInvoiceOptions)(store)).toPromise();
+
+                expect(requestSender.submitQuote).not.toHaveBeenCalled();
+            });
+
+            it('sends null shipping fields when the checkout has no consignments', async () => {
+                store = createCheckoutStore({
+                    ...getCheckoutStoreStateWithOrder(),
+                    b2bToken: { data: { token: 'b2b-auth-token' }, errors: {}, statuses: {} },
+                    consignments: { ...getConsignmentsState(), data: [] },
+                });
+                mockStoreConfig({ id: 941 });
+
+                await from(actionCreator.persistB2BMetadata(nonInvoiceOptions)(store)).toPromise();
+
+                expect(requestSender.submitQuote).toHaveBeenCalledWith(
+                    941,
+                    expect.objectContaining({
+                        shippingTotal: null,
+                        shippingMethod: null,
+                        shippingAddress: null,
+                    }),
+                    'b2b-auth-token',
+                    b2bApiSettings.baseUrl,
+                );
+            });
+
+            it('emits failed action without calling submitQuote when the checkout state is missing', async () => {
+                store = createCheckoutStore({
+                    ...getCheckoutStoreStateWithOrder(),
+                    b2bToken: { data: { token: 'b2b-auth-token' }, errors: {}, statuses: {} },
+                    checkout: { errors: {}, statuses: {} },
+                });
+                mockStoreConfig({ id: 941 });
+
+                const errorHandler = jest.fn((action) => of(action));
+                const actions = await from(
+                    actionCreator.persistB2BMetadata(nonInvoiceOptions)(store),
+                )
+                    .pipe(catchError(errorHandler), toArray())
+                    .toPromise();
+
+                expect(requestSender.submitOrderExtraFields).toHaveBeenCalled();
+                expect(requestSender.submitQuote).not.toHaveBeenCalled();
+                expect(actions).toEqual([
+                    { type: B2BPostOrderActionType.PersistB2BMetadataRequested },
+                    expect.objectContaining({
+                        type: B2BPostOrderActionType.PersistB2BMetadataFailed,
+                        error: true,
+                    }),
+                ]);
+            });
+
+            it('emits failed action when submitQuote rejects', async () => {
+                mockStoreConfig({ id: 941 });
+
+                jest.spyOn(requestSender, 'submitQuote').mockRejectedValue(getErrorResponse());
+
+                const errorHandler = jest.fn((action) => of(action));
+                const actions = await from(
+                    actionCreator.persistB2BMetadata(nonInvoiceOptions)(store),
+                )
+                    .pipe(catchError(errorHandler), toArray())
+                    .toPromise();
+
+                expect(requestSender.submitOrderExtraFields).toHaveBeenCalled();
+                expect(actions).toEqual([
+                    { type: B2BPostOrderActionType.PersistB2BMetadataRequested },
+                    expect.objectContaining({
+                        type: B2BPostOrderActionType.PersistB2BMetadataFailed,
+                        error: true,
+                    }),
+                ]);
+            });
+
+            it('does not call submitQuote in the invoice flow even when a quote id is present', async () => {
+                mockStoreConfig({ id: 941 });
+
+                await from(actionCreator.persistB2BMetadata(invoiceOptions)(store)).toPromise();
+
+                expect(requestSender.submitQuote).not.toHaveBeenCalled();
+            });
         });
     });
 });
