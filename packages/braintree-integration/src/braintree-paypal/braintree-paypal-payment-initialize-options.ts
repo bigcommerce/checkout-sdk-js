@@ -2,7 +2,7 @@ import {
     BraintreeError,
     BraintreeFormOptions,
     BraintreeThreeDSecureOptions,
-    ButtonActions,
+    InitButtonActions,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -57,7 +57,7 @@ export interface BraintreePaypalPaymentInitializeOptions {
      *
      * @param actions - The Braintree PayPal Button actions
      */
-    onInitButton?(actions: ButtonActions): void;
+    onInitButton?(actions: InitButtonActions): void;
 
     /**
      * Callback for the Checkout form validation.

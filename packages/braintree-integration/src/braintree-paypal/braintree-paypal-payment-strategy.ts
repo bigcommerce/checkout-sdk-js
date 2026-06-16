@@ -361,7 +361,9 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                         return resolve();
                     };
 
-                    return options?.onValidate?.(onValidationPassed, reject);
+                    return typeof options?.onValidate !== 'undefined'
+                        ? options.onValidate(onValidationPassed, reject)
+                        : onValidationPassed();
                 },
                 createOrder: () => this.setupPayment(braintreePaypalCheckout, id, onPaymentError),
                 onApprove: async (authorizeData: PaypalAuthorizeData) => {
