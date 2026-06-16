@@ -95,19 +95,20 @@ function buildCompanyAddresses(
     consignments: Consignment[] | undefined,
     addressExtraFields: CompanyAddressExtraFields | undefined,
 ): CreateCompanyAddressPayload[] {
-    const companyAddresses: CreateCompanyAddressPayload[] = [];
-    const shouldSaveBillingAddress = billingAddress?.shouldSaveAddress ? billingAddress : undefined;
+    const savedAddresses: Array<{
+        rawAddress: Address;
+        mappedAddress: CreateCompanyAddressPayload;
+    }> = [];
 
-    let billingCompanyAddress: CreateCompanyAddressPayload | undefined;
-
-    if (shouldSaveBillingAddress) {
-        billingCompanyAddress = mapToCompanyAddress(
-            shouldSaveBillingAddress,
-            { isBilling: 1, isShipping: 0 },
-            addressExtraFields?.billingAddressExtraFields ?? [],
-        );
-
-        companyAddresses.push(billingCompanyAddress);
+    if (billingAddress?.shouldSaveAddress) {
+        savedAddresses.push({
+            rawAddress: billingAddress,
+            mappedAddress: mapToCompanyAddress(
+                billingAddress,
+                { isBilling: 1, isShipping: 0 },
+                addressExtraFields?.billingAddressExtraFields ?? [],
+            ),
+        });
     }
 
     (consignments ?? []).forEach((consignment) => {
@@ -117,26 +118,27 @@ function buildCompanyAddresses(
             return;
         }
 
-        if (
-            shouldSaveBillingAddress &&
-            billingCompanyAddress &&
-            isAddressEqual(shouldSaveBillingAddress, shippingAddress)
-        ) {
-            billingCompanyAddress.isShipping = 1;
+        const savedAddress = savedAddresses.find(({ rawAddress }) =>
+            isAddressEqual(rawAddress, shippingAddress),
+        );
+
+        if (savedAddress) {
+            savedAddress.mappedAddress.isShipping = 1;
 
             return;
         }
 
-        companyAddresses.push(
-            mapToCompanyAddress(
+        savedAddresses.push({
+            rawAddress: shippingAddress,
+            mappedAddress: mapToCompanyAddress(
                 shippingAddress,
                 { isBilling: 0, isShipping: 1 },
                 addressExtraFields?.shippingAddressExtraFields ?? [],
             ),
-        );
+        });
     });
 
-    return companyAddresses;
+    return savedAddresses.map(({ mappedAddress }) => mappedAddress);
 }
 
 export default class B2BPostOrderActionCreator {

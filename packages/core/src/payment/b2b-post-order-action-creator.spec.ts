@@ -322,6 +322,23 @@ describe('B2BPostOrderActionCreator', () => {
                 );
             });
 
+            it('deduplicates identical shipping addresses across consignments into a single save', async () => {
+                mockConsignments([
+                    createConsignment({ address1: '5 Same St', shouldSaveAddress: true }, 'c-1'),
+                    createConsignment({ address1: '5 Same St', shouldSaveAddress: true }, 'c-2'),
+                ]);
+
+                await from(actionCreator.persistB2BMetadata(nonInvoiceOptions)(store)).toPromise();
+
+                expect(requestSender.submitCompanyAddress).toHaveBeenCalledTimes(1);
+                expect(requestSender.submitCompanyAddress).toHaveBeenCalledWith(
+                    12345,
+                    expectedCompanyAddress({ addressLine1: '5 Same St', isShipping: 1 }),
+                    'b2b-auth-token',
+                    b2bApiSettings.baseUrl,
+                );
+            });
+
             it('merges billing and shipping into one entry when they are the same address', async () => {
                 mockBillingAddress(createBillingAddress({ shouldSaveAddress: true }));
                 mockConsignments([createConsignment({ shouldSaveAddress: true })]);
