@@ -1,20 +1,28 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { isEqual } from 'lodash';
 import { concat, defer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { Address } from '../address';
+import { Address, isAddressEqual } from '../address';
 // TODO: CHECKOUT-9979 remove this import before delivery
 import { resolveB2bBaseUrl } from '../b2b-dev-tools';
+import { BillingAddress } from '../billing';
 import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
+import { Consignment } from '../shipping';
 
 import {
     B2BPostOrderActionType,
     PersistB2BMetadataAction,
     PersistB2BMetadataOptions,
 } from './b2b-post-order-actions';
-import B2BPostOrderRequestSender, { QuoteOrderedPayload } from './b2b-post-order-request-sender';
+import B2BPostOrderRequestSender, {
+    AddOrderExtraFieldsPayload,
+    B2BExtraField,
+    CreateCompanyAddressPayload,
+    QuoteOrderedPayload,
+} from './b2b-post-order-request-sender';
 
 function mapToQuoteShippingAddress(
     address: Address,
@@ -50,6 +58,94 @@ function mapToQuoteOrderedPayload(
     };
 }
 
+type CompanyAddressExtraFields = NonNullable<
+    AddOrderExtraFieldsPayload['extraInfo']['addressExtraFields']
+>;
+
+function mapToCompanyAddress(
+    address: Address,
+    flags: Pick<CreateCompanyAddressPayload, 'isBilling' | 'isShipping'>,
+    extraFields: B2BExtraField[],
+): CreateCompanyAddressPayload {
+    return {
+        addressLine1: address.address1,
+        addressLine2: address.address2,
+        city: address.city,
+        label: address.label ?? '',
+        firstName: address.firstName,
+        lastName: address.lastName,
+        phoneNumber: address.phone,
+        zipCode: address.postalCode,
+        country: {
+            countryCode: address.countryCode,
+            countryName: address.country,
+        },
+        state: {
+            stateCode: address.stateOrProvinceCode,
+            stateName: address.stateOrProvince,
+        },
+        isBilling: flags.isBilling,
+        isCheckout: true,
+        isShipping: flags.isShipping,
+        extraFields,
+    };
+}
+
+function buildCompanyAddresses(
+    billingAddress: BillingAddress | undefined,
+    consignments: Consignment[] | undefined,
+    addressExtraFields: CompanyAddressExtraFields | undefined,
+): CreateCompanyAddressPayload[] {
+    const savedAddresses: Array<{
+        rawAddress: Address;
+        mappedAddress: CreateCompanyAddressPayload;
+    }> = [];
+
+    if (billingAddress?.shouldSaveAddress) {
+        savedAddresses.push({
+            rawAddress: billingAddress,
+            mappedAddress: mapToCompanyAddress(
+                billingAddress,
+                { isBilling: 1, isShipping: 0 },
+                addressExtraFields?.billingAddressExtraFields ?? [],
+            ),
+        });
+    }
+
+    const shippingExtraFields = addressExtraFields?.shippingAddressExtraFields ?? [];
+
+    (consignments ?? []).forEach((consignment) => {
+        const { shippingAddress } = consignment;
+
+        if (!shippingAddress?.shouldSaveAddress) {
+            return;
+        }
+
+        const savedAddress = savedAddresses.find(
+            ({ rawAddress, mappedAddress }) =>
+                isAddressEqual(rawAddress, shippingAddress) &&
+                isEqual(mappedAddress.extraFields ?? [], shippingExtraFields),
+        );
+
+        if (savedAddress) {
+            savedAddress.mappedAddress.isShipping = 1;
+
+            return;
+        }
+
+        savedAddresses.push({
+            rawAddress: shippingAddress,
+            mappedAddress: mapToCompanyAddress(
+                shippingAddress,
+                { isBilling: 0, isShipping: 1 },
+                shippingExtraFields,
+            ),
+        });
+    });
+
+    return savedAddresses.map(({ mappedAddress }) => mappedAddress);
+}
+
 export default class B2BPostOrderActionCreator {
     constructor(private _requestSender: B2BPostOrderRequestSender) {}
 
@@ -71,8 +167,14 @@ export default class B2BPostOrderActionCreator {
             const b2bBaseUrl = resolveB2bBaseUrl(
                 state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
             );
+            const companyId = state.cart.getCart()?.companyId;
             const storeConfig = state.config.getStoreConfig();
             const quoteId = storeConfig?.checkoutSettings.capabilities?.userJourney.quoteConfig?.id;
+            const companyAddresses = buildCompanyAddresses(
+                state.billingAddress.getBillingAddress(),
+                state.consignments.getConsignments(),
+                extraInfo?.addressExtraFields,
+            );
 
             if (!orderId || !b2bToken || !b2bBaseUrl) {
                 throw new MissingDataError(MissingDataErrorType.MissingOrder);
@@ -92,6 +194,19 @@ export default class B2BPostOrderActionCreator {
 
                         payload = { receiptId: body.data.receiptId };
                     } else {
+                        if (companyId && companyAddresses.length) {
+                            await Promise.all(
+                                companyAddresses.map((companyAddress) =>
+                                    this._requestSender.submitCompanyAddress(
+                                        companyId,
+                                        companyAddress,
+                                        b2bToken,
+                                        b2bBaseUrl,
+                                    ),
+                                ),
+                            );
+                        }
+
                         await this._requestSender.submitOrderExtraFields(
                             {
                                 orderId,
