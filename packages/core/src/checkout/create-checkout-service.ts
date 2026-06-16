@@ -36,10 +36,10 @@ import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
     B2BCompanyPaymentMethodRequestSender,
-    B2BPaymentsRefreshActionCreator,
-    B2BPaymentsRefreshRequestSender,
     B2BPostOrderActionCreator,
     B2BPostOrderRequestSender,
+    B2BPreOrderActionCreator,
+    B2BPreOrderRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistry,
     createPaymentStrategyRegistryV2,
@@ -234,8 +234,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         formFieldsActionCreator,
         extensionActionCreator,
         workerExtensionMessenger,
-        new B2BPaymentsRefreshActionCreator(new B2BPaymentsRefreshRequestSender(requestSender)),
         new B2BPostOrderActionCreator(new B2BPostOrderRequestSender(requestSender)),
+        new B2BPreOrderActionCreator(new B2BPreOrderRequestSender(requestSender)),
     );
 }
 

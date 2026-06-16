@@ -38,17 +38,11 @@ export {
     WithMollieIssuerInstrument,
 } from './payment';
 export { default as B2BCompanyPaymentMethodRequestSender } from './b2b-company-payment-method-request-sender';
-export { default as B2BPaymentsRefreshActionCreator } from './b2b-payments-refresh-action-creator';
-export {
-    B2BPaymentsRefreshActionType,
-    RefreshB2BPaymentMethodsAction,
-} from './b2b-payments-refresh-actions';
-export {
-    default as B2BPaymentsRefreshRequestSender,
-    B2BPaymentsRefreshPayment,
-} from './b2b-payments-refresh-request-sender';
 export { default as B2BPostOrderActionCreator } from './b2b-post-order-action-creator';
 export { default as B2BPostOrderRequestSender } from './b2b-post-order-request-sender';
+export { default as B2BPreOrderActionCreator } from './b2b-pre-order-action-creator';
+export { B2BPreOrderActionType, PreOrderB2BMetadataAction } from './b2b-pre-order-actions';
+export { default as B2BPreOrderRequestSender } from './b2b-pre-order-request-sender';
 export { default as b2bPostOrderReducer } from './b2b-post-order-reducer';
 export {
     default as B2BPostOrderSelector,

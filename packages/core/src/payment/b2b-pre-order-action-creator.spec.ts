@@ -2,20 +2,21 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { getCart } from '../cart/carts.mock';
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getConfig } from '../config/configs.mock';
 
-import B2BPaymentsRefreshActionCreator from './b2b-payments-refresh-action-creator';
-import { B2BPaymentsRefreshActionType } from './b2b-payments-refresh-actions';
-import B2BPaymentsRefreshRequestSender from './b2b-payments-refresh-request-sender';
+import B2BPreOrderActionCreator from './b2b-pre-order-action-creator';
+import { B2BPreOrderActionType } from './b2b-pre-order-actions';
+import B2BPreOrderRequestSender from './b2b-pre-order-request-sender';
 import PaymentMethod from './payment-method';
 
-describe('B2BPaymentsRefreshActionCreator', () => {
+describe('B2BPreOrderActionCreator', () => {
     let store: CheckoutStore;
-    let requestSender: B2BPaymentsRefreshRequestSender;
-    let actionCreator: B2BPaymentsRefreshActionCreator;
+    let requestSender: B2BPreOrderRequestSender;
+    let actionCreator: B2BPreOrderActionCreator;
 
     const b2bApiSettings = {
         clientId: 'dl7c39mdpul6hyc489yk0vzxl6jesyx',
@@ -40,14 +41,6 @@ describe('B2BPaymentsRefreshActionCreator', () => {
             config: {},
             skipRedirectConfirmationAlert: false,
         },
-        {
-            id: 'no-display-no-gateway',
-            method: 'credit-card',
-            type: 'PAYMENT_TYPE_API',
-            supportedCards: [],
-            config: {},
-            skipRedirectConfirmationAlert: false,
-        },
     ];
 
     beforeEach(() => {
@@ -61,74 +54,86 @@ describe('B2BPaymentsRefreshActionCreator', () => {
             },
         });
 
-        requestSender = new B2BPaymentsRefreshRequestSender(createRequestSender());
+        requestSender = new B2BPreOrderRequestSender(createRequestSender());
 
-        jest.spyOn(requestSender, 'refresh').mockResolvedValue(getResponse({}));
+        jest.spyOn(requestSender, 'refreshPaymentMethods').mockResolvedValue(getResponse({}));
+        jest.spyOn(requestSender, 'submitPreOrderExtraFields').mockResolvedValue(
+            getResponse(undefined),
+        );
 
         jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
             ...getConfig().storeConfig,
             b2bApiSettings,
         });
 
-        actionCreator = new B2BPaymentsRefreshActionCreator(requestSender);
+        actionCreator = new B2BPreOrderActionCreator(requestSender);
     });
 
-    describe('#refreshB2BPaymentMethods()', () => {
+    describe('#persistPreOrderB2BMetadata()', () => {
         it('emits requested and succeeded actions on success', async () => {
-            const actions = await from(actionCreator.refreshB2BPaymentMethods()(store))
+            const actions = await from(actionCreator.persistPreOrderB2BMetadata({})(store))
                 .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsRequested },
-                { type: B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsSucceeded },
+                { type: B2BPreOrderActionType.PreOrderB2BMetadataRequested },
+                { type: B2BPreOrderActionType.PreOrderB2BMetadataSucceeded },
             ]);
         });
 
-        it('calls refresh with payments mapped from payment methods state', async () => {
-            await from(actionCreator.refreshB2BPaymentMethods()(store)).toPromise();
+        it('refreshes payment methods then persists the cart order extra info', async () => {
+            await from(
+                actionCreator.persistPreOrderB2BMetadata({
+                    poNumber: 'PO-1',
+                    referenceNumber: 'REF-1',
+                })(store),
+            ).toPromise();
 
-            expect(requestSender.refresh).toHaveBeenCalledWith(
+            expect(requestSender.refreshPaymentMethods).toHaveBeenCalledWith(
                 [
                     { code: 'cheque', name: 'Check' },
                     { code: 'stripe-card', name: 'stripev3' },
-                    { code: 'no-display-no-gateway', name: '' },
                 ],
                 'b2b-auth-token',
                 b2bApiSettings.baseUrl,
                 undefined,
             );
-        });
 
-        it('sends an empty array when no payment methods are loaded', async () => {
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
-                b2bToken: { data: { token: 'b2b-auth-token' }, errors: {}, statuses: {} },
-                paymentMethods: { errors: {}, statuses: {} },
-            });
-
-            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
-                ...getConfig().storeConfig,
-                b2bApiSettings,
-            });
-
-            await from(actionCreator.refreshB2BPaymentMethods()(store)).toPromise();
-
-            expect(requestSender.refresh).toHaveBeenCalledWith(
-                [],
+            expect(requestSender.submitPreOrderExtraFields).toHaveBeenCalledWith(
+                getCart().id,
+                {
+                    poNumber: 'PO-1',
+                    referenceNumber: 'REF-1',
+                    extraFields: undefined,
+                    extraInfo: undefined,
+                },
                 'b2b-auth-token',
                 b2bApiSettings.baseUrl,
                 undefined,
             );
+
+            const refreshOrder = (requestSender.refreshPaymentMethods as jest.Mock).mock
+                .invocationCallOrder[0];
+            const submitOrder = (requestSender.submitPreOrderExtraFields as jest.Mock).mock
+                .invocationCallOrder[0];
+
+            expect(refreshOrder).toBeLessThan(submitOrder);
         });
 
-        it('forwards request options to the request sender', async () => {
+        it('forwards request options to both request sender calls', async () => {
             const options = { timeout: undefined, params: { foo: 'bar' } };
 
-            await from(actionCreator.refreshB2BPaymentMethods(options)(store)).toPromise();
+            await from(actionCreator.persistPreOrderB2BMetadata({}, options)(store)).toPromise();
 
-            expect(requestSender.refresh).toHaveBeenCalledWith(
+            expect(requestSender.refreshPaymentMethods).toHaveBeenCalledWith(
                 expect.any(Array),
+                'b2b-auth-token',
+                b2bApiSettings.baseUrl,
+                options,
+            );
+            expect(requestSender.submitPreOrderExtraFields).toHaveBeenCalledWith(
+                getCart().id,
+                expect.any(Object),
                 'b2b-auth-token',
                 b2bApiSettings.baseUrl,
                 options,
@@ -150,7 +155,7 @@ describe('B2BPaymentsRefreshActionCreator', () => {
                 b2bApiSettings,
             });
 
-            expect(() => actionCreator.refreshB2BPaymentMethods()(store)).toThrow();
+            expect(() => actionCreator.persistPreOrderB2BMetadata({})(store)).toThrow();
         });
 
         it('throws when the b2b base url is missing', () => {
@@ -159,22 +164,24 @@ describe('B2BPaymentsRefreshActionCreator', () => {
                 b2bApiSettings: { ...b2bApiSettings, baseUrl: '' },
             });
 
-            expect(() => actionCreator.refreshB2BPaymentMethods()(store)).toThrow();
+            expect(() => actionCreator.persistPreOrderB2BMetadata({})(store)).toThrow();
         });
 
-        it('emits failed action when the request rejects', async () => {
-            jest.spyOn(requestSender, 'refresh').mockRejectedValue(getErrorResponse());
+        it('emits failed action when a request rejects', async () => {
+            jest.spyOn(requestSender, 'refreshPaymentMethods').mockRejectedValue(
+                getErrorResponse(),
+            );
 
             const errorHandler = jest.fn((action) => of(action));
-            const actions = await from(actionCreator.refreshB2BPaymentMethods()(store))
+            const actions = await from(actionCreator.persistPreOrderB2BMetadata({})(store))
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsRequested },
+                { type: B2BPreOrderActionType.PreOrderB2BMetadataRequested },
                 expect.objectContaining({
-                    type: B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsFailed,
+                    type: B2BPreOrderActionType.PreOrderB2BMetadataFailed,
                     error: true,
                 }),
             ]);

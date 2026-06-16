@@ -63,10 +63,10 @@ import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/inte
 import { getOrder } from '../order/orders.mock';
 import {
     B2BCompanyPaymentMethodRequestSender,
-    B2BPaymentsRefreshActionCreator,
-    B2BPaymentsRefreshRequestSender,
     B2BPostOrderActionCreator,
     B2BPostOrderRequestSender,
+    B2BPreOrderActionCreator,
+    B2BPreOrderRequestSender,
     createPaymentClient,
     createPaymentStrategyRegistryV2,
     PaymentMethodActionCreator,
@@ -130,10 +130,10 @@ import { createCheckoutSelectorsFactory } from './create-checkout-selectors';
 import createCheckoutStore from './create-checkout-store';
 
 describe('CheckoutService', () => {
-    let b2bPaymentsRefreshActionCreator: B2BPaymentsRefreshActionCreator;
-    let b2bPaymentsRefreshRequestSender: B2BPaymentsRefreshRequestSender;
     let b2bPostOrderActionCreator: B2BPostOrderActionCreator;
     let b2bPostOrderRequestSender: B2BPostOrderRequestSender;
+    let b2bPreOrderActionCreator: B2BPreOrderActionCreator;
+    let b2bPreOrderRequestSender: B2BPreOrderRequestSender;
     let billingAddressActionCreator: BillingAddressActionCreator;
     let billingAddressRequestSender: BillingAddressRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
@@ -407,14 +407,6 @@ describe('CheckoutService', () => {
             new B2BCompanyPaymentMethodRequestSender(requestSender),
         );
 
-        b2bPaymentsRefreshRequestSender = new B2BPaymentsRefreshRequestSender(requestSender);
-
-        jest.spyOn(b2bPaymentsRefreshRequestSender, 'refresh').mockResolvedValue(getResponse({}));
-
-        b2bPaymentsRefreshActionCreator = new B2BPaymentsRefreshActionCreator(
-            b2bPaymentsRefreshRequestSender,
-        );
-
         b2bPostOrderRequestSender = new B2BPostOrderRequestSender(requestSender);
 
         jest.spyOn(b2bPostOrderRequestSender, 'submitInvoice').mockResolvedValue(
@@ -422,6 +414,17 @@ describe('CheckoutService', () => {
         );
 
         b2bPostOrderActionCreator = new B2BPostOrderActionCreator(b2bPostOrderRequestSender);
+
+        b2bPreOrderRequestSender = new B2BPreOrderRequestSender(requestSender);
+
+        jest.spyOn(b2bPreOrderRequestSender, 'refreshPaymentMethods').mockResolvedValue(
+            getResponse({}),
+        );
+        jest.spyOn(b2bPreOrderRequestSender, 'submitPreOrderExtraFields').mockResolvedValue(
+            getResponse(undefined),
+        );
+
+        b2bPreOrderActionCreator = new B2BPreOrderActionCreator(b2bPreOrderRequestSender);
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,
@@ -479,8 +482,8 @@ describe('CheckoutService', () => {
             formFieldsActionCreator,
             extensionActionCreator,
             workerExtensionMessenger,
-            b2bPaymentsRefreshActionCreator,
             b2bPostOrderActionCreator,
+            b2bPreOrderActionCreator,
         );
     });
 
@@ -633,25 +636,6 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#refreshB2BPaymentMethods()', () => {
-        it('exposes the method on the service', () => {
-            expect(typeof checkoutService.refreshB2BPaymentMethods).toBe('function');
-        });
-
-        it('dispatches the action creator and returns a promise', async () => {
-            jest.spyOn(b2bPaymentsRefreshActionCreator, 'refreshB2BPaymentMethods');
-
-            const result = checkoutService.refreshB2BPaymentMethods();
-
-            expect(result).toBeInstanceOf(Promise);
-            expect(b2bPaymentsRefreshActionCreator.refreshB2BPaymentMethods).toHaveBeenCalledWith(
-                undefined,
-            );
-
-            await result.catch(() => undefined);
-        });
-    });
-
     describe('#persistB2BMetadata()', () => {
         it('exposes the method on the service', () => {
             expect(typeof checkoutService.persistB2BMetadata).toBe('function');
@@ -674,6 +658,34 @@ describe('CheckoutService', () => {
                 extraFields: [],
                 extraInfo: {},
             });
+
+            await result.catch(() => undefined);
+        });
+    });
+
+    describe('#persistPreOrderB2BMetadata()', () => {
+        it('exposes the method on the service', () => {
+            expect(typeof checkoutService.persistPreOrderB2BMetadata).toBe('function');
+        });
+
+        it('dispatches the action creator and returns a promise', async () => {
+            jest.spyOn(b2bPreOrderActionCreator, 'persistPreOrderB2BMetadata');
+
+            const result = checkoutService.persistPreOrderB2BMetadata({
+                poNumber: 'PO-1',
+                referenceNumber: 'REF-1',
+            });
+
+            expect(result).toBeInstanceOf(Promise);
+            expect(b2bPreOrderActionCreator.persistPreOrderB2BMetadata).toHaveBeenCalledWith(
+                {
+                    poNumber: 'PO-1',
+                    referenceNumber: 'REF-1',
+                    extraFields: [],
+                    extraInfo: {},
+                },
+                undefined,
+            );
 
             await result.catch(() => undefined);
         });

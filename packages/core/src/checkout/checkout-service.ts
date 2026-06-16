@@ -36,8 +36,8 @@ import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import {
-    B2BPaymentsRefreshActionCreator,
     B2BPostOrderActionCreator,
+    B2BPreOrderActionCreator,
     OrderFinalizeOptions,
     PaymentInitializeOptions,
     PaymentMethodActionCreator,
@@ -45,6 +45,7 @@ import {
     PaymentStrategyActionCreator,
 } from '../payment';
 import { PersistB2BMetadataOptions } from '../payment/b2b-post-order-actions';
+import { PreOrderB2BMetadataOptions } from '../payment/b2b-pre-order-actions';
 import { InstrumentActionCreator } from '../payment/instrument';
 import {
     ConsignmentActionCreator,
@@ -115,8 +116,8 @@ export default class CheckoutService {
         private _formFieldsActionCreator: FormFieldsActionCreator,
         private _extensionActionCreator: ExtensionActionCreator,
         private _workerExtensionMessenger: WorkerExtensionMessenger,
-        private _b2bPaymentsRefreshActionCreator: B2BPaymentsRefreshActionCreator,
         private _b2bPostOrderActionCreator: B2BPostOrderActionCreator,
+        private _b2bPreOrderActionCreator: B2BPreOrderActionCreator,
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
     }
@@ -708,22 +709,6 @@ export default class CheckoutService {
     }
 
     /**
-     * Refreshes the B2B payment methods cache for the current customer.
-     *
-     * ```js
-     * await service.refreshB2BPaymentMethods();
-     * ```
-     *
-     * @param options - Options for the request.
-     * @returns A promise that resolves to the current state.
-     */
-    refreshB2BPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._b2bPaymentsRefreshActionCreator.refreshB2BPaymentMethods(options);
-
-        return this._dispatch(action, { queueId: 'b2bPaymentsRefresh' });
-    }
-
-    /**
      * Persists B2B order metadata (e.g. invoice comment) after an order is placed
      *
      * ```js
@@ -751,6 +736,35 @@ export default class CheckoutService {
         });
 
         return this._dispatch(action, { queueId: 'b2bPostOrder' });
+    }
+
+    /**
+     * Persists B2B order metadata before an order is placed by refreshing the
+     * B2B payment methods cache and storing the cart order extra info.
+     *
+     * ```js
+     * const state = await service.persistPreOrderB2BMetadata({ poNumber, referenceNumber });
+     * ```
+     *
+     * @param PreOrderB2BMetadataOptions - Passing an object to prepare the payload for the request.
+     * @param options - Options for the request.
+     * @returns A promise that resolves to the current state.
+     */
+    persistPreOrderB2BMetadata(
+        {
+            poNumber = '',
+            referenceNumber = '',
+            extraFields = [],
+            extraInfo = {},
+        }: PreOrderB2BMetadataOptions,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
+        const action = this._b2bPreOrderActionCreator.persistPreOrderB2BMetadata(
+            { poNumber, referenceNumber, extraFields, extraInfo },
+            options,
+        );
+
+        return this._dispatch(action, { queueId: 'b2bPreOrder' });
     }
 
     /**
