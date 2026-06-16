@@ -1,4 +1,5 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { isEqual } from 'lodash';
 import { concat, defer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -111,6 +112,8 @@ function buildCompanyAddresses(
         });
     }
 
+    const shippingExtraFields = addressExtraFields?.shippingAddressExtraFields ?? [];
+
     (consignments ?? []).forEach((consignment) => {
         const { shippingAddress } = consignment;
 
@@ -118,8 +121,10 @@ function buildCompanyAddresses(
             return;
         }
 
-        const savedAddress = savedAddresses.find(({ rawAddress }) =>
-            isAddressEqual(rawAddress, shippingAddress),
+        const savedAddress = savedAddresses.find(
+            ({ rawAddress, mappedAddress }) =>
+                isAddressEqual(rawAddress, shippingAddress) &&
+                isEqual(mappedAddress.extraFields ?? [], shippingExtraFields),
         );
 
         if (savedAddress) {
@@ -133,7 +138,7 @@ function buildCompanyAddresses(
             mappedAddress: mapToCompanyAddress(
                 shippingAddress,
                 { isBilling: 0, isShipping: 1 },
-                addressExtraFields?.shippingAddressExtraFields ?? [],
+                shippingExtraFields,
             ),
         });
     });

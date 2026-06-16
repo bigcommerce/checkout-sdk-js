@@ -354,6 +354,83 @@ describe('B2BPostOrderActionCreator', () => {
                 );
             });
 
+            it('keeps billing and shipping separate when the address matches but extra fields differ', async () => {
+                mockBillingAddress(createBillingAddress({ shouldSaveAddress: true }));
+                mockConsignments([createConsignment({ shouldSaveAddress: true })]);
+
+                await from(
+                    actionCreator.persistB2BMetadata({
+                        isInvoice: false,
+                        extraInfo: {
+                            addressExtraFields: {
+                                billingAddressExtraFields: [
+                                    { fieldName: 'department', fieldValue: 'Finance' },
+                                ],
+                                shippingAddressExtraFields: [
+                                    { fieldName: 'dock', fieldValue: 'B7' },
+                                ],
+                            },
+                        },
+                    })(store),
+                ).toPromise();
+
+                expect(requestSender.submitCompanyAddress).toHaveBeenCalledTimes(2);
+                expect(requestSender.submitCompanyAddress).toHaveBeenNthCalledWith(
+                    1,
+                    12345,
+                    expectedCompanyAddress({
+                        isBilling: 1,
+                        isShipping: 0,
+                        extraFields: [{ fieldName: 'department', fieldValue: 'Finance' }],
+                    }),
+                    'b2b-auth-token',
+                    b2bApiSettings.baseUrl,
+                );
+                expect(requestSender.submitCompanyAddress).toHaveBeenNthCalledWith(
+                    2,
+                    12345,
+                    expectedCompanyAddress({
+                        isShipping: 1,
+                        extraFields: [{ fieldName: 'dock', fieldValue: 'B7' }],
+                    }),
+                    'b2b-auth-token',
+                    b2bApiSettings.baseUrl,
+                );
+            });
+
+            it('merges billing and shipping when both the address and extra fields match', async () => {
+                mockBillingAddress(createBillingAddress({ shouldSaveAddress: true }));
+                mockConsignments([createConsignment({ shouldSaveAddress: true })]);
+
+                await from(
+                    actionCreator.persistB2BMetadata({
+                        isInvoice: false,
+                        extraInfo: {
+                            addressExtraFields: {
+                                billingAddressExtraFields: [
+                                    { fieldName: 'department', fieldValue: 'Finance' },
+                                ],
+                                shippingAddressExtraFields: [
+                                    { fieldName: 'department', fieldValue: 'Finance' },
+                                ],
+                            },
+                        },
+                    })(store),
+                ).toPromise();
+
+                expect(requestSender.submitCompanyAddress).toHaveBeenCalledTimes(1);
+                expect(requestSender.submitCompanyAddress).toHaveBeenCalledWith(
+                    12345,
+                    expectedCompanyAddress({
+                        isBilling: 1,
+                        isShipping: 1,
+                        extraFields: [{ fieldName: 'department', fieldValue: 'Finance' }],
+                    }),
+                    'b2b-auth-token',
+                    b2bApiSettings.baseUrl,
+                );
+            });
+
             it('keeps billing and shipping separate when the addresses differ', async () => {
                 mockBillingAddress(createBillingAddress({ shouldSaveAddress: true }));
                 mockConsignments([
