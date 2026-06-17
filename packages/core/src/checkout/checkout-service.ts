@@ -739,30 +739,26 @@ export default class CheckoutService {
     }
 
     /**
-     * Persists B2B order metadata before an order is placed by refreshing the
-     * B2B payment methods cache and storing the cart order extra info.
+     * Persists B2B order metadata before an order is placed.
+     *
+     * The B2B payment methods cache is always refreshed. The cart order extra
+     * info (PO number, reference number, extra fields) is stored only when a
+     * `metadata` object is provided — even if its fields are empty. Omitting the
+     * argument refreshes the payment methods without submitting extra info.
      *
      * ```js
      * const state = await service.persistPreOrderB2BMetadata({ poNumber, referenceNumber });
      * ```
      *
-     * @param B2BOrderMetadataOptions - Passing an object to prepare the payload for the request.
+     * @param metadata - Passing an object to prepare the payload for the request.
      * @param options - Options for the request.
      * @returns A promise that resolves to the current state.
      */
     persistPreOrderB2BMetadata(
-        {
-            poNumber = '',
-            referenceNumber = '',
-            extraFields = [],
-            extraInfo = {},
-        }: B2BOrderMetadataOptions,
+        metadata?: B2BOrderMetadataOptions,
         options?: RequestOptions,
     ): Promise<CheckoutSelectors> {
-        const action = this._b2bPreOrderActionCreator.persistPreOrderB2BMetadata(
-            { poNumber, referenceNumber, extraFields, extraInfo },
-            options,
-        );
+        const action = this._b2bPreOrderActionCreator.persistPreOrderB2BMetadata(metadata, options);
 
         return this._dispatch(action, { queueId: 'b2bPreOrder' });
     }

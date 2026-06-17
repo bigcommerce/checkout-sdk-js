@@ -71,7 +71,7 @@ describe('B2BPreOrderActionCreator', () => {
 
     describe('#persistPreOrderB2BMetadata()', () => {
         it('emits requested and succeeded actions on success', async () => {
-            const actions = await from(actionCreator.persistPreOrderB2BMetadata({})(store))
+            const actions = await from(actionCreator.persistPreOrderB2BMetadata()(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -81,13 +81,8 @@ describe('B2BPreOrderActionCreator', () => {
             ]);
         });
 
-        it('refreshes payment methods then persists the cart order extra info', async () => {
-            await from(
-                actionCreator.persistPreOrderB2BMetadata({
-                    poNumber: 'PO-1',
-                    referenceNumber: 'REF-1',
-                })(store),
-            ).toPromise();
+        it('always refreshes payment methods', async () => {
+            await from(actionCreator.persistPreOrderB2BMetadata()(store)).toPromise();
 
             expect(requestSender.refreshPaymentMethods).toHaveBeenCalledWith(
                 [
@@ -98,6 +93,43 @@ describe('B2BPreOrderActionCreator', () => {
                 b2bApiSettings.baseUrl,
                 undefined,
             );
+        });
+
+        it('does not submit cart order extra info when no metadata is provided', async () => {
+            await from(actionCreator.persistPreOrderB2BMetadata()(store)).toPromise();
+
+            expect(requestSender.submitExtraFieldsToCart).not.toHaveBeenCalled();
+        });
+
+        it('submits cart order extra info when an empty metadata object is provided', async () => {
+            await from(
+                actionCreator.persistPreOrderB2BMetadata({
+                    poNumber: '',
+                    referenceNumber: '',
+                    extraFields: [],
+                    extraInfo: {},
+                })(store),
+            ).toPromise();
+
+            expect(requestSender.submitExtraFieldsToCart).toHaveBeenCalledWith(
+                getCart().id,
+                {
+                    extraFields: [],
+                    extraInfo: {},
+                },
+                'b2b-auth-token',
+                b2bApiSettings.baseUrl,
+                undefined,
+            );
+        });
+
+        it('submits cart order extra info after refreshing when metadata is provided', async () => {
+            await from(
+                actionCreator.persistPreOrderB2BMetadata({
+                    poNumber: 'PO-1',
+                    referenceNumber: 'REF-1',
+                })(store),
+            ).toPromise();
 
             expect(requestSender.submitExtraFieldsToCart).toHaveBeenCalledWith(
                 getCart().id,
@@ -120,7 +152,7 @@ describe('B2BPreOrderActionCreator', () => {
             expect(refreshOrder).toBeLessThan(submitOrder);
         });
 
-        it('omits poNumber and referenceNumber from the payload when they are falsy', async () => {
+        it('submits when only extra fields are provided and omits falsy poNumber/referenceNumber', async () => {
             await from(
                 actionCreator.persistPreOrderB2BMetadata({
                     poNumber: '',
@@ -141,10 +173,12 @@ describe('B2BPreOrderActionCreator', () => {
             );
         });
 
-        it('forwards request options to both request sender calls', async () => {
+        it('forwards request options to both requests', async () => {
             const options = { timeout: undefined, params: { foo: 'bar' } };
 
-            await from(actionCreator.persistPreOrderB2BMetadata({}, options)(store)).toPromise();
+            await from(
+                actionCreator.persistPreOrderB2BMetadata({ poNumber: 'PO-1' }, options)(store),
+            ).toPromise();
 
             expect(requestSender.refreshPaymentMethods).toHaveBeenCalledWith(
                 expect.any(Array),
@@ -162,21 +196,14 @@ describe('B2BPreOrderActionCreator', () => {
         });
 
         it('throws when the b2b token is missing', () => {
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
-                paymentMethods: {
-                    data: paymentMethods,
-                    errors: {},
-                    statuses: {},
-                },
-            });
+            store = createCheckoutStore(getCheckoutStoreState());
 
             jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
                 ...getConfig().storeConfig,
                 b2bApiSettings,
             });
 
-            expect(() => actionCreator.persistPreOrderB2BMetadata({})(store)).toThrow();
+            expect(() => actionCreator.persistPreOrderB2BMetadata()(store)).toThrow();
         });
 
         it('throws when the b2b base url is missing', () => {
@@ -185,7 +212,7 @@ describe('B2BPreOrderActionCreator', () => {
                 b2bApiSettings: { ...b2bApiSettings, baseUrl: '' },
             });
 
-            expect(() => actionCreator.persistPreOrderB2BMetadata({})(store)).toThrow();
+            expect(() => actionCreator.persistPreOrderB2BMetadata()(store)).toThrow();
         });
 
         it('emits failed action when a request rejects', async () => {
@@ -194,7 +221,7 @@ describe('B2BPreOrderActionCreator', () => {
             );
 
             const errorHandler = jest.fn((action) => of(action));
-            const actions = await from(actionCreator.persistPreOrderB2BMetadata({})(store))
+            const actions = await from(actionCreator.persistPreOrderB2BMetadata()(store))
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 

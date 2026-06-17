@@ -4,7 +4,7 @@ import { RequestOptions } from '../common/http-request';
 
 import { B2BOrderMetadataOptions } from './b2b-order-metadata';
 
-interface B2BPaymentsRefreshPayment {
+interface B2BRefreshPayment {
     code: string;
     name: string;
 }
@@ -13,7 +13,7 @@ export default class B2BPreOrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
     async refreshPaymentMethods(
-        payments: B2BPaymentsRefreshPayment[],
+        payments: B2BRefreshPayment[],
         b2bToken: string,
         b2bBaseUrl: string,
         options?: RequestOptions,

@@ -678,12 +678,7 @@ describe('CheckoutService', () => {
 
             expect(result).toBeInstanceOf(Promise);
             expect(b2bPreOrderActionCreator.persistPreOrderB2BMetadata).toHaveBeenCalledWith(
-                {
-                    poNumber: 'PO-1',
-                    referenceNumber: 'REF-1',
-                    extraFields: [],
-                    extraInfo: {},
-                },
+                { poNumber: 'PO-1', referenceNumber: 'REF-1' },
                 undefined,
             );
 

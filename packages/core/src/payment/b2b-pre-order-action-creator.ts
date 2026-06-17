@@ -17,7 +17,7 @@ export default class B2BPreOrderActionCreator {
     constructor(private _requestSender: B2BPreOrderRequestSender) {}
 
     persistPreOrderB2BMetadata(
-        { poNumber, referenceNumber, extraFields, extraInfo }: B2BOrderMetadataOptions,
+        metadata?: B2BOrderMetadataOptions,
         options?: RequestOptions,
     ): ThunkAction<PreOrderB2BMetadataAction, InternalCheckoutSelectors> {
         return (store) => {
@@ -26,7 +26,6 @@ export default class B2BPreOrderActionCreator {
             const b2bBaseUrl = resolveB2bBaseUrl(
                 state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
             );
-            const cartId = state.cart.getCartOrThrow().id;
             const paymentMethods = state.paymentMethods.getPaymentMethods() ?? [];
 
             if (!b2bToken || !b2bBaseUrl) {
@@ -47,18 +46,23 @@ export default class B2BPreOrderActionCreator {
                         b2bBaseUrl,
                         options,
                     );
-                    await this._requestSender.submitExtraFieldsToCart(
-                        cartId,
-                        {
-                            ...(poNumber ? { poNumber } : {}),
-                            ...(referenceNumber ? { referenceNumber } : {}),
-                            extraFields: extraFields ?? [],
-                            extraInfo: extraInfo ?? {},
-                        },
-                        b2bToken,
-                        b2bBaseUrl,
-                        options,
-                    );
+
+                    if (metadata) {
+                        const { poNumber, referenceNumber, extraFields, extraInfo } = metadata;
+
+                        await this._requestSender.submitExtraFieldsToCart(
+                            state.cart.getCartOrThrow().id,
+                            {
+                                ...(poNumber ? { poNumber } : {}),
+                                ...(referenceNumber ? { referenceNumber } : {}),
+                                extraFields: extraFields ?? [],
+                                extraInfo: extraInfo ?? {},
+                            },
+                            b2bToken,
+                            b2bBaseUrl,
+                            options,
+                        );
+                    }
 
                     return createAction(B2BPreOrderActionType.PreOrderB2BMetadataSucceeded);
                 }),
