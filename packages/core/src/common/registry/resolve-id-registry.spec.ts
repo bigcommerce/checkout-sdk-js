@@ -106,7 +106,7 @@ describe('ResolveIdRegistry', () => {
         subject.register(registryKey1, () => new StrategyA());
         subject.register(registryKey2, () => new BarStrategy());
 
-        const query = { id: 'credit_card', gateway: 'barclaycard', type: 'PAYMENT_TYPE_HOSTED' };
+        const query = { id: 'credit_card', gateway: 'mollie', type: 'PAYMENT_TYPE_HOSTED' };
 
         expect(subject.get(query)).toBeInstanceOf(BarStrategy);
     });
@@ -127,14 +127,14 @@ describe('ResolveIdRegistry', () => {
     it('returns correct strategy for a entered registry when entry is with type', () => {
         const subject = new ResolveIdRegistry(true);
         const registryKey1 = { id: 'credit_card', gateway: 'bluesnap' };
-        const registryKey2 = { id: 'card', gateway: 'barclaycard' };
+        const registryKey2 = { id: 'card', gateway: 'mollie' };
         const registryKey3 = { type: 'PAYMENT_TYPE_HOSTED' };
 
         subject.register(registryKey1, () => new StrategyA());
         subject.register(registryKey2, () => new BarStrategy());
         subject.register(registryKey3, () => new FooStrategy());
 
-        const query = { id: 'credit_card', gateway: 'barclaycard', type: 'PAYMENT_TYPE_HOSTED' };
+        const query = { id: 'credit_card', gateway: 'mollie', type: 'PAYMENT_TYPE_HOSTED' };
 
         expect(subject.get(query)).toBeInstanceOf(FooStrategy);
     });
@@ -152,7 +152,7 @@ describe('ResolveIdRegistry', () => {
         subject.register(registryKey1, () => new StrategyA());
         subject.register(registryKey2, () => new BarStrategy());
 
-        const query = { id: 'credit_card', gateway: 'barclaycard', type: 'PAYMENT_TYPE_HOSTED' };
+        const query = { id: 'credit_card', gateway: 'mollie', type: 'PAYMENT_TYPE_HOSTED' };
 
         subject.get(query);
 
