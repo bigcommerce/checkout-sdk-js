@@ -74,9 +74,9 @@ describe('B2BPreOrderRequestSender', () => {
         });
     });
 
-    describe('#submitPreOrderExtraFields()', () => {
+    describe('#submitExtraFieldsToCart()', () => {
         it('puts to the cart-order extra-info endpoint with auth headers and cartId in the body', async () => {
-            await b2bPreOrderRequestSender.submitPreOrderExtraFields(
+            await b2bPreOrderRequestSender.submitExtraFieldsToCart(
                 'cart-123',
                 { poNumber: 'PO-1', referenceNumber: 'REF-1' },
                 'b2b-token-value',
@@ -101,7 +101,7 @@ describe('B2BPreOrderRequestSender', () => {
         it('forwards the request timeout', async () => {
             const timeout = createTimeout();
 
-            await b2bPreOrderRequestSender.submitPreOrderExtraFields(
+            await b2bPreOrderRequestSender.submitExtraFieldsToCart(
                 'cart-123',
                 {},
                 'b2b-token-value',
@@ -119,7 +119,7 @@ describe('B2BPreOrderRequestSender', () => {
             jest.spyOn(requestSender, 'put').mockRejectedValue(getErrorResponse());
 
             await expect(
-                b2bPreOrderRequestSender.submitPreOrderExtraFields(
+                b2bPreOrderRequestSender.submitExtraFieldsToCart(
                     'cart-123',
                     {},
                     'b2b-token-value',

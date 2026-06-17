@@ -57,7 +57,7 @@ describe('B2BPreOrderActionCreator', () => {
         requestSender = new B2BPreOrderRequestSender(createRequestSender());
 
         jest.spyOn(requestSender, 'refreshPaymentMethods').mockResolvedValue(getResponse({}));
-        jest.spyOn(requestSender, 'submitPreOrderExtraFields').mockResolvedValue(
+        jest.spyOn(requestSender, 'submitExtraFieldsToCart').mockResolvedValue(
             getResponse(undefined),
         );
 
@@ -99,13 +99,13 @@ describe('B2BPreOrderActionCreator', () => {
                 undefined,
             );
 
-            expect(requestSender.submitPreOrderExtraFields).toHaveBeenCalledWith(
+            expect(requestSender.submitExtraFieldsToCart).toHaveBeenCalledWith(
                 getCart().id,
                 {
                     poNumber: 'PO-1',
                     referenceNumber: 'REF-1',
-                    extraFields: undefined,
-                    extraInfo: undefined,
+                    extraFields: [],
+                    extraInfo: {},
                 },
                 'b2b-auth-token',
                 b2bApiSettings.baseUrl,
@@ -114,10 +114,31 @@ describe('B2BPreOrderActionCreator', () => {
 
             const refreshOrder = (requestSender.refreshPaymentMethods as jest.Mock).mock
                 .invocationCallOrder[0];
-            const submitOrder = (requestSender.submitPreOrderExtraFields as jest.Mock).mock
+            const submitOrder = (requestSender.submitExtraFieldsToCart as jest.Mock).mock
                 .invocationCallOrder[0];
 
             expect(refreshOrder).toBeLessThan(submitOrder);
+        });
+
+        it('omits poNumber and referenceNumber from the payload when they are falsy', async () => {
+            await from(
+                actionCreator.persistPreOrderB2BMetadata({
+                    poNumber: '',
+                    referenceNumber: '',
+                    extraFields: [{ fieldName: 'gift', fieldValue: true }],
+                })(store),
+            ).toPromise();
+
+            expect(requestSender.submitExtraFieldsToCart).toHaveBeenCalledWith(
+                getCart().id,
+                {
+                    extraFields: [{ fieldName: 'gift', fieldValue: true }],
+                    extraInfo: {},
+                },
+                'b2b-auth-token',
+                b2bApiSettings.baseUrl,
+                undefined,
+            );
         });
 
         it('forwards request options to both request sender calls', async () => {
@@ -131,7 +152,7 @@ describe('B2BPreOrderActionCreator', () => {
                 b2bApiSettings.baseUrl,
                 options,
             );
-            expect(requestSender.submitPreOrderExtraFields).toHaveBeenCalledWith(
+            expect(requestSender.submitExtraFieldsToCart).toHaveBeenCalledWith(
                 getCart().id,
                 expect.any(Object),
                 'b2b-auth-token',

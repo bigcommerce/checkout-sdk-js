@@ -37,7 +37,7 @@ export default class B2BPreOrderRequestSender {
         });
     }
 
-    async submitPreOrderExtraFields(
+    async submitExtraFieldsToCart(
         cartId: string,
         payload: CartOrderExtraInfoPayload,
         b2bToken: string,

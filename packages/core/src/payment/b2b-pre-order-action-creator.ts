@@ -50,9 +50,14 @@ export default class B2BPreOrderActionCreator {
                         b2bBaseUrl,
                         options,
                     );
-                    await this._requestSender.submitPreOrderExtraFields(
+                    await this._requestSender.submitExtraFieldsToCart(
                         cartId,
-                        { poNumber, referenceNumber, extraFields, extraInfo },
+                        {
+                            ...(poNumber ? { poNumber } : {}),
+                            ...(referenceNumber ? { referenceNumber } : {}),
+                            extraFields: extraFields ?? [],
+                            extraInfo: extraInfo ?? {},
+                        },
                         b2bToken,
                         b2bBaseUrl,
                         options,

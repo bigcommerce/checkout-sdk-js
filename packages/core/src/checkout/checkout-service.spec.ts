@@ -420,7 +420,7 @@ describe('CheckoutService', () => {
         jest.spyOn(b2bPreOrderRequestSender, 'refreshPaymentMethods').mockResolvedValue(
             getResponse({}),
         );
-        jest.spyOn(b2bPreOrderRequestSender, 'submitPreOrderExtraFields').mockResolvedValue(
+        jest.spyOn(b2bPreOrderRequestSender, 'submitExtraFieldsToCart').mockResolvedValue(
             getResponse(undefined),
         );
 
