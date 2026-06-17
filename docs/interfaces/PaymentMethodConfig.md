@@ -98,6 +98,12 @@
 
 ***
 
+### shouldVaultAllPayments?
+
+> `optional` **shouldVaultAllPayments?**: `boolean`
+
+***
+
 ### showCardHolderName?
 
 > `optional` **showCardHolderName?**: `boolean`

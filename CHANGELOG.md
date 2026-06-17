@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.930.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.929.0...v1.930.0) (2026-06-17)
+
+
+### Features
+
+* **payment:** PAYMENTS-11661 Add payment method config to indicate support for vaulting all payments ([de88238](https://github.com/bigcommerce/checkout-sdk-js/commit/de8823822503b486c386400d758e3246222e83a7))
+
 ## [1.929.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.928.0...v1.929.0) (2026-06-16)
 
 

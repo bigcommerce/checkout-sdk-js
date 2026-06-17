@@ -7841,6 +7841,7 @@ declare interface PaymentMethodConfig {
     redirectUrl?: string;
     requireCustomerCode?: boolean;
     returnUrl?: string;
+    shouldVaultAllPayments?: boolean;
     showCardHolderName?: boolean;
     testMode?: boolean;
 }
