@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.930.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.930.0...v1.930.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* **checkout:** PAYPAL-6440 Fix T&C checkbox can be bypassed durring PSD2 flow but it is required ([#3288](https://github.com/bigcommerce/checkout-sdk-js/issues/3288)) ([f265ab7](https://github.com/bigcommerce/checkout-sdk-js/commit/f265ab759e7e1a663172efd7f42514434c13c89d))
+
 ## [1.930.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.929.0...v1.930.0) (2026-06-17)
 
 

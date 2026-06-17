@@ -26,6 +26,7 @@ import { CustomerStrategy } from '@bigcommerce/checkout-sdk/payment-integration-
 import { CustomerStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ExecutePaymentMethodCheckoutOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { FormPoster } from '@bigcommerce/form-poster';
+import { InitButtonActions } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -742,6 +743,20 @@ declare interface BraintreePaypalPaymentInitializeOptions {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError?(error: unknown): void;
+    /**
+     * A callback for the Smart Payment Button initialization.
+     * Used to register button actions (enable/disable) in the `checkout-sdk-js`
+     *
+     * @param actions - The Braintree PayPal Button actions
+     */
+    onInitButton?(actions: InitButtonActions): void;
+    /**
+     * Callback for the Checkout form validation.
+     *
+     * @param resolve - Callback for the successful form validation
+     * @param reject - Callback for the failed form validation
+     */
+    onValidate?(resolve: () => void, reject: () => void): Promise<void>;
 }
 
 declare class BraintreePaypalPaymentStrategy implements PaymentStrategy {
