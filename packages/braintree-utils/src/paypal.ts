@@ -113,7 +113,8 @@ export interface PaypalButtonOptions {
     onAuthorize?(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<unknown>;
     createOrder?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<unknown>;
     onApprove?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<unknown>;
-    onClick?(): void;
+    onClick?(payload: ClickCallbackPayload, actions: ClickButtonActions): void;
+    onInit?(payload: InitCallbackPayload, actions: InitButtonActions): void;
     onCancel?(): void;
     onError?(error: Error): void;
 }
@@ -171,4 +172,22 @@ export interface PaypalPaymentActions {
 
 export interface PaypalRequestActions {
     post(url: string, payload?: object, options?: object): Promise<{ id: string }>;
+}
+
+export interface InitCallbackPayload {
+    correlationID: string;
+}
+
+export interface ClickCallbackPayload {
+    fundingSource: string;
+}
+
+export interface InitButtonActions {
+    enable(): void;
+    disable(): void;
+}
+
+export interface ClickButtonActions {
+    reject(): void;
+    resolve(): void;
 }

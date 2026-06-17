@@ -48,6 +48,7 @@ import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy'
 
 describe('BraintreePaypalPaymentStrategy', () => {
     let eventEmitter: EventEmitter;
+    let loadingIndicator: LoadingIndicator;
     let strategy: BraintreePaypalPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -96,6 +97,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             braintreeSDKVersionManager,
         );
         braintreeMessages = new BraintreeMessages(paymentIntegrationService);
+        loadingIndicator = new LoadingIndicator();
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
             window,
@@ -104,7 +106,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             paymentIntegrationService,
             braintreeIntegrationService,
             braintreeMessages,
-            new LoadingIndicator(),
+            loadingIndicator,
         );
 
         const div = document.createElement('div');
@@ -174,6 +176,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         jest.spyOn(braintreeMessages, 'render');
 
+        jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
+
         jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation((options: PaypalButtonOptions) => {
             eventEmitter.on('approve', () => {
                 if (typeof options.onApprove === 'function') {
@@ -184,6 +188,18 @@ describe('BraintreePaypalPaymentStrategy', () => {
             eventEmitter.on('createOrder', () => {
                 if (typeof options.createOrder === 'function') {
                     options.createOrder();
+                }
+            });
+
+            eventEmitter.on('onClick', () => {
+                if (options.onClick) {
+                    options.onClick(
+                        { fundingSource: paypalSdkMock.FUNDING.PAYPAL! },
+                        {
+                            reject: jest.fn(),
+                            resolve: jest.fn(),
+                        },
+                    );
                 }
             });
 
@@ -610,54 +626,101 @@ describe('BraintreePaypalPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenLastCalledWith(expected);
         });
 
-        it('#createOrder button callback', async () => {
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
-                throw providerError;
+        describe('#createOrder button callback', () => {
+            it('calls validation callback with provided params', async () => {
+                const onValidateMock = jest.fn().mockImplementation((resolve) => {
+                    resolve();
+                });
+
+                const braintreeOptions = {
+                    ...options,
+                    braintree: {
+                        onError: jest.fn(),
+                        containerId: '#checkout-button-container',
+                        bannerContainerId: 'banner-container-id',
+                        onValidate: onValidateMock,
+                    },
+                };
+
+                await strategy.initialize(braintreeOptions);
+
+                eventEmitter.emit('onClick');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(onValidateMock).toHaveBeenCalled();
             });
 
-            const braintreeOptions = {
-                ...options,
-                braintree: {
-                    onError: jest.fn(),
-                    containerId: '#checkout-button-container',
-                },
-            };
+            it('triggers the indicator through the validation callback call with provided params', async () => {
+                await strategy.initialize({
+                    ...options,
+                    braintree: {
+                        containerId: '#checkout-button-container',
+                        bannerContainerId: 'banner-container-id',
+                        onValidate: jest.fn().mockImplementation((onValidationPassed) => {
+                            onValidationPassed();
+                        }),
+                    },
+                });
 
-            await strategy.initialize(braintreeOptions);
+                eventEmitter.emit('onClick');
 
-            try {
-                await strategy.execute(orderRequestBody, options);
-            } catch (error) {
-                expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
-                    new Error('INSTRUMENT_DECLINED'),
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(loadingIndicator.show).toHaveBeenCalled();
+            });
+
+            it('createPayment options check', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                    throw providerError;
+                });
+
+                const braintreeOptions = {
+                    ...options,
+                    braintree: {
+                        onError: jest.fn(),
+                        containerId: '#checkout-button-container',
+                    },
+                };
+
+                await strategy.initialize(braintreeOptions);
+
+                try {
+                    await strategy.execute(orderRequestBody, options);
+                } catch (error) {
+                    expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
+                        new Error('INSTRUMENT_DECLINED'),
+                    );
+                }
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(
+                    jest.fn(),
                 );
-            }
 
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
+                eventEmitter.emit('createOrder');
 
-            eventEmitter.emit('createOrder');
+                await new Promise((resolve) => process.nextTick(resolve));
 
-            await new Promise((resolve) => process.nextTick(resolve));
+                await strategy.execute(orderRequestBody, options);
 
-            await strategy.execute(orderRequestBody, options);
-
-            expect(braintreePaypalCheckoutMock.createPayment).toHaveBeenCalledWith({
-                amount: 190,
-                currency: 'USD',
-                enableShippingAddress: true,
-                flow: 'checkout',
-                offerCredit: false,
-                shippingAddressEditable: false,
-                shippingAddressOverride: {
-                    city: 'Some City',
-                    countryCode: 'US',
-                    line1: '12345 Testing Way',
-                    line2: '',
-                    phone: '555-555-5555',
-                    postalCode: '95555',
-                    recipientName: 'Test Tester',
-                    state: 'CA',
-                },
+                expect(braintreePaypalCheckoutMock.createPayment).toHaveBeenCalledWith({
+                    amount: 190,
+                    currency: 'USD',
+                    enableShippingAddress: true,
+                    flow: 'checkout',
+                    offerCredit: false,
+                    shippingAddressEditable: false,
+                    shippingAddressOverride: {
+                        city: 'Some City',
+                        countryCode: 'US',
+                        line1: '12345 Testing Way',
+                        line2: '',
+                        phone: '555-555-5555',
+                        postalCode: '95555',
+                        recipientName: 'Test Tester',
+                        state: 'CA',
+                    },
+                });
             });
         });
 
