@@ -44,8 +44,8 @@ import {
     PaymentRequestOptions,
     PaymentStrategyActionCreator,
 } from '../payment';
+import { B2BOrderMetadataOptions } from '../payment/b2b-order-metadata';
 import { PersistB2BMetadataOptions } from '../payment/b2b-post-order-actions';
-import { PreOrderB2BMetadataOptions } from '../payment/b2b-pre-order-actions';
 import { InstrumentActionCreator } from '../payment/instrument';
 import {
     ConsignmentActionCreator,
@@ -746,7 +746,7 @@ export default class CheckoutService {
      * const state = await service.persistPreOrderB2BMetadata({ poNumber, referenceNumber });
      * ```
      *
-     * @param PreOrderB2BMetadataOptions - Passing an object to prepare the payload for the request.
+     * @param B2BOrderMetadataOptions - Passing an object to prepare the payload for the request.
      * @param options - Options for the request.
      * @returns A promise that resolves to the current state.
      */
@@ -756,7 +756,7 @@ export default class CheckoutService {
             referenceNumber = '',
             extraFields = [],
             extraInfo = {},
-        }: PreOrderB2BMetadataOptions,
+        }: B2BOrderMetadataOptions,
         options?: RequestOptions,
     ): Promise<CheckoutSelectors> {
         const action = this._b2bPreOrderActionCreator.persistPreOrderB2BMetadata(

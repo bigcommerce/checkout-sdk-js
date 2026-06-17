@@ -1,15 +1,11 @@
 import { Action } from '@bigcommerce/data-store';
 
-import { AddOrderExtraFieldsPayload, B2BExtraField } from './b2b-post-order-request-sender';
+import { B2BOrderMetadataOptions } from './b2b-order-metadata';
 import { B2BPostOrderData } from './b2b-post-order-state';
 
-export interface PersistB2BMetadataOptions {
+export interface PersistB2BMetadataOptions extends B2BOrderMetadataOptions {
     isInvoice: boolean;
     invoiceComment?: string;
-    poNumber?: string;
-    referenceNumber?: string;
-    extraFields?: B2BExtraField[];
-    extraInfo?: AddOrderExtraFieldsPayload['extraInfo'];
 }
 
 export enum B2BPostOrderActionType {

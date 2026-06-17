@@ -2,18 +2,11 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { RequestOptions } from '../common/http-request';
 
-import { AddOrderExtraFieldsPayload, B2BExtraField } from './b2b-post-order-request-sender';
+import { B2BOrderMetadataOptions } from './b2b-order-metadata';
 
-export interface B2BPaymentsRefreshPayment {
+interface B2BPaymentsRefreshPayment {
     code: string;
     name: string;
-}
-
-export interface CartOrderExtraInfoPayload {
-    poNumber?: string;
-    referenceNumber?: string;
-    extraFields?: B2BExtraField[];
-    extraInfo?: AddOrderExtraFieldsPayload['extraInfo'];
 }
 
 export default class B2BPreOrderRequestSender {
@@ -39,7 +32,7 @@ export default class B2BPreOrderRequestSender {
 
     async submitExtraFieldsToCart(
         cartId: string,
-        payload: CartOrderExtraInfoPayload,
+        payload: B2BOrderMetadataOptions,
         b2bToken: string,
         b2bBaseUrl: string,
         options?: RequestOptions,

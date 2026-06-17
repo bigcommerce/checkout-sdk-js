@@ -3,6 +3,8 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { RequestOptions } from '../common/http-request';
 import { ShippingOption } from '../shipping';
 
+import { B2BOrderMetadataOptions } from './b2b-order-metadata';
+
 export interface CloseInvoicePayload {
     orderId: string;
     comment: string;
@@ -16,24 +18,8 @@ export interface CloseInvoiceResponseBody {
     code: number;
 }
 
-export interface B2BExtraField {
-    fieldName: string;
-    fieldValue: string | number | boolean | string[];
-}
-
-export interface AddOrderExtraFieldsPayload {
+export interface AddOrderExtraFieldsPayload extends Required<B2BOrderMetadataOptions> {
     orderId: number;
-    poNumber: string;
-    referenceNumber: string;
-    extraFields: B2BExtraField[];
-    extraInfo: {
-        addressExtraFields?: {
-            billingAddressExtraFields: B2BExtraField[];
-            shippingAddressExtraFields: B2BExtraField[];
-        };
-        billingAddressId?: number;
-        shipppingAddressId?: number; // triple-p is intentional — wire contract
-    };
 }
 
 export interface QuoteOrderedPayload {

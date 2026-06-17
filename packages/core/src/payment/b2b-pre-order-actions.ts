@@ -1,14 +1,5 @@
 import { Action } from '@bigcommerce/data-store';
 
-import { AddOrderExtraFieldsPayload, B2BExtraField } from './b2b-post-order-request-sender';
-
-export interface PreOrderB2BMetadataOptions {
-    poNumber?: string;
-    referenceNumber?: string;
-    extraFields?: B2BExtraField[];
-    extraInfo?: AddOrderExtraFieldsPayload['extraInfo'];
-}
-
 export enum B2BPreOrderActionType {
     PreOrderB2BMetadataRequested = 'PRE_ORDER_B2B_METADATA_REQUESTED',
     PreOrderB2BMetadataSucceeded = 'PRE_ORDER_B2B_METADATA_SUCCEEDED',

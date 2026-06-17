@@ -9,18 +9,15 @@ import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import {
-    B2BPreOrderActionType,
-    PreOrderB2BMetadataAction,
-    PreOrderB2BMetadataOptions,
-} from './b2b-pre-order-actions';
+import { B2BOrderMetadataOptions } from './b2b-order-metadata';
+import { B2BPreOrderActionType, PreOrderB2BMetadataAction } from './b2b-pre-order-actions';
 import B2BPreOrderRequestSender from './b2b-pre-order-request-sender';
 
 export default class B2BPreOrderActionCreator {
     constructor(private _requestSender: B2BPreOrderRequestSender) {}
 
     persistPreOrderB2BMetadata(
-        { poNumber, referenceNumber, extraFields, extraInfo }: PreOrderB2BMetadataOptions,
+        { poNumber, referenceNumber, extraFields, extraInfo }: B2BOrderMetadataOptions,
         options?: RequestOptions,
     ): ThunkAction<PreOrderB2BMetadataAction, InternalCheckoutSelectors> {
         return (store) => {
