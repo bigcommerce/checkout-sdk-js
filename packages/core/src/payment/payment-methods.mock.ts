@@ -670,6 +670,7 @@ export function getMollie(): PaymentMethod {
             isVaultingCvvEnabled: false,
             isVaultingEnabled: false,
             isVisaCheckoutEnabled: false,
+            shouldVaultAllPayments: false,
             merchantId: 'test_T0k3n',
             requireCustomerCode: false,
             testMode: true,
@@ -775,6 +776,7 @@ export function getApplePay() {
             isVaultingEnabled: false,
             hasDefaultStoredInstrument: false,
             isHostedFormEnabled: false,
+            shouldVaultAllPayments: false,
         },
         type: 'PAYMENT_TYPE_WALLET',
         initializationStrategy: {

@@ -158,6 +158,7 @@ export function getMollie(): PaymentMethod {
             isVisaCheckoutEnabled: false,
             merchantId: 'test_T0k3n',
             requireCustomerCode: false,
+            shouldVaultAllPayments: false,
             testMode: true,
         },
         initializationData: {

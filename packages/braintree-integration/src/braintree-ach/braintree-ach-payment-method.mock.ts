@@ -10,6 +10,7 @@ export function getBraintreeAchPaymentMethod(): PaymentMethod {
         config: {
             displayName: 'Braintree ACH',
             isVaultingEnabled: true,
+            shouldVaultAllPayments: false,
         },
         initializationData: {
             isAcceleratedCheckoutEnabled: false,

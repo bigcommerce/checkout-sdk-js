@@ -14,5 +14,6 @@ export default interface PaymentMethodConfig {
     redirectUrl?: string;
     requireCustomerCode?: boolean;
     returnUrl?: string;
+    shouldVaultAllPayments?: boolean;
     testMode?: boolean;
 }

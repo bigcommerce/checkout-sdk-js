@@ -101,6 +101,7 @@ export function getAmazonPayV2(region?: string): PaymentMethod<AmazonPayV2Initia
             isVaultingEnabled: false,
             merchantId: 'checkout_amazonpay',
             requireCustomerCode: false,
+            shouldVaultAllPayments: false,
             testMode: true,
         },
         id: 'amazonpay',
