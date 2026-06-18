@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.930.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.930.1...v1.930.2) (2026-06-18)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-10080 Reorder Company Address Save Call ([#3296](https://github.com/bigcommerce/checkout-sdk-js/issues/3296)) ([e366d3a](https://github.com/bigcommerce/checkout-sdk-js/commit/e366d3ab49bdc8e59516bebf2074146e8f71ce3c))
+
 ### [1.930.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.930.0...v1.930.1) (2026-06-17)
 
 
