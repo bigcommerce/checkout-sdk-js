@@ -71,4 +71,14 @@ export default class CheckoutRequestSender {
                 throw err;
             });
     }
+
+    deleteCheckout(id: string, { timeout }: RequestOptions = {}): Promise<Response<void>> {
+        const url = `/api/storefront/carts/${id}`;
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
+
+        return this._requestSender.delete<void>(url, { headers, timeout });
+    }
 }

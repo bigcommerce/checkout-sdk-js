@@ -117,6 +117,13 @@ function errorsReducer(
         case CheckoutActionType.UpdateCheckoutFailed:
             return objectSet(errors, 'updateError', action.payload);
 
+        case CheckoutActionType.DeleteCheckoutRequested:
+        case CheckoutActionType.DeleteCheckoutSucceeded:
+            return objectSet(errors, 'deleteError', undefined);
+
+        case CheckoutActionType.DeleteCheckoutFailed:
+            return objectSet(errors, 'deleteError', action.payload);
+
         default:
             return errors;
     }
@@ -140,6 +147,13 @@ function statusesReducer(
         case CheckoutActionType.UpdateCheckoutFailed:
         case CheckoutActionType.UpdateCheckoutSucceeded:
             return objectSet(statuses, 'isUpdating', false);
+
+        case CheckoutActionType.DeleteCheckoutRequested:
+            return objectSet(statuses, 'isDeleting', true);
+
+        case CheckoutActionType.DeleteCheckoutFailed:
+        case CheckoutActionType.DeleteCheckoutSucceeded:
+            return objectSet(statuses, 'isDeleting', false);
 
         case SpamProtectionActionType.ExecuteRequested:
             return objectSet(statuses, 'isExecutingSpamCheck', true);

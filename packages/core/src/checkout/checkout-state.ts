@@ -16,12 +16,14 @@ export type CheckoutDataState = Omit<
 export interface CheckoutErrorsState {
     loadError?: Error;
     updateError?: Error;
+    deleteError?: Error;
 }
 
 export interface CheckoutStatusesState {
     isExecutingSpamCheck?: boolean;
     isLoading?: boolean;
     isUpdating?: boolean;
+    isDeleting?: boolean;
 }
 
 export const DEFAULT_STATE: CheckoutState = {

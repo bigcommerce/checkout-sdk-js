@@ -9,7 +9,12 @@ import { ConfigActionCreator } from '../config';
 import { FormFieldsActionCreator } from '../form';
 
 import Checkout, { CheckoutRequestBody } from './checkout';
-import { CheckoutActionType, LoadCheckoutAction, UpdateCheckoutAction } from './checkout-actions';
+import {
+    CheckoutActionType,
+    DeleteCheckoutAction,
+    LoadCheckoutAction,
+    UpdateCheckoutAction,
+} from './checkout-actions';
 import { CheckoutHydrateActionType } from './checkout-hydrate-actions';
 import CheckoutInitialState from './checkout-initial-state';
 import CheckoutRequestSender from './checkout-request-sender';
@@ -125,6 +130,34 @@ export default class CheckoutActionCreator {
                     .catch((response) => {
                         observer.error(
                             createErrorAction(CheckoutActionType.UpdateCheckoutFailed, response),
+                        );
+                    });
+            });
+    }
+
+    deleteCheckout(
+        options?: RequestOptions,
+    ): ThunkAction<DeleteCheckoutAction, InternalCheckoutSelectors> {
+        return (store) =>
+            new Observable((observer) => {
+                const state = store.getState();
+                const checkout = state.checkout.getCheckout();
+
+                if (!checkout) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                }
+
+                observer.next(createAction(CheckoutActionType.DeleteCheckoutRequested));
+
+                this._checkoutRequestSender
+                    .deleteCheckout(checkout.id, options)
+                    .then(() => {
+                        observer.next(createAction(CheckoutActionType.DeleteCheckoutSucceeded));
+                        observer.complete();
+                    })
+                    .catch((response) => {
+                        observer.error(
+                            createErrorAction(CheckoutActionType.DeleteCheckoutFailed, response),
                         );
                     });
             });

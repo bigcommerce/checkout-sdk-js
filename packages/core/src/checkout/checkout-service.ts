@@ -265,6 +265,22 @@ export default class CheckoutService {
     }
 
     /**
+     * Deletes the current checkout.
+     *
+     * ```js
+     * await service.deleteCheckout();
+     * ```
+     *
+     * @param options - Options for deleting the current checkout.
+     * @returns A promise that resolves to the current state.
+     */
+    deleteCheckout(options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._checkoutActionCreator.deleteCheckout(options);
+
+        return this._dispatch(action);
+    }
+
+    /**
      * Loads an order by an id.
      *
      * The method can only retrieve an order if the order belongs to the current
