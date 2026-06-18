@@ -532,12 +532,18 @@ describe('B2BPostOrderActionCreator', () => {
                 expect(requestSender.submitOrderExtraFields).toHaveBeenCalled();
             });
 
-            it('does not submit a company address in the invoice flow', async () => {
+            it('submits a company address in the invoice flow', async () => {
                 mockBillingAddress(createBillingAddress({ shouldSaveAddress: true }));
 
                 await from(actionCreator.persistB2BMetadata(invoiceOptions)(store)).toPromise();
 
-                expect(requestSender.submitCompanyAddress).not.toHaveBeenCalled();
+                expect(requestSender.submitCompanyAddress).toHaveBeenCalledTimes(1);
+                expect(requestSender.submitCompanyAddress).toHaveBeenCalledWith(
+                    12345,
+                    expectedCompanyAddress({ isBilling: 1, isShipping: 0 }),
+                    'b2b-auth-token',
+                    b2bApiSettings.baseUrl,
+                );
             });
 
             it('emits failed action without calling submitOrderExtraFields when submitCompanyAddress rejects', async () => {
