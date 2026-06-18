@@ -183,4 +183,14 @@ describe('cartReducer()', () => {
             }),
         );
     });
+
+    it('removes cart data when checkout is deleted', () => {
+        expect(initialState.data).toBeDefined();
+
+        const action = {
+            type: CheckoutActionType.DeleteCheckoutSucceeded,
+        };
+
+        expect(cartReducer(initialState, action).data).toBeUndefined();
+    });
 });
