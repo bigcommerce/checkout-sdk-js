@@ -57,6 +57,9 @@ function dataReducer(
         case CheckoutHydrateActionType.HydrateInitialState:
             return objectMerge(data, action.payload?.checkout?.cart);
 
+        case CheckoutActionType.DeleteCheckoutSucceeded:
+            return undefined;
+
         default:
             return data;
     }

@@ -77,6 +77,9 @@ function dataReducer(
                 ]),
             ) as CheckoutDataState;
 
+        case CheckoutActionType.DeleteCheckoutSucceeded:
+            return undefined;
+
         case OrderActionType.SubmitOrderSucceeded:
             return objectSet(data, 'orderId', action.payload && action.payload.order.orderId);
 
