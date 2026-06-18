@@ -185,6 +185,19 @@ export default class B2BPostOrderActionCreator {
                 defer(async () => {
                     let payload = { receiptId: '' };
 
+                    if (companyId && companyAddresses.length) {
+                        await Promise.all(
+                            companyAddresses.map((companyAddress) =>
+                                this._requestSender.submitCompanyAddress(
+                                    companyId,
+                                    companyAddress,
+                                    b2bToken,
+                                    b2bBaseUrl,
+                                ),
+                            ),
+                        );
+                    }
+
                     if (isInvoice) {
                         const { body } = await this._requestSender.submitInvoice(
                             { orderId: `${orderId}`, comment: invoiceComment ?? '' },
@@ -194,19 +207,6 @@ export default class B2BPostOrderActionCreator {
 
                         payload = { receiptId: body.data.receiptId };
                     } else {
-                        if (companyId && companyAddresses.length) {
-                            await Promise.all(
-                                companyAddresses.map((companyAddress) =>
-                                    this._requestSender.submitCompanyAddress(
-                                        companyId,
-                                        companyAddress,
-                                        b2bToken,
-                                        b2bBaseUrl,
-                                    ),
-                                ),
-                            );
-                        }
-
                         await this._requestSender.submitOrderExtraFields(
                             {
                                 orderId,
