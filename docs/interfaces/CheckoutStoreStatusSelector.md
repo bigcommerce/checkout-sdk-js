@@ -134,6 +134,20 @@ True if the customer step is pending, otherwise false.
 
 ***
 
+### isDeletingCheckout()
+
+> **isDeletingCheckout**(): `boolean`
+
+Checks whether the current checkout is being deleted.
+
+#### Returns
+
+`boolean`
+
+True if the current checkout is being deleted, otherwise false.
+
+***
+
 ### isDeletingConsignment()
 
 > **isDeletingConsignment**(`consignmentId?`): `boolean`

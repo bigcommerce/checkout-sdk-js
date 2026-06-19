@@ -2831,9 +2831,11 @@ declare interface CheckoutSelector {
     getOutstandingBalance(useStoreCredit?: boolean): number | undefined;
     getLoadError(): Error | undefined;
     getUpdateError(): Error | undefined;
+    getDeleteError(): Error | undefined;
     isExecutingSpamCheck(): boolean;
     isLoading(): boolean;
     isUpdating(): boolean;
+    isDeleting(): boolean;
 }
 
 declare interface CheckoutSelectors {
@@ -2992,6 +2994,17 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     updateCheckout(payload: CheckoutRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Deletes the current checkout.
+     *
+     * ```js
+     * await service.deleteCheckout();
+     * ```
+     *
+     * @param options - Options for deleting the current checkout.
+     * @returns A promise that resolves to the current state.
+     */
+    deleteCheckout(options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Loads an order by an id.
      *
@@ -4040,6 +4053,12 @@ declare interface CheckoutStoreErrorSelector {
      */
     getUpdateCheckoutError(): Error | undefined;
     /**
+     * Returns an error if unable to delete the current checkout.
+     *
+     * @returns The error object if unable to delete, otherwise undefined.
+     */
+    getDeleteCheckoutError(): Error | undefined;
+    /**
      * Returns an error if unable to submit the current order.
      *
      * @returns The error object if unable to submit, otherwise undefined.
@@ -4593,6 +4612,12 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if the current checkout is being updated, otherwise false.
      */
     isUpdatingCheckout(): boolean;
+    /**
+     * Checks whether the current checkout is being deleted.
+     *
+     * @returns True if the current checkout is being deleted, otherwise false.
+     */
+    isDeletingCheckout(): boolean;
     /**
      * Checks whether spam check is executing.
      *

@@ -489,6 +489,32 @@ A promise that resolves to the current state.
 
 ***
 
+### deleteCheckout()
+
+> **deleteCheckout**(`options?`): `Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+Deletes the current checkout.
+
+```js
+await service.deleteCheckout();
+```
+
+#### Parameters
+
+##### options?
+
+[`RequestOptions`](../interfaces/RequestOptions.md)\<`object`\>
+
+Options for deleting the current checkout.
+
+#### Returns
+
+`Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+A promise that resolves to the current state.
+
+***
+
 ### deleteConsignment()
 
 > **deleteConsignment**(`consignmentId`, `options?`): `Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>

@@ -28,6 +28,16 @@
 
 ***
 
+### getDeleteError()
+
+> **getDeleteError**(): `Error` \| `undefined`
+
+#### Returns
+
+`Error` \| `undefined`
+
+***
+
 ### getLoadError()
 
 > **getLoadError**(): `Error` \| `undefined`
@@ -61,6 +71,16 @@
 #### Returns
 
 `Error` \| `undefined`
+
+***
+
+### isDeleting()
+
+> **isDeleting**(): `boolean`
+
+#### Returns
+
+`boolean`
 
 ***
 

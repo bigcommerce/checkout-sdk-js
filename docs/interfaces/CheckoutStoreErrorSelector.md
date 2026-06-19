@@ -124,6 +124,20 @@ The error object if unable to create address, otherwise undefined.
 
 ***
 
+### getDeleteCheckoutError()
+
+> **getDeleteCheckoutError**(): `Error` \| `undefined`
+
+Returns an error if unable to delete the current checkout.
+
+#### Returns
+
+`Error` \| `undefined`
+
+The error object if unable to delete, otherwise undefined.
+
+***
+
 ### getDeleteConsignmentError()
 
 > **getDeleteConsignmentError**(`consignmentId?`): `Error` \| `undefined`
