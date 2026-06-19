@@ -18,9 +18,11 @@ export default interface CheckoutSelector {
     getOutstandingBalance(useStoreCredit?: boolean): number | undefined;
     getLoadError(): Error | undefined;
     getUpdateError(): Error | undefined;
+    getDeleteError(): Error | undefined;
     isExecutingSpamCheck(): boolean;
     isLoading(): boolean;
     isUpdating(): boolean;
+    isDeleting(): boolean;
 }
 
 export type CheckoutSelectorFactory = (
@@ -122,6 +124,11 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
         (error) => () => error,
     );
 
+    const getDeleteError = createSelector(
+        (state: CheckoutState) => state.errors.deleteError,
+        (error) => () => error,
+    );
+
     const isExecutingSpamCheck = createSelector(
         (state: CheckoutState) => state.statuses.isExecutingSpamCheck,
         (isExecutingSpamCheck) => () => isExecutingSpamCheck === true,
@@ -135,6 +142,11 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
     const isUpdating = createSelector(
         (state: CheckoutState) => state.statuses.isUpdating,
         (isUpdating) => () => isUpdating === true,
+    );
+
+    const isDeleting = createSelector(
+        (state: CheckoutState) => state.statuses.isDeleting,
+        (isDeleting) => () => isDeleting === true,
     );
 
     return memoizeOne(
@@ -174,9 +186,11 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
                 }),
                 getLoadError: getLoadError(state),
                 getUpdateError: getUpdateError(state),
+                getDeleteError: getDeleteError(state),
                 isExecutingSpamCheck: isExecutingSpamCheck(state),
                 isLoading: isLoading(state),
                 isUpdating: isUpdating(state),
+                isDeleting: isDeleting(state),
             };
         },
     );

@@ -36,6 +36,13 @@ export default interface CheckoutStoreStatusSelector {
     isUpdatingCheckout(): boolean;
 
     /**
+     * Checks whether the current checkout is being deleted.
+     *
+     * @returns True if the current checkout is being deleted, otherwise false.
+     */
+    isDeletingCheckout(): boolean;
+
+    /**
      * Checks whether spam check is executing.
      *
      * @returns True if the current checkout is being updated, otherwise false.
@@ -484,6 +491,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
         const selector = {
             isLoadingCheckout: state.checkout.isLoading,
             isUpdatingCheckout: state.checkout.isUpdating,
+            isDeletingCheckout: state.checkout.isDeleting,
             isExecutingSpamCheck: state.checkout.isExecutingSpamCheck,
             isSubmittingOrder: isSubmittingOrder(state),
             isFinalizingOrder: state.paymentStrategies.isFinalizing,

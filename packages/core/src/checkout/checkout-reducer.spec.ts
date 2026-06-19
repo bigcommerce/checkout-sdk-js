@@ -2,7 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
 
 import { CheckoutActionType } from '../checkout';
-import { getCheckout } from '../checkout/checkouts.mock';
+import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { ConsignmentActionType } from '../shipping';
@@ -75,6 +75,17 @@ describe('checkoutReducer', () => {
             errors: { updateError: undefined },
             statuses: { isUpdating: false },
         });
+    });
+
+    it('removes checkout data when checkout is deleted', () => {
+        const stateWithData = getCheckoutState();
+
+        expect(stateWithData.data).toBeDefined();
+
+        const action = createAction(CheckoutActionType.DeleteCheckoutSucceeded);
+        const output = checkoutReducer(stateWithData, action);
+
+        expect(output.data).toBeUndefined();
     });
 
     it('returns new state when consignment gets created', () => {

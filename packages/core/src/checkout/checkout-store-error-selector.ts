@@ -37,6 +37,13 @@ export default interface CheckoutStoreErrorSelector {
     getUpdateCheckoutError(): Error | undefined;
 
     /**
+     * Returns an error if unable to delete the current checkout.
+     *
+     * @returns The error object if unable to delete, otherwise undefined.
+     */
+    getDeleteCheckoutError(): Error | undefined;
+
+    /**
      * Returns an error if unable to submit the current order.
      *
      * @returns The error object if unable to submit, otherwise undefined.
@@ -365,6 +372,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
         const selector = {
             getLoadCheckoutError: state.checkout.getLoadError,
             getUpdateCheckoutError: state.checkout.getUpdateError,
+            getDeleteCheckoutError: state.checkout.getDeleteError,
             getSubmitOrderError: state.paymentStrategies.getExecuteError,
             getFinalizeOrderError: state.paymentStrategies.getFinalizeError,
             getLoadOrderError: state.order.getLoadError,
