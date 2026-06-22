@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.932.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.931.0...v1.932.0) (2026-06-22)
+
+
+### Features
+
+* **payment:** PI-5047 [Barclaycard][Phase 4][FE] Remove the code ([eebc723](https://github.com/bigcommerce/checkout-sdk-js/commit/eebc7233339da756ff696daa76ecb1d41f98ef63))
+
 ## [1.931.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.930.2...v1.931.0) (2026-06-19)
 
 
