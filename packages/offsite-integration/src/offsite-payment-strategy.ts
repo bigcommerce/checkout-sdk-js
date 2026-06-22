@@ -80,6 +80,6 @@ export default class OffsitePaymentStrategy implements PaymentStrategy {
             return false;
         }
 
-        return payment.gatewayId === 'adyen' || payment.gatewayId === 'barclaycard';
+        return payment.gatewayId === 'adyen';
     }
 }
