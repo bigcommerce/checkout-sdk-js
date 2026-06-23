@@ -87,6 +87,9 @@ interface CreateCompanyAddressResponseBody {
 export default class B2BPostOrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
+    // To be deleted
+    // invoiceComment will be sent to the Order API
+    // Server side needs to pass order id to B2B when it is an invoice-to-checkout
     async submitInvoice(
         payload: CloseInvoicePayload,
         b2bToken: string,
@@ -108,6 +111,9 @@ export default class B2BPostOrderRequestSender {
         );
     }
 
+    // To be deleted
+    // no additional info wil be sent to Order API
+    // server side can pass the rest of the info to B2B by reading the checkout object and order object
     async submitQuote(
         quoteId: number,
         payload: QuoteOrderedPayload,
@@ -125,6 +131,9 @@ export default class B2BPostOrderRequestSender {
         });
     }
 
+    // To be deleted
+    // poNumber, referenceNumber, orderExtraFields will be sent to Order API.
+    // server side can pass the rest of the info to B2B by reading the checkout object and order object
     async submitOrderExtraFields(
         payload: AddOrderExtraFieldsPayload,
         b2bToken: string,
@@ -141,6 +150,8 @@ export default class B2BPostOrderRequestSender {
         });
     }
 
+    // To be deleted
+    // server side can pass company address info to B2B by reading the checkout object
     async submitCompanyAddress(
         companyId: number,
         payload: CreateCompanyAddressPayload,
