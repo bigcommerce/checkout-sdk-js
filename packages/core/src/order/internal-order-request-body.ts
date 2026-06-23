@@ -18,10 +18,8 @@ export interface InternalOrderPaymentRequestBody {
 }
 
 export interface InternalOrderB2BMetadata {
-    // For invoice flow
     invoiceComment?: string;
-    // For all B2B flows
+    orderExtraFields?: B2BExtraField[];
     poNumber?: string;
     referenceNumber?: string;
-    orderExtraFields?: B2BExtraField[];
 }
