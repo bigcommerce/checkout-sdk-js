@@ -207,9 +207,10 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
             }
 
             if (hasPhysicalItems) {
-                await this.bigCommercePaymentsIntegrationService.updateOrder(
+                await this.bigCommercePaymentsIntegrationService.updateOrder({
+                    providerId: 'bigcommerce_payments',
                     isServerSideShippingCallbacksEnabled,
-                );
+                });
             }
 
             if (isServerSideShippingCallbacksEnabled) {
@@ -248,7 +249,9 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
                 this.bigCommercePaymentsIntegrationService.getShippingOptionOrThrow();
 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder({
+                providerId: 'bigcommerce_payments',
+            });
         } catch (error) {
             this.handleError(error);
         }
@@ -263,7 +266,9 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
 
         try {
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder({
+                providerId: 'bigcommerce_payments',
+            });
         } catch (error) {
             this.handleError(error);
         }
