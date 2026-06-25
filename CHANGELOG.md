@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.934.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.933.0...v1.934.0) (2026-06-25)
+
+
+### Features
+
+* **paymnet:** Remove isButtonMicroTextDisabled for not usage ([3bc82d8](https://github.com/bigcommerce/checkout-sdk-js/commit/3bc82d86619d5466f1fe0d39a3d23970cbabd3ce))
+
 ## [1.933.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.932.1...v1.933.0) (2026-06-25)
 
 

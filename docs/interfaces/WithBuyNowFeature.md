@@ -52,18 +52,6 @@ Language used to render the button and text on Amazon Pay hosted pages.
 
 ***
 
-### design?
-
-> `optional` **design?**: `AmazonPayV2ButtonDesign`
-
-Sets Amazon Pay button design.
-
-#### Inherited from
-
-`AmazonPayV2ButtonConfig.design`
-
-***
-
 ### ledgerCurrency
 
 > **ledgerCurrency**: `AmazonPayV2LedgerCurrency`
