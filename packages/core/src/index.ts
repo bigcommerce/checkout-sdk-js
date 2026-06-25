@@ -15,7 +15,13 @@ export {
 export { getCheckoutStoreStateWithOrder } from './checkout/checkouts.mock';
 export { StoreConfig } from './config';
 export { Customer } from './customer';
-export { Order, OrderActionCreator, OrderRequestBody } from './order';
+export {
+    B2BExtraField,
+    Order,
+    OrderActionCreator,
+    OrderB2BMetadata,
+    OrderRequestBody,
+} from './order';
 export { getOrder } from './order/orders.mock';
 export {
     Payment,

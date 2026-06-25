@@ -1,5 +1,6 @@
 import { PaymentInstrument } from '../payment';
-import { B2BExtraField } from '../payment/b2b-post-order-request-sender';
+
+import { B2BExtraField } from './order-b2b-metadata';
 
 export default interface InternalOrderRequestBody {
     cartId: string;

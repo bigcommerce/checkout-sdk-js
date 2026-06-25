@@ -17,6 +17,7 @@ export interface OrderMetaState extends InternalOrderMeta {
     orderToken?: string;
     callbackUrl?: string;
     payment?: InternalOrderPayment;
+    b2bReceiptId?: number;
 }
 
 export interface OrderErrorsState {
