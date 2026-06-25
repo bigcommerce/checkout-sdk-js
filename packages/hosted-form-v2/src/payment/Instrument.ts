@@ -1,6 +1,7 @@
 export enum InstrumentType {
     Card = 'card',
     ManualPayment = 'manual_payment',
+    TokenizedCard = 'tokenized_card',
 }
 
 export const manualPaymentMethod = 'bigcommerce.manual_payment';
@@ -50,4 +51,13 @@ interface OfflinePaymentInstrument {
     type: OfflinePaymentMethodTypes;
 }
 
-export type Instrument = CardInstrument | ManualPaymentInstrument | OfflinePaymentInstrument;
+interface TokenizedCardInstrument {
+    type: InstrumentType.TokenizedCard;
+    token: string;
+}
+
+export type Instrument =
+    | CardInstrument
+    | ManualPaymentInstrument
+    | OfflinePaymentInstrument
+    | TokenizedCardInstrument;
