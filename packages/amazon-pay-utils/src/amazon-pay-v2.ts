@@ -99,11 +99,6 @@ export interface AmazonPayV2ButtonConfig {
      * if your `publicKeyId` has an environment prefix. Default is false.
      */
     sandbox?: boolean;
-
-    /**
-     * Sets Amazon Pay button design.
-     */
-    design?: AmazonPayV2ButtonDesign;
 }
 
 export interface AmazonPayV2ButtonParams extends AmazonPayV2ButtonConfig {
@@ -252,10 +247,6 @@ export enum AmazonPayV2ButtonColor {
     DarkGray = 'DarkGray',
 }
 
-export enum AmazonPayV2ButtonDesign {
-    C0001 = 'C0001',
-}
-
 // TODO: after migration AmazonPay strategies to integration package
 // <InternalCheckoutSelectors> should be removed
 // and replaced usage with <PaymentIntegrationService>
@@ -283,7 +274,6 @@ export interface AmazonPayV2InitializeOptions {
     ledgerCurrency?: AmazonPayV2LedgerCurrency;
     publicKeyId?: string;
     region?: string;
-    isButtonMicroTextDisabled?: boolean;
     paymentToken?: string;
 }
 
@@ -295,7 +285,6 @@ export interface AmazonPayV2ButtonRenderingOptions {
     buttonColor?: AmazonPayV2ButtonColor;
     options?: AmazonPayV2ButtonParameters;
     placement: AmazonPayV2Placement;
-    isButtonMicroTextDisabled?: boolean;
 }
 
 export interface AmazonPayAdditionalActionErrorBody {

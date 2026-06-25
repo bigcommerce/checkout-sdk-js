@@ -48,7 +48,6 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
         const { getPaymentMethodOrThrow } = this.paymentIntegrationService.getState();
 
         const paymentMethod = getPaymentMethodOrThrow<AmazonPayV2InitializeOptions>(methodId);
-        const { initializationData } = paymentMethod;
 
         await this.amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
@@ -75,7 +74,6 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             options: initializeAmazonButtonOptions,
             placement: AmazonPayV2Placement.Cart,
             buttonColor,
-            isButtonMicroTextDisabled: initializationData?.isButtonMicroTextDisabled,
         });
 
         if (this._buyNowInitializeOptions) {

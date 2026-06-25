@@ -51,7 +51,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         const { features } = state.getStoreConfigOrThrow().checkoutSettings;
         const paymentMethod = state.getPaymentMethodOrThrow<AmazonPayV2InitializeOptions>(methodId);
         const initializationData = paymentMethod.initializationData || {};
-        const { paymentToken = '', region = '', isButtonMicroTextDisabled } = initializationData;
+        const { paymentToken = '', region = '' } = initializationData;
 
         await this.amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
@@ -76,7 +76,6 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
                 ),
                 methodId,
                 placement: AmazonPayV2Placement.Checkout,
-                isButtonMicroTextDisabled,
             });
 
             if (!this._amazonPayButton) {

@@ -3,7 +3,6 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import {
     AmazonPayV2ButtonColor,
     AmazonPayV2ButtonConfig,
-    AmazonPayV2ButtonDesign,
     AmazonPayV2ButtonParameters,
     AmazonPayV2CheckoutLanguage,
     AmazonPayV2InitializeOptions,
@@ -73,9 +72,7 @@ export function getAmazonPayBaseButtonParamsMock(): AmazonPayV2ButtonConfig {
     };
 }
 
-export function getAmazonPayV2ButtonParamsMock(
-    isButtonMicroTextDisabled = false,
-): AmazonPayV2ButtonParameters {
+export function getAmazonPayV2ButtonParamsMock(): AmazonPayV2ButtonParameters {
     return {
         buttonColor: AmazonPayV2ButtonColor.Gold,
         checkoutLanguage: AmazonPayV2CheckoutLanguage.en_US,
@@ -89,7 +86,6 @@ export function getAmazonPayV2ButtonParamsMock(
         placement: AmazonPayV2Placement.Checkout,
         productType: AmazonPayV2PayOptions.PayAndShip,
         sandbox: true,
-        ...(isButtonMicroTextDisabled ? { design: AmazonPayV2ButtonDesign.C0001 } : {}),
     };
 }
 
