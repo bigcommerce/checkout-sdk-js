@@ -113,7 +113,7 @@ describe('GooglePayPaymentStrategy', () => {
         };
     });
 
-    beforeAll(() => {
+    beforeEach(() => {
         button = document.createElement('div');
 
         button.id = BUTTON_ID;
@@ -125,8 +125,7 @@ describe('GooglePayPaymentStrategy', () => {
     });
 
     afterEach(() => {
-        (button.addEventListener as jest.Mock).mockClear();
-        (button.removeEventListener as jest.Mock).mockClear();
+        button.remove();
     });
 
     describe('#initialize', () => {
@@ -449,9 +448,11 @@ describe('GooglePayPaymentStrategy', () => {
 
             await strategy.initialize(options);
 
-            button.click();
+            const [, clickHandler] = (button.addEventListener as jest.Mock).mock.calls.find(
+                ([eventName]) => eventName === 'click',
+            );
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await expect(clickHandler(new MouseEvent('click'))).rejects.toThrow(internalError);
 
             expect(LoadingHide).toHaveBeenCalled();
             expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
@@ -741,9 +742,13 @@ describe('GooglePayPaymentStrategy', () => {
 
                     await strategy.initialize(options);
 
-                    button.click();
+                    const [, clickHandler] = (button.addEventListener as jest.Mock).mock.calls.find(
+                        ([eventName]) => eventName === 'click',
+                    );
 
-                    await new Promise((resolve) => process.nextTick(resolve));
+                    await expect(clickHandler(new MouseEvent('click'))).rejects.toThrow(
+                        MissingDataError,
+                    );
 
                     expect(processor.handleCoupons).not.toHaveBeenCalled();
                 });
@@ -867,6 +872,8 @@ describe('GooglePayPaymentStrategy', () => {
             });
 
             it('should hide loading indicator after completing checkout', async () => {
+                completeCheckoutFlowSpy.mockRestore();
+
                 button.click();
 
                 await new Promise((resolve) => process.nextTick(resolve));
