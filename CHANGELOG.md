@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.934.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.934.0...v1.934.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* **payment:** fix GooglePay strategy spec crashing ([#3299](https://github.com/bigcommerce/checkout-sdk-js/issues/3299)) ([e8df371](https://github.com/bigcommerce/checkout-sdk-js/commit/e8df371679ee1e3f8c30dc74f07d82d13c9ae3e4))
+
 ## [1.934.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.933.0...v1.934.0) (2026-06-25)
 
 
