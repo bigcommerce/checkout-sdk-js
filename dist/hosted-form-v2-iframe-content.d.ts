@@ -77,6 +77,7 @@ declare type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, Host
 declare interface HostedFormManualOrderData {
     paymentMethodId: string;
     paymentSessionToken: string;
+    token?: string;
 }
 
 declare class HostedInput {

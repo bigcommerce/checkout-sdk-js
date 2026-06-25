@@ -24,7 +24,7 @@ declare interface HostedCardFieldOptions {
     placeholder?: string;
 }
 
-declare interface HostedCardFieldOptionsMap {
+export declare interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardCode]?: HostedCardFieldOptions;
     [HostedFieldType.CardExpiry]?: HostedCardFieldOptions;
     [HostedFieldType.CardName]?: HostedCardFieldOptions;
@@ -185,6 +185,7 @@ declare interface HostedFormInterface {
 declare interface HostedFormManualOrderData {
     paymentMethodId: string;
     paymentSessionToken: string;
+    token?: string;
 }
 
 declare interface HostedFormOptions {
@@ -216,7 +217,7 @@ declare class HostedFormOrderDataTransformer {
     transform(payload: OrderPaymentRequestBody, additionalAction?: PaymentAdditionalAction): HostedFormOrderData;
 }
 
-declare class HostedFormService {
+export declare class HostedFormService {
     protected _host: string;
     protected _hostedFormFactory: HostedFormFactory;
     protected _hostedForm?: HostedForm;
@@ -342,7 +343,7 @@ declare interface HostedInputSubmitManualOrderErrorEvent {
     };
 }
 
-declare interface HostedInputSubmitManualOrderSuccessEvent {
+export declare interface HostedInputSubmitManualOrderSuccessEvent {
     type: HostedInputEventType.SubmitManualOrderSucceeded;
     payload: {
         response: Response<unknown>;
@@ -362,7 +363,7 @@ declare interface HostedInputValidateErrorData {
     type: string;
 }
 
-declare interface HostedInputValidateErrorDataMap {
+export declare interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardCode]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
@@ -376,7 +377,7 @@ declare interface HostedInputValidateEvent {
     payload: HostedInputValidateResults;
 }
 
-declare interface HostedInputValidateResults {
+export declare interface HostedInputValidateResults {
     errors: HostedInputValidateErrorDataMap;
     isValid: boolean;
 }

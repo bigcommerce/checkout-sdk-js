@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.933.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.932.1...v1.933.0) (2026-06-25)
+
+
+### Features
+
+* **payment:** PAYMENTS-11630 Allow manual order payment with tokenized card ([f3842e0](https://github.com/bigcommerce/checkout-sdk-js/commit/f3842e0511d691cc68ac3911101892d8ab782b7d))
+* **payment:** PAYMENTS-11630 Expose components consumed by new manual order in newer releases ([9c95941](https://github.com/bigcommerce/checkout-sdk-js/commit/9c959410c8921481c96ad6046a0dac9f79bad91c))
+
 ### [1.932.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.932.0...v1.932.1) (2026-06-23)
 
 
