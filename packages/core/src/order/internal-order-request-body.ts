@@ -1,6 +1,5 @@
+import { AddressExtraFieldValue } from '../form';
 import { PaymentInstrument } from '../payment';
-
-import { B2BExtraField } from './order-b2b-metadata';
 
 export default interface InternalOrderRequestBody {
     cartId: string;
@@ -20,7 +19,7 @@ export interface InternalOrderPaymentRequestBody {
 
 export interface InternalOrderB2BMetadata {
     invoiceComment?: string;
-    orderExtraFields?: B2BExtraField[];
+    orderExtraFields?: AddressExtraFieldValue[];
     poNumber?: string;
     referenceNumber?: string;
 }

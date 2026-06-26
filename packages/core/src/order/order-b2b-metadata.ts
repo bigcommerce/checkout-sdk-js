@@ -1,11 +1,8 @@
-export interface B2BExtraField {
-    fieldName: string;
-    fieldValue: string | number;
-}
+import { AddressExtraFieldValue } from '../form';
 
 export interface OrderB2BMetadata {
     invoiceComment?: string;
-    orderExtraFields?: B2BExtraField[];
+    orderExtraFields?: AddressExtraFieldValue[];
     poNumber?: string;
     referenceNumber?: string;
 }
