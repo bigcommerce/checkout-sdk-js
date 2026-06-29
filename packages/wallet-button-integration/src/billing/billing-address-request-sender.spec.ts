@@ -36,8 +36,14 @@ describe('BillingAddressRequestSender', () => {
         id: 'address-1',
     };
 
+    const {
+        id: _ignoredAddressId,
+        shouldSaveAddress: _ignoredShouldSaveAddress,
+        ...billingAddressResponseFields
+    } = updateBillingAddressRequestBody;
+
     const billingAddressResponse: BillingAddressResponse = {
-        ...updateBillingAddressRequestBody,
+        ...billingAddressResponseFields,
         entityId: 'entity-1',
     };
 

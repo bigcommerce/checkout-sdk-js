@@ -1,6 +1,7 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import BillingAddressRequestSender from './billing/billing-address-request-sender';
+import { CheckoutRequestSender } from './checkout/checkout-request-sender';
 import { PaymentRequestSender } from './payment/payment-request-sender';
 import WalletButtonIntegrationService from './wallet-button-integration-service';
 
@@ -8,6 +9,7 @@ describe('WalletButtonIntegrationService', () => {
     let requestSender: RequestSender;
     let paymentRequestSender: PaymentRequestSender;
     let billingAddressRequestSender: BillingAddressRequestSender;
+    let checkoutRequestSender: CheckoutRequestSender;
     let walletButtonIntegrationService: WalletButtonIntegrationService;
 
     const graphQLEndpoint = 'graphql';
@@ -16,11 +18,13 @@ describe('WalletButtonIntegrationService', () => {
         requestSender = createRequestSender();
         paymentRequestSender = new PaymentRequestSender(requestSender);
         billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
+        checkoutRequestSender = new CheckoutRequestSender(requestSender);
 
         walletButtonIntegrationService = new WalletButtonIntegrationService(
             graphQLEndpoint,
             billingAddressRequestSender,
             paymentRequestSender,
+            checkoutRequestSender,
         );
     });
 
@@ -155,6 +159,61 @@ describe('WalletButtonIntegrationService', () => {
                 graphQLEndpoint,
                 checkoutId,
                 address,
+                customOptions,
+            );
+            expect(result).toEqual(expectedResponse);
+        });
+    });
+
+    describe('#getRedirectToCheckoutUrl()', () => {
+        const inputData = {
+            paymentWalletData: {
+                providerId: 'paypalcommerce',
+                providerOrderId: 'order-id-123',
+            },
+            cartEntityId: 'cart-id-123',
+            queryParams: [{ key: 'foo', value: 'bar' }],
+        };
+
+        const expectedResponse = {
+            body: {
+                redirectUrls: { externalCheckoutUrl: 'https://store.example.com/checkout' },
+            },
+            status: 200,
+            statusText: 'OK',
+            headers: { 'content-type': 'application/json' },
+        };
+
+        it('delegates to CheckoutRequestSender with the graphQLEndpoint', async () => {
+            jest.spyOn(checkoutRequestSender, 'getRedirectToCheckoutUrl').mockResolvedValue(
+                expectedResponse,
+            );
+
+            const result = await walletButtonIntegrationService.getRedirectToCheckoutUrl(inputData);
+
+            expect(checkoutRequestSender.getRedirectToCheckoutUrl).toHaveBeenCalledWith(
+                graphQLEndpoint,
+                inputData,
+                undefined,
+            );
+            expect(result).toEqual(expectedResponse);
+        });
+
+        it('passes custom options to CheckoutRequestSender', async () => {
+            const customOptions = { headers: { Authorization: 'Bearer token-xyz' } };
+
+            jest.spyOn(checkoutRequestSender, 'getRedirectToCheckoutUrl').mockResolvedValue(
+                expectedResponse,
+            );
+
+            const result = await walletButtonIntegrationService.getRedirectToCheckoutUrl(
+                inputData,
+                customOptions,
+            );
+
+            expect(checkoutRequestSender.getRedirectToCheckoutUrl).toHaveBeenCalledWith(
+                graphQLEndpoint,
+                inputData,
                 customOptions,
             );
             expect(result).toEqual(expectedResponse);

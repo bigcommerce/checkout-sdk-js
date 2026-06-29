@@ -6,6 +6,11 @@ import {
     BillingAddressUpdateRequestBody,
 } from './billing/billing-address';
 import BillingAddressRequestSender from './billing/billing-address-request-sender';
+import {
+    CreateRedirectToCheckoutResponseBody,
+    RedirectToCheckoutUrlInputData,
+} from './checkout/checkout';
+import { CheckoutRequestSender } from './checkout/checkout-request-sender';
 import { GraphQLRequestOptions } from './graphql-request-options';
 import {
     CreatePaymentOrderIntentInputData,
@@ -18,6 +23,7 @@ export default class WalletButtonIntegrationService {
         private graphQLEndpoint: string,
         private billingAddressRequestSender: BillingAddressRequestSender,
         private paymentRequestSender: PaymentRequestSender,
+        private checkoutRequestSender: CheckoutRequestSender,
     ) {}
 
     async addBillingAddress(
@@ -51,6 +57,17 @@ export default class WalletButtonIntegrationService {
         options?: GraphQLRequestOptions,
     ): Promise<Response<CreatePaymentOrderIntentResponseBody>> {
         return this.paymentRequestSender.createPaymentOrderIntent(
+            this.graphQLEndpoint,
+            inputData,
+            options,
+        );
+    }
+
+    async getRedirectToCheckoutUrl(
+        inputData: RedirectToCheckoutUrlInputData,
+        options?: GraphQLRequestOptions,
+    ): Promise<Response<CreateRedirectToCheckoutResponseBody>> {
+        return this.checkoutRequestSender.getRedirectToCheckoutUrl(
             this.graphQLEndpoint,
             inputData,
             options,
