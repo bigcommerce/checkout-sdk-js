@@ -20,6 +20,12 @@
 
 ***
 
+### bundledItems
+
+> **bundledItems**: `Pick`\<[`LineItemMap`](LineItemMap.md), `"physicalItems"` \| `"digitalItems"`\>
+
+***
+
 ### cartId
 
 > **cartId**: `string`

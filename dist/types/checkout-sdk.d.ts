@@ -6823,6 +6823,7 @@ declare interface Option {
 declare interface Order {
     baseAmount: number;
     billingAddress: OrderBillingAddress;
+    bundledItems: Pick<LineItemMap, 'physicalItems' | 'digitalItems'>;
     cartId: string;
     coupons: Coupon[];
     consignments: OrderConsignment;
