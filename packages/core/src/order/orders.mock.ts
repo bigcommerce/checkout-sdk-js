@@ -18,6 +18,10 @@ export function getOrder(): Order {
     return {
         baseAmount: 200,
         billingAddress: getBillingAddress(),
+        bundledItems: {
+            physicalItems: [],
+            digitalItems: [],
+        },
         cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         consignments: getOrderConsignment(),
         comparisonShippingCost: 20,
