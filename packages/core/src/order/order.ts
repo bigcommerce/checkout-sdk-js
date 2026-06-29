@@ -10,6 +10,7 @@ import { OrderMetaState } from './order-state';
 export default interface Order {
     baseAmount: number;
     billingAddress: OrderBillingAddress;
+    bundledItems: Pick<LineItemMap, 'physicalItems' | 'digitalItems'>;
     cartId: string;
     coupons: Coupon[];
     consignments: OrderConsignment;
