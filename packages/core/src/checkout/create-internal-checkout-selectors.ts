@@ -12,7 +12,6 @@ import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
 import { createOrderBillingAddressSelectorFactory } from '../order-billing-address';
 import {
-    createB2BPostOrderSelectorFactory,
     createPaymentMethodSelectorFactory,
     createPaymentSelectorFactory,
     createPaymentStrategySelectorFactory,
@@ -42,7 +41,6 @@ export type InternalCheckoutSelectorsFactory = (
 ) => InternalCheckoutSelectors;
 
 export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelectorsFactory {
-    const createB2BPostOrderSelector = createB2BPostOrderSelectorFactory();
     const createB2BTokenSelector = createB2BTokenSelectorFactory();
     const createBillingAddressSelector = createBillingAddressSelectorFactory();
     const createCartSelector = createCartSelectorFactory();
@@ -74,7 +72,6 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createExtensionSelector = createExtensionSelectorFactory();
 
     return (state, options = {}) => {
-        const b2bPostOrder = createB2BPostOrderSelector(state.b2bPostOrder);
         const b2bToken = createB2BTokenSelector(state.b2bToken);
         const billingAddress = createBillingAddressSelector(state.billingAddress);
         const cart = createCartSelector(state.cart);
@@ -118,7 +115,6 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const config = createConfigSelector(state.config, state.formFields);
 
         const selectors = {
-            b2bPostOrder,
             b2bToken,
             billingAddress,
             cart,

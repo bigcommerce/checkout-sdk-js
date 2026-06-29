@@ -37,14 +37,12 @@ import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import {
     B2BPaymentsRefreshActionCreator,
-    B2BPostOrderActionCreator,
     OrderFinalizeOptions,
     PaymentInitializeOptions,
     PaymentMethodActionCreator,
     PaymentRequestOptions,
     PaymentStrategyActionCreator,
 } from '../payment';
-import { PersistB2BMetadataOptions } from '../payment/b2b-post-order-actions';
 import { InstrumentActionCreator } from '../payment/instrument';
 import {
     ConsignmentActionCreator,
@@ -116,7 +114,6 @@ export default class CheckoutService {
         private _extensionActionCreator: ExtensionActionCreator,
         private _workerExtensionMessenger: WorkerExtensionMessenger,
         private _b2bPaymentsRefreshActionCreator: B2BPaymentsRefreshActionCreator,
-        private _b2bPostOrderActionCreator: B2BPostOrderActionCreator,
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
     }
@@ -737,36 +734,6 @@ export default class CheckoutService {
         const action = this._b2bPaymentsRefreshActionCreator.refreshB2BPaymentMethods(options);
 
         return this._dispatch(action, { queueId: 'b2bPaymentsRefresh' });
-    }
-
-    /**
-     * Persists B2B order metadata (e.g. invoice comment) after an order is placed
-     *
-     * ```js
-     * const state = await service.persistB2BMetadata(comment);
-     * ```
-     *
-     * @param PersistB2BMetadataOptions - Passing an object to prepare the payload for the request.
-     * @returns A promise that resolves to the current state.
-     */
-    persistB2BMetadata({
-        isInvoice = false,
-        invoiceComment = '',
-        poNumber = '',
-        referenceNumber = '',
-        extraFields = [],
-        extraInfo = {},
-    }: PersistB2BMetadataOptions): Promise<CheckoutSelectors> {
-        const action = this._b2bPostOrderActionCreator.persistB2BMetadata({
-            isInvoice,
-            invoiceComment,
-            poNumber,
-            referenceNumber,
-            extraFields,
-            extraInfo,
-        });
-
-        return this._dispatch(action, { queueId: 'b2bPostOrder' });
     }
 
     /**
