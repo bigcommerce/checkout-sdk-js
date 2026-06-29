@@ -557,20 +557,6 @@ True if there is a pending action, otherwise false.
 
 ***
 
-### isPersistingB2BMetadata()
-
-> **isPersistingB2BMetadata**(): `boolean`
-
-Checks whether B2B order metadata is being persisted.
-
-#### Returns
-
-`boolean`
-
-True if B2B order metadata is being persisted, otherwise false.
-
-***
-
 ### isRemovingCoupon()
 
 > **isRemovingCoupon**(): `boolean`

@@ -8,12 +8,6 @@
 
 ## Properties
 
-### b2bPostOrder
-
-> **b2bPostOrder**: [`B2BPostOrderSelector`](B2BPostOrderSelector.md)
-
-***
-
 ### b2bToken
 
 > **b2bToken**: [`B2BTokenSelector`](B2BTokenSelector.md)

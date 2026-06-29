@@ -10,6 +10,15 @@ An object that contains the information required for submitting an order.
 
 ## Properties
 
+### b2bMetadata?
+
+> `optional` **b2bMetadata?**: [`OrderB2BMetadata`](OrderB2BMetadata.md)
+
+B2B order metadata to persist through the Order API, such as the invoice
+comment, purchase order number, reference number and order extra fields.
+
+***
+
 ### payment?
 
 > `optional` **payment?**: [`OrderPaymentRequestBody`](OrderPaymentRequestBody.md)

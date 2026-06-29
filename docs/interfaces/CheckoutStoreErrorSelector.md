@@ -455,20 +455,6 @@ The error object if unable to load, otherwise undefined.
 
 ***
 
-### getPersistB2BMetadataError()
-
-> **getPersistB2BMetadataError**(): `Error` \| `undefined`
-
-Returns an error if unable to persist B2B order metadata.
-
-#### Returns
-
-`Error` \| `undefined`
-
-The error object if unable to persist B2B metadata, otherwise undefined.
-
-***
-
 ### getPickupOptionsError()
 
 > **getPickupOptionsError**(): `Error` \| `undefined`

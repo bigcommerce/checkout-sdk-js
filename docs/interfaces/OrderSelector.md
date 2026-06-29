@@ -8,6 +8,16 @@
 
 ## Methods
 
+### getB2BReceiptId()
+
+> **getB2BReceiptId**(): `number` \| `undefined`
+
+#### Returns
+
+`number` \| `undefined`
+
+***
+
 ### getLoadError()
 
 > **getLoadError**(): `Error` \| `undefined`
