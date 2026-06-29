@@ -53,7 +53,10 @@ export {
     getStripeCheckoutInstanceMock,
     getStripeCheckoutSessionActionsMock,
 } from './stripe.mock';
-export { default as StripePaymentInitializeOptions } from './stripe-initialize-options';
+export {
+    default as StripePaymentInitializeOptions,
+    WithSelectedSubMethod,
+} from './stripe-initialize-options';
 export { default as StripeIntegrationService } from './stripe-integration-service';
 export { default as StripeScriptLoader } from './stripe-script-loader';
 export { default as formatStripeLocale } from './format-locale';

@@ -63,7 +63,12 @@ export default interface StripeOCSPaymentInitializeOptions extends StripePayment
 
     render(): void;
 
-    paymentMethodSelect?(id: string): void;
+    /**
+     * Implements the `WithSelectedSubMethod` capability: called when the shopper selects a
+     * sub-method inside the OCS widget (e.g. `card`, `us_bank_account`). Declared inline (rather
+     * than via `extends WithSelectedSubMethod`) so it survives the cross-package `.d.ts` bundle.
+     */
+    paymentMethodSelect?(methodId: string, selectedSubMethod?: string): void;
 
     handleClosePaymentMethod?(collapseElement: () => void): void;
 
