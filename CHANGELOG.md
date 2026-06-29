@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.935.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.934.2...v1.935.0) (2026-06-29)
+
+
+### Features
+
+* **payment:** PAYPAL-6472 add wallet button redirect to checkout ([44bbf84](https://github.com/bigcommerce/checkout-sdk-js/commit/44bbf841f002caddcfd8a4b576c5d81250548587))
+
 ### [1.934.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.934.1...v1.934.2) (2026-06-29)
 
 
