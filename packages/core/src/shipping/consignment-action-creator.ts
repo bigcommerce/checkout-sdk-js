@@ -2,7 +2,7 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { find } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
-import { AddressRequestBody } from '../address';
+import { AddressRequestBody, mapToAddressRequestBody } from '../address';
 import { Cart } from '../cart';
 import {
     CheckoutIncludes,
@@ -242,7 +242,13 @@ export default class ConsignmentActionCreator {
                 observer.next(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
                 this._consignmentRequestSender
-                    .createConsignments(checkout.id, consignments, options)
+                    .createConsignments(
+                        checkout.id,
+                        consignments.map((consignment) =>
+                            this._stripConsignmentAddresses(consignment),
+                        ),
+                        options,
+                    )
                     .then(({ body }) => {
                         observer.next(
                             createAction(ConsignmentActionType.CreateConsignmentsSucceeded, body),
@@ -283,7 +289,11 @@ export default class ConsignmentActionCreator {
                 );
 
                 this._consignmentRequestSender
-                    .updateConsignment(checkout.id, consignment, options)
+                    .updateConsignment(
+                        checkout.id,
+                        this._stripConsignmentAddresses(consignment),
+                        options,
+                    )
                     .then(({ body }) => {
                         observer.next(
                             createAction(
@@ -447,6 +457,25 @@ export default class ConsignmentActionCreator {
                 itemId: item.id,
                 quantity: item.quantity,
             })),
+        };
+    }
+
+    // Strip address-book metadata that a selected `CustomerAddress` carries but the API
+    // does not accept from the consignment's `address`/`shippingAddress` before it is sent.
+    private _stripConsignmentAddresses<
+        T extends {
+            address?: AddressRequestBody;
+            shippingAddress?: AddressRequestBody;
+        },
+    >(consignment: T): T {
+        return {
+            ...consignment,
+            ...(consignment.address && {
+                address: mapToAddressRequestBody(consignment.address),
+            }),
+            ...(consignment.shippingAddress && {
+                shippingAddress: mapToAddressRequestBody(consignment.shippingAddress),
+            }),
         };
     }
 

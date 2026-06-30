@@ -4,6 +4,7 @@ import { isEmpty } from 'lodash';
 import { concat, defer, empty, merge, Observable, Observer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { mapToAddressRequestBody } from '../address';
 import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
@@ -107,13 +108,15 @@ export default class BillingAddressActionCreator {
 
                 const hasBillingAddress = !isEmpty(billingAddress);
 
+                const sanitizedAddress = mapToAddressRequestBody(address);
+
                 // If email is not present in the address provided by the client, then
                 // fall back to the stored email as it could have been set separately
                 // using a convenience method. We can't rely on billingAddress having
                 // an ID to consider that there's a preexisting email, as billingAddress
                 // object from Order doesn't have an ID.
                 const billingAddressRequestBody = {
-                    ...address,
+                    ...sanitizedAddress,
                     email:
                         typeof address.email === 'undefined' && billingAddress
                             ? billingAddress.email

@@ -396,6 +396,32 @@ describe('BillingAddressActionCreator', () => {
             });
         });
 
+        it('strips CustomerAddress boolean flags but preserves id', async () => {
+            store = createCheckoutStore(omit(state, 'billingAddress'));
+
+            const addressWithMetadata = {
+                ...address,
+                id: 'caller-provided-id',
+                isShipping: false,
+                isBilling: true,
+                isDefaultShipping: false,
+                isDefaultBilling: true,
+            } as unknown as BillingAddressRequestBody;
+
+            await from(
+                billingAddressActionCreator.updateAddress(addressWithMetadata)(store),
+            ).toPromise();
+
+            const sentBody = (billingAddressRequestSender.createAddress as jest.Mock).mock
+                .calls[0][1];
+
+            expect(sentBody).not.toHaveProperty('isShipping');
+            expect(sentBody).not.toHaveProperty('isBilling');
+            expect(sentBody).not.toHaveProperty('isDefaultShipping');
+            expect(sentBody).not.toHaveProperty('isDefaultBilling');
+            expect(sentBody).toHaveProperty('id', 'caller-provided-id');
+        });
+
         describe('when store has checkout data but no billing address data', () => {
             beforeEach(() => {
                 store = createCheckoutStore(omit(state, 'billingAddress'));

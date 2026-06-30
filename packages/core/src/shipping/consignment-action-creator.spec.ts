@@ -705,6 +705,32 @@ describe('consignmentActionCreator', () => {
                 options,
             );
         });
+
+        it('strips CustomerAddress boolean flags from the address before sending', async () => {
+            const payloadWithMetadata = {
+                ...payload,
+                address: {
+                    ...payload.address,
+                    isShipping: true,
+                    isBilling: false,
+                    isDefaultShipping: true,
+                    isDefaultBilling: false,
+                },
+            } as unknown as ConsignmentUpdateRequestBody;
+
+            await from(
+                consignmentActionCreator.updateConsignment(payloadWithMetadata, options)(store),
+            ).toPromise();
+
+            const sentBody = (consignmentRequestSender.updateConsignment as jest.Mock).mock
+                .calls[0][1];
+
+            expect(sentBody.address).not.toHaveProperty('isShipping');
+            expect(sentBody.address).not.toHaveProperty('isBilling');
+            expect(sentBody.address).not.toHaveProperty('isDefaultShipping');
+            expect(sentBody.address).not.toHaveProperty('isDefaultBilling');
+            expect(sentBody.address).toMatchObject({ address1: payload.address?.address1 });
+        });
     });
 
     describe('#deleteConsignment()', () => {
