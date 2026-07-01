@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 
 import { CustomerAddress } from '../customer';
 
-import Address from './address';
+import Address, { AddressRequestBody } from './address';
 
 const CUSTOMER_ADDRESS_METADATA_FIELDS: Array<keyof CustomerAddress> = [
     'isShipping',
@@ -19,6 +19,6 @@ const CUSTOMER_ADDRESS_METADATA_FIELDS: Array<keyof CustomerAddress> = [
  * callers that previously forwarded a selected `CustomerAddress` straight to an
  * update call.
  */
-export default function mapToAddressRequestBody<T extends Partial<Address>>(address: T): T {
-    return omit(address, CUSTOMER_ADDRESS_METADATA_FIELDS) as T;
+export default function mapToAddressRequestBody(address: Partial<Address>): AddressRequestBody {
+    return omit(address, CUSTOMER_ADDRESS_METADATA_FIELDS) as AddressRequestBody;
 }

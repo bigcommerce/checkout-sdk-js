@@ -50,11 +50,13 @@ describe('mapToAddressRequestBody()', () => {
     });
 
     it('preserves id and type', () => {
-        const result = mapToAddressRequestBody({
+        const addressWithMetadata = {
             ...baseAddress,
             id: 12,
             type: 'residential',
-        });
+        };
+
+        const result = mapToAddressRequestBody(addressWithMetadata);
 
         expect(result).toHaveProperty('id', 12);
         expect(result).toHaveProperty('type', 'residential');

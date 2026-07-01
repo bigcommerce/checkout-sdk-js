@@ -11,8 +11,16 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
+import { BillingAddressUpdateRequestBody } from './billing-address';
 import BillingAddressRequestSender from './billing-address-request-sender';
 import { getBillingAddress } from './billing-addresses.mock';
+
+const CUSTOMER_ADDRESS_METADATA = {
+    isShipping: true,
+    isBilling: false,
+    isDefaultShipping: true,
+    isDefaultBilling: false,
+};
 
 describe('BillingAddressRequestSender', () => {
     let addressRequestSender: BillingAddressRequestSender;
@@ -79,6 +87,21 @@ describe('BillingAddressRequestSender', () => {
             );
         });
 
+        it('strips CustomerAddress metadata flags from the request body', async () => {
+            await addressRequestSender.updateAddress('foo', {
+                ...getBillingAddress(),
+                ...CUSTOMER_ADDRESS_METADATA,
+            } as unknown as BillingAddressUpdateRequestBody);
+
+            const { body } = (requestSender.put as jest.Mock).mock.calls[0][1];
+
+            expect(body).not.toHaveProperty('isShipping');
+            expect(body).not.toHaveProperty('isBilling');
+            expect(body).not.toHaveProperty('isDefaultShipping');
+            expect(body).not.toHaveProperty('isDefaultBilling');
+            expect(body).toHaveProperty('address1', address.address1);
+        });
+
         it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
             const error = getErrorResponse(
                 {
@@ -138,6 +161,21 @@ describe('BillingAddressRequestSender', () => {
                     },
                 },
             );
+        });
+
+        it('strips CustomerAddress metadata flags from the request body', async () => {
+            await addressRequestSender.createAddress('foo', {
+                ...getBillingAddress(),
+                ...CUSTOMER_ADDRESS_METADATA,
+            } as unknown as BillingAddressUpdateRequestBody);
+
+            const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
+
+            expect(body).not.toHaveProperty('isShipping');
+            expect(body).not.toHaveProperty('isBilling');
+            expect(body).not.toHaveProperty('isDefaultShipping');
+            expect(body).not.toHaveProperty('isDefaultBilling');
+            expect(body).toHaveProperty('address1', address.address1);
         });
 
         it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
