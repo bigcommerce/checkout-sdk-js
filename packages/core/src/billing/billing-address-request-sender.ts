@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { AddressRequestBody } from '../address';
+import { AddressRequestBody, mapToAddressRequestBody } from '../address';
 import { EmptyCartError } from '../cart/errors';
 import { Checkout } from '../checkout';
 import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
@@ -34,7 +34,7 @@ export default class BillingAddressRequestSender {
 
         return this._requestSender
             .post<Checkout>(url, {
-                body: address,
+                body: mapToAddressRequestBody(address),
                 params: DEFAULT_PARAMS,
                 headers,
                 timeout,
@@ -61,7 +61,12 @@ export default class BillingAddressRequestSender {
         };
 
         return this._requestSender
-            .put<Checkout>(url, { params: DEFAULT_PARAMS, body, headers, timeout })
+            .put<Checkout>(url, {
+                params: DEFAULT_PARAMS,
+                body: mapToAddressRequestBody(body),
+                headers,
+                timeout,
+            })
             .catch((err) => {
                 if (err.body.type === 'empty_cart') {
                     throw new EmptyCartError();

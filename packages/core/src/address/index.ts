@@ -5,4 +5,5 @@ export { default as isAddressEqual } from './is-address-equal';
 export { default as isInternalAddressEqual } from './is-internal-address-equal';
 
 export { default as mapFromInternalAddress } from './map-from-internal-address';
+export { default as mapToAddressRequestBody } from './map-to-address-request-body';
 export { default as mapToInternalAddress } from './map-to-internal-address';

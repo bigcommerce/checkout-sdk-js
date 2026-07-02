@@ -1,5 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { AddressRequestBody, mapToAddressRequestBody } from '../address';
 import { EmptyCartError } from '../cart/errors';
 import { Checkout, CheckoutParams } from '../checkout';
 import {
@@ -11,6 +12,25 @@ import {
 } from '../common/http-request';
 
 import { ConsignmentsRequestBody, ConsignmentUpdateRequestBody } from './consignment';
+
+// Strip address-book metadata that a selected `CustomerAddress` carries but the API
+// does not accept from the consignment's `address`/`shippingAddress` before it is sent.
+function stripConsignmentAddresses<
+    T extends {
+        address?: AddressRequestBody;
+        shippingAddress?: AddressRequestBody;
+    },
+>(consignment: T): T {
+    return {
+        ...consignment,
+        ...(consignment.address && {
+            address: mapToAddressRequestBody(consignment.address),
+        }),
+        ...(consignment.shippingAddress && {
+            shippingAddress: mapToAddressRequestBody(consignment.shippingAddress),
+        }),
+    };
+}
 
 const DEFAULT_INCLUDES = [
     'consignments.availableShippingOptions',
@@ -38,7 +58,7 @@ export default class ConsignmentRequestSender {
 
         return this._requestSender
             .post<Checkout>(url, {
-                body: consignments,
+                body: consignments.map(stripConsignmentAddresses),
                 params: {
                     include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
                 },
@@ -61,6 +81,7 @@ export default class ConsignmentRequestSender {
     ): Promise<Response<Checkout>> {
         const { id, ...body } = consignment;
         const url = `/api/storefront/checkouts/${checkoutId}/consignments/${id}`;
+        const strippedBody = stripConsignmentAddresses(body);
         const headers = {
             Accept: ContentType.JsonV1,
             ...SDK_VERSION_HEADERS,
@@ -68,7 +89,7 @@ export default class ConsignmentRequestSender {
 
         return this._requestSender
             .put<Checkout>(url, {
-                body,
+                body: strippedBody,
                 params: {
                     include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
                 },

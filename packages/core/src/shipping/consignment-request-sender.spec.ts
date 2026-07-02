@@ -5,8 +5,16 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
+import { ConsignmentsRequestBody, ConsignmentUpdateRequestBody } from './consignment';
 import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
+
+const CUSTOMER_ADDRESS_METADATA = {
+    isShipping: true,
+    isBilling: false,
+    isDefaultShipping: true,
+    isDefaultBilling: false,
+};
 
 describe('ConsignmentRequestSender', () => {
     let consignmentRequestSender: ConsignmentRequestSender;
@@ -122,6 +130,27 @@ describe('ConsignmentRequestSender', () => {
             );
         });
 
+        it('strips CustomerAddress metadata flags from consignment addresses', async () => {
+            await consignmentRequestSender.createConsignments(checkoutId, [
+                {
+                    ...consignments[0],
+                    address: { ...consignments[0].address, ...CUSTOMER_ADDRESS_METADATA },
+                    shippingAddress: {
+                        ...consignments[0].shippingAddress,
+                        ...CUSTOMER_ADDRESS_METADATA,
+                    },
+                },
+            ] as unknown as ConsignmentsRequestBody);
+
+            const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
+
+            expect(body[0].address).not.toHaveProperty('isShipping');
+            expect(body[0].address).not.toHaveProperty('isDefaultBilling');
+            expect(body[0].shippingAddress).not.toHaveProperty('isShipping');
+            expect(body[0].shippingAddress).not.toHaveProperty('isDefaultBilling');
+            expect(body[0].address).toHaveProperty('address1', consignments[0].address.address1);
+        });
+
         it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
             const error = getErrorResponse(
                 {
@@ -212,6 +241,21 @@ describe('ConsignmentRequestSender', () => {
                     },
                 },
             );
+        });
+
+        it('strips CustomerAddress metadata flags from the consignment address', async () => {
+            await consignmentRequestSender.updateConsignment(checkoutId, {
+                ...consignment,
+                address: { ...consignment.address, ...CUSTOMER_ADDRESS_METADATA },
+            } as unknown as ConsignmentUpdateRequestBody);
+
+            const { body: sentBody } = (requestSender.put as jest.Mock).mock.calls[0][1];
+
+            expect(sentBody.address).not.toHaveProperty('isShipping');
+            expect(sentBody.address).not.toHaveProperty('isBilling');
+            expect(sentBody.address).not.toHaveProperty('isDefaultShipping');
+            expect(sentBody.address).not.toHaveProperty('isDefaultBilling');
+            expect(sentBody.address).toHaveProperty('address1', consignment.address?.address1);
         });
 
         it('throws `EmptyCartError` if error type is `empty_cart`', async () => {
