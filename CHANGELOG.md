@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.936.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.935.1...v1.936.0) (2026-07-02)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10140 strip unnecessary company address fields ([#3303](https://github.com/bigcommerce/checkout-sdk-js/issues/3303)) ([4d5a325](https://github.com/bigcommerce/checkout-sdk-js/commit/4d5a325098f939bcdd369ee91ca5ad57415ad66f))
+
 ### [1.935.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.935.0...v1.935.1) (2026-06-29)
 
 ## [1.935.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.934.2...v1.935.0) (2026-06-29)
