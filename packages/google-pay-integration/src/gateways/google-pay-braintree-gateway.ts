@@ -1,7 +1,7 @@
 import {
     BraintreeGooglePayment,
-    BraintreeGooglePayThreeDSecure,
     BraintreeSdk,
+    BraintreeThreeDSecure,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CancellablePromise,
@@ -27,6 +27,7 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
     private _braintreeGooglePayment?: BraintreeGooglePayment;
     private _service: PaymentIntegrationService;
     private _methodId = GooglePayKey.BRAINTREE;
+    private _verificationsInProgress = 0;
 
     constructor(service: PaymentIntegrationService, private _braintreeSdk: BraintreeSdk) {
         super('braintree', service);
@@ -154,12 +155,18 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
         return deviceData;
     }
 
-    private _braintreePresent3DSChallenge(
-        threeDSecure: BraintreeGooglePayThreeDSecure,
+    private async _braintreePresent3DSChallenge(
+        threeDSecure: BraintreeThreeDSecure,
         amount: number,
         nonce: string,
         bin: string,
     ) {
+        if (this._verificationsInProgress > 0) {
+            await this._cancelBraintree3DSVerification(threeDSecure);
+        }
+
+        this._verificationsInProgress += 1;
+
         const verification = new CancellablePromise(
             threeDSecure.verifyCard({
                 amount,
@@ -171,6 +178,20 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
             }),
         );
 
-        return verification.promise;
+        try {
+            return await verification.promise;
+        } finally {
+            this._verificationsInProgress -= 1;
+        }
+    }
+
+    private async _cancelBraintree3DSVerification(
+        threeDSecure: BraintreeThreeDSecure,
+    ): Promise<void> {
+        try {
+            await threeDSecure.cancelVerifyCard();
+        } catch {
+            // No-op: cancelVerifyCard rejects when no authentication is in progress.
+        }
     }
 }

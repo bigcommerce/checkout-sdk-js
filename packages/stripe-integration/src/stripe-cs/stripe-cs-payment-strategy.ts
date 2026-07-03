@@ -549,6 +549,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
     private _rerenderPlaceholderButton(): void {
         const { render } = this.stripeInitializationOptions || {};
+
         render?.();
     }
 }
