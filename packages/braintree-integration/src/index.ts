@@ -10,9 +10,11 @@ export { WithBraintreeAchPaymentInitializeOptions } from './braintree-ach/braint
 export { default as createBraintreePaypalButtonStrategy } from './braintree-paypal/create-braintree-paypal-button-strategy';
 export { default as createBraintreePaypalCustomerStrategy } from './braintree-paypal/create-braintree-paypal-customer-strategy';
 export { default as createBraintreePaypalPaymentStrategy } from './braintree-paypal/create-braintree-paypal-payment-strategy';
+export { default as createBraintreePaypalWalletStrategy } from './braintree-paypal/create-braintree-paypal-wallet-strategy';
 export { WithBraintreePaypalButtonInitializeOptions } from './braintree-paypal/braintree-paypal-button-initialize-options';
 export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-initialize-options';
 export { WithBraintreePaypalPaymentInitializeOptions } from './braintree-paypal/braintree-paypal-payment-initialize-options';
+export { WithBraintreePaypalWalletInitializeOptions } from './braintree-paypal/braintree-paypal-wallet-initialize-options';
 
 /**
  * Braintree PayPal Credit strategies
