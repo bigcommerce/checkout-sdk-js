@@ -217,6 +217,160 @@ describe('GooglePayBraintreeGateway', () => {
             expect(nonce).toBe('verification_nonce');
         });
 
+        it('does not cancel before the first verification', async () => {
+            braintreeMock.initializationData.isThreeDSecureEnabled = true;
+            braintreeMock.initializationData.card_information = {
+                type: 'type',
+                number: '1234',
+                bin: 'bin',
+                isNetworkTokenized: false,
+            };
+
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
+
+            await googlePayBraintreeGateway.getNonce('googlepaybraintree');
+
+            expect(braintreeThreeDSecureMock.cancelVerifyCard).not.toHaveBeenCalled();
+            expect(braintreeThreeDSecureMock.verifyCard).toHaveBeenCalled();
+        });
+
+        it('cancels a stale authentication before a subsequent verification while one is in progress', async () => {
+            braintreeMock.initializationData.isThreeDSecureEnabled = true;
+            braintreeMock.initializationData.card_information = {
+                type: 'type',
+                number: '1234',
+                bin: 'bin',
+                isNetworkTokenized: false,
+            };
+
+            jest.spyOn(GooglePayGateway.prototype, 'getNonce').mockResolvedValue('token');
+
+            const verificationPayload = {
+                nonce: 'verification_nonce',
+                details: { cardType: '', lastFour: '', lastTwo: '' },
+                description: '',
+                liabilityShiftPossible: true,
+                liabilityShifted: true,
+            };
+
+            let resolveFirstVerify: (payload: unknown) => void = () => undefined;
+
+            jest.spyOn(braintreeThreeDSecureMock, 'verifyCard')
+                .mockReturnValueOnce(
+                    new Promise((resolve) => {
+                        resolveFirstVerify = resolve;
+                    }),
+                )
+                .mockResolvedValueOnce(verificationPayload);
+
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
+
+            const firstVerification = googlePayBraintreeGateway.getNonce('googlepaybraintree');
+
+            await new Promise((resolve) => {
+                setTimeout(resolve, 0);
+            });
+
+            const secondNonce = await googlePayBraintreeGateway.getNonce('googlepaybraintree');
+
+            expect(braintreeThreeDSecureMock.cancelVerifyCard).toHaveBeenCalled();
+            expect(secondNonce).toBe('verification_nonce');
+
+            resolveFirstVerify(verificationPayload);
+
+            await firstVerification;
+        });
+
+        it('keeps cancelling while any overlapping verification is still in progress', async () => {
+            braintreeMock.initializationData.isThreeDSecureEnabled = true;
+            braintreeMock.initializationData.card_information = {
+                type: 'type',
+                number: '1234',
+                bin: 'bin',
+                isNetworkTokenized: false,
+            };
+
+            jest.spyOn(GooglePayGateway.prototype, 'getNonce').mockResolvedValue('token');
+
+            const verificationPayload = {
+                nonce: 'verification_nonce',
+                details: { cardType: '', lastFour: '', lastTwo: '' },
+                description: '',
+                liabilityShiftPossible: true,
+                liabilityShifted: true,
+            };
+
+            let resolveFirstVerify: (payload: unknown) => void = () => undefined;
+            let resolveSecondVerify: (payload: unknown) => void = () => undefined;
+
+            jest.spyOn(braintreeThreeDSecureMock, 'verifyCard')
+                .mockReturnValueOnce(
+                    new Promise((resolve) => {
+                        resolveFirstVerify = resolve;
+                    }),
+                )
+                .mockReturnValueOnce(
+                    new Promise((resolve) => {
+                        resolveSecondVerify = resolve;
+                    }),
+                )
+                .mockResolvedValueOnce(verificationPayload);
+
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
+
+            // First and second verifications are started and left in progress.
+            const firstVerification = googlePayBraintreeGateway.getNonce('googlepaybraintree');
+
+            await new Promise((resolve) => {
+                setTimeout(resolve, 0);
+            });
+
+            const secondVerification = googlePayBraintreeGateway.getNonce('googlepaybraintree');
+
+            await new Promise((resolve) => {
+                setTimeout(resolve, 0);
+            });
+
+            resolveFirstVerify(verificationPayload);
+
+            await firstVerification;
+
+            (braintreeThreeDSecureMock.cancelVerifyCard as jest.Mock).mockClear();
+
+            const thirdNonce = await googlePayBraintreeGateway.getNonce('googlepaybraintree');
+
+            expect(braintreeThreeDSecureMock.cancelVerifyCard).toHaveBeenCalled();
+            expect(thirdNonce).toBe('verification_nonce');
+
+            resolveSecondVerify(verificationPayload);
+
+            await secondVerification;
+        });
+
+        it('re-throws when verifyCard rejects', async () => {
+            braintreeMock.initializationData.isThreeDSecureEnabled = true;
+            braintreeMock.initializationData.card_information = {
+                type: 'type',
+                number: '1234',
+                bin: 'bin',
+                isNetworkTokenized: false,
+            };
+
+            const verifyError = new Error(
+                'Cannot call verifyCard while existing authentication is in progress.',
+            );
+
+            jest.spyOn(braintreeThreeDSecureMock, 'verifyCard').mockRejectedValue(verifyError);
+
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
+
+            await expect(googlePayBraintreeGateway.getNonce('googlepaybraintree')).rejects.toThrow(
+                verifyError,
+            );
+
+            expect(braintreeThreeDSecureMock.cancelVerifyCard).not.toHaveBeenCalled();
+        });
+
         it('get nonce when 3DSecure is not enabled', async () => {
             braintreeMock.initializationData.card_information = {
                 type: 'type',
