@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.936.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.936.1...v1.936.2) (2026-07-03)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-6718 BT google pay refresh 3ds state before verification ([244fb7d](https://github.com/bigcommerce/checkout-sdk-js/commit/244fb7d013a972396009b0b9edceb16ab3250e94))
+
 ### [1.936.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.936.0...v1.936.1) (2026-07-03)
 
 ## [1.936.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.935.1...v1.936.0) (2026-07-02)
