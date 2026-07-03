@@ -8,7 +8,6 @@ export {
     InternalOrderPayment,
 } from './internal-order';
 export { default as InternalOrderRequestBody } from './internal-order-request-body';
-export { OrderB2BMetadata } from './order-b2b-metadata';
 
 export { default as OrderActionCreator } from './order-action-creator';
 export { default as orderReducer } from './order-reducer';
