@@ -20,8 +20,6 @@ import {
     WithMollieIssuerInstrument,
 } from '../payment';
 
-import { OrderB2BMetadata } from './order-b2b-metadata';
-
 /**
  * An object that contains the information required for submitting an order.
  */
@@ -40,12 +38,6 @@ export default interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
-
-    /**
-     * B2B order metadata to persist through the Order API, such as the invoice
-     * comment, purchase order number, reference number and order extra fields.
-     */
-    b2bMetadata?: OrderB2BMetadata;
 }
 
 export type OrderPaymentInstrument =

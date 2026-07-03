@@ -13,7 +13,6 @@ export default interface OrderSelector {
     getOrder(): Order | undefined;
     getOrderOrThrow(): Order;
     getOrderMeta(): OrderMetaState | undefined;
-    getB2BReceiptId(): number | undefined;
     getLoadError(): Error | undefined;
     getPaymentId(methodId: string): string | undefined;
     isLoading(): boolean;
@@ -59,11 +58,6 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
         (meta) => () => meta,
     );
 
-    const getB2BReceiptId = createSelector(
-        (state: OrderState) => state.meta?.b2bReceiptId,
-        (b2bReceiptId) => () => b2bReceiptId,
-    );
-
     const getLoadError = createSelector(
         (state: OrderState) => state.errors.loadError,
         (error) => () => error,
@@ -94,7 +88,6 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
                 getOrder: getOrder(state, { billingAddress, coupons }),
                 getOrderOrThrow: getOrderOrThrow(state, { billingAddress, coupons }),
                 getOrderMeta: getOrderMeta(state),
-                getB2BReceiptId: getB2BReceiptId(state),
                 getLoadError: getLoadError(state),
                 getPaymentId: getPaymentId(state),
                 isLoading: isLoading(state),

@@ -67,11 +67,11 @@ export default interface CheckoutStoreSelector {
     getB2BToken(): string | undefined;
 
     /**
-     * Gets the B2B invoice payment receipt id returned after an order is submitted.
+     * Gets the B2B receipt id produced after persisting order metadata.
      *
-     * @returns The B2B receipt id if it is available, otherwise undefined.
+     * @returns The B2B receipt id string if it has been persisted, otherwise undefined.
      */
-    getB2BReceiptId(): number | undefined;
+    getB2BReceiptId(): string | undefined;
 
     /**
      * Gets the shipping address of the current checkout.
@@ -522,8 +522,8 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
     );
 
     const getB2BReceiptId = createSelector(
-        ({ order }: InternalCheckoutSelectors) => order.getB2BReceiptId,
-        (getB2BReceiptId) => clone(getB2BReceiptId),
+        ({ b2bPostOrder }: InternalCheckoutSelectors) => b2bPostOrder.getReceiptId,
+        (getReceiptId) => clone(getReceiptId),
     );
 
     const isPaymentDataRequired = createSelector(

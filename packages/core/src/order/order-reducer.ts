@@ -56,7 +56,6 @@ function metaReducer(
                 callbackUrl: action.payload && action.payload.order.callbackUrl,
                 orderToken: action.payload && action.payload.order.token,
                 payment: action.payload && action.payload.order && action.payload.order.payment,
-                b2bReceiptId: action.payload?.b2bContext?.receiptId,
             });
 
         default:
