@@ -59,6 +59,21 @@ declare interface AchInstrument extends BaseAccountInstrument {
     method: 'ach' | 'ecp';
 }
 
+declare interface AddOrderExtraFieldsPayload {
+    orderId: number;
+    poNumber: string;
+    referenceNumber: string;
+    extraFields: B2BExtraField[];
+    extraInfo: {
+        addressExtraFields?: {
+            billingAddressExtraFields: B2BExtraField[];
+            shippingAddressExtraFields: B2BExtraField[];
+        };
+        billingAddressId?: number;
+        shipppingAddressId?: number;
+    };
+}
+
 declare interface Address extends AddressRequestBody {
     country: string;
     shouldSaveAddress?: boolean;
@@ -669,9 +684,20 @@ declare interface B2BApiSettings {
     baseUrl: string;
 }
 
+declare interface B2BExtraField {
+    fieldName: string;
+    fieldValue: string | number | boolean | string[];
+}
+
 declare enum B2BPaymentMethodFilterType {
     Standard = "standard",
     Invoice = "invoice"
+}
+
+declare interface B2BPostOrderSelector {
+    getReceiptId(): string | undefined;
+    getPersistError(): Error | undefined;
+    isPersisting(): boolean;
 }
 
 declare interface B2BTokenSelector {
@@ -2856,6 +2882,7 @@ declare class CheckoutService {
     private _extensionActionCreator;
     private _workerExtensionMessenger;
     private _b2bPaymentsRefreshActionCreator;
+    private _b2bPostOrderActionCreator;
     private _errorTransformer;
     /**
      * Returns a snapshot of the current checkout state.
@@ -3326,6 +3353,17 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     refreshB2BPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Persists B2B order metadata (e.g. invoice comment) after an order is placed
+     *
+     * ```js
+     * const state = await service.persistB2BMetadata(comment);
+     * ```
+     *
+     * @param PersistB2BMetadataOptions - Passing an object to prepare the payload for the request.
+     * @returns A promise that resolves to the current state.
+     */
+    persistB2BMetadata({ isInvoice, invoiceComment, poNumber, referenceNumber, extraFields, extraInfo, }: PersistB2BMetadataOptions): Promise<CheckoutSelectors>;
     /**
      * Creates a customer account.
      *
@@ -4243,6 +4281,12 @@ declare interface CheckoutStoreErrorSelector {
      */
     getLoadB2BTokenError(): Error | undefined;
     /**
+     * Returns an error if unable to persist B2B order metadata.
+     *
+     * @returns The error object if unable to persist B2B metadata, otherwise undefined.
+     */
+    getPersistB2BMetadataError(): Error | undefined;
+    /**
      * Returns an error if unable to create customer account.
      *
      * @returns The error object if unable to create account, otherwise undefined.
@@ -4307,11 +4351,11 @@ declare interface CheckoutStoreSelector {
      */
     getB2BToken(): string | undefined;
     /**
-     * Gets the B2B invoice payment receipt id returned after an order is submitted.
+     * Gets the B2B receipt id produced after persisting order metadata.
      *
-     * @returns The B2B receipt id if it is available, otherwise undefined.
+     * @returns The B2B receipt id string if it has been persisted, otherwise undefined.
      */
-    getB2BReceiptId(): number | undefined;
+    getB2BReceiptId(): string | undefined;
     /**
      * Gets the shipping address of the current checkout.
      *
@@ -4798,6 +4842,12 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if a B2B token is being loaded, otherwise false.
      */
     isLoadingB2BToken(): boolean;
+    /**
+     * Checks whether B2B order metadata is being persisted.
+     *
+     * @returns True if B2B order metadata is being persisted, otherwise false.
+     */
+    isPersistingB2BMetadata(): boolean;
     /**
      * Checks whether the current customer is applying a gift certificate.
      *
@@ -6499,6 +6549,7 @@ declare interface InternalAddress<T = string> {
 }
 
 declare interface InternalCheckoutSelectors {
+    b2bPostOrder: B2BPostOrderSelector;
     b2bToken: B2BTokenSelector;
     billingAddress: BillingAddressSelector;
     cart: CartSelector;
@@ -6858,13 +6909,6 @@ declare interface Order {
     fees: OrderFee[];
 }
 
-declare interface OrderB2BMetadata {
-    invoiceComment?: string;
-    orderExtraFields?: AddressExtraFieldValue[];
-    poNumber?: string;
-    referenceNumber?: string;
-}
-
 declare interface OrderBillingAddress extends Address {
     email?: string;
 }
@@ -6899,7 +6943,6 @@ declare interface OrderMetaState extends InternalOrderMeta {
     orderToken?: string;
     callbackUrl?: string;
     payment?: InternalOrderPayment;
-    b2bReceiptId?: number;
 }
 
 declare interface OrderPayment {
@@ -6952,18 +6995,12 @@ declare interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
-    /**
-     * B2B order metadata to persist through the Order API, such as the invoice
-     * comment, purchase order number, reference number and order extra fields.
-     */
-    b2bMetadata?: OrderB2BMetadata;
 }
 
 declare interface OrderSelector {
     getOrder(): Order | undefined;
     getOrderOrThrow(): Order;
     getOrderMeta(): OrderMetaState | undefined;
-    getB2BReceiptId(): number | undefined;
     getLoadError(): Error | undefined;
     getPaymentId(methodId: string): string | undefined;
     isLoading(): boolean;
@@ -8066,6 +8103,15 @@ declare interface PaypalStyleOptions {
     tagline?: boolean;
     fundingicons?: boolean;
     height?: number;
+}
+
+declare interface PersistB2BMetadataOptions {
+    isInvoice: boolean;
+    invoiceComment?: string;
+    poNumber?: string;
+    referenceNumber?: string;
+    extraFields?: B2BExtraField[];
+    extraInfo?: AddOrderExtraFieldsPayload['extraInfo'];
 }
 
 declare interface PhysicalItem extends LineItem {

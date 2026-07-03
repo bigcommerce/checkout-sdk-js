@@ -29,15 +29,15 @@ The list of extra fields if available, otherwise an empty array.
 
 ### getB2BReceiptId()
 
-> **getB2BReceiptId**(): `number` \| `undefined`
+> **getB2BReceiptId**(): `string` \| `undefined`
 
-Gets the B2B invoice payment receipt id returned after an order is submitted.
+Gets the B2B receipt id produced after persisting order metadata.
 
 #### Returns
 
-`number` \| `undefined`
+`string` \| `undefined`
 
-The B2B receipt id if it is available, otherwise undefined.
+The B2B receipt id string if it has been persisted, otherwise undefined.
 
 ***
 

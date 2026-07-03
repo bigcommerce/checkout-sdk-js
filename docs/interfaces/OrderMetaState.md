@@ -12,12 +12,6 @@
 
 ## Properties
 
-### b2bReceiptId?
-
-> `optional` **b2bReceiptId?**: `number`
-
-***
-
 ### callbackUrl?
 
 > `optional` **callbackUrl?**: `string`

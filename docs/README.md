@@ -68,6 +68,7 @@
 ## Interfaces
 
 - [AchInstrument](interfaces/AchInstrument.md)
+- [AddOrderExtraFieldsPayload](interfaces/AddOrderExtraFieldsPayload.md)
 - [Address](interfaces/Address.md)
 - [AddressExtraFieldValue](interfaces/AddressExtraFieldValue.md)
 - [AddressRequestBody](interfaces/AddressRequestBody.md)
@@ -93,6 +94,8 @@
 - [ApplePayCustomerInitializeOptions](interfaces/ApplePayCustomerInitializeOptions.md)
 - [ApplePayPaymentInitializeOptions](interfaces/ApplePayPaymentInitializeOptions.md)
 - [B2BApiSettings](interfaces/B2BApiSettings.md)
+- [B2BExtraField](interfaces/B2BExtraField.md)
+- [B2BPostOrderSelector](interfaces/B2BPostOrderSelector.md)
 - [B2BTokenSelector](interfaces/B2BTokenSelector.md)
 - [BankInstrument](interfaces/BankInstrument.md)
 - [Banner](interfaces/Banner.md)
@@ -337,7 +340,6 @@
 - [NonceInstrument](interfaces/NonceInstrument.md)
 - [Option](interfaces/Option.md)
 - [Order](interfaces/Order.md)
-- [OrderB2BMetadata](interfaces/OrderB2BMetadata.md)
 - [OrderBillingAddress](interfaces/OrderBillingAddress.md)
 - [OrderBillingAddressSelector](interfaces/OrderBillingAddressSelector.md)
 - [OrderConsignment](interfaces/OrderConsignment.md)
@@ -386,6 +388,7 @@
 - [PayPalCommerceVenmoPaymentInitializeOptions](interfaces/PayPalCommerceVenmoPaymentInitializeOptions.md)
 - [PayPalInstrument](interfaces/PayPalInstrument.md)
 - [PaypalStyleOptions](interfaces/PaypalStyleOptions.md)
+- [PersistB2BMetadataOptions](interfaces/PersistB2BMetadataOptions.md)
 - [PhysicalItem](interfaces/PhysicalItem.md)
 - [PickupMethod](interfaces/PickupMethod.md)
 - [PickupOptionRequestBody](interfaces/PickupOptionRequestBody.md)

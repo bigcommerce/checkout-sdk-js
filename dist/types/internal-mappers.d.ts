@@ -696,7 +696,6 @@ declare interface OrderMetaState extends InternalOrderMeta {
     orderToken?: string;
     callbackUrl?: string;
     payment?: InternalOrderPayment;
-    b2bReceiptId?: number;
 }
 
 declare interface OrderPayment {
