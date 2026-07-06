@@ -29,6 +29,7 @@ import {
     StripeEventType,
     StripeInitializationData,
     StripeIntegrationService,
+    StripeJsVersion,
     StripeLinkV2Event,
     StripeLinkV2Options,
     StripeLinkV2ShippingRate,
@@ -96,14 +97,12 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         const { initializationData } = paymentMethod;
         const { captureMethod } = initializationData;
-        const stripeJsVersion =
-            this.stripeIntegrationService.getStripeJsVersion(initializationData);
 
         this._captureMethod = captureMethod;
         this._stripeClient = await this.scriptLoader.getStripeClient(
             initializationData,
             state.getCartLocale(),
-            stripeJsVersion,
+            StripeJsVersion.CLOVER,
         );
 
         await this._mountExpressCheckoutElement(container, this._stripeClient, buttonHeight);
