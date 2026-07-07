@@ -1,4 +1,4 @@
-export default interface B2BContext {
+export interface B2BContext {
     billingAddressId?: number;
     shippingAddressId?: number;
     receiptId?: string;
