@@ -6,6 +6,7 @@ import { guard } from '../common/utility';
 import { CouponSelector } from '../coupon';
 import OrderBillingAddressSelector from '../order-billing-address/order-billing-address-selector';
 
+import B2BContext from './b2b-context';
 import Order from './order';
 import OrderState, { DEFAULT_STATE, OrderMetaState } from './order-state';
 
@@ -13,6 +14,7 @@ export default interface OrderSelector {
     getOrder(): Order | undefined;
     getOrderOrThrow(): Order;
     getOrderMeta(): OrderMetaState | undefined;
+    getB2BContext(): B2BContext | undefined;
     getLoadError(): Error | undefined;
     getPaymentId(methodId: string): string | undefined;
     isLoading(): boolean;
@@ -58,6 +60,11 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
         (meta) => () => meta,
     );
 
+    const getB2BContext = createSelector(
+        (state: OrderState) => state.meta?.b2bContext,
+        (b2bContext) => () => b2bContext,
+    );
+
     const getLoadError = createSelector(
         (state: OrderState) => state.errors.loadError,
         (error) => () => error,
@@ -88,6 +95,7 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
                 getOrder: getOrder(state, { billingAddress, coupons }),
                 getOrderOrThrow: getOrderOrThrow(state, { billingAddress, coupons }),
                 getOrderMeta: getOrderMeta(state),
+                getB2BContext: getB2BContext(state),
                 getLoadError: getLoadError(state),
                 getPaymentId: getPaymentId(state),
                 isLoading: isLoading(state),

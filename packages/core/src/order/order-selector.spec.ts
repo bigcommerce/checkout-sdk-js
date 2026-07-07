@@ -54,6 +54,31 @@ describe('OrderSelector', () => {
         });
     });
 
+    describe('#getB2BContext()', () => {
+        it('returns B2B context', () => {
+            const b2bContext = { billingAddressId: 1, shippingAddressId: 2 };
+            const orderState = set(getOrderState(), 'meta.b2bContext', b2bContext);
+
+            orderSelector = createOrderSelector(
+                orderState,
+                selectors.orderBillingAddress,
+                selectors.coupons,
+            );
+
+            expect(orderSelector.getB2BContext()).toEqual(b2bContext);
+        });
+
+        it('returns undefined if B2B context is unavailable', () => {
+            orderSelector = createOrderSelector(
+                state.order,
+                selectors.orderBillingAddress,
+                selectors.coupons,
+            );
+
+            expect(orderSelector.getB2BContext()).toBeUndefined();
+        });
+    });
+
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
             const loadError = new RequestError(getErrorResponse());

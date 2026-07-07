@@ -51,12 +51,16 @@ function metaReducer(
     switch (action.type) {
         case OrderActionType.FinalizeOrderSucceeded:
         case OrderActionType.SubmitOrderSucceeded:
-            return objectMerge(meta, {
-                ...action.meta,
-                callbackUrl: action.payload && action.payload.order.callbackUrl,
-                orderToken: action.payload && action.payload.order.token,
-                payment: action.payload && action.payload.order && action.payload.order.payment,
-            });
+            return objectSet(
+                objectMerge(meta, {
+                    ...action.meta,
+                    callbackUrl: action.payload && action.payload.order.callbackUrl,
+                    orderToken: action.payload && action.payload.order.token,
+                    payment: action.payload && action.payload.order && action.payload.order.payment,
+                }),
+                'b2bContext',
+                action.payload?.b2bContext,
+            );
 
         default:
             return meta;

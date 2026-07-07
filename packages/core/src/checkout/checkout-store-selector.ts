@@ -12,7 +12,7 @@ import { Customer } from '../customer';
 import { Extension, ExtensionRegion } from '../extension';
 import { FormField } from '../form';
 import { Country } from '../geography';
-import { Order } from '../order';
+import { B2BContext, Order } from '../order';
 import { PaymentMethod } from '../payment';
 import { CardInstrument, PaymentInstrument } from '../payment/instrument';
 import { PaymentProviderCustomer } from '../payment-provider-customer';
@@ -67,11 +67,11 @@ export default interface CheckoutStoreSelector {
     getB2BToken(): string | undefined;
 
     /**
-     * Gets the B2B receipt id produced after persisting order metadata.
+     * Gets the B2B context of the current order.
      *
-     * @returns The B2B receipt id string if it has been persisted, otherwise undefined.
+     * @returns The B2B context if it is available, otherwise undefined.
      */
-    getB2BReceiptId(): string | undefined;
+    getB2BContext(): B2BContext | undefined;
 
     /**
      * Gets the shipping address of the current checkout.
@@ -521,9 +521,20 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getToken) => clone(getToken),
     );
 
-    const getB2BReceiptId = createSelector(
+    const getB2BContext = createSelector(
+        ({ order }: InternalCheckoutSelectors) => order.getB2BContext,
         ({ b2bPostOrder }: InternalCheckoutSelectors) => b2bPostOrder.getReceiptId,
-        (getReceiptId) => clone(getReceiptId),
+        (getB2BContext, getReceiptId) =>
+            clone(() => {
+                const b2bContext = getB2BContext();
+                const receiptId = getReceiptId();
+
+                if (!b2bContext && receiptId === undefined) {
+                    return;
+                }
+
+                return { ...b2bContext, receiptId };
+            }),
     );
 
     const isPaymentDataRequired = createSelector(
@@ -661,7 +672,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             isPaymentDataSubmitted: isPaymentDataSubmitted(state),
             getSignInEmail: getSignInEmail(state),
             getB2BToken: getB2BToken(state),
-            getB2BReceiptId: getB2BReceiptId(state),
+            getB2BContext: getB2BContext(state),
             getInstruments: getInstruments(state),
             getCustomerAccountFields: getCustomerAccountFields(state),
             getBillingAddressFields: getBillingAddressFields(state),

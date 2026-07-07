@@ -97,6 +97,50 @@ describe('orderReducer()', () => {
         );
     });
 
+    it('stores B2B context in meta if it is submitted successfully', () => {
+        const response = getSubmitOrderResponseBody();
+        const headers = getSubmitOrderResponseHeaders();
+        const b2bContext = { billingAddressId: 1, shippingAddressId: 2 };
+        const action: SubmitOrderAction = {
+            type: OrderActionType.SubmitOrderSucceeded,
+            meta: {
+                ...response.meta,
+                token: headers.token,
+            },
+            payload: {
+                ...response.data,
+                b2bContext,
+            },
+        };
+
+        expect(orderReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                meta: expect.objectContaining({ b2bContext }),
+            }),
+        );
+    });
+
+    it('clears stale B2B context in meta if the new order does not have one', () => {
+        const response = getSubmitOrderResponseBody();
+        const headers = getSubmitOrderResponseHeaders();
+        const action: SubmitOrderAction = {
+            type: OrderActionType.SubmitOrderSucceeded,
+            meta: {
+                ...response.meta,
+                token: headers.token,
+            },
+            payload: response.data,
+        };
+        const staleState: OrderState = {
+            ...initialState,
+            meta: { b2bContext: { billingAddressId: 1, shippingAddressId: 2 } },
+        };
+
+        const state = orderReducer(staleState, action);
+
+        expect(state.meta && state.meta.b2bContext).toBeUndefined();
+    });
+
     it('returns new data if it is finalized successfully', () => {
         const response = getCompleteOrderResponseBody();
         const action: FinalizeOrderAction = {
