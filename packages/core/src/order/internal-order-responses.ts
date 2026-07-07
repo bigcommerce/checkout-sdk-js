@@ -1,7 +1,7 @@
 import { InternalResponseBody } from '../common/http-request';
 import { InternalCustomer } from '../customer';
 
-import B2BContext from './b2b-context';
+import { B2BContext } from './b2b-context';
 import InternalOrder from './internal-order';
 
 export type InternalOrderResponseBody = InternalResponseBody<

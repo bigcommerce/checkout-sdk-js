@@ -6,7 +6,7 @@ import { guard } from '../common/utility';
 import { CouponSelector } from '../coupon';
 import OrderBillingAddressSelector from '../order-billing-address/order-billing-address-selector';
 
-import B2BContext from './b2b-context';
+import { B2BContext } from './b2b-context';
 import Order from './order';
 import OrderState, { DEFAULT_STATE, OrderMetaState } from './order-state';
 

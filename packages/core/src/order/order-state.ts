@@ -1,6 +1,6 @@
 import { Omit } from '../common/types';
 
-import B2BContext from './b2b-context';
+import { B2BContext } from './b2b-context';
 import { InternalOrderMeta, InternalOrderPayment } from './internal-order';
 import Order from './order';
 
