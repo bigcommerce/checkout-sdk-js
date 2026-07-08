@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.938.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.937.0...v1.938.0) (2026-07-08)
+
+
+### Features
+
+* **payment:** remove experiment for new Stripe JS version for Stripe OCS ([#3306](https://github.com/bigcommerce/checkout-sdk-js/issues/3306)) ([cdefc69](https://github.com/bigcommerce/checkout-sdk-js/commit/cdefc691c61a5df7b279260863273e5bb9433527))
+
 ## [1.937.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.936.2...v1.937.0) (2026-07-08)
 
 
