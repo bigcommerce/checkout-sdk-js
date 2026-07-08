@@ -1,10 +1,14 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, from, Observable, of } from 'rxjs';
+import { concat, defer, from, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { CheckoutActionCreator, InternalCheckoutSelectors } from '../checkout';
+import {
+    CheckoutActionCreator,
+    CUSTOMER_ADDRESSES_B2B_INCLUDE,
+    InternalCheckoutSelectors,
+} from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import {
@@ -76,22 +80,28 @@ export default class CustomerActionCreator {
     createAddress(
         customerAddress: CustomerAddressRequestBody,
         options?: RequestOptions,
-    ): Observable<CreateCustomerAddressAction> {
-        return concat(
-            of(createAction(CustomerActionType.CreateCustomerAddressRequested)),
-            defer(async () => {
-                const { body } = await this._customerRequestSender.createAddress(
-                    customerAddress,
-                    options,
-                );
+    ): ThunkAction<CreateCustomerAddressAction, InternalCheckoutSelectors> {
+        return (store) =>
+            concat(
+                of(createAction(CustomerActionType.CreateCustomerAddressRequested)),
+                defer(async () => {
+                    const capabilities = store.getState().config.getStoreConfig()
+                        ?.checkoutSettings.capabilities;
 
-                return createAction(CustomerActionType.CreateCustomerAddressSucceeded, body);
-            }),
-        ).pipe(
-            catchError((error) =>
-                throwErrorAction(CustomerActionType.CreateCustomerAddressFailed, error),
-            ),
-        );
+                    const { body } = await this._customerRequestSender.createAddress(
+                        customerAddress,
+                        capabilities?.userJourney.hasCompanyAddressBook
+                            ? { ...options, params: { include: [CUSTOMER_ADDRESSES_B2B_INCLUDE] } }
+                            : options,
+                    );
+
+                    return createAction(CustomerActionType.CreateCustomerAddressSucceeded, body);
+                }),
+            ).pipe(
+                catchError((error) =>
+                    throwErrorAction(CustomerActionType.CreateCustomerAddressFailed, error),
+                ),
+            );
     }
 
     signInCustomer(

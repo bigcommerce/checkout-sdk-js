@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { concat, defer, empty, merge, Observable, Observer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { Checkout, InternalCheckoutSelectors } from '../checkout';
+import { Checkout, InternalCheckoutSelectors, withCapabilityIncludes } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -66,11 +66,14 @@ export default class BillingAddressActionCreator {
                 concat(
                     of(createAction(BillingAddressActionType.ContinueAsGuestRequested)),
                     defer(async () => {
+                        const capabilities =
+                            state.config.getStoreConfig()?.checkoutSettings.capabilities;
+
                         const { body } = await this._createOrUpdateBillingAddress(
                             checkout.id,
                             billingAddressRequestBody,
                             hasBillingAddress,
-                            options,
+                            withCapabilityIncludes(capabilities, options),
                         );
 
                         return createAction(
@@ -124,11 +127,13 @@ export default class BillingAddressActionCreator {
                     billingAddressRequestBody.id = billingAddress.id;
                 }
 
+                const capabilities = state.config.getStoreConfig()?.checkoutSettings.capabilities;
+
                 this._createOrUpdateBillingAddress(
                     checkout.id,
                     billingAddressRequestBody,
                     hasBillingAddress,
-                    options,
+                    withCapabilityIncludes(capabilities, options),
                 )
                     .then(({ body }) => {
                         observer.next(

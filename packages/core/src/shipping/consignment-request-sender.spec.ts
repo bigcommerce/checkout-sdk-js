@@ -10,10 +10,14 @@ import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
 
 const CUSTOMER_ADDRESS_METADATA = {
-    isShipping: true,
-    isBilling: false,
-    isDefaultShipping: true,
-    isDefaultBilling: false,
+    b2b: {
+        isShipping: true,
+        isBilling: false,
+        isDefaultShipping: true,
+        isDefaultBilling: false,
+        label: 'Head Office',
+        extraFields: [],
+    },
 };
 
 describe('ConsignmentRequestSender', () => {
@@ -130,7 +134,7 @@ describe('ConsignmentRequestSender', () => {
             );
         });
 
-        it('strips CustomerAddress metadata flags from consignment addresses', async () => {
+        it('strips CustomerAddress b2b metadata from consignment addresses', async () => {
             await consignmentRequestSender.createConsignments(checkoutId, [
                 {
                     ...consignments[0],
@@ -144,10 +148,8 @@ describe('ConsignmentRequestSender', () => {
 
             const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
 
-            expect(body[0].address).not.toHaveProperty('isShipping');
-            expect(body[0].address).not.toHaveProperty('isDefaultBilling');
-            expect(body[0].shippingAddress).not.toHaveProperty('isShipping');
-            expect(body[0].shippingAddress).not.toHaveProperty('isDefaultBilling');
+            expect(body[0].address).not.toHaveProperty('b2b');
+            expect(body[0].shippingAddress).not.toHaveProperty('b2b');
             expect(body[0].address).toHaveProperty('address1', consignments[0].address.address1);
         });
 
@@ -243,7 +245,7 @@ describe('ConsignmentRequestSender', () => {
             );
         });
 
-        it('strips CustomerAddress metadata flags from the consignment address', async () => {
+        it('strips CustomerAddress b2b metadata from the consignment address', async () => {
             await consignmentRequestSender.updateConsignment(checkoutId, {
                 ...consignment,
                 address: { ...consignment.address, ...CUSTOMER_ADDRESS_METADATA },
@@ -251,10 +253,7 @@ describe('ConsignmentRequestSender', () => {
 
             const { body: sentBody } = (requestSender.put as jest.Mock).mock.calls[0][1];
 
-            expect(sentBody.address).not.toHaveProperty('isShipping');
-            expect(sentBody.address).not.toHaveProperty('isBilling');
-            expect(sentBody.address).not.toHaveProperty('isDefaultShipping');
-            expect(sentBody.address).not.toHaveProperty('isDefaultBilling');
+            expect(sentBody.address).not.toHaveProperty('b2b');
             expect(sentBody.address).toHaveProperty('address1', consignment.address?.address1);
         });
 

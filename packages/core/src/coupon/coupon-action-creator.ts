@@ -1,7 +1,7 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
-import { InternalCheckoutSelectors } from '../checkout';
+import { InternalCheckoutSelectors, withCapabilityIncludes } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
@@ -31,8 +31,10 @@ export default class CouponActionCreator {
 
                 observer.next(createAction(CouponActionType.ApplyCouponRequested));
 
+                const capabilities = state.config.getStoreConfig()?.checkoutSettings.capabilities;
+
                 this._couponRequestSender
-                    .applyCoupon(checkout.id, code, options)
+                    .applyCoupon(checkout.id, code, withCapabilityIncludes(capabilities, options))
                     .then(({ body }) => {
                         observer.next(createAction(CouponActionType.ApplyCouponSucceeded, body));
                         observer.complete();
@@ -60,8 +62,10 @@ export default class CouponActionCreator {
 
                 observer.next(createAction(CouponActionType.RemoveCouponRequested));
 
+                const capabilities = state.config.getStoreConfig()?.checkoutSettings.capabilities;
+
                 this._couponRequestSender
-                    .removeCoupon(checkout.id, code, options)
+                    .removeCoupon(checkout.id, code, withCapabilityIncludes(capabilities, options))
                     .then(({ body }) => {
                         observer.next(createAction(CouponActionType.RemoveCouponSucceeded, body));
                         observer.complete();

@@ -241,8 +241,7 @@ describe('CustomerActionCreator', () => {
         it('emits actions if able to create customer address', async () => {
             const address = getShippingAddress();
 
-            const actions = await customerActionCreator
-                .createAddress(address)
+            const actions = await from(customerActionCreator.createAddress(address)(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -260,8 +259,7 @@ describe('CustomerActionCreator', () => {
             const address = getShippingAddress();
 
             const errorHandler = jest.fn((action) => of(action));
-            const actions = await customerActionCreator
-                .createAddress(address)
+            const actions = await from(customerActionCreator.createAddress(address)(store))
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 

@@ -31,22 +31,23 @@ describe('mapToAddressRequestBody()', () => {
         expect(mapToAddressRequestBody(address)).toEqual(address);
     });
 
-    it('strips CustomerAddress boolean flags', () => {
+    it('strips CustomerAddress b2b metadata', () => {
         const customerAddress = {
             ...baseAddress,
-            isShipping: true,
-            isBilling: false,
-            isDefaultShipping: true,
-            isDefaultBilling: false,
+            b2b: {
+                isShipping: true,
+                isBilling: false,
+                isDefaultShipping: true,
+                isDefaultBilling: false,
+                label: 'Head Office',
+                extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
+            },
         };
 
         const result = mapToAddressRequestBody(customerAddress);
 
         expect(result).toEqual(baseAddress);
-        expect(result).not.toHaveProperty('isShipping');
-        expect(result).not.toHaveProperty('isBilling');
-        expect(result).not.toHaveProperty('isDefaultShipping');
-        expect(result).not.toHaveProperty('isDefaultBilling');
+        expect(result).not.toHaveProperty('b2b');
     });
 
     it('preserves id and type', () => {

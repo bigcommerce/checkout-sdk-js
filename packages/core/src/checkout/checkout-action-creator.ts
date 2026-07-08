@@ -15,6 +15,7 @@ import {
     LoadCheckoutAction,
     UpdateCheckoutAction,
 } from './checkout-actions';
+import { withCapabilityIncludes } from './checkout-capability-includes';
 import { CheckoutHydrateActionType } from './checkout-hydrate-actions';
 import CheckoutInitialState from './checkout-initial-state';
 import CheckoutRequestSender from './checkout-request-sender';
@@ -31,7 +32,7 @@ export default class CheckoutActionCreator {
         id: string,
         options?: RequestOptions,
     ): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
-        return () => {
+        return (store) => {
             return concat(
                 of(createAction(CheckoutActionType.LoadCheckoutRequested)),
                 merge(
@@ -46,8 +47,11 @@ export default class CheckoutActionCreator {
                     }),
                 ),
                 defer(() => {
+                    const capabilities = store.getState().config.getStoreConfig()
+                        ?.checkoutSettings.capabilities;
+
                     return this._checkoutRequestSender
-                        .loadCheckout(id, options)
+                        .loadCheckout(id, withCapabilityIncludes(capabilities, options))
                         .then(({ body }) => {
                             return createAction(
                                 CheckoutActionType.LoadCheckoutSucceeded,
@@ -87,9 +91,12 @@ export default class CheckoutActionCreator {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                     }
 
+                    const capabilities =
+                        state.config.getStoreConfig()?.checkoutSettings.capabilities;
+
                     const { body } = await this._checkoutRequestSender.loadCheckout(
                         context.checkoutId,
-                        options,
+                        withCapabilityIncludes(capabilities, options),
                     );
 
                     return createAction(

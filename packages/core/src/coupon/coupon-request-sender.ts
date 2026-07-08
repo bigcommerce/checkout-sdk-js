@@ -1,10 +1,10 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { EmptyCartError } from '../cart/errors';
-import { Checkout, CHECKOUT_DEFAULT_INCLUDES, CheckoutIncludes } from '../checkout';
+import { Checkout, CHECKOUT_DEFAULT_INCLUDES, CheckoutIncludes, CheckoutParams } from '../checkout';
 import {
     ContentType,
-    joinIncludes,
+    joinOrMergeIncludes,
     RequestOptions,
     SDK_VERSION_HEADERS,
 } from '../common/http-request';
@@ -15,7 +15,7 @@ export default class CouponRequestSender {
     applyCoupon(
         checkoutId: string,
         couponCode: string,
-        { timeout }: RequestOptions = {},
+        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {},
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/coupons`;
         const headers = {
@@ -28,10 +28,10 @@ export default class CouponRequestSender {
                 headers,
                 timeout,
                 params: {
-                    include: joinIncludes([
-                        ...CHECKOUT_DEFAULT_INCLUDES,
-                        CheckoutIncludes.AvailableShippingOptions,
-                    ]),
+                    include: joinOrMergeIncludes(
+                        [...CHECKOUT_DEFAULT_INCLUDES, CheckoutIncludes.AvailableShippingOptions],
+                        include,
+                    ),
                 },
                 body: { couponCode },
             })
@@ -47,7 +47,7 @@ export default class CouponRequestSender {
     removeCoupon(
         checkoutId: string,
         couponCode: string,
-        { timeout }: RequestOptions = {},
+        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {},
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`;
         const headers = {
@@ -60,10 +60,10 @@ export default class CouponRequestSender {
                 headers,
                 timeout,
                 params: {
-                    include: joinIncludes([
-                        ...CHECKOUT_DEFAULT_INCLUDES,
-                        CheckoutIncludes.AvailableShippingOptions,
-                    ]),
+                    include: joinOrMergeIncludes(
+                        [...CHECKOUT_DEFAULT_INCLUDES, CheckoutIncludes.AvailableShippingOptions],
+                        include,
+                    ),
                 },
             })
             .catch((err) => {

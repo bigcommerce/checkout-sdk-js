@@ -1,4 +1,5 @@
 import { Address } from '../address';
+import { AddressExtraFieldValue } from '../form';
 
 export default interface Customer {
     id: number;
@@ -24,6 +25,20 @@ export default interface Customer {
 export interface CustomerAddress extends Address {
     id: number;
     type: string;
+    /**
+     * Company address metadata returned only for B2B company addresses, and
+     * only when the `addresses.b2b` include is requested from the API.
+     */
+    b2b?: CustomerAddressB2B;
+}
+
+export interface CustomerAddressB2B {
+    isShipping: boolean;
+    isBilling: boolean;
+    isDefaultShipping: boolean;
+    isDefaultBilling: boolean;
+    label: string;
+    extraFields: AddressExtraFieldValue[];
 }
 
 export interface CustomerGroup {

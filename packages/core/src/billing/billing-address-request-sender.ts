@@ -2,21 +2,24 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { AddressRequestBody, mapToAddressRequestBody } from '../address';
 import { EmptyCartError } from '../cart/errors';
-import { Checkout } from '../checkout';
-import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import { Checkout, CheckoutParams } from '../checkout';
+import {
+    ContentType,
+    joinOrMergeIncludes,
+    RequestOptions,
+    SDK_VERSION_HEADERS,
+} from '../common/http-request';
 
 import { BillingAddressUpdateRequestBody } from './billing-address';
 
-const DEFAULT_PARAMS = {
-    include: [
-        'cart.lineItems.physicalItems.options',
-        'cart.lineItems.physicalItems.stockPosition',
-        'cart.lineItems.digitalItems.options',
-        'cart.lineItems.digitalItems.stockPosition',
-        'customer',
-        'promotions.banners',
-    ].join(','),
-};
+const DEFAULT_INCLUDES = [
+    'cart.lineItems.physicalItems.options',
+    'cart.lineItems.physicalItems.stockPosition',
+    'cart.lineItems.digitalItems.options',
+    'cart.lineItems.digitalItems.stockPosition',
+    'customer',
+    'promotions.banners',
+];
 
 export default class BillingAddressRequestSender {
     constructor(private _requestSender: RequestSender) {}
@@ -24,7 +27,7 @@ export default class BillingAddressRequestSender {
     createAddress(
         checkoutId: string,
         address: Partial<AddressRequestBody>,
-        { timeout }: RequestOptions = {},
+        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {},
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address`;
         const headers = {
@@ -35,7 +38,9 @@ export default class BillingAddressRequestSender {
         return this._requestSender
             .post<Checkout>(url, {
                 body: mapToAddressRequestBody(address),
-                params: DEFAULT_PARAMS,
+                params: {
+                    include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
+                },
                 headers,
                 timeout,
             })
@@ -51,7 +56,7 @@ export default class BillingAddressRequestSender {
     updateAddress(
         checkoutId: string,
         address: Partial<BillingAddressUpdateRequestBody>,
-        { timeout }: RequestOptions = {},
+        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {},
     ): Promise<Response<Checkout>> {
         const { id, ...body } = address;
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address/${id}`;
@@ -62,7 +67,9 @@ export default class BillingAddressRequestSender {
 
         return this._requestSender
             .put<Checkout>(url, {
-                params: DEFAULT_PARAMS,
+                params: {
+                    include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
+                },
                 body: mapToAddressRequestBody(body),
                 headers,
                 timeout,
