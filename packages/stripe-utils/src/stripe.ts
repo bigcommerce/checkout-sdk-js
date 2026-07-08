@@ -800,7 +800,6 @@ export interface StripeInitializationData {
     enableLink?: boolean;
     allowRedisplayForStoredInstruments?: boolean;
     captureMethod?: 'automatic' | 'manual';
-    useNewStripeJsVersion?: boolean;
     checkoutSessionEnabled?: boolean;
     sendSecondPaymentRequestOnStripeError?: boolean;
     adaptivePricingEnabled?: boolean;

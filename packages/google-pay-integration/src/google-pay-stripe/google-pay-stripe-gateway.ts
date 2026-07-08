@@ -142,7 +142,7 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
 
         const locale = this.paymentIntegrationService.getState().getCartLocale();
 
-        if (methodId === 'googlepaystripeocs' && !!initializationData.useNewStripeJsVersion) {
+        if (methodId === 'googlepaystripeocs') {
             return this.scriptLoader.getStripeClient(
                 initializationData,
                 locale,

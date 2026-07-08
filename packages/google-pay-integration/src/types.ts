@@ -397,7 +397,6 @@ export interface GooglePayStripeInitializationData extends GooglePayBaseInitiali
     stripePublishableKey: string;
     stripeVersion: string;
     shopperLanguage: string;
-    useNewStripeJsVersion?: boolean;
 }
 
 export interface GooglePayCheckoutComInitializationData extends GooglePayBaseInitializationData {
