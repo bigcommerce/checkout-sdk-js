@@ -27,17 +27,17 @@ The list of extra fields if available, otherwise an empty array.
 
 ***
 
-### getB2BReceiptId()
+### getB2BContext()
 
-> **getB2BReceiptId**(): `string` \| `undefined`
+> **getB2BContext**(): [`B2BContext`](B2BContext.md) \| `undefined`
 
-Gets the B2B receipt id produced after persisting order metadata.
+Gets the B2B context of the current order.
 
 #### Returns
 
-`string` \| `undefined`
+[`B2BContext`](B2BContext.md) \| `undefined`
 
-The B2B receipt id string if it has been persisted, otherwise undefined.
+The B2B context if it is available, otherwise undefined.
 
 ***
 

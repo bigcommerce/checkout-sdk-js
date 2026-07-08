@@ -684,6 +684,12 @@ declare interface B2BApiSettings {
     baseUrl: string;
 }
 
+declare interface B2BContext {
+    billingAddressId?: number;
+    shippingAddressId?: number;
+    receiptId?: string;
+}
+
 declare interface B2BExtraField {
     fieldName: string;
     fieldValue: string | number | boolean | string[];
@@ -4351,11 +4357,11 @@ declare interface CheckoutStoreSelector {
      */
     getB2BToken(): string | undefined;
     /**
-     * Gets the B2B receipt id produced after persisting order metadata.
+     * Gets the B2B context of the current order.
      *
-     * @returns The B2B receipt id string if it has been persisted, otherwise undefined.
+     * @returns The B2B context if it is available, otherwise undefined.
      */
-    getB2BReceiptId(): string | undefined;
+    getB2BContext(): B2BContext | undefined;
     /**
      * Gets the shipping address of the current checkout.
      *
@@ -6943,6 +6949,7 @@ declare interface OrderMetaState extends InternalOrderMeta {
     orderToken?: string;
     callbackUrl?: string;
     payment?: InternalOrderPayment;
+    b2bContext?: B2BContext;
 }
 
 declare interface OrderPayment {
@@ -7001,6 +7008,7 @@ declare interface OrderSelector {
     getOrder(): Order | undefined;
     getOrderOrThrow(): Order;
     getOrderMeta(): OrderMetaState | undefined;
+    getB2BContext(): B2BContext | undefined;
     getLoadError(): Error | undefined;
     getPaymentId(methodId: string): string | undefined;
     isLoading(): boolean;

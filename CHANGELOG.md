@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.937.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.936.2...v1.937.0) (2026-07-08)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10142 Add getB2BContext ([#3308](https://github.com/bigcommerce/checkout-sdk-js/issues/3308)) ([56b802f](https://github.com/bigcommerce/checkout-sdk-js/commit/56b802f20e1463c8a8bd83529f524fd2f3a70210))
+
 ### [1.936.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.936.1...v1.936.2) (2026-07-03)
 
 

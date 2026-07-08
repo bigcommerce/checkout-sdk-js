@@ -8,6 +8,16 @@
 
 ## Methods
 
+### getB2BContext()
+
+> **getB2BContext**(): [`B2BContext`](B2BContext.md) \| `undefined`
+
+#### Returns
+
+[`B2BContext`](B2BContext.md) \| `undefined`
+
+***
+
 ### getLoadError()
 
 > **getLoadError**(): `Error` \| `undefined`

@@ -12,6 +12,12 @@
 
 ## Properties
 
+### b2bContext?
+
+> `optional` **b2bContext?**: [`B2BContext`](B2BContext.md)
+
+***
+
 ### callbackUrl?
 
 > `optional` **callbackUrl?**: `string`

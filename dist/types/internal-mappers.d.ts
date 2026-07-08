@@ -31,6 +31,12 @@ declare interface AddressRequestBody {
     label?: string;
 }
 
+declare interface B2BContext {
+    billingAddressId?: number;
+    shippingAddressId?: number;
+    receiptId?: string;
+}
+
 declare interface Banner {
     type: string;
     text: string;
@@ -696,6 +702,7 @@ declare interface OrderMetaState extends InternalOrderMeta {
     orderToken?: string;
     callbackUrl?: string;
     payment?: InternalOrderPayment;
+    b2bContext?: B2BContext;
 }
 
 declare interface OrderPayment {
