@@ -2,6 +2,7 @@ export * from './internal-order-responses';
 export * from './order-actions';
 
 export { default as Order, GatewayOrderPayment, OrderMeta } from './order';
+export { B2BContext } from './b2b-context';
 export {
     default as InternalOrder,
     InternalIncompleteOrder,

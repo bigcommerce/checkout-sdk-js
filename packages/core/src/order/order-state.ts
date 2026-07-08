@@ -1,5 +1,6 @@
 import { Omit } from '../common/types';
 
+import { B2BContext } from './b2b-context';
 import { InternalOrderMeta, InternalOrderPayment } from './internal-order';
 import Order from './order';
 
@@ -17,6 +18,7 @@ export interface OrderMetaState extends InternalOrderMeta {
     orderToken?: string;
     callbackUrl?: string;
     payment?: InternalOrderPayment;
+    b2bContext?: B2BContext;
 }
 
 export interface OrderErrorsState {

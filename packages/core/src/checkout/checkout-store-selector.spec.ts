@@ -46,6 +46,49 @@ describe('CheckoutStoreSelector', () => {
         expect(selector.getSignInEmail()).toEqual(internalSelectors.signInEmail.getEmail());
     });
 
+    describe('#getB2BContext()', () => {
+        const b2bContext = { billingAddressId: 1, shippingAddressId: 2 };
+
+        it('returns undefined if neither B2B context nor receipt id is available', () => {
+            expect(selector.getB2BContext()).toBeUndefined();
+        });
+
+        it('returns B2B context merged with receipt id if both are available', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.order, 'getB2BContext').mockReturnValue(b2bContext);
+            jest.spyOn(internalSelectors.b2bPostOrder, 'getReceiptId').mockReturnValue(
+                'receipt-id',
+            );
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getB2BContext()).toEqual({ ...b2bContext, receiptId: 'receipt-id' });
+        });
+
+        it('returns B2B context of the order if receipt id is unavailable', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.order, 'getB2BContext').mockReturnValue(b2bContext);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getB2BContext()).toEqual(b2bContext);
+        });
+
+        it('returns receipt id if B2B context of the order is unavailable', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.b2bPostOrder, 'getReceiptId').mockReturnValue(
+                'receipt-id',
+            );
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getB2BContext()).toEqual({ receiptId: 'receipt-id' });
+        });
+    });
+
     it('returns config', () => {
         expect(selector.getConfig()).toEqual(internalSelectors.config.getStoreConfig());
     });
