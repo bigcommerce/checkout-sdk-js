@@ -38,6 +38,17 @@ export default interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
+
+    poNumber?: string;
+
+    additionalText?: string;
+
+    orderExtraFields?: OrderExtraField[];
+}
+
+export interface OrderExtraField {
+    fieldId: string;
+    fieldValue?: string | number | null;
 }
 
 export type OrderPaymentInstrument =

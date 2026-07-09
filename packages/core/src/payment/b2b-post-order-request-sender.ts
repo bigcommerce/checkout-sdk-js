@@ -18,7 +18,7 @@ export interface CloseInvoiceResponseBody {
 
 export interface B2BExtraField {
     fieldName: string;
-    fieldValue: string | number | boolean | string[];
+    fieldValue: string | number;
 }
 
 export interface AddOrderExtraFieldsPayload {

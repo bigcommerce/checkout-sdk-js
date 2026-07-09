@@ -7,7 +7,11 @@ export {
     OrderShippingConsignment,
     OrderShippingConsignmentDiscount,
 } from './order';
-export { default as OrderRequestBody, OrderPaymentRequestBody } from './order-request-body';
+export {
+    default as OrderRequestBody,
+    OrderExtraField,
+    OrderPaymentRequestBody,
+} from './order-request-body';
 export {
     LoadOrderAction,
     FinalizeOrderAction,
