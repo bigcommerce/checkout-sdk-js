@@ -31,10 +31,8 @@ export default class CouponActionCreator {
 
                 observer.next(createAction(CouponActionType.ApplyCouponRequested));
 
-                const capabilities = state.config.getStoreConfig()?.checkoutSettings.capabilities;
-
                 this._couponRequestSender
-                    .applyCoupon(checkout.id, code, withCapabilityIncludes(capabilities, options))
+                    .applyCoupon(checkout.id, code, withCapabilityIncludes(store, options))
                     .then(({ body }) => {
                         observer.next(createAction(CouponActionType.ApplyCouponSucceeded, body));
                         observer.complete();
@@ -62,10 +60,8 @@ export default class CouponActionCreator {
 
                 observer.next(createAction(CouponActionType.RemoveCouponRequested));
 
-                const capabilities = state.config.getStoreConfig()?.checkoutSettings.capabilities;
-
                 this._couponRequestSender
-                    .removeCoupon(checkout.id, code, withCapabilityIncludes(capabilities, options))
+                    .removeCoupon(checkout.id, code, withCapabilityIncludes(store, options))
                     .then(({ body }) => {
                         observer.next(createAction(CouponActionType.RemoveCouponSucceeded, body));
                         observer.complete();

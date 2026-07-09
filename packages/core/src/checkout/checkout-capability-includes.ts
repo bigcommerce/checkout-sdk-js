@@ -4,6 +4,7 @@ import { RequestOptions } from '../common/http-request';
 import { Capabilities } from '../config/capabilities';
 
 import CheckoutParams, { CheckoutIncludeParam, CheckoutIncludes } from './checkout-params';
+import { ReadableCheckoutStore } from './checkout-store';
 
 const ADDRESS_EXTRA_FIELDS_INCLUDES = [
     CheckoutIncludes.BillingAddressExtraFields,
@@ -23,9 +24,10 @@ export function getCapabilityIncludes(capabilities?: Capabilities): CheckoutIncl
 }
 
 export function withCapabilityIncludes(
-    capabilities: Capabilities | undefined,
+    store: ReadableCheckoutStore,
     options?: RequestOptions<CheckoutParams>,
 ): RequestOptions<CheckoutParams> | undefined {
+    const capabilities = store.getState().config.getStoreConfig()?.checkoutSettings.capabilities;
     const capabilityIncludes = getCapabilityIncludes(capabilities);
 
     if (!capabilityIncludes.length) {

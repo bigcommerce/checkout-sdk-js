@@ -47,11 +47,8 @@ export default class CheckoutActionCreator {
                     }),
                 ),
                 defer(() => {
-                    const capabilities = store.getState().config.getStoreConfig()
-                        ?.checkoutSettings.capabilities;
-
                     return this._checkoutRequestSender
-                        .loadCheckout(id, withCapabilityIncludes(capabilities, options))
+                        .loadCheckout(id, withCapabilityIncludes(store, options))
                         .then(({ body }) => {
                             return createAction(
                                 CheckoutActionType.LoadCheckoutSucceeded,
@@ -91,12 +88,9 @@ export default class CheckoutActionCreator {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                     }
 
-                    const capabilities =
-                        state.config.getStoreConfig()?.checkoutSettings.capabilities;
-
                     const { body } = await this._checkoutRequestSender.loadCheckout(
                         context.checkoutId,
-                        withCapabilityIncludes(capabilities, options),
+                        withCapabilityIncludes(store, options),
                     );
 
                     return createAction(

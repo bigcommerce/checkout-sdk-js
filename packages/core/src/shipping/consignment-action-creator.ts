@@ -154,7 +154,7 @@ export default class ConsignmentActionCreator {
                     .updateConsignment(
                         checkout.id,
                         consignmentUpdateBody,
-                        this._withCapabilityIncludes(store, options),
+                        withCapabilityIncludes(store, options),
                     )
                     .then(({ body }) => {
                         observer.next(
@@ -195,7 +195,7 @@ export default class ConsignmentActionCreator {
                 this._checkoutRequestSender
                     .loadCheckout(
                         checkout.id,
-                        this._withCapabilityIncludes(store, {
+                        withCapabilityIncludes(store, {
                             ...options,
                             params: {
                                 include: [CheckoutIncludes.AvailableShippingOptions],
@@ -253,7 +253,7 @@ export default class ConsignmentActionCreator {
                     .createConsignments(
                         checkout.id,
                         consignments,
-                        this._withCapabilityIncludes(store, options),
+                        withCapabilityIncludes(store, options),
                     )
                     .then(({ body }) => {
                         observer.next(
@@ -298,7 +298,7 @@ export default class ConsignmentActionCreator {
                     .updateConsignment(
                         checkout.id,
                         consignment,
-                        this._withCapabilityIncludes(store, options),
+                        withCapabilityIncludes(store, options),
                     )
                     .then(({ body }) => {
                         observer.next(
@@ -347,7 +347,7 @@ export default class ConsignmentActionCreator {
                     .deleteConsignment(
                         checkout.id,
                         consignmentId,
-                        this._withCapabilityIncludes(store, options),
+                        withCapabilityIncludes(store, options),
                     )
                     .then(({ body }) => {
                         observer.next(
@@ -409,7 +409,7 @@ export default class ConsignmentActionCreator {
                     .updateConsignment(
                         checkout.id,
                         consignment,
-                        this._withCapabilityIncludes(store, options),
+                        withCapabilityIncludes(store, options),
                     )
                     .then(({ body }) => {
                         observer.next(
@@ -450,16 +450,6 @@ export default class ConsignmentActionCreator {
 
             return this.createConsignments([consignment], options)(store);
         };
-    }
-
-    private _withCapabilityIncludes(
-        store: ReadableCheckoutStore,
-        options?: RequestOptions<CheckoutParams>,
-    ): RequestOptions<CheckoutParams> | undefined {
-        const capabilities = store.getState().config.getStoreConfig()
-            ?.checkoutSettings.capabilities;
-
-        return withCapabilityIncludes(capabilities, options);
     }
 
     private _getUpdateAddressRequestBody(

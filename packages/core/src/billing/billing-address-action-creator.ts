@@ -66,14 +66,11 @@ export default class BillingAddressActionCreator {
                 concat(
                     of(createAction(BillingAddressActionType.ContinueAsGuestRequested)),
                     defer(async () => {
-                        const capabilities =
-                            state.config.getStoreConfig()?.checkoutSettings.capabilities;
-
                         const { body } = await this._createOrUpdateBillingAddress(
                             checkout.id,
                             billingAddressRequestBody,
                             hasBillingAddress,
-                            withCapabilityIncludes(capabilities, options),
+                            withCapabilityIncludes(store, options),
                         );
 
                         return createAction(
@@ -127,13 +124,11 @@ export default class BillingAddressActionCreator {
                     billingAddressRequestBody.id = billingAddress.id;
                 }
 
-                const capabilities = state.config.getStoreConfig()?.checkoutSettings.capabilities;
-
                 this._createOrUpdateBillingAddress(
                     checkout.id,
                     billingAddressRequestBody,
                     hasBillingAddress,
-                    withCapabilityIncludes(capabilities, options),
+                    withCapabilityIncludes(store, options),
                 )
                     .then(({ body }) => {
                         observer.next(
