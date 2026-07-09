@@ -1,15 +1,10 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
-import { union } from 'lodash';
-import { concat, defer, from, of } from 'rxjs';
+import { concat, defer, from, Observable, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import {
-    CheckoutActionCreator,
-    CUSTOMER_ADDRESSES_B2B_INCLUDE,
-    InternalCheckoutSelectors,
-} from '../checkout';
+import { CheckoutActionCreator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import {
@@ -26,7 +21,7 @@ import {
     SignOutCustomerAction,
 } from './customer-actions';
 import CustomerCredentials from './customer-credentials';
-import CustomerRequestSender, { CustomerAddressParams } from './customer-request-sender';
+import CustomerRequestSender from './customer-request-sender';
 
 export default class CustomerActionCreator {
     constructor(
@@ -80,37 +75,23 @@ export default class CustomerActionCreator {
 
     createAddress(
         customerAddress: CustomerAddressRequestBody,
-        options?: RequestOptions<CustomerAddressParams>,
-    ): ThunkAction<CreateCustomerAddressAction, InternalCheckoutSelectors> {
-        return (store) =>
-            concat(
-                of(createAction(CustomerActionType.CreateCustomerAddressRequested)),
-                defer(async () => {
-                    const capabilities = store.getState().config.getStoreConfig()
-                        ?.checkoutSettings.capabilities;
+        options?: RequestOptions,
+    ): Observable<CreateCustomerAddressAction> {
+        return concat(
+            of(createAction(CustomerActionType.CreateCustomerAddressRequested)),
+            defer(async () => {
+                const { body } = await this._customerRequestSender.createAddress(
+                    customerAddress,
+                    options,
+                );
 
-                    const { body } = await this._customerRequestSender.createAddress(
-                        customerAddress,
-                        capabilities?.userJourney.hasCompanyAddressBook
-                            ? {
-                                  ...options,
-                                  params: {
-                                      ...options?.params,
-                                      include: union(options?.params?.include, [
-                                          CUSTOMER_ADDRESSES_B2B_INCLUDE,
-                                      ]),
-                                  },
-                              }
-                            : options,
-                    );
-
-                    return createAction(CustomerActionType.CreateCustomerAddressSucceeded, body);
-                }),
-            ).pipe(
-                catchError((error) =>
-                    throwErrorAction(CustomerActionType.CreateCustomerAddressFailed, error),
-                ),
-            );
+                return createAction(CustomerActionType.CreateCustomerAddressSucceeded, body);
+            }),
+        ).pipe(
+            catchError((error) =>
+                throwErrorAction(CustomerActionType.CreateCustomerAddressFailed, error),
+            ),
+        );
     }
 
     signInCustomer(

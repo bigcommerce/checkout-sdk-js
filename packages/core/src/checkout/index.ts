@@ -2,11 +2,7 @@ export * from './checkout-actions';
 export * from './checkout-hydrate-actions';
 
 export { default as Checkout, CheckoutPayment } from './checkout';
-export {
-    CUSTOMER_ADDRESSES_B2B_INCLUDE,
-    getCapabilityIncludes,
-    withCapabilityIncludes,
-} from './checkout-capability-includes';
+export { getCapabilityIncludes, withCapabilityIncludes } from './checkout-capability-includes';
 export { default as CHECKOUT_DEFAULT_INCLUDES } from './checkout-default-includes';
 export { default as CheckoutActionCreator } from './checkout-action-creator';
 export {

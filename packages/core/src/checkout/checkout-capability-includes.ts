@@ -5,8 +5,6 @@ import { Capabilities } from '../config/capabilities';
 
 import CheckoutParams, { CheckoutIncludeParam, CheckoutIncludes } from './checkout-params';
 
-export const CUSTOMER_ADDRESSES_B2B_INCLUDE = 'addresses.b2b';
-
 const ADDRESS_EXTRA_FIELDS_INCLUDES = [
     CheckoutIncludes.BillingAddressExtraFields,
     CheckoutIncludes.ConsignmentAddressExtraFields,

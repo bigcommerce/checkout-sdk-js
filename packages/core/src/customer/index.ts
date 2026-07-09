@@ -18,7 +18,7 @@ export {
 } from './customer-account';
 export { default as CustomerActionCreator } from './customer-action-creator';
 export { default as CustomerCredentials } from './customer-credentials';
-export { default as CustomerRequestSender, CustomerAddressParams } from './customer-request-sender';
+export { default as CustomerRequestSender } from './customer-request-sender';
 export {
     default as CustomerSelector,
     CustomerSelectorFactory,

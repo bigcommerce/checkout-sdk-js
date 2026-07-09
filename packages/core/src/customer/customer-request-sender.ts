@@ -1,15 +1,11 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { joinIncludes, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import { RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import Customer from './customer';
 import { CustomerAccountInternalRequestBody, CustomerAddressRequestBody } from './customer-account';
 import CustomerCredentials from './customer-credentials';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
-
-export interface CustomerAddressParams {
-    include?: string[];
-}
 
 export default class CustomerRequestSender {
     constructor(private _requestSender: RequestSender) {}
@@ -29,14 +25,13 @@ export default class CustomerRequestSender {
 
     createAddress(
         customerAddress: CustomerAddressRequestBody,
-        { timeout, params: { include } = {} }: RequestOptions<CustomerAddressParams> = {},
+        { timeout }: RequestOptions = {},
     ): Promise<Response<Customer>> {
         const url = `/api/storefront/customer-address`;
 
         return this._requestSender.post<Customer>(url, {
             timeout,
             headers: SDK_VERSION_HEADERS,
-            ...(include?.length ? { params: { include: joinIncludes(include) } } : {}),
             body: customerAddress,
         });
     }

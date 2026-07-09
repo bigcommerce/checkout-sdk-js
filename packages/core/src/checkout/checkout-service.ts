@@ -14,7 +14,6 @@ import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import {
     CustomerAccountRequestBody,
     CustomerActionCreator,
-    CustomerAddressParams,
     CustomerAddressRequestBody,
     CustomerCredentials,
     CustomerInitializeOptions,
@@ -828,7 +827,7 @@ export default class CheckoutService {
      */
     createCustomerAddress(
         customerAddress: CustomerAddressRequestBody,
-        options?: RequestOptions<CustomerAddressParams>,
+        options?: RequestOptions,
     ): Promise<CheckoutSelectors> {
         const action = this._customerActionCreator.createAddress(customerAddress, options);
 
