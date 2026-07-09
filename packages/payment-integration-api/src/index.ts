@@ -115,7 +115,7 @@ export {
     OrderConsignment,
     OrderShippingConsignment,
     OrderShippingConsignmentDiscount,
-    OrderExtraField,
+    OrderExtraFieldValue,
     OrderPaymentRequestBody,
     OrderRequestBody,
     FinalizeOrderAction,

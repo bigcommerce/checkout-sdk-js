@@ -9,7 +9,7 @@ export {
 } from './order';
 export {
     default as OrderRequestBody,
-    OrderExtraField,
+    OrderExtraFieldValue,
     OrderPaymentRequestBody,
 } from './order-request-body';
 export {

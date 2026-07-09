@@ -40,10 +40,10 @@ export default interface OrderRequestBody {
 
     additionalText?: string;
 
-    orderExtraFields?: OrderExtraField[];
+    orderExtraFields?: OrderExtraFieldValue[];
 }
 
-export interface OrderExtraField {
+export interface OrderExtraFieldValue {
     fieldId: string;
     fieldValue?: string | number | null;
 }

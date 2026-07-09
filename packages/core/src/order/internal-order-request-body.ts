@@ -1,6 +1,6 @@
 import { PaymentInstrument } from '../payment';
 
-import { OrderExtraField } from './order-request-body';
+import { OrderExtraFieldValue } from './order-request-body';
 
 export default interface InternalOrderRequestBody {
     cartId: string;
@@ -11,7 +11,7 @@ export default interface InternalOrderRequestBody {
     shouldSaveInstrument?: boolean;
     poNumber?: string;
     additionalText?: string;
-    orderExtraFields?: OrderExtraField[];
+    orderExtraFields?: OrderExtraFieldValue[];
 }
 
 export interface InternalOrderPaymentRequestBody {

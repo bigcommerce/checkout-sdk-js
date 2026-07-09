@@ -14,7 +14,7 @@ export { default as OrderActionCreator } from './order-action-creator';
 export { default as orderReducer } from './order-reducer';
 export {
     default as OrderRequestBody,
-    OrderExtraField,
+    OrderExtraFieldValue,
     OrderPaymentRequestBody,
     OrderPaymentInstrument,
 } from './order-request-body';
