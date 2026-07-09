@@ -7,14 +7,14 @@ import {
     isBraintreeError,
     PaypalAuthorizeData,
     PaypalStyleOptions,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
+} from './index';
 import {
     PaymentMethodClientUnavailableError,
     StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import getValidButtonStyle from '../get-valid-button-style';
+import getValidButtonStyle from '../../braintree-integration/src/get-valid-button-style';
 
 export default class BraintreePaypalWalletService {
     private braintreePaypalCheckout?: BraintreePaypalCheckout;
@@ -34,7 +34,7 @@ export default class BraintreePaypalWalletService {
     }
 
     async loadPaypalCheckout(
-        options: Partial<BraintreePaypalSdkCreatorConfig>,
+        options: BraintreePaypalSdkCreatorConfig,
         containerId: string,
         onError?: (error: BraintreeError | StandardError) => void,
     ): Promise<BraintreePaypalCheckout> {

@@ -13,7 +13,7 @@ import {
     WalletPaymentButtonStrategyFactory,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import BraintreePaypalWalletService from './braintree-paypal-wallet-service';
+import BraintreePaypalWalletService from '../../../braintree-utils/src/braintree-paypal-wallet-service';
 import BraintreePaypalWalletStrategy from './braintree-paypal-wallet-strategy';
 
 const createBraintreePaypalWalletStrategy: WalletPaymentButtonStrategyFactory<

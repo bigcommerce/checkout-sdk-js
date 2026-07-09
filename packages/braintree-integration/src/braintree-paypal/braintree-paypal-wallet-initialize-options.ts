@@ -9,10 +9,7 @@ export default interface BraintreePaypalWalletInitializeOptions {
     };
     initializationData: string;
     clientToken: string;
-    style?: Pick<
-        PaypalStyleOptions,
-        'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'
-    >;
+    style?: PaypalStyleOptions;
     onAuthorizeError?(error: BraintreeError | StandardError): void;
     onPaymentError?(error: BraintreeError | StandardError): void;
     onError?(error: BraintreeError | StandardError): void;

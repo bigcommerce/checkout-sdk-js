@@ -31,7 +31,7 @@ import { getPaypalSDKMock } from '../mocks/paypal.mock';
 import BraintreePaypalWalletInitializeOptions, {
     WithBraintreePaypalWalletInitializeOptions,
 } from './braintree-paypal-wallet-initialize-options';
-import BraintreePaypalWalletService from './braintree-paypal-wallet-service';
+import BraintreePaypalWalletService from '../../../braintree-utils/src/braintree-paypal-wallet-service';
 import BraintreePaypalWalletStrategy from './braintree-paypal-wallet-strategy';
 
 describe('BraintreePaypalWalletStrategy', () => {

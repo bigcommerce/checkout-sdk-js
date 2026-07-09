@@ -5,6 +5,7 @@ import {
     BraintreePaypalSdkCreatorConfig,
     isBraintreeError,
     PaypalAuthorizeData,
+    BraintreePaypalWalletService,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CheckoutButtonInitializeOptions,
@@ -19,7 +20,6 @@ import {
 import BraintreePaypalWalletInitializeOptions, {
     WithBraintreePaypalWalletInitializeOptions,
 } from './braintree-paypal-wallet-initialize-options';
-import BraintreePaypalWalletService from './braintree-paypal-wallet-service';
 
 export default class BraintreePaypalWalletStrategy implements CheckoutButtonStrategy {
     constructor(
@@ -60,7 +60,7 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const paypalCheckoutOptions: Partial<BraintreePaypalSdkCreatorConfig> = {
+        const paypalCheckoutOptions: BraintreePaypalSdkCreatorConfig = {
             currency: braintreepaypal.currency.code,
             intent: initializationData.intent,
             isCreditEnabled: initializationData.isCreditEnabled,
@@ -143,10 +143,8 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
                 intent,
             });
         } catch (error: unknown) {
-            if (onPaymentError) {
-                if (isBraintreeError(error) || error instanceof StandardError) {
-                    onPaymentError(error);
-                }
+            if (isBraintreeError(error) || error instanceof StandardError) {
+                onPaymentError?.(error);
             }
 
             throw error;
@@ -166,10 +164,8 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
                 cartId,
             );
         } catch (error) {
-            if (onError) {
-                if (isBraintreeError(error) || error instanceof StandardError) {
-                    onError(error);
-                }
+            if (isBraintreeError(error) || error instanceof StandardError) {
+                onError?.(error);
             }
 
             throw error;

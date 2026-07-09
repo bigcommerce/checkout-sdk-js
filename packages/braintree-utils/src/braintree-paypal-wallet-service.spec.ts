@@ -11,7 +11,7 @@ import {
     getPaypalCheckoutMock,
     getTokenizePayload,
     PaypalAuthorizeData,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
+} from './index';
 import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
