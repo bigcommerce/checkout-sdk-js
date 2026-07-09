@@ -1,4 +1,5 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { union } from 'lodash';
 import { concat, defer, from, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
@@ -25,7 +26,7 @@ import {
     SignOutCustomerAction,
 } from './customer-actions';
 import CustomerCredentials from './customer-credentials';
-import CustomerRequestSender from './customer-request-sender';
+import CustomerRequestSender, { CustomerAddressParams } from './customer-request-sender';
 
 export default class CustomerActionCreator {
     constructor(
@@ -79,7 +80,7 @@ export default class CustomerActionCreator {
 
     createAddress(
         customerAddress: CustomerAddressRequestBody,
-        options?: RequestOptions,
+        options?: RequestOptions<CustomerAddressParams>,
     ): ThunkAction<CreateCustomerAddressAction, InternalCheckoutSelectors> {
         return (store) =>
             concat(
@@ -91,7 +92,15 @@ export default class CustomerActionCreator {
                     const { body } = await this._customerRequestSender.createAddress(
                         customerAddress,
                         capabilities?.userJourney.hasCompanyAddressBook
-                            ? { ...options, params: { include: [CUSTOMER_ADDRESSES_B2B_INCLUDE] } }
+                            ? {
+                                  ...options,
+                                  params: {
+                                      ...options?.params,
+                                      include: union(options?.params?.include, [
+                                          CUSTOMER_ADDRESSES_B2B_INCLUDE,
+                                      ]),
+                                  },
+                              }
                             : options,
                     );
 
