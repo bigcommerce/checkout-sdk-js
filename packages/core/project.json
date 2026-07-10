@@ -15,6 +15,9 @@
                     "target": "generate"
                 },
                 {
+                    "target": "codegen"
+                },
+                {
                     "target": "build",
                     "dependencies": true
                 }
@@ -34,6 +37,9 @@
                     "target": "generate"
                 },
                 {
+                    "target": "codegen"
+                },
+                {
                     "target": "build",
                     "dependencies": true
                 }
@@ -47,6 +53,9 @@
             "dependsOn": [
                 {
                     "target": "generate"
+                },
+                {
+                    "target": "codegen"
                 },
                 {
                     "target": "build",
@@ -68,6 +77,9 @@
                     "target": "generate"
                 },
                 {
+                    "target": "codegen"
+                },
+                {
                     "target": "build",
                     "dependencies": true
                 }
@@ -85,7 +97,12 @@
                     "rm -rf ../../temp",
                     "nx run hosted-form-v2:build-dts"
                 ]
-            }
+            },
+            "dependsOn": [
+                {
+                    "target": "codegen"
+                }
+            ]
         },
         "docs": {
             "executor": "nx:run-commands",
@@ -113,6 +130,9 @@
             "dependsOn": [
                 {
                     "target": "generate"
+                },
+                {
+                    "target": "codegen"
                 }
             ]
         },
@@ -127,6 +147,9 @@
             "dependsOn": [
                 {
                     "target": "generate"
+                },
+                {
+                    "target": "codegen"
                 }
             ]
         },
@@ -141,6 +164,19 @@
                 ],
                 "parallel": false
             }
+        },
+        "codegen": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "graphql-codegen --config packages/core/codegen.ts"
+            },
+            "cache": true,
+            "inputs": [
+                "{projectRoot}/codegen.ts",
+                "{projectRoot}/schema/storefront.graphql",
+                "{projectRoot}/src/**/*.graphql"
+            ],
+            "outputs": ["{projectRoot}/src/generated_codegen"]
         }
     }
 }
