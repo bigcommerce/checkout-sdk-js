@@ -1,4 +1,10 @@
 import {
+    PaymentMethodClientUnavailableError,
+    StandardError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+
+import {
     BraintreeError,
     BraintreeIntegrationService,
     BraintreePaypalCheckout,
@@ -6,15 +12,7 @@ import {
     BraintreeTokenizePayload,
     isBraintreeError,
     PaypalAuthorizeData,
-    PaypalStyleOptions,
-} from './index';
-import {
-    PaymentMethodClientUnavailableError,
-    StandardError,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
-
-import getValidButtonStyle from '../../braintree-integration/src/get-valid-button-style';
+} from './';
 
 export default class BraintreePaypalWalletService {
     private braintreePaypalCheckout?: BraintreePaypalCheckout;
@@ -38,23 +36,25 @@ export default class BraintreePaypalWalletService {
         containerId: string,
         onError?: (error: BraintreeError | StandardError) => void,
     ): Promise<BraintreePaypalCheckout> {
-        this.braintreePaypalCheckout = await new Promise((resolve, reject) => {
-            void this.braintreeIntegrationService.getPaypalCheckout(
-                options,
-                resolve,
-                (error: BraintreeError) => {
-                    this.removeElement(containerId);
+        this.braintreePaypalCheckout = await new Promise<BraintreePaypalCheckout>(
+            (resolve, reject) => {
+                void this.braintreeIntegrationService.getPaypalCheckout(
+                    options,
+                    resolve,
+                    (error: BraintreeError) => {
+                        this.removeElement(containerId);
 
-                    if (onError && isBraintreeError(error)) {
-                        onError(error);
-                    }
+                        if (onError && isBraintreeError(error)) {
+                            onError(error);
+                        }
 
-                    reject(error);
-                },
-            );
-        });
+                        reject(error);
+                    },
+                );
+            },
+        );
 
-        return this.braintreePaypalCheckout;
+        return this.braintreePaypalCheckout!;
     }
 
     getBraintreePaypalCheckoutOrThrow(): BraintreePaypalCheckout {
@@ -118,22 +118,15 @@ export default class BraintreePaypalWalletService {
             inputData,
         );
 
-        if (!response.body.redirectUrls?.externalCheckoutUrl) {
+        const externalCheckoutUrl = response.body.redirectUrls?.externalCheckoutUrl;
+
+        if (!externalCheckoutUrl) {
             throw new Error('Failed to redirect to checkout page');
         }
 
-        window.location.assign(response.body.redirectUrls.externalCheckoutUrl);
+        window.location.assign(externalCheckoutUrl);
 
         return tokenizePayload;
-    }
-
-    /**
-     *
-     * Button style methods
-     *
-     */
-    getValidButtonStyle(style?: PaypalStyleOptions): PaypalStyleOptions {
-        return getValidButtonStyle(style);
     }
 
     /**

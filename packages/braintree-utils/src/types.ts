@@ -776,3 +776,7 @@ export interface BraintreeRequestData {
     endpoint: string;
     method: string;
 }
+
+export interface SDKVersionManager {
+    getSDKVersion(): string;
+}

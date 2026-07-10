@@ -9,8 +9,9 @@ import {
     BRAINTREE_SDK_HOSTED_FIELDS_FIX_VERSION,
     BRAINTREE_SDK_STABLE_VERSION,
 } from './braintree-sdk-verison';
+import { SDKVersionManager } from './types';
 
-export default class BraintreeSDKVersionManager {
+export default class BraintreeSDKVersionManager implements SDKVersionManager {
     private braintreeWindow: BraintreeHostWindow = window;
 
     constructor(private paymentIntegrationService: PaymentIntegrationService) {}

@@ -1,11 +1,11 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    BRAINTREE_SDK_DEFAULT_VERSION,
+    BraintreeHeadlessSDKVersionManager,
     BraintreeHostWindow,
     BraintreeIntegrationService,
+    BraintreePaypalWalletService,
     BraintreeScriptLoader,
-    BraintreeSDKVersionManager,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { toResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -13,23 +13,18 @@ import {
     WalletPaymentButtonStrategyFactory,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import BraintreePaypalWalletService from '../../../braintree-utils/src/braintree-paypal-wallet-service';
 import BraintreePaypalWalletStrategy from './braintree-paypal-wallet-strategy';
 
 const createBraintreePaypalWalletStrategy: WalletPaymentButtonStrategyFactory<
     BraintreePaypalWalletStrategy
 > = (walletButtonIntegrationService: WalletButtonIntegrationService) => {
     const braintreeHostWindow: BraintreeHostWindow = window;
-    // TODO: Remove the hardcoded SDK version and add store state to walletButtonIntegrationService so we can use BraintreeSDKVersionManager
-    const braintreeSDKVersionManager = {
-        getSDKVersion: () => BRAINTREE_SDK_DEFAULT_VERSION,
-    } as BraintreeSDKVersionManager;
 
     const braintreeIntegrationService = new BraintreeIntegrationService(
         new BraintreeScriptLoader(
             getScriptLoader(),
             braintreeHostWindow,
-            braintreeSDKVersionManager,
+            new BraintreeHeadlessSDKVersionManager(),
         ),
         braintreeHostWindow,
     );

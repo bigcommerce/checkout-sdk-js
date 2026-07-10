@@ -1,18 +1,6 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    BraintreeDataCollector,
-    BraintreeError,
-    BraintreeIntegrationService,
-    BraintreePaypalCheckout,
-    BraintreeScriptLoader,
-    BraintreeSDKVersionManager,
-    getDataCollectorMock,
-    getPaypalCheckoutMock,
-    getTokenizePayload,
-    PaypalAuthorizeData,
-} from './index';
-import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -23,6 +11,19 @@ import {
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 import BraintreePaypalWalletService from './braintree-paypal-wallet-service';
+
+import {
+    BraintreeDataCollector,
+    BraintreeError,
+    BraintreeIntegrationService,
+    BraintreePaypalCheckout,
+    BraintreeScriptLoader,
+    BraintreeSDKVersionManager,
+    getDataCollectorMock,
+    getPaypalCheckoutMock,
+    getTokenizePayload,
+    PaypalAuthorizeData,
+} from './';
 
 describe('BraintreePaypalWalletService', () => {
     let braintreeIntegrationService: BraintreeIntegrationService;
@@ -197,12 +198,12 @@ describe('BraintreePaypalWalletService', () => {
 
             const [inputData] = (
                 walletButtonIntegrationService.getRedirectToCheckoutUrl as jest.Mock
-            ).mock.calls[0];
+            ).mock.calls[0] as [{ queryParams: Array<{ key: string; value: string }> }];
             const billingAddressParam = inputData.queryParams.find(
-                (param: { key: string; value: string }) => param.key === 'billing_address',
+                (param) => param.key === 'billing_address',
             );
 
-            expect(JSON.parse(decodeURIComponent(billingAddressParam.value))).toEqual(
+            expect(JSON.parse(decodeURIComponent(billingAddressParam?.value ?? ''))).toEqual(
                 expect.objectContaining({ email: getTokenizePayload().details.email }),
             );
         });
@@ -224,14 +225,6 @@ describe('BraintreePaypalWalletService', () => {
             await expect(
                 service.proxyTokenizationPayment(authorizeData, methodId, cartId),
             ).rejects.toThrow('Failed to redirect to checkout page');
-        });
-    });
-
-    describe('#getValidButtonStyle()', () => {
-        it('returns a valid button style', () => {
-            expect(service.getValidButtonStyle({ height: 45 })).toEqual(
-                expect.objectContaining({ height: 45 }),
-            );
         });
     });
 

@@ -3,9 +3,9 @@ import {
     BraintreeHostWindow,
     BraintreeInitializationData,
     BraintreePaypalSdkCreatorConfig,
+    BraintreePaypalWalletService,
     isBraintreeError,
     PaypalAuthorizeData,
-    BraintreePaypalWalletService,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CheckoutButtonInitializeOptions,
@@ -16,6 +16,8 @@ import {
     PaymentMethod,
     StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import getValidButtonStyle from '../get-valid-button-style';
 
 import BraintreePaypalWalletInitializeOptions, {
     WithBraintreePaypalWalletInitializeOptions,
@@ -50,9 +52,13 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
             );
         }
 
-        const parsedPaymentMethod: PaymentMethod<BraintreeInitializationData> = JSON.parse(
-            atob(braintreepaypal.initializationData),
-        );
+        let parsedPaymentMethod: PaymentMethod<BraintreeInitializationData>;
+
+        try {
+            parsedPaymentMethod = JSON.parse(atob(braintreepaypal.initializationData));
+        } catch (error) {
+            throw new InvalidArgumentError("Failed to parse payment method 'initializationData'.");
+        }
 
         const { initializationData, config } = parsedPaymentMethod;
 
@@ -102,7 +108,7 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
             const paypalButtonRender = paypal.Buttons({
                 env: testMode ? 'sandbox' : 'production',
                 fundingSource: paypal.FUNDING.PAYPAL,
-                style: this.braintreePaypalWalletService.getValidButtonStyle(style),
+                style: getValidButtonStyle(style),
                 createOrder: () => this.setupPayment(braintreepaypal, intent),
                 onApprove: (authorizeData: PaypalAuthorizeData) =>
                     this.tokenizePayment(
