@@ -19,6 +19,10 @@ export enum MissingDataErrorType {
     MissingPaymentStatus,
     MissingPaymentToken,
     MissingShippingAddress,
+    // New members must be appended at the end — this is a numeric enum, so
+    // inserting one above shifts the value of every member below it.
+    MissingB2BToken,
+    MissingB2BStorefrontToken,
 }
 
 /**
@@ -76,6 +80,12 @@ function getErrorMessage(type: MissingDataErrorType): string {
 
         case MissingDataErrorType.MissingShippingAddress:
             return 'Unable to proceed because shipping address data is unavailable.';
+
+        case MissingDataErrorType.MissingB2BToken:
+            return 'Unable to proceed because the B2B token is unavailable. `getB2BToken` must be called first.';
+
+        case MissingDataErrorType.MissingB2BStorefrontToken:
+            return 'Unable to proceed because the B2B Edition API did not return a storefront token.';
 
         default:
             return 'Unable to proceed because the required data is unavailable.';

@@ -5,9 +5,14 @@ import { B2BTokenActionCreator, B2BTokenRequestSender } from '../b2b-token';
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { createDataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorLogger } from '../common/error';
-import { ExperimentAwareRequestSender } from '../common/http-request';
+import { ExperimentAwareRequestSender, GraphQLRequestSender } from '../common/http-request';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
+import {
+    B2BStorefrontTokenRequestSender,
+    CompanyAddressRequestSender,
+    CompanyAddressService,
+} from '../company';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
 import {
     CouponActionCreator,
@@ -236,6 +241,11 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         workerExtensionMessenger,
         new B2BPaymentsRefreshActionCreator(new B2BPaymentsRefreshRequestSender(requestSender)),
         new B2BPostOrderActionCreator(new B2BPostOrderRequestSender(requestSender)),
+        new CompanyAddressService(
+            store,
+            new B2BStorefrontTokenRequestSender(requestSender),
+            new CompanyAddressRequestSender(new GraphQLRequestSender(requestSender)),
+        ),
     );
 }
 

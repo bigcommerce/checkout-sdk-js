@@ -1,2 +1,3 @@
 /packages/core/src/generated/**/*.ts
+/packages/core/src/__generated__/**/*.ts
 /dist/*
