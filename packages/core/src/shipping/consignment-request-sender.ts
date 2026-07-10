@@ -5,7 +5,6 @@ import { EmptyCartError } from '../cart/errors';
 import { Checkout, CheckoutParams } from '../checkout';
 import {
     ContentType,
-    joinIncludes,
     joinOrMergeIncludes,
     RequestOptions,
     SDK_VERSION_HEADERS,
@@ -108,17 +107,22 @@ export default class ConsignmentRequestSender {
     deleteConsignment(
         checkoutId: string,
         consignmentId: string,
-        { timeout }: RequestOptions = {},
+        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {},
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/consignments/${consignmentId}`;
         const headers = {
             Accept: ContentType.JsonV1,
             ...SDK_VERSION_HEADERS,
         };
-        const include = joinIncludes(DEFAULT_INCLUDES);
 
         return this._requestSender
-            .delete<Checkout>(url, { params: { include }, headers, timeout })
+            .delete<Checkout>(url, {
+                params: {
+                    include: joinOrMergeIncludes(DEFAULT_INCLUDES, include),
+                },
+                headers,
+                timeout,
+            })
             .catch((err) => {
                 if (err.body.type === 'empty_cart') {
                     throw new EmptyCartError();

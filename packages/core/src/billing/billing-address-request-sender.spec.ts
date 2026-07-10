@@ -16,10 +16,14 @@ import BillingAddressRequestSender from './billing-address-request-sender';
 import { getBillingAddress } from './billing-addresses.mock';
 
 const CUSTOMER_ADDRESS_METADATA = {
-    isShipping: true,
-    isBilling: false,
-    isDefaultShipping: true,
-    isDefaultBilling: false,
+    b2b: {
+        isShipping: true,
+        isBilling: false,
+        isDefaultShipping: true,
+        isDefaultBilling: false,
+        label: 'Head Office',
+        extraFields: [],
+    },
 };
 
 describe('BillingAddressRequestSender', () => {
@@ -87,7 +91,7 @@ describe('BillingAddressRequestSender', () => {
             );
         });
 
-        it('strips CustomerAddress metadata flags from the request body', async () => {
+        it('strips CustomerAddress b2b metadata from the request body', async () => {
             await addressRequestSender.updateAddress('foo', {
                 ...getBillingAddress(),
                 ...CUSTOMER_ADDRESS_METADATA,
@@ -95,10 +99,7 @@ describe('BillingAddressRequestSender', () => {
 
             const { body } = (requestSender.put as jest.Mock).mock.calls[0][1];
 
-            expect(body).not.toHaveProperty('isShipping');
-            expect(body).not.toHaveProperty('isBilling');
-            expect(body).not.toHaveProperty('isDefaultShipping');
-            expect(body).not.toHaveProperty('isDefaultBilling');
+            expect(body).not.toHaveProperty('b2b');
             expect(body).toHaveProperty('address1', address.address1);
         });
 
@@ -163,7 +164,7 @@ describe('BillingAddressRequestSender', () => {
             );
         });
 
-        it('strips CustomerAddress metadata flags from the request body', async () => {
+        it('strips CustomerAddress b2b metadata from the request body', async () => {
             await addressRequestSender.createAddress('foo', {
                 ...getBillingAddress(),
                 ...CUSTOMER_ADDRESS_METADATA,
@@ -171,10 +172,7 @@ describe('BillingAddressRequestSender', () => {
 
             const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
 
-            expect(body).not.toHaveProperty('isShipping');
-            expect(body).not.toHaveProperty('isBilling');
-            expect(body).not.toHaveProperty('isDefaultShipping');
-            expect(body).not.toHaveProperty('isDefaultBilling');
+            expect(body).not.toHaveProperty('b2b');
             expect(body).toHaveProperty('address1', address.address1);
         });
 

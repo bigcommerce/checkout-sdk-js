@@ -2,6 +2,7 @@ export * from './checkout-actions';
 export * from './checkout-hydrate-actions';
 
 export { default as Checkout, CheckoutPayment } from './checkout';
+export { getCapabilityIncludes, withCapabilityIncludes } from './checkout-capability-includes';
 export { default as CHECKOUT_DEFAULT_INCLUDES } from './checkout-default-includes';
 export { default as CheckoutActionCreator } from './checkout-action-creator';
 export {

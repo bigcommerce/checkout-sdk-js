@@ -6,7 +6,7 @@ export {
 } from './customer-request-options';
 
 export { default as InternalCustomer } from './internal-customer';
-export { default as Customer, CustomerAddress } from './customer';
+export { default as Customer, CustomerAddress, CustomerAddressB2B } from './customer';
 
 export { default as createCustomerStrategyRegistry } from './create-customer-strategy-registry';
 export { default as createCustomerStrategyRegistryV2 } from './create-customer-strategy-registry-v2';

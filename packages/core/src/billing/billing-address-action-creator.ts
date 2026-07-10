@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { concat, defer, empty, merge, Observable, Observer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { Checkout, InternalCheckoutSelectors } from '../checkout';
+import { Checkout, InternalCheckoutSelectors, withCapabilityIncludes } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -70,7 +70,7 @@ export default class BillingAddressActionCreator {
                             checkout.id,
                             billingAddressRequestBody,
                             hasBillingAddress,
-                            options,
+                            withCapabilityIncludes(store, options),
                         );
 
                         return createAction(
@@ -128,7 +128,7 @@ export default class BillingAddressActionCreator {
                     checkout.id,
                     billingAddressRequestBody,
                     hasBillingAddress,
-                    options,
+                    withCapabilityIncludes(store, options),
                 )
                     .then(({ body }) => {
                         observer.next(

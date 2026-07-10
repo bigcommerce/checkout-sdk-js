@@ -10,6 +10,7 @@ import {
     CheckoutRequestSender,
     InternalCheckoutSelectors,
     ReadableCheckoutStore,
+    withCapabilityIncludes,
 } from '../checkout';
 import {
     InvalidArgumentError,
@@ -150,7 +151,11 @@ export default class ConsignmentActionCreator {
                 );
 
                 this._consignmentRequestSender
-                    .updateConsignment(checkout.id, consignmentUpdateBody, options)
+                    .updateConsignment(
+                        checkout.id,
+                        consignmentUpdateBody,
+                        withCapabilityIncludes(store, options),
+                    )
                     .then(({ body }) => {
                         observer.next(
                             createAction(
@@ -188,12 +193,15 @@ export default class ConsignmentActionCreator {
                 observer.next(createAction(ConsignmentActionType.LoadShippingOptionsRequested));
 
                 this._checkoutRequestSender
-                    .loadCheckout(checkout.id, {
-                        ...options,
-                        params: {
-                            include: [CheckoutIncludes.AvailableShippingOptions],
-                        },
-                    })
+                    .loadCheckout(
+                        checkout.id,
+                        withCapabilityIncludes(store, {
+                            ...options,
+                            params: {
+                                include: [CheckoutIncludes.AvailableShippingOptions],
+                            },
+                        }),
+                    )
                     .then(({ body }) => {
                         observer.next(
                             createAction(ConsignmentActionType.LoadShippingOptionsSucceeded, body),
@@ -242,7 +250,11 @@ export default class ConsignmentActionCreator {
                 observer.next(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
                 this._consignmentRequestSender
-                    .createConsignments(checkout.id, consignments, options)
+                    .createConsignments(
+                        checkout.id,
+                        consignments,
+                        withCapabilityIncludes(store, options),
+                    )
                     .then(({ body }) => {
                         observer.next(
                             createAction(ConsignmentActionType.CreateConsignmentsSucceeded, body),
@@ -283,7 +295,11 @@ export default class ConsignmentActionCreator {
                 );
 
                 this._consignmentRequestSender
-                    .updateConsignment(checkout.id, consignment, options)
+                    .updateConsignment(
+                        checkout.id,
+                        consignment,
+                        withCapabilityIncludes(store, options),
+                    )
                     .then(({ body }) => {
                         observer.next(
                             createAction(
@@ -328,7 +344,11 @@ export default class ConsignmentActionCreator {
                 );
 
                 this._consignmentRequestSender
-                    .deleteConsignment(checkout.id, consignmentId, options)
+                    .deleteConsignment(
+                        checkout.id,
+                        consignmentId,
+                        withCapabilityIncludes(store, options),
+                    )
                     .then(({ body }) => {
                         observer.next(
                             createAction(
@@ -386,7 +406,11 @@ export default class ConsignmentActionCreator {
                 );
 
                 this._consignmentRequestSender
-                    .updateConsignment(checkout.id, consignment, options)
+                    .updateConsignment(
+                        checkout.id,
+                        consignment,
+                        withCapabilityIncludes(store, options),
+                    )
                     .then(({ body }) => {
                         observer.next(
                             createAction(
