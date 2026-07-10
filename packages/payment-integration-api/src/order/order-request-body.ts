@@ -45,7 +45,7 @@ export default interface OrderRequestBody {
 
 export interface OrderExtraFieldValue {
     fieldId: string;
-    fieldValue?: string | number | null;
+    fieldValue?: string | number;
 }
 
 /**
