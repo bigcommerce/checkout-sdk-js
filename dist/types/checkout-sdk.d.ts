@@ -692,7 +692,7 @@ declare interface B2BContext {
 
 declare interface B2BExtraField {
     fieldName: string;
-    fieldValue: string | number | boolean | string[];
+    fieldValue: string | number;
 }
 
 declare enum B2BPaymentMethodFilterType {
@@ -2798,7 +2798,11 @@ declare type CheckoutIncludeParam = {
 declare enum CheckoutIncludes {
     AvailableShippingOptions = "consignments.availableShippingOptions",
     PhysicalItemsCategoryNames = "cart.lineItems.physicalItems.categoryNames",
-    DigitalItemsCategoryNames = "cart.lineItems.digitalItems.categoryNames"
+    DigitalItemsCategoryNames = "cart.lineItems.digitalItems.categoryNames",
+    BillingAddressExtraFields = "billingAddress.extraFields",
+    ConsignmentAddressExtraFields = "consignments.address.extraFields",
+    ConsignmentShippingAddressExtraFields = "consignments.shippingAddress.extraFields",
+    CustomerAddressesB2B = "customer.addresses.b2b"
 }
 
 declare interface CheckoutInitialState {
@@ -5318,10 +5322,20 @@ declare interface CustomerAccountRequestBody {
 declare interface CustomerAddress extends Address {
     id: number;
     type: string;
-    isShipping?: boolean;
-    isBilling?: boolean;
-    isDefaultShipping?: boolean;
-    isDefaultBilling?: boolean;
+    /**
+     * Company address metadata returned only for B2B company addresses, and
+     * only when the `addresses.b2b` include is requested from the API.
+     */
+    b2b?: CustomerAddressB2B;
+}
+
+declare interface CustomerAddressB2B {
+    isShipping: boolean;
+    isBilling: boolean;
+    isDefaultShipping: boolean;
+    isDefaultBilling: boolean;
+    label: string;
+    extraFields: AddressExtraFieldValue[];
 }
 
 declare type CustomerAddressRequestBody = AddressRequestBody;
@@ -6927,6 +6941,11 @@ declare interface OrderConsignment {
     shipping: OrderShippingConsignment[];
 }
 
+declare interface OrderExtraFieldValue {
+    fieldId: string;
+    fieldValue?: string | number;
+}
+
 declare interface OrderFee {
     id: number;
     type: string;
@@ -7002,6 +7021,9 @@ declare interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
+    poNumber?: string;
+    additionalText?: string;
+    orderExtraFields?: OrderExtraFieldValue[];
 }
 
 declare interface OrderSelector {

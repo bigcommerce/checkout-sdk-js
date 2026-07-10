@@ -16,4 +16,4 @@
 
 ### fieldValue
 
-> **fieldValue**: `string` \| `number` \| `boolean` \| `string`[]
+> **fieldValue**: `string` \| `number`

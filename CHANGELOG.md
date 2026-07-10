@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.939.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.938.0...v1.939.0) (2026-07-10)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10142 Add Capability-driven Optional Includes ([#3310](https://github.com/bigcommerce/checkout-sdk-js/issues/3310)) ([77f7bc2](https://github.com/bigcommerce/checkout-sdk-js/commit/77f7bc2c076574c35d7d689faf2dbab963134eb3))
+
 ## [1.938.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.937.0...v1.938.0) (2026-07-08)
 
 

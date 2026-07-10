@@ -231,10 +231,20 @@ declare interface Customer {
 declare interface CustomerAddress extends Address {
     id: number;
     type: string;
-    isShipping?: boolean;
-    isBilling?: boolean;
-    isDefaultShipping?: boolean;
-    isDefaultBilling?: boolean;
+    /**
+     * Company address metadata returned only for B2B company addresses, and
+     * only when the `addresses.b2b` include is requested from the API.
+     */
+    b2b?: CustomerAddressB2B;
+}
+
+declare interface CustomerAddressB2B {
+    isShipping: boolean;
+    isBilling: boolean;
+    isDefaultShipping: boolean;
+    isDefaultBilling: boolean;
+    label: string;
+    extraFields: AddressExtraFieldValue[];
 }
 
 declare interface CustomerGroup {

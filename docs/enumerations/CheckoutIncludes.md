@@ -14,6 +14,30 @@
 
 ***
 
+### BillingAddressExtraFields
+
+> **BillingAddressExtraFields**: `"billingAddress.extraFields"`
+
+***
+
+### ConsignmentAddressExtraFields
+
+> **ConsignmentAddressExtraFields**: `"consignments.address.extraFields"`
+
+***
+
+### ConsignmentShippingAddressExtraFields
+
+> **ConsignmentShippingAddressExtraFields**: `"consignments.shippingAddress.extraFields"`
+
+***
+
+### CustomerAddressesB2B
+
+> **CustomerAddressesB2B**: `"customer.addresses.b2b"`
+
+***
+
 ### DigitalItemsCategoryNames
 
 > **DigitalItemsCategoryNames**: `"cart.lineItems.digitalItems.categoryNames"`

@@ -10,6 +10,18 @@ An object that contains the information required for submitting an order.
 
 ## Properties
 
+### additionalText?
+
+> `optional` **additionalText?**: `string`
+
+***
+
+### orderExtraFields?
+
+> `optional` **orderExtraFields?**: [`OrderExtraFieldValue`](OrderExtraFieldValue.md)[]
+
+***
+
 ### payment?
 
 > `optional` **payment?**: [`OrderPaymentRequestBody`](OrderPaymentRequestBody.md)
@@ -19,6 +31,12 @@ you can omit this object if the order does not require further payment.
 For example, the customer is able to use their store credit to pay for
 the entire order. Or they have already submitted their payment details
 using PayPal.
+
+***
+
+### poNumber?
+
+> `optional` **poNumber?**: `string`
 
 ***
 
