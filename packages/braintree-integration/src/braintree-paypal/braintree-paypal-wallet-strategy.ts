@@ -62,7 +62,7 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
 
         const { initializationData, config } = parsedPaymentMethod;
 
-        if (!braintreepaypal.clientToken || !initializationData) {
+        if (!braintreepaypal.clientToken || !initializationData || !config) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 

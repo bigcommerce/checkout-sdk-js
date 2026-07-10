@@ -4,6 +4,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
+import BraintreePaypalWalletError from './braintree-paypal-wallet-error';
+
 import {
     BraintreeError,
     BraintreeIntegrationService,
@@ -121,7 +123,7 @@ export default class BraintreePaypalWalletService {
         const externalCheckoutUrl = response.body.redirectUrls?.externalCheckoutUrl;
 
         if (!externalCheckoutUrl) {
-            throw new Error('Failed to redirect to checkout page');
+            throw new BraintreePaypalWalletError();
         }
 
         window.location.assign(externalCheckoutUrl);

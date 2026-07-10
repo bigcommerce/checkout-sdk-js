@@ -10,6 +10,7 @@ import {
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
+import BraintreePaypalWalletError from './braintree-paypal-wallet-error';
 import BraintreePaypalWalletService from './braintree-paypal-wallet-service';
 
 import {
@@ -224,7 +225,7 @@ describe('BraintreePaypalWalletService', () => {
 
             await expect(
                 service.proxyTokenizationPayment(authorizeData, methodId, cartId),
-            ).rejects.toThrow('Failed to redirect to checkout page');
+            ).rejects.toThrow(BraintreePaypalWalletError);
         });
     });
 

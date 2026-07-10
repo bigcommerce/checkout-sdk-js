@@ -209,6 +209,20 @@ describe('BraintreePaypalWalletStrategy', () => {
             ).rejects.toBeInstanceOf(MissingDataError);
         });
 
+        it('throws an error if config is missing', async () => {
+            await expect(
+                strategy.initialize({
+                    ...initializationOptions,
+                    braintreepaypal: {
+                        ...braintreePaypalWalletOptions,
+                        initializationData: btoa(
+                            JSON.stringify({ initializationData: { intent: 'authorize' } }),
+                        ),
+                    },
+                }),
+            ).rejects.toBeInstanceOf(MissingDataError);
+        });
+
         it('initializes the braintree paypal wallet service with the client token', async () => {
             await strategy.initialize(initializationOptions);
 
