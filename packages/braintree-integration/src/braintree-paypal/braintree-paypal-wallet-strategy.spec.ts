@@ -244,13 +244,25 @@ describe('BraintreePaypalWalletStrategy', () => {
             );
         });
 
-        it('renders the Braintree PayPal button only', async () => {
+        it('renders the Braintree PayPal button', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: { shape: 'rect', height: 45 },
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
+        it('renders the Braintree PayPal PayLater button with the gold color', async () => {
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
+                env: 'sandbox',
+                fundingSource: paypalSdkMock.FUNDING.PAYLATER,
+                style: { shape: 'rect', height: 45, color: 'gold' },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
             });
