@@ -9,15 +9,15 @@ import AfterpaySdk from './afterpay-sdk';
 import isAfterpayWindow from './is-afterpay-window';
 
 enum SCRIPTS_DEFAULT {
-    PROD = '//portal.afterpay.com/afterpay-async.js',
-    SANDBOX = '//portal.sandbox.afterpay.com/afterpay.js',
+    PROD = 'https://portal.afterpay.com/afterpay-async.js',
+    SANDBOX = 'https://portal.sandbox.afterpay.com/afterpay.js',
     HTTPS_PROD = 'https://portal.afterpay.com/afterpay-async.js',
     HTTPS_SANDBOX = 'https://portal.sandbox.afterpay.com/afterpay.js',
 }
 
 enum SCRIPTS_US {
-    PROD = '//portal.afterpay.com/afterpay-async.js',
-    SANDBOX = '//portal.sandbox.afterpay.com/afterpay.js',
+    PROD = 'https://portal.afterpay.com/afterpay-async.js',
+    SANDBOX = 'https://portal.sandbox.afterpay.com/afterpay.js',
     HTTPS_PROD = 'https://portal.afterpay.com/afterpay-async.js',
     HTTPS_SANDBOX = 'https://portal.sandbox.afterpay.com/afterpay.js',
 }
@@ -34,7 +34,7 @@ export default class AfterpayScriptLoader {
     async load(
         method: PaymentMethod,
         countryCode: string,
-        withHttps = false,
+        withHttps = true,
     ): Promise<AfterpaySdk> {
         const testMode = method.config.testMode || false;
         const scriptURI = this._getScriptURI(countryCode, testMode, withHttps);
@@ -48,7 +48,7 @@ export default class AfterpayScriptLoader {
         });
     }
 
-    private _getScriptURI(countryCode: string, testMode: boolean, withHttps = false): string {
+    private _getScriptURI(countryCode: string, testMode: boolean, withHttps = true): string {
         if (countryCode === 'US') {
             if (withHttps) {
                 return testMode ? SCRIPTS_US.HTTPS_SANDBOX : SCRIPTS_US.HTTPS_PROD;
