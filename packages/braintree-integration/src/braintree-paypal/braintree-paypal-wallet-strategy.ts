@@ -6,6 +6,7 @@ import {
     BraintreePaypalWalletService,
     isBraintreeError,
     PaypalAuthorizeData,
+    PaypalButtonStyleColorOption,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CheckoutButtonInitializeOptions,
@@ -104,11 +105,26 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
         const { style, onEligibilityFailure } = braintreepaypal;
         const { paypal } = this.braintreeHostWindow;
 
-        if (paypal) {
+        if (!paypal) {
+            this.braintreePaypalWalletService.removeElement(containerId);
+
+            return;
+        }
+
+        const fundingSources = [paypal.FUNDING.PAYPAL, paypal.FUNDING.PAYLATER];
+
+        let hasRenderedButton = false;
+
+        fundingSources.forEach((fundingSource) => {
+            const buttonStyle =
+                fundingSource === paypal.FUNDING.PAYLATER
+                    ? { ...getValidButtonStyle(style), color: PaypalButtonStyleColorOption.GOLD }
+                    : getValidButtonStyle(style);
+
             const paypalButtonRender = paypal.Buttons({
                 env: testMode ? 'sandbox' : 'production',
-                fundingSource: paypal.FUNDING.PAYPAL,
-                style: getValidButtonStyle(style),
+                fundingSource,
+                style: buttonStyle,
                 createOrder: () => this.setupPayment(braintreepaypal, intent),
                 onApprove: (authorizeData: PaypalAuthorizeData) =>
                     this.tokenizePayment(
@@ -121,11 +137,16 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
 
             if (paypalButtonRender.isEligible()) {
                 paypalButtonRender.render(`#${containerId}`);
-            } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
-                onEligibilityFailure();
+                hasRenderedButton = true;
             }
-        } else {
-            this.braintreePaypalWalletService.removeElement(containerId);
+        });
+
+        if (
+            !hasRenderedButton &&
+            onEligibilityFailure &&
+            typeof onEligibilityFailure === 'function'
+        ) {
+            onEligibilityFailure();
         }
     }
 
