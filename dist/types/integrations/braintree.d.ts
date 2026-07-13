@@ -11,6 +11,7 @@ import { BraintreeHostedFieldsCreatorConfig } from '@bigcommerce/checkout-sdk/br
 import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeMessages } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeOrderStatusData } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreePaypalWalletService } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeSDKVersionManager } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -39,6 +40,7 @@ import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-ap
 import { RequestSender } from '@bigcommerce/request-sender';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { TokenizationPayload } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 declare interface BraintreeAchInitializeOptions {
     /**
@@ -795,6 +797,32 @@ declare class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private getSmartButtonContainerId;
 }
 
+declare interface BraintreePaypalWalletInitializeOptions {
+    cartId: string;
+    amount: number;
+    currency: {
+        code: string;
+    };
+    initializationData: string;
+    clientToken: string;
+    style?: PaypalStyleOptions;
+    onAuthorizeError?(error: BraintreeError | StandardError): void;
+    onPaymentError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError | StandardError): void;
+    onEligibilityFailure?(): void;
+}
+
+declare class BraintreePaypalWalletStrategy implements CheckoutButtonStrategy {
+    private braintreePaypalWalletService;
+    private braintreeHostWindow;
+    constructor(braintreePaypalWalletService: BraintreePaypalWalletService, braintreeHostWindow: BraintreeHostWindow);
+    initialize(options: CheckoutButtonInitializeOptions & WithBraintreePaypalWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
+    private setupPayment;
+    private tokenizePayment;
+}
+
 declare class BraintreeRequestSender {
     private requestSender;
     constructor(requestSender: RequestSender);
@@ -1010,6 +1038,10 @@ declare interface WithBraintreePaypalPaymentInitializeOptions {
     braintree?: BraintreePaypalPaymentInitializeOptions;
 }
 
+declare interface WithBraintreePaypalWalletInitializeOptions {
+    braintreepaypal?: BraintreePaypalWalletInitializeOptions;
+}
+
 declare interface WithBraintreeVenmoInitializeOptions {
     /**
      * The options that are required to facilitate Braintree Venmo. They can be
@@ -1071,6 +1103,10 @@ export declare const createBraintreePaypalCustomerStrategy: import("@bigcommerce
 }>;
 
 export declare const createBraintreePaypalPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreePaypalPaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createBraintreePaypalWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreePaypalWalletStrategy>, {
     id: string;
 }>;
 
