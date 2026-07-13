@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.941.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.940.0...v1.941.0) (2026-07-13)
+
+
+### Features
+
+* **payment:** PAYPAL-4195 Add an ability to render Braintree PayPal PayLater button ([#3311](https://github.com/bigcommerce/checkout-sdk-js/issues/3311)) ([9a7eb2a](https://github.com/bigcommerce/checkout-sdk-js/commit/9a7eb2afab258f9318dd5c5e181afe96489eb4fa))
+
 ## [1.940.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.939.0...v1.940.0) (2026-07-13)
 
 
