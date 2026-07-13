@@ -209,25 +209,68 @@ function createApiExtractorConfigs(
     packageNames.forEach((packageName) => {
         const moduleName = packageName.replace(/-integration$/, '');
         const config = {
+            $schema:
+                'https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json',
+            mainEntryPointFilePath: entryPointSourceFile.replace('<moduleName>', moduleName),
+            bundledPackages: [],
             compiler: {
-                configType: 'tsconfig',
-                rootFolder: '../../../..',
+                overrideTsconfig: {
+                    compilerOptions: {
+                        target: 'es5',
+                        module: 'esnext',
+                        moduleResolution: 'node',
+                        lib: ['dom', 'dom.iterable', 'esnext', 'scripthost'],
+                        experimentalDecorators: true,
+                        esModuleInterop: true,
+                        allowSyntheticDefaultImports: true,
+                        skipLibCheck: true,
+                        strict: true,
+                        stripInternal: true,
+                    },
+                    include: ['../../temp/**/*.d.ts'],
+                },
             },
-            project: {
-                entryPointSourceFile: entryPointSourceFile.replace('<moduleName>', moduleName),
-            },
-            validationRules: {
-                missingReleaseTags: 'allow',
-            },
-            apiReviewFile: {
+            apiReport: {
                 enabled: false,
             },
-            apiJsonFile: {
+            docModel: {
+                enabled: false,
+            },
+            tsdocMetadata: {
                 enabled: false,
             },
             dtsRollup: {
                 enabled: true,
-                mainDtsRollupPath: mainDtsRollupPath.replace('<moduleName>', moduleName),
+                untrimmedFilePath: mainDtsRollupPath.replace('<moduleName>', moduleName),
+            },
+            messages: {
+                compilerMessageReporting: {
+                    default: {
+                        logLevel: 'warning',
+                    },
+                },
+                extractorMessageReporting: {
+                    default: {
+                        logLevel: 'warning',
+                    },
+                    'ae-wrong-input-file-type': {
+                        logLevel: 'none',
+                    },
+                    'ae-missing-release-tag': {
+                        logLevel: 'none',
+                    },
+                    'ae-forgotten-export': {
+                        logLevel: 'none',
+                    },
+                    'ae-unresolved-link': {
+                        logLevel: 'none',
+                    },
+                },
+                tsdocMessageReporting: {
+                    default: {
+                        logLevel: 'none',
+                    },
+                },
             },
         };
 

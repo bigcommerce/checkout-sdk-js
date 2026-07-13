@@ -1,22 +1,64 @@
 {
+    "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+    "mainEntryPointFilePath": "<projectFolder>/../../temp/hosted-form-v2/src/bundles/hosted-form-v2-iframe-host.d.ts",
+    "bundledPackages": [],
     "compiler": {
-        "configType": "tsconfig",
-        "rootFolder": "."
+        "overrideTsconfig": {
+            "compilerOptions": {
+                "target": "es5",
+                "module": "esnext",
+                "moduleResolution": "node",
+                "lib": ["dom", "dom.iterable", "esnext", "scripthost"],
+                "experimentalDecorators": true,
+                "esModuleInterop": true,
+                "allowSyntheticDefaultImports": true,
+                "skipLibCheck": true,
+                "strict": true,
+                "stripInternal": true
+            },
+            "include": ["../../temp/**/*.d.ts"]
+        }
     },
-    "project": {
-        "entryPointSourceFile": "../../temp/hosted-form-v2/src/bundles/hosted-form-v2-iframe-host.d.ts"
-    },
-    "validationRules": {
-        "missingReleaseTags": "allow"
-    },
-    "apiReviewFile": {
+    "apiReport": {
         "enabled": false
     },
-    "apiJsonFile": {
+    "docModel": {
+        "enabled": false
+    },
+    "tsdocMetadata": {
         "enabled": false
     },
     "dtsRollup": {
         "enabled": true,
-        "mainDtsRollupPath": "hosted-form-v2-iframe-host.d.ts"
+        "untrimmedFilePath": "<projectFolder>/../../dist/hosted-form-v2-iframe-host.d.ts"
+    },
+    "messages": {
+        "compilerMessageReporting": {
+            "default": {
+                "logLevel": "warning"
+            }
+        },
+        "extractorMessageReporting": {
+            "default": {
+                "logLevel": "warning"
+            },
+            "ae-wrong-input-file-type": {
+                "logLevel": "none"
+            },
+            "ae-missing-release-tag": {
+                "logLevel": "none"
+            },
+            "ae-forgotten-export": {
+                "logLevel": "none"
+            },
+            "ae-unresolved-link": {
+                "logLevel": "none"
+            }
+        },
+        "tsdocMessageReporting": {
+            "default": {
+                "logLevel": "none"
+            }
+        }
     }
 }

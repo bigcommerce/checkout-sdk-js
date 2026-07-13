@@ -26,8 +26,9 @@
                 "cwd": "packages/hosted-form-v2",
                 "parallel": false,
                 "commands": [
-                    "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
+                    "tsc --outDir ../../temp --rootDir .. --declaration --emitDeclarationOnly",
                     "api-extractor run --config api-extractor/hosted-form-v2-iframe-content.json & api-extractor run --config api-extractor/hosted-form-v2-iframe-host.json",
+                    "find ../../dist -maxdepth 1 -name 'hosted-form-v2-iframe-*.d.ts' -type f -exec perl -i -ne 'print unless /^export \\{.*\\}\\s*$/' {} +",
                     "rm -rf ../../temp"
                 ]
             }
