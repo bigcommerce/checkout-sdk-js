@@ -12,6 +12,7 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentStrategy,
+    SurchargeActionHandler,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BlueSnapDirectSdk, BlueSnapDirectThreeDSecureData } from '../types';
@@ -32,6 +33,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
         private _paymentIntegrationService: PaymentIntegrationService,
         private _blueSnapDirectHostedForm: BlueSnapDirectHostedForm,
         private _blueSnapDirect3ds: BlueSnapDirect3ds,
+        private _surchargeActionHandler: SurchargeActionHandler,
     ) {}
 
     async initialize(
@@ -62,6 +64,37 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
 
         if (this._shouldUseHostedFields) {
             this._blueSnapDirectHostedForm.initialize(this._blueSnapSdk, creditCard.form.fields);
+
+            // When the card number is valid, run the surcharge check (BE) and apply the fee so
+            // the summary shows it. The handler dedupes by BIN, so it re-runs only when the
+            // card changes. NOTE: `cardData` comes from the latest onType; on paste/autofill
+            // onValid can fire before onType, so ccBin may be missing — the BE check still
+            // works off the pfToken, and it re-runs once onType supplies a new BIN.
+            this._blueSnapDirectHostedForm.setOnCardValidated((cardData) => {
+                const token = this._getPaymentFieldsToken();
+
+                const bin =
+                    typeof cardData === 'object' &&
+                    cardData !== null &&
+                    'ccBin' in cardData &&
+                    typeof cardData.ccBin === 'string'
+                        ? cardData.ccBin
+                        : undefined;
+
+                void this._surchargeActionHandler
+                    .applyInFlight({
+                        methodId,
+                        cardData: {
+                            pfToken: token,
+                            bin,
+                            providerCardData: cardData,
+                        },
+                    })
+                    .catch((error) => {
+                        // eslint-disable-next-line no-console
+                        console.error('[surcharge][bluesnap] in-flight surcharge failed', error);
+                    });
+            });
 
             try {
                 await this._blueSnapDirectHostedForm.attach(

@@ -26,6 +26,7 @@ import { DataStoreProjection } from '../common/data-store';
 import { getResponse } from '../common/http-request/responses.mock';
 import { CouponActionCreator } from '../coupon';
 import { CustomerActionCreator } from '../customer';
+import { FeeActionCreator } from '../fee';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { getOrder } from '../order/orders.mock';
@@ -310,6 +311,7 @@ describe('DefaultPaymentIntegrationService', () => {
             customerActionCreator as CustomerActionCreator,
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
+            { applyFees: jest.fn() } as unknown as FeeActionCreator,
             couponActionCreator as CouponActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
             paymentProviderCustomerActionCreator,

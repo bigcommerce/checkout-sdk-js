@@ -11,6 +11,8 @@ import {
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
+    SurchargeActionHandler,
+    SurchargeRequestSender,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -85,6 +87,9 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             paymentIntegrationService,
             hostedForm,
             bluesnapdirect3ds,
+            new SurchargeActionHandler(paymentIntegrationService, {
+                checkSurcharge: jest.fn(),
+            } as unknown as SurchargeRequestSender),
         );
 
         optionsCardValidationWithoutFields = {

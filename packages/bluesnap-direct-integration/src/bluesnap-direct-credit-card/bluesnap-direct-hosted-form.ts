@@ -47,11 +47,19 @@ import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input'
 export default class BlueSnapDirectHostedForm {
     private _blueSnapSdk?: BlueSnapDirectSdk;
     private _onValidate: HostedFormOptions['onValidate'];
+    // latest card metadata from onType + a hook fired when
+    // the card number becomes valid, so the strategy can run the in-flight surcharge.
+    private _lastCardData?: unknown;
+    private _onCardValidated?: (cardData: unknown) => void;
 
     constructor(
         private _nameOnCardInput: BluesnapDirectNameOnCardInput,
         private _hostedInputValidator: BlueSnapHostedInputValidator,
     ) {}
+
+    setOnCardValidated(callback: (cardData: unknown) => void): void {
+        this._onCardValidated = callback;
+    }
 
     initialize(blueSnapSdk: BlueSnapDirectSdk, fields?: HostedFieldOptionsMap) {
         this._blueSnapSdk = blueSnapSdk;
@@ -192,11 +200,26 @@ export default class BlueSnapDirectHostedForm {
                 onFocus: this._usetUiEventCallback(onFocus),
                 onBlur: this._usetUiEventCallback(onBlur),
                 onError: this._handleError(onValidate),
-                onType: (_tagId: HostedFieldTagId, cardType: CardTypeValues) =>
-                    onCardTypeChange?.({ cardType: CardType[cardType] }),
+                onType: (
+                    _tagId: HostedFieldTagId,
+                    cardType: CardTypeValues,
+                    cardData?: unknown,
+                ) => {
+                    // Surcharging: capture the card metadata Bluesnap exposes in-flight
+                    // so the strategy can forward it to the surcharge check.
+                    this._lastCardData = cardData;
+                    onCardTypeChange?.({ cardType: CardType[cardType] });
+                },
                 onEnter: this._usetUiEventCallback(onEnter),
-                onValid: (tagId: HostedFieldTagId) =>
-                    onValidate?.(this._hostedInputValidator.validate({ tagId })),
+                onValid: (tagId: HostedFieldTagId) => {
+                    onValidate?.(this._hostedInputValidator.validate({ tagId }));
+
+                    // Surcharging: once the card number is valid, let the strategy run the
+                    // in-flight surcharge check (before Place Order).
+                    if (tagId === HostedFieldTagId.CardNumber) {
+                        this._onCardValidated?.(this._lastCardData);
+                    }
+                },
             },
             ...(isHostedCardFieldOptionsMap(fields) && {
                 ccnPlaceHolder: fields.cardNumber.placeholder || '',
