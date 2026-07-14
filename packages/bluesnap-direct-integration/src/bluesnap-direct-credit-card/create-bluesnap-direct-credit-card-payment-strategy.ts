@@ -1,7 +1,10 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
     PaymentStrategyFactory,
+    SurchargeActionHandler,
+    SurchargeRequestSender,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -23,6 +26,10 @@ const createBlueSnapDirectCreditCardPaymentStrategy: PaymentStrategyFactory<
             new BlueSnapHostedInputValidator(),
         ),
         new BlueSnapDirect3ds(),
+        new SurchargeActionHandler(
+            paymentIntegrationService,
+            new SurchargeRequestSender(createRequestSender()),
+        ),
     );
 
 export default toResolvableModule(createBlueSnapDirectCreditCardPaymentStrategy, [

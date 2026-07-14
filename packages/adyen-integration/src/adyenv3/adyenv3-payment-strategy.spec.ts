@@ -24,6 +24,8 @@ import {
     PaymentInvalidFormError,
     PaymentMethodCancelledError,
     RequestError,
+    SurchargeActionHandler,
+    SurchargeRequestSender,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCreditCardInstrument,
@@ -60,7 +62,13 @@ describe('AdyenV3PaymentStrategy', () => {
         adyenV3ScriptLoader = new AdyenV3ScriptLoader(scriptLoader, stylesheetLoader);
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        strategy = new AdyenV3PaymentStrategy(paymentIntegrationService, adyenV3ScriptLoader);
+        strategy = new AdyenV3PaymentStrategy(
+            paymentIntegrationService,
+            adyenV3ScriptLoader,
+            new SurchargeActionHandler(paymentIntegrationService, {
+                checkSurcharge: jest.fn(),
+            } as unknown as SurchargeRequestSender),
+        );
 
         const mockElement = document.createElement('div');
 

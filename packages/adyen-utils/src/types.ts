@@ -257,6 +257,19 @@ export interface AdyenComponentEvents {
     onError?(state: AdyenValidationState, component: AdyenComponent): void;
 
     onFieldValid?(state: AdyenValidationState, component: AdyenComponent): void;
+
+    /**
+     * Called as the shopper types the card number, once enough
+     * digits are entered. `binValue` holds the leading digits (6 by default; up to 8/11
+     * when the merchant is enrolled in Adyen's extended BIN). Never the full raw PAN.
+     */
+    onBinValue?(data: AdyenBinValueData): void;
+}
+
+export interface AdyenBinValueData {
+    binValue: string;
+    encryptedBin?: string;
+    uuid?: string;
 }
 
 export interface AdyenClient {

@@ -15,6 +15,7 @@ import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import CouponActionCreator from '../coupon/coupon-action-creator';
 import CouponRequestSender from '../coupon/coupon-request-sender';
 import { CustomerActionCreator, CustomerRequestSender } from '../customer';
+import { FeeActionCreator, FeeRequestSender } from '../fee';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
@@ -119,6 +120,8 @@ export default function createPaymentIntegrationService(
         new StoreCreditRequestSender(requestSender),
     );
 
+    const feeActionCreator = new FeeActionCreator(new FeeRequestSender(requestSender));
+
     const applyCouponActionCreator = new CouponActionCreator(
         new CouponRequestSender(requestSender),
     );
@@ -161,6 +164,7 @@ export default function createPaymentIntegrationService(
         customerActionCreator,
         cartRequestSender,
         storeCreditActionCreator,
+        feeActionCreator,
         applyCouponActionCreator,
         spamProtectionActionCreator,
         paymentProviderCustomerActionCreator,

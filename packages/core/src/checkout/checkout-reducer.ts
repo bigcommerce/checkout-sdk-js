@@ -10,6 +10,7 @@ import {
     GiftCertificateAction,
     GiftCertificateActionType,
 } from '../coupon';
+import { FeeAction, FeeActionType } from '../fee';
 import { OrderAction, OrderActionType } from '../order';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 import { SpamProtectionAction, SpamProtectionActionType } from '../spam-protection';
@@ -44,6 +45,7 @@ function dataReducer(
         | BillingAddressAction
         | ConsignmentAction
         | CouponAction
+        | FeeAction
         | GiftCertificateAction
         | OrderAction
         | SpamProtectionAction
@@ -54,6 +56,7 @@ function dataReducer(
         case CheckoutActionType.LoadCheckoutSucceeded:
         case CheckoutActionType.UpdateCheckoutSucceeded:
         case StoreCreditActionType.ApplyStoreCreditSucceeded:
+        case FeeActionType.ApplyFeesSucceeded:
         case BillingAddressActionType.UpdateBillingAddressSucceeded:
         case CouponActionType.ApplyCouponSucceeded:
         case CouponActionType.RemoveCouponSucceeded:
