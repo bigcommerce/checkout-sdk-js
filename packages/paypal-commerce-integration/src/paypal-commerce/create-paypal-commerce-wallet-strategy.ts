@@ -1,17 +1,23 @@
+import { getScriptLoader } from '@bigcommerce/script-loader';
+
 import { toResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import {
-    WalletButtonIntegrationService,
-    WalletPaymentButtonStrategyFactory,
-} from '@bigcommerce/checkout-sdk/wallet-button-integration';
+import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import PayPalCommerceWalletStrategy from './paypal-commerce-wallet-strategy';
+import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
+import PaypalCommerceWalletService from '../paypal-commerce-wallet-service';
 
-const createPayPalCommerceWalletStrategy: WalletPaymentButtonStrategyFactory<
-    PayPalCommerceWalletStrategy
-> = (walletButtonIntegrationService: WalletButtonIntegrationService) => {
-    return new PayPalCommerceWalletStrategy(walletButtonIntegrationService);
-};
+import PaypalCommerceWalletStrategy from './paypal-commerce-wallet-strategy';
 
-export default toResolvableModule(createPayPalCommerceWalletStrategy, [
+const createPaypalCommerceWalletStrategy: WalletPaymentButtonStrategyFactory<
+    PaypalCommerceWalletStrategy
+> = (walletButtonIntegrationService) =>
+    new PaypalCommerceWalletStrategy(
+        new PaypalCommerceWalletService(
+            walletButtonIntegrationService,
+            new PayPalCommerceScriptLoader(getScriptLoader()),
+        ),
+    );
+
+export default toResolvableModule(createPaypalCommerceWalletStrategy, [
     { id: 'paypalcommercepaypal' },
 ]);
