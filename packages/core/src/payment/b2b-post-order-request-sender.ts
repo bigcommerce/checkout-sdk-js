@@ -54,42 +54,9 @@ export interface QuoteOrderedPayload {
     } | null;
 }
 
-export interface CreateCompanyAddressPayload {
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    label: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    zipCode: string;
-    country: {
-        countryCode: string;
-        countryName: string;
-    };
-    state: {
-        stateCode: string;
-        stateName: string;
-    };
-    isBilling: 0 | 1;
-    isCheckout: boolean;
-    isShipping: 0 | 1;
-    extraFields?: B2BExtraField[];
-}
-
-interface CreateCompanyAddressResponseBody {
-    data: {
-        addressId: string;
-    };
-    code: number;
-}
-
 export default class B2BPostOrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
-    // To be deleted
-    // invoiceComment will be sent to the Order API
-    // Server side needs to pass order id to B2B when it is an invoice-to-checkout
     async submitInvoice(
         payload: CloseInvoicePayload,
         b2bToken: string,
@@ -111,9 +78,6 @@ export default class B2BPostOrderRequestSender {
         );
     }
 
-    // To be deleted
-    // no additional info wil be sent to Order API
-    // server side can pass the rest of the info to B2B by reading the checkout object and order object
     async submitQuote(
         quoteId: number,
         payload: QuoteOrderedPayload,
@@ -131,34 +95,12 @@ export default class B2BPostOrderRequestSender {
         });
     }
 
-    // To be deleted
-    // poNumber, referenceNumber, orderExtraFields will be sent to Order API.
-    // server side can pass the rest of the info to B2B by reading the checkout object and order object
     async submitOrderExtraFields(
         payload: AddOrderExtraFieldsPayload,
         b2bToken: string,
         b2bBaseUrl: string,
     ): Promise<Response<void>> {
         return this._requestSender.post(`${b2bBaseUrl}/api/v2/orders`, {
-            credentials: false,
-            headers: {
-                'Content-Type': 'application/json',
-                authToken: b2bToken,
-                Authorization: `Bearer ${b2bToken}`,
-            },
-            body: payload,
-        });
-    }
-
-    // To be deleted
-    // server side can pass company address info to B2B by reading the checkout object
-    async submitCompanyAddress(
-        companyId: number,
-        payload: CreateCompanyAddressPayload,
-        b2bToken: string,
-        b2bBaseUrl: string,
-    ): Promise<Response<CreateCompanyAddressResponseBody>> {
-        return this._requestSender.post(`${b2bBaseUrl}/api/v2/companies/${companyId}/addresses`, {
             credentials: false,
             headers: {
                 'Content-Type': 'application/json',
