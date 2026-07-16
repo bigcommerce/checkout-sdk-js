@@ -59,22 +59,29 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
             b._.push([h, arguments]);
         };
 
-        let a1 = 0;
+        const checkoutMethods = [
+            'set',
+            'add',
+            'save',
+            'post',
+            'open',
+            'empty',
+            'reset',
+            'on',
+            'off',
+            'trigger',
+            'ready',
+            'setProduct',
+        ] as const;
 
-        for (
-            const c1 = 'set add save post open empty reset on off trigger ready setProduct'.split(
-                ' ',
-            );
-            a1 < c1.length;
-            a1++
-        ) {
-            f[c1[a1]] = l(b, d, c1[a1]);
+        for (let a1 = 0; a1 < checkoutMethods.length; a1++) {
+            f[checkoutMethods[a1]] = l(b, d, checkoutMethods[a1]);
         }
 
-        let a2 = 0;
+        const checkoutProperties = ['get', 'token', 'url', 'items'] as const;
 
-        for (const c2 = ['get', 'token', 'url', 'items']; a2 < c2.length; a2++) {
-            f[c2[a2]] = function foobar() {};
+        for (let a2 = 0; a2 < checkoutProperties.length; a2++) {
+            f[checkoutProperties[a2]] = function foobar() {};
         }
 
         k.async = !0;
