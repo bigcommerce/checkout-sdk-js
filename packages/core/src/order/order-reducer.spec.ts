@@ -100,7 +100,7 @@ describe('orderReducer()', () => {
     it('stores B2B context in meta if it is submitted successfully', () => {
         const response = getSubmitOrderResponseBody();
         const headers = getSubmitOrderResponseHeaders();
-        const b2bContext = { billingAddressId: 1, shippingAddressId: 2 };
+        const b2bMetadata = { billingAddressId: 1, shippingAddressId: 2 };
         const action: SubmitOrderAction = {
             type: OrderActionType.SubmitOrderSucceeded,
             meta: {
@@ -109,13 +109,18 @@ describe('orderReducer()', () => {
             },
             payload: {
                 ...response.data,
-                b2bContext,
+                order: {
+                    ...response.data.order,
+                    b2bMetadata,
+                },
             },
         };
 
         expect(orderReducer(initialState, action)).toEqual(
             expect.objectContaining({
-                meta: expect.objectContaining({ b2bContext }),
+                meta: expect.objectContaining({
+                    b2bContext: { billingAddressId: 1, shippingAddressId: 2 },
+                }),
             }),
         );
     });
