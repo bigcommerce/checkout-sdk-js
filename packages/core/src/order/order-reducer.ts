@@ -4,6 +4,8 @@ import { omit } from 'lodash';
 import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
 
+import { B2BContext } from './b2b-context';
+import InternalOrder from './internal-order';
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, {
     DEFAULT_STATE,
@@ -59,12 +61,25 @@ function metaReducer(
                     payment: action.payload && action.payload.order && action.payload.order.payment,
                 }),
                 'b2bContext',
-                action.payload?.b2bContext,
+                mapToB2BContext(action.payload?.order),
             );
 
         default:
             return meta;
     }
+}
+
+function mapToB2BContext(order?: InternalOrder): B2BContext | undefined {
+    if (!order?.b2bMetadata) {
+        return undefined;
+    }
+
+    const { billingAddressId, shippingAddressId } = order.b2bMetadata;
+
+    return {
+        billingAddressId: billingAddressId ?? undefined,
+        shippingAddressId: shippingAddressId ?? undefined,
+    };
 }
 
 function errorsReducer(

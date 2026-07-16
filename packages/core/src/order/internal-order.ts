@@ -52,6 +52,12 @@ export default interface InternalOrder {
     isDownloadable: boolean;
     isComplete: boolean;
     callbackUrl?: string;
+    b2bMetadata?: InternalOrderB2BMetadata;
+}
+
+export interface InternalOrderB2BMetadata {
+    shippingAddressId: number | null;
+    billingAddressId: number | null;
 }
 
 export interface InternalIncompleteOrder {

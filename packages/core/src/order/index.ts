@@ -6,6 +6,7 @@ export { B2BContext } from './b2b-context';
 export {
     default as InternalOrder,
     InternalIncompleteOrder,
+    InternalOrderB2BMetadata,
     InternalOrderPayment,
 } from './internal-order';
 export { default as InternalOrderRequestBody } from './internal-order-request-body';
