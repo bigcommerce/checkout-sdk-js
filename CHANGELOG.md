@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.942.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.942.0...v1.942.1) (2026-07-16)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-10210 Remove submitCompanyAddress ([#3314](https://github.com/bigcommerce/checkout-sdk-js/issues/3314)) ([bb8d283](https://github.com/bigcommerce/checkout-sdk-js/commit/bb8d2837869abeada3cbba38bbd0701d7a9d6b06))
+
 ## [1.942.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.941.0...v1.942.0) (2026-07-14)
 
 
