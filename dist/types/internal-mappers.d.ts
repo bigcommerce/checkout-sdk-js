@@ -539,6 +539,12 @@ declare interface InternalOrder {
     isDownloadable: boolean;
     isComplete: boolean;
     callbackUrl?: string;
+    b2bMetadata?: InternalOrderB2BMetadata;
+}
+
+declare interface InternalOrderB2BMetadata {
+    shippingAddressId: number | null;
+    billingAddressId: number | null;
 }
 
 declare interface InternalOrderMeta {
