@@ -6,6 +6,7 @@ import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getConfig } from '../config/configs.mock';
+import { getGuestCustomer } from '../customer/customers.mock';
 
 import B2BPaymentsRefreshActionCreator from './b2b-payments-refresh-action-creator';
 import { B2BPaymentsRefreshActionType } from './b2b-payments-refresh-actions';
@@ -151,6 +152,38 @@ describe('B2BPaymentsRefreshActionCreator', () => {
             });
 
             expect(() => actionCreator.refreshB2BPaymentMethods()(store)).toThrow();
+        });
+
+        it('refreshes without a token when the customer is a guest', async () => {
+            store = createCheckoutStore({
+                ...getCheckoutStoreState(),
+                customer: { data: getGuestCustomer(), errors: {}, statuses: {} },
+                paymentMethods: {
+                    data: paymentMethods,
+                    errors: {},
+                    statuses: {},
+                },
+            });
+
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                ...getConfig().storeConfig,
+                b2bApiSettings,
+            });
+
+            const actions = await from(actionCreator.refreshB2BPaymentMethods()(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(requestSender.refresh).toHaveBeenCalledWith(
+                expect.any(Array),
+                undefined,
+                b2bApiSettings.baseUrl,
+                undefined,
+            );
+            expect(actions).toEqual([
+                { type: B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsRequested },
+                { type: B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsSucceeded },
+            ]);
         });
 
         it('throws when the b2b base url is missing', () => {

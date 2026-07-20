@@ -171,6 +171,26 @@ describe('B2BPostOrderRequestSender', () => {
             );
         });
 
+        it('posts without auth headers when no token is provided', async () => {
+            await b2bPostOrderRequestSender.submitQuote(
+                123,
+                submitQuotePayload,
+                undefined,
+                'https://api-b2b.bigcommerce.com',
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                'https://api-b2b.bigcommerce.com/api/v2/rfq/123/ordered',
+                {
+                    credentials: false,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: submitQuotePayload,
+                },
+            );
+        });
+
         it('rejects when the request sender rejects', async () => {
             jest.spyOn(requestSender, 'post').mockRejectedValue(getErrorResponse());
 

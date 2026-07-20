@@ -25,11 +25,12 @@ export default class B2BPaymentsRefreshActionCreator {
             const state = store.getState();
             const paymentMethods = state.paymentMethods.getPaymentMethods() ?? [];
             const b2bToken = state.b2bToken.getToken();
+            const isGuest = state.customer.getCustomer()?.isGuest ?? false;
             const b2bBaseUrl = resolveB2bBaseUrl(
                 state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
             );
 
-            if (!b2bToken || !b2bBaseUrl) {
+            if (!b2bBaseUrl || (!b2bToken && !isGuest)) {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
             }
 

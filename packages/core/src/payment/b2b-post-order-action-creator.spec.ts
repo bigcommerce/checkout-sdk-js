@@ -7,6 +7,7 @@ import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checko
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getCapabilities } from '../config/capabilities.mock';
 import { getConfig } from '../config/configs.mock';
+import { getGuestCustomer } from '../customer/customers.mock';
 import { getConsignmentsState } from '../shipping/consignments.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
@@ -328,6 +329,40 @@ describe('B2BPostOrderActionCreator', () => {
                 await from(actionCreator.persistB2BMetadata(invoiceOptions)(store)).toPromise();
 
                 expect(requestSender.submitQuote).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('guest quote-to-checkout flow', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({
+                    ...getCheckoutStoreStateWithOrder(),
+                    customer: { data: getGuestCustomer(), errors: {}, statuses: {} },
+                });
+
+                mockStoreConfig({ id: 941 });
+            });
+
+            it('submits the quote without a token and skips submitOrderExtraFields', async () => {
+                const actions = await from(
+                    actionCreator.persistB2BMetadata(nonInvoiceOptions)(store),
+                )
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(requestSender.submitOrderExtraFields).not.toHaveBeenCalled();
+                expect(requestSender.submitQuote).toHaveBeenCalledWith(
+                    941,
+                    expect.objectContaining({ orderId: 295 }),
+                    undefined,
+                    b2bApiSettings.baseUrl,
+                );
+                expect(actions).toEqual([
+                    { type: B2BPostOrderActionType.PersistB2BMetadataRequested },
+                    {
+                        type: B2BPostOrderActionType.PersistB2BMetadataSucceeded,
+                        payload: { receiptId: '' },
+                    },
+                ]);
             });
         });
     });

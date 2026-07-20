@@ -44,6 +44,26 @@ describe('B2BPaymentsRefreshRequestSender', () => {
             );
         });
 
+        it('posts without auth headers when no token is provided', async () => {
+            await b2bPaymentsRefreshRequestSender.refresh(
+                payments,
+                undefined,
+                'https://api-b2b.bigcommerce.com',
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                'https://api-b2b.bigcommerce.com/api/v2/payments/refresh',
+                {
+                    timeout: undefined,
+                    credentials: false,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: { payments },
+                },
+            );
+        });
+
         it('forwards the request timeout', async () => {
             const timeout = createTimeout();
 
