@@ -26,6 +26,12 @@
 
 ***
 
+### companyName
+
+> **companyName**: `string` \| `null`
+
+***
+
 ### coupons
 
 > **coupons**: [`Coupon`](Coupon.md)[]

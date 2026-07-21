@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.943.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.942.4...v1.943.0) (2026-07-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10067 update cart interface to include companyName ([#3321](https://github.com/bigcommerce/checkout-sdk-js/issues/3321)) ([86eb6aa](https://github.com/bigcommerce/checkout-sdk-js/commit/86eb6aaaa824149af37f7aea1637cc543a0730fd))
+
 ### [1.942.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.942.3...v1.942.4) (2026-07-21)
 
 
