@@ -10,6 +10,7 @@ export default interface Cart {
     id: string;
     customerId: number;
     companyId: number | null;
+    companyName: string | null;
     currency: Currency;
     email: string;
     isTaxIncluded: boolean;
