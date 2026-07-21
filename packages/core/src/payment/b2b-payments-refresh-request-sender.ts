@@ -12,7 +12,7 @@ export default class B2BPaymentsRefreshRequestSender {
 
     async refresh(
         payments: B2BPaymentsRefreshPayment[],
-        b2bToken: string,
+        b2bToken: string | undefined,
         b2bBaseUrl: string,
         options?: RequestOptions,
     ): Promise<Response<unknown>> {
@@ -21,8 +21,7 @@ export default class B2BPaymentsRefreshRequestSender {
             credentials: false,
             headers: {
                 'Content-Type': 'application/json',
-                authToken: b2bToken,
-                Authorization: `Bearer ${b2bToken}`,
+                ...(b2bToken ? { authToken: b2bToken, Authorization: `Bearer ${b2bToken}` } : {}),
             },
             body: { payments },
         });

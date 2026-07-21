@@ -68,13 +68,14 @@ export default class B2BPostOrderActionCreator {
             const state = store.getState();
             const orderId = state.order.getOrderOrThrow().orderId;
             const b2bToken = state.b2bToken.getToken();
+            const isGuest = state.customer.getCustomer()?.isGuest ?? false;
             const b2bBaseUrl = resolveB2bBaseUrl(
                 state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
             );
             const storeConfig = state.config.getStoreConfig();
             const quoteId = storeConfig?.checkoutSettings.capabilities?.userJourney.quoteConfig?.id;
 
-            if (!orderId || !b2bToken || !b2bBaseUrl) {
+            if (!orderId || !b2bBaseUrl || (!b2bToken && !isGuest)) {
                 throw new MissingDataError(MissingDataErrorType.MissingOrder);
             }
 
@@ -84,6 +85,10 @@ export default class B2BPostOrderActionCreator {
                     let payload = { receiptId: '' };
 
                     if (isInvoice) {
+                        if (!b2bToken) {
+                            throw new MissingDataError(MissingDataErrorType.MissingOrder);
+                        }
+
                         const { body } = await this._requestSender.submitInvoice(
                             { orderId: `${orderId}`, comment: invoiceComment ?? '' },
                             b2bToken,
@@ -92,17 +97,19 @@ export default class B2BPostOrderActionCreator {
 
                         payload = { receiptId: body.data.receiptId };
                     } else {
-                        await this._requestSender.submitOrderExtraFields(
-                            {
-                                orderId,
-                                poNumber: poNumber ?? '',
-                                referenceNumber: referenceNumber ?? '',
-                                extraFields: extraFields ?? [],
-                                extraInfo: extraInfo ?? {},
-                            },
-                            b2bToken,
-                            b2bBaseUrl,
-                        );
+                        if (b2bToken) {
+                            await this._requestSender.submitOrderExtraFields(
+                                {
+                                    orderId,
+                                    poNumber: poNumber ?? '',
+                                    referenceNumber: referenceNumber ?? '',
+                                    extraFields: extraFields ?? [],
+                                    extraInfo: extraInfo ?? {},
+                                },
+                                b2bToken,
+                                b2bBaseUrl,
+                            );
+                        }
 
                         if (typeof quoteId === 'number') {
                             const checkout = state.checkout.getCheckoutOrThrow();
