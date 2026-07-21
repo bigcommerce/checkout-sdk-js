@@ -25,7 +25,7 @@ describe('B2BPaymentsRefreshRequestSender', () => {
         it('posts to the payments refresh endpoint with auth headers and payload', async () => {
             await b2bPaymentsRefreshRequestSender.refresh(
                 payments,
-                'b2b-token-value',
+                { b2bToken: 'b2b-token-value' },
                 'https://api-b2b.bigcommerce.com',
             );
 
@@ -47,7 +47,7 @@ describe('B2BPaymentsRefreshRequestSender', () => {
         it('posts without auth headers when no token is provided', async () => {
             await b2bPaymentsRefreshRequestSender.refresh(
                 payments,
-                undefined,
+                {},
                 'https://api-b2b.bigcommerce.com',
             );
 
@@ -64,12 +64,33 @@ describe('B2BPaymentsRefreshRequestSender', () => {
             );
         });
 
+        it('posts with only the authToken header when a bc token is provided', async () => {
+            await b2bPaymentsRefreshRequestSender.refresh(
+                payments,
+                { bcToken: 'bc-jwt-token' },
+                'https://api-b2b.bigcommerce.com',
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                'https://api-b2b.bigcommerce.com/api/v2/payments/refresh',
+                {
+                    timeout: undefined,
+                    credentials: false,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        authToken: 'bc-jwt-token',
+                    },
+                    body: { payments },
+                },
+            );
+        });
+
         it('forwards the request timeout', async () => {
             const timeout = createTimeout();
 
             await b2bPaymentsRefreshRequestSender.refresh(
                 payments,
-                'b2b-token-value',
+                { b2bToken: 'b2b-token-value' },
                 'https://api-b2b.bigcommerce.com',
                 { timeout },
             );
@@ -83,7 +104,7 @@ describe('B2BPaymentsRefreshRequestSender', () => {
         it('uses the provided b2bBaseUrl for the endpoint', async () => {
             await b2bPaymentsRefreshRequestSender.refresh(
                 payments,
-                'b2b-token-value',
+                { b2bToken: 'b2b-token-value' },
                 'https://api-b2b.staging.zone',
             );
 
@@ -96,7 +117,7 @@ describe('B2BPaymentsRefreshRequestSender', () => {
         it('sends an empty payments array when given one', async () => {
             await b2bPaymentsRefreshRequestSender.refresh(
                 [],
-                'b2b-token-value',
+                { b2bToken: 'b2b-token-value' },
                 'https://api-b2b.bigcommerce.com',
             );
 
@@ -112,7 +133,7 @@ describe('B2BPaymentsRefreshRequestSender', () => {
             await expect(
                 b2bPaymentsRefreshRequestSender.refresh(
                     payments,
-                    'b2b-token-value',
+                    { b2bToken: 'b2b-token-value' },
                     'https://api-b2b.bigcommerce.com',
                 ),
             ).rejects.toEqual(getErrorResponse());

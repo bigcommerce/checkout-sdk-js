@@ -153,7 +153,7 @@ describe('B2BPostOrderRequestSender', () => {
             await b2bPostOrderRequestSender.submitQuote(
                 123,
                 submitQuotePayload,
-                'b2b-token-value',
+                { b2bToken: 'b2b-token-value' },
                 'https://api-b2b.bigcommerce.com',
             );
 
@@ -175,7 +175,7 @@ describe('B2BPostOrderRequestSender', () => {
             await b2bPostOrderRequestSender.submitQuote(
                 123,
                 submitQuotePayload,
-                undefined,
+                {},
                 'https://api-b2b.bigcommerce.com',
             );
 
@@ -191,6 +191,27 @@ describe('B2BPostOrderRequestSender', () => {
             );
         });
 
+        it('posts with only the authToken header when a bc token is provided', async () => {
+            await b2bPostOrderRequestSender.submitQuote(
+                123,
+                submitQuotePayload,
+                { bcToken: 'bc-jwt-token' },
+                'https://api-b2b.bigcommerce.com',
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                'https://api-b2b.bigcommerce.com/api/v2/rfq/123/ordered',
+                {
+                    credentials: false,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        authToken: 'bc-jwt-token',
+                    },
+                    body: submitQuotePayload,
+                },
+            );
+        });
+
         it('rejects when the request sender rejects', async () => {
             jest.spyOn(requestSender, 'post').mockRejectedValue(getErrorResponse());
 
@@ -198,7 +219,7 @@ describe('B2BPostOrderRequestSender', () => {
                 b2bPostOrderRequestSender.submitQuote(
                     123,
                     submitQuotePayload,
-                    'b2b-token-value',
+                    { b2bToken: 'b2b-token-value' },
                     'https://api-b2b.bigcommerce.com',
                 ),
             ).rejects.toEqual(getErrorResponse());

@@ -12,6 +12,16 @@ export interface B2BTokenResponseBody {
 export default class B2BTokenRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
+    async getCurrentCustomerJWT(appClientId: string, options?: RequestOptions): Promise<string> {
+        const { body } = await this._requestSender.get<{ token: string }>('/customer/current.jwt', {
+            timeout: options?.timeout,
+            params: { app_client_id: appClientId },
+            headers: SDK_VERSION_HEADERS,
+        });
+
+        return body.token;
+    }
+
     async getB2BToken(
         appClientId: string,
         customerId: number,
@@ -20,21 +30,14 @@ export default class B2BTokenRequestSender {
         b2bBaseUrl: string,
         options?: RequestOptions,
     ): Promise<Response<B2BTokenResponseBody>> {
-        const { body: jwtBody } = await this._requestSender.get<{ token: string }>(
-            '/customer/current.jwt',
-            {
-                timeout: options?.timeout,
-                params: { app_client_id: appClientId },
-                headers: SDK_VERSION_HEADERS,
-            },
-        );
+        const bcToken = await this.getCurrentCustomerJWT(appClientId, options);
 
         return this._requestSender.post(`${b2bBaseUrl}/api/v2/login`, {
             timeout: options?.timeout,
             credentials: false,
             headers: { 'Content-Type': 'application/json' },
             body: {
-                bcToken: jwtBody.token,
+                bcToken,
                 customerId,
                 storeHash,
                 channelId,

@@ -234,8 +234,14 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         formFieldsActionCreator,
         extensionActionCreator,
         workerExtensionMessenger,
-        new B2BPaymentsRefreshActionCreator(new B2BPaymentsRefreshRequestSender(requestSender)),
-        new B2BPostOrderActionCreator(new B2BPostOrderRequestSender(requestSender)),
+        new B2BPaymentsRefreshActionCreator(
+            new B2BPaymentsRefreshRequestSender(requestSender),
+            new B2BTokenRequestSender(requestSender),
+        ),
+        new B2BPostOrderActionCreator(
+            new B2BPostOrderRequestSender(requestSender),
+            new B2BTokenRequestSender(requestSender),
+        ),
     );
 }
 

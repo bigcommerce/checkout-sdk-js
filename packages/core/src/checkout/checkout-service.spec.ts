@@ -413,6 +413,7 @@ describe('CheckoutService', () => {
 
         b2bPaymentsRefreshActionCreator = new B2BPaymentsRefreshActionCreator(
             b2bPaymentsRefreshRequestSender,
+            new B2BTokenRequestSender(requestSender),
         );
 
         b2bPostOrderRequestSender = new B2BPostOrderRequestSender(requestSender);
@@ -421,7 +422,10 @@ describe('CheckoutService', () => {
             getResponse({ data: { paymentId: 'pay_1', receiptId: 'rcpt_1' }, code: 200 }),
         );
 
-        b2bPostOrderActionCreator = new B2BPostOrderActionCreator(b2bPostOrderRequestSender);
+        b2bPostOrderActionCreator = new B2BPostOrderActionCreator(
+            b2bPostOrderRequestSender,
+            new B2BTokenRequestSender(requestSender),
+        );
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,
