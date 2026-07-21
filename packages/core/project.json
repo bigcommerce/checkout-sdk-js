@@ -79,9 +79,10 @@
                 "cwd": "packages/core",
                 "parallel": false,
                 "commands": [
-                    "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
+                    "tsc --outDir ../../temp --rootDir .. --declaration --emitDeclarationOnly",
                     "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json & wait",
                     "find src/generated/integrations -name 'api-extractor.json' | xargs -I {} -P 8 sh -c 'cd \"$(dirname \"{}\")\" && npx api-extractor run --config api-extractor.json'",
+                    "find ../../dist/types -name '*.d.ts' -type f -exec perl -i -ne 'print unless /^export \\{.*\\}\\s*$/' {} +",
                     "rm -rf ../../temp",
                     "nx run hosted-form-v2:build-dts"
                 ]
