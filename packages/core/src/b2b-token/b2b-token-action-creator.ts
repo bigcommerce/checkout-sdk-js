@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { resolveB2bAppClientId, resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { B2BTokenActionType, LoadB2BTokenAction } from './b2b-token-actions';
@@ -25,6 +26,11 @@ export default class B2BTokenActionCreator {
             const { baseUrl = '', clientId = '' } = storeConfig.b2bApiSettings ?? {};
             const b2bClientId = resolveB2bAppClientId(clientId);
             const b2bBaseUrl = resolveB2bBaseUrl(baseUrl);
+
+            if (!b2bBaseUrl || !b2bClientId) {
+                throw new MissingDataError(MissingDataErrorType.MissingB2BConfig);
+            }
+
             const { id: customerId } = state.customer.getCustomerOrThrow();
             const { channelId } = state.checkout.getCheckoutOrThrow();
 

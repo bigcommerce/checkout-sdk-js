@@ -7,6 +7,7 @@ import { resolveB2bAppClientId, resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { B2BTokenRequestSender } from '../b2b-token';
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import {
@@ -30,6 +31,10 @@ export default class B2BPaymentsRefreshActionCreator {
             const b2bToken = state.b2bToken.getToken();
             const storeConfig = state.config.getStoreConfig();
             const b2bBaseUrl = resolveB2bBaseUrl(storeConfig?.b2bApiSettings?.baseUrl ?? '');
+
+            if (!b2bBaseUrl) {
+                throw new MissingDataError(MissingDataErrorType.MissingB2BConfig);
+            }
 
             const payments = paymentMethods.map((method) => ({
                 code: method.id,

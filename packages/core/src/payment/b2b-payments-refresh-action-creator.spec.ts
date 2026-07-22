@@ -205,6 +205,15 @@ describe('B2BPaymentsRefreshActionCreator', () => {
             );
         });
 
+        it('throws when the b2b base url is missing', () => {
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                ...getConfig().storeConfig,
+                b2bApiSettings: { ...b2bApiSettings, baseUrl: '' },
+            });
+
+            expect(() => actionCreator.refreshB2BPaymentMethods()(store)).toThrow();
+        });
+
         it('emits failed action when the request rejects', async () => {
             jest.spyOn(requestSender, 'refresh').mockRejectedValue(getErrorResponse());
 

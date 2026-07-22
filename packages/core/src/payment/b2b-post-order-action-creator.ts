@@ -83,7 +83,7 @@ export default class B2BPostOrderActionCreator {
             }
 
             if (!b2bBaseUrl) {
-                throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                throw new MissingDataError(MissingDataErrorType.MissingB2BConfig);
             }
 
             return concat(
@@ -93,7 +93,7 @@ export default class B2BPostOrderActionCreator {
 
                     if (isInvoice) {
                         if (!b2bToken) {
-                            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                            throw new MissingDataError(MissingDataErrorType.MissingB2BConfig);
                         }
 
                         const { body } = await this._requestSender.submitInvoice(
