@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.943.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.943.0...v1.943.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-10249 Add Fallback B2B Token ([#3322](https://github.com/bigcommerce/checkout-sdk-js/issues/3322)) ([519ca56](https://github.com/bigcommerce/checkout-sdk-js/commit/519ca563491f947c2ae775fe0b75045c04a91439))
+
 ## [1.943.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.942.4...v1.943.0) (2026-07-21)
 
 
