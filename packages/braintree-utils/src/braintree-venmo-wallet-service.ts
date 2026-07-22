@@ -1,7 +1,4 @@
-import {
-    PaymentMethodClientUnavailableError,
-    StandardError,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 import BraintreePaypalWalletError from './braintree-paypal-wallet-error';
@@ -9,15 +6,12 @@ import BraintreePaypalWalletError from './braintree-paypal-wallet-error';
 import {
     BraintreeError,
     BraintreeIntegrationService,
-    BraintreePaypalCheckout,
-    BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
-    isBraintreeError,
-    PaypalAuthorizeData,
+    BraintreeVenmoCheckout,
 } from './';
 
-export default class BraintreePaypalWalletService {
-    private braintreePaypalCheckout?: BraintreePaypalCheckout;
+export default class BraintreeVenmoWalletService {
+    private braintreeVenmoCheckout?: BraintreeVenmoCheckout;
 
     constructor(
         private walletButtonIntegrationService: WalletButtonIntegrationService,
@@ -33,38 +27,24 @@ export default class BraintreePaypalWalletService {
         this.braintreeIntegrationService.initialize(clientToken);
     }
 
-    async loadPaypalCheckout(
-        options: BraintreePaypalSdkCreatorConfig,
-        containerId: string,
-        onError?: (error: BraintreeError | StandardError) => void,
-    ): Promise<BraintreePaypalCheckout> {
-        this.braintreePaypalCheckout = await new Promise<BraintreePaypalCheckout>(
-            (resolve, reject) => {
-                void this.braintreeIntegrationService.getPaypalCheckout(
-                    options,
-                    resolve,
-                    (error: BraintreeError) => {
-                        this.removeElement(containerId);
+    async loadVenmoCheckout(containerId: string): Promise<BraintreeVenmoCheckout> {
+        try {
+            this.braintreeVenmoCheckout = await this.braintreeIntegrationService.getVenmoCheckout();
+        } catch (error) {
+            this.removeElement(containerId);
 
-                        if (onError && isBraintreeError(error)) {
-                            onError(error);
-                        }
+            throw error;
+        }
 
-                        reject(error);
-                    },
-                );
-            },
-        );
-
-        return this.braintreePaypalCheckout!;
+        return this.braintreeVenmoCheckout;
     }
 
-    getBraintreePaypalCheckoutOrThrow(): BraintreePaypalCheckout {
-        if (!this.braintreePaypalCheckout) {
+    getBraintreeVenmoCheckoutOrThrow(): BraintreeVenmoCheckout {
+        if (!this.braintreeVenmoCheckout) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.braintreePaypalCheckout;
+        return this.braintreeVenmoCheckout;
     }
 
     async teardown(): Promise<void> {
@@ -77,17 +57,15 @@ export default class BraintreePaypalWalletService {
      *
      */
     async proxyTokenizationPayment(
-        authorizeData: PaypalAuthorizeData,
         methodId: string,
         cartId: string,
     ): Promise<BraintreeTokenizePayload> {
-        const braintreePaypalCheckout = this.getBraintreePaypalCheckoutOrThrow();
+        const tokenizePayload = await this.tokenizeVenmo();
 
         const { deviceData } = await this.braintreeIntegrationService.getDataCollector({
             paypal: true,
         });
 
-        const tokenizePayload = await braintreePaypalCheckout.tokenizePayment(authorizeData);
         const { details, nonce } = tokenizePayload;
 
         const shippingAddress =
@@ -133,5 +111,21 @@ export default class BraintreePaypalWalletService {
      */
     removeElement(containerId?: string): void {
         this.braintreeIntegrationService.removeElement(containerId);
+    }
+
+    private tokenizeVenmo(): Promise<BraintreeTokenizePayload> {
+        const braintreeVenmoCheckout = this.getBraintreeVenmoCheckoutOrThrow();
+
+        return new Promise<BraintreeTokenizePayload>((resolve, reject) => {
+            braintreeVenmoCheckout.tokenize(
+                (error: BraintreeError | undefined, payload: BraintreeTokenizePayload) => {
+                    if (error) {
+                        return reject(error);
+                    }
+
+                    resolve(payload);
+                },
+            );
+        });
     }
 }

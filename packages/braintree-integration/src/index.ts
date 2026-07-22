@@ -21,8 +21,10 @@ export { WithBraintreePaypalWalletInitializeOptions } from './braintree-paypal/b
  */
 export { default as createBraintreePaypalCreditButtonStrategy } from './braintree-paypal-credit/create-braintree-paypal-credit-button-strategy';
 export { default as createBraintreePaypalCreditCustomerStrategy } from './braintree-paypal-credit/create-braintree-paypal-credit-customer-strategy';
+export { default as createBraintreePaypalCreditWalletStrategy } from './braintree-paypal-credit/create-braintree-paypal-credit-wallet-strategy';
 export { WithBraintreePaypalCreditButtonInitializeOptions } from './braintree-paypal-credit/braintree-paypal-credit-button-initialize-options';
 export { WithBraintreePaypalCreditCustomerInitializeOptions } from './braintree-paypal-credit/braintree-paypal-credit-customer-initialize-options';
+export { WithBraintreePaypalCreditWalletInitializeOptions } from './braintree-paypal-credit/braintree-paypal-credit-wallet-initialize-options';
 
 /**
  * Braintree LPMs strategies
@@ -50,6 +52,8 @@ export { default as createBraintreeVisaCheckoutPaymentStrategy } from './braintr
  */
 export { default as createBraintreeVenmoButtonStrategy } from './braintree-venmo/create-braintree-venmo-button-strategy';
 export { default as createBraintreeVenmoPaymentStrategy } from './braintree-venmo/create-braintree-venmo-payment-strategy';
+export { default as createBraintreeVenmoWalletStrategy } from './braintree-venmo/create-braintree-venmo-wallet-strategy';
+export { WithBraintreeVenmoWalletInitializeOptions } from './braintree-venmo/braintree-venmo-wallet-initialize-options';
 /**
  * Braintree Credit Card Payment Strategies
  */
