@@ -223,6 +223,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new ShippingCountryActionCreator(
             new ShippingCountryRequestSender(experimentRequestSender, { locale }),
             store,
+            new CountryRequestSender(experimentRequestSender, { locale }),
         ),
         new ShippingStrategyActionCreator(
             createShippingStrategyRegistry(store, experimentRequestSender),
