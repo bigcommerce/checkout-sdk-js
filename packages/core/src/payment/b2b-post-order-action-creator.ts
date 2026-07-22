@@ -4,7 +4,8 @@ import { catchError } from 'rxjs/operators';
 
 import { Address } from '../address';
 // TODO: CHECKOUT-9979 remove this import before delivery
-import { resolveB2bBaseUrl } from '../b2b-dev-tools';
+import { resolveB2bAppClientId, resolveB2bBaseUrl } from '../b2b-dev-tools';
+import { B2BTokenRequestSender } from '../b2b-token';
 import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
@@ -51,7 +52,10 @@ function mapToQuoteOrderedPayload(
 }
 
 export default class B2BPostOrderActionCreator {
-    constructor(private _requestSender: B2BPostOrderRequestSender) {}
+    constructor(
+        private _requestSender: B2BPostOrderRequestSender,
+        private _b2bTokenRequestSender: B2BTokenRequestSender,
+    ) {}
 
     persistB2BMetadata({
         isInvoice,
@@ -68,15 +72,18 @@ export default class B2BPostOrderActionCreator {
             const state = store.getState();
             const orderId = state.order.getOrderOrThrow().orderId;
             const b2bToken = state.b2bToken.getToken();
-            const isGuest = state.customer.getCustomer()?.isGuest ?? false;
             const b2bBaseUrl = resolveB2bBaseUrl(
                 state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
             );
             const storeConfig = state.config.getStoreConfig();
             const quoteId = storeConfig?.checkoutSettings.capabilities?.userJourney.quoteConfig?.id;
 
-            if (!orderId || !b2bBaseUrl || (!b2bToken && !isGuest)) {
+            if (!orderId) {
                 throw new MissingDataError(MissingDataErrorType.MissingOrder);
+            }
+
+            if (!b2bBaseUrl) {
+                throw new MissingDataError(MissingDataErrorType.MissingB2BConfig);
             }
 
             return concat(
@@ -86,7 +93,7 @@ export default class B2BPostOrderActionCreator {
 
                     if (isInvoice) {
                         if (!b2bToken) {
-                            throw new MissingDataError(MissingDataErrorType.MissingOrder);
+                            throw new MissingDataError(MissingDataErrorType.MissingB2BConfig);
                         }
 
                         const { body } = await this._requestSender.submitInvoice(
@@ -113,6 +120,19 @@ export default class B2BPostOrderActionCreator {
 
                         if (typeof quoteId === 'number') {
                             const checkout = state.checkout.getCheckoutOrThrow();
+                            const isGuest = state.customer.getCustomer()?.isGuest ?? false;
+
+                            let bcToken: string | undefined;
+
+                            if (!b2bToken && !isGuest) {
+                                const b2bClientId = resolveB2bAppClientId(
+                                    storeConfig?.b2bApiSettings?.clientId ?? '',
+                                );
+
+                                bcToken = await this._b2bTokenRequestSender.getCurrentCustomerJWT(
+                                    b2bClientId,
+                                );
+                            }
 
                             await this._requestSender.submitQuote(
                                 quoteId,
@@ -121,7 +141,7 @@ export default class B2BPostOrderActionCreator {
                                     orderId,
                                     storeConfig?.storeProfile.storeHash ?? '',
                                 ),
-                                b2bToken,
+                                { b2bToken, bcToken },
                                 b2bBaseUrl,
                             );
                         }

@@ -2,6 +2,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { B2BTokenRequestSender } from '../b2b-token';
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
@@ -16,6 +17,7 @@ import PaymentMethod from './payment-method';
 describe('B2BPaymentsRefreshActionCreator', () => {
     let store: CheckoutStore;
     let requestSender: B2BPaymentsRefreshRequestSender;
+    let b2bTokenRequestSender: B2BTokenRequestSender;
     let actionCreator: B2BPaymentsRefreshActionCreator;
 
     const b2bApiSettings = {
@@ -66,12 +68,18 @@ describe('B2BPaymentsRefreshActionCreator', () => {
 
         jest.spyOn(requestSender, 'refresh').mockResolvedValue(getResponse({}));
 
+        b2bTokenRequestSender = new B2BTokenRequestSender(createRequestSender());
+
+        jest.spyOn(b2bTokenRequestSender, 'getCurrentCustomerJWT').mockResolvedValue(
+            'bc-jwt-token',
+        );
+
         jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
             ...getConfig().storeConfig,
             b2bApiSettings,
         });
 
-        actionCreator = new B2BPaymentsRefreshActionCreator(requestSender);
+        actionCreator = new B2BPaymentsRefreshActionCreator(requestSender, b2bTokenRequestSender);
     });
 
     describe('#refreshB2BPaymentMethods()', () => {
@@ -95,7 +103,7 @@ describe('B2BPaymentsRefreshActionCreator', () => {
                     { code: 'stripe-card', name: 'stripev3' },
                     { code: 'no-display-no-gateway', name: '' },
                 ],
-                'b2b-auth-token',
+                { b2bToken: 'b2b-auth-token', bcToken: undefined },
                 b2bApiSettings.baseUrl,
                 undefined,
             );
@@ -117,7 +125,7 @@ describe('B2BPaymentsRefreshActionCreator', () => {
 
             expect(requestSender.refresh).toHaveBeenCalledWith(
                 [],
-                'b2b-auth-token',
+                { b2bToken: 'b2b-auth-token', bcToken: undefined },
                 b2bApiSettings.baseUrl,
                 undefined,
             );
@@ -130,28 +138,10 @@ describe('B2BPaymentsRefreshActionCreator', () => {
 
             expect(requestSender.refresh).toHaveBeenCalledWith(
                 expect.any(Array),
-                'b2b-auth-token',
+                { b2bToken: 'b2b-auth-token', bcToken: undefined },
                 b2bApiSettings.baseUrl,
                 options,
             );
-        });
-
-        it('throws when the b2b token is missing', () => {
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
-                paymentMethods: {
-                    data: paymentMethods,
-                    errors: {},
-                    statuses: {},
-                },
-            });
-
-            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
-                ...getConfig().storeConfig,
-                b2bApiSettings,
-            });
-
-            expect(() => actionCreator.refreshB2BPaymentMethods()(store)).toThrow();
         });
 
         it('refreshes without a token when the customer is a guest', async () => {
@@ -174,9 +164,10 @@ describe('B2BPaymentsRefreshActionCreator', () => {
                 .pipe(toArray())
                 .toPromise();
 
+            expect(b2bTokenRequestSender.getCurrentCustomerJWT).not.toHaveBeenCalled();
             expect(requestSender.refresh).toHaveBeenCalledWith(
                 expect.any(Array),
-                undefined,
+                { b2bToken: undefined, bcToken: undefined },
                 b2bApiSettings.baseUrl,
                 undefined,
             );
@@ -184,6 +175,34 @@ describe('B2BPaymentsRefreshActionCreator', () => {
                 { type: B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsRequested },
                 { type: B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsSucceeded },
             ]);
+        });
+
+        it('refreshes with a bc token when a signed-in customer has no b2b token', async () => {
+            store = createCheckoutStore({
+                ...getCheckoutStoreState(),
+                paymentMethods: {
+                    data: paymentMethods,
+                    errors: {},
+                    statuses: {},
+                },
+            });
+
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                ...getConfig().storeConfig,
+                b2bApiSettings,
+            });
+
+            await from(actionCreator.refreshB2BPaymentMethods()(store)).toPromise();
+
+            expect(b2bTokenRequestSender.getCurrentCustomerJWT).toHaveBeenCalledWith(
+                b2bApiSettings.clientId,
+            );
+            expect(requestSender.refresh).toHaveBeenCalledWith(
+                expect.any(Array),
+                { b2bToken: undefined, bcToken: 'bc-jwt-token' },
+                b2bApiSettings.baseUrl,
+                undefined,
+            );
         });
 
         it('throws when the b2b base url is missing', () => {

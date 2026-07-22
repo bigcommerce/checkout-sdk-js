@@ -184,8 +184,12 @@ export default class PaymentMethodActionCreator {
             state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
         );
 
-        if (customer.isGuest || !b2bToken || !baseUrl || !cart.companyId) {
+        if (customer.isGuest || !baseUrl || !cart.companyId) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        if (!b2bToken) {
+            return methods;
         }
 
         const b2bPaymentFilterType =

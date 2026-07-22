@@ -3,6 +3,8 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { RequestOptions } from '../common/http-request';
 import { ShippingOption } from '../shipping';
 
+import { B2BAuthTokens, getB2BAuthHeaders } from './b2b-auth-headers';
+
 export interface CloseInvoicePayload {
     orderId: string;
     comment: string;
@@ -70,8 +72,7 @@ export default class B2BPostOrderRequestSender {
                 credentials: false,
                 headers: {
                     'Content-Type': 'application/json',
-                    authToken: b2bToken,
-                    Authorization: `Bearer ${b2bToken}`,
+                    ...getB2BAuthHeaders({ b2bToken }),
                 },
                 body: payload,
             },
@@ -81,14 +82,14 @@ export default class B2BPostOrderRequestSender {
     async submitQuote(
         quoteId: number,
         payload: QuoteOrderedPayload,
-        b2bToken: string | undefined,
+        auth: B2BAuthTokens,
         b2bBaseUrl: string,
     ): Promise<Response<void>> {
         return this._requestSender.post(`${b2bBaseUrl}/api/v2/rfq/${quoteId}/ordered`, {
             credentials: false,
             headers: {
                 'Content-Type': 'application/json',
-                ...(b2bToken ? { authToken: b2bToken, Authorization: `Bearer ${b2bToken}` } : {}),
+                ...getB2BAuthHeaders(auth),
             },
             body: payload,
         });
@@ -103,8 +104,7 @@ export default class B2BPostOrderRequestSender {
             credentials: false,
             headers: {
                 'Content-Type': 'application/json',
-                authToken: b2bToken,
-                Authorization: `Bearer ${b2bToken}`,
+                ...getB2BAuthHeaders({ b2bToken }),
             },
             body: payload,
         });

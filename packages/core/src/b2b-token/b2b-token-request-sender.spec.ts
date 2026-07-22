@@ -23,6 +23,20 @@ describe('B2BTokenRequestSender', () => {
         b2bTokenRequestSender = new B2BTokenRequestSender(requestSender);
     });
 
+    describe('#getCurrentCustomerJWT()', () => {
+        it('fetches the current customer JWT with the app client id and returns the token', async () => {
+            const token = await b2bTokenRequestSender.getCurrentCustomerJWT('my-client-id');
+
+            expect(requestSender.get).toHaveBeenCalledWith('/customer/current.jwt', {
+                params: { app_client_id: 'my-client-id' },
+                headers: SDK_VERSION_HEADERS,
+                timeout: undefined,
+            });
+
+            expect(token).toBe(jwtToken);
+        });
+    });
+
     describe('#getB2BToken()', () => {
         it('fetches BC JWT then exchanges it for a B2B token', async () => {
             await b2bTokenRequestSender.getB2BToken(

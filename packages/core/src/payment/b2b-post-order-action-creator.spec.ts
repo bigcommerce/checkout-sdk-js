@@ -2,6 +2,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { B2BTokenRequestSender } from '../b2b-token';
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
@@ -18,6 +19,7 @@ import B2BPostOrderRequestSender from './b2b-post-order-request-sender';
 describe('B2BPostOrderActionCreator', () => {
     let store: CheckoutStore;
     let requestSender: B2BPostOrderRequestSender;
+    let b2bTokenRequestSender: B2BTokenRequestSender;
     let actionCreator: B2BPostOrderActionCreator;
 
     const comment = 'Invoice comment';
@@ -61,9 +63,15 @@ describe('B2BPostOrderActionCreator', () => {
 
         jest.spyOn(requestSender, 'submitQuote').mockResolvedValue(getResponse(undefined));
 
+        b2bTokenRequestSender = new B2BTokenRequestSender(createRequestSender());
+
+        jest.spyOn(b2bTokenRequestSender, 'getCurrentCustomerJWT').mockResolvedValue(
+            'bc-jwt-token',
+        );
+
         mockStoreConfig();
 
-        actionCreator = new B2BPostOrderActionCreator(requestSender);
+        actionCreator = new B2BPostOrderActionCreator(requestSender, b2bTokenRequestSender);
     });
 
     describe('#persistB2BMetadata()', () => {
@@ -164,7 +172,7 @@ describe('B2BPostOrderActionCreator', () => {
             expect(() => actionCreator.persistB2BMetadata(invoiceOptions)(store)).toThrow();
         });
 
-        it('throws when the b2b token is missing', () => {
+        it('emits failed action when the b2b token is missing in the invoice flow', async () => {
             store = createCheckoutStore(getCheckoutStoreStateWithOrder());
 
             jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
@@ -172,7 +180,19 @@ describe('B2BPostOrderActionCreator', () => {
                 b2bApiSettings,
             });
 
-            expect(() => actionCreator.persistB2BMetadata(invoiceOptions)(store)).toThrow();
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(actionCreator.persistB2BMetadata(invoiceOptions)(store))
+                .pipe(catchError(errorHandler), toArray())
+                .toPromise();
+
+            expect(requestSender.submitInvoice).not.toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: B2BPostOrderActionType.PersistB2BMetadataRequested },
+                expect.objectContaining({
+                    type: B2BPostOrderActionType.PersistB2BMetadataFailed,
+                    error: true,
+                }),
+            ]);
         });
 
         it('throws when the b2b base url is missing', () => {
@@ -227,7 +247,7 @@ describe('B2BPostOrderActionCreator', () => {
                             lastName: 'Tester',
                         },
                     },
-                    'b2b-auth-token',
+                    { b2bToken: 'b2b-auth-token', bcToken: undefined },
                     b2bApiSettings.baseUrl,
                 );
 
@@ -237,6 +257,24 @@ describe('B2BPostOrderActionCreator', () => {
                     .invocationCallOrder;
 
                 expect(submitQuoteCallOrder).toBeGreaterThan(addOrderCallOrder);
+            });
+
+            it('submits the quote with a bc token when a signed-in customer has no b2b token', async () => {
+                store = createCheckoutStore(getCheckoutStoreStateWithOrder());
+                mockStoreConfig({ id: 941 });
+
+                await from(actionCreator.persistB2BMetadata(nonInvoiceOptions)(store)).toPromise();
+
+                expect(requestSender.submitOrderExtraFields).not.toHaveBeenCalled();
+                expect(b2bTokenRequestSender.getCurrentCustomerJWT).toHaveBeenCalledWith(
+                    b2bApiSettings.clientId,
+                );
+                expect(requestSender.submitQuote).toHaveBeenCalledWith(
+                    941,
+                    expect.objectContaining({ orderId: 295 }),
+                    { b2bToken: undefined, bcToken: 'bc-jwt-token' },
+                    b2bApiSettings.baseUrl,
+                );
             });
 
             it('does not call submitQuote when quoteConfig is null', async () => {
@@ -270,7 +308,7 @@ describe('B2BPostOrderActionCreator', () => {
                         shippingMethod: null,
                         shippingAddress: null,
                     }),
-                    'b2b-auth-token',
+                    { b2bToken: 'b2b-auth-token', bcToken: undefined },
                     b2bApiSettings.baseUrl,
                 );
             });
@@ -350,10 +388,11 @@ describe('B2BPostOrderActionCreator', () => {
                     .toPromise();
 
                 expect(requestSender.submitOrderExtraFields).not.toHaveBeenCalled();
+                expect(b2bTokenRequestSender.getCurrentCustomerJWT).not.toHaveBeenCalled();
                 expect(requestSender.submitQuote).toHaveBeenCalledWith(
                     941,
                     expect.objectContaining({ orderId: 295 }),
-                    undefined,
+                    { b2bToken: undefined, bcToken: undefined },
                     b2bApiSettings.baseUrl,
                 );
                 expect(actions).toEqual([

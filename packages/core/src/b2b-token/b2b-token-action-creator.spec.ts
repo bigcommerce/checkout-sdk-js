@@ -18,6 +18,10 @@ describe('B2BTokenActionCreator', () => {
     let actionCreator: B2BTokenActionCreator;
 
     const b2bResponse = getResponse({ code: 200, data: { token: 'b2b-auth-token' } });
+    const b2bApiSettings = {
+        clientId: '123456',
+        baseUrl: 'https://api-b2b.bigcommerce.com',
+    };
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -25,9 +29,10 @@ describe('B2BTokenActionCreator', () => {
 
         jest.spyOn(requestSender, 'getB2BToken').mockResolvedValue(b2bResponse);
 
-        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
-            getConfig().storeConfig,
-        );
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+            ...getConfig().storeConfig,
+            b2bApiSettings,
+        });
         jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(getCustomer());
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(getCheckout());
 
@@ -52,15 +57,6 @@ describe('B2BTokenActionCreator', () => {
         it('calls getB2BToken with b2bApiSettings from initial state', async () => {
             const customer = getCustomer();
             const checkout = getCheckout();
-            const b2bApiSettings = {
-                clientId: 'dl7c39mdpul6hyc489yk0vzxl6jesyx',
-                baseUrl: 'https://api-b2b.bigcommerce.com',
-            };
-
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
-                ...getConfig().storeConfig,
-                b2bApiSettings,
-            });
 
             await from(actionCreator.loadB2BToken()(store)).toPromise();
 
@@ -72,6 +68,14 @@ describe('B2BTokenActionCreator', () => {
                 b2bApiSettings.baseUrl,
                 undefined,
             );
+        });
+
+        it('throws when the b2b api settings are missing', () => {
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                getConfig().storeConfig,
+            );
+
+            expect(() => actionCreator.loadB2BToken()(store)).toThrow();
         });
 
         it('emits error actions if getB2BToken fails', async () => {

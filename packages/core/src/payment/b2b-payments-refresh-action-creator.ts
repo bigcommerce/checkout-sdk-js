@@ -3,7 +3,8 @@ import { concat, defer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 // TODO: CHECKOUT-9979 remove this import before delivery
-import { resolveB2bBaseUrl } from '../b2b-dev-tools';
+import { resolveB2bAppClientId, resolveB2bBaseUrl } from '../b2b-dev-tools';
+import { B2BTokenRequestSender } from '../b2b-token';
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
@@ -16,7 +17,10 @@ import {
 import B2BPaymentsRefreshRequestSender from './b2b-payments-refresh-request-sender';
 
 export default class B2BPaymentsRefreshActionCreator {
-    constructor(private _requestSender: B2BPaymentsRefreshRequestSender) {}
+    constructor(
+        private _requestSender: B2BPaymentsRefreshRequestSender,
+        private _b2bTokenRequestSender: B2BTokenRequestSender,
+    ) {}
 
     refreshB2BPaymentMethods(
         options?: RequestOptions,
@@ -25,13 +29,11 @@ export default class B2BPaymentsRefreshActionCreator {
             const state = store.getState();
             const paymentMethods = state.paymentMethods.getPaymentMethods() ?? [];
             const b2bToken = state.b2bToken.getToken();
-            const isGuest = state.customer.getCustomer()?.isGuest ?? false;
-            const b2bBaseUrl = resolveB2bBaseUrl(
-                state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
-            );
+            const storeConfig = state.config.getStoreConfig();
+            const b2bBaseUrl = resolveB2bBaseUrl(storeConfig?.b2bApiSettings?.baseUrl ?? '');
 
-            if (!b2bBaseUrl || (!b2bToken && !isGuest)) {
-                throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+            if (!b2bBaseUrl) {
+                throw new MissingDataError(MissingDataErrorType.MissingB2BConfig);
             }
 
             const payments = paymentMethods.map((method) => ({
@@ -42,7 +44,26 @@ export default class B2BPaymentsRefreshActionCreator {
             return concat(
                 of(createAction(B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsRequested)),
                 defer(async () => {
-                    await this._requestSender.refresh(payments, b2bToken, b2bBaseUrl, options);
+                    const isGuest = state.customer.getCustomer()?.isGuest ?? false;
+
+                    let bcToken: string | undefined;
+
+                    if (!b2bToken && !isGuest) {
+                        const b2bClientId = resolveB2bAppClientId(
+                            storeConfig?.b2bApiSettings?.clientId ?? '',
+                        );
+
+                        bcToken = await this._b2bTokenRequestSender.getCurrentCustomerJWT(
+                            b2bClientId,
+                        );
+                    }
+
+                    await this._requestSender.refresh(
+                        payments,
+                        { b2bToken, bcToken },
+                        b2bBaseUrl,
+                        options,
+                    );
 
                     return createAction(
                         B2BPaymentsRefreshActionType.RefreshB2BPaymentMethodsSucceeded,
