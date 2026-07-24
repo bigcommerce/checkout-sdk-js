@@ -17,8 +17,11 @@ describe('mapToAddressRequestBody()', () => {
         customFields: [],
     };
 
-    it('keeps all AddressRequestBody fields', () => {
-        expect(mapToAddressRequestBody(baseAddress)).toEqual(baseAddress);
+    it('keeps all AddressRequestBody fields and defaults shouldSaveAddress to false', () => {
+        expect(mapToAddressRequestBody(baseAddress)).toEqual({
+            ...baseAddress,
+            shouldSaveAddress: false,
+        });
     });
 
     it('keeps extraFields and label when present', () => {
@@ -28,7 +31,10 @@ describe('mapToAddressRequestBody()', () => {
             extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
         };
 
-        expect(mapToAddressRequestBody(address)).toEqual(address);
+        expect(mapToAddressRequestBody(address)).toEqual({
+            ...address,
+            shouldSaveAddress: false,
+        });
     });
 
     it('strips CustomerAddress b2b metadata and hoists extraFields', () => {
@@ -49,6 +55,7 @@ describe('mapToAddressRequestBody()', () => {
         expect(result).toEqual({
             ...baseAddress,
             extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
+            shouldSaveAddress: false,
         });
         expect(result).not.toHaveProperty('b2b');
         expect(result).not.toHaveProperty('label');

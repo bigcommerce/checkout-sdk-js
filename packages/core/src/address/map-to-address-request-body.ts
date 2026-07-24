@@ -25,12 +25,19 @@ export default function mapToAddressRequestBody(
 ): Partial<AddressRequestBody> {
     const { b2b, ...requestBody } = address;
 
+    // The API currently defaults shouldSaveAddress to true. We decided to handle this on the FE
+    // by consistently sending false as the default on 24 July 2026.
+    const requestBodyWithSaveFlag = {
+        ...requestBody,
+        shouldSaveAddress: requestBody.shouldSaveAddress ?? false,
+    };
+
     if (!b2b) {
-        return requestBody;
+        return requestBodyWithSaveFlag;
     }
 
     return {
-        ...requestBody,
-        extraFields: requestBody.extraFields ?? b2b.extraFields,
+        ...requestBodyWithSaveFlag,
+        extraFields: requestBodyWithSaveFlag.extraFields ?? b2b.extraFields,
     };
 }
