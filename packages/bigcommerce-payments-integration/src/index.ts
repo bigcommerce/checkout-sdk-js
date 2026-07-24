@@ -86,3 +86,11 @@ export { WithBigCommercePaymentsVenmoCustomerInitializeOptions } from './bigcomm
 
 export { default as createBigCommercePaymentsVenmoPaymentStrategy } from './bigcommerce-payments-venmo/create-bigcommerce-payments-venmo-payment-strategy';
 export { WithBigCommercePaymentsVenmoPaymentInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-payment-initialize-options';
+
+/**
+ *
+ * BigCommercePayments Invoices strategies
+ *
+ */
+export { default as createBigCommercePaymentsInvoicesPaymentStrategy } from './bigcommerce-payments-invoices/create-bigcommerce-payments-invoices-payment-strategy';
+export { WithBigCommercePaymentsInvoicesPaymentInitializeOptions } from './bigcommerce-payments-invoices/bigcommerce-payments-invoices-payment-initialize-options';
