@@ -86,3 +86,6 @@ export { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-com
  */
 export { default as createPayPalCommerceWalletStrategy } from './paypal-commerce/create-paypal-commerce-wallet-strategy';
 export { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce/paypal-commerce-wallet-initialize-options';
+
+export { default as createPayPalCommerceCreditWalletStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-wallet-strategy';
+export { WithPayPalCommerceCreditWalletInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-wallet-initialize-options';
