@@ -474,7 +474,11 @@ describe('CheckoutService', () => {
             paymentMethodActionCreator,
             paymentStrategyActionCreator,
             new PickupOptionActionCreator(new PickupOptionRequestSender(requestSender)),
-            new ShippingCountryActionCreator(shippingCountryRequestSender, store),
+            new ShippingCountryActionCreator(
+                shippingCountryRequestSender,
+                store,
+                countryRequestSender,
+            ),
             shippingStrategyActionCreator,
             signInEmailActionCreator,
             spamProtectionActionCreator,
