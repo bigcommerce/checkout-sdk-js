@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.943.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.943.1...v1.943.2) (2026-07-24)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-10262 Consistently Send shouldSaveAddress Value ([#3326](https://github.com/bigcommerce/checkout-sdk-js/issues/3326)) ([9310955](https://github.com/bigcommerce/checkout-sdk-js/commit/9310955dfd45df5f8e154649ba3ee75d54d740cd))
+
 ### [1.943.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.943.0...v1.943.1) (2026-07-22)
 
 

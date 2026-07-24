@@ -93,6 +93,12 @@
 
 ***
 
+### shouldSaveAddress?
+
+> `optional` **shouldSaveAddress?**: `boolean`
+
+***
+
 ### stateOrProvince
 
 > **stateOrProvince**: `string`

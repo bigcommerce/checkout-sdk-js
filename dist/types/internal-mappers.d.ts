@@ -3,7 +3,6 @@ import { Currency as Currency_2 } from '@bigcommerce/checkout-sdk/payment-integr
 
 declare interface Address extends AddressRequestBody {
     country: string;
-    shouldSaveAddress?: boolean;
 }
 
 declare interface AddressExtraFieldValue {
@@ -12,6 +11,7 @@ declare interface AddressExtraFieldValue {
 }
 
 declare interface AddressRequestBody {
+    shouldSaveAddress?: boolean;
     firstName: string;
     lastName: string;
     company: string;

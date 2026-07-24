@@ -76,7 +76,6 @@ declare interface AddOrderExtraFieldsPayload {
 
 declare interface Address extends AddressRequestBody {
     country: string;
-    shouldSaveAddress?: boolean;
 }
 
 declare interface AddressExtraFieldValue {
@@ -87,6 +86,7 @@ declare interface AddressExtraFieldValue {
 declare type AddressKey = keyof Address;
 
 declare interface AddressRequestBody {
+    shouldSaveAddress?: boolean;
     firstName: string;
     lastName: string;
     company: string;

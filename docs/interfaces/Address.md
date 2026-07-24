@@ -156,6 +156,10 @@
 
 > `optional` **shouldSaveAddress?**: `boolean`
 
+#### Inherited from
+
+[`AddressRequestBody`](AddressRequestBody.md).[`shouldSaveAddress`](AddressRequestBody.md#shouldsaveaddress)
+
 ***
 
 ### stateOrProvince
