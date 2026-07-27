@@ -89,3 +89,6 @@ export { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce/pay
 
 export { default as createPayPalCommerceCreditWalletStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-wallet-strategy';
 export { WithPayPalCommerceCreditWalletInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-wallet-initialize-options';
+
+export { default as createPayPalCommerceVenmoWalletStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-wallet-strategy';
+export { WithPayPalCommerceVenmoWalletInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-wallet-initialize-options';

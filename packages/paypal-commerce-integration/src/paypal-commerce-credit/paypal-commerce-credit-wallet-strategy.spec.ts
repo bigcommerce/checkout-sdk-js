@@ -241,6 +241,8 @@ describe('PayPalCommerceCreditWalletStrategy', () => {
         });
         expect(paypalCommerceWalletService.proxyTokenizationPayment).toHaveBeenCalledWith(
             defaultCartId,
+            'paypalcommerce.paypalcredit',
+            'paypalcommercecredit',
             defaultOrderId,
         );
     });
