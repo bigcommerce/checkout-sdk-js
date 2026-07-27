@@ -2,7 +2,10 @@ import {
     PaymentMethodClientUnavailableError,
     StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+import {
+    AddressRequestBody,
+    WalletButtonIntegrationService,
+} from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 import BraintreePaypalWalletError from './braintree-paypal-wallet-error';
 
@@ -11,6 +14,7 @@ import {
     BraintreeIntegrationService,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
+    BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
     BraintreeVenmoCheckout,
     isBraintreeError,
@@ -142,6 +146,11 @@ export default class BraintreePaypalWalletService {
         const shippingAddress =
             this.braintreeIntegrationService.mapToLegacyShippingAddress(details);
 
+        await this.walletButtonIntegrationService.addBillingAddress(
+            cartId,
+            this.mapToBillingAddress(details),
+        );
+
         const inputData = {
             paymentWalletData: {
                 providerId: methodId,
@@ -152,6 +161,7 @@ export default class BraintreePaypalWalletService {
                 { key: 'payment_type', value: 'paypal' },
                 { key: 'action', value: 'set_external_checkout' },
                 { key: 'provider', value: methodId },
+                { key: 'nonce', value: nonce },
                 {
                     key: 'shipping_address',
                     value: encodeURIComponent(JSON.stringify(shippingAddress)),
@@ -173,6 +183,28 @@ export default class BraintreePaypalWalletService {
         window.location.assign(externalCheckoutUrl);
 
         return tokenizePayload;
+    }
+
+    private mapToBillingAddress(details: BraintreeTokenizationDetails): AddressRequestBody {
+        const { billingAddress, email, firstName, lastName, phone, shippingAddress } = details;
+
+        const address = billingAddress || shippingAddress;
+
+        return {
+            firstName: firstName || '',
+            lastName: lastName || '',
+            company: '',
+            address1: address?.line1 || '',
+            address2: address?.line2 || '',
+            city: address?.city || '',
+            email: email || '',
+            stateOrProvince: address?.state || '',
+            stateOrProvinceCode: address?.state || '',
+            countryCode: address?.countryCode || '',
+            postalCode: address?.postalCode || '',
+            phone: phone || '',
+            shouldSaveAddress: false,
+        };
     }
 
     private tokenizeVenmo(): Promise<BraintreeTokenizePayload> {

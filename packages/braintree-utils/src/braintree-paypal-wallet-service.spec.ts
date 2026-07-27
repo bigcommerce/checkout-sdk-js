@@ -119,6 +119,10 @@ describe('BraintreePaypalWalletService', () => {
             body: { redirectUrls: { externalCheckoutUrl } },
         } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
 
+        jest.spyOn(walletButtonIntegrationService, 'addBillingAddress').mockResolvedValue(
+            {} as Awaited<ReturnType<WalletButtonIntegrationService['addBillingAddress']>>,
+        );
+
         Object.defineProperty(window, 'location', {
             configurable: true,
             value: { assign: jest.fn() },
@@ -225,20 +229,43 @@ describe('BraintreePaypalWalletService', () => {
             expect(braintreePaypalCheckoutMock.tokenizePayment).toHaveBeenCalledWith(authorizeData);
         });
 
+        it('adds the buyer billing address to the cart', async () => {
+            await service.proxyTokenizationPayment(authorizeData, methodId, cartId);
+
+            expect(walletButtonIntegrationService.addBillingAddress).toHaveBeenCalledWith(cartId, {
+                firstName: 'Foo',
+                lastName: 'Bar',
+                company: '',
+                address1: '56789 Testing Way',
+                address2: 'Level 2',
+                city: 'Some Other City',
+                email: 'foo@bar.com',
+                stateOrProvince: 'Arizona',
+                stateOrProvinceCode: 'Arizona',
+                countryCode: 'US',
+                postalCode: '96666',
+                phone: '',
+                shouldSaveAddress: false,
+            });
+        });
+
         it('requests the redirect url with wallet data and buyer billing/shipping address', async () => {
             await service.proxyTokenizationPayment(authorizeData, methodId, cartId);
+
+            const nonce = getTokenizePayload().nonce;
 
             expect(walletButtonIntegrationService.getRedirectToCheckoutUrl).toHaveBeenCalledWith(
                 expect.objectContaining({
                     paymentWalletData: {
                         providerId: methodId,
-                        providerOrderId: getTokenizePayload().nonce,
+                        providerOrderId: nonce,
                     },
                     cartEntityId: cartId,
                     queryParams: expect.arrayContaining([
                         { key: 'payment_type', value: 'paypal' },
                         { key: 'action', value: 'set_external_checkout' },
                         { key: 'provider', value: methodId },
+                        { key: 'nonce', value: nonce },
                         { key: 'device_data', value: dataCollector.deviceData },
                     ]),
                 }),
@@ -276,20 +303,43 @@ describe('BraintreePaypalWalletService', () => {
             expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
         });
 
+        it('adds the buyer billing address to the cart', async () => {
+            await service.proxyVenmoTokenizationPayment(methodId, cartId);
+
+            expect(walletButtonIntegrationService.addBillingAddress).toHaveBeenCalledWith(cartId, {
+                firstName: 'Foo',
+                lastName: 'Bar',
+                company: '',
+                address1: '56789 Testing Way',
+                address2: 'Level 2',
+                city: 'Some Other City',
+                email: 'foo@bar.com',
+                stateOrProvince: 'Arizona',
+                stateOrProvinceCode: 'Arizona',
+                countryCode: 'US',
+                postalCode: '96666',
+                phone: '',
+                shouldSaveAddress: false,
+            });
+        });
+
         it('requests the redirect url with wallet data and buyer billing/shipping address', async () => {
             await service.proxyVenmoTokenizationPayment(methodId, cartId);
+
+            const nonce = getTokenizePayload().nonce;
 
             expect(walletButtonIntegrationService.getRedirectToCheckoutUrl).toHaveBeenCalledWith(
                 expect.objectContaining({
                     paymentWalletData: {
                         providerId: methodId,
-                        providerOrderId: getTokenizePayload().nonce,
+                        providerOrderId: nonce,
                     },
                     cartEntityId: cartId,
                     queryParams: expect.arrayContaining([
                         { key: 'payment_type', value: 'paypal' },
                         { key: 'action', value: 'set_external_checkout' },
                         { key: 'provider', value: methodId },
+                        { key: 'nonce', value: nonce },
                         { key: 'device_data', value: dataCollector.deviceData },
                     ]),
                 }),
