@@ -10,6 +10,10 @@ export { default as createBraintreeSdk } from './create-braintree-sdk';
 export { default as BraintreeSDKVersionManager } from './braintree-sdk-version-manager';
 export { default as BraintreePaypalWalletService } from './braintree-paypal-wallet-service';
 export { default as BraintreePaypalWalletError } from './braintree-paypal-wallet-error';
+export {
+    default as getBraintreeVenmoButtonStyle,
+    VenmoButtonImage,
+} from './get-braintree-venmo-button-style';
 export { default as BraintreeHeadlessSDKVersionManager } from './braintree-headless-sdk-version-manager';
 export { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
 export {

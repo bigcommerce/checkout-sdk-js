@@ -3,6 +3,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
+    UnsupportedBrowserError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
@@ -20,15 +21,19 @@ import {
     BraintreePaypalCheckout,
     BraintreeScriptLoader,
     BraintreeSDKVersionManager,
+    BraintreeTokenizePayload,
+    BraintreeVenmoCheckout,
     getDataCollectorMock,
     getPaypalCheckoutMock,
     getTokenizePayload,
+    getVenmoCheckoutMock,
     PaypalAuthorizeData,
 } from './';
 
 describe('BraintreePaypalWalletService', () => {
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
+    let braintreeVenmoCheckoutMock: BraintreeVenmoCheckout;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
     let dataCollector: BraintreeDataCollector;
@@ -68,6 +73,17 @@ describe('BraintreePaypalWalletService', () => {
     beforeEach(() => {
         dataCollector = getDataCollectorMock();
         braintreePaypalCheckoutMock = getPaypalCheckoutMock();
+        braintreeVenmoCheckoutMock = getVenmoCheckoutMock();
+        braintreeVenmoCheckoutMock.tokenize = jest.fn(
+            (
+                callback: (
+                    error: BraintreeError | undefined,
+                    payload: BraintreeTokenizePayload,
+                ) => void,
+            ) => {
+                callback(undefined, getTokenizePayload());
+            },
+        );
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
         braintreeScriptLoader = new BraintreeScriptLoader(
@@ -92,6 +108,9 @@ describe('BraintreePaypalWalletService', () => {
         jest.spyOn(braintreeIntegrationService, 'getPaypalCheckout').mockImplementation(
             getSuccessCheckoutMock(),
         );
+        jest.spyOn(braintreeIntegrationService, 'getVenmoCheckout').mockResolvedValue(
+            braintreeVenmoCheckoutMock,
+        );
         jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockResolvedValue(
             dataCollector,
         );
@@ -99,6 +118,10 @@ describe('BraintreePaypalWalletService', () => {
         jest.spyOn(walletButtonIntegrationService, 'getRedirectToCheckoutUrl').mockResolvedValue({
             body: { redirectUrls: { externalCheckoutUrl } },
         } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
+
+        jest.spyOn(walletButtonIntegrationService, 'addBillingAddress').mockResolvedValue(
+            {} as Awaited<ReturnType<WalletButtonIntegrationService['addBillingAddress']>>,
+        );
 
         Object.defineProperty(window, 'location', {
             configurable: true,
@@ -141,6 +164,24 @@ describe('BraintreePaypalWalletService', () => {
         });
     });
 
+    describe('#loadVenmoCheckout()', () => {
+        it('resolves with the braintree venmo checkout instance', async () => {
+            const checkout = await service.loadVenmoCheckout(containerId);
+
+            expect(checkout).toBe(braintreeVenmoCheckoutMock);
+        });
+
+        it('removes the container and rethrows when checkout creation fails', async () => {
+            const error = new UnsupportedBrowserError();
+
+            jest.spyOn(braintreeIntegrationService, 'getVenmoCheckout').mockRejectedValue(error);
+
+            await expect(service.loadVenmoCheckout(containerId)).rejects.toBe(error);
+
+            expect(braintreeIntegrationService.removeElement).toHaveBeenCalledWith(containerId);
+        });
+    });
+
     describe('#getBraintreePaypalCheckoutOrThrow()', () => {
         it('throws when the paypal checkout has not been loaded', () => {
             expect(() => service.getBraintreePaypalCheckoutOrThrow()).toThrow(
@@ -152,6 +193,20 @@ describe('BraintreePaypalWalletService', () => {
             await service.loadPaypalCheckout({}, containerId);
 
             expect(service.getBraintreePaypalCheckoutOrThrow()).toBe(braintreePaypalCheckoutMock);
+        });
+    });
+
+    describe('#getBraintreeVenmoCheckoutOrThrow()', () => {
+        it('throws when the venmo checkout has not been loaded', () => {
+            expect(() => service.getBraintreeVenmoCheckoutOrThrow()).toThrow(
+                PaymentMethodClientUnavailableError,
+            );
+        });
+
+        it('returns the venmo checkout once loaded', async () => {
+            await service.loadVenmoCheckout(containerId);
+
+            expect(service.getBraintreeVenmoCheckoutOrThrow()).toBe(braintreeVenmoCheckoutMock);
         });
     });
 
@@ -174,38 +229,46 @@ describe('BraintreePaypalWalletService', () => {
             expect(braintreePaypalCheckoutMock.tokenizePayment).toHaveBeenCalledWith(authorizeData);
         });
 
+        it('adds the buyer billing address to the cart', async () => {
+            await service.proxyTokenizationPayment(authorizeData, methodId, cartId);
+
+            expect(walletButtonIntegrationService.addBillingAddress).toHaveBeenCalledWith(cartId, {
+                firstName: 'Foo',
+                lastName: 'Bar',
+                company: '',
+                address1: '56789 Testing Way',
+                address2: 'Level 2',
+                city: 'Some Other City',
+                email: 'foo@bar.com',
+                stateOrProvince: 'Arizona',
+                stateOrProvinceCode: 'Arizona',
+                countryCode: 'US',
+                postalCode: '96666',
+                phone: '',
+                shouldSaveAddress: false,
+            });
+        });
+
         it('requests the redirect url with wallet data and buyer billing/shipping address', async () => {
             await service.proxyTokenizationPayment(authorizeData, methodId, cartId);
+
+            const nonce = getTokenizePayload().nonce;
 
             expect(walletButtonIntegrationService.getRedirectToCheckoutUrl).toHaveBeenCalledWith(
                 expect.objectContaining({
                     paymentWalletData: {
                         providerId: methodId,
-                        providerOrderId: getTokenizePayload().nonce,
+                        providerOrderId: nonce,
                     },
                     cartEntityId: cartId,
                     queryParams: expect.arrayContaining([
                         { key: 'payment_type', value: 'paypal' },
                         { key: 'action', value: 'set_external_checkout' },
                         { key: 'provider', value: methodId },
+                        { key: 'nonce', value: nonce },
                         { key: 'device_data', value: dataCollector.deviceData },
                     ]),
                 }),
-            );
-        });
-
-        it('includes the buyer email in the billing address query param', async () => {
-            await service.proxyTokenizationPayment(authorizeData, methodId, cartId);
-
-            const [inputData] = (
-                walletButtonIntegrationService.getRedirectToCheckoutUrl as jest.Mock
-            ).mock.calls[0] as [{ queryParams: Array<{ key: string; value: string }> }];
-            const billingAddressParam = inputData.queryParams.find(
-                (param) => param.key === 'billing_address',
-            );
-
-            expect(JSON.parse(decodeURIComponent(billingAddressParam?.value ?? ''))).toEqual(
-                expect.objectContaining({ email: getTokenizePayload().details.email }),
             );
         });
 
@@ -226,6 +289,99 @@ describe('BraintreePaypalWalletService', () => {
             await expect(
                 service.proxyTokenizationPayment(authorizeData, methodId, cartId),
             ).rejects.toThrow(BraintreePaypalWalletError);
+        });
+    });
+
+    describe('#proxyVenmoTokenizationPayment()', () => {
+        beforeEach(async () => {
+            await service.loadVenmoCheckout(containerId);
+        });
+
+        it('tokenizes the payment through the venmo checkout', async () => {
+            await service.proxyVenmoTokenizationPayment(methodId, cartId);
+
+            expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
+        });
+
+        it('adds the buyer billing address to the cart', async () => {
+            await service.proxyVenmoTokenizationPayment(methodId, cartId);
+
+            expect(walletButtonIntegrationService.addBillingAddress).toHaveBeenCalledWith(cartId, {
+                firstName: 'Foo',
+                lastName: 'Bar',
+                company: '',
+                address1: '56789 Testing Way',
+                address2: 'Level 2',
+                city: 'Some Other City',
+                email: 'foo@bar.com',
+                stateOrProvince: 'Arizona',
+                stateOrProvinceCode: 'Arizona',
+                countryCode: 'US',
+                postalCode: '96666',
+                phone: '',
+                shouldSaveAddress: false,
+            });
+        });
+
+        it('requests the redirect url with wallet data and buyer billing/shipping address', async () => {
+            await service.proxyVenmoTokenizationPayment(methodId, cartId);
+
+            const nonce = getTokenizePayload().nonce;
+
+            expect(walletButtonIntegrationService.getRedirectToCheckoutUrl).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentWalletData: {
+                        providerId: methodId,
+                        providerOrderId: nonce,
+                    },
+                    cartEntityId: cartId,
+                    queryParams: expect.arrayContaining([
+                        { key: 'payment_type', value: 'paypal' },
+                        { key: 'action', value: 'set_external_checkout' },
+                        { key: 'provider', value: methodId },
+                        { key: 'nonce', value: nonce },
+                        { key: 'device_data', value: dataCollector.deviceData },
+                    ]),
+                }),
+            );
+        });
+
+        it('redirects the buyer to the external checkout url', async () => {
+            await service.proxyVenmoTokenizationPayment(methodId, cartId);
+
+            expect(window.location.assign).toHaveBeenCalledWith(externalCheckoutUrl);
+        });
+
+        it('rejects when the venmo tokenization fails', async () => {
+            const tokenizeError = { type: 'UNKNOWN', code: '234' } as BraintreeError;
+
+            braintreeVenmoCheckoutMock.tokenize = jest.fn(
+                (
+                    callback: (
+                        error: BraintreeError | undefined,
+                        payload: BraintreeTokenizePayload,
+                    ) => void,
+                ) => {
+                    callback(tokenizeError, getTokenizePayload());
+                },
+            );
+
+            await expect(service.proxyVenmoTokenizationPayment(methodId, cartId)).rejects.toBe(
+                tokenizeError,
+            );
+        });
+
+        it('throws when no external checkout url is returned', async () => {
+            jest.spyOn(
+                walletButtonIntegrationService,
+                'getRedirectToCheckoutUrl',
+            ).mockResolvedValue({
+                body: { redirectUrls: null },
+            } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
+
+            await expect(service.proxyVenmoTokenizationPayment(methodId, cartId)).rejects.toThrow(
+                BraintreePaypalWalletError,
+            );
         });
     });
 

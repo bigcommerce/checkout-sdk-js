@@ -6,6 +6,7 @@ import {
     BraintreePaypalWalletService,
     isBraintreeError,
     PaypalAuthorizeData,
+    PaypalButtonStyleColorOption,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CheckoutButtonInitializeOptions,
@@ -19,20 +20,20 @@ import {
 
 import getValidButtonStyle from '../get-valid-button-style';
 
-import BraintreePaypalWalletInitializeOptions, {
-    WithBraintreePaypalWalletInitializeOptions,
-} from './braintree-paypal-wallet-initialize-options';
+import BraintreePaypalCreditWalletInitializeOptions, {
+    WithBraintreePaypalCreditWalletInitializeOptions,
+} from './braintree-paypal-credit-wallet-initialize-options';
 
-export default class BraintreePaypalWalletStrategy implements CheckoutButtonStrategy {
+export default class BraintreePaypalCreditWalletStrategy implements CheckoutButtonStrategy {
     constructor(
         private braintreePaypalWalletService: BraintreePaypalWalletService,
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
     async initialize(
-        options: CheckoutButtonInitializeOptions & WithBraintreePaypalWalletInitializeOptions,
+        options: CheckoutButtonInitializeOptions & WithBraintreePaypalCreditWalletInitializeOptions,
     ): Promise<void> {
-        const { braintreepaypal, containerId, methodId } = options;
+        const { braintreepaypalcredit, containerId, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -46,43 +47,43 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
             );
         }
 
-        if (!braintreepaypal) {
+        if (!braintreepaypalcredit) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.braintreepaypal" argument is not provided.`,
+                `Unable to initialize payment because "options.braintreepaypalcredit" argument is not provided.`,
             );
         }
 
         let parsedPaymentMethod: PaymentMethod<BraintreeInitializationData>;
 
         try {
-            parsedPaymentMethod = JSON.parse(atob(braintreepaypal.initializationData));
+            parsedPaymentMethod = JSON.parse(atob(braintreepaypalcredit.initializationData));
         } catch (error) {
             throw new InvalidArgumentError("Failed to parse payment method 'initializationData'.");
         }
 
         const { initializationData, config } = parsedPaymentMethod;
 
-        if (!braintreepaypal.clientToken || !initializationData || !config) {
+        if (!braintreepaypalcredit.clientToken || !initializationData || !config) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const paypalCheckoutOptions: BraintreePaypalSdkCreatorConfig = {
-            currency: braintreepaypal.currency.code,
+            currency: braintreepaypalcredit.currency.code,
             intent: initializationData.intent,
             isCreditEnabled: initializationData.isCreditEnabled,
             commit: false,
         };
 
-        this.braintreePaypalWalletService.initialize(braintreepaypal.clientToken);
+        this.braintreePaypalWalletService.initialize(braintreepaypalcredit.clientToken);
 
         await this.braintreePaypalWalletService.loadPaypalCheckout(
             paypalCheckoutOptions,
             containerId,
-            braintreepaypal.onError,
+            braintreepaypalcredit.onError,
         );
 
         this.renderButton(
-            braintreepaypal,
+            braintreepaypalcredit,
             containerId,
             methodId,
             !!config.testMode,
@@ -95,13 +96,13 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
     }
 
     private renderButton(
-        braintreepaypal: BraintreePaypalWalletInitializeOptions,
+        braintreepaypalcredit: BraintreePaypalCreditWalletInitializeOptions,
         containerId: string,
         methodId: string,
         testMode: boolean,
         intent?: BraintreeInitializationData['intent'],
     ): void {
-        const { style, onEligibilityFailure } = braintreepaypal;
+        const { style, onEligibilityFailure } = braintreepaypalcredit;
         const { paypal } = this.braintreeHostWindow;
 
         if (!paypal) {
@@ -112,15 +113,15 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
 
         const paypalButtonRender = paypal.Buttons({
             env: testMode ? 'sandbox' : 'production',
-            fundingSource: paypal.FUNDING.PAYPAL,
-            style: getValidButtonStyle(style),
-            createOrder: () => this.setupPayment(braintreepaypal, intent),
+            fundingSource: paypal.FUNDING.PAYLATER,
+            style: { ...getValidButtonStyle(style), color: PaypalButtonStyleColorOption.GOLD },
+            createOrder: () => this.setupPayment(braintreepaypalcredit, intent),
             onApprove: (authorizeData: PaypalAuthorizeData) =>
                 this.tokenizePayment(
                     authorizeData,
                     methodId,
-                    braintreepaypal.cartId,
-                    braintreepaypal.onAuthorizeError,
+                    braintreepaypalcredit.cartId,
+                    braintreepaypalcredit.onAuthorizeError,
                 ),
         });
 
@@ -136,10 +137,10 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
     }
 
     private async setupPayment(
-        braintreepaypal: BraintreePaypalWalletInitializeOptions,
+        braintreepaypalcredit: BraintreePaypalCreditWalletInitializeOptions,
         intent?: BraintreeInitializationData['intent'],
     ): Promise<string | void> {
-        const { onPaymentError, amount, currency } = braintreepaypal;
+        const { onPaymentError, amount, currency } = braintreepaypalcredit;
 
         const braintreePaypalCheckout =
             this.braintreePaypalWalletService.getBraintreePaypalCheckoutOrThrow();
@@ -151,7 +152,7 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
                 shippingAddressEditable: false,
                 amount,
                 currency: currency.code,
-                offerCredit: false,
+                offerCredit: true,
                 intent,
             });
         } catch (error: unknown) {

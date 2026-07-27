@@ -29,12 +29,12 @@ import {
 
 import { getPaypalSDKMock } from '../mocks/paypal.mock';
 
-import BraintreePaypalWalletInitializeOptions, {
-    WithBraintreePaypalWalletInitializeOptions,
-} from './braintree-paypal-wallet-initialize-options';
-import BraintreePaypalWalletStrategy from './braintree-paypal-wallet-strategy';
+import BraintreePaypalCreditWalletInitializeOptions, {
+    WithBraintreePaypalCreditWalletInitializeOptions,
+} from './braintree-paypal-credit-wallet-initialize-options';
+import BraintreePaypalCreditWalletStrategy from './braintree-paypal-credit-wallet-strategy';
 
-describe('BraintreePaypalWalletStrategy', () => {
+describe('BraintreePaypalCreditWalletStrategy', () => {
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
     let braintreePaypalWalletService: BraintreePaypalWalletService;
@@ -44,10 +44,10 @@ describe('BraintreePaypalWalletStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paypalButtonElement: HTMLDivElement;
     let paypalSdkMock: PaypalSDK;
-    let strategy: BraintreePaypalWalletStrategy;
+    let strategy: BraintreePaypalCreditWalletStrategy;
     let walletButtonIntegrationService: WalletButtonIntegrationService;
 
-    const defaultButtonContainerId = 'braintree-paypal-wallet-mock-id';
+    const defaultButtonContainerId = 'braintree-paypal-credit-wallet-mock-id';
 
     const paymentMethod: PaymentMethod = {
         ...getBraintree(),
@@ -58,13 +58,13 @@ describe('BraintreePaypalWalletStrategy', () => {
         initializationData: {
             ...getBraintree().initializationData,
             intent: 'authorize',
-            isCreditEnabled: false,
+            isCreditEnabled: true,
         },
     };
 
     const encodedInitializationData = btoa(JSON.stringify(paymentMethod));
 
-    const braintreePaypalWalletOptions: BraintreePaypalWalletInitializeOptions = {
+    const braintreePaypalCreditWalletOptions: BraintreePaypalCreditWalletInitializeOptions = {
         cartId: 'cart-123',
         amount: 190,
         currency: { code: 'USD' },
@@ -78,10 +78,10 @@ describe('BraintreePaypalWalletStrategy', () => {
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions &
-        WithBraintreePaypalWalletInitializeOptions = {
-        methodId: 'braintreepaypal',
+        WithBraintreePaypalCreditWalletInitializeOptions = {
+        methodId: 'braintreepaypalcredit',
         containerId: defaultButtonContainerId,
-        braintreepaypal: braintreePaypalWalletOptions,
+        braintreepaypalcredit: braintreePaypalCreditWalletOptions,
     };
 
     beforeEach(() => {
@@ -111,7 +111,7 @@ describe('BraintreePaypalWalletStrategy', () => {
             braintreeIntegrationService,
         );
 
-        strategy = new BraintreePaypalWalletStrategy(braintreePaypalWalletService, window);
+        strategy = new BraintreePaypalCreditWalletStrategy(braintreePaypalWalletService, window);
 
         jest.spyOn(braintreePaypalWalletService, 'initialize').mockImplementation(jest.fn());
         jest.spyOn(braintreePaypalWalletService, 'teardown').mockResolvedValue();
@@ -158,8 +158,8 @@ describe('BraintreePaypalWalletStrategy', () => {
         }
     });
 
-    it('creates an instance of the braintree paypal wallet strategy', () => {
-        expect(strategy).toBeInstanceOf(BraintreePaypalWalletStrategy);
+    it('creates an instance of the braintree paypal credit wallet strategy', () => {
+        expect(strategy).toBeInstanceOf(BraintreePaypalCreditWalletStrategy);
     });
 
     describe('#initialize()', () => {
@@ -172,17 +172,17 @@ describe('BraintreePaypalWalletStrategy', () => {
         it('throws an error if containerId is not provided', async () => {
             await expect(
                 strategy.initialize({
-                    methodId: 'braintreepaypal',
+                    methodId: 'braintreepaypalcredit',
                     containerId: '',
-                    braintreepaypal: braintreePaypalWalletOptions,
+                    braintreepaypalcredit: braintreePaypalCreditWalletOptions,
                 } as CheckoutButtonInitializeOptions),
             ).rejects.toBeInstanceOf(InvalidArgumentError);
         });
 
-        it('throws an error if braintreepaypal is not provided', async () => {
+        it('throws an error if braintreepaypalcredit is not provided', async () => {
             await expect(
                 strategy.initialize({
-                    methodId: 'braintreepaypal',
+                    methodId: 'braintreepaypalcredit',
                     containerId: defaultButtonContainerId,
                 } as CheckoutButtonInitializeOptions),
             ).rejects.toBeInstanceOf(InvalidArgumentError);
@@ -192,32 +192,9 @@ describe('BraintreePaypalWalletStrategy', () => {
             await expect(
                 strategy.initialize({
                     ...initializationOptions,
-                    braintreepaypal: { ...braintreePaypalWalletOptions, clientToken: '' },
-                }),
-            ).rejects.toBeInstanceOf(MissingDataError);
-        });
-
-        it('throws an error if initialization data is missing', async () => {
-            await expect(
-                strategy.initialize({
-                    ...initializationOptions,
-                    braintreepaypal: {
-                        ...braintreePaypalWalletOptions,
-                        initializationData: btoa(JSON.stringify({ config: { testMode: true } })),
-                    },
-                }),
-            ).rejects.toBeInstanceOf(MissingDataError);
-        });
-
-        it('throws an error if config is missing', async () => {
-            await expect(
-                strategy.initialize({
-                    ...initializationOptions,
-                    braintreepaypal: {
-                        ...braintreePaypalWalletOptions,
-                        initializationData: btoa(
-                            JSON.stringify({ initializationData: { intent: 'authorize' } }),
-                        ),
+                    braintreepaypalcredit: {
+                        ...braintreePaypalCreditWalletOptions,
+                        clientToken: '',
                     },
                 }),
             ).rejects.toBeInstanceOf(MissingDataError);
@@ -229,57 +206,38 @@ describe('BraintreePaypalWalletStrategy', () => {
             expect(braintreePaypalWalletService.initialize).toHaveBeenCalledWith('clientToken');
         });
 
-        it('loads paypal checkout with intent sourced from the initialization data', async () => {
+        it('loads paypal checkout with credit enabled sourced from the initialization data', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(braintreePaypalWalletService.loadPaypalCheckout).toHaveBeenCalledWith(
                 {
                     currency: 'USD',
                     intent: 'authorize',
-                    isCreditEnabled: false,
+                    isCreditEnabled: true,
                     commit: false,
                 },
                 defaultButtonContainerId,
-                braintreePaypalWalletOptions.onError,
+                braintreePaypalCreditWalletOptions.onError,
             );
         });
 
-        it('renders the Braintree PayPal button', async () => {
+        it('renders the Braintree PayPal PayLater button with the gold color', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                fundingSource: paypalSdkMock.FUNDING.PAYPAL,
-                style: { shape: 'rect', height: 45 },
+                fundingSource: paypalSdkMock.FUNDING.PAYLATER,
+                style: { shape: 'rect', height: 45, color: 'gold' },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
             });
         });
 
-        it('does not render the Braintree PayPal PayLater button', async () => {
+        it('does not render the Braintree PayPal button', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdkMock.Buttons).not.toHaveBeenCalledWith(
-                expect.objectContaining({ fundingSource: paypalSdkMock.FUNDING.PAYLATER }),
-            );
-        });
-
-        it('renders the Braintree PayPal button in production when not in test mode', async () => {
-            const productionPaymentMethod = {
-                ...paymentMethod,
-                config: { ...paymentMethod.config, testMode: false },
-            };
-
-            await strategy.initialize({
-                ...initializationOptions,
-                braintreepaypal: {
-                    ...braintreePaypalWalletOptions,
-                    initializationData: btoa(JSON.stringify(productionPaymentMethod)),
-                },
-            });
-
-            expect(paypalSdkMock.Buttons).toHaveBeenCalledWith(
-                expect.objectContaining({ env: 'production' }),
+                expect.objectContaining({ fundingSource: paypalSdkMock.FUNDING.PAYPAL }),
             );
         });
 
@@ -304,11 +262,11 @@ describe('BraintreePaypalWalletStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(braintreePaypalWalletOptions.onEligibilityFailure).toHaveBeenCalled();
+            expect(braintreePaypalCreditWalletOptions.onEligibilityFailure).toHaveBeenCalled();
             expect(renderMock).not.toHaveBeenCalled();
         });
 
-        it('sets up the PayPal payment flow when createOrder is triggered', async () => {
+        it('sets up the PayPal Credit payment flow with offerCredit when createOrder is triggered', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
@@ -321,7 +279,7 @@ describe('BraintreePaypalWalletStrategy', () => {
                 shippingAddressEditable: false,
                 amount: 190,
                 currency: 'USD',
-                offerCredit: false,
+                offerCredit: true,
                 intent: 'authorize',
             });
         });
@@ -341,7 +299,9 @@ describe('BraintreePaypalWalletStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(braintreePaypalWalletOptions.onPaymentError).toHaveBeenCalledWith(expectedError);
+            expect(braintreePaypalCreditWalletOptions.onPaymentError).toHaveBeenCalledWith(
+                expectedError,
+            );
         });
 
         it('tokenizes the payment through the wallet service when approved', async () => {
@@ -353,7 +313,7 @@ describe('BraintreePaypalWalletStrategy', () => {
 
             expect(braintreePaypalWalletService.proxyTokenizationPayment).toHaveBeenCalledWith(
                 { payerId: 'PAYER_ID' },
-                'braintreepaypal',
+                'braintreepaypalcredit',
                 'cart-123',
             );
         });
@@ -373,7 +333,7 @@ describe('BraintreePaypalWalletStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(braintreePaypalWalletOptions.onAuthorizeError).toHaveBeenCalledWith(
+            expect(braintreePaypalCreditWalletOptions.onAuthorizeError).toHaveBeenCalledWith(
                 expectedError,
             );
         });

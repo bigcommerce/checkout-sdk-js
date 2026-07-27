@@ -2,7 +2,10 @@ import {
     PaymentMethodClientUnavailableError,
     StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+import {
+    AddressRequestBody,
+    WalletButtonIntegrationService,
+} from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 import BraintreePaypalWalletError from './braintree-paypal-wallet-error';
 
@@ -11,13 +14,16 @@ import {
     BraintreeIntegrationService,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
+    BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
+    BraintreeVenmoCheckout,
     isBraintreeError,
     PaypalAuthorizeData,
 } from './';
 
 export default class BraintreePaypalWalletService {
     private braintreePaypalCheckout?: BraintreePaypalCheckout;
+    private braintreeVenmoCheckout?: BraintreeVenmoCheckout;
 
     constructor(
         private walletButtonIntegrationService: WalletButtonIntegrationService,
@@ -59,12 +65,32 @@ export default class BraintreePaypalWalletService {
         return this.braintreePaypalCheckout!;
     }
 
+    async loadVenmoCheckout(containerId: string): Promise<BraintreeVenmoCheckout> {
+        try {
+            this.braintreeVenmoCheckout = await this.braintreeIntegrationService.getVenmoCheckout();
+        } catch (error) {
+            this.removeElement(containerId);
+
+            throw error;
+        }
+
+        return this.braintreeVenmoCheckout;
+    }
+
     getBraintreePaypalCheckoutOrThrow(): BraintreePaypalCheckout {
         if (!this.braintreePaypalCheckout) {
             throw new PaymentMethodClientUnavailableError();
         }
 
         return this.braintreePaypalCheckout;
+    }
+
+    getBraintreeVenmoCheckoutOrThrow(): BraintreeVenmoCheckout {
+        if (!this.braintreeVenmoCheckout) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.braintreeVenmoCheckout;
     }
 
     async teardown(): Promise<void> {
@@ -83,16 +109,47 @@ export default class BraintreePaypalWalletService {
     ): Promise<BraintreeTokenizePayload> {
         const braintreePaypalCheckout = this.getBraintreePaypalCheckoutOrThrow();
 
+        const tokenizePayload = await braintreePaypalCheckout.tokenizePayment(authorizeData);
+
+        return this.redirectToExternalCheckout(tokenizePayload, methodId, cartId);
+    }
+
+    async proxyVenmoTokenizationPayment(
+        methodId: string,
+        cartId: string,
+    ): Promise<BraintreeTokenizePayload> {
+        const tokenizePayload = await this.tokenizeVenmo();
+
+        return this.redirectToExternalCheckout(tokenizePayload, methodId, cartId);
+    }
+
+    /**
+     *
+     * Utils methods
+     *
+     */
+    removeElement(containerId?: string): void {
+        this.braintreeIntegrationService.removeElement(containerId);
+    }
+
+    private async redirectToExternalCheckout(
+        tokenizePayload: BraintreeTokenizePayload,
+        methodId: string,
+        cartId: string,
+    ): Promise<BraintreeTokenizePayload> {
         const { deviceData } = await this.braintreeIntegrationService.getDataCollector({
             paypal: true,
         });
 
-        const tokenizePayload = await braintreePaypalCheckout.tokenizePayment(authorizeData);
         const { details, nonce } = tokenizePayload;
 
-        const billingAddress = this.braintreeIntegrationService.mapToLegacyBillingAddress(details);
         const shippingAddress =
             this.braintreeIntegrationService.mapToLegacyShippingAddress(details);
+
+        await this.walletButtonIntegrationService.addBillingAddress(
+            cartId,
+            this.mapToBillingAddress(details),
+        );
 
         const inputData = {
             paymentWalletData: {
@@ -104,10 +161,7 @@ export default class BraintreePaypalWalletService {
                 { key: 'payment_type', value: 'paypal' },
                 { key: 'action', value: 'set_external_checkout' },
                 { key: 'provider', value: methodId },
-                {
-                    key: 'billing_address',
-                    value: encodeURIComponent(JSON.stringify(billingAddress)),
-                },
+                { key: 'nonce', value: nonce },
                 {
                     key: 'shipping_address',
                     value: encodeURIComponent(JSON.stringify(shippingAddress)),
@@ -131,12 +185,41 @@ export default class BraintreePaypalWalletService {
         return tokenizePayload;
     }
 
-    /**
-     *
-     * Utils methods
-     *
-     */
-    removeElement(containerId?: string): void {
-        this.braintreeIntegrationService.removeElement(containerId);
+    private mapToBillingAddress(details: BraintreeTokenizationDetails): AddressRequestBody {
+        const { billingAddress, email, firstName, lastName, phone, shippingAddress } = details;
+
+        const address = billingAddress || shippingAddress;
+
+        return {
+            firstName: firstName || '',
+            lastName: lastName || '',
+            company: '',
+            address1: address?.line1 || '',
+            address2: address?.line2 || '',
+            city: address?.city || '',
+            email: email || '',
+            stateOrProvince: address?.state || '',
+            stateOrProvinceCode: address?.state || '',
+            countryCode: address?.countryCode || '',
+            postalCode: address?.postalCode || '',
+            phone: phone || '',
+            shouldSaveAddress: false,
+        };
+    }
+
+    private tokenizeVenmo(): Promise<BraintreeTokenizePayload> {
+        const braintreeVenmoCheckout = this.getBraintreeVenmoCheckoutOrThrow();
+
+        return new Promise<BraintreeTokenizePayload>((resolve, reject) => {
+            braintreeVenmoCheckout.tokenize(
+                (error: BraintreeError | undefined, payload: BraintreeTokenizePayload) => {
+                    if (error) {
+                        return reject(error);
+                    }
+
+                    resolve(payload);
+                },
+            );
+        });
     }
 }
