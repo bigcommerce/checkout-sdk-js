@@ -887,6 +887,24 @@ declare class PayPalCommerceCreditPaymentStrategy implements PaymentStrategy {
     private renderMessages;
 }
 
+declare interface PayPalCommerceCreditWalletInitializeOptions {
+    cartId: string;
+    currency: {
+        code: string;
+    };
+    initializationData: string;
+    clientToken: string;
+}
+
+declare class PayPalCommerceCreditWalletStrategy implements CheckoutButtonStrategy {
+    private paypalCommerceHeadlessWalletButtonService;
+    constructor(paypalCommerceHeadlessWalletButtonService: PaypalCommerceWalletService);
+    initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceCreditWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
+    private mapOrderDetailsToBillingAddress;
+}
+
 /**
  * A set of options that are required to initialize the customer step of
  * checkout to support PayPalCommerce.
@@ -2032,6 +2050,10 @@ declare interface WithPayPalCommerceCreditPaymentInitializeOptions {
     paypalcommercecredit?: PayPalCommerceCreditPaymentInitializeOptions;
 }
 
+declare interface WithPayPalCommerceCreditWalletInitializeOptions {
+    paypalcommercepaypalcredit?: PayPalCommerceCreditWalletInitializeOptions;
+}
+
 declare interface WithPayPalCommerceCustomerInitializeOptions {
     /**
      * The options that are required to initialize the customer step of checkout
@@ -2094,6 +2116,10 @@ export declare const createPayPalCommerceCreditCustomerStrategy: import("@bigcom
 }>;
 
 export declare const createPayPalCommerceCreditPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceCreditPaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createPayPalCommerceCreditWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<PayPalCommerceCreditWalletStrategy>, {
     id: string;
 }>;
 
