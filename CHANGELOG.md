@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.945.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.944.0...v1.945.0) (2026-07-27)
+
+
+### Features
+
+* **payment:** PAYPAL-4196 Add an ability to render Braintree Venmo button with Wallet buttons tool ([#3325](https://github.com/bigcommerce/checkout-sdk-js/issues/3325)) ([6161ffc](https://github.com/bigcommerce/checkout-sdk-js/commit/6161ffc745c03f1d647987b275186c67c90a23c9))
+
 ## [1.944.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.943.2...v1.944.0) (2026-07-27)
 
 

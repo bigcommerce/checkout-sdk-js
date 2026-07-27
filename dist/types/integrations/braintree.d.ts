@@ -673,6 +673,32 @@ declare class BraintreePaypalCreditCustomerStrategy implements CustomerStrategy 
     private handleError;
 }
 
+declare interface BraintreePaypalCreditWalletInitializeOptions {
+    cartId: string;
+    amount: number;
+    currency: {
+        code: string;
+    };
+    initializationData: string;
+    clientToken: string;
+    style?: PaypalStyleOptions;
+    onAuthorizeError?(error: BraintreeError | StandardError): void;
+    onPaymentError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError | StandardError): void;
+    onEligibilityFailure?(): void;
+}
+
+declare class BraintreePaypalCreditWalletStrategy implements CheckoutButtonStrategy {
+    private braintreePaypalWalletService;
+    private braintreeHostWindow;
+    constructor(braintreePaypalWalletService: BraintreePaypalWalletService, braintreeHostWindow: BraintreeHostWindow);
+    initialize(options: CheckoutButtonInitializeOptions & WithBraintreePaypalCreditWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
+    private setupPayment;
+    private tokenizePayment;
+}
+
 declare interface BraintreePaypalCustomerInitializeOptions {
     /**
      * The ID of a container which the checkout button should be inserted into.
@@ -891,6 +917,25 @@ declare interface BraintreeVenmoPaymentStrategyInitializeOptions {
     allowDesktop?: boolean;
 }
 
+declare interface BraintreeVenmoWalletInitializeOptions {
+    cartId: string;
+    initializationData: string;
+    clientToken: string;
+    style?: PaypalStyleOptions;
+    onAuthorizeError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError | StandardError): void;
+    onEligibilityFailure?(): void;
+}
+
+declare class BraintreeVenmoWalletStrategy implements CheckoutButtonStrategy {
+    private braintreePaypalWalletService;
+    constructor(braintreePaypalWalletService: BraintreePaypalWalletService);
+    initialize(options: CheckoutButtonInitializeOptions & WithBraintreeVenmoWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private handleInitializationError;
+    private renderButton;
+}
+
 declare class BraintreeVisaCheckoutButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
     private formPoster;
@@ -1022,6 +1067,10 @@ declare interface WithBraintreePaypalCreditCustomerInitializeOptions {
     braintreepaypalcredit?: BraintreePaypalCreditCustomerInitializeOptions;
 }
 
+declare interface WithBraintreePaypalCreditWalletInitializeOptions {
+    braintreepaypalcredit?: BraintreePaypalCreditWalletInitializeOptions;
+}
+
 declare interface WithBraintreePaypalCustomerInitializeOptions {
     /**
      * The options that are required to initialize the customer step of checkout
@@ -1056,6 +1105,10 @@ declare interface WithBraintreeVenmoInitializeOptions_2 {
      * omitted unless you need to support Braintree Venmo.
      */
     braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
+}
+
+declare interface WithBraintreeVenmoWalletInitializeOptions {
+    braintreevenmo?: BraintreeVenmoWalletInitializeOptions;
 }
 
 declare interface WithBraintreeVisaCheckoutCustomerInitializeOptions {
@@ -1098,6 +1151,10 @@ export declare const createBraintreePaypalCreditCustomerStrategy: import("@bigco
     id: string;
 }>;
 
+export declare const createBraintreePaypalCreditWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreePaypalCreditWalletStrategy>, {
+    id: string;
+}>;
+
 export declare const createBraintreePaypalCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreePaypalCustomerStrategy>, {
     id: string;
 }>;
@@ -1115,6 +1172,10 @@ export declare const createBraintreeVenmoButtonStrategy: import("@bigcommerce/ch
 }>;
 
 export declare const createBraintreeVenmoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVenmoPaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createBraintreeVenmoWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreeVenmoWalletStrategy>, {
     id: string;
 }>;
 
