@@ -51,6 +51,9 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
     private _linkV2Element?: StripeElement;
     private _amountTransformer?: AmountTransformer;
     private _onComplete?: (orderId?: number) => Promise<never>;
+    private _filterAvailableShippingOptions?: (
+        availableShippingOptions: ShippingOption[],
+    ) => Promise<ShippingOption[]>;
     private _loadingIndicatorContainer?: string;
     private _currencyCode?: string;
     private _captureMethod?: 'automatic' | 'manual';
@@ -82,11 +85,13 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             params: { method: methodId },
         });
         const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
-        const { loadingContainerId, buttonHeight, onComplete } = stripeocs;
+        const { loadingContainerId, buttonHeight, onComplete, filterAvailableShippingOptions } =
+            stripeocs;
 
         this._loadingIndicatorContainer = loadingContainerId;
 
         this._onComplete = onComplete;
+        this._filterAvailableShippingOptions = filterAvailableShippingOptions;
 
         if (!isStripePaymentMethodLike(paymentMethod)) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -516,14 +521,28 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             return;
         }
 
-        const consignment = consignments[0];
-        const options = (consignment.availableShippingOptions || []).map(
-            this._getStripeShippingOption.bind(this),
-        );
-        const recommendedShippingOption = consignment.availableShippingOptions?.find(
+        let { availableShippingOptions = [] } = consignments[0];
+        const { selectedShippingOption } = consignments[0];
+
+        if (typeof this._filterAvailableShippingOptions === 'function') {
+            try {
+                availableShippingOptions = await this._filterAvailableShippingOptions(
+                    availableShippingOptions,
+                );
+            } catch (error) {
+                // INFO: fall back to the unfiltered options so the Stripe shipping event still resolves.
+                console.error('Failed to filter available shipping options:', error);
+            }
+        }
+
+        const options = availableShippingOptions.map(this._getStripeShippingOption.bind(this));
+        const recommendedShippingOption = availableShippingOptions?.find(
             (shippingOption) => shippingOption.isRecommended,
         );
-        const selectedId = consignment.selectedShippingOption?.id;
+        const isSelectedOptionAvailable = availableShippingOptions?.some(
+            (shippingOption) => shippingOption.id === selectedShippingOption?.id,
+        );
+        const selectedId = isSelectedOptionAvailable ? selectedShippingOption?.id : undefined;
         const recommendedId = recommendedShippingOption?.id;
 
         if (selectedId) {
