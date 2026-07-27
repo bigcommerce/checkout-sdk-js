@@ -2,10 +2,10 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
     BraintreeIntegrationService,
+    BraintreePaypalWalletService,
     BraintreeScriptLoader,
     BraintreeSDKVersionManager,
     BraintreeVenmoCheckout,
-    BraintreeVenmoWalletService,
     getBraintree,
     getTokenizePayload,
     getVenmoCheckoutMock,
@@ -34,7 +34,7 @@ describe('BraintreeVenmoWalletStrategy', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
     let braintreeSDKVersionManager: BraintreeSDKVersionManager;
     let braintreeVenmoCheckoutMock: BraintreeVenmoCheckout;
-    let braintreeVenmoWalletService: BraintreeVenmoWalletService;
+    let braintreePaypalWalletService: BraintreePaypalWalletService;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeVenmoWalletStrategy;
     let venmoButtonElement: HTMLDivElement;
@@ -91,20 +91,20 @@ describe('BraintreeVenmoWalletStrategy', () => {
             window,
         );
         walletButtonIntegrationService = createWalletButtonIntegrationService('/graphql');
-        braintreeVenmoWalletService = new BraintreeVenmoWalletService(
+        braintreePaypalWalletService = new BraintreePaypalWalletService(
             walletButtonIntegrationService,
             braintreeIntegrationService,
         );
 
-        strategy = new BraintreeVenmoWalletStrategy(braintreeVenmoWalletService);
+        strategy = new BraintreeVenmoWalletStrategy(braintreePaypalWalletService);
 
-        jest.spyOn(braintreeVenmoWalletService, 'initialize').mockImplementation(jest.fn());
-        jest.spyOn(braintreeVenmoWalletService, 'teardown').mockResolvedValue();
-        jest.spyOn(braintreeVenmoWalletService, 'removeElement').mockImplementation(jest.fn());
-        jest.spyOn(braintreeVenmoWalletService, 'loadVenmoCheckout').mockResolvedValue(
+        jest.spyOn(braintreePaypalWalletService, 'initialize').mockImplementation(jest.fn());
+        jest.spyOn(braintreePaypalWalletService, 'teardown').mockResolvedValue();
+        jest.spyOn(braintreePaypalWalletService, 'removeElement').mockImplementation(jest.fn());
+        jest.spyOn(braintreePaypalWalletService, 'loadVenmoCheckout').mockResolvedValue(
             braintreeVenmoCheckoutMock,
         );
-        jest.spyOn(braintreeVenmoWalletService, 'proxyTokenizationPayment').mockResolvedValue(
+        jest.spyOn(braintreePaypalWalletService, 'proxyVenmoTokenizationPayment').mockResolvedValue(
             getTokenizePayload(),
         );
     });
@@ -197,13 +197,13 @@ describe('BraintreeVenmoWalletStrategy', () => {
         it('initializes the braintree venmo wallet service with the client token', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeVenmoWalletService.initialize).toHaveBeenCalledWith('clientToken');
+            expect(braintreePaypalWalletService.initialize).toHaveBeenCalledWith('clientToken');
         });
 
         it('loads the venmo checkout', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeVenmoWalletService.loadVenmoCheckout).toHaveBeenCalledWith(
+            expect(braintreePaypalWalletService.loadVenmoCheckout).toHaveBeenCalledWith(
                 defaultButtonContainerId,
             );
         });
@@ -220,14 +220,14 @@ describe('BraintreeVenmoWalletStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeVenmoWalletService.removeElement).toHaveBeenCalledWith(
+            expect(braintreePaypalWalletService.removeElement).toHaveBeenCalledWith(
                 defaultButtonContainerId,
             );
             expect(braintreeVenmoWalletOptions.onEligibilityFailure).toHaveBeenCalled();
         });
 
         it('calls onEligibilityFailure when the browser is not supported', async () => {
-            jest.spyOn(braintreeVenmoWalletService, 'loadVenmoCheckout').mockRejectedValue(
+            jest.spyOn(braintreePaypalWalletService, 'loadVenmoCheckout').mockRejectedValue(
                 new UnsupportedBrowserError(),
             );
 
@@ -241,7 +241,7 @@ describe('BraintreeVenmoWalletStrategy', () => {
 
             expectedError.name = 'BraintreeError';
 
-            jest.spyOn(braintreeVenmoWalletService, 'loadVenmoCheckout').mockRejectedValue(
+            jest.spyOn(braintreePaypalWalletService, 'loadVenmoCheckout').mockRejectedValue(
                 expectedError,
             );
 
@@ -257,7 +257,7 @@ describe('BraintreeVenmoWalletStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(braintreeVenmoWalletService.proxyTokenizationPayment).toHaveBeenCalledWith(
+            expect(braintreePaypalWalletService.proxyVenmoTokenizationPayment).toHaveBeenCalledWith(
                 'braintreevenmo',
                 'cart-123',
             );
@@ -268,9 +268,10 @@ describe('BraintreeVenmoWalletStrategy', () => {
 
             expectedError.name = 'BraintreeError';
 
-            jest.spyOn(braintreeVenmoWalletService, 'proxyTokenizationPayment').mockRejectedValue(
-                expectedError,
-            );
+            jest.spyOn(
+                braintreePaypalWalletService,
+                'proxyVenmoTokenizationPayment',
+            ).mockRejectedValue(expectedError);
 
             await strategy.initialize(initializationOptions);
 
@@ -289,7 +290,7 @@ describe('BraintreeVenmoWalletStrategy', () => {
             await strategy.initialize(initializationOptions);
             await strategy.deinitialize();
 
-            expect(braintreeVenmoWalletService.teardown).toHaveBeenCalled();
+            expect(braintreePaypalWalletService.teardown).toHaveBeenCalled();
         });
     });
 });

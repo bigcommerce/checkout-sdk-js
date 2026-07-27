@@ -4,8 +4,8 @@ import {
     BraintreeHeadlessSDKVersionManager,
     BraintreeHostWindow,
     BraintreeIntegrationService,
+    BraintreePaypalWalletService,
     BraintreeScriptLoader,
-    BraintreeVenmoWalletService,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { toResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -30,7 +30,7 @@ const createBraintreeVenmoWalletStrategy: WalletPaymentButtonStrategyFactory<
     );
 
     return new BraintreeVenmoWalletStrategy(
-        new BraintreeVenmoWalletService(
+        new BraintreePaypalWalletService(
             walletButtonIntegrationService,
             braintreeIntegrationService,
         ),
