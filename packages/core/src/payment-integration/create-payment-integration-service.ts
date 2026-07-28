@@ -16,6 +16,7 @@ import CouponActionCreator from '../coupon/coupon-action-creator';
 import CouponRequestSender from '../coupon/coupon-request-sender';
 import { CustomerActionCreator, CustomerRequestSender } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import { CountryRequestSender } from '../geography';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
@@ -137,6 +138,7 @@ export default function createPaymentIntegrationService(
     const shippingCountryActionCreator = new ShippingCountryActionCreator(
         new ShippingCountryRequestSender(requestSender, { locale: getLocale() }),
         store,
+        new CountryRequestSender(requestSender, { locale: getLocale() }),
     );
 
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
