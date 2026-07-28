@@ -50,7 +50,9 @@ export interface MoneriesHostedFieldsQueryParams {
     css_body: string;
     css_textbox: string;
     css_textbox_pan: string;
+    enable_cc_formatting: number;
     enable_exp: number;
+    enable_exp_formatting: number;
     css_textbox_exp: string;
     enable_cvd: number;
     css_textbox_cvd: string;

@@ -191,7 +191,20 @@ describe('MonerisPaymentStrategy', () => {
         it('initialize moneris iframe and sets hosted fields css', async () => {
             paymentMethodMock.config.testMode = true;
 
-            await strategy.initialize(initializeOptions);
+            await strategy.initialize({
+                ...initializeOptions,
+                moneris: {
+                    ...initializeOptions.moneris!,
+                    style: {
+                        cssBody: 'font-family: Helvetica;background: transparent;',
+                        cssTextbox: 'border-radius:4px;border:1px solid rgb(221,221,221);',
+                        cssTextboxCardNumber: 'width: 100%;',
+                        cssTextboxExpiryDate: 'width: 120px;',
+                        cssTextboxCVV: 'width: 80px;',
+                        cssInputLabel: 'font-weight: 500;',
+                    },
+                },
+            });
 
             const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
 
@@ -202,6 +215,8 @@ describe('MonerisPaymentStrategy', () => {
             expect(iframe.src).toContain('css_textbox_exp=');
             expect(iframe.src).toContain('css_textbox_cvd=');
             expect(iframe.src).toContain('css_input_label=');
+            expect(iframe.src).toContain('border-radius:4px');
+            expect(iframe.src).toContain('font-family:%20Helvetica');
         });
 
         it('fails to initialize moneris strategy when initialization options are not provided', async () => {

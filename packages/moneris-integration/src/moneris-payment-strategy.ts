@@ -76,6 +76,7 @@ export default class MonerisPaymentStrategy {
                 monerisOptions.containerId,
                 initializationData,
                 !!config.testMode,
+                monerisOptions.style,
             );
         }
 
@@ -256,7 +257,9 @@ export default class MonerisPaymentStrategy {
             id: initializationData.profileId,
             pmmsg: true,
             display_labels: 1,
+            enable_cc_formatting: 1,
             enable_exp: 1,
+            enable_exp_formatting: 1,
             enable_cvd: 1,
             css_body:
                 style?.cssBody ||
