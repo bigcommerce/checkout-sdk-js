@@ -14,6 +14,7 @@ import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integra
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StripeAppearanceOptions } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { StripeAppearanceValues } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { StripeCustomFont } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -69,6 +70,7 @@ declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
     private _linkV2Element?;
     private _amountTransformer?;
     private _onComplete?;
+    private _filterAvailableShippingOptions?;
     private _loadingIndicatorContainer?;
     private _currencyCode?;
     private _captureMethod?;
@@ -118,6 +120,7 @@ declare class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _linkV2Element?;
     private _amountTransformer?;
     private _onComplete?;
+    private _filterAvailableShippingOptions?;
     private _loadingIndicatorContainer?;
     private _captureMethod?;
     private _currencyCode?;
@@ -170,6 +173,12 @@ declare interface StripeOCSCustomerInitializeOptions {
     gatewayId: string;
     onComplete?: (orderId?: number) => Promise<never>;
     loadingContainerId?: string;
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>;
 }
 
 /**
