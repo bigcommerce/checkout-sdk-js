@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.948.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.947.0...v1.948.0) (2026-07-28)
+
+
+### Features
+
+* **checkout:** SHIPPING-4147 fallback to full country list if shippa… ([#3323](https://github.com/bigcommerce/checkout-sdk-js/issues/3323)) ([41670f2](https://github.com/bigcommerce/checkout-sdk-js/commit/41670f25029f828e307cfe685fdc0300a9cc243c))
+
 ## [1.947.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.946.0...v1.947.0) (2026-07-28)
 
 
