@@ -5,26 +5,24 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalCommerceInitializationData } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
-import { AddressRequestBody } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 import {
-    ApproveCallbackActions,
     ApproveCallbackPayload,
     PayPalButtonStyleOptions,
     PayPalCommerceButtonsOptions,
-    PayPalOrderDetails,
+    StyleButtonColor,
 } from '../paypal-commerce-types';
 import PaypalCommerceWalletService from '../paypal-commerce-wallet-service';
 
-import { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce-wallet-initialize-options';
+import { WithPayPalCommerceVenmoWalletInitializeOptions } from './paypal-commerce-venmo-wallet-initialize-options';
 
-export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrategy {
+export default class PayPalCommerceVenmoWalletStrategy implements CheckoutButtonStrategy {
     constructor(private paypalCommerceHeadlessWalletButtonService: PaypalCommerceWalletService) {}
 
     async initialize(
-        options: CheckoutButtonInitializeOptions & WithPayPalCommerceWalletInitializeOptions,
+        options: CheckoutButtonInitializeOptions & WithPayPalCommerceVenmoWalletInitializeOptions,
     ): Promise<void> {
-        const { paypalcommercepaypal, containerId, methodId } = options;
+        const { paypalcommercevenmo, containerId, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -34,20 +32,20 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
 
         if (!containerId) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.containerId" argument is not provided.`,
+                'Unable to initialize payment because "options.containerId" argument is not provided.',
             );
         }
 
-        if (!paypalcommercepaypal) {
+        if (!paypalcommercevenmo) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.paypalcommercepaypal" argument is not provided.`,
+                'Unable to initialize payment because "options.paypalcommercevenmo" argument is not provided.',
             );
         }
 
         let parsedInitializationData: PaymentMethod<PayPalCommerceInitializationData>;
 
         try {
-            parsedInitializationData = JSON.parse(atob(paypalcommercepaypal.initializationData));
+            parsedInitializationData = JSON.parse(atob(paypalcommercevenmo.initializationData));
         } catch {
             throw new InvalidArgumentError("Failed to parse payment method 'initializationData'.");
         }
@@ -57,14 +55,14 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
 
         await this.paypalCommerceHeadlessWalletButtonService.loadPayPalSdk(
             parsedInitializationData,
-            paypalcommercepaypal.currency.code,
+            paypalcommercevenmo.currency.code,
             false,
         );
 
         this.renderButton(
             containerId,
-            'paypalcommerce.paypal',
-            paypalcommercepaypal.cartId,
+            'paypalcommerce.venmo',
+            paypalcommercevenmo.cartId,
             buttonStyle,
         );
     }
@@ -87,29 +85,19 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
                     providerId,
                     cartId,
                 ),
-            onApprove: async (
-                { orderID }: ApproveCallbackPayload,
-                actions: ApproveCallbackActions,
-            ) => {
-                const orderDetails = await actions.order.get();
-                const billingAddress = this.mapOrderDetailsToBillingAddress(orderDetails);
-
-                await this.paypalCommerceHeadlessWalletButtonService.addBillingAddress(
-                    cartId,
-                    billingAddress,
-                );
+            onApprove: async ({ orderID }: ApproveCallbackPayload) => {
                 await this.paypalCommerceHeadlessWalletButtonService.proxyTokenizationPayment(
                     cartId,
                     providerId,
-                    'paypalcommerce',
+                    'paypalcommercevenmo',
                     orderID,
                 );
             },
         };
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
-            fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.paypalCommerceHeadlessWalletButtonService.getValidButtonStyle(buttonStyle),
+            fundingSource: paypalSdk.FUNDING.VENMO,
+            style: this.getValidVenmoButtonStyles(buttonStyle),
             ...defaultCallbacks,
         };
 
@@ -122,23 +110,17 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
         }
     }
 
-    private mapOrderDetailsToBillingAddress(orderDetails: PayPalOrderDetails): AddressRequestBody {
-        const { payer } = orderDetails;
+    private getValidVenmoButtonStyles(style: PayPalButtonStyleOptions | undefined) {
+        const validButtonStyle =
+            this.paypalCommerceHeadlessWalletButtonService.getValidButtonStyle(style);
 
-        return {
-            firstName: payer.name.given_name,
-            lastName: payer.name.surname,
-            company: '',
-            address1: payer.address.address_line_1,
-            address2: payer.address.address_line_2,
-            city: payer.address.admin_area_2,
-            email: payer.email_address,
-            stateOrProvince: payer.address.admin_area_1 ?? '',
-            stateOrProvinceCode: payer.address.admin_area_1 ?? '',
-            countryCode: payer.address.country_code,
-            postalCode: payer.address.postal_code,
-            phone: payer.phone?.phone_number.national_number ?? '',
-            shouldSaveAddress: false,
-        };
+        if (validButtonStyle.color === StyleButtonColor.gold) {
+            return {
+                ...validButtonStyle,
+                color: undefined,
+            };
+        }
+
+        return validButtonStyle;
     }
 }

@@ -6,23 +6,23 @@ import {
 import getPayPalSDKMock from '../mocks/get-paypal-sdk.mock';
 import PaypalCommerceWalletService from '../paypal-commerce-wallet-service';
 
-import { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce-wallet-initialize-options';
-import PaypalCommerceWalletStrategy from './paypal-commerce-wallet-strategy';
+import { WithPayPalCommerceVenmoWalletInitializeOptions } from './paypal-commerce-venmo-wallet-initialize-options';
+import PayPalCommerceVenmoWalletStrategy from './paypal-commerce-venmo-wallet-strategy';
 
-describe('PaypalCommerceWalletStrategy', () => {
-    let strategy: PaypalCommerceWalletStrategy;
+describe('PayPalCommerceVenmoWalletStrategy', () => {
+    let strategy: PayPalCommerceVenmoWalletStrategy;
     let paypalCommerceWalletService: jest.Mocked<PaypalCommerceWalletService>;
 
-    const defaultContainerId = 'paypal-commerce-wallet-button';
-    const defaultMethodId = 'paypalcommerce';
+    const defaultContainerId = 'paypal-commerce-venmo-wallet-button';
+    const defaultMethodId = 'paypalcommercevenmo';
     const defaultCartId = 'abc123';
     const defaultOrderId = 'ORDER_ID';
 
     const initializationOptions: CheckoutButtonInitializeOptions &
-        WithPayPalCommerceWalletInitializeOptions = {
+        WithPayPalCommerceVenmoWalletInitializeOptions = {
         methodId: defaultMethodId,
         containerId: defaultContainerId,
-        paypalcommercepaypal: {
+        paypalcommercevenmo: {
             cartId: defaultCartId,
             currency: {
                 code: 'USD',
@@ -51,14 +51,15 @@ describe('PaypalCommerceWalletStrategy', () => {
             removeElement: jest.fn(),
         } as unknown as jest.Mocked<PaypalCommerceWalletService>;
 
-        strategy = new PaypalCommerceWalletStrategy(paypalCommerceWalletService);
+        strategy = new PayPalCommerceVenmoWalletStrategy(paypalCommerceWalletService);
     });
 
     it('throws when methodId is not provided', async () => {
         const optionsWithoutMethodId = {
             ...initializationOptions,
             methodId: undefined,
-        } as unknown as CheckoutButtonInitializeOptions & WithPayPalCommerceWalletInitializeOptions;
+        } as unknown as CheckoutButtonInitializeOptions &
+            WithPayPalCommerceVenmoWalletInitializeOptions;
 
         await expect(strategy.initialize(optionsWithoutMethodId)).rejects.toEqual(
             new InvalidArgumentError(
@@ -67,21 +68,7 @@ describe('PaypalCommerceWalletStrategy', () => {
         );
     });
 
-    it('throws when payment method initializationData cannot be parsed', async () => {
-        const invalidInitializationOptions = {
-            ...initializationOptions,
-            paypalcommercepaypal: {
-                ...initializationOptions.paypalcommercepaypal!,
-                initializationData: '%%%invalid-base64%%%',
-            },
-        };
-
-        await expect(strategy.initialize(invalidInitializationOptions)).rejects.toEqual(
-            new InvalidArgumentError("Failed to parse payment method 'initializationData'."),
-        );
-    });
-
-    it('creates wallet intent', async () => {
+    it('creates wallet intent with Venmo funding source', async () => {
         const paypalButtons = {
             close: jest.fn(),
             isEligible: jest.fn().mockReturnValue(true),
@@ -96,8 +83,9 @@ describe('PaypalCommerceWalletStrategy', () => {
 
         await buttonOptions.createOrder();
 
+        expect(buttonOptions.fundingSource).toEqual(paypalSdk.FUNDING.VENMO);
         expect(paypalCommerceWalletService.createPaymentOrderIntent).toHaveBeenCalledWith(
-            'paypalcommerce.paypal',
+            'paypalcommerce.venmo',
             defaultCartId,
         );
         expect(paypalButtons.render).toHaveBeenCalledWith(`#${defaultContainerId}`);
@@ -105,7 +93,7 @@ describe('PaypalCommerceWalletStrategy', () => {
         expect(buttonOptions.onShippingOptionsChange).toBeUndefined();
     });
 
-    it('adds billing address and proxies tokenization on approve', async () => {
+    it('proxies tokenization on approve', async () => {
         const paypalButtons = {
             close: jest.fn(),
             isEligible: jest.fn().mockReturnValue(true),
@@ -148,25 +136,11 @@ describe('PaypalCommerceWalletStrategy', () => {
             },
         );
 
-        expect(paypalCommerceWalletService.addBillingAddress).toHaveBeenCalledWith(defaultCartId, {
-            firstName: 'John',
-            lastName: 'Doe',
-            company: '',
-            address1: '123 Main St',
-            address2: 'Suite 100',
-            city: 'Austin',
-            email: 'john@doe.com',
-            stateOrProvince: 'TX',
-            stateOrProvinceCode: 'TX',
-            countryCode: 'US',
-            postalCode: '73301',
-            phone: '5555555555',
-            shouldSaveAddress: false,
-        });
+        expect(paypalCommerceWalletService.addBillingAddress).not.toHaveBeenCalled();
         expect(paypalCommerceWalletService.proxyTokenizationPayment).toHaveBeenCalledWith(
             defaultCartId,
-            'paypalcommerce.paypal',
-            'paypalcommerce',
+            'paypalcommerce.venmo',
+            'paypalcommercevenmo',
             defaultOrderId,
         );
     });

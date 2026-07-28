@@ -102,13 +102,18 @@ describe('PaypalCommerceWalletService', () => {
 
     describe('#proxyTokenizationPayment', () => {
         it('throws if order id is missing', async () => {
-            await expect(service.proxyTokenizationPayment(cartId)).rejects.toThrow(
-                MissingDataError,
-            );
+            await expect(
+                service.proxyTokenizationPayment(cartId, 'paypalcommerce', 'paypalcommerce'),
+            ).rejects.toThrow(MissingDataError);
         });
 
         it('requests external checkout url and redirects customer', async () => {
-            await service.proxyTokenizationPayment(cartId, orderId);
+            await service.proxyTokenizationPayment(
+                cartId,
+                'paypalcommerce',
+                'paypalcommerce',
+                orderId,
+            );
 
             expect(walletButtonIntegrationService.getRedirectToCheckoutUrl).toHaveBeenCalledWith({
                 paymentWalletData: {
@@ -136,9 +141,14 @@ describe('PaypalCommerceWalletService', () => {
                 statusText: 'OK',
             } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
 
-            await expect(service.proxyTokenizationPayment(cartId, orderId)).rejects.toThrow(
-                'Failed to redirection to checkout page',
-            );
+            await expect(
+                service.proxyTokenizationPayment(
+                    cartId,
+                    'paypalcommerce',
+                    'paypalcommerce',
+                    orderId,
+                ),
+            ).rejects.toThrow('Failed to redirection to checkout page');
         });
     });
 

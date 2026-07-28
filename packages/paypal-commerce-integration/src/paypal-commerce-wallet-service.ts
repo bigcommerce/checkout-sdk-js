@@ -67,21 +67,26 @@ export default class PaypalCommerceWalletService {
      * Payment submitting and tokenizing methods
      *
      */
-    async proxyTokenizationPayment(cartId: string, orderId?: string): Promise<void> {
+    async proxyTokenizationPayment(
+        cartId: string,
+        providerId: string,
+        methodId: string,
+        orderId?: string,
+    ): Promise<void> {
         if (!orderId) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
 
         const inputData = {
             paymentWalletData: {
-                providerId: 'paypalcommerce',
+                providerId,
                 providerOrderId: orderId,
             },
             cartEntityId: cartId,
             queryParams: [
                 { key: 'payment_type', value: 'paypal' },
                 { key: 'action', value: 'set_external_checkout' },
-                { key: 'provider', value: 'paypalcommerce' },
+                { key: 'provider', value: methodId },
             ],
         };
 

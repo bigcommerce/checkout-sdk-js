@@ -77,7 +77,7 @@ export default class PayPalCommerceCreditWalletStrategy implements CheckoutButto
 
     private renderButton(
         containerId: string,
-        methodId: string,
+        providerId: string,
         cartId: string,
         buttonStyle?: PayPalButtonStyleOptions,
     ): void {
@@ -87,7 +87,7 @@ export default class PayPalCommerceCreditWalletStrategy implements CheckoutButto
         const defaultCallbacks = {
             createOrder: () =>
                 this.paypalCommerceHeadlessWalletButtonService.createPaymentOrderIntent(
-                    methodId,
+                    providerId,
                     cartId,
                 ),
             onApprove: async (
@@ -104,6 +104,8 @@ export default class PayPalCommerceCreditWalletStrategy implements CheckoutButto
 
                 await this.paypalCommerceHeadlessWalletButtonService.proxyTokenizationPayment(
                     cartId,
+                    providerId,
+                    'paypalcommercecredit',
                     orderID,
                 );
             },
