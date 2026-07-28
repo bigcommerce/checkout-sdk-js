@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.946.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.945.0...v1.946.0) (2026-07-28)
+
+
+### Features
+
+* **payment:** PAYPAL-4192 PPCP venmo wallet strategy ([d9cd195](https://github.com/bigcommerce/checkout-sdk-js/commit/d9cd195a6926af473a19887e71c7626cfb893d92))
+
 ## [1.945.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.944.0...v1.945.0) (2026-07-27)
 
 

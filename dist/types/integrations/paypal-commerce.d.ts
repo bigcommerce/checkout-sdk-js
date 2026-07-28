@@ -1693,6 +1693,24 @@ declare class PayPalCommerceVenmoPaymentStrategy implements PaymentStrategy {
     private toggleLoadingIndicator;
 }
 
+declare interface PayPalCommerceVenmoWalletInitializeOptions {
+    cartId: string;
+    currency: {
+        code: string;
+    };
+    initializationData: string;
+    clientToken: string;
+}
+
+declare class PayPalCommerceVenmoWalletStrategy implements CheckoutButtonStrategy {
+    private paypalCommerceHeadlessWalletButtonService;
+    constructor(paypalCommerceHeadlessWalletButtonService: PaypalCommerceWalletService);
+    initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceVenmoWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
+    private getValidVenmoButtonStyles;
+}
+
 declare interface PayPalCommerceWalletInitializeOptions {
     cartId: string;
     currency: {
@@ -1965,7 +1983,7 @@ declare class PaypalCommerceWalletService {
      * Payment submitting and tokenizing methods
      *
      */
-    proxyTokenizationPayment(cartId: string, orderId?: string): Promise<void>;
+    proxyTokenizationPayment(cartId: string, providerId: string, methodId: string, orderId?: string): Promise<void>;
     createPaymentOrderIntent(providerId: string, cartId: string, options?: GraphQLRequestOptions): Promise<string>;
     addBillingAddress(cartId: string, address: AddressRequestBody, options?: GraphQLRequestOptions): Promise<Response<BillingAddressResponse>>;
     /**
@@ -2091,6 +2109,10 @@ declare interface WithPayPalCommerceVenmoPaymentInitializeOptions {
     paypalcommercevenmo?: PayPalCommerceVenmoPaymentInitializeOptions;
 }
 
+declare interface WithPayPalCommerceVenmoWalletInitializeOptions {
+    paypalcommercevenmo?: PayPalCommerceVenmoWalletInitializeOptions;
+}
+
 declare interface WithPayPalCommerceWalletInitializeOptions {
     paypalcommercepaypal?: PayPalCommerceWalletInitializeOptions;
 }
@@ -2153,6 +2175,10 @@ export declare const createPayPalCommerceVenmoCustomerStrategy: import("@bigcomm
 }>;
 
 export declare const createPayPalCommerceVenmoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceVenmoPaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createPayPalCommerceVenmoWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<PayPalCommerceVenmoWalletStrategy>, {
     id: string;
 }>;
 
