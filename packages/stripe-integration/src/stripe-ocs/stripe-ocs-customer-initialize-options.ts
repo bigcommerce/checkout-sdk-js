@@ -1,3 +1,5 @@
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 export default interface StripeOCSCustomerInitializeOptions {
     buttonHeight?: number;
 
@@ -16,6 +18,15 @@ export default interface StripeOCSCustomerInitializeOptions {
     onComplete?: (orderId?: number) => Promise<never>;
 
     loadingContainerId?: string;
+
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (
+        shippingOptions: ShippingOption[],
+    ) => Promise<ShippingOption[]>;
 }
 
 export interface WithStripeOCSCustomerInitializeOptions {

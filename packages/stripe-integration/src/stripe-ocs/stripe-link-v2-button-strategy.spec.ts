@@ -6,6 +6,7 @@ import {
     PaymentIntegrationService,
     PaymentMethodCancelledError,
     RequestError,
+    ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCart,
@@ -321,6 +322,47 @@ describe('StripeLinkV2ButtonStrategy', () => {
             });
         });
 
+        it('resolves onShippingAddressChange with unfiltered shipping rates if filterAvailableShippingOptions fails', async () => {
+            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+            await strategy.initialize({
+                ...initialiseOptions,
+                stripeocs: {
+                    ...initialiseOptions.stripeocs,
+                    filterAvailableShippingOptions: jest
+                        .fn()
+                        .mockRejectedValue(new Error('filter failed')),
+                },
+            });
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: 'London',
+                    country: 'UK',
+                    postal_code: '091-22',
+                    state: 'CA',
+                },
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(stripeEvent).toHaveBeenCalledWith({
+                shippingRates: [
+                    {
+                        amount: 0,
+                        displayName: 'Flat Rate',
+                        id: '0:61d4bb52f746477e1d4fb411221318c3',
+                    },
+                ],
+            });
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                'Failed to filter available shipping options:',
+                expect.any(Error),
+            );
+
+            consoleErrorSpy.mockRestore();
+        });
+
         it('calls onShippingAddressChange callback with empty address', async () => {
             await strategy.initialize(initialiseOptions);
 
@@ -444,6 +486,137 @@ describe('StripeLinkV2ButtonStrategy', () => {
             });
             await new Promise((resolve) => process.nextTick(resolve));
 
+            expect(stripeEvent).toHaveBeenCalledWith({
+                shippingRates: [
+                    {
+                        amount: 200000,
+                        displayName: 'description2',
+                        id: 2,
+                    },
+                    {
+                        amount: 100000,
+                        displayName: 'description',
+                        id: 1,
+                    },
+                ],
+            });
+        });
+
+        it('re-selects the first available option if filterAvailableShippingOptions removes the selected one', async () => {
+            jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+                ...paymentIntegrationService.getState(),
+                getConsignments: jest.fn().mockReturnValue([
+                    {
+                        availableShippingOptions: [
+                            {
+                                id: 1,
+                                description: 'description',
+                                cost: 1000,
+                            },
+                            {
+                                id: 2,
+                                description: 'description2',
+                                cost: 2000,
+                            },
+                        ],
+                        selectedShippingOption: {
+                            id: 2,
+                            description: 'description2',
+                            cost: 2000,
+                        },
+                    },
+                ]),
+            });
+
+            await strategy.initialize({
+                ...initialiseOptions,
+                stripeocs: {
+                    ...initialiseOptions.stripeocs,
+                    filterAvailableShippingOptions: (shippingOptions: ShippingOption[]) =>
+                        Promise.resolve(shippingOptions.slice(0, 1)),
+                },
+            });
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: 'London',
+                    country: 'UK',
+                    postal_code: '091-22',
+                    state: 'CA',
+                },
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(1);
+            expect(stripeEvent).toHaveBeenCalledWith({
+                shippingRates: [
+                    {
+                        amount: 100000,
+                        displayName: 'description',
+                        id: 1,
+                    },
+                ],
+            });
+        });
+
+        it('resolves onShippingAddressChange with options filtered by filterAvailableShippingOptions', async () => {
+            const availableShippingOptions = [
+                {
+                    id: 1,
+                    description: 'description',
+                    cost: 1000,
+                },
+                {
+                    id: 2,
+                    description: 'description2',
+                    cost: 2000,
+                },
+                {
+                    id: 3,
+                    description: 'description3',
+                    cost: 3000,
+                },
+            ];
+            const filterAvailableShippingOptions = jest.fn((shippingOptions: ShippingOption[]) =>
+                Promise.resolve(shippingOptions.slice(0, 2)),
+            );
+
+            jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+                ...paymentIntegrationService.getState(),
+                getConsignments: jest.fn().mockReturnValue([
+                    {
+                        availableShippingOptions,
+                        selectedShippingOption: {
+                            id: 2,
+                            description: 'description2',
+                            cost: 2000,
+                        },
+                    },
+                ]),
+            });
+
+            await strategy.initialize({
+                ...initialiseOptions,
+                stripeocs: {
+                    ...initialiseOptions.stripeocs,
+                    filterAvailableShippingOptions,
+                },
+            });
+
+            stripeEventEmitter.emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                address: {
+                    city: 'London',
+                    country: 'UK',
+                    postal_code: '091-22',
+                    state: 'CA',
+                },
+                resolve: stripeEvent,
+            });
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(filterAvailableShippingOptions).toHaveBeenCalledWith(availableShippingOptions);
+            expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
             expect(stripeEvent).toHaveBeenCalledWith({
                 shippingRates: [
                     {
