@@ -1,10 +1,16 @@
 import { B2BCompanyPaymentMethodsResponseBody } from './b2b-company-payment-method-request-sender';
 import PaymentMethod from './payment-method';
 
+const legacyProviderCodeMap: { [methodId: string]: string } = {
+    quickbooks: 'qbmsv2',
+    elavon: 'myvirtualmerchant',
+};
+
 /**
  * Intersects the storefront payment method list against a B2B company's
- * allow-list. Matches on `PaymentMethod.id === b2bMethod.code` and drops
- * disabled methods (`isEnabled !== '1'`).
+ * allow-list. Matches on `PaymentMethod.id === b2bMethod.code` (translating
+ * legacy provider IDs whose setup code differs from their checkout ID) and
+ * drops disabled methods (`isEnabled !== '1'`).
  */
 export default function filterPaymentMethodsByB2BCompanyAllowList(
     methods: PaymentMethod[],
@@ -12,5 +18,7 @@ export default function filterPaymentMethodsByB2BCompanyAllowList(
 ): PaymentMethod[] {
     const allowedCodes = new Set(body.data.filter((m) => m.isEnabled === '1').map((m) => m.code));
 
-    return methods.filter((method) => allowedCodes.has(method.id));
+    return methods.filter((method) =>
+        allowedCodes.has(legacyProviderCodeMap[method.id] ?? method.id),
+    );
 }

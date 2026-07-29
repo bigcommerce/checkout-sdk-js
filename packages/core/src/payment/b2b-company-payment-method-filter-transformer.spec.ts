@@ -59,6 +59,24 @@ describe('filterPaymentMethodsByB2BCompanyAllowList', () => {
         expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual([]);
     });
 
+    it('maps quickbooks to qbmsv2 when matching against the allow-list', () => {
+        const methods = [makeMethod('quickbooks')];
+        const body: B2BCompanyPaymentMethodsResponseBody = {
+            data: [{ code: 'qbmsv2', name: 'QuickBooks', isEnabled: '1', paymentId: 1 }],
+        };
+
+        expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual(methods);
+    });
+
+    it('maps elavon to myvirtualmerchant when matching against the allow-list', () => {
+        const methods = [makeMethod('elavon')];
+        const body: B2BCompanyPaymentMethodsResponseBody = {
+            data: [{ code: 'myvirtualmerchant', name: 'Elavon', isEnabled: '1', paymentId: 1 }],
+        };
+
+        expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual(methods);
+    });
+
     it('preserves the order of the input methods', () => {
         const methods = [makeMethod('stripev3'), makeMethod('braintree'), makeMethod('cheque')];
         const body: B2BCompanyPaymentMethodsResponseBody = {
