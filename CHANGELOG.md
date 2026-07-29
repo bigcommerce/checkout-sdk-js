@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.948.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.948.0...v1.948.1) (2026-07-29)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-10262 Add B2B legacyProviderCodeMap ([#3332](https://github.com/bigcommerce/checkout-sdk-js/issues/3332)) ([d8334d4](https://github.com/bigcommerce/checkout-sdk-js/commit/d8334d4494e5919cb4a4232e558e45e76823d7cb))
+
 ## [1.948.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.947.0...v1.948.0) (2026-07-28)
 
 
