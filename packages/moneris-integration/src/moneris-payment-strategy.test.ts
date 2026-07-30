@@ -202,6 +202,9 @@ describe('MonerisPaymentStrategy', () => {
                         cssTextboxExpiryDate: 'width: 120px;',
                         cssTextboxCVV: 'width: 80px;',
                         cssInputLabel: 'font-weight: 500;',
+                        cssLabelCardNumber: 'grid-column: 1 / 3; grid-row: 1;',
+                        cssLabelExpiryDate: 'grid-column: 1; grid-row: 2;',
+                        cssLabelCVV: 'grid-column: 2; grid-row: 2;',
                     },
                 },
             });
@@ -215,8 +218,25 @@ describe('MonerisPaymentStrategy', () => {
             expect(iframe.src).toContain('css_textbox_exp=');
             expect(iframe.src).toContain('css_textbox_cvd=');
             expect(iframe.src).toContain('css_input_label=');
+            expect(iframe.src).toContain('css_label_pan=');
+            expect(iframe.src).toContain('css_label_exp=');
+            expect(iframe.src).toContain('css_label_cvd=');
+            expect(iframe.src).toContain('enable_cc_formatting=1');
+            expect(iframe.src).toContain('enable_exp_formatting=1');
             expect(iframe.src).toContain(encodeURIComponent('border-radius:4px'));
             expect(iframe.src).toContain(encodeURIComponent('font-family: Helvetica'));
+        });
+
+        it('does not set formatting flags when custom styles are not provided', async () => {
+            paymentMethodMock.config.testMode = true;
+
+            await strategy.initialize(initializeOptions);
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).not.toContain('enable_cc_formatting=');
+            expect(iframe.src).not.toContain('enable_exp_formatting=');
         });
 
         it('encodes css query params that contain percent characters', async () => {

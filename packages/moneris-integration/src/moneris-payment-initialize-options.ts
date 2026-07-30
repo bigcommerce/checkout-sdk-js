@@ -15,11 +15,15 @@ import MonerisStylingProps from './moneris';
  *      moneris: {
  *          containerId: 'container',
  *          style : {
- *              cssBody: 'background:white;';
- *              cssTextbox: 'border-width:2px;';
- *              cssTextboxCardNumber: 'width:140px;';
- *              cssTextboxExpiryDate: 'width:40px;';
- *              cssTextboxCVV: 'width:40px';
+ *              cssBody: 'background:white;',
+ *              cssTextbox: 'border-width:2px;',
+ *              cssTextboxCardNumber: 'width:140px;',
+ *              cssTextboxExpiryDate: 'width:40px;',
+ *              cssTextboxCVV: 'width:40px;',
+ *              cssInputLabel: 'font-weight:500;',
+ *              cssLabelCardNumber: 'grid-column: 1 / 3; grid-row: 1;',
+ *              cssLabelExpiryDate: 'grid-column: 1; grid-row: 2;',
+ *              cssLabelCVV: 'grid-column: 2; grid-row: 2;',
  *          }
  *      }
  * });
