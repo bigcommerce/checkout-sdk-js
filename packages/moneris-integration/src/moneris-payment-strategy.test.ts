@@ -215,8 +215,30 @@ describe('MonerisPaymentStrategy', () => {
             expect(iframe.src).toContain('css_textbox_exp=');
             expect(iframe.src).toContain('css_textbox_cvd=');
             expect(iframe.src).toContain('css_input_label=');
-            expect(iframe.src).toContain('border-radius:4px');
-            expect(iframe.src).toContain('font-family:%20Helvetica');
+            expect(iframe.src).toContain(encodeURIComponent('border-radius:4px'));
+            expect(iframe.src).toContain(encodeURIComponent('font-family: Helvetica'));
+        });
+
+        it('encodes css query params that contain percent characters', async () => {
+            paymentMethodMock.config.testMode = true;
+
+            await strategy.initialize({
+                ...initializeOptions,
+                moneris: {
+                    ...initializeOptions.moneris!,
+                    style: {
+                        cssTextboxExpiryDate:
+                            'clear: both; float: left; margin-bottom: 0; margin-right: 12px; width: calc(50% - 12px);',
+                        cssTextboxCVV: 'float: left; margin-bottom: 0; width: calc(50% - 12px);',
+                    },
+                },
+            });
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).toContain('HPPtoken/index.php');
+            expect(iframe.src).toContain(encodeURIComponent('calc(50% - 12px)'));
         });
 
         it('fails to initialize moneris strategy when initialization options are not provided', async () => {

@@ -42,6 +42,18 @@ export default interface MonerisStylingProps {
      * Stringified CSS to apply to input labels
      */
     cssInputLabel?: string;
+    /**
+     * Layout CSS for the card number label (`#monerisDataLabel`).
+     */
+    cssLabelCardNumber?: string;
+    /**
+     * Layout CSS for the expiry date label (`#monerisExpLabel`).
+     */
+    cssLabelExpiryDate?: string;
+    /**
+     * Layout CSS for the CVV label (`#monerisCvdLabel`).
+     */
+    cssLabelCVV?: string;
 }
 
 export interface MoneriesHostedFieldsQueryParams {
@@ -61,6 +73,9 @@ export interface MoneriesHostedFieldsQueryParams {
     exp_label: string;
     cvd_label: string;
     css_input_label: string;
+    css_label_pan?: string;
+    css_label_exp?: string;
+    css_label_cvd?: string;
 }
 
 export interface MonerisResponseData {

@@ -274,12 +274,18 @@ export default class MonerisPaymentStrategy {
             css_input_label:
                 style?.cssInputLabel ||
                 'font-size: 10px;position: relative;top: 8px;left: 6px;background: rgb(255,255,255);padding: 3px 2px;color: rgb(66,66,66);font-weight: 600;z-index: 2;',
+            ...(style?.cssLabelCardNumber && { css_label_pan: style.cssLabelCardNumber }),
+            ...(style?.cssLabelExpiryDate && { css_label_exp: style.cssLabelExpiryDate }),
+            ...(style?.cssLabelCVV && { css_label_cvd: style.cssLabelCVV }),
             pan_label: initializationData.creditCardLabel || 'Credit Card Number',
             exp_label: initializationData.expiryDateLabel || 'Expiration',
             cvd_label: initializationData.cvdLabel || 'CVD',
         };
 
-        const queryString = map(monerisQueryParams, (value, key) => `${key}=${value}`).join('&');
+        const queryString = map(
+            monerisQueryParams,
+            (value, key) => `${key}=${encodeURIComponent(String(value))}`,
+        ).join('&');
 
         iframe.width = '100%';
         iframe.height = '100%';
