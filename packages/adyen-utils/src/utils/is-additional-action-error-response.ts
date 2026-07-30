@@ -8,6 +8,7 @@ export default function isAdditionalActionRequiredErrorResponse(
         param !== null &&
         'errors' in (param as AdyenAdditionalActionErrorResponse) &&
         Array.isArray((param as AdyenAdditionalActionErrorResponse).errors) &&
+        (param as AdyenAdditionalActionErrorResponse).errors.length > 0 &&
         'code' in (param as AdyenAdditionalActionErrorResponse).errors[0] &&
         typeof (param as AdyenAdditionalActionErrorResponse).errors[0].code === 'string' &&
         'provider_data' in param &&
