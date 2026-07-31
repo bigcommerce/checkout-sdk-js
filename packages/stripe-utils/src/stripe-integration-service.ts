@@ -163,6 +163,26 @@ export default class StripeIntegrationService {
         return paymentIntent?.status === StripePaymentIntentStatus.SUCCEEDED;
     }
 
+    async isPaymentCompletedByToken(
+        token?: string,
+        stripeUPEClient?: StripeClient,
+    ): Promise<boolean> {
+        const state = this.paymentIntegrationService.getState();
+        const { features } = state.getStoreConfigOrThrow().checkoutSettings;
+
+        if (
+            !token ||
+            !stripeUPEClient ||
+            !features['PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE']
+        ) {
+            return false;
+        }
+
+        const { paymentIntent } = await stripeUPEClient.retrievePaymentIntent(token);
+
+        return paymentIntent?.status === StripePaymentIntentStatus.SUCCEEDED;
+    }
+
     mapStripePaymentData(
         stripeElements?: StripeElements,
         returnUrl?: string,
