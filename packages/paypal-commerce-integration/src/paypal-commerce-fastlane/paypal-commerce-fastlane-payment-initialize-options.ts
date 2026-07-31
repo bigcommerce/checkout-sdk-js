@@ -74,6 +74,11 @@ export default interface PayPalCommerceFastlanePaymentInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: PayPalFastlaneStylesOption;
+
+    /**
+     * Method that will only log errors with no-blocking flow
+     */
+    onErrorLog?: (error: unknown) => void;
 }
 
 export interface WithPayPalCommerceFastlanePaymentInitializeOptions {
