@@ -266,6 +266,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
     }
 
