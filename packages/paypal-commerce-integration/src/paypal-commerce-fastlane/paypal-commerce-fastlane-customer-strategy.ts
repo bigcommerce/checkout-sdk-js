@@ -26,7 +26,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private paypalFastlaneUtils: PayPalFastlaneUtils,
-        private errorLogger?:(error: unknown) => void,
+        private errorLogger?: (error: unknown) => void,
     ) {}
 
     async initialize(
@@ -40,9 +40,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
             );
         }
 
-        if (
-            onErrorLog && typeof onErrorLog === 'function'
-        ) {
+        if (onErrorLog && typeof onErrorLog === 'function') {
             this.errorLogger = onErrorLog;
         }
 
