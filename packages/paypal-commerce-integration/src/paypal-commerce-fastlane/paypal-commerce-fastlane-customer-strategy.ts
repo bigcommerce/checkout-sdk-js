@@ -26,7 +26,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private paypalFastlaneUtils: PayPalFastlaneUtils,
-        private errorLogger?:(error: unknown) => void,
+        private errorLogger?: (error: unknown) => void,
     ) {}
 
     async initialize(
