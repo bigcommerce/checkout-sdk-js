@@ -405,6 +405,101 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
             expect(initializationOptions.bigcommerce_payments_fastlane.onInit).toHaveBeenCalled();
             expect(initializationOptions.bigcommerce_payments_fastlane.onChange).toHaveBeenCalled();
         });
+
+        it('sets error logger when onErrorLog option is provided as a function', async () => {
+            const onErrorLog = jest.fn();
+            const error = new Error('initialization error');
+
+            jest.spyOn(
+                bigCommercePaymentsFastlaneUtils,
+                'initializePayPalFastlane',
+            ).mockRejectedValue(error);
+
+            await strategy.initialize({
+                methodId,
+                bigcommerce_payments_fastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(),
+                    onErrorLog,
+                },
+            });
+
+            expect(onErrorLog).toHaveBeenCalledWith(error);
+        });
+
+        it('does not set error logger if onErrorLog option is not a function', async () => {
+            const error = new Error('initialization error');
+
+            jest.spyOn(
+                bigCommercePaymentsFastlaneUtils,
+                'initializePayPalFastlane',
+            ).mockRejectedValue(error);
+
+            await expect(
+                strategy.initialize({
+                    methodId,
+                    bigcommerce_payments_fastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog: undefined,
+                    },
+                }),
+            ).resolves.not.toThrow();
+        });
+
+        it('does not throw and does not call onErrorLog if it was not provided when paypal fastlane initialization fails', async () => {
+            jest.spyOn(
+                bigCommercePaymentsFastlaneUtils,
+                'initializePayPalFastlane',
+            ).mockRejectedValue(new Error('initialization error'));
+
+            await expect(strategy.initialize(initializationOptions)).resolves.not.toThrow();
+        });
+
+        it('logs the error and does not throw if authentication flow fails during initialization', async () => {
+            const onErrorLog = jest.fn();
+            const error = new Error('authentication flow error');
+
+            jest.spyOn(bigCommercePaymentsFastlaneUtils, 'lookupCustomerOrThrow').mockRejectedValue(
+                error,
+            );
+
+            jest.spyOn(
+                bigCommercePaymentsFastlaneUtils,
+                'triggerAuthenticationFlowOrThrow',
+            ).mockRejectedValue(error);
+
+            await expect(
+                strategy.initialize({
+                    methodId,
+                    bigcommerce_payments_fastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog,
+                    },
+                }),
+            ).resolves.not.toThrow();
+        });
+
+        it('calls onError callback if an error occurs during the authentication flow', async () => {
+            const onError = jest.fn();
+            const error = new Error('lookup customer error');
+
+            jest.spyOn(bigCommercePaymentsFastlaneUtils, 'lookupCustomerOrThrow').mockRejectedValue(
+                error,
+            );
+
+            await strategy.initialize({
+                methodId,
+                bigcommerce_payments_fastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(),
+                    onError,
+                },
+            });
+
+            expect(onError).toHaveBeenCalledWith(error);
+        });
     });
 
     describe('#execute()', () => {
@@ -842,6 +937,36 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
             const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
 
             expect(paypalFastlaneComponent.render).toHaveBeenCalledWith(containerId);
+        });
+
+        it('calls onError callback if an error occurs while rendering fastlane credit card component', async () => {
+            const onError = jest.fn();
+            const containerId = 'containerIdMock';
+            const error = new Error('render error');
+            let onInitCallback: (container: string) => void = noop;
+
+            const onInitImplementation = (renderComponentCallback: (container: string) => void) => {
+                onInitCallback = renderComponentCallback;
+            };
+
+            await strategy.initialize({
+                methodId,
+                bigcommerce_payments_fastlane: {
+                    onInit: jest.fn(onInitImplementation),
+                    onChange: jest.fn(),
+                    onError,
+                },
+            });
+
+            const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
+
+            jest.spyOn(paypalFastlaneComponent, 'render').mockImplementation(() => {
+                throw error;
+            });
+
+            onInitCallback(containerId);
+
+            expect(onError).toHaveBeenCalledWith(error);
         });
     });
 
