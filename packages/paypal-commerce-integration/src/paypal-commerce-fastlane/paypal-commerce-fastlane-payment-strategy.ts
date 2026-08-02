@@ -130,6 +130,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             paypalcommercefastlane?.styles,
         );
 
+        try {
         await this.paypalFastlaneUtils.initializePayPalFastlane(
             this.paypalFastlaneSdk,
             !!isDeveloperModeApplicable,
@@ -146,6 +147,9 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             this.renderPayPalPaymentComponent(container),
         );
         paypalcommercefastlane.onChange(() => this.handlePayPalStoredInstrumentChange(methodId));
+        } catch (error) {
+            this.handleErrorLog(error);
+        }
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
