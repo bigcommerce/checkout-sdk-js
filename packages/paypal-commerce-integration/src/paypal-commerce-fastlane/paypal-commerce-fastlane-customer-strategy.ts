@@ -22,26 +22,25 @@ import PayPalCommerceFastlaneCustomerInitializeOptions, {
 } from './paypal-commerce-fastlane-customer-initialize-options';
 
 export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerStrategy {
+    private options?: CustomerInitializeOptions &
+        WithPayPalCommerceFastlaneCustomerInitializeOptions;
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private paypalFastlaneUtils: PayPalFastlaneUtils,
-        private errorLogger?: (error: unknown) => void,
     ) {}
 
     async initialize(
         options: CustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions,
     ): Promise<void> {
-        const { methodId, paypalcommercefastlane, onErrorLog } = options;
+        const { methodId, paypalcommercefastlane } = options;
+        this.options = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" argument is not provided.',
             );
-        }
-
-        if (onErrorLog && typeof onErrorLog === 'function') {
-            this.errorLogger = onErrorLog;
         }
 
         try {
@@ -237,8 +236,10 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
     }
 
     private handleErrorLog(error: unknown): void {
-        if (this.errorLogger) {
-            this.errorLogger(error);
+        const { onErrorLog } = this.options || {};
+
+        if (onErrorLog && typeof onErrorLog === 'function') {
+            onErrorLog(error);
         }
     }
 }

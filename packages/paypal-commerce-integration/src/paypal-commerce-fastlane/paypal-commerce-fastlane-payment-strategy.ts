@@ -46,7 +46,6 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     private paypalcommercefastlane?: PayPalCommerceFastlanePaymentInitializeOptions;
     private orderId?: string;
     private methodId?: string;
-    private errorLogger?: (error: unknown) => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -94,13 +93,6 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.paypalcommercefastlane.onChange" argument is not provided or it is not a function.',
             );
-        }
-
-        if (
-            paypalcommercefastlane.onErrorLog &&
-            typeof paypalcommercefastlane.onErrorLog === 'function'
-        ) {
-            this.errorLogger = paypalcommercefastlane.onErrorLog;
         }
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
@@ -311,11 +303,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             );
         }
 
-        try {
-            paypalComponentMethods.render(container);
-        } catch (error) {
-            this.handleErrorLog(error);
-        }
+        paypalComponentMethods.render(container);
     }
 
     private getPayPalComponentMethodsOrThrow(): PayPalFastlaneCardComponentMethods {
@@ -529,8 +517,11 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     }
 
     private handleErrorLog(error: unknown): void {
-        if (this.errorLogger) {
-            this.errorLogger(error);
+        if (
+            this.paypalcommercefastlane?.onErrorLog &&
+            typeof this.paypalcommercefastlane.onErrorLog === 'function'
+        ) {
+            this.paypalcommercefastlane.onErrorLog(error);
         }
     }
 }

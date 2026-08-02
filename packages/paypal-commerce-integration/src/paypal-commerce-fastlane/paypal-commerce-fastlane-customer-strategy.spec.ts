@@ -553,27 +553,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
     });
 
     describe('#handleErrorLog()', () => {
-        it('forwards Fastlane initialization error to the errorLogger provided in the constructor', async () => {
-            const error = new Error('Fastlane initialization failed');
-            const errorLogger = jest.fn();
-
-            strategy = new PayPalCommerceFastlaneCustomerStrategy(
-                paymentIntegrationService,
-                paypalSdkScriptLoader,
-                paypalCommerceFastlaneUtils,
-                errorLogger,
-            );
-
-            jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
-                Promise.reject(error),
-            );
-
-            await strategy.initialize(initializationOptions);
-
-            expect(errorLogger).toHaveBeenCalledWith(error);
-        });
-
-        it('forwards Fastlane initialization error to the onErrorLog option', async () => {
+        it('forwards Fastlane initialization error to the onErrorLog callback', async () => {
             const error = new Error('Fastlane initialization failed');
             const onErrorLog = jest.fn();
 
@@ -592,7 +572,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             expect(onErrorLog).toHaveBeenCalledWith(error);
         });
 
-        it('does not throw when initialization fails and no errorLogger is configured', async () => {
+        it('does not throw when initialization fails and no onErrorLog is configured', async () => {
             jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
                 Promise.reject(new Error('Fastlane initialization failed')),
             );
@@ -600,19 +580,30 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             await expect(strategy.initialize(initializationOptions)).resolves.toBeUndefined();
         });
 
-        it('keeps the constructor errorLogger when the onErrorLog option is not a function', async () => {
-            const error = new Error('Fastlane initialization failed');
-            const errorLogger = jest.fn();
-
-            strategy = new PayPalCommerceFastlaneCustomerStrategy(
-                paymentIntegrationService,
-                paypalSdkScriptLoader,
-                paypalCommerceFastlaneUtils,
-                errorLogger,
+        it('does not throw when onErrorLog is provided but is not a function', async () => {
+            jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                Promise.reject(new Error('Fastlane initialization failed')),
             );
 
-            jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
-                Promise.reject(error),
+            const options = {
+                ...initializationOptions,
+                paypalcommercefastlane: {
+                    ...initializationOptions.paypalcommercefastlane,
+                    onErrorLog: 'not a function',
+                },
+            };
+
+            await expect(
+                strategy.initialize(options as unknown as typeof initializationOptions),
+            ).resolves.toBeUndefined();
+        });
+
+        it('forwards authentication flow error to the onErrorLog callback during executePaymentMethodCheckout', async () => {
+            const error = new Error('Authentication flow failed');
+            const onErrorLog = jest.fn();
+
+            jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockImplementation(
+                () => Promise.reject(error),
             );
 
             await strategy.initialize({
@@ -620,31 +611,11 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                 paypalcommercefastlane: {
                     ...initializationOptions.paypalcommercefastlane,
                 },
-                onErrorLog: undefined,
+                onErrorLog,
             });
-
-            expect(errorLogger).toHaveBeenCalledWith(error);
-        });
-
-        it('forwards authentication flow error to the errorLogger during executePaymentMethodCheckout', async () => {
-            const error = new Error('Authentication flow failed');
-            const errorLogger = jest.fn();
-
-            strategy = new PayPalCommerceFastlaneCustomerStrategy(
-                paymentIntegrationService,
-                paypalSdkScriptLoader,
-                paypalCommerceFastlaneUtils,
-                errorLogger,
-            );
-
-            jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockImplementation(
-                () => Promise.reject(error),
-            );
-
-            await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
-            expect(errorLogger).toHaveBeenCalledWith(error);
+            expect(onErrorLog).toHaveBeenCalledWith(error);
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
         });
     });

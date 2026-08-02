@@ -389,6 +389,18 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             });
         });
 
+        it('throws if PayPal Fastlane card component fails to initialize', async () => {
+            const componentError = new Error('component error');
+
+            jest.spyOn(paypalFastlane, 'FastlaneCardComponent').mockRejectedValueOnce(
+                componentError,
+            );
+
+            await expect(strategy.initialize(initializationOptions)).rejects.toThrow(
+                componentError,
+            );
+        });
+
         it('provides callback function to be able to use them on ui', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -397,26 +409,6 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         });
 
         describe('error logging', () => {
-            it('rejects initialization and does not wire onInit/onChange if initializing PayPal Fastlane fails', async () => {
-                const error = new Error('initializePayPalFastlane error');
-                const onInit = jest.fn();
-                const onChange = jest.fn();
-
-                jest.spyOn(paypalFastlaneUtils, 'initializePayPalFastlane').mockRejectedValue(
-                    error,
-                );
-
-                await expect(
-                    strategy.initialize({
-                        methodId,
-                        paypalcommercefastlane: { onInit, onChange },
-                    }),
-                ).rejects.toThrow(error);
-
-                expect(onInit).not.toHaveBeenCalled();
-                expect(onChange).not.toHaveBeenCalled();
-            });
-
             it('logs an error with the provided onErrorLog callback if the authentication flow fails, without failing initialization', async () => {
                 const error = new Error('lookupCustomerOrThrow error');
                 const onErrorLog = jest.fn();
@@ -453,24 +445,6 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 await expect(
                     strategy.initialize(options as unknown as typeof initializationOptions),
                 ).resolves.toBeUndefined();
-            });
-
-            it('rejects initialization and does not wire onInit/onChange if initializing the card component fails', async () => {
-                const error = new Error('FastlaneCardComponent error');
-                const onInit = jest.fn();
-                const onChange = jest.fn();
-
-                jest.spyOn(paypalFastlane, 'FastlaneCardComponent').mockRejectedValue(error);
-
-                await expect(
-                    strategy.initialize({
-                        methodId,
-                        paypalcommercefastlane: { onInit, onChange },
-                    }),
-                ).rejects.toThrow(error);
-
-                expect(onInit).not.toHaveBeenCalled();
-                expect(onChange).not.toHaveBeenCalled();
             });
         });
     });
@@ -898,9 +872,9 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             expect(paypalFastlaneComponent.render).toHaveBeenCalledWith(containerId);
         });
 
-        it('logs an error with the provided onErrorLog callback if rendering the card component fails, without throwing', async () => {
+        it('throws when rendering the card component fails, without swallowing the error', async () => {
             const containerId = 'containerIdMock';
-            const error = new Error('render error');
+            const renderError = new Error('render error');
             const onErrorLog = jest.fn();
             let onInitCallback: (container: string) => void = noop;
 
@@ -920,11 +894,10 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
 
             jest.spyOn(paypalFastlaneComponent, 'render').mockImplementationOnce(() => {
-                throw error;
+                throw renderError;
             });
 
-            expect(() => onInitCallback(containerId)).not.toThrow();
-            expect(onErrorLog).toHaveBeenCalledWith(error);
+            expect(() => onInitCallback(containerId)).toThrow(renderError);
         });
     });
 
