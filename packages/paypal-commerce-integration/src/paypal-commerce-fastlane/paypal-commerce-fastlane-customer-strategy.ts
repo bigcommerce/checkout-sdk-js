@@ -26,6 +26,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private paypalFastlaneUtils: PayPalFastlaneUtils,
+        private errorLogger?:(error: unknown) => void,
     ) {}
 
     async initialize(
@@ -37,6 +38,13 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" argument is not provided.',
             );
+        }
+
+        if (
+            paypalcommercefastlane?.onErrorLog &&
+            typeof paypalcommercefastlane.onErrorLog === 'function'
+        ) {
+            this.errorLogger = paypalcommercefastlane.onErrorLog;
         }
 
         try {
@@ -60,9 +68,10 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 isTestModeEnabled,
                 this.getFastlaneStyles(methodId, paypalcommercefastlane),
             );
-        } catch (_) {
+        } catch (error) {
             // TODO: add logger to be able to debug issues if there any
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
 
         return Promise.resolve();
@@ -119,9 +128,10 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
 
             try {
                 await this.runPayPalAuthenticationFlowOrThrow(methodId);
-            } catch (_) {
+            } catch (error) {
                 // TODO: add logger to be able to debug issues if there any
                 // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+                this.handleErrorLog(error);
             }
         }
 
@@ -227,5 +237,11 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
             isFastlaneStylingEnabled ? fastlaneStyles : {},
             paypalcommercefastlane?.styles,
         );
+    }
+
+    private handleErrorLog(error: unknown): void {
+        if (this.errorLogger) {
+            this.errorLogger(error);
+        }
     }
 }
