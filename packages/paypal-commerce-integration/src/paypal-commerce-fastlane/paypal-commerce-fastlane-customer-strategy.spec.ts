@@ -585,8 +585,8 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                 ...initializationOptions,
                 paypalcommercefastlane: {
                     ...initializationOptions.paypalcommercefastlane,
+                    onErrorLog,
                 },
-                onErrorLog,
             });
 
             expect(onErrorLog).toHaveBeenCalledWith(error);
@@ -619,8 +619,8 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                 ...initializationOptions,
                 paypalcommercefastlane: {
                     ...initializationOptions.paypalcommercefastlane,
+                    onErrorLog: 'not-a-function' as unknown as (error: unknown) => void,
                 },
-                onErrorLog: undefined,
             });
 
             expect(errorLogger).toHaveBeenCalledWith(error);

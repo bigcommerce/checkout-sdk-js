@@ -46,7 +46,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     private paypalcommercefastlane?: PayPalCommerceFastlanePaymentInitializeOptions;
     private orderId?: string;
     private methodId?: string;
-    private errorLogger?:(error: unknown) => void;
+    private errorLogger?: (error: unknown) => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -130,28 +130,22 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             paypalcommercefastlane?.styles,
         );
 
-        try {
-            await this.paypalFastlaneUtils.initializePayPalFastlane(
-                this.paypalFastlaneSdk,
-                !!isDeveloperModeApplicable,
-                fastlaneStyles,
-            );
+        await this.paypalFastlaneUtils.initializePayPalFastlane(
+            this.paypalFastlaneSdk,
+            !!isDeveloperModeApplicable,
+            fastlaneStyles,
+        );
 
-            if (this.shouldRunAuthenticationFlow()) {
-                await this.runPayPalAuthenticationFlowOrThrow(methodId);
-            }
-
-            await this.initializePayPalPaymentComponent();
-
-            paypalcommercefastlane.onInit((container: string) =>
-                this.renderPayPalPaymentComponent(container),
-            );
-            paypalcommercefastlane.onChange(() =>
-                this.handlePayPalStoredInstrumentChange(methodId),
-            );
-        } catch (error) {
-            this.handleErrorLog(error);
+        if (this.shouldRunAuthenticationFlow()) {
+            await this.runPayPalAuthenticationFlowOrThrow(methodId);
         }
+
+        await this.initializePayPalPaymentComponent();
+
+        paypalcommercefastlane.onInit((container: string) =>
+            this.renderPayPalPaymentComponent(container),
+        );
+        paypalcommercefastlane.onChange(() => this.handlePayPalStoredInstrumentChange(methodId));
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -317,7 +311,11 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             );
         }
 
-        paypalComponentMethods.render(container);
+        try {
+            paypalComponentMethods.render(container);
+        } catch (error) {
+            this.handleErrorLog(error);
+        }
     }
 
     private getPayPalComponentMethodsOrThrow(): PayPalFastlaneCardComponentMethods {

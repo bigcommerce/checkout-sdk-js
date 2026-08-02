@@ -26,13 +26,13 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalSdkScriptLoader: PayPalSdkScriptLoader,
         private paypalFastlaneUtils: PayPalFastlaneUtils,
-        private errorLogger?:(error: unknown) => void,
+        private errorLogger?: (error: unknown) => void,
     ) {}
 
     async initialize(
         options: CustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions,
     ): Promise<void> {
-        const { methodId, paypalcommercefastlane, onErrorLog } = options;
+        const { methodId, paypalcommercefastlane } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -41,9 +41,10 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         }
 
         if (
-            onErrorLog && typeof onErrorLog === 'function'
+            paypalcommercefastlane?.onErrorLog &&
+            typeof paypalcommercefastlane.onErrorLog === 'function'
         ) {
-            this.errorLogger = onErrorLog;
+            this.errorLogger = paypalcommercefastlane.onErrorLog;
         }
 
         try {
