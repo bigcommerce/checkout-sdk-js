@@ -97,7 +97,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         }
 
         if (
-            paypalcommercefastlane.onErrorLog ||
+            paypalcommercefastlane.onErrorLog &&
             typeof paypalcommercefastlane.onErrorLog === 'function'
         ) {
             this.errorLogger = paypalcommercefastlane.onErrorLog;
@@ -130,22 +130,28 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             paypalcommercefastlane?.styles,
         );
 
-        await this.paypalFastlaneUtils.initializePayPalFastlane(
-            this.paypalFastlaneSdk,
-            !!isDeveloperModeApplicable,
-            fastlaneStyles,
-        );
+        try {
+            await this.paypalFastlaneUtils.initializePayPalFastlane(
+                this.paypalFastlaneSdk,
+                !!isDeveloperModeApplicable,
+                fastlaneStyles,
+            );
 
-        if (this.shouldRunAuthenticationFlow()) {
-            await this.runPayPalAuthenticationFlowOrThrow(methodId);
+            if (this.shouldRunAuthenticationFlow()) {
+                await this.runPayPalAuthenticationFlowOrThrow(methodId);
+            }
+
+            await this.initializePayPalPaymentComponent();
+
+            paypalcommercefastlane.onInit((container: string) =>
+                this.renderPayPalPaymentComponent(container),
+            );
+            paypalcommercefastlane.onChange(() =>
+                this.handlePayPalStoredInstrumentChange(methodId),
+            );
+        } catch (error) {
+            this.handleErrorLog(error);
         }
-
-        await this.initializePayPalPaymentComponent();
-
-        paypalcommercefastlane.onInit((container: string) =>
-            this.renderPayPalPaymentComponent(container),
-        );
-        paypalcommercefastlane.onChange(() => this.handlePayPalStoredInstrumentChange(methodId));
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -266,6 +272,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
     }
 

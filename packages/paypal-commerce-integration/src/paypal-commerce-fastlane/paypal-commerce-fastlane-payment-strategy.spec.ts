@@ -395,6 +395,96 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             expect(initializationOptions.paypalcommercefastlane.onInit).toHaveBeenCalled();
             expect(initializationOptions.paypalcommercefastlane.onChange).toHaveBeenCalled();
         });
+
+        describe('error logging', () => {
+            it('does not throw when onErrorLog is provided but is not a function', async () => {
+                const error = new Error('initializePayPalFastlane error');
+
+                jest.spyOn(paypalFastlaneUtils, 'initializePayPalFastlane').mockRejectedValue(
+                    error,
+                );
+
+                const options = {
+                    methodId,
+                    paypalcommercefastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog: 'not a function',
+                    },
+                };
+
+                await expect(
+                    strategy.initialize(options as unknown as typeof initializationOptions),
+                ).resolves.toBeUndefined();
+            });
+
+            it('does not throw and does not call onErrorLog when it is not provided and an error occurs', async () => {
+                const error = new Error('initializePayPalFastlane error');
+
+                jest.spyOn(paypalFastlaneUtils, 'initializePayPalFastlane').mockRejectedValue(
+                    error,
+                );
+
+                await expect(strategy.initialize(initializationOptions)).resolves.toBeUndefined();
+            });
+
+            it('logs an error with the provided onErrorLog callback if initializing PayPal Fastlane fails', async () => {
+                const error = new Error('initializePayPalFastlane error');
+                const onErrorLog = jest.fn();
+
+                jest.spyOn(paypalFastlaneUtils, 'initializePayPalFastlane').mockRejectedValue(
+                    error,
+                );
+
+                await strategy.initialize({
+                    methodId,
+                    paypalcommercefastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog,
+                    },
+                });
+
+                expect(onErrorLog).toHaveBeenCalledWith(error);
+            });
+
+            it('logs an error with the provided onErrorLog callback if the authentication flow fails', async () => {
+                const error = new Error('lookupCustomerOrThrow error');
+                const onErrorLog = jest.fn();
+
+                jest.spyOn(paypalFastlaneUtils, 'lookupCustomerOrThrow').mockRejectedValue(error);
+
+                await strategy.initialize({
+                    methodId,
+                    paypalcommercefastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog,
+                    },
+                });
+
+                expect(onErrorLog).toHaveBeenCalledWith(error);
+                expect(paypalFastlaneUtils.updateStorageSessionId).not.toHaveBeenCalled();
+            });
+
+            it('logs an error with the provided onErrorLog callback if initializing the card component fails', async () => {
+                const error = new Error('FastlaneCardComponent error');
+                const onErrorLog = jest.fn();
+
+                jest.spyOn(paypalFastlane, 'FastlaneCardComponent').mockRejectedValue(error);
+
+                await strategy.initialize({
+                    methodId,
+                    paypalcommercefastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog,
+                    },
+                });
+
+                expect(onErrorLog).toHaveBeenCalledWith(error);
+            });
+        });
     });
 
     describe('#execute()', () => {
