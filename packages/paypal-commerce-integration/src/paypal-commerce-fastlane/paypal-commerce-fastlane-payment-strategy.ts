@@ -97,7 +97,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         }
 
         if (
-            paypalcommercefastlane.onErrorLog &&
+            paypalcommercefastlane.onErrorLog ||
             typeof paypalcommercefastlane.onErrorLog === 'function'
         ) {
             this.errorLogger = paypalcommercefastlane.onErrorLog;
@@ -114,39 +114,33 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         this.threeDSVerificationMethod =
             paymentMethod.initializationData?.threeDSVerificationMethod;
 
-        try {
-            this.paypalFastlaneSdk = await this.paypalSdkScriptLoader.getPayPalFastlaneSdk(
-                paymentMethod,
-                cart.currency.code,
-                cart.id,
-                state.getLocale(),
-            );
+        this.paypalFastlaneSdk = await this.paypalSdkScriptLoader.getPayPalFastlaneSdk(
+            paymentMethod,
+            cart.currency.code,
+            cart.id,
+            state.getLocale(),
+        );
 
-            const paypalFastlaneStyling = isFastlaneStylingEnabled
-                ? paymentMethod?.initializationData?.fastlaneStyles
-                : {};
+        const paypalFastlaneStyling = isFastlaneStylingEnabled
+            ? paymentMethod?.initializationData?.fastlaneStyles
+            : {};
 
-            const fastlaneStyles = getFastlaneStyles(
-                paypalFastlaneStyling,
-                paypalcommercefastlane?.styles,
-            );
+        const fastlaneStyles = getFastlaneStyles(
+            paypalFastlaneStyling,
+            paypalcommercefastlane?.styles,
+        );
 
-            await this.paypalFastlaneUtils.initializePayPalFastlane(
-                this.paypalFastlaneSdk,
-                !!isDeveloperModeApplicable,
-                fastlaneStyles,
-            );
+        await this.paypalFastlaneUtils.initializePayPalFastlane(
+            this.paypalFastlaneSdk,
+            !!isDeveloperModeApplicable,
+            fastlaneStyles,
+        );
 
-            if (this.shouldRunAuthenticationFlow()) {
-                await this.runPayPalAuthenticationFlowOrThrow(methodId);
-            }
-
-            await this.initializePayPalPaymentComponent();
-        } catch (error) {
-            this.handleError(error);
-
-            throw error;
+        if (this.shouldRunAuthenticationFlow()) {
+            await this.runPayPalAuthenticationFlowOrThrow(methodId);
         }
+
+        await this.initializePayPalPaymentComponent();
 
         paypalcommercefastlane.onInit((container: string) =>
             this.renderPayPalPaymentComponent(container),
@@ -192,12 +186,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             }
 
             if (error instanceof Error && error.name !== 'FastlaneError') {
-                this.handleError(error);
-
                 throw error;
             }
-
-            this.handleError(error);
 
             return Promise.reject();
         }
@@ -313,21 +303,15 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     }
 
     private renderPayPalPaymentComponent(container?: string): void {
-        try {
-            const paypalComponentMethods = this.getPayPalComponentMethodsOrThrow();
+        const paypalComponentMethods = this.getPayPalComponentMethodsOrThrow();
 
-            if (!container) {
-                throw new InvalidArgumentError(
-                    'Unable to render card component because "container" argument is not provided.',
-                );
-            }
-
-            paypalComponentMethods.render(container);
-        } catch (error) {
-            this.handleError(error);
-
-            throw error;
+        if (!container) {
+            throw new InvalidArgumentError(
+                'Unable to render card component because "container" argument is not provided.',
+            );
         }
+
+        paypalComponentMethods.render(container);
     }
 
     private getPayPalComponentMethodsOrThrow(): PayPalFastlaneCardComponentMethods {
@@ -504,39 +488,31 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     private async handlePayPalStoredInstrumentChange(
         methodId: string,
     ): Promise<CardInstrument | undefined> {
-        try {
-            const paypalAxoSdk = this.paypalFastlaneUtils.getPayPalFastlaneOrThrow();
+        const paypalAxoSdk = this.paypalFastlaneUtils.getPayPalFastlaneOrThrow();
 
-            const { selectionChanged, selectedCard } =
-                await paypalAxoSdk.profile.showCardSelector();
+        const { selectionChanged, selectedCard } = await paypalAxoSdk.profile.showCardSelector();
 
-            if (selectionChanged) {
-                const state = this.paymentIntegrationService.getState();
-                const paymentProviderCustomer = state.getPaymentProviderCustomer();
-                const paypalFastlaneCustomer = isPayPalFastlaneCustomer(paymentProviderCustomer)
-                    ? paymentProviderCustomer
-                    : {};
+        if (selectionChanged) {
+            const state = this.paymentIntegrationService.getState();
+            const paymentProviderCustomer = state.getPaymentProviderCustomer();
+            const paypalFastlaneCustomer = isPayPalFastlaneCustomer(paymentProviderCustomer)
+                ? paymentProviderCustomer
+                : {};
 
-                const selectedInstrument = this.paypalFastlaneUtils.mapPayPalToBcInstrument(
-                    methodId,
-                    selectedCard,
-                )[0];
+            const selectedInstrument = this.paypalFastlaneUtils.mapPayPalToBcInstrument(
+                methodId,
+                selectedCard,
+            )[0];
 
-                await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                    ...paypalFastlaneCustomer,
-                    instruments: [selectedInstrument],
-                });
+            await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                ...paypalFastlaneCustomer,
+                instruments: [selectedInstrument],
+            });
 
-                return selectedInstrument;
-            }
-
-            return undefined;
-        } catch (error) {
-            // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
-            this.handleErrorLog(error);
-
-            return undefined;
+            return selectedInstrument;
         }
+
+        return undefined;
     }
 
     private handleError(error: unknown): void {
