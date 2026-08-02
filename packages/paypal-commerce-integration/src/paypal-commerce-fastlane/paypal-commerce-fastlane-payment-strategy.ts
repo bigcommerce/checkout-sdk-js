@@ -46,7 +46,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     private paypalcommercefastlane?: PayPalCommerceFastlanePaymentInitializeOptions;
     private orderId?: string;
     private methodId?: string;
-    private errorLogger?: (error: unknown) => void;
+    private errorLogger?:(error: unknown) => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
