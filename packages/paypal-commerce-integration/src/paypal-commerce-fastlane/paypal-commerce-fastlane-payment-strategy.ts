@@ -130,21 +130,17 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             paypalcommercefastlane?.styles,
         );
 
-        try {
-            await this.paypalFastlaneUtils.initializePayPalFastlane(
-                this.paypalFastlaneSdk,
-                !!isDeveloperModeApplicable,
-                fastlaneStyles,
-            );
+        await this.paypalFastlaneUtils.initializePayPalFastlane(
+            this.paypalFastlaneSdk,
+            !!isDeveloperModeApplicable,
+            fastlaneStyles,
+        );
 
-            if (this.shouldRunAuthenticationFlow()) {
-                await this.runPayPalAuthenticationFlowOrThrow(methodId);
-            }
-
-            await this.initializePayPalPaymentComponent();
-        } catch (error) {
-            this.handleErrorLog(error);
+        if (this.shouldRunAuthenticationFlow()) {
+            await this.runPayPalAuthenticationFlowOrThrow(methodId);
         }
+
+        await this.initializePayPalPaymentComponent();
 
         paypalcommercefastlane.onInit((container: string) =>
             this.renderPayPalPaymentComponent(container),
