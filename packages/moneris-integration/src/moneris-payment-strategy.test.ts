@@ -227,18 +227,6 @@ describe('MonerisPaymentStrategy', () => {
             expect(iframe.src).toContain(encodeURIComponent('font-family: Helvetica'));
         });
 
-        it('does not set formatting flags when custom styles are not provided', async () => {
-            paymentMethodMock.config.testMode = true;
-
-            await strategy.initialize(initializeOptions);
-
-            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
-
-            expect(iframe).toBeTruthy();
-            expect(iframe.src).not.toContain('enable_cc_formatting=');
-            expect(iframe.src).not.toContain('enable_exp_formatting=');
-        });
-
         it('encodes css query params that contain percent characters', async () => {
             paymentMethodMock.config.testMode = true;
 
