@@ -4,7 +4,6 @@ import { Observable, Observer } from 'rxjs';
 import { resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
-import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { B2BPaymentMethodFilterType } from '../config/capabilities';
 
@@ -184,11 +183,7 @@ export default class PaymentMethodActionCreator {
             state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
         );
 
-        if (customer.isGuest || !baseUrl || !cart.companyId) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
-
-        if (!b2bToken) {
+        if (customer.isGuest || !baseUrl || !cart.companyId || !b2bToken) {
             return methods;
         }
 
