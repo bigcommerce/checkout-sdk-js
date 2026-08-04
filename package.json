@@ -75,7 +75,7 @@
     "addFileAttribute": "true"
   },
   "dependencies": {
-    "@bigcommerce/bigpay-client": "^5.28.1",
+    "@bigcommerce/bigpay-client": "^5.29.0",
     "@bigcommerce/data-store": "^1.0.3",
     "@bigcommerce/form-poster": "^1.5.0",
     "@bigcommerce/memoize": "^1.0.0",
