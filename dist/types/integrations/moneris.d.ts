@@ -17,11 +17,15 @@ import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integr
  *      moneris: {
  *          containerId: 'container',
  *          style : {
- *              cssBody: 'background:white;';
- *              cssTextbox: 'border-width:2px;';
- *              cssTextboxCardNumber: 'width:140px;';
- *              cssTextboxExpiryDate: 'width:40px;';
- *              cssTextboxCVV: 'width:40px';
+ *              cssBody: 'background:white;',
+ *              cssTextbox: 'border-width:2px;',
+ *              cssTextboxCardNumber: 'width:140px;',
+ *              cssTextboxExpiryDate: 'width:40px;',
+ *              cssTextboxCVV: 'width:40px;',
+ *              cssInputLabel: 'font-weight:500;',
+ *              cssLabelCardNumber: 'grid-column: 1 / 3; grid-row: 1;',
+ *              cssLabelExpiryDate: 'grid-column: 1; grid-row: 2;',
+ *              cssLabelCVV: 'grid-column: 2; grid-row: 2;',
  *          }
  *      }
  * });
@@ -78,6 +82,10 @@ declare class MonerisPaymentStrategy {
  *      cssTextboxCardNumber: 'width:140px;';
  *      cssTextboxExpiryDate: 'width:40px;';
  *      cssTextboxCVV: 'width:40px;';
+ *      cssInputLabel: 'font-weight:500;';
+ *      cssLabelCardNumber: 'grid-column: 1 / 3; grid-row: 1;';
+ *      cssLabelExpiryDate: 'grid-column: 1; grid-row: 2;';
+ *      cssLabelCVV: 'grid-column: 2; grid-row: 2;';
  * }
  * ```
  *
@@ -109,6 +117,18 @@ declare interface MonerisStylingProps {
      * Stringified CSS to apply to input labels
      */
     cssInputLabel?: string;
+    /**
+     * Layout CSS for the card number label (`#monerisDataLabel`).
+     */
+    cssLabelCardNumber?: string;
+    /**
+     * Layout CSS for the expiry date label (`#monerisExpLabel`).
+     */
+    cssLabelExpiryDate?: string;
+    /**
+     * Layout CSS for the CVV label (`#monerisCvdLabel`).
+     */
+    cssLabelCVV?: string;
 }
 
 declare interface WithMonerisPaymentInitializeOptions {

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.950.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.949.0...v1.950.0) (2026-08-04)
+
+
+### Features
+
+* **payment:** PI-5328 [Moneris][FE] Change the styling to match default BC fields ([#3333](https://github.com/bigcommerce/checkout-sdk-js/issues/3333)) ([1db7db3](https://github.com/bigcommerce/checkout-sdk-js/commit/1db7db31fc21d96235a7fc375b3ed2329865c071))
+
 ## [1.949.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.948.1...v1.949.0) (2026-08-04)
 
 
