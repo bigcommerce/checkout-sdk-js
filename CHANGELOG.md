@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.949.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.948.1...v1.949.0) (2026-08-04)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10295 Remove throwing error from applyB2bFilter ([#3340](https://github.com/bigcommerce/checkout-sdk-js/issues/3340)) ([8637bff](https://github.com/bigcommerce/checkout-sdk-js/commit/8637bff305d70e316f8bd13fbde52793a0a7d7fa))
+
 ### [1.948.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.948.0...v1.948.1) (2026-07-29)
 
 
