@@ -2,6 +2,7 @@ import { RequestOptions } from '@bigcommerce/request-sender';
 
 export interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
+    onErrorLog?: (error: unknown) => void;
 }
 
 export interface CustomerInitializeOptions extends CustomerRequestOptions {

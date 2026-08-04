@@ -47,6 +47,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
     private bigcommerce_payments_fastlane?: BigCommercePaymentsFastlanePaymentInitializeOptions;
     private methodId?: string;
     private orderId?: string;
+    private errorLogger?: (error: unknown) => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -97,6 +98,13 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.bigcommerce_payments_fastlane.onChange" argument is not provided or it is not a function.',
             );
+        }
+
+        if (
+            bigcommerce_payments_fastlane.onErrorLog &&
+            typeof bigcommerce_payments_fastlane.onErrorLog === 'function'
+        ) {
+            this.errorLogger = bigcommerce_payments_fastlane.onErrorLog;
         }
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
@@ -265,6 +273,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
     }
 
@@ -295,9 +304,13 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             },
         };
 
-        this.paypalComponentMethods = await paypalFastlane.FastlaneCardComponent(
-            cardComponentOptions,
-        );
+        try {
+            this.paypalComponentMethods = await paypalFastlane.FastlaneCardComponent(
+                cardComponentOptions,
+            );
+        } catch (error) {
+            this.handleErrorLog(error);
+        }
     }
 
     private renderPayPalPaymentComponent(container?: string): void {
@@ -309,7 +322,11 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             );
         }
 
-        paypalComponentMethods.render(container);
+        try {
+            paypalComponentMethods.render(container);
+        } catch (error) {
+            this.handleErrorLog(error);
+        }
     }
 
     private getPayPalComponentMethodsOrThrow(): PayPalFastlaneCardComponentMethods {
@@ -541,6 +558,12 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             typeof this.bigcommerce_payments_fastlane.onError === 'function'
         ) {
             this.bigcommerce_payments_fastlane.onError(error);
+        }
+    }
+
+    private handleErrorLog(error: unknown): void {
+        if (this.errorLogger) {
+            this.errorLogger(error);
         }
     }
 }
