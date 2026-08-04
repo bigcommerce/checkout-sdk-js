@@ -191,7 +191,23 @@ describe('MonerisPaymentStrategy', () => {
         it('initialize moneris iframe and sets hosted fields css', async () => {
             paymentMethodMock.config.testMode = true;
 
-            await strategy.initialize(initializeOptions);
+            await strategy.initialize({
+                ...initializeOptions,
+                moneris: {
+                    ...initializeOptions.moneris!,
+                    style: {
+                        cssBody: 'font-family: Helvetica;background: transparent;',
+                        cssTextbox: 'border-radius:4px;border:1px solid rgb(221,221,221);',
+                        cssTextboxCardNumber: 'width: 100%;',
+                        cssTextboxExpiryDate: 'width: 120px;',
+                        cssTextboxCVV: 'width: 80px;',
+                        cssInputLabel: 'font-weight: 500;',
+                        cssLabelCardNumber: 'grid-column: 1 / 3; grid-row: 1;',
+                        cssLabelExpiryDate: 'grid-column: 1; grid-row: 2;',
+                        cssLabelCVV: 'grid-column: 2; grid-row: 2;',
+                    },
+                },
+            });
 
             const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
 
@@ -202,6 +218,35 @@ describe('MonerisPaymentStrategy', () => {
             expect(iframe.src).toContain('css_textbox_exp=');
             expect(iframe.src).toContain('css_textbox_cvd=');
             expect(iframe.src).toContain('css_input_label=');
+            expect(iframe.src).toContain('css_label_pan=');
+            expect(iframe.src).toContain('css_label_exp=');
+            expect(iframe.src).toContain('css_label_cvd=');
+            expect(iframe.src).toContain('enable_cc_formatting=1');
+            expect(iframe.src).toContain('enable_exp_formatting=1');
+            expect(iframe.src).toContain(encodeURIComponent('border-radius:4px'));
+            expect(iframe.src).toContain(encodeURIComponent('font-family: Helvetica'));
+        });
+
+        it('encodes css query params that contain percent characters', async () => {
+            paymentMethodMock.config.testMode = true;
+
+            await strategy.initialize({
+                ...initializeOptions,
+                moneris: {
+                    ...initializeOptions.moneris!,
+                    style: {
+                        cssTextboxExpiryDate:
+                            'clear: both; float: left; margin-bottom: 0; margin-right: 12px; width: calc(50% - 12px);',
+                        cssTextboxCVV: 'float: left; margin-bottom: 0; width: calc(50% - 12px);',
+                    },
+                },
+            });
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).toContain('HPPtoken/index.php');
+            expect(iframe.src).toContain(encodeURIComponent('calc(50% - 12px)'));
         });
 
         it('fails to initialize moneris strategy when initialization options are not provided', async () => {

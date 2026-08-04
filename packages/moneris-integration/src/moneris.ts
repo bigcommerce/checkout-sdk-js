@@ -11,6 +11,10 @@
  *      cssTextboxCardNumber: 'width:140px;';
  *      cssTextboxExpiryDate: 'width:40px;';
  *      cssTextboxCVV: 'width:40px;';
+ *      cssInputLabel: 'font-weight:500;';
+ *      cssLabelCardNumber: 'grid-column: 1 / 3; grid-row: 1;';
+ *      cssLabelExpiryDate: 'grid-column: 1; grid-row: 2;';
+ *      cssLabelCVV: 'grid-column: 2; grid-row: 2;';
  * }
  * ```
  *
@@ -42,6 +46,18 @@ export default interface MonerisStylingProps {
      * Stringified CSS to apply to input labels
      */
     cssInputLabel?: string;
+    /**
+     * Layout CSS for the card number label (`#monerisDataLabel`).
+     */
+    cssLabelCardNumber?: string;
+    /**
+     * Layout CSS for the expiry date label (`#monerisExpLabel`).
+     */
+    cssLabelExpiryDate?: string;
+    /**
+     * Layout CSS for the CVV label (`#monerisCvdLabel`).
+     */
+    cssLabelCVV?: string;
 }
 
 export interface MoneriesHostedFieldsQueryParams {
@@ -50,7 +66,9 @@ export interface MoneriesHostedFieldsQueryParams {
     css_body: string;
     css_textbox: string;
     css_textbox_pan: string;
+    enable_cc_formatting: number;
     enable_exp: number;
+    enable_exp_formatting: number;
     css_textbox_exp: string;
     enable_cvd: number;
     css_textbox_cvd: string;
@@ -59,6 +77,9 @@ export interface MoneriesHostedFieldsQueryParams {
     exp_label: string;
     cvd_label: string;
     css_input_label: string;
+    css_label_pan?: string;
+    css_label_exp?: string;
+    css_label_cvd?: string;
 }
 
 export interface MonerisResponseData {
