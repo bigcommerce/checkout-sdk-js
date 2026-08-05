@@ -14,22 +14,22 @@ import {
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
+import BigCommercePaymentsScriptLoader from './bigcommerce-payments-script-loader';
 import {
+    BigCommercePaymentsInitializationData,
     PayPalButtonStyleOptions,
-    PayPalCommerceInitializationData,
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
     StyleButtonShape,
-} from './paypal-commerce-types';
+} from './bigcommerce-payments-types';
 
-export default class PaypalCommerceWalletService {
+export default class BigCommercePaymentsWalletService {
     private paypalSdk?: PayPalSDK;
 
     constructor(
         private walletButtonIntegrationService: WalletButtonIntegrationService,
-        private paypalCommerceScriptLoader: PayPalCommerceScriptLoader,
+        private bigCommercePaymentsScriptLoader: BigCommercePaymentsScriptLoader,
     ) {}
 
     /**
@@ -38,15 +38,14 @@ export default class PaypalCommerceWalletService {
      *
      */
     async loadPayPalSdk(
-        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
         providedCurrencyCode: string,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
     ): Promise<PayPalSDK | undefined> {
-        this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
+        this.paypalSdk = await this.bigCommercePaymentsScriptLoader.getPayPalSDK(
             paymentMethod,
             providedCurrencyCode,
-            undefined,
             initializesOnCheckoutPage,
             forceLoad,
         );
@@ -113,7 +112,7 @@ export default class PaypalCommerceWalletService {
         };
         const response = await this.walletButtonIntegrationService.createPaymentOrderIntent(
             inputData,
-            'PayPalCommercePaymentWalletIntentData',
+            'BigcommercePaymentWalletIntentData',
             options,
         );
 

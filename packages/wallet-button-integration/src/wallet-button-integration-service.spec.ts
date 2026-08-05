@@ -56,6 +56,7 @@ describe('WalletButtonIntegrationService', () => {
                 graphQLEndpoint,
                 inputData,
                 undefined,
+                undefined,
             );
             expect(result).toEqual(expectedResponse);
         });
@@ -87,12 +88,14 @@ describe('WalletButtonIntegrationService', () => {
 
             const result = await walletButtonIntegrationService.createPaymentOrderIntent(
                 inputData,
+                undefined,
                 customOptions,
             );
 
             expect(paymentRequestSender.createPaymentOrderIntent).toHaveBeenCalledWith(
                 graphQLEndpoint,
                 inputData,
+                undefined,
                 customOptions,
             );
             expect(result).toEqual(expectedResponse);

@@ -16,6 +16,9 @@ export { WithBigCommercePaymentsCustomerInitializeOptions } from './bigcommerce-
 export { default as createBigCommercePaymentsPaymentStrategy } from './bigcommerce-payments/create-bigcommerce-payments-payment-strategy';
 export { WithBigCommercePaymentsPaymentInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-payment-initialize-options';
 
+export { default as createBigCommercePaymentsWalletStrategy } from './bigcommerce-payments/create-bigcommerce-payments-wallet-strategy';
+export { WithBigCommercePaymentsWalletInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-wallet-initialize-options';
+
 /**
  *
  * BigCommercePayments Fastlane strategy

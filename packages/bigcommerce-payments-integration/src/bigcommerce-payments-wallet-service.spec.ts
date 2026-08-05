@@ -8,22 +8,22 @@ import {
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import { getPayPalCommercePaymentMethod, getPayPalSDKMock } from './mocks';
-import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
+import BigCommercePaymentsScriptLoader from './bigcommerce-payments-script-loader';
 import {
     PayPalButtonStyleOptions,
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
     StyleButtonShape,
-} from './paypal-commerce-types';
-import PaypalCommerceWalletService from './paypal-commerce-wallet-service';
+} from './bigcommerce-payments-types';
+import BigCommercePaymentsWalletService from './bigcommerce-payments-wallet-service';
+import { getBigCommercePaymentsPaymentMethod, getPayPalSDKMock } from './mocks';
 
-describe('PaypalCommerceWalletService', () => {
-    let paymentMethod: ReturnType<typeof getPayPalCommercePaymentMethod>;
-    let paypalCommerceScriptLoader: PayPalCommerceScriptLoader;
+describe('BigCommercePaymentsWalletService', () => {
+    let paymentMethod: ReturnType<typeof getBigCommercePaymentsPaymentMethod>;
+    let bigCommercePaymentsScriptLoader: BigCommercePaymentsScriptLoader;
     let paypalSdk: PayPalSDK;
-    let service: PaypalCommerceWalletService;
+    let service: BigCommercePaymentsWalletService;
     let walletButtonIntegrationService: WalletButtonIntegrationService;
 
     const cartId = 'cart-123';
@@ -31,17 +31,17 @@ describe('PaypalCommerceWalletService', () => {
     const externalCheckoutUrl = 'https://store.example/checkout.php?action=set_external_checkout';
 
     beforeEach(() => {
-        paymentMethod = getPayPalCommercePaymentMethod();
+        paymentMethod = getBigCommercePaymentsPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         walletButtonIntegrationService = createWalletButtonIntegrationService('/graphql');
-        paypalCommerceScriptLoader = new PayPalCommerceScriptLoader({} as never);
+        bigCommercePaymentsScriptLoader = new BigCommercePaymentsScriptLoader({} as never);
 
-        service = new PaypalCommerceWalletService(
+        service = new BigCommercePaymentsWalletService(
             walletButtonIntegrationService,
-            paypalCommerceScriptLoader,
+            bigCommercePaymentsScriptLoader,
         );
 
-        jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockResolvedValue(paypalSdk);
+        jest.spyOn(bigCommercePaymentsScriptLoader, 'getPayPalSDK').mockResolvedValue(paypalSdk);
         jest.spyOn(walletButtonIntegrationService, 'getRedirectToCheckoutUrl').mockResolvedValue({
             body: { redirectUrls: { externalCheckoutUrl } },
         } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
@@ -65,18 +65,17 @@ describe('PaypalCommerceWalletService', () => {
         jest.clearAllMocks();
     });
 
-    it('creates an instance of PaypalCommerceWalletService', () => {
-        expect(service).toBeInstanceOf(PaypalCommerceWalletService);
+    it('creates an instance of BigCommercePaymentsWalletService', () => {
+        expect(service).toBeInstanceOf(BigCommercePaymentsWalletService);
     });
 
     describe('#loadPayPalSdk', () => {
         it('loads and returns paypal sdk', async () => {
             const output = await service.loadPayPalSdk(paymentMethod, 'USD', true, true);
 
-            expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+            expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 'USD',
-                undefined,
                 true,
                 true,
             );
@@ -103,28 +102,32 @@ describe('PaypalCommerceWalletService', () => {
     describe('#proxyTokenizationPayment', () => {
         it('throws if order id is missing', async () => {
             await expect(
-                service.proxyTokenizationPayment(cartId, 'paypalcommerce', 'paypalcommerce'),
+                service.proxyTokenizationPayment(
+                    cartId,
+                    'bigcommerce_payments.paypal',
+                    'bigcommerce_payments',
+                ),
             ).rejects.toThrow(MissingDataError);
         });
 
         it('requests external checkout url and redirects customer', async () => {
             await service.proxyTokenizationPayment(
                 cartId,
-                'paypalcommerce',
-                'paypalcommerce',
+                'bigcommerce_payments.paypal',
+                'bigcommerce_payments',
                 orderId,
             );
 
             expect(walletButtonIntegrationService.getRedirectToCheckoutUrl).toHaveBeenCalledWith({
                 paymentWalletData: {
-                    providerId: 'paypalcommerce',
+                    providerId: 'bigcommerce_payments.paypal',
                     providerOrderId: orderId,
                 },
                 cartEntityId: cartId,
                 queryParams: [
                     { key: 'payment_type', value: 'paypal' },
                     { key: 'action', value: 'set_external_checkout' },
-                    { key: 'provider', value: 'paypalcommerce' },
+                    { key: 'provider', value: 'bigcommerce_payments' },
                     { key: 'order_id', value: orderId },
                 ],
             });
@@ -145,8 +148,8 @@ describe('PaypalCommerceWalletService', () => {
             await expect(
                 service.proxyTokenizationPayment(
                     cartId,
-                    'paypalcommerce',
-                    'paypalcommerce',
+                    'bigcommerce_payments.paypal',
+                    'bigcommerce_payments',
                     orderId,
                 ),
             ).rejects.toThrow('Failed to redirection to checkout page');
@@ -154,17 +157,19 @@ describe('PaypalCommerceWalletService', () => {
     });
 
     describe('#createPaymentOrderIntent', () => {
-        it('creates payment order intent and returns order id', async () => {
-            const output = await service.createPaymentOrderIntent('paypalcommerce', cartId, {
-                headers: { 'x-test': 'value' },
-            });
+        it('creates payment order intent with BigcommercePaymentWalletIntentData typename and returns order id', async () => {
+            const output = await service.createPaymentOrderIntent(
+                'bigcommerce_payments.paypal',
+                cartId,
+                { headers: { 'x-test': 'value' } },
+            );
 
             expect(walletButtonIntegrationService.createPaymentOrderIntent).toHaveBeenCalledWith(
                 {
                     cartEntityId: cartId,
-                    paymentWalletEntityId: 'paypalcommerce',
+                    paymentWalletEntityId: 'bigcommerce_payments.paypal',
                 },
-                'PayPalCommercePaymentWalletIntentData',
+                'BigcommercePaymentWalletIntentData',
                 { headers: { 'x-test': 'value' } },
             );
             expect(output).toBe(orderId);
@@ -216,9 +221,7 @@ describe('PaypalCommerceWalletService', () => {
 
             const output = service.getValidButtonStyle(style);
 
-            expect(output).toEqual({
-                height: 40,
-            });
+            expect(output).toEqual({ height: 40 });
         });
     });
 

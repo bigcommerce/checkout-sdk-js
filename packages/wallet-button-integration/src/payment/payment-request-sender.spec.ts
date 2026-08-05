@@ -178,6 +178,7 @@ describe('PaymentRequestSender', () => {
             await paymentRequestSender.createPaymentOrderIntent(
                 graphQLEndpoint,
                 inputData,
+                'PayPalCommercePaymentWalletIntentData',
                 customOptions,
             );
 
