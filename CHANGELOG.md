@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.950.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.950.3...v1.950.4) (2026-08-06)
+
+
+### Bug Fixes
+
+* **payment:** resolve Stripe Link V2 method from state and verify completion by intent token ([#3335](https://github.com/bigcommerce/checkout-sdk-js/issues/3335)) ([2de0b5a](https://github.com/bigcommerce/checkout-sdk-js/commit/2de0b5a8649f388d9aa78ae045b88dde0549cb06))
+
 ### [1.950.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.950.2...v1.950.3) (2026-08-06)
 
 
