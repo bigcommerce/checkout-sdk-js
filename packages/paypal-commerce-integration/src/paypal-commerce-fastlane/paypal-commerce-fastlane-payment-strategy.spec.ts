@@ -396,7 +396,9 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 componentError,
             );
 
-            await expect(strategy.initialize(initializationOptions)).rejects.toThrow(componentError);
+            await expect(strategy.initialize(initializationOptions)).rejects.toThrow(
+                componentError,
+            );
         });
 
         it('provides callback function to be able to use them on ui', async () => {
