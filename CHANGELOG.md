@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.950.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.950.2...v1.950.3) (2026-08-06)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-10281 Revert normalizeAvailableShippingOptions ([#3348](https://github.com/bigcommerce/checkout-sdk-js/issues/3348)) ([877ddb3](https://github.com/bigcommerce/checkout-sdk-js/commit/877ddb3584395135db73246be760d2df514006de))
+
 ### [1.950.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.950.1...v1.950.2) (2026-08-06)
 
 
