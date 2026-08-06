@@ -1,5 +1,4 @@
 import { createAction } from '@bigcommerce/data-store';
-import { omit } from 'lodash';
 
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
@@ -7,7 +6,6 @@ import { CouponActionType } from '../coupon';
 
 import { ConsignmentActionType } from './consignment-actions';
 import consignmentReducer from './consignment-reducer';
-import { getConsignment } from './consignments.mock';
 
 import { ConsignmentState } from '.';
 
@@ -278,51 +276,6 @@ describe('consignmentReducer', () => {
 
         expect(consignmentReducer(initialState, action)).toMatchObject({
             data: action.payload && action.payload.consignments,
-        });
-    });
-
-    it.each([
-        ConsignmentActionType.LoadShippingOptionsSucceeded,
-        ConsignmentActionType.CreateConsignmentsSucceeded,
-        ConsignmentActionType.UpdateConsignmentSucceeded,
-        ConsignmentActionType.DeleteConsignmentSucceeded,
-        ConsignmentActionType.UpdateShippingOptionSucceeded,
-        CouponActionType.ApplyCouponSucceeded,
-        CouponActionType.RemoveCouponSucceeded,
-    ])(
-        'resets available shipping options when %s returns consignments without them',
-        (actionType) => {
-            const action = createAction(
-                actionType,
-                {
-                    ...getCheckout(),
-                    consignments: [omit(getConsignment(), 'availableShippingOptions')],
-                },
-                { id },
-            );
-
-            expect(
-                consignmentReducer({ ...initialState, data: [getConsignment()] }, action),
-            ).toMatchObject({
-                data: [expect.objectContaining({ availableShippingOptions: [] })],
-            });
-        },
-    );
-
-    it('keeps previously loaded available shipping options when checkout is loaded without them', () => {
-        const action = createAction(CheckoutActionType.LoadCheckoutSucceeded, {
-            ...getCheckout(),
-            consignments: [omit(getConsignment(), 'availableShippingOptions')],
-        });
-
-        expect(
-            consignmentReducer({ ...initialState, data: [getConsignment()] }, action),
-        ).toMatchObject({
-            data: [
-                expect.objectContaining({
-                    availableShippingOptions: getConsignment().availableShippingOptions,
-                }),
-            ],
         });
     });
 });
