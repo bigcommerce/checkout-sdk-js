@@ -11,6 +11,7 @@ import {
     NotInitializedErrorType,
     Payment,
     PaymentIntegrationService,
+    PaymentMethod,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
     ShippingOption,
@@ -80,11 +81,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const methodId = this._getMethodId(gatewayId);
-        const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-            params: { method: methodId },
-        });
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
+        const paymentMethod = await this._getPaymentMethod(gatewayId);
         const { loadingContainerId, buttonHeight, onComplete, filterAvailableShippingOptions } =
             stripeocs;
 
@@ -97,13 +94,13 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { initializationData } = paymentMethod;
+        const { initializationData, id: methodId } = paymentMethod;
         const { captureMethod } = initializationData;
 
         this._captureMethod = captureMethod;
         this._stripeClient = await this.scriptLoader.getStripeClient(
             initializationData,
-            state.getCartLocale(),
+            this.paymentIntegrationService.getState().getCartLocale(),
             StripeJsVersion.CLOVER,
         );
 
@@ -374,10 +371,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         const { data: additionalActionData } = error.body.additional_action_required;
         const { token } = additionalActionData;
 
-        const { paymentIntent } = await this._confirmStripePaymentOrThrow(
-            additionalActionData,
-            methodId,
-        );
+        const { paymentIntent } = await this._confirmStripePaymentOrThrow(additionalActionData);
 
         const paymentPayload = this._getPaymentPayload(methodId, paymentIntent?.id || token);
 
@@ -394,7 +388,6 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
 
     private async _confirmStripePaymentOrThrow(
         additionalActionData: StripeAdditionalActionRequired['data'],
-        methodId: string,
     ): Promise<StripeResult | never> {
         const { token, redirect_url } = additionalActionData;
         const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
@@ -404,10 +397,11 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         let stripeError: StripeError | undefined;
 
         try {
-            const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
-                methodId,
-                this._stripeClient,
-            );
+            const isPaymentCompleted =
+                await this.stripeIntegrationService.isPaymentCompletedByToken(
+                    token,
+                    this._stripeClient,
+                );
 
             const confirmationResult = !isPaymentCompleted
                 ? await this._stripeClient?.confirmPayment({
@@ -610,14 +604,34 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         }
     }
 
-    private _getMethodId(gatewayId: string): string {
-        const { initializationData: { checkoutSessionEnabled } = {} } =
-            this.paymentIntegrationService
-                .getState()
-                .getPaymentMethodOrThrow<StripeInitializationData>(gatewayId);
+    private async _getPaymentMethod(
+        gatewayId: string,
+    ): Promise<PaymentMethod<StripeInitializationData>> {
+        let state = this.paymentIntegrationService.getState();
+        const stripePaymentMethod =
+            state.getPaymentMethod<StripeInitializationData>(
+                StripePaymentMethodType.CHECKOUT_SESSION,
+                gatewayId,
+            ) ||
+            state.getPaymentMethod<StripeInitializationData>(
+                StripePaymentMethodType.OCS,
+                gatewayId,
+            );
 
-        return checkoutSessionEnabled
+        if (stripePaymentMethod) {
+            return stripePaymentMethod;
+        }
+
+        const { initializationData } =
+            state.getPaymentMethodOrThrow<StripeInitializationData>(gatewayId);
+        const methodId = initializationData?.checkoutSessionEnabled
             ? StripePaymentMethodType.CHECKOUT_SESSION
             : StripePaymentMethodType.OCS;
+
+        state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+            params: { method: methodId },
+        });
+
+        return state.getPaymentMethodOrThrow(methodId, gatewayId);
     }
 }

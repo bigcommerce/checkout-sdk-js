@@ -22,6 +22,7 @@ export const getStripeIntegrationServiceMock = () =>
         }),
         isCancellationError: jest.fn(() => false),
         isPaymentCompleted: jest.fn(() => Promise.resolve(false)),
+        isPaymentCompletedByToken: jest.fn(() => Promise.resolve(false)),
         mapStripePaymentData: jest.fn((return_url?: string) => ({
             elements: getStripeJsMock().elements({}),
             redirect: StripeStringConstants.IF_REQUIRED,

@@ -537,6 +537,96 @@ describe('StripeIntegrationService', () => {
         });
     });
 
+    describe('#isPaymentCompletedByToken', () => {
+        const setConfirmationExperiment = (enabled = true) => {
+            const storeConfig: StoreConfig = {
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE': enabled,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfig);
+        };
+
+        beforeEach(() => {
+            setConfirmationExperiment(true);
+            stripeUPEJsMock = {
+                ...getStripeJsMock(),
+                retrievePaymentIntent: jest.fn().mockResolvedValue({
+                    paymentIntent: {
+                        status: 'succeeded',
+                    },
+                }),
+            };
+        });
+
+        it('returns true if payment intent already completed', async () => {
+            expect(
+                await stripeIntegrationService.isPaymentCompletedByToken('token', stripeUPEJsMock),
+            ).toBe(true);
+
+            expect(stripeUPEJsMock.retrievePaymentIntent).toHaveBeenCalledWith('token');
+        });
+
+        it('returns false if no token provided', async () => {
+            expect(
+                await stripeIntegrationService.isPaymentCompletedByToken(
+                    undefined,
+                    stripeUPEJsMock,
+                ),
+            ).toBe(false);
+        });
+
+        it('returns false if no stripe client', async () => {
+            expect(
+                await stripeIntegrationService.isPaymentCompletedByToken('token', undefined),
+            ).toBe(false);
+        });
+
+        it('returns false if experiment disabled', async () => {
+            setConfirmationExperiment(false);
+
+            expect(
+                await stripeIntegrationService.isPaymentCompletedByToken('token', stripeUPEJsMock),
+            ).toBe(false);
+        });
+
+        it('returns false if no payment intent retrieved', async () => {
+            stripeUPEJsMock = {
+                ...getStripeJsMock(),
+                retrievePaymentIntent: jest.fn().mockResolvedValue({
+                    paymentIntent: undefined,
+                }),
+            };
+
+            expect(
+                await stripeIntegrationService.isPaymentCompletedByToken('token', stripeUPEJsMock),
+            ).toBe(false);
+        });
+
+        it('returns false if payment status not succeed', async () => {
+            stripeUPEJsMock = {
+                ...getStripeJsMock(),
+                retrievePaymentIntent: jest.fn().mockResolvedValue({
+                    paymentIntent: {
+                        status: 'failed',
+                    },
+                }),
+            };
+
+            expect(
+                await stripeIntegrationService.isPaymentCompletedByToken('token', stripeUPEJsMock),
+            ).toBe(false);
+        });
+    });
+
     describe('#mapStripePaymentData', () => {
         beforeEach(() => {
             jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
