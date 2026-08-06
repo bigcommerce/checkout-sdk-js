@@ -176,7 +176,7 @@
                 "{projectRoot}/schema/storefront.graphql",
                 "{projectRoot}/src/**/*.graphql"
             ],
-            "outputs": ["{projectRoot}/src/generated_codegen"]
+            "outputs": ["{projectRoot}/src/generated-codegen"]
         }
     }
 }

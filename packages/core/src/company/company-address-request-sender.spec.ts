@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 
-import { SearchCompanyAddressesDocument } from '../generated_codegen/graphql';
+import { SearchCompanyAddressesDocument } from '../generated-codegen/graphql';
 import { GraphQLRequestSender } from '../common/http-request';
 
 import { CompanyAddressSearchResult } from './company-address';

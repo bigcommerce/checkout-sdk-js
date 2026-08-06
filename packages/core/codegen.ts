@@ -11,7 +11,7 @@ const config: CodegenConfig = {
     schema: 'packages/core/schema/storefront.graphql',
     documents: ['packages/core/src/**/*.graphql'],
     generates: {
-        'packages/core/src/generated_codegen/': {
+        'packages/core/src/generated-codegen/': {
             preset: 'client',
             presetConfig: {
                 fragmentMasking: false,

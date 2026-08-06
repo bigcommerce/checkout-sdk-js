@@ -1,5 +1,5 @@
 import { RequestOptions } from '../common/http-request';
-import { SearchCompanyAddressesQuery } from '../generated_codegen/graphql';
+import { SearchCompanyAddressesQuery } from '../generated-codegen/graphql';
 
 export type CompanyAddressSearchResult = SearchCompanyAddressesQuery;
 

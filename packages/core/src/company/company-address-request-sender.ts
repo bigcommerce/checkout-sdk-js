@@ -1,4 +1,4 @@
-import { SearchCompanyAddressesDocument } from '../generated_codegen/graphql';
+import { SearchCompanyAddressesDocument } from '../generated-codegen/graphql';
 import { GraphQLRequestSender } from '../common/http-request';
 
 import { CompanyAddressSearchOptions, CompanyAddressSearchResult } from './company-address';
