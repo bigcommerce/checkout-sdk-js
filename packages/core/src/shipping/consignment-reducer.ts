@@ -42,7 +42,6 @@ function dataReducer(
         | CheckoutHydrateAction,
 ): Consignment[] | undefined {
     switch (action.type) {
-        case CheckoutActionType.LoadCheckoutSucceeded:
         case ConsignmentActionType.LoadShippingOptionsSucceeded:
         case ConsignmentActionType.CreateConsignmentsSucceeded:
         case ConsignmentActionType.UpdateConsignmentSucceeded:
@@ -50,6 +49,12 @@ function dataReducer(
         case ConsignmentActionType.UpdateShippingOptionSucceeded:
         case CouponActionType.ApplyCouponSucceeded:
         case CouponActionType.RemoveCouponSucceeded:
+            return arrayReplace(
+                data,
+                normalizeAvailableShippingOptions(action.payload?.consignments),
+            );
+
+        case CheckoutActionType.LoadCheckoutSucceeded:
             return arrayReplace(data, action.payload && action.payload.consignments);
 
         case CustomerActionType.SignOutCustomerSucceeded:
@@ -61,6 +66,18 @@ function dataReducer(
         default:
             return data;
     }
+}
+
+function normalizeAvailableShippingOptions(
+    consignments?: Consignment[],
+): Consignment[] | undefined {
+    return (
+        consignments &&
+        consignments.map((consignment) => ({
+            ...consignment,
+            availableShippingOptions: consignment.availableShippingOptions ?? [],
+        }))
+    );
 }
 
 function errorsReducer(
