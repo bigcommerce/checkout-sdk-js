@@ -258,6 +258,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
     }
 
@@ -512,6 +513,15 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             typeof this.paypalcommercefastlane.onError === 'function'
         ) {
             this.paypalcommercefastlane.onError(error);
+        }
+    }
+
+    private handleErrorLog(error: unknown): void {
+        if (
+            this.paypalcommercefastlane?.onErrorLog &&
+            typeof this.paypalcommercefastlane.onErrorLog === 'function'
+        ) {
+            this.paypalcommercefastlane.onErrorLog(error);
         }
     }
 }

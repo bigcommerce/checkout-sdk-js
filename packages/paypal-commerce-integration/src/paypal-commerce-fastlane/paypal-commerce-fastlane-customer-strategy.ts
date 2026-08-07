@@ -22,6 +22,9 @@ import PayPalCommerceFastlaneCustomerInitializeOptions, {
 } from './paypal-commerce-fastlane-customer-initialize-options';
 
 export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerStrategy {
+    private options?: CustomerInitializeOptions &
+        WithPayPalCommerceFastlaneCustomerInitializeOptions;
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalSdkScriptLoader: PayPalSdkScriptLoader,
@@ -32,6 +35,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         options: CustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions,
     ): Promise<void> {
         const { methodId, paypalcommercefastlane } = options;
+        this.options = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -60,9 +64,10 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 isTestModeEnabled,
                 this.getFastlaneStyles(methodId, paypalcommercefastlane),
             );
-        } catch (_) {
+        } catch (error) {
             // TODO: add logger to be able to debug issues if there any
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
 
         return Promise.resolve();
@@ -119,9 +124,10 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
 
             try {
                 await this.runPayPalAuthenticationFlowOrThrow(methodId);
-            } catch (_) {
+            } catch (error) {
                 // TODO: add logger to be able to debug issues if there any
                 // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+                this.handleErrorLog(error);
             }
         }
 
@@ -227,5 +233,13 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
             isFastlaneStylingEnabled ? fastlaneStyles : {},
             paypalcommercefastlane?.styles,
         );
+    }
+
+    private handleErrorLog(error: unknown): void {
+        const { onErrorLog } = this.options || {};
+
+        if (onErrorLog && typeof onErrorLog === 'function') {
+            onErrorLog(error);
+        }
     }
 }

@@ -389,11 +389,63 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             });
         });
 
+        it('throws if PayPal Fastlane card component fails to initialize', async () => {
+            const componentError = new Error('component error');
+
+            jest.spyOn(paypalFastlane, 'FastlaneCardComponent').mockRejectedValueOnce(
+                componentError,
+            );
+
+            await expect(strategy.initialize(initializationOptions)).rejects.toThrow(
+                componentError,
+            );
+        });
+
         it('provides callback function to be able to use them on ui', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(initializationOptions.paypalcommercefastlane.onInit).toHaveBeenCalled();
             expect(initializationOptions.paypalcommercefastlane.onChange).toHaveBeenCalled();
+        });
+
+        describe('error logging', () => {
+            it('logs an error with the provided onErrorLog callback if the authentication flow fails, without failing initialization', async () => {
+                const error = new Error('lookupCustomerOrThrow error');
+                const onErrorLog = jest.fn();
+
+                jest.spyOn(paypalFastlaneUtils, 'lookupCustomerOrThrow').mockRejectedValue(error);
+
+                await strategy.initialize({
+                    methodId,
+                    paypalcommercefastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog,
+                    },
+                });
+
+                expect(onErrorLog).toHaveBeenCalledWith(error);
+                expect(paypalFastlaneUtils.updateStorageSessionId).not.toHaveBeenCalled();
+            });
+
+            it('does not throw when onErrorLog is provided but is not a function, for a soft-failing authentication flow error', async () => {
+                const error = new Error('lookupCustomerOrThrow error');
+
+                jest.spyOn(paypalFastlaneUtils, 'lookupCustomerOrThrow').mockRejectedValue(error);
+
+                const options = {
+                    methodId,
+                    paypalcommercefastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog: 'not a function',
+                    },
+                };
+
+                await expect(
+                    strategy.initialize(options as unknown as typeof initializationOptions),
+                ).resolves.toBeUndefined();
+            });
         });
     });
 
@@ -818,6 +870,34 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
 
             expect(paypalFastlaneComponent.render).toHaveBeenCalledWith(containerId);
+        });
+
+        it('throws when rendering the card component fails, without swallowing the error', async () => {
+            const containerId = 'containerIdMock';
+            const renderError = new Error('render error');
+            const onErrorLog = jest.fn();
+            let onInitCallback: (container: string) => void = noop;
+
+            const onInitImplementation = (renderComponentCallback: (container: string) => void) => {
+                onInitCallback = renderComponentCallback;
+            };
+
+            await strategy.initialize({
+                methodId,
+                paypalcommercefastlane: {
+                    onInit: jest.fn(onInitImplementation),
+                    onChange: jest.fn(),
+                    onErrorLog,
+                },
+            });
+
+            const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
+
+            jest.spyOn(paypalFastlaneComponent, 'render').mockImplementationOnce(() => {
+                throw renderError;
+            });
+
+            expect(() => onInitCallback(containerId)).toThrow(renderError);
         });
     });
 
