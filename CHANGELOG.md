@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.951.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.950.4...v1.951.0) (2026-08-07)
+
+
+### Features
+
+* **payment:** PAYPAL-6856 added ability to log errors into Sentry without throwing an error ([#3334](https://github.com/bigcommerce/checkout-sdk-js/issues/3334)) ([97ba6ae](https://github.com/bigcommerce/checkout-sdk-js/commit/97ba6ae838fe6b455dd8076d9ba1c2b433b74b3e))
+
 ### [1.950.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.950.3...v1.950.4) (2026-08-06)
 
 

@@ -998,6 +998,7 @@ declare class PayPalCommerceFastlaneCustomerStrategy implements CustomerStrategy
     private paymentIntegrationService;
     private paypalSdkScriptLoader;
     private paypalFastlaneUtils;
+    private options?;
     constructor(paymentIntegrationService: PaymentIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
     initialize(options: CustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
@@ -1017,6 +1018,7 @@ declare class PayPalCommerceFastlaneCustomerStrategy implements CustomerStrategy
      *
      */
     private getFastlaneStyles;
+    private handleErrorLog;
 }
 
 /**
@@ -1089,6 +1091,10 @@ declare interface PayPalCommerceFastlanePaymentInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: PayPalFastlaneStylesOption;
+    /**
+     * Method that will only log errors with no-blocking flow
+     */
+    onErrorLog?: (error: unknown) => void;
 }
 
 declare interface PayPalCommerceFields {
@@ -1891,6 +1897,7 @@ declare class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
      */
     private handlePayPalStoredInstrumentChange;
     private handleError;
+    private handleErrorLog;
 }
 
 declare interface PaypalCommerceRatePay {
