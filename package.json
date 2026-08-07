@@ -65,6 +65,7 @@
     "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
     "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
+    "pretest": "npm run codegen",
     "test": "NODE_OPTIONS='--unhandled-rejections=warn' jest --config packages/core/jest.config.js",
     "test:coverage": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run-many --all --target=test --parallel=5 -- --coverage",
     "test:series": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run-many --all --target=test --parallel=5 -- --runInBand",

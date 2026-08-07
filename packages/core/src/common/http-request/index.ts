@@ -14,3 +14,4 @@ export { default as ContentType } from './content-type';
 export { default as RequestOptions } from './request-options';
 export { default as joinIncludes } from './join-includes';
 export { default as joinOrMergeIncludes } from './join-or-merge-includes';
+export { default as isResponse } from './is-response';

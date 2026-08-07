@@ -3,6 +3,7 @@ import { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 
 import ContentType from './content-type';
 import GraphQLRequestError, { GraphQLError } from './graphql-request-error';
+import isResponse from './is-response';
 import RequestOptions from './request-options';
 import { SDK_VERSION_HEADERS } from './sdk-version-headers';
 
@@ -46,7 +47,7 @@ export default class GraphQLRequestSender {
                 },
             });
         } catch (error) {
-            if (this._isResponse(error)) {
+            if (isResponse<GraphQLResponseBody<unknown>>(error)) {
                 throw new GraphQLRequestError(error, error.body?.errors);
             }
 
@@ -64,11 +65,5 @@ export default class GraphQLRequestSender {
         }
 
         return data;
-    }
-
-    private _isResponse(
-        value: unknown,
-    ): value is Response<GraphQLResponseBody<unknown> | undefined> {
-        return typeof value === 'object' && value !== null && 'status' in value && 'body' in value;
     }
 }

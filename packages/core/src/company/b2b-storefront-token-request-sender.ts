@@ -5,6 +5,7 @@ import {
     ContentType,
     GraphQLError,
     GraphQLRequestError,
+    isResponse,
     RequestOptions,
 } from '../common/http-request';
 
@@ -55,7 +56,7 @@ export default class B2BStorefrontTokenRequestSender {
                 },
             );
         } catch (error) {
-            if (this._isResponse(error)) {
+            if (isResponse<B2BStorefrontTokenResponseBody>(error)) {
                 throw new GraphQLRequestError(error, error.body?.errors);
             }
 
@@ -75,11 +76,5 @@ export default class B2BStorefrontTokenRequestSender {
         }
 
         return token;
-    }
-
-    private _isResponse(
-        value: unknown,
-    ): value is Response<B2BStorefrontTokenResponseBody | undefined> {
-        return typeof value === 'object' && value !== null && 'status' in value && 'body' in value;
     }
 }
