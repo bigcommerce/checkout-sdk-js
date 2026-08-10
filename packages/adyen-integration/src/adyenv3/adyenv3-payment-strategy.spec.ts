@@ -356,6 +356,7 @@ describe('AdyenV3PaymentStrategy', () => {
                                     screen_width: 0,
                                     time_zone_offset: expect.anything(),
                                 },
+                                checkout_attempt_id: 'CHECKOUT_ATTEMPT_ID',
                             }),
                         },
                     }),
