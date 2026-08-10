@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.953.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.952.0...v1.953.0) (2026-08-10)
+
+
+### Features
+
+* **payment:** PAYPAL-6493 add BCP wallet strategy ([#3345](https://github.com/bigcommerce/checkout-sdk-js/issues/3345)) ([a275cb3](https://github.com/bigcommerce/checkout-sdk-js/commit/a275cb3d9331ae08d021b26ce3759cacfebc4941))
+
 ## [1.952.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.951.0...v1.952.0) (2026-08-10)
 
 

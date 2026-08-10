@@ -25,11 +25,13 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { VaultedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 declare interface AllowedPaymentMethods {
     type: string;
@@ -1747,6 +1749,23 @@ declare class BigCommercePaymentsVenmoPaymentStrategy implements PaymentStrategy
     private toggleLoadingIndicator;
 }
 
+declare interface BigCommercePaymentsWalletInitializeOptions {
+    cartId: string;
+    currency: {
+        code: string;
+    };
+    initializationData: string;
+    clientToken: string;
+}
+
+declare class BigCommercePaymentsWalletStrategy implements CheckoutButtonStrategy {
+    private bigCommercePaymentsWalletService;
+    constructor(bigCommercePaymentsWalletService: PaypalCommerceWalletService);
+    initialize(options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
+}
+
 declare interface BirthDate {
     getFullYear(): number;
     getDate(): number;
@@ -2053,6 +2072,10 @@ declare interface WithBigCommercePaymentsVenmoPaymentInitializeOptions {
     bigcommerce_payments_venmo?: BigCommercePaymentsVenmoPaymentInitializeOptions;
 }
 
+declare interface WithBigCommercePaymentsWalletInitializeOptions {
+    bigcommerce_paymentspaypal?: BigCommercePaymentsWalletInitializeOptions;
+}
+
 export declare const createBigCommercePaymentsAlternativeMethodsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsAlternativeMethodsPaymentStrategy>, {
     gateway: string;
 }>;
@@ -2112,5 +2135,9 @@ export declare const createBigCommercePaymentsVenmoCustomerStrategy: import("@bi
 }>;
 
 export declare const createBigCommercePaymentsVenmoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsVenmoPaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createBigCommercePaymentsWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<BigCommercePaymentsWalletStrategy>, {
     id: string;
 }>;

@@ -1,6 +1,4 @@
-import { AddressRequestBody } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 import { BillingAddressRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BillingAddressResponse } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -13,7 +11,6 @@ import { CustomerStrategy } from '@bigcommerce/checkout-sdk/payment-integration-
 import { CustomerStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ExecutePaymentMethodCheckoutOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { FormPoster } from '@bigcommerce/form-poster';
-import { GraphQLRequestOptions } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -29,13 +26,12 @@ import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integra
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaypalButtonCreationService } from '@bigcommerce/checkout-sdk/paypal-utils';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { Response } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { VaultedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 declare interface AllowedPaymentMethods {
@@ -902,7 +898,6 @@ declare class PayPalCommerceCreditWalletStrategy implements CheckoutButtonStrate
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceCreditWalletInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
-    private mapOrderDetailsToBillingAddress;
 }
 
 /**
@@ -1973,48 +1968,12 @@ declare class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
     private toggleLoadingIndicator;
 }
 
-declare class PaypalCommerceWalletService {
-    private walletButtonIntegrationService;
-    private paypalCommerceScriptLoader;
-    private paypalSdk?;
-    constructor(walletButtonIntegrationService: WalletButtonIntegrationService, paypalCommerceScriptLoader: PayPalCommerceScriptLoader);
-    /**
-     *
-     * PayPalSDK methods
-     *
-     */
-    loadPayPalSdk(paymentMethod: PaymentMethod<PayPalCommerceInitializationData>, providedCurrencyCode: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean): Promise<PayPalSDK | undefined>;
-    getPayPalSdkOrThrow(): PayPalSDK;
-    /**
-     *
-     * Payment submitting and tokenizing methods
-     *
-     */
-    proxyTokenizationPayment(cartId: string, providerId: string, methodId: string, orderId?: string): Promise<void>;
-    createPaymentOrderIntent(providerId: string, cartId: string, options?: GraphQLRequestOptions): Promise<string>;
-    addBillingAddress(cartId: string, address: AddressRequestBody, options?: GraphQLRequestOptions): Promise<Response<BillingAddressResponse>>;
-    /**
-     *
-     * Buttons style methods
-     *
-     */
-    getValidButtonStyle(style?: PayPalButtonStyleOptions): PayPalButtonStyleOptions;
-    getValidHeight(height?: number): number;
-    /**
-     *
-     * Utils methods
-     *
-     */
-    removeElement(elementId?: string): void;
-}
-
 declare class PaypalCommerceWalletStrategy implements CheckoutButtonStrategy {
     private paypalCommerceHeadlessWalletButtonService;
     constructor(paypalCommerceHeadlessWalletButtonService: PaypalCommerceWalletService);
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceWalletInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
-    private mapOrderDetailsToBillingAddress;
 }
 
 declare interface ShippingAddressChangeCallbackPayload {
