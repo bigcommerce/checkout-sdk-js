@@ -8,20 +8,20 @@ import {
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import { getPayPalCommercePaymentMethod, getPayPalSDKMock } from './mocks';
-import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
+import { getPayPalPaymentMethod, getPayPalSDKMock } from './mocks';
+import PayPalSdkScriptLoader from './paypal-sdk-script-loader';
 import {
     PayPalButtonStyleOptions,
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
     StyleButtonShape,
-} from './paypal-commerce-types';
-import PaypalCommerceWalletService from './paypal-commerce-wallet-service';
+} from './paypal-types';
+import PaypalCommerceWalletService from './paypal-wallet-service';
 
 describe('PaypalCommerceWalletService', () => {
-    let paymentMethod: ReturnType<typeof getPayPalCommercePaymentMethod>;
-    let paypalCommerceScriptLoader: PayPalCommerceScriptLoader;
+    let paymentMethod: ReturnType<typeof getPayPalPaymentMethod>;
+    let scriptLoader: jest.Mocked<Pick<PayPalSdkScriptLoader, 'getPayPalSDK'>>;
     let paypalSdk: PayPalSDK;
     let service: PaypalCommerceWalletService;
     let walletButtonIntegrationService: WalletButtonIntegrationService;
@@ -31,17 +31,13 @@ describe('PaypalCommerceWalletService', () => {
     const externalCheckoutUrl = 'https://store.example/checkout.php?action=set_external_checkout';
 
     beforeEach(() => {
-        paymentMethod = getPayPalCommercePaymentMethod();
+        paymentMethod = getPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         walletButtonIntegrationService = createWalletButtonIntegrationService('/graphql');
-        paypalCommerceScriptLoader = new PayPalCommerceScriptLoader({} as never);
+        scriptLoader = { getPayPalSDK: jest.fn().mockResolvedValue(paypalSdk) };
 
-        service = new PaypalCommerceWalletService(
-            walletButtonIntegrationService,
-            paypalCommerceScriptLoader,
-        );
+        service = new PaypalCommerceWalletService(walletButtonIntegrationService, scriptLoader);
 
-        jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockResolvedValue(paypalSdk);
         jest.spyOn(walletButtonIntegrationService, 'getRedirectToCheckoutUrl').mockResolvedValue({
             body: { redirectUrls: { externalCheckoutUrl } },
         } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
@@ -73,7 +69,7 @@ describe('PaypalCommerceWalletService', () => {
         it('loads and returns paypal sdk', async () => {
             const output = await service.loadPayPalSdk(paymentMethod, 'USD', true, true);
 
-            expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+            expect(scriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 'USD',
                 undefined,
@@ -88,9 +84,7 @@ describe('PaypalCommerceWalletService', () => {
         it('returns paypal sdk if it was loaded earlier', async () => {
             await service.loadPayPalSdk(paymentMethod, 'USD');
 
-            const output = service.getPayPalSdkOrThrow();
-
-            expect(output).toBe(paypalSdk);
+            expect(service.getPayPalSdkOrThrow()).toBe(paypalSdk);
         });
 
         it('throws an error if paypal sdk is not defined', () => {
@@ -125,6 +119,7 @@ describe('PaypalCommerceWalletService', () => {
                     { key: 'payment_type', value: 'paypal' },
                     { key: 'action', value: 'set_external_checkout' },
                     { key: 'provider', value: 'paypalcommerce' },
+                    { key: 'order_id', value: orderId },
                 ],
             });
             expect(window.location.assign).toHaveBeenCalledWith(externalCheckoutUrl);
@@ -153,24 +148,41 @@ describe('PaypalCommerceWalletService', () => {
     });
 
     describe('#createPaymentOrderIntent', () => {
-        it('creates payment order intent and returns order id', async () => {
-            const output = await service.createPaymentOrderIntent('paypalcommerce', cartId, {
-                headers: { 'x-test': 'value' },
-            });
+        it('uses the default PayPalCommercePaymentWalletIntentData typename', async () => {
+            await service.createPaymentOrderIntent('paypalcommerce', cartId);
 
             expect(walletButtonIntegrationService.createPaymentOrderIntent).toHaveBeenCalledWith(
-                {
-                    cartEntityId: cartId,
-                    paymentWalletEntityId: 'paypalcommerce',
-                },
-                { headers: { 'x-test': 'value' } },
+                { cartEntityId: cartId, paymentWalletEntityId: 'paypalcommerce' },
+                'PayPalCommercePaymentWalletIntentData',
+                undefined,
             );
+        });
+
+        it('uses a custom intentTypename when provided at construction', async () => {
+            const customService = new PaypalCommerceWalletService(
+                walletButtonIntegrationService,
+                scriptLoader,
+                'BigcommercePaymentWalletIntentData',
+            );
+
+            await customService.createPaymentOrderIntent('bigcommerce_payments.paypal', cartId);
+
+            expect(walletButtonIntegrationService.createPaymentOrderIntent).toHaveBeenCalledWith(
+                { cartEntityId: cartId, paymentWalletEntityId: 'bigcommerce_payments.paypal' },
+                'BigcommercePaymentWalletIntentData',
+                undefined,
+            );
+        });
+
+        it('returns the order id from the response', async () => {
+            const output = await service.createPaymentOrderIntent('paypalcommerce', cartId);
+
             expect(output).toBe(orderId);
         });
     });
 
     describe('#addBillingAddress', () => {
-        it('passes billing address payload to wallet button service', async () => {
+        it('passes billing address to wallet button service', async () => {
             const address = { city: 'Austin' } as AddressRequestBody;
 
             await service.addBillingAddress(cartId, address, {
@@ -185,6 +197,69 @@ describe('PaypalCommerceWalletService', () => {
         });
     });
 
+    describe('#mapOrderDetailsToBillingAddress', () => {
+        it('maps order details to a billing address', () => {
+            const output = service.mapOrderDetailsToBillingAddress({
+                payer: {
+                    name: { given_name: 'John', surname: 'Doe' },
+                    email_address: 'john@doe.com',
+                    address: {
+                        address_line_1: '123 Main St',
+                        address_line_2: 'Suite 100',
+                        admin_area_2: 'Austin',
+                        admin_area_1: 'TX',
+                        postal_code: '73301',
+                        country_code: 'US',
+                    },
+                    phone: { phone_number: { national_number: '5555555555' } },
+                },
+                purchase_units: [],
+            } as never);
+
+            expect(output).toEqual({
+                firstName: 'John',
+                lastName: 'Doe',
+                company: '',
+                address1: '123 Main St',
+                address2: 'Suite 100',
+                city: 'Austin',
+                email: 'john@doe.com',
+                stateOrProvince: 'TX',
+                stateOrProvinceCode: 'TX',
+                countryCode: 'US',
+                postalCode: '73301',
+                phone: '5555555555',
+                shouldSaveAddress: false,
+            });
+        });
+
+        it('falls back to empty strings when phone and state are absent', () => {
+            const output = service.mapOrderDetailsToBillingAddress({
+                payer: {
+                    name: { given_name: 'Jane', surname: 'Smith' },
+                    email_address: 'jane@smith.com',
+                    address: {
+                        address_line_1: '1 High St',
+                        address_line_2: '',
+                        admin_area_2: 'London',
+                        admin_area_1: undefined,
+                        postal_code: 'SW1A 1AA',
+                        country_code: 'GB',
+                    },
+                },
+                purchase_units: [],
+            } as never);
+
+            expect(output).toEqual(
+                expect.objectContaining({
+                    stateOrProvince: '',
+                    stateOrProvinceCode: '',
+                    phone: '',
+                }),
+            );
+        });
+    });
+
     describe('#getValidButtonStyle', () => {
         it('returns only valid style fields', () => {
             const style = {
@@ -194,9 +269,7 @@ describe('PaypalCommerceWalletService', () => {
                 shape: StyleButtonShape.pill,
             } as PayPalButtonStyleOptions;
 
-            const output = service.getValidButtonStyle(style);
-
-            expect(output).toEqual({
+            expect(service.getValidButtonStyle(style)).toEqual({
                 color: StyleButtonColor.gold,
                 height: 55,
                 label: StyleButtonLabel.pay,
@@ -212,16 +285,12 @@ describe('PaypalCommerceWalletService', () => {
                 shape: 'invalid',
             } as unknown as PayPalButtonStyleOptions;
 
-            const output = service.getValidButtonStyle(style);
-
-            expect(output).toEqual({
-                height: 40,
-            });
+            expect(service.getValidButtonStyle(style)).toEqual({ height: 40 });
         });
     });
 
     describe('#getValidHeight', () => {
-        it('returns default height when height is not provided', () => {
+        it('returns default height when not provided', () => {
             expect(service.getValidHeight()).toBe(40);
         });
 
@@ -233,7 +302,7 @@ describe('PaypalCommerceWalletService', () => {
             expect(service.getValidHeight(100)).toBe(55);
         });
 
-        it('returns provided value when it is in range', () => {
+        it('returns provided value when in range', () => {
             expect(service.getValidHeight(35)).toBe(35);
         });
     });

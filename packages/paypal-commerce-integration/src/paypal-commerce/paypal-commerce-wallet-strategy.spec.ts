@@ -2,9 +2,9 @@ import {
     CheckoutButtonInitializeOptions,
     InvalidArgumentError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import getPayPalSDKMock from '../mocks/get-paypal-sdk.mock';
-import PaypalCommerceWalletService from '../paypal-commerce-wallet-service';
 
 import { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce-wallet-initialize-options';
 import PaypalCommerceWalletStrategy from './paypal-commerce-wallet-strategy';
@@ -17,6 +17,23 @@ describe('PaypalCommerceWalletStrategy', () => {
     const defaultMethodId = 'paypalcommerce';
     const defaultCartId = 'abc123';
     const defaultOrderId = 'ORDER_ID';
+
+    const orderDetails = {
+        payer: {
+            name: { given_name: 'John', surname: 'Doe' },
+            email_address: 'john@doe.com',
+            address: {
+                address_line_1: '123 Main St',
+                address_line_2: 'Suite 100',
+                admin_area_2: 'Austin',
+                admin_area_1: 'TX',
+                postal_code: '73301',
+                country_code: 'US',
+            },
+        },
+        purchase_units: [],
+    };
+    const mappedBillingAddress = { firstName: 'John', lastName: 'Doe' };
 
     const initializationOptions: CheckoutButtonInitializeOptions &
         WithPayPalCommerceWalletInitializeOptions = {
@@ -47,6 +64,7 @@ describe('PaypalCommerceWalletStrategy', () => {
             getPayPalSdkOrThrow: jest.fn().mockReturnValue(paypalSdk),
             getValidButtonStyle: jest.fn().mockReturnValue({ height: 45 }),
             loadPayPalSdk: jest.fn(),
+            mapOrderDetailsToBillingAddress: jest.fn().mockReturnValue(mappedBillingAddress),
             proxyTokenizationPayment: jest.fn(),
             removeElement: jest.fn(),
         } as unknown as jest.Mocked<PaypalCommerceWalletService>;
@@ -122,47 +140,18 @@ describe('PaypalCommerceWalletStrategy', () => {
             { orderID: defaultOrderId },
             {
                 order: {
-                    get: jest.fn().mockResolvedValue({
-                        payer: {
-                            name: {
-                                given_name: 'John',
-                                surname: 'Doe',
-                            },
-                            email_address: 'john@doe.com',
-                            address: {
-                                address_line_1: '123 Main St',
-                                address_line_2: 'Suite 100',
-                                admin_area_2: 'Austin',
-                                admin_area_1: 'TX',
-                                postal_code: '73301',
-                                country_code: 'US',
-                            },
-                            phone: {
-                                phone_number: {
-                                    national_number: '5555555555',
-                                },
-                            },
-                        },
-                    }),
+                    get: jest.fn().mockResolvedValue(orderDetails),
                 },
             },
         );
 
-        expect(paypalCommerceWalletService.addBillingAddress).toHaveBeenCalledWith(defaultCartId, {
-            firstName: 'John',
-            lastName: 'Doe',
-            company: '',
-            address1: '123 Main St',
-            address2: 'Suite 100',
-            city: 'Austin',
-            email: 'john@doe.com',
-            stateOrProvince: 'TX',
-            stateOrProvinceCode: 'TX',
-            countryCode: 'US',
-            postalCode: '73301',
-            phone: '5555555555',
-            shouldSaveAddress: false,
-        });
+        expect(paypalCommerceWalletService.mapOrderDetailsToBillingAddress).toHaveBeenCalledWith(
+            orderDetails,
+        );
+        expect(paypalCommerceWalletService.addBillingAddress).toHaveBeenCalledWith(
+            defaultCartId,
+            mappedBillingAddress,
+        );
         expect(paypalCommerceWalletService.proxyTokenizationPayment).toHaveBeenCalledWith(
             defaultCartId,
             'paypalcommerce.paypal',

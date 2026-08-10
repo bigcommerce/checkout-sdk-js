@@ -2,9 +2,9 @@ import {
     CheckoutButtonInitializeOptions,
     InvalidArgumentError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import getPayPalSDKMock from '../mocks/get-paypal-sdk.mock';
-import PaypalCommerceWalletService from '../paypal-commerce-wallet-service';
 
 import { WithPayPalCommerceVenmoWalletInitializeOptions } from './paypal-commerce-venmo-wallet-initialize-options';
 import PayPalCommerceVenmoWalletStrategy from './paypal-commerce-venmo-wallet-strategy';

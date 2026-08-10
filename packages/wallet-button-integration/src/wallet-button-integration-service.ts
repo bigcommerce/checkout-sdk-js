@@ -54,11 +54,13 @@ export default class WalletButtonIntegrationService {
 
     async createPaymentOrderIntent(
         inputData: CreatePaymentOrderIntentInputData,
+        intentTypename?: string,
         options?: GraphQLRequestOptions,
     ): Promise<Response<CreatePaymentOrderIntentResponseBody>> {
         return this.paymentRequestSender.createPaymentOrderIntent(
             this.graphQLEndpoint,
             inputData,
+            intentTypename,
             options,
         );
     }

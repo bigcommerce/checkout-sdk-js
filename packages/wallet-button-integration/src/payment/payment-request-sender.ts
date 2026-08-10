@@ -17,6 +17,7 @@ export class PaymentRequestSender {
     async createPaymentOrderIntent(
         graphQLEndpoint: string,
         inputData: CreatePaymentOrderIntentInputData,
+        intentTypename = 'PayPalCommercePaymentWalletIntentData',
         options?: GraphQLRequestOptions,
     ): Promise<Response<CreatePaymentOrderIntentResponseBody>> {
         const document = `
@@ -28,7 +29,7 @@ export class PaymentRequestSender {
                         createPaymentWalletIntent(input: $input) {
                             paymentWalletIntentData {
                                 __typename
-                                ... on PayPalCommercePaymentWalletIntentData {
+                                ... on ${intentTypename} {
                                     orderId
                                     approvalUrl
                                     initializationEntityId

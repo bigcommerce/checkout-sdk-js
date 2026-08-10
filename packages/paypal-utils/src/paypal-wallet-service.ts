@@ -14,22 +14,23 @@ import {
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
+import PayPalSdkScriptLoader from './paypal-sdk-script-loader';
 import {
     PayPalButtonStyleOptions,
-    PayPalCommerceInitializationData,
+    PayPalOrderDetails,
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
     StyleButtonShape,
-} from './paypal-commerce-types';
+} from './paypal-types';
 
 export default class PaypalCommerceWalletService {
     private paypalSdk?: PayPalSDK;
 
     constructor(
         private walletButtonIntegrationService: WalletButtonIntegrationService,
-        private paypalCommerceScriptLoader: PayPalCommerceScriptLoader,
+        private scriptLoader: Pick<PayPalSdkScriptLoader, 'getPayPalSDK'>,
+        private intentTypename = 'PayPalCommercePaymentWalletIntentData',
     ) {}
 
     /**
@@ -38,12 +39,12 @@ export default class PaypalCommerceWalletService {
      *
      */
     async loadPayPalSdk(
-        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        paymentMethod: PaymentMethod,
         providedCurrencyCode: string,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
     ): Promise<PayPalSDK | undefined> {
-        this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
+        this.paypalSdk = await this.scriptLoader.getPayPalSDK(
             paymentMethod,
             providedCurrencyCode,
             undefined,
@@ -87,6 +88,7 @@ export default class PaypalCommerceWalletService {
                 { key: 'payment_type', value: 'paypal' },
                 { key: 'action', value: 'set_external_checkout' },
                 { key: 'provider', value: methodId },
+                { key: 'order_id', value: orderId },
             ],
         };
 
@@ -98,7 +100,7 @@ export default class PaypalCommerceWalletService {
             throw new Error('Failed to redirection to checkout page');
         }
 
-        window.location.assign(response.body.redirectUrls.externalCheckoutUrl);
+        window.location.assign(response.body.redirectUrls!.externalCheckoutUrl);
     }
 
     async createPaymentOrderIntent(
@@ -112,6 +114,7 @@ export default class PaypalCommerceWalletService {
         };
         const response = await this.walletButtonIntegrationService.createPaymentOrderIntent(
             inputData,
+            this.intentTypename,
             options,
         );
 
@@ -126,13 +129,31 @@ export default class PaypalCommerceWalletService {
         return this.walletButtonIntegrationService.addBillingAddress(cartId, address, options);
     }
 
+    mapOrderDetailsToBillingAddress({ payer }: PayPalOrderDetails): AddressRequestBody {
+        return {
+            firstName: payer.name.given_name,
+            lastName: payer.name.surname,
+            company: '',
+            address1: payer.address.address_line_1,
+            address2: payer.address.address_line_2,
+            city: payer.address.admin_area_2,
+            email: payer.email_address,
+            stateOrProvince: payer.address.admin_area_1 ?? '',
+            stateOrProvinceCode: payer.address.admin_area_1 ?? '',
+            countryCode: payer.address.country_code,
+            postalCode: payer.address.postal_code,
+            phone: payer.phone?.phone_number.national_number ?? '',
+            shouldSaveAddress: false,
+        };
+    }
+
     /**
      *
      * Buttons style methods
      *
      */
-    getValidButtonStyle(style?: PayPalButtonStyleOptions): PayPalButtonStyleOptions {
-        const { color, height, label, shape } = style || {};
+    getValidButtonStyle(style: PayPalButtonStyleOptions = {}): PayPalButtonStyleOptions {
+        const { color, height, label, shape } = style;
 
         const validStyles = {
             color: color && StyleButtonColor[color] ? color : undefined,

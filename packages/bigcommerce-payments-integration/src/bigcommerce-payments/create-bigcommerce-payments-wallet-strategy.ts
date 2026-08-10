@@ -5,18 +5,19 @@ import {
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import PaypalCommerceWalletStrategy from './paypal-commerce-wallet-strategy';
+import BigCommercePaymentsWalletStrategy from './bigcommerce-payments-wallet-strategy';
 
-const createPaypalCommerceWalletStrategy: WalletPaymentButtonStrategyFactory<
-    PaypalCommerceWalletStrategy
+const createBigCommercePaymentsWalletStrategy: WalletPaymentButtonStrategyFactory<
+    BigCommercePaymentsWalletStrategy
 > = (walletButtonIntegrationService) =>
-    new PaypalCommerceWalletStrategy(
+    new BigCommercePaymentsWalletStrategy(
         new PaypalCommerceWalletService(
             walletButtonIntegrationService,
             createPayPalSdkScriptLoader(),
+            'BigcommercePaymentWalletIntentData',
         ),
     );
 
-export default toResolvableModule(createPaypalCommerceWalletStrategy, [
-    { id: 'paypalcommercepaypal' },
+export default toResolvableModule(createBigCommercePaymentsWalletStrategy, [
+    { id: 'bigcommerce_paymentspaypal' },
 ]);

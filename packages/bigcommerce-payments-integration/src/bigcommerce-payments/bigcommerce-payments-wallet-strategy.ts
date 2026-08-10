@@ -4,25 +4,25 @@ import {
     InvalidArgumentError,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalCommerceInitializationData } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
     ApproveCallbackActions,
     ApproveCallbackPayload,
+    BigCommercePaymentsButtonsOptions,
+    BigCommercePaymentsInitializationData,
     PayPalButtonStyleOptions,
-    PayPalCommerceButtonsOptions,
-} from '../paypal-commerce-types';
+} from '../bigcommerce-payments-types';
 
-import { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce-wallet-initialize-options';
+import { WithBigCommercePaymentsWalletInitializeOptions } from './bigcommerce-payments-wallet-initialize-options';
 
-export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrategy {
-    constructor(private paypalCommerceHeadlessWalletButtonService: PaypalCommerceWalletService) {}
+export default class BigCommercePaymentsWalletStrategy implements CheckoutButtonStrategy {
+    constructor(private bigCommercePaymentsWalletService: PaypalCommerceWalletService) {}
 
     async initialize(
-        options: CheckoutButtonInitializeOptions & WithPayPalCommerceWalletInitializeOptions,
+        options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsWalletInitializeOptions,
     ): Promise<void> {
-        const { paypalcommercepaypal, containerId, methodId } = options;
+        const { bigcommerce_paymentspaypal, containerId, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -36,16 +36,18 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
             );
         }
 
-        if (!paypalcommercepaypal) {
+        if (!bigcommerce_paymentspaypal) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.paypalcommercepaypal" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_paymentspaypal" argument is not provided.`,
             );
         }
 
-        let parsedInitializationData: PaymentMethod<PayPalCommerceInitializationData>;
+        let parsedInitializationData: PaymentMethod<BigCommercePaymentsInitializationData>;
 
         try {
-            parsedInitializationData = JSON.parse(atob(paypalcommercepaypal.initializationData));
+            parsedInitializationData = JSON.parse(
+                atob(bigcommerce_paymentspaypal.initializationData),
+            );
         } catch {
             throw new InvalidArgumentError("Failed to parse payment method 'initializationData'.");
         }
@@ -53,16 +55,16 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
         const buttonStyle =
             parsedInitializationData.initializationData?.paymentButtonStyles?.cartButtonStyles;
 
-        await this.paypalCommerceHeadlessWalletButtonService.loadPayPalSdk(
+        await this.bigCommercePaymentsWalletService.loadPayPalSdk(
             parsedInitializationData,
-            paypalcommercepaypal.currency.code,
+            bigcommerce_paymentspaypal.currency.code,
             false,
         );
 
         this.renderButton(
             containerId,
-            'paypalcommerce.paypal',
-            paypalcommercepaypal.cartId,
+            'bigcommerce_payments.paypal',
+            bigcommerce_paymentspaypal.cartId,
             buttonStyle,
         );
     }
@@ -77,40 +79,37 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
         cartId: string,
         buttonStyle?: PayPalButtonStyleOptions,
     ): void {
-        const paypalSdk = this.paypalCommerceHeadlessWalletButtonService.getPayPalSdkOrThrow();
+        const paypalSdk = this.bigCommercePaymentsWalletService.getPayPalSdkOrThrow();
 
         const defaultCallbacks = {
             createOrder: () =>
-                this.paypalCommerceHeadlessWalletButtonService.createPaymentOrderIntent(
-                    providerId,
-                    cartId,
-                ),
+                this.bigCommercePaymentsWalletService.createPaymentOrderIntent(providerId, cartId),
             onApprove: async (
                 { orderID }: ApproveCallbackPayload,
                 actions: ApproveCallbackActions,
             ) => {
                 const orderDetails = await actions.order.get();
                 const billingAddress =
-                    this.paypalCommerceHeadlessWalletButtonService.mapOrderDetailsToBillingAddress(
+                    this.bigCommercePaymentsWalletService.mapOrderDetailsToBillingAddress(
                         orderDetails,
                     );
 
-                await this.paypalCommerceHeadlessWalletButtonService.addBillingAddress(
+                await this.bigCommercePaymentsWalletService.addBillingAddress(
                     cartId,
                     billingAddress,
                 );
-                await this.paypalCommerceHeadlessWalletButtonService.proxyTokenizationPayment(
+                await this.bigCommercePaymentsWalletService.proxyTokenizationPayment(
                     cartId,
                     providerId,
-                    'paypalcommerce',
+                    'bigcommerce_payments',
                     orderID,
                 );
             },
         };
 
-        const buttonRenderOptions: PayPalCommerceButtonsOptions = {
+        const buttonRenderOptions: BigCommercePaymentsButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.paypalCommerceHeadlessWalletButtonService.getValidButtonStyle(buttonStyle),
+            style: this.bigCommercePaymentsWalletService.getValidButtonStyle(buttonStyle),
             ...defaultCallbacks,
         };
 
@@ -119,7 +118,7 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
         if (paypalButton.isEligible()) {
             paypalButton.render(`#${containerId}`);
         } else {
-            this.paypalCommerceHeadlessWalletButtonService.removeElement(containerId);
+            this.bigCommercePaymentsWalletService.removeElement(containerId);
         }
     }
 }
