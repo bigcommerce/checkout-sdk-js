@@ -5,6 +5,7 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalCommerceInitializationData } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
     ApproveCallbackPayload,
@@ -12,7 +13,6 @@ import {
     PayPalCommerceButtonsOptions,
     StyleButtonColor,
 } from '../paypal-commerce-types';
-import PaypalCommerceWalletService from '../paypal-commerce-wallet-service';
 
 import { WithPayPalCommerceVenmoWalletInitializeOptions } from './paypal-commerce-venmo-wallet-initialize-options';
 

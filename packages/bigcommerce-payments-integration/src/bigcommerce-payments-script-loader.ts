@@ -6,6 +6,7 @@ import {
     PaymentMethod,
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { transformLocaleToPayPalFormat } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
     BigCommercePaymentsHostWindow,
@@ -26,12 +27,14 @@ export default class BigCommercePaymentsScriptLoader {
     async getPayPalSDK(
         paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
         currencyCode: string,
+        storeLanguage: string | undefined,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
     ): Promise<PayPalSDK> {
         const paypalSdkScriptConfig = this.getPayPalSdkScriptConfigOrThrow(
             paymentMethod,
             currencyCode,
+            storeLanguage,
             initializesOnCheckoutPage,
         );
 
@@ -67,6 +70,7 @@ export default class BigCommercePaymentsScriptLoader {
     private getPayPalSdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
         currencyCode: string,
+        storeLanguage: string | undefined,
         initializesOnCheckoutPage = true,
     ): BigCommercePaymentsScriptParams {
         const { id, clientToken, initializationData } = paymentMethod;
@@ -121,6 +125,8 @@ export default class BigCommercePaymentsScriptLoader {
             ...enabledAlternativePaymentMethods,
         ]);
 
+        const locale = transformLocaleToPayPalFormat(storeLanguage);
+
         return {
             options: {
                 'client-id': clientId,
@@ -139,6 +145,7 @@ export default class BigCommercePaymentsScriptLoader {
                 currency: currencyCode,
                 intent,
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+                ...(locale && { locale }),
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,

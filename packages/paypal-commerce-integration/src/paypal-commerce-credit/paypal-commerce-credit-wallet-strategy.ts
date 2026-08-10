@@ -5,16 +5,14 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalCommerceInitializationData } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
-import { AddressRequestBody } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
     ApproveCallbackActions,
     ApproveCallbackPayload,
     PayPalButtonStyleOptions,
     PayPalCommerceButtonsOptions,
-    PayPalOrderDetails,
 } from '../paypal-commerce-types';
-import PaypalCommerceWalletService from '../paypal-commerce-wallet-service';
 
 import { WithPayPalCommerceCreditWalletInitializeOptions } from './paypal-commerce-credit-wallet-initialize-options';
 
@@ -95,7 +93,10 @@ export default class PayPalCommerceCreditWalletStrategy implements CheckoutButto
                 actions: ApproveCallbackActions,
             ) => {
                 const orderDetails = await actions.order.get();
-                const billingAddress = this.mapOrderDetailsToBillingAddress(orderDetails);
+                const billingAddress =
+                    this.paypalCommerceHeadlessWalletButtonService.mapOrderDetailsToBillingAddress(
+                        orderDetails,
+                    );
 
                 await this.paypalCommerceHeadlessWalletButtonService.addBillingAddress(
                     cartId,
@@ -135,25 +136,5 @@ export default class PayPalCommerceCreditWalletStrategy implements CheckoutButto
         if (!hasRenderedSmartButton) {
             this.paypalCommerceHeadlessWalletButtonService.removeElement(containerId);
         }
-    }
-
-    private mapOrderDetailsToBillingAddress(orderDetails: PayPalOrderDetails): AddressRequestBody {
-        const { payer } = orderDetails;
-
-        return {
-            firstName: payer.name.given_name,
-            lastName: payer.name.surname,
-            company: '',
-            address1: payer.address.address_line_1,
-            address2: payer.address.address_line_2,
-            city: payer.address.admin_area_2,
-            email: payer.email_address,
-            stateOrProvince: payer.address.admin_area_1 ?? '',
-            stateOrProvinceCode: payer.address.admin_area_1 ?? '',
-            countryCode: payer.address.country_code,
-            postalCode: payer.address.postal_code,
-            phone: payer.phone?.phone_number.national_number ?? '',
-            shouldSaveAddress: false,
-        };
     }
 }

@@ -2,8 +2,8 @@ import {
     CheckoutButtonInitializeOptions,
     InvalidArgumentError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
-import BigCommercePaymentsWalletService from '../bigcommerce-payments-wallet-service';
 import { getPayPalSDKMock } from '../mocks';
 
 import { WithBigCommercePaymentsWalletInitializeOptions } from './bigcommerce-payments-wallet-initialize-options';
@@ -11,13 +11,30 @@ import BigCommercePaymentsWalletStrategy from './bigcommerce-payments-wallet-str
 
 describe('BigCommercePaymentsWalletStrategy', () => {
     let strategy: BigCommercePaymentsWalletStrategy;
-    let bigCommercePaymentsWalletService: jest.Mocked<BigCommercePaymentsWalletService>;
+    let bigCommercePaymentsWalletService: jest.Mocked<PaypalCommerceWalletService>;
 
     const defaultContainerId = 'bigcommerce-payments-wallet-button';
     const defaultMethodId = 'bigcommerce_payments';
     const defaultProviderId = 'bigcommerce_payments.paypal';
     const defaultCartId = 'abc123';
     const defaultOrderId = 'ORDER_ID';
+
+    const orderDetails = {
+        payer: {
+            name: { given_name: 'John', surname: 'Doe' },
+            email_address: 'john@doe.com',
+            address: {
+                address_line_1: '123 Main St',
+                address_line_2: 'Suite 100',
+                admin_area_2: 'Austin',
+                admin_area_1: 'TX',
+                postal_code: '73301',
+                country_code: 'US',
+            },
+        },
+        purchase_units: [],
+    };
+    const mappedBillingAddress = { firstName: 'John', lastName: 'Doe' };
 
     const initializationOptions: CheckoutButtonInitializeOptions &
         WithBigCommercePaymentsWalletInitializeOptions = {
@@ -51,9 +68,10 @@ describe('BigCommercePaymentsWalletStrategy', () => {
             getPayPalSdkOrThrow: jest.fn().mockReturnValue(paypalSdk),
             getValidButtonStyle: jest.fn().mockReturnValue({ height: 45 }),
             loadPayPalSdk: jest.fn(),
+            mapOrderDetailsToBillingAddress: jest.fn().mockReturnValue(mappedBillingAddress),
             proxyTokenizationPayment: jest.fn(),
             removeElement: jest.fn(),
-        } as unknown as jest.Mocked<BigCommercePaymentsWalletService>;
+        } as unknown as jest.Mocked<PaypalCommerceWalletService>;
 
         strategy = new BigCommercePaymentsWalletStrategy(bigCommercePaymentsWalletService);
     });
@@ -167,102 +185,23 @@ describe('BigCommercePaymentsWalletStrategy', () => {
             { orderID: defaultOrderId },
             {
                 order: {
-                    get: jest.fn().mockResolvedValue({
-                        payer: {
-                            name: {
-                                given_name: 'John',
-                                surname: 'Doe',
-                            },
-                            email_address: 'john@doe.com',
-                            address: {
-                                address_line_1: '123 Main St',
-                                address_line_2: 'Suite 100',
-                                admin_area_2: 'Austin',
-                                admin_area_1: 'TX',
-                                postal_code: '73301',
-                                country_code: 'US',
-                            },
-                            phone: {
-                                phone_number: {
-                                    national_number: '5555555555',
-                                },
-                            },
-                        },
-                        purchase_units: [],
-                    }),
+                    get: jest.fn().mockResolvedValue(orderDetails),
                 },
             },
         );
 
+        expect(
+            bigCommercePaymentsWalletService.mapOrderDetailsToBillingAddress,
+        ).toHaveBeenCalledWith(orderDetails);
         expect(bigCommercePaymentsWalletService.addBillingAddress).toHaveBeenCalledWith(
             defaultCartId,
-            {
-                firstName: 'John',
-                lastName: 'Doe',
-                company: '',
-                address1: '123 Main St',
-                address2: 'Suite 100',
-                city: 'Austin',
-                email: 'john@doe.com',
-                stateOrProvince: 'TX',
-                stateOrProvinceCode: 'TX',
-                countryCode: 'US',
-                postalCode: '73301',
-                phone: '5555555555',
-                shouldSaveAddress: false,
-            },
+            mappedBillingAddress,
         );
         expect(bigCommercePaymentsWalletService.proxyTokenizationPayment).toHaveBeenCalledWith(
             defaultCartId,
             defaultProviderId,
             'bigcommerce_payments',
             defaultOrderId,
-        );
-    });
-
-    it('maps billing address without phone when payer phone is absent', async () => {
-        const paypalButtons = {
-            close: jest.fn(),
-            isEligible: jest.fn().mockReturnValue(true),
-            render: jest.fn(),
-        };
-        const paypalSdk = bigCommercePaymentsWalletService.getPayPalSdkOrThrow();
-        const buttonsSpy = jest.spyOn(paypalSdk, 'Buttons').mockReturnValue(paypalButtons);
-
-        await strategy.initialize(initializationOptions);
-
-        const buttonOptions = buttonsSpy.mock.calls[0][0];
-
-        await buttonOptions.onApprove?.(
-            { orderID: defaultOrderId },
-            {
-                order: {
-                    get: jest.fn().mockResolvedValue({
-                        payer: {
-                            name: { given_name: 'Jane', surname: 'Smith' },
-                            email_address: 'jane@smith.com',
-                            address: {
-                                address_line_1: '1 High St',
-                                address_line_2: '',
-                                admin_area_2: 'London',
-                                admin_area_1: undefined,
-                                postal_code: 'SW1A 1AA',
-                                country_code: 'GB',
-                            },
-                        },
-                        purchase_units: [],
-                    }),
-                },
-            },
-        );
-
-        expect(bigCommercePaymentsWalletService.addBillingAddress).toHaveBeenCalledWith(
-            defaultCartId,
-            expect.objectContaining({
-                stateOrProvince: '',
-                stateOrProvinceCode: '',
-                phone: '',
-            }),
         );
     });
 

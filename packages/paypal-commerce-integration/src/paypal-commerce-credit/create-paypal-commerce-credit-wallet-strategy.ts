@@ -1,10 +1,10 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { toResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
-import PaypalCommerceWalletService from '../paypal-commerce-wallet-service';
 
 import PayPalCommerceCreditWalletStrategy from './paypal-commerce-credit-wallet-strategy';
 

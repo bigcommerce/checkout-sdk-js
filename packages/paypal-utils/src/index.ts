@@ -38,3 +38,14 @@ export { default as createPayPalIntegrationService } from './create-paypal-integ
  */
 
 export { default as PaypalButtonCreationService } from './paypal-button-creation-service';
+
+/**
+ *
+ * PayPal Wallet Service
+ *
+ */
+
+export {
+    default as PaypalCommerceWalletService,
+    PayPalWalletScriptLoader,
+} from './paypal-wallet-service';

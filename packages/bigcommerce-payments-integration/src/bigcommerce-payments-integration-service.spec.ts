@@ -97,6 +97,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
             expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
+                undefined,
                 false,
                 false,
             );
@@ -115,6 +116,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
             expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 providedCurrencyCode,
+                undefined,
                 false,
                 false,
             );

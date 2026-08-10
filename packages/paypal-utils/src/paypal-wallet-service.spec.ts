@@ -8,22 +8,21 @@ import {
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
-import BigCommercePaymentsScriptLoader from './bigcommerce-payments-script-loader';
+import { getPayPalPaymentMethod, getPayPalSDKMock } from './mocks';
 import {
     PayPalButtonStyleOptions,
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
     StyleButtonShape,
-} from './bigcommerce-payments-types';
-import BigCommercePaymentsWalletService from './bigcommerce-payments-wallet-service';
-import { getBigCommercePaymentsPaymentMethod, getPayPalSDKMock } from './mocks';
+} from './paypal-types';
+import PaypalCommerceWalletService, { PayPalWalletScriptLoader } from './paypal-wallet-service';
 
-describe('BigCommercePaymentsWalletService', () => {
-    let paymentMethod: ReturnType<typeof getBigCommercePaymentsPaymentMethod>;
-    let bigCommercePaymentsScriptLoader: BigCommercePaymentsScriptLoader;
+describe('PaypalCommerceWalletService', () => {
+    let paymentMethod: ReturnType<typeof getPayPalPaymentMethod>;
+    let scriptLoader: jest.Mocked<PayPalWalletScriptLoader>;
     let paypalSdk: PayPalSDK;
-    let service: BigCommercePaymentsWalletService;
+    let service: PaypalCommerceWalletService;
     let walletButtonIntegrationService: WalletButtonIntegrationService;
 
     const cartId = 'cart-123';
@@ -31,17 +30,13 @@ describe('BigCommercePaymentsWalletService', () => {
     const externalCheckoutUrl = 'https://store.example/checkout.php?action=set_external_checkout';
 
     beforeEach(() => {
-        paymentMethod = getBigCommercePaymentsPaymentMethod();
+        paymentMethod = getPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         walletButtonIntegrationService = createWalletButtonIntegrationService('/graphql');
-        bigCommercePaymentsScriptLoader = new BigCommercePaymentsScriptLoader({} as never);
+        scriptLoader = { getPayPalSDK: jest.fn().mockResolvedValue(paypalSdk) };
 
-        service = new BigCommercePaymentsWalletService(
-            walletButtonIntegrationService,
-            bigCommercePaymentsScriptLoader,
-        );
+        service = new PaypalCommerceWalletService(walletButtonIntegrationService, scriptLoader);
 
-        jest.spyOn(bigCommercePaymentsScriptLoader, 'getPayPalSDK').mockResolvedValue(paypalSdk);
         jest.spyOn(walletButtonIntegrationService, 'getRedirectToCheckoutUrl').mockResolvedValue({
             body: { redirectUrls: { externalCheckoutUrl } },
         } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
@@ -65,17 +60,18 @@ describe('BigCommercePaymentsWalletService', () => {
         jest.clearAllMocks();
     });
 
-    it('creates an instance of BigCommercePaymentsWalletService', () => {
-        expect(service).toBeInstanceOf(BigCommercePaymentsWalletService);
+    it('creates an instance of PaypalCommerceWalletService', () => {
+        expect(service).toBeInstanceOf(PaypalCommerceWalletService);
     });
 
     describe('#loadPayPalSdk', () => {
         it('loads and returns paypal sdk', async () => {
             const output = await service.loadPayPalSdk(paymentMethod, 'USD', true, true);
 
-            expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+            expect(scriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 'USD',
+                undefined,
                 true,
                 true,
             );
@@ -87,9 +83,7 @@ describe('BigCommercePaymentsWalletService', () => {
         it('returns paypal sdk if it was loaded earlier', async () => {
             await service.loadPayPalSdk(paymentMethod, 'USD');
 
-            const output = service.getPayPalSdkOrThrow();
-
-            expect(output).toBe(paypalSdk);
+            expect(service.getPayPalSdkOrThrow()).toBe(paypalSdk);
         });
 
         it('throws an error if paypal sdk is not defined', () => {
@@ -102,32 +96,28 @@ describe('BigCommercePaymentsWalletService', () => {
     describe('#proxyTokenizationPayment', () => {
         it('throws if order id is missing', async () => {
             await expect(
-                service.proxyTokenizationPayment(
-                    cartId,
-                    'bigcommerce_payments.paypal',
-                    'bigcommerce_payments',
-                ),
+                service.proxyTokenizationPayment(cartId, 'paypalcommerce', 'paypalcommerce'),
             ).rejects.toThrow(MissingDataError);
         });
 
         it('requests external checkout url and redirects customer', async () => {
             await service.proxyTokenizationPayment(
                 cartId,
-                'bigcommerce_payments.paypal',
-                'bigcommerce_payments',
+                'paypalcommerce',
+                'paypalcommerce',
                 orderId,
             );
 
             expect(walletButtonIntegrationService.getRedirectToCheckoutUrl).toHaveBeenCalledWith({
                 paymentWalletData: {
-                    providerId: 'bigcommerce_payments.paypal',
+                    providerId: 'paypalcommerce',
                     providerOrderId: orderId,
                 },
                 cartEntityId: cartId,
                 queryParams: [
                     { key: 'payment_type', value: 'paypal' },
                     { key: 'action', value: 'set_external_checkout' },
-                    { key: 'provider', value: 'bigcommerce_payments' },
+                    { key: 'provider', value: 'paypalcommerce' },
                     { key: 'order_id', value: orderId },
                 ],
             });
@@ -148,8 +138,8 @@ describe('BigCommercePaymentsWalletService', () => {
             await expect(
                 service.proxyTokenizationPayment(
                     cartId,
-                    'bigcommerce_payments.paypal',
-                    'bigcommerce_payments',
+                    'paypalcommerce',
+                    'paypalcommerce',
                     orderId,
                 ),
             ).rejects.toThrow('Failed to redirection to checkout page');
@@ -157,27 +147,41 @@ describe('BigCommercePaymentsWalletService', () => {
     });
 
     describe('#createPaymentOrderIntent', () => {
-        it('creates payment order intent with BigcommercePaymentWalletIntentData typename and returns order id', async () => {
-            const output = await service.createPaymentOrderIntent(
-                'bigcommerce_payments.paypal',
-                cartId,
-                { headers: { 'x-test': 'value' } },
-            );
+        it('uses the default PayPalCommercePaymentWalletIntentData typename', async () => {
+            await service.createPaymentOrderIntent('paypalcommerce', cartId);
 
             expect(walletButtonIntegrationService.createPaymentOrderIntent).toHaveBeenCalledWith(
-                {
-                    cartEntityId: cartId,
-                    paymentWalletEntityId: 'bigcommerce_payments.paypal',
-                },
-                'BigcommercePaymentWalletIntentData',
-                { headers: { 'x-test': 'value' } },
+                { cartEntityId: cartId, paymentWalletEntityId: 'paypalcommerce' },
+                'PayPalCommercePaymentWalletIntentData',
+                undefined,
             );
+        });
+
+        it('uses a custom intentTypename when provided at construction', async () => {
+            const customService = new PaypalCommerceWalletService(
+                walletButtonIntegrationService,
+                scriptLoader,
+                'BigcommercePaymentWalletIntentData',
+            );
+
+            await customService.createPaymentOrderIntent('bigcommerce_payments.paypal', cartId);
+
+            expect(walletButtonIntegrationService.createPaymentOrderIntent).toHaveBeenCalledWith(
+                { cartEntityId: cartId, paymentWalletEntityId: 'bigcommerce_payments.paypal' },
+                'BigcommercePaymentWalletIntentData',
+                undefined,
+            );
+        });
+
+        it('returns the order id from the response', async () => {
+            const output = await service.createPaymentOrderIntent('paypalcommerce', cartId);
+
             expect(output).toBe(orderId);
         });
     });
 
     describe('#addBillingAddress', () => {
-        it('passes billing address payload to wallet button service', async () => {
+        it('passes billing address to wallet button service', async () => {
             const address = { city: 'Austin' } as AddressRequestBody;
 
             await service.addBillingAddress(cartId, address, {
@@ -192,6 +196,69 @@ describe('BigCommercePaymentsWalletService', () => {
         });
     });
 
+    describe('#mapOrderDetailsToBillingAddress', () => {
+        it('maps order details to a billing address', () => {
+            const output = service.mapOrderDetailsToBillingAddress({
+                payer: {
+                    name: { given_name: 'John', surname: 'Doe' },
+                    email_address: 'john@doe.com',
+                    address: {
+                        address_line_1: '123 Main St',
+                        address_line_2: 'Suite 100',
+                        admin_area_2: 'Austin',
+                        admin_area_1: 'TX',
+                        postal_code: '73301',
+                        country_code: 'US',
+                    },
+                    phone: { phone_number: { national_number: '5555555555' } },
+                },
+                purchase_units: [],
+            } as never);
+
+            expect(output).toEqual({
+                firstName: 'John',
+                lastName: 'Doe',
+                company: '',
+                address1: '123 Main St',
+                address2: 'Suite 100',
+                city: 'Austin',
+                email: 'john@doe.com',
+                stateOrProvince: 'TX',
+                stateOrProvinceCode: 'TX',
+                countryCode: 'US',
+                postalCode: '73301',
+                phone: '5555555555',
+                shouldSaveAddress: false,
+            });
+        });
+
+        it('falls back to empty strings when phone and state are absent', () => {
+            const output = service.mapOrderDetailsToBillingAddress({
+                payer: {
+                    name: { given_name: 'Jane', surname: 'Smith' },
+                    email_address: 'jane@smith.com',
+                    address: {
+                        address_line_1: '1 High St',
+                        address_line_2: '',
+                        admin_area_2: 'London',
+                        admin_area_1: undefined,
+                        postal_code: 'SW1A 1AA',
+                        country_code: 'GB',
+                    },
+                },
+                purchase_units: [],
+            } as never);
+
+            expect(output).toEqual(
+                expect.objectContaining({
+                    stateOrProvince: '',
+                    stateOrProvinceCode: '',
+                    phone: '',
+                }),
+            );
+        });
+    });
+
     describe('#getValidButtonStyle', () => {
         it('returns only valid style fields', () => {
             const style = {
@@ -201,9 +268,7 @@ describe('BigCommercePaymentsWalletService', () => {
                 shape: StyleButtonShape.pill,
             } as PayPalButtonStyleOptions;
 
-            const output = service.getValidButtonStyle(style);
-
-            expect(output).toEqual({
+            expect(service.getValidButtonStyle(style)).toEqual({
                 color: StyleButtonColor.gold,
                 height: 55,
                 label: StyleButtonLabel.pay,
@@ -219,14 +284,12 @@ describe('BigCommercePaymentsWalletService', () => {
                 shape: 'invalid',
             } as unknown as PayPalButtonStyleOptions;
 
-            const output = service.getValidButtonStyle(style);
-
-            expect(output).toEqual({ height: 40 });
+            expect(service.getValidButtonStyle(style)).toEqual({ height: 40 });
         });
     });
 
     describe('#getValidHeight', () => {
-        it('returns default height when height is not provided', () => {
+        it('returns default height when not provided', () => {
             expect(service.getValidHeight()).toBe(40);
         });
 
@@ -238,7 +301,7 @@ describe('BigCommercePaymentsWalletService', () => {
             expect(service.getValidHeight(100)).toBe(55);
         });
 
-        it('returns provided value when it is in range', () => {
+        it('returns provided value when in range', () => {
             expect(service.getValidHeight(35)).toBe(35);
         });
     });

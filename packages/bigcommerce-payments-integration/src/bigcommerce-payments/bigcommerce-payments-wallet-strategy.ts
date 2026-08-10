@@ -4,7 +4,7 @@ import {
     InvalidArgumentError,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { AddressRequestBody } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
     ApproveCallbackActions,
@@ -12,14 +12,12 @@ import {
     BigCommercePaymentsButtonsOptions,
     BigCommercePaymentsInitializationData,
     PayPalButtonStyleOptions,
-    PayPalOrderDetails,
 } from '../bigcommerce-payments-types';
-import BigCommercePaymentsWalletService from '../bigcommerce-payments-wallet-service';
 
 import { WithBigCommercePaymentsWalletInitializeOptions } from './bigcommerce-payments-wallet-initialize-options';
 
 export default class BigCommercePaymentsWalletStrategy implements CheckoutButtonStrategy {
-    constructor(private bigCommercePaymentsWalletService: BigCommercePaymentsWalletService) {}
+    constructor(private bigCommercePaymentsWalletService: PaypalCommerceWalletService) {}
 
     async initialize(
         options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsWalletInitializeOptions,
@@ -91,7 +89,10 @@ export default class BigCommercePaymentsWalletStrategy implements CheckoutButton
                 actions: ApproveCallbackActions,
             ) => {
                 const orderDetails = await actions.order.get();
-                const billingAddress = this.mapOrderDetailsToBillingAddress(orderDetails);
+                const billingAddress =
+                    this.bigCommercePaymentsWalletService.mapOrderDetailsToBillingAddress(
+                        orderDetails,
+                    );
 
                 await this.bigCommercePaymentsWalletService.addBillingAddress(
                     cartId,
@@ -119,25 +120,5 @@ export default class BigCommercePaymentsWalletStrategy implements CheckoutButton
         } else {
             this.bigCommercePaymentsWalletService.removeElement(containerId);
         }
-    }
-
-    private mapOrderDetailsToBillingAddress(orderDetails: PayPalOrderDetails): AddressRequestBody {
-        const { payer } = orderDetails;
-
-        return {
-            firstName: payer.name.given_name,
-            lastName: payer.name.surname,
-            company: '',
-            address1: payer.address.address_line_1,
-            address2: payer.address.address_line_2,
-            city: payer.address.admin_area_2,
-            email: payer.email_address,
-            stateOrProvince: payer.address.admin_area_1 ?? '',
-            stateOrProvinceCode: payer.address.admin_area_1 ?? '',
-            countryCode: payer.address.country_code,
-            postalCode: payer.address.postal_code,
-            phone: payer.phone?.phone_number.national_number ?? '',
-            shouldSaveAddress: false,
-        };
     }
 }
