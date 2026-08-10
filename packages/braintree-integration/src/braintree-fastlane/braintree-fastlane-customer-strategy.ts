@@ -108,6 +108,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
                 await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow(
                     undefined,
                     true,
+                    { onErrorLog: this.onErrorLog },
                 );
             }
         }

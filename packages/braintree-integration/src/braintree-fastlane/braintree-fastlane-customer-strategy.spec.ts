@@ -310,6 +310,19 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
             expect(braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow).toHaveBeenCalled();
         });
 
+        it('forwards onErrorLog to runPayPalAuthenticationFlowOrThrow so auth failures are logged', async () => {
+            const onErrorLog = jest.fn();
+
+            await strategy.initialize({ ...initializationOptions, onErrorLog });
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow).toHaveBeenCalledWith(
+                undefined,
+                true,
+                { onErrorLog },
+            );
+        });
+
         it('does not authenticate customer with PayPal Fastlane if it should not run due to A/B testing', async () => {
             const mockPaymentMethod = {
                 ...paymentMethod,
