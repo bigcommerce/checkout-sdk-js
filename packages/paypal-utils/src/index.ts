@@ -45,7 +45,4 @@ export { default as PaypalButtonCreationService } from './paypal-button-creation
  *
  */
 
-export {
-    default as PaypalCommerceWalletService,
-    PayPalWalletScriptLoader,
-} from './paypal-wallet-service';
+export { default as PaypalCommerceWalletService } from './paypal-wallet-service';

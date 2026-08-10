@@ -60,7 +60,6 @@ export default class BigCommercePaymentsIntegrationService {
         this.paypalSdk = await this.bigCommercePaymentsScriptLoader.getPayPalSDK(
             paymentMethod,
             currencyCode,
-            undefined,
             initializesOnCheckoutPage,
             forceLoad,
         );

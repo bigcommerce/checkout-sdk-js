@@ -14,6 +14,7 @@ import {
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
+import PayPalSdkScriptLoader from './paypal-sdk-script-loader';
 import {
     PayPalButtonStyleOptions,
     PayPalOrderDetails,
@@ -23,22 +24,12 @@ import {
     StyleButtonShape,
 } from './paypal-types';
 
-export interface PayPalWalletScriptLoader {
-    getPayPalSDK(
-        paymentMethod: PaymentMethod,
-        currencyCode: string,
-        storeLanguage?: string,
-        initializesOnCheckoutPage?: boolean,
-        forceLoad?: boolean,
-    ): Promise<PayPalSDK>;
-}
-
 export default class PaypalCommerceWalletService {
     private paypalSdk?: PayPalSDK;
 
     constructor(
         private walletButtonIntegrationService: WalletButtonIntegrationService,
-        private scriptLoader: PayPalWalletScriptLoader,
+        private scriptLoader: Pick<PayPalSdkScriptLoader, 'getPayPalSDK'>,
         private intentTypename = 'PayPalCommercePaymentWalletIntentData',
     ) {}
 

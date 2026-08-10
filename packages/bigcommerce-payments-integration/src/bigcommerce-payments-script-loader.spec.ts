@@ -72,13 +72,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
         };
 
         await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
-        await paypalLoader.getPayPalSDK(
-            bigCommercePaymentsCreditPaymentMethod,
-            'USD',
-            undefined,
-            false,
-            true,
-        );
+        await paypalLoader.getPayPalSDK(bigCommercePaymentsCreditPaymentMethod, 'USD', false, true);
 
         expect(loader.loadScript).toHaveBeenCalledTimes(2);
     });
@@ -259,7 +253,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
     });
 
     it('loads PayPalSDK script with commit flag as true', async () => {
-        await paypalLoader.getPayPalSDK(paymentMethod, 'USD', undefined, true);
+        await paypalLoader.getPayPalSDK(paymentMethod, 'USD', true);
 
         const paypalSdkScriptSrc =
             'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture';
@@ -276,7 +270,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
     });
 
     it('loads PayPalSDK script with commit flag as false', async () => {
-        await paypalLoader.getPayPalSDK(paymentMethod, 'USD', undefined, false);
+        await paypalLoader.getPayPalSDK(paymentMethod, 'USD', false);
 
         const paypalSdkScriptSrc =
             'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
@@ -301,7 +295,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
             },
         };
 
-        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', undefined, false);
+        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
 
         const paypalSdkScriptSrc =
             'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
@@ -331,7 +325,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
             },
         };
 
-        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', undefined, false);
+        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
 
         const paypalSdkScriptSrc =
             'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
@@ -358,7 +352,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
             },
         };
 
-        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', undefined, false);
+        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
 
         const paypalSdkScriptSrc =
             'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture&buyer-country=UA';
@@ -386,7 +380,7 @@ describe('BigCommercePaymentsScriptLoader', () => {
             },
         };
 
-        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', undefined, false);
+        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
 
         const paypalSdkScriptSrc =
             'https://www.paypal.com/sdk/js?client-id=abc&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal&currency=USD&intent=capture';

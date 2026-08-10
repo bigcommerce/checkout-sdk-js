@@ -9,6 +9,7 @@ import {
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
 import { getPayPalPaymentMethod, getPayPalSDKMock } from './mocks';
+import PayPalSdkScriptLoader from './paypal-sdk-script-loader';
 import {
     PayPalButtonStyleOptions,
     PayPalSDK,
@@ -16,11 +17,11 @@ import {
     StyleButtonLabel,
     StyleButtonShape,
 } from './paypal-types';
-import PaypalCommerceWalletService, { PayPalWalletScriptLoader } from './paypal-wallet-service';
+import PaypalCommerceWalletService from './paypal-wallet-service';
 
 describe('PaypalCommerceWalletService', () => {
     let paymentMethod: ReturnType<typeof getPayPalPaymentMethod>;
-    let scriptLoader: jest.Mocked<PayPalWalletScriptLoader>;
+    let scriptLoader: jest.Mocked<Pick<PayPalSdkScriptLoader, 'getPayPalSDK'>>;
     let paypalSdk: PayPalSDK;
     let service: PaypalCommerceWalletService;
     let walletButtonIntegrationService: WalletButtonIntegrationService;
