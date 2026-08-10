@@ -38,6 +38,8 @@ export default function mapToAddressRequestBody(
 
     return {
         ...requestBodyWithSaveFlag,
-        extraFields: requestBodyWithSaveFlag.extraFields ?? b2b.extraFields,
+        extraFields: requestBodyWithSaveFlag.extraFields?.length
+            ? requestBodyWithSaveFlag.extraFields
+            : b2b.extraFields,
     };
 }

@@ -9,6 +9,11 @@ import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billi
 import { DataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
+import {
+    CompanyAddressSearchOptions,
+    CompanyAddressSearchResult,
+    CompanyAddressService,
+} from '../company';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import {
@@ -117,6 +122,7 @@ export default class CheckoutService {
         private _workerExtensionMessenger: WorkerExtensionMessenger,
         private _b2bPaymentsRefreshActionCreator: B2BPaymentsRefreshActionCreator,
         private _b2bPostOrderActionCreator: B2BPostOrderActionCreator,
+        private _companyAddressService: CompanyAddressService,
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
     }
@@ -767,6 +773,39 @@ export default class CheckoutService {
         });
 
         return this._dispatch(action, { queueId: 'b2bPostOrder' });
+    }
+
+    /**
+     * Searches the addresses in the signed-in B2B customer's company address book.
+     *
+     * The search is performed by the storefront GraphQL API and the payload is
+     * returned as-is, without being persisted into the checkout state. Results
+     * are ordered by creation date, newest first. A B2B token must be loaded
+     * via `getB2BToken` beforehand, otherwise the returned promise rejects
+     * with a `MissingDataError`.
+     *
+     * ```js
+     * await service.getB2BToken();
+     *
+     * const result = await service.searchCompanyAddresses('main st', { first: 5 });
+     *
+     * console.log(result.company?.addresses.edges);
+     * ```
+     *
+     * @alpha
+     * @param searchQuery - The text to match addresses against. Pass an empty
+     * string to list the most recently created addresses instead of searching.
+     * @param options - Options for the search, such as the maximum number of
+     * addresses to return.
+     * @returns A promise that resolves to the search payload returned by the
+     * GraphQL API. `company` is `null` when the shopper is not signed in or
+     * the store does not have B2B enabled.
+     */
+    searchCompanyAddresses(
+        searchQuery: string,
+        options?: CompanyAddressSearchOptions,
+    ): Promise<CompanyAddressSearchResult> {
+        return this._companyAddressService.searchAddresses(searchQuery, options);
     }
 
     /**

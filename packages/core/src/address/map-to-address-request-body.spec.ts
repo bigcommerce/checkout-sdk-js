@@ -80,6 +80,25 @@ describe('mapToAddressRequestBody()', () => {
         expect(result).toHaveProperty('extraFields', [{ fieldId: '200', fieldValue: 'Explicit' }]);
     });
 
+    it('falls back to b2b extraFields when top-level extraFields is empty', () => {
+        const customerAddress = {
+            ...baseAddress,
+            extraFields: [],
+            b2b: {
+                isShipping: true,
+                isBilling: false,
+                isDefaultShipping: true,
+                isDefaultBilling: false,
+                label: 'Head Office',
+                extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
+            },
+        };
+
+        const result = mapToAddressRequestBody(customerAddress);
+
+        expect(result).toHaveProperty('extraFields', [{ fieldId: '100', fieldValue: 'Acme' }]);
+    });
+
     it('preserves id and type', () => {
         const addressWithMetadata = {
             ...baseAddress,

@@ -20,8 +20,15 @@ import {
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { createDataStoreProjection, DataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator } from '../common/error';
+import { GraphQLRequestSender } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ResolveIdRegistry } from '../common/registry';
+import {
+    B2BStorefrontTokenRequestSender,
+    B2BStorefrontTokenService,
+    CompanyAddressRequestSender,
+    CompanyAddressService,
+} from '../company';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import {
@@ -134,6 +141,7 @@ describe('CheckoutService', () => {
     let b2bPaymentsRefreshRequestSender: B2BPaymentsRefreshRequestSender;
     let b2bPostOrderActionCreator: B2BPostOrderActionCreator;
     let b2bPostOrderRequestSender: B2BPostOrderRequestSender;
+    let companyAddressService: CompanyAddressService;
     let billingAddressActionCreator: BillingAddressActionCreator;
     let billingAddressRequestSender: BillingAddressRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
@@ -427,6 +435,14 @@ describe('CheckoutService', () => {
             new B2BTokenRequestSender(requestSender),
         );
 
+        companyAddressService = new CompanyAddressService(
+            new B2BStorefrontTokenService(
+                store,
+                new B2BStorefrontTokenRequestSender(requestSender),
+            ),
+            new CompanyAddressRequestSender(new GraphQLRequestSender(requestSender)),
+        );
+
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,
             paymentStrategyRegistryV2,
@@ -489,6 +505,7 @@ describe('CheckoutService', () => {
             workerExtensionMessenger,
             b2bPaymentsRefreshActionCreator,
             b2bPostOrderActionCreator,
+            companyAddressService,
         );
     });
 
@@ -684,6 +701,21 @@ describe('CheckoutService', () => {
             });
 
             await result.catch(() => undefined);
+        });
+    });
+
+    describe('#searchCompanyAddresses()', () => {
+        it('delegates to the company address service and returns its payload', async () => {
+            const result = { company: null };
+
+            jest.spyOn(companyAddressService, 'searchAddresses').mockResolvedValue(result);
+
+            const output = await checkoutService.searchCompanyAddresses('main st', { first: 5 });
+
+            expect(companyAddressService.searchAddresses).toHaveBeenCalledWith('main st', {
+                first: 5,
+            });
+            expect(output).toEqual(result);
         });
     });
 

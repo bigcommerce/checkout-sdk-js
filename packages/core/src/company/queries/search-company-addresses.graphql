@@ -1,0 +1,35 @@
+query SearchCompanyAddresses($searchQuery: String, $first: Int = 10) {
+    company {
+        addresses(
+            first: $first
+            filters: { searchQuery: $searchQuery }
+            sort: [{ field: CREATED_AT, direction: DESC }]
+        ) {
+            edges {
+                node {
+                    entityId
+                    firstName
+                    lastName
+                    address1
+                    address2
+                    city
+                    stateOrProvince
+                    stateOrProvinceCode
+                    postalCode
+                    country
+                    countryCode
+                    phone
+                    label
+                    isDefaultShipping
+                    isDefaultBilling
+                    isShipping
+                    isBilling
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+        }
+    }
+}
