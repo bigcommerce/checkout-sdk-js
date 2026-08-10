@@ -265,6 +265,7 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
     }
 
@@ -541,6 +542,15 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             typeof this.bigcommerce_payments_fastlane.onError === 'function'
         ) {
             this.bigcommerce_payments_fastlane.onError(error);
+        }
+    }
+
+    private handleErrorLog(error: unknown): void {
+        if (
+            this.bigcommerce_payments_fastlane?.onErrorLog &&
+            typeof this.bigcommerce_payments_fastlane.onErrorLog === 'function'
+        ) {
+            this.bigcommerce_payments_fastlane.onErrorLog(error);
         }
     }
 }
