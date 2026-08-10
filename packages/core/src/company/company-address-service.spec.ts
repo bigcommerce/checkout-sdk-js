@@ -7,6 +7,7 @@ import { MissingDataError } from '../common/error/errors';
 import { GraphQLRequestSender } from '../common/http-request';
 
 import B2BStorefrontTokenRequestSender from './b2b-storefront-token-request-sender';
+import B2BStorefrontTokenService from './b2b-storefront-token-service';
 import { CompanyAddressSearchResult } from './company-address';
 import CompanyAddressRequestSender from './company-address-request-sender';
 import CompanyAddressService from './company-address-service';
@@ -28,7 +29,10 @@ describe('CompanyAddressService', () => {
         );
         jest.spyOn(requestSender, 'searchAddresses').mockResolvedValue(result);
 
-        return new CompanyAddressService(store, storefrontTokenRequestSender, requestSender);
+        return new CompanyAddressService(
+            new B2BStorefrontTokenService(store, storefrontTokenRequestSender),
+            requestSender,
+        );
     };
 
     describe('#searchAddresses()', () => {

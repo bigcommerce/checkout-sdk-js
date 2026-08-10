@@ -25,6 +25,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { ResolveIdRegistry } from '../common/registry';
 import {
     B2BStorefrontTokenRequestSender,
+    B2BStorefrontTokenService,
     CompanyAddressRequestSender,
     CompanyAddressService,
 } from '../company';
@@ -435,8 +436,10 @@ describe('CheckoutService', () => {
         );
 
         companyAddressService = new CompanyAddressService(
-            store,
-            new B2BStorefrontTokenRequestSender(requestSender),
+            new B2BStorefrontTokenService(
+                store,
+                new B2BStorefrontTokenRequestSender(requestSender),
+            ),
             new CompanyAddressRequestSender(new GraphQLRequestSender(requestSender)),
         );
 
