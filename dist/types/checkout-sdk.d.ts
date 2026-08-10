@@ -2894,6 +2894,7 @@ declare class CheckoutService {
     private _workerExtensionMessenger;
     private _b2bPaymentsRefreshActionCreator;
     private _b2bPostOrderActionCreator;
+    private _companyAddressService;
     private _errorTransformer;
     /**
      * Returns a snapshot of the current checkout state.
@@ -3375,6 +3376,33 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     persistB2BMetadata({ isInvoice, invoiceComment, poNumber, referenceNumber, extraFields, extraInfo, }: PersistB2BMetadataOptions): Promise<CheckoutSelectors>;
+    /**
+     * Searches the addresses in the signed-in B2B customer's company address book.
+     *
+     * The search is performed by the storefront GraphQL API and the payload is
+     * returned as-is, without being persisted into the checkout state. Results
+     * are ordered by creation date, newest first. A B2B token must be loaded
+     * via `getB2BToken` beforehand, otherwise the returned promise rejects
+     * with a `MissingDataError`.
+     *
+     * ```js
+     * await service.getB2BToken();
+     *
+     * const result = await service.searchCompanyAddresses('main st', { first: 5 });
+     *
+     * console.log(result.company?.addresses.edges);
+     * ```
+     *
+     * @alpha
+     * @param searchQuery - The text to match addresses against. Pass an empty
+     * string to list the most recently created addresses instead of searching.
+     * @param options - Options for the search, such as the maximum number of
+     * addresses to return.
+     * @returns A promise that resolves to the search payload returned by the
+     * GraphQL API. `company` is `null` when the shopper is not signed in or
+     * the store does not have B2B enabled.
+     */
+    searchCompanyAddresses(searchQuery: string, options?: CompanyAddressSearchOptions): Promise<CompanyAddressSearchResult>;
     /**
      * Creates a customer account.
      *
@@ -4944,6 +4972,14 @@ declare interface CheckoutStoreStatusSelector {
      */
     isLoadingPickupOptions(): boolean;
 }
+
+export declare type CompanyAddress = NonNullable<NonNullable<CompanyAddressSearchResult['company']>['addresses']['edges']>[number]['node'];
+
+export declare interface CompanyAddressSearchOptions extends RequestOptions {
+    first?: number;
+}
+
+export declare type CompanyAddressSearchResult = SearchCompanyAddressesQuery;
 
 declare type ComparableCheckout = Pick<Checkout, 'outstandingBalance' | 'coupons' | 'giftCertificates'> & {
     cart: Partial<Cart>;
@@ -8274,6 +8310,38 @@ declare interface SearchArea {
     radius: Radius;
     coordinates: Coordinates;
 }
+
+declare type SearchCompanyAddressesQuery = {
+    company?: {
+        addresses: {
+            edges?: Array<{
+                node: {
+                    entityId: number;
+                    firstName: string;
+                    lastName: string;
+                    address1: string;
+                    address2?: string | null;
+                    city: string;
+                    stateOrProvince?: string | null;
+                    stateOrProvinceCode?: string | null;
+                    postalCode?: string | null;
+                    country: string;
+                    countryCode: string;
+                    phone?: string | null;
+                    label?: string | null;
+                    isDefaultShipping?: boolean | null;
+                    isDefaultBilling?: boolean | null;
+                    isShipping?: boolean | null;
+                    isBilling?: boolean | null;
+                };
+            }> | null;
+            pageInfo: {
+                hasNextPage: boolean;
+                endCursor?: string | null;
+            };
+        };
+    } | null;
+};
 
 declare interface SepaPlaceHolder {
     ownerName?: string;

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.952.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.951.0...v1.952.0) (2026-08-10)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9981 Search Company Address Book ([#3347](https://github.com/bigcommerce/checkout-sdk-js/issues/3347)) ([086b425](https://github.com/bigcommerce/checkout-sdk-js/commit/086b425c1ecf2b36bf4a4e03cdc9a2c0a4401abd))
+
 ## [1.951.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.950.4...v1.951.0) (2026-08-07)
 
 

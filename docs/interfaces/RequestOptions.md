@@ -11,6 +11,7 @@ A set of options for configuring an asynchronous request.
 ## Extended by
 
 - [`CheckoutButtonOptions`](CheckoutButtonOptions.md)
+- [`CompanyAddressSearchOptions`](CompanyAddressSearchOptions.md)
 - [`CustomerRequestOptions`](CustomerRequestOptions.md)
 - [`OrderFinalizeOptions`](OrderFinalizeOptions.md)
 - [`PaymentRequestOptions`](PaymentRequestOptions.md)

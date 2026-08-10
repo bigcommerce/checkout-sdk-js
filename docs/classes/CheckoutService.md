@@ -1626,6 +1626,54 @@ A promise that resolves to the current state.
 
 ***
 
+### searchCompanyAddresses()
+
+> **searchCompanyAddresses**(`searchQuery`, `options?`): `Promise`\<[`SearchCompanyAddressesQuery`](../type-aliases/SearchCompanyAddressesQuery.md)\>
+
+**`Alpha`**
+
+Searches the addresses in the signed-in B2B customer's company address book.
+
+The search is performed by the storefront GraphQL API and the payload is
+returned as-is, without being persisted into the checkout state. Results
+are ordered by creation date, newest first. A B2B token must be loaded
+via `getB2BToken` beforehand, otherwise the returned promise rejects
+with a `MissingDataError`.
+
+```js
+await service.getB2BToken();
+
+const result = await service.searchCompanyAddresses('main st', { first: 5 });
+
+console.log(result.company?.addresses.edges);
+```
+
+#### Parameters
+
+##### searchQuery
+
+`string`
+
+The text to match addresses against. Pass an empty
+string to list the most recently created addresses instead of searching.
+
+##### options?
+
+[`CompanyAddressSearchOptions`](../interfaces/CompanyAddressSearchOptions.md)
+
+Options for the search, such as the maximum number of
+addresses to return.
+
+#### Returns
+
+`Promise`\<[`SearchCompanyAddressesQuery`](../type-aliases/SearchCompanyAddressesQuery.md)\>
+
+A promise that resolves to the search payload returned by the
+GraphQL API. `company` is `null` when the shopper is not signed in or
+the store does not have B2B enabled.
+
+***
+
 ### selectConsignmentShippingOption()
 
 > **selectConsignmentShippingOption**(`consignmentId`, `shippingOptionId`, `options?`): `Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
