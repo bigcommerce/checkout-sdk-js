@@ -48,6 +48,11 @@ export default interface BraintreeFastlaneCustomerInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: BraintreeFastlaneStylesOption;
+
+    /**
+     * Method that will only log errors with no-blocking flow
+     */
+    onErrorLog?: (error: unknown) => void;
 }
 
 export interface WithBraintreeFastlaneCustomerInitializeOptions {
