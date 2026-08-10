@@ -13,7 +13,7 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import  { WithBraintreeFastlaneCustomerInitializeOptions } from './braintree-fastlane-customer-initialize-options';
+import { WithBraintreeFastlaneCustomerInitializeOptions } from './braintree-fastlane-customer-initialize-options';
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 
 export default class BraintreeFastlaneCustomerStrategy implements CustomerStrategy {

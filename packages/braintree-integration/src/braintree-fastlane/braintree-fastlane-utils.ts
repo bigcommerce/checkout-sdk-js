@@ -21,6 +21,7 @@ import {
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
+
 import BraintreeFastlanePaymentInitializeOptions from './braintree-fastlane-payment-initialize-options';
 
 export default class BraintreeFastlaneUtils {
