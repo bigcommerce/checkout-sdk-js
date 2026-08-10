@@ -29,11 +29,13 @@ import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastlane-payment-initialize-options';
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
+import { BraintreeFastlaneInitializeOptions } from '../../../core/src/shipping/strategies/braintree';
 
 export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy {
     private braintreeCardComponent?: BraintreeFastlaneCardComponent;
     private is3DSEnabled?: boolean;
     private onError?: (error: Error) => void;
+    private braintreefastlane?: BraintreeFastlaneInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -75,6 +77,8 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
             );
         }
 
+        this.braintreefastlane = braintreefastlane;
+
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         const state = this.paymentIntegrationService.getState();
@@ -108,7 +112,12 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         );
 
         if (this.shouldRunAuthenticationFlow()) {
-            await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow();
+            try {
+                await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow();
+            } catch (error) {
+                // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+                this.handleErrorLog(error);
+            }
         }
 
         await this.initializeCardComponent();
@@ -132,7 +141,13 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
 
         await this.paymentIntegrationService.submitPayment(paymentPayload);
 
-        this.braintreeFastlaneUtils.removeSessionIdFromCookies();
+        try {
+            // Info: payment is already submitted at this point, so this cleanup must not
+            // surface an error to the shopper. Log it instead of blocking the flow.
+            this.braintreeFastlaneUtils.removeSessionIdFromCookies();
+        } catch (error) {
+            this.handleErrorLog(error);
+        }
     }
 
     finalize(): Promise<void> {
@@ -399,5 +414,14 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         }
 
         return undefined;
+    }
+
+    private handleErrorLog(error: unknown): void {
+        if (
+            this.braintreefastlane?.onErrorLog &&
+            typeof this.braintreefastlane.onErrorLog === 'function'
+        ) {
+            this.braintreefastlane.onErrorLog(error);
+        }
     }
 }

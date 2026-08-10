@@ -85,113 +85,109 @@ export default class BraintreeFastlaneUtils {
      * Authentication methods
      *
      * */
-    // Remove this rule disabling after method refactor
-    // eslint-disable-next-line complexity
     async runPayPalAuthenticationFlowOrThrow(
         email?: string,
         shouldSetShippingOption?: boolean,
     ): Promise<void> {
-        try {
-            const methodId = this.getMethodIdOrThrow();
-            const braintreeFastlane = this.getBraintreeFastlaneOrThrow();
-            const { lookupCustomerByEmail, triggerAuthenticationFlow } = braintreeFastlane.identity;
+        // Info: this method intentionally throws. The authentication flow is best-effort,
+        // so callers are responsible for catching the error and deciding whether to log it
+        // (e.g. via onErrorLog) without blocking the customer from passing the checkout flow.
+        const methodId = this.getMethodIdOrThrow();
+        const braintreeFastlane = this.getBraintreeFastlaneOrThrow();
+        const { lookupCustomerByEmail, triggerAuthenticationFlow } = braintreeFastlane.identity;
 
-            const state = this.paymentIntegrationService.getState();
-            const cart = state.getCartOrThrow();
-            const customer = state.getCustomer();
-            const billingAddress = state.getBillingAddress();
-            const { isFastlaneShippingOptionAutoSelectEnabled } =
-                state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId)
-                    .initializationData || {};
+        const state = this.paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const customer = state.getCustomer();
+        const billingAddress = state.getBillingAddress();
+        const { isFastlaneShippingOptionAutoSelectEnabled } =
+            state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId)
+                .initializationData || {};
 
-            const customerEmail = email || customer?.email || billingAddress?.email || '';
+        const customerEmail = email || customer?.email || billingAddress?.email || '';
 
-            const { customerContextId } = await lookupCustomerByEmail(customerEmail);
+        const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
-            if (!customerContextId) {
-                // Info: we should clean up previous experience with default data and related authenticationState
-                await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                    authenticationState: BraintreeFastlaneAuthenticationState.UNRECOGNIZED,
-                    addresses: [],
-                    instruments: [],
-                });
-
-                this.saveSessionIdToCookies(cart.id);
-
-                return;
-            }
-
-            const { authenticationState, profileData } = await triggerAuthenticationFlow(
-                customerContextId,
-            );
-
-            const phoneNumber = profileData?.shippingAddress?.phoneNumber || '';
-
-            if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
-                await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                    authenticationState,
-                    addresses: [],
-                    instruments: [],
-                });
-
-                this.removeSessionIdFromCookies();
-
-                return;
-            }
-
-            const shippingAddresses =
-                this.mapPayPalToBcAddress([profileData.shippingAddress], [phoneNumber]) || [];
-            const paypalBillingAddress = this.getPayPalBillingAddresses(profileData);
-            const billingAddresses = paypalBillingAddress
-                ? this.mapPayPalToBcAddress([paypalBillingAddress], [phoneNumber])
-                : [];
-            const instruments = profileData.card
-                ? this.mapPayPalToBcInstrument(methodId, [profileData.card])
-                : [];
-            const addresses = this.mergeShippingAndBillingAddresses(
-                shippingAddresses,
-                billingAddresses,
-            );
+        if (!customerContextId) {
+            // Info: we should clean up previous experience with default data and related authenticationState
+            await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                authenticationState: BraintreeFastlaneAuthenticationState.UNRECOGNIZED,
+                addresses: [],
+                instruments: [],
+            });
 
             this.saveSessionIdToCookies(cart.id);
 
+            return;
+        }
+
+        const { authenticationState, profileData } = await triggerAuthenticationFlow(
+            customerContextId,
+        );
+
+        const phoneNumber = profileData?.shippingAddress?.phoneNumber || '';
+
+        if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
                 authenticationState,
-                addresses,
-                instruments,
+                addresses: [],
+                instruments: [],
             });
 
-            if (billingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
-                await this.paymentIntegrationService.updateBillingAddress(billingAddresses[0]);
+            this.removeSessionIdFromCookies();
+
+            return;
+        }
+
+        const shippingAddresses =
+            this.mapPayPalToBcAddress([profileData.shippingAddress], [phoneNumber]) || [];
+        const paypalBillingAddress = this.getPayPalBillingAddresses(profileData);
+        const billingAddresses = paypalBillingAddress
+            ? this.mapPayPalToBcAddress([paypalBillingAddress], [phoneNumber])
+            : [];
+        const instruments = profileData.card
+            ? this.mapPayPalToBcInstrument(methodId, [profileData.card])
+            : [];
+        const addresses = this.mergeShippingAndBillingAddresses(
+            shippingAddresses,
+            billingAddresses,
+        );
+
+        this.saveSessionIdToCookies(cart.id);
+
+        await this.paymentIntegrationService.updatePaymentProviderCustomer({
+            authenticationState,
+            addresses,
+            instruments,
+        });
+
+        if (billingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
+            await this.paymentIntegrationService.updateBillingAddress(billingAddresses[0]);
+        }
+
+        // Prefill billing form if only digital items in cart with billing data and firstName and lastName
+        // from shippingAddresses because there are empty in billing
+        if (
+            billingAddresses.length > 0 &&
+            cart.lineItems.digitalItems.length > 0 &&
+            cart.lineItems.physicalItems.length === 0
+        ) {
+            const { firstName, lastName } = addresses[0];
+            const digitalItemBilling = {
+                ...billingAddresses[0],
+                firstName,
+                lastName,
+            };
+
+            await this.paymentIntegrationService.updateBillingAddress(digitalItemBilling);
+        }
+
+        if (shippingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
+            await this.paymentIntegrationService.updateShippingAddress(shippingAddresses[0]);
+
+            if (shouldSetShippingOption && isFastlaneShippingOptionAutoSelectEnabled) {
+                await this.setShippingOption();
             }
-
-            // Prefill billing form if only digital items in cart with billing data and firstName and lastName
-            // from shippingAddresses because there are empty in billing
-            if (
-                billingAddresses.length > 0 &&
-                cart.lineItems.digitalItems.length > 0 &&
-                cart.lineItems.physicalItems.length === 0
-            ) {
-                const { firstName, lastName } = addresses[0];
-                const digitalItemBilling = {
-                    ...billingAddresses[0],
-                    firstName,
-                    lastName,
-                };
-
-                await this.paymentIntegrationService.updateBillingAddress(digitalItemBilling);
-            }
-
-            if (shippingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
-                await this.paymentIntegrationService.updateShippingAddress(shippingAddresses[0]);
-
-                if (shouldSetShippingOption && isFastlaneShippingOptionAutoSelectEnabled) {
-                    await this.setShippingOption();
-                }
-            }
-        } catch (error) {
-            // TODO: we should figure out what to do here
-            // TODO: because we should not to stop the flow if the error occurs on paypal side
         }
     }
 

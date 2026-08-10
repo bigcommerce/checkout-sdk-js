@@ -163,8 +163,8 @@ describe('BraintreeFastlaneUtils', () => {
             });
         });
 
-        it('does not authenticate user if braintree fastlane is not loaded', async () => {
-            await subject.runPayPalAuthenticationFlowOrThrow();
+        it('throws and does not authenticate user if braintree fastlane is not loaded', async () => {
+            await expect(subject.runPayPalAuthenticationFlowOrThrow()).rejects.toThrow();
 
             expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
         });
@@ -565,14 +565,15 @@ describe('BraintreeFastlaneUtils', () => {
             });
         });
 
-        it('do not update billing and shipping address if paypal does not return any address in profile data', async () => {
+        it('propagates the error and does not update billing and shipping address if authentication flow fails', async () => {
             jest.spyOn(
                 braintreeFastlaneMock.identity,
                 'triggerAuthenticationFlow',
             ).mockRejectedValue({});
 
             await subject.initializeBraintreeFastlaneOrThrow(methodId);
-            await subject.runPayPalAuthenticationFlowOrThrow();
+
+            await expect(subject.runPayPalAuthenticationFlowOrThrow()).rejects.toEqual({});
 
             expect(paymentIntegrationService.updateBillingAddress).not.toHaveBeenCalled();
             expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();

@@ -20,4 +20,9 @@ export default interface BraintreeFastlaneShippingInitializeOptions {
     onPayPalFastlaneAddressChange?: (
         showBraintreeFastlaneAddressSelector: () => Promise<CustomerAddress | undefined>,
     ) => void;
+
+    /**
+     * Method that will only log errors with no-blocking flow
+     */
+    onErrorLog?: (error: unknown) => void;
 }
