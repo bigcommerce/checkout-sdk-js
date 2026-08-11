@@ -550,4 +550,89 @@ describe('BigCommercePaymentsFastlaneCustomerStrategy', () => {
             expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();
         });
     });
+
+    describe('#handleErrorLog()', () => {
+        it('forwards Fastlane initialization error to the onErrorLog callback', async () => {
+            const error = new Error('Fastlane initialization failed');
+            const onErrorLog = jest.fn();
+
+            jest.spyOn(bigCommercePaymentsSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                Promise.reject(error),
+            );
+
+            await strategy.initialize({
+                ...initializationOptions,
+                onErrorLog,
+            });
+
+            expect(onErrorLog).toHaveBeenCalledWith(error);
+        });
+
+        it('does not throw when initialization fails and no onErrorLog is configured', async () => {
+            jest.spyOn(bigCommercePaymentsSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                Promise.reject(new Error('Fastlane initialization failed')),
+            );
+
+            await expect(strategy.initialize(initializationOptions)).resolves.toBeUndefined();
+        });
+
+        it('does not throw when onErrorLog is provided but is not a function', async () => {
+            jest.spyOn(bigCommercePaymentsSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                Promise.reject(new Error('Fastlane initialization failed')),
+            );
+
+            const options = {
+                ...initializationOptions,
+                onErrorLog: 'not a function',
+            };
+
+            await expect(
+                strategy.initialize(options as unknown as typeof initializationOptions),
+            ).resolves.toBeUndefined();
+        });
+
+        it('does not forward errors when no error occurs during initialization', async () => {
+            const onErrorLog = jest.fn();
+
+            await strategy.initialize({
+                ...initializationOptions,
+                onErrorLog,
+            });
+
+            expect(onErrorLog).not.toHaveBeenCalled();
+        });
+
+        it('forwards authentication flow error to the onErrorLog callback during executePaymentMethodCheckout', async () => {
+            const error = new Error('Authentication flow failed');
+            const onErrorLog = jest.fn();
+
+            jest.spyOn(
+                bigCommercePaymentsFastlaneUtils,
+                'lookupCustomerOrThrow',
+            ).mockImplementation(() => Promise.reject(error));
+
+            await strategy.initialize({
+                ...initializationOptions,
+                onErrorLog,
+            });
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(onErrorLog).toHaveBeenCalledWith(error);
+            expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
+        });
+
+        it('does not forward authentication flow errors when onErrorLog is not configured', async () => {
+            jest.spyOn(
+                bigCommercePaymentsFastlaneUtils,
+                'lookupCustomerOrThrow',
+            ).mockImplementation(() => Promise.reject(new Error('Authentication flow failed')));
+
+            await strategy.initialize(initializationOptions);
+
+            await expect(
+                strategy.executePaymentMethodCheckout(executionOptions),
+            ).resolves.toBeUndefined();
+            expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
+        });
+    });
 });

@@ -22,6 +22,9 @@ import BigCommercePaymentsFastlaneCustomerInitializeOptions, {
 } from './bigcommerce-payments-fastlane-customer-initialize-options';
 
 export default class BigCommercePaymentsFastlaneCustomerStrategy implements CustomerStrategy {
+    private options?: CustomerInitializeOptions &
+        WithBigCommercePaymentsFastlaneCustomerInitializeOptions;
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommercePaymentsSdk: PayPalSdkHelper,
@@ -33,6 +36,8 @@ export default class BigCommercePaymentsFastlaneCustomerStrategy implements Cust
             WithBigCommercePaymentsFastlaneCustomerInitializeOptions,
     ): Promise<void> {
         const { methodId, bigcommerce_payments_fastlane } = options;
+
+        this.options = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -61,9 +66,9 @@ export default class BigCommercePaymentsFastlaneCustomerStrategy implements Cust
                 isTestModeEnabled,
                 this.getFastlaneStyles(methodId, bigcommerce_payments_fastlane),
             );
-        } catch (_) {
-            // TODO: add logger to be able to debug issues if there any
+        } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
 
         return Promise.resolve();
@@ -120,9 +125,9 @@ export default class BigCommercePaymentsFastlaneCustomerStrategy implements Cust
 
             try {
                 await this.runPayPalAuthenticationFlowOrThrow(methodId);
-            } catch (_) {
-                // TODO: add logger to be able to debug issues if there any
+            } catch (error) {
                 // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+                this.handleErrorLog(error);
             }
         }
 
@@ -234,5 +239,13 @@ export default class BigCommercePaymentsFastlaneCustomerStrategy implements Cust
             isFastlaneStylingEnabled ? fastlaneStyles : {},
             bigcommerce_payments_fastlane?.styles,
         );
+    }
+
+    private handleErrorLog(error: unknown): void {
+        const { onErrorLog } = this.options || {};
+
+        if (onErrorLog && typeof onErrorLog === 'function') {
+            onErrorLog(error);
+        }
     }
 }

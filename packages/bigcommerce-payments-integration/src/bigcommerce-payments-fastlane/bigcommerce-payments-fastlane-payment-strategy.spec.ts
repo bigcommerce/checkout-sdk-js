@@ -405,6 +405,76 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
             expect(initializationOptions.bigcommerce_payments_fastlane.onInit).toHaveBeenCalled();
             expect(initializationOptions.bigcommerce_payments_fastlane.onChange).toHaveBeenCalled();
         });
+
+        describe('error logging', () => {
+            it('logs an error with the provided onErrorLog callback if the authentication flow fails, without failing initialization', async () => {
+                const error = new Error('lookupCustomerOrThrow error');
+                const onErrorLog = jest.fn();
+
+                jest.spyOn(
+                    bigCommercePaymentsFastlaneUtils,
+                    'lookupCustomerOrThrow',
+                ).mockRejectedValue(error);
+
+                await strategy.initialize({
+                    methodId,
+                    bigcommerce_payments_fastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog,
+                    },
+                });
+
+                expect(onErrorLog).toHaveBeenCalledWith(error);
+                expect(
+                    bigCommercePaymentsFastlaneUtils.updateStorageSessionId,
+                ).not.toHaveBeenCalled();
+            });
+
+            it('does not throw when the authentication flow fails and no onErrorLog is configured', async () => {
+                jest.spyOn(
+                    bigCommercePaymentsFastlaneUtils,
+                    'lookupCustomerOrThrow',
+                ).mockRejectedValue(new Error('lookupCustomerOrThrow error'));
+
+                await expect(strategy.initialize(initializationOptions)).resolves.toBeUndefined();
+            });
+
+            it('does not throw when onErrorLog is provided but is not a function, for a soft-failing authentication flow error', async () => {
+                jest.spyOn(
+                    bigCommercePaymentsFastlaneUtils,
+                    'lookupCustomerOrThrow',
+                ).mockRejectedValue(new Error('lookupCustomerOrThrow error'));
+
+                const options = {
+                    methodId,
+                    bigcommerce_payments_fastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog: 'not a function',
+                    },
+                };
+
+                await expect(
+                    strategy.initialize(options as unknown as typeof initializationOptions),
+                ).resolves.toBeUndefined();
+            });
+
+            it('does not call onErrorLog when the authentication flow succeeds', async () => {
+                const onErrorLog = jest.fn();
+
+                await strategy.initialize({
+                    methodId,
+                    bigcommerce_payments_fastlane: {
+                        onInit: jest.fn(),
+                        onChange: jest.fn(),
+                        onErrorLog,
+                    },
+                });
+
+                expect(onErrorLog).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('#execute()', () => {
