@@ -25,8 +25,6 @@ export interface CustomerAddress extends Address {
     id: number;
     type: string;
     /**
-     * Indicates whether this address is used for shipping. Present only for
-     * B2B company addresses when the `addresses.b2b` include is requested.
      */
     isShipping?: boolean;
     isBilling?: boolean;
