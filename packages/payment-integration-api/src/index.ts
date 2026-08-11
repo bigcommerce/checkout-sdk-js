@@ -41,7 +41,6 @@ export {
     CustomerStrategyResolveId,
     Customer,
     CustomerAddress,
-    CustomerAddressB2B,
     CustomerRequestOptions,
     CustomerInitializeOptions,
     InternalCustomer,

@@ -16,14 +16,10 @@ import BillingAddressRequestSender from './billing-address-request-sender';
 import { getBillingAddress } from './billing-addresses.mock';
 
 const CUSTOMER_ADDRESS_METADATA = {
-    b2b: {
-        isShipping: true,
-        isBilling: false,
-        isDefaultShipping: true,
-        isDefaultBilling: false,
-        label: 'Head Office',
-        extraFields: [],
-    },
+    isShipping: true,
+    isBilling: false,
+    isDefaultShipping: true,
+    isDefaultBilling: false,
 };
 
 describe('BillingAddressRequestSender', () => {
@@ -91,7 +87,7 @@ describe('BillingAddressRequestSender', () => {
             );
         });
 
-        it('strips CustomerAddress b2b metadata from the request body', async () => {
+        it('strips CustomerAddress B2B fields from the request body', async () => {
             await addressRequestSender.updateAddress('foo', {
                 ...getBillingAddress(),
                 ...CUSTOMER_ADDRESS_METADATA,
@@ -99,7 +95,10 @@ describe('BillingAddressRequestSender', () => {
 
             const { body } = (requestSender.put as jest.Mock).mock.calls[0][1];
 
-            expect(body).not.toHaveProperty('b2b');
+            for (const key of Object.keys(CUSTOMER_ADDRESS_METADATA)) {
+                expect(body).not.toHaveProperty(key);
+            }
+
             expect(body).toHaveProperty('address1', address.address1);
         });
 
@@ -164,7 +163,7 @@ describe('BillingAddressRequestSender', () => {
             );
         });
 
-        it('strips CustomerAddress b2b metadata from the request body', async () => {
+        it('strips CustomerAddress B2B fields from the request body', async () => {
             await addressRequestSender.createAddress('foo', {
                 ...getBillingAddress(),
                 ...CUSTOMER_ADDRESS_METADATA,
@@ -172,7 +171,10 @@ describe('BillingAddressRequestSender', () => {
 
             const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
 
-            expect(body).not.toHaveProperty('b2b');
+            for (const key of Object.keys(CUSTOMER_ADDRESS_METADATA)) {
+                expect(body).not.toHaveProperty(key);
+            }
+
             expect(body).toHaveProperty('address1', address.address1);
         });
 
