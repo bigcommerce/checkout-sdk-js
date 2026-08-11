@@ -11,13 +11,15 @@ export default class CompanyAddressRequestSender {
         searchQuery: string,
         options?: CompanyAddressSearchOptions,
     ): Promise<CompanyAddressSearchResult> {
-        const { first, timeout } = options || {};
+        const { first, isShipping, isBilling, timeout } = options || {};
 
         return this._graphQLRequestSender.query(
             SearchCompanyAddressesDocument,
             {
                 searchQuery: searchQuery || null,
                 first,
+                isShipping,
+                isBilling,
             },
             { token, timeout },
         );
