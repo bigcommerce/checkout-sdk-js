@@ -71,6 +71,7 @@ export default interface BraintreeFastlanePaymentInitializeOptions {
      */
     styles?: BraintreeFastlaneStylesOption;
     onError?: (error: Error) => void;
+    onErrorLog?: (error: unknown) => void;
 }
 
 export interface WithBraintreeFastlanePaymentInitializeOptions {

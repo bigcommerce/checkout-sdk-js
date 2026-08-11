@@ -22,6 +22,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CookieStorage } from '@bigcommerce/checkout-sdk/storage';
 
+import BraintreeFastlanePaymentInitializeOptions from './braintree-fastlane-payment-initialize-options';
+
 export default class BraintreeFastlaneUtils {
     private braintreeFastlane?: BraintreeFastlane;
     private methodId?: string;
@@ -90,6 +92,7 @@ export default class BraintreeFastlaneUtils {
     async runPayPalAuthenticationFlowOrThrow(
         email?: string,
         shouldSetShippingOption?: boolean,
+        braintreeFastlaneOptions?: BraintreeFastlanePaymentInitializeOptions,
     ): Promise<void> {
         try {
             const methodId = this.getMethodIdOrThrow();
@@ -192,6 +195,7 @@ export default class BraintreeFastlaneUtils {
         } catch (error) {
             // TODO: we should figure out what to do here
             // TODO: because we should not to stop the flow if the error occurs on paypal side
+            this.handleErrorLog(error, braintreeFastlaneOptions);
         }
     }
 
@@ -368,6 +372,18 @@ export default class BraintreeFastlaneUtils {
             const selectedOption = recommendedShippingOption || availableShippingOptions[0];
 
             await this.paymentIntegrationService.selectShippingOption(selectedOption.id);
+        }
+    }
+
+    private handleErrorLog(
+        error: unknown,
+        braintreeFastlaneOptions?: BraintreeFastlanePaymentInitializeOptions,
+    ): void {
+        if (
+            braintreeFastlaneOptions?.onErrorLog &&
+            typeof braintreeFastlaneOptions.onErrorLog === 'function'
+        ) {
+            braintreeFastlaneOptions.onErrorLog(error);
         }
     }
 }

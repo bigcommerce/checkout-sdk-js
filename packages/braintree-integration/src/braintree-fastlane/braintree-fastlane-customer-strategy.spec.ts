@@ -206,6 +206,40 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
                 expect(error).toBeUndefined();
             }
         });
+
+        it('logs the error via onErrorLog and does not throw when Fastlane initialization fails', async () => {
+            const error = new Error('Fastlane initialization failed');
+            const onErrorLog = jest.fn();
+
+            jest.spyOn(
+                braintreeFastlaneUtils,
+                'initializeBraintreeFastlaneOrThrow',
+            ).mockRejectedValue(error);
+
+            await expect(
+                strategy.initialize({ ...initializationOptions, onErrorLog }),
+            ).resolves.toBeUndefined();
+
+            expect(onErrorLog).toHaveBeenCalledWith(error);
+        });
+
+        it('does not call onErrorLog when Fastlane initialization succeeds', async () => {
+            const onErrorLog = jest.fn();
+
+            await strategy.initialize({ ...initializationOptions, onErrorLog });
+
+            expect(braintreeFastlaneUtils.initializeBraintreeFastlaneOrThrow).toHaveBeenCalled();
+            expect(onErrorLog).not.toHaveBeenCalled();
+        });
+
+        it('does not throw when Fastlane initialization fails and onErrorLog is not provided', async () => {
+            jest.spyOn(
+                braintreeFastlaneUtils,
+                'initializeBraintreeFastlaneOrThrow',
+            ).mockRejectedValue(new Error('Fastlane initialization failed'));
+
+            await expect(strategy.initialize(initializationOptions)).resolves.toBeUndefined();
+        });
     });
 
     describe('#executePaymentMethodCheckout()', () => {
@@ -274,6 +308,19 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
                 undefined,
             );
             expect(braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow).toHaveBeenCalled();
+        });
+
+        it('forwards onErrorLog to runPayPalAuthenticationFlowOrThrow so auth failures are logged', async () => {
+            const onErrorLog = jest.fn();
+
+            await strategy.initialize({ ...initializationOptions, onErrorLog });
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow).toHaveBeenCalledWith(
+                undefined,
+                true,
+                { onErrorLog },
+            );
         });
 
         it('does not authenticate customer with PayPal Fastlane if it should not run due to A/B testing', async () => {

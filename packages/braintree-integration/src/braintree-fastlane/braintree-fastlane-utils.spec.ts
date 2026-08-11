@@ -623,6 +623,44 @@ describe('BraintreeFastlaneUtils', () => {
                 customFields: [],
             });
         });
+
+        it('logs the error via onErrorLog and does not throw if the authentication flow fails', async () => {
+            const error = new Error('Authentication flow failed');
+            const onErrorLog = jest.fn();
+
+            jest.spyOn(
+                braintreeFastlaneMock.identity,
+                'triggerAuthenticationFlow',
+            ).mockRejectedValue(error);
+
+            await subject.initializeBraintreeFastlaneOrThrow(methodId);
+
+            await expect(
+                subject.runPayPalAuthenticationFlowOrThrow(undefined, undefined, { onErrorLog }),
+            ).resolves.toBeUndefined();
+
+            expect(onErrorLog).toHaveBeenCalledWith(error);
+        });
+
+        it('does not call onErrorLog if the authentication flow succeeds', async () => {
+            const onErrorLog = jest.fn();
+
+            await subject.initializeBraintreeFastlaneOrThrow(methodId);
+            await subject.runPayPalAuthenticationFlowOrThrow(undefined, undefined, { onErrorLog });
+
+            expect(onErrorLog).not.toHaveBeenCalled();
+        });
+
+        it('does not throw if the authentication flow fails and onErrorLog is not provided', async () => {
+            jest.spyOn(
+                braintreeFastlaneMock.identity,
+                'triggerAuthenticationFlow',
+            ).mockRejectedValue(new Error('Authentication flow failed'));
+
+            await subject.initializeBraintreeFastlaneOrThrow(methodId);
+
+            await expect(subject.runPayPalAuthenticationFlowOrThrow()).resolves.toBeUndefined();
+        });
     });
 
     describe('#getDeviceSessionId', () => {

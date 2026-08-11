@@ -108,7 +108,11 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         );
 
         if (this.shouldRunAuthenticationFlow()) {
-            await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow();
+            await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow(
+                undefined,
+                undefined,
+                braintreefastlane,
+            );
         }
 
         await this.initializeCardComponent();

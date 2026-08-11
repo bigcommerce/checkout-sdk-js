@@ -18,6 +18,7 @@ import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 
 export default class BraintreeFastlaneCustomerStrategy implements CustomerStrategy {
     private isAcceleratedCheckoutEnabled = false;
+    private onErrorLog?: (error: unknown) => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -27,6 +28,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
     async initialize({
         methodId,
         braintreefastlane,
+        onErrorLog,
     }: CustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions): Promise<void> {
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -44,6 +46,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             : undefined;
 
         this.isAcceleratedCheckoutEnabled = !!isAcceleratedCheckoutEnabled;
+        this.onErrorLog = onErrorLog;
 
         try {
             if (this.isAcceleratedCheckoutEnabled) {
@@ -57,8 +60,9 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
                     fastlaneStyles,
                 );
             }
-        } catch (_) {
+        } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            this.handleErrorLog(error);
         }
 
         return Promise.resolve();
@@ -104,6 +108,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
                 await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow(
                     undefined,
                     true,
+                    { onErrorLog: this.onErrorLog },
                 );
             }
         }
@@ -149,5 +154,11 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
         return this.paymentIntegrationService
             .getState()
             .getPaymentMethodOrThrow<BraintreeInitializationData>(validPaymentMethodId);
+    }
+
+    private handleErrorLog(error: unknown): void {
+        if (this.onErrorLog && typeof this.onErrorLog === 'function') {
+            this.onErrorLog(error);
+        }
     }
 }
