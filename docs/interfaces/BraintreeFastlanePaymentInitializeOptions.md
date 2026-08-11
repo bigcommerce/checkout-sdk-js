@@ -89,6 +89,22 @@ when get triggered
 
 ***
 
+### onErrorLog?
+
+> `optional` **onErrorLog?**: (`error`) => `void`
+
+#### Parameters
+
+##### error
+
+`unknown`
+
+#### Returns
+
+`void`
+
+***
+
 ### onInit?
 
 > `optional` **onInit?**: (`renderPayPalComponentMethod`) => `void`

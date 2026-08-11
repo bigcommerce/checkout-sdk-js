@@ -211,14 +211,16 @@ declare class BraintreeFastlaneCustomerStrategy implements CustomerStrategy {
     private paymentIntegrationService;
     private braintreeFastlaneUtils;
     private isAcceleratedCheckoutEnabled;
+    private onErrorLog?;
     constructor(paymentIntegrationService: PaymentIntegrationService, braintreeFastlaneUtils: BraintreeFastlaneUtils);
-    initialize({ methodId, braintreefastlane, }: CustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions): Promise<void>;
+    initialize({ methodId, braintreefastlane, onErrorLog, }: CustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void>;
     signOut(options?: RequestOptions): Promise<void>;
     executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<void>;
     private shouldRunAuthenticationFlow;
     private getValidPaymentMethodOrThrow;
+    private handleErrorLog;
 }
 
 /**
@@ -289,6 +291,7 @@ declare interface BraintreeFastlanePaymentInitializeOptions {
      */
     styles?: BraintreeFastlaneStylesOption;
     onError?: (error: Error) => void;
+    onErrorLog?: (error: unknown) => void;
 }
 
 declare class BraintreeFastlanePaymentStrategy implements PaymentStrategy {
@@ -367,7 +370,7 @@ declare class BraintreeFastlaneUtils {
      * Authentication methods
      *
      * */
-    runPayPalAuthenticationFlowOrThrow(email?: string, shouldSetShippingOption?: boolean): Promise<void>;
+    runPayPalAuthenticationFlowOrThrow(email?: string, shouldSetShippingOption?: boolean, braintreeFastlaneOptions?: BraintreeFastlanePaymentInitializeOptions): Promise<void>;
     /**
      *
      * Session id management
@@ -398,6 +401,7 @@ declare class BraintreeFastlaneUtils {
      * */
     private getMethodIdOrThrow;
     private setShippingOption;
+    private handleErrorLog;
 }
 
 declare class BraintreeHostedForm {

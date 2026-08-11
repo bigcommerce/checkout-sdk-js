@@ -2114,6 +2114,7 @@ declare interface BraintreeFastlanePaymentInitializeOptions {
      */
     styles?: BraintreeFastlaneStylesOption;
     onError?: (error: Error) => void;
+    onErrorLog?: (error: unknown) => void;
 }
 
 /**
