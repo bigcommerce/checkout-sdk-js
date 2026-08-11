@@ -32,15 +32,6 @@
 
 ***
 
-### b2b?
-
-> `optional` **b2b?**: [`CustomerAddressB2B`](CustomerAddressB2B.md)
-
-Company address metadata returned only for B2B company addresses, and
-only when the `addresses.b2b` include is requested from the API.
-
-***
-
 ### city
 
 > **city**: `string`
@@ -122,6 +113,30 @@ only when the `addresses.b2b` include is requested from the API.
 ### id
 
 > **id**: `number`
+
+***
+
+### isBilling?
+
+> `optional` **isBilling?**: `boolean`
+
+***
+
+### isDefaultBilling?
+
+> `optional` **isDefaultBilling?**: `boolean`
+
+***
+
+### isDefaultShipping?
+
+> `optional` **isDefaultShipping?**: `boolean`
+
+***
+
+### isShipping?
+
+> `optional` **isShipping?**: `boolean`
 
 ***
 

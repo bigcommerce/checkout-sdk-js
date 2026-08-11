@@ -223,7 +223,6 @@
 - [Customer](interfaces/Customer.md)
 - [CustomerAccountRequestBody](interfaces/CustomerAccountRequestBody.md)
 - [CustomerAddress](interfaces/CustomerAddress.md)
-- [CustomerAddressB2B](interfaces/CustomerAddressB2B.md)
 - [CustomerCredentials](interfaces/CustomerCredentials.md)
 - [CustomerGroup](interfaces/CustomerGroup.md)
 - [CustomerPasswordRequirements](interfaces/CustomerPasswordRequirements.md)
