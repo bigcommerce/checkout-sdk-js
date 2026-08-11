@@ -9,4 +9,6 @@ export type CompanyAddress = NonNullable<
 
 export interface CompanyAddressSearchOptions extends RequestOptions {
     first?: number;
+    isShipping?: boolean;
+    isBilling?: boolean;
 }

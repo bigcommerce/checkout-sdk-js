@@ -1,7 +1,7 @@
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 
-import { SearchCompanyAddressesDocument } from '../generated-codegen/graphql';
 import { GraphQLRequestSender } from '../common/http-request';
+import { SearchCompanyAddressesDocument } from '../generated-codegen/graphql';
 
 import { CompanyAddressSearchResult } from './company-address';
 import CompanyAddressRequestSender from './company-address-request-sender';
@@ -27,15 +27,32 @@ describe('CompanyAddressRequestSender', () => {
             const output = await companyAddressRequestSender.searchAddresses(
                 'b2b-token',
                 'main st',
-                { first: 5, timeout },
+                { first: 5, isShipping: true, timeout },
             );
 
             expect(graphQLRequestSender.query).toHaveBeenCalledWith(
                 SearchCompanyAddressesDocument,
-                { searchQuery: 'main st', first: 5 },
+                { searchQuery: 'main st', first: 5, isShipping: true, isBilling: undefined },
                 { token: 'b2b-token', timeout },
             );
             expect(output).toEqual(result);
+        });
+
+        it('forwards the billing filter as a query variable', async () => {
+            await companyAddressRequestSender.searchAddresses('b2b-token', 'main st', {
+                isBilling: true,
+            });
+
+            expect(graphQLRequestSender.query).toHaveBeenCalledWith(
+                SearchCompanyAddressesDocument,
+                {
+                    searchQuery: 'main st',
+                    first: undefined,
+                    isShipping: undefined,
+                    isBilling: true,
+                },
+                { token: 'b2b-token', timeout: undefined },
+            );
         });
 
         it('omits the search filter when the query is empty', async () => {
@@ -43,7 +60,12 @@ describe('CompanyAddressRequestSender', () => {
 
             expect(graphQLRequestSender.query).toHaveBeenCalledWith(
                 SearchCompanyAddressesDocument,
-                { searchQuery: null, first: undefined },
+                {
+                    searchQuery: null,
+                    first: undefined,
+                    isShipping: undefined,
+                    isBilling: undefined,
+                },
                 { token: 'b2b-token', timeout: undefined },
             );
         });

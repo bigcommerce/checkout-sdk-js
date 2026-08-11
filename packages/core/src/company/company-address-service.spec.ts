@@ -43,7 +43,11 @@ describe('CompanyAddressService', () => {
             const service = createService(store);
             const timeout = createTimeout();
 
-            const output = await service.searchAddresses('main st', { first: 5, timeout });
+            const output = await service.searchAddresses('main st', {
+                first: 5,
+                isBilling: true,
+                timeout,
+            });
 
             expect(storefrontTokenRequestSender.createStorefrontToken).toHaveBeenCalledWith(
                 'b2b-token',
@@ -59,7 +63,7 @@ describe('CompanyAddressService', () => {
             expect(requestSender.searchAddresses).toHaveBeenCalledWith(
                 'storefront-token',
                 'main st',
-                { first: 5, timeout },
+                { first: 5, isBilling: true, timeout },
             );
             expect(output).toEqual(result);
         });

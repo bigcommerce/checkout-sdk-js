@@ -796,7 +796,7 @@ export default class CheckoutService {
      * @param searchQuery - The text to match addresses against. Pass an empty
      * string to list the most recently created addresses instead of searching.
      * @param options - Options for the search, such as the maximum number of
-     * addresses to return.
+     * addresses to return, or restricting results to shipping/billing addresses.
      * @returns A promise that resolves to the search payload returned by the
      * GraphQL API. `company` is `null` when the shopper is not signed in or
      * the store does not have B2B enabled.
