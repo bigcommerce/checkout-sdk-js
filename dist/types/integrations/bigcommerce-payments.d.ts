@@ -687,6 +687,7 @@ declare class BigCommercePaymentsFastlaneCustomerStrategy implements CustomerStr
     private paymentIntegrationService;
     private bigCommercePaymentsSdk;
     private bigCommercePaymentsFastlaneUtils;
+    private options?;
     constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsSdk: PayPalSdkHelper, bigCommercePaymentsFastlaneUtils: BigCommercePaymentsFastlaneUtils);
     initialize(options: CustomerInitializeOptions & WithBigCommercePaymentsFastlaneCustomerInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
@@ -706,6 +707,7 @@ declare class BigCommercePaymentsFastlaneCustomerStrategy implements CustomerStr
      *
      */
     private getFastlaneStyles;
+    private handleErrorLog;
 }
 
 /**
@@ -778,6 +780,10 @@ declare interface BigCommercePaymentsFastlanePaymentInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: PayPalFastlaneStylesOption;
+    /**
+     * Method that will only log errors with no-blocking flow
+     */
+    onErrorLog?: (error: unknown) => void;
 }
 
 declare class BigCommercePaymentsFastlanePaymentStrategy implements PaymentStrategy {
@@ -843,6 +849,7 @@ declare class BigCommercePaymentsFastlanePaymentStrategy implements PaymentStrat
      */
     private isBigcommercePaymentsFastlaneThreeDSAvailable;
     private handleError;
+    private handleErrorLog;
 }
 
 declare interface BigCommercePaymentsFields {

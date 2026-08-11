@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.955.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.954.1...v1.955.0) (2026-08-11)
+
+
+### Features
+
+* **payment:** PAYPAL-6856 added error logger for BCP FL ([#3349](https://github.com/bigcommerce/checkout-sdk-js/issues/3349)) ([b4ec1d8](https://github.com/bigcommerce/checkout-sdk-js/commit/b4ec1d87044ed5713e7d38f70ad8fcd43f831b19))
+
 ### [1.954.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.954.0...v1.954.1) (2026-08-11)
 
 ## [1.954.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.953.0...v1.954.0) (2026-08-11)

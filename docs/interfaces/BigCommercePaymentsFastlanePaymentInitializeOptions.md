@@ -90,6 +90,24 @@ Callback that handles errors
 
 ***
 
+### onErrorLog?
+
+> `optional` **onErrorLog?**: (`error`) => `void`
+
+Method that will only log errors with no-blocking flow
+
+#### Parameters
+
+##### error
+
+`unknown`
+
+#### Returns
+
+`void`
+
+***
+
 ### onInit?
 
 > `optional` **onInit?**: (`renderPayPalCardComponent`) => `void`
