@@ -1662,7 +1662,7 @@ string to list the most recently created addresses instead of searching.
 [`CompanyAddressSearchOptions`](../interfaces/CompanyAddressSearchOptions.md)
 
 Options for the search, such as the maximum number of
-addresses to return.
+addresses to return, or restricting results to shipping/billing addresses.
 
 #### Returns
 

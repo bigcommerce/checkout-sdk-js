@@ -20,6 +20,18 @@ A set of options for configuring an asynchronous request.
 
 ***
 
+### isBilling?
+
+> `optional` **isBilling?**: `boolean`
+
+***
+
+### isShipping?
+
+> `optional` **isShipping?**: `boolean`
+
+***
+
 ### params?
 
 > `optional` **params?**: `object`
