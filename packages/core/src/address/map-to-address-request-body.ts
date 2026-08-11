@@ -2,44 +2,37 @@ import { CustomerAddress } from '../customer';
 
 import Address, { AddressRequestBody } from './address';
 
-type AddressWithB2BMetadata = Partial<Address> & Pick<Partial<CustomerAddress>, 'b2b'>;
+type AddressWithB2BFields = Partial<Address> &
+    Pick<
+        Partial<CustomerAddress>,
+        'isShipping' | 'isBilling' | 'isDefaultShipping' | 'isDefaultBilling'
+    >;
 
 /**
- * Strips the `CustomerAddress`-only `b2b` metadata object from an address-like
- * object so it can be sent to the API, hoisting its `extraFields` to the top
- * level of the payload where the API accepts them. Every other field —
- * including `id`, `type`, `country` and `shouldSaveAddress` — is preserved,
+ * Strips the `CustomerAddress`-only B2B fields (`isShipping`, `isBilling`,
+ * `isDefaultShipping`, `isDefaultBilling`) from an address-like object so it
+ * can be sent to the API. Every other field — including `id`, `type`,
+ * `country`, `label`, `extraFields` and `shouldSaveAddress` — is preserved,
  * so this is a behaviour-safe replacement for callers that previously
  * forwarded a selected `CustomerAddress` straight to an update call.
  */
 export default function mapToAddressRequestBody(
-    address: AddressRequestBody & AddressWithB2BMetadata,
+    address: AddressRequestBody & AddressWithB2BFields,
 ): AddressRequestBody;
 
 export default function mapToAddressRequestBody(
-    address: AddressWithB2BMetadata,
+    address: AddressWithB2BFields,
 ): Partial<AddressRequestBody>;
 
 export default function mapToAddressRequestBody(
-    address: AddressWithB2BMetadata,
+    address: AddressWithB2BFields,
 ): Partial<AddressRequestBody> {
-    const { b2b, ...requestBody } = address;
+    const { isShipping, isBilling, isDefaultShipping, isDefaultBilling, ...requestBody } = address;
 
     // The API currently defaults shouldSaveAddress to true. We decided to handle this on the FE
     // by consistently sending false as the default on 24 July 2026.
-    const requestBodyWithSaveFlag = {
+    return {
         ...requestBody,
         shouldSaveAddress: requestBody.shouldSaveAddress ?? false,
-    };
-
-    if (!b2b) {
-        return requestBodyWithSaveFlag;
-    }
-
-    return {
-        ...requestBodyWithSaveFlag,
-        extraFields: requestBodyWithSaveFlag.extraFields?.length
-            ? requestBodyWithSaveFlag.extraFields
-            : b2b.extraFields,
     };
 }

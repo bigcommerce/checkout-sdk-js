@@ -37,17 +37,15 @@ describe('mapToAddressRequestBody()', () => {
         });
     });
 
-    it('strips CustomerAddress b2b metadata and hoists extraFields', () => {
+    it('strips flat CustomerAddress B2B fields and keeps top-level extraFields', () => {
         const customerAddress = {
             ...baseAddress,
-            b2b: {
-                isShipping: true,
-                isBilling: false,
-                isDefaultShipping: true,
-                isDefaultBilling: false,
-                label: 'Head Office',
-                extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
-            },
+            extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
+            label: 'Head Office',
+            isShipping: true,
+            isBilling: false,
+            isDefaultShipping: true,
+            isDefaultBilling: false,
         };
 
         const result = mapToAddressRequestBody(customerAddress);
@@ -55,48 +53,13 @@ describe('mapToAddressRequestBody()', () => {
         expect(result).toEqual({
             ...baseAddress,
             extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
+            label: 'Head Office',
             shouldSaveAddress: false,
         });
-        expect(result).not.toHaveProperty('b2b');
-        expect(result).not.toHaveProperty('label');
-    });
-
-    it('does not overwrite top-level extraFields with b2b values', () => {
-        const customerAddress = {
-            ...baseAddress,
-            extraFields: [{ fieldId: '200', fieldValue: 'Explicit' }],
-            b2b: {
-                isShipping: true,
-                isBilling: false,
-                isDefaultShipping: true,
-                isDefaultBilling: false,
-                label: 'Head Office',
-                extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
-            },
-        };
-
-        const result = mapToAddressRequestBody(customerAddress);
-
-        expect(result).toHaveProperty('extraFields', [{ fieldId: '200', fieldValue: 'Explicit' }]);
-    });
-
-    it('falls back to b2b extraFields when top-level extraFields is empty', () => {
-        const customerAddress = {
-            ...baseAddress,
-            extraFields: [],
-            b2b: {
-                isShipping: true,
-                isBilling: false,
-                isDefaultShipping: true,
-                isDefaultBilling: false,
-                label: 'Head Office',
-                extraFields: [{ fieldId: '100', fieldValue: 'Acme' }],
-            },
-        };
-
-        const result = mapToAddressRequestBody(customerAddress);
-
-        expect(result).toHaveProperty('extraFields', [{ fieldId: '100', fieldValue: 'Acme' }]);
+        expect(result).not.toHaveProperty('isShipping');
+        expect(result).not.toHaveProperty('isBilling');
+        expect(result).not.toHaveProperty('isDefaultShipping');
+        expect(result).not.toHaveProperty('isDefaultBilling');
     });
 
     it('preserves id and type', () => {
