@@ -90,8 +90,11 @@ export enum ResultCode {
     IdentifyShopper = 'IdentifyShopper',
 }
 
+export const FAILED_CHECKOUT_ATTEMPT_ID = 'fetch-checkoutAttemptId-failed';
+
 interface AdyenPaymentMethodState {
     type: string;
+    checkoutAttemptId?: string;
 }
 
 interface WechatDataPaymentMethodState {

@@ -16,6 +16,7 @@ import {
     AdyenV3PaymentMethodInitializationData,
     AdyenV3ScriptLoader,
     CardStateErrors,
+    FAILED_CHECKOUT_ATTEMPT_ID,
     isBoletoState,
     isCardState,
     WithAdyenV3PaymentInitializeOptions,
@@ -189,6 +190,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                             },
                             origin: window.location.origin,
                             browser_info: getBrowserInfo(),
+                            checkout_attempt_id: this._getCheckoutAttemptId(componentState),
                             set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                         },
                     },
@@ -276,6 +278,20 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
     private _updateComponentState(componentState: AdyenComponentEventState) {
         this.componentState = componentState;
+    }
+
+    private _getCheckoutAttemptId(componentState?: AdyenComponentEventState): string | null {
+        if (!componentState || !isCardState(componentState)) {
+            return null;
+        }
+
+        const { checkoutAttemptId } = componentState.data.paymentMethod;
+
+        if (!checkoutAttemptId || checkoutAttemptId === FAILED_CHECKOUT_ATTEMPT_ID) {
+            return null;
+        }
+
+        return checkoutAttemptId;
     }
 
     private _getLocale(): string | undefined {

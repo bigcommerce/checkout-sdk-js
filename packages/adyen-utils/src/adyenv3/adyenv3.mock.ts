@@ -119,6 +119,7 @@ export function getComponentCCEventState(isValid = true): AdyenComponentEventSta
                 encryptedSecurityCode: 'ENCRYPTED_CVV',
                 holderName: 'John Smith',
                 type: AdyenPaymentMethodType.CreditCard,
+                checkoutAttemptId: 'CHECKOUT_ATTEMPT_ID',
             },
             installments: {
                 value: 10,
