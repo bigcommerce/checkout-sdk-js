@@ -62,6 +62,14 @@ export { WithBigCommercePaymentsCreditCardsPaymentInitializeOptions } from './bi
 
 /**
  *
+ * BigCommercePayments Invoices strategy
+ *
+ */
+export { default as createBigCommercePaymentsInvoicesPaymentStrategy } from './bigcommerce-payments-invoices/create-bigcommerce-payments-invoices-payment-strategy';
+export { WithBigCommercePaymentsInvoicesPaymentInitializeOptions } from './bigcommerce-payments-invoices/bigcommerce-payments-invoices-payment-initialize-options';
+
+/**
+ *
  * BigCommercePayments Alternative methods strategies
  *
  */
