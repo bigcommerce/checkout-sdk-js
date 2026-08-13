@@ -12,6 +12,12 @@
 
 ## Properties
 
+### checkoutAttemptId?
+
+> `optional` **checkoutAttemptId?**: `string`
+
+***
+
 ### type
 
 > **type**: `string`

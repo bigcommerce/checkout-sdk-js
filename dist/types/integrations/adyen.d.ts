@@ -51,6 +51,7 @@ declare class Adyenv3PaymentStrategy implements PaymentStrategy {
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
     private _updateComponentState;
+    private _getCheckoutAttemptId;
     private _getLocale;
     private _getAdyenClient;
     private _getPaymentInitializeOptions;

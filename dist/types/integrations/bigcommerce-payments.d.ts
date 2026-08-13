@@ -1275,6 +1275,23 @@ declare class BigCommercePaymentsPayLaterPaymentStrategy implements PaymentStrat
     private renderMessages;
 }
 
+declare interface BigCommercePaymentsPayLaterWalletInitializeOptions {
+    cartId: string;
+    currency: {
+        code: string;
+    };
+    initializationData: string;
+    clientToken: string;
+}
+
+declare class BigCommercePaymentsPayLaterWalletStrategy implements CheckoutButtonStrategy {
+    private bigCommercePaymentsPayLaterWalletService;
+    constructor(bigCommercePaymentsPayLaterWalletService: PaypalCommerceWalletService);
+    initialize(options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsPayLaterWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
+}
+
 /**
  *
  * BigCommerce Payments Payment fields
@@ -2055,6 +2072,10 @@ declare interface WithBigCommercePaymentsPayLaterPaymentInitializeOptions {
     bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterPaymentInitializeOptions;
 }
 
+declare interface WithBigCommercePaymentsPayLaterWalletInitializeOptions {
+    bigcommerce_paymentspaypalcredit?: BigCommercePaymentsPayLaterWalletInitializeOptions;
+}
+
 declare interface WithBigCommercePaymentsPaymentInitializeOptions {
     bigcommerce_payments?: BigCommercePaymentsPaymentInitializeOptions;
 }
@@ -2116,6 +2137,10 @@ export declare const createBigCommercePaymentsPayLaterCustomerStrategy: import("
 }>;
 
 export declare const createBigCommercePaymentsPayLaterPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsPayLaterPaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createBigCommercePaymentsPayLaterWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<BigCommercePaymentsPayLaterWalletStrategy>, {
     id: string;
 }>;
 

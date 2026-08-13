@@ -12,6 +12,16 @@
 
 ## Properties
 
+### checkoutAttemptId?
+
+> `optional` **checkoutAttemptId?**: `string`
+
+#### Inherited from
+
+[`AdyenPaymentMethodState`](AdyenPaymentMethodState.md).[`checkoutAttemptId`](AdyenPaymentMethodState.md#checkoutattemptid)
+
+***
+
 ### encryptedCardNumber
 
 > **encryptedCardNumber**: `string`

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.957.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.956.0...v1.957.0) (2026-08-13)
+
+
+### Features
+
+* **payment:** PAYPAL-6494 add BCP pay later wallet strategy ([#3358](https://github.com/bigcommerce/checkout-sdk-js/issues/3358)) ([92033ed](https://github.com/bigcommerce/checkout-sdk-js/commit/92033edfece362a64d3e8713aecff3ca1d6d4580))
+* **payment:** PI-5537 Send Adyen checkoutAttemptId for vaulted instruments ([#3352](https://github.com/bigcommerce/checkout-sdk-js/issues/3352)) ([3fe0b5a](https://github.com/bigcommerce/checkout-sdk-js/commit/3fe0b5a2c0df717ac132af76ddec8e200d370d9d))
+
 ## [1.956.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.955.0...v1.956.0) (2026-08-11)
 
 

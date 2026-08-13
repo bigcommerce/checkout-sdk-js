@@ -251,6 +251,7 @@ declare interface AdyenIdealComponentOptions extends AdyenBaseCardComponentOptio
 
 declare interface AdyenPaymentMethodState {
     type: string;
+    checkoutAttemptId?: string;
 }
 
 declare interface AdyenPlaceholderData {
