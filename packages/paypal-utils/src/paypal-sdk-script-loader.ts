@@ -216,18 +216,18 @@ export default class PayPalSdkScriptLoader {
         const cardFieldsComponent: PayPalSdkComponents = initializesOnCheckoutPage
             ? ['card-fields']
             : [];
-        const disableFunding: FundingType = [
+        const disableFunding: FundingType = this.filterFundingOptions([
             ...disableCardFunding,
             ...disableCreditFunding,
             ...disableVenmoFunding,
             ...disableAPMsFunding,
-        ];
-        const enableFunding: FundingType = [
+        ]);
+        const enableFunding: FundingType = this.filterFundingOptions([
             ...enableCardFunding,
             ...enableCreditFunding,
             ...enableVenmoFunding,
             ...enabledAlternativePaymentMethods,
-        ];
+        ]);
 
         const locale = transformLocaleToPayPalFormat(storeLanguage);
 
@@ -366,9 +366,11 @@ export default class PayPalSdkScriptLoader {
             enabledAlternativePaymentMethods = [],
         } = initializationData;
 
-        const enableAPMsFunding = enabledAlternativePaymentMethods;
-        const disableAPMsFunding = availableAlternativePaymentMethods.filter(
-            (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
+        const enableAPMsFunding = this.filterFundingOptions(enabledAlternativePaymentMethods);
+        const disableAPMsFunding = this.filterFundingOptions(
+            availableAlternativePaymentMethods.filter(
+                (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
+            ),
         );
 
         const locale = transformLocaleToPayPalFormat(storeLanguage);
@@ -430,6 +432,18 @@ export default class PayPalSdkScriptLoader {
      * Utils methods
      *
      */
+    private filterFundingOptions(fundingOptions: FundingType | undefined): FundingType {
+        const unsupportedFundingTypes = ['klarna', 'afterpay'];
+
+        if (!fundingOptions) {
+            return [];
+        }
+
+        return fundingOptions.filter(
+            (fundingOption) => !unsupportedFundingTypes.includes(fundingOption),
+        );
+    }
+
     private transformConfig<T extends Record<string, unknown>>(config: T): Record<string, string> {
         let transformedConfig = {};
 

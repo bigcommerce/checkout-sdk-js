@@ -44,6 +44,9 @@ export { WithBigCommercePaymentsPayLaterCustomerInitializeOptions } from './bigc
 export { default as createBigCommercePaymentsPayLaterPaymentStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-payment-strategy';
 export { WithBigCommercePaymentsPayLaterPaymentInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-payment-initialize-options';
 
+export { default as createBigCommercePaymentsPayLaterWalletStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-wallet-strategy';
+export { WithBigCommercePaymentsPayLaterWalletInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-wallet-initialize-options';
+
 /**
  *
  * BigCommercePayments RatePay strategy
