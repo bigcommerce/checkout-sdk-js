@@ -274,6 +274,24 @@ describe('PayPalSdkLoader', () => {
             });
         });
 
+        it('filters afterpay and klarna from disable-funding APMs', async () => {
+            const paymentMethodProp = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    availableAlternativePaymentMethods: ['bancontact', 'afterpay', 'klarna'],
+                    enabledAlternativePaymentMethods: ['bancontact'],
+                },
+            };
+
+            await subject.getPayPalSDK(paymentMethodProp, 'USD', 'en-US');
+
+            const paypalSdkScriptSrc =
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=bancontact&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture&locale=en_US';
+
+            expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, expect.any(Object));
+        });
+
         it('loads PayPalSDK script with commit flag as false', async () => {
             await subject.getPayPalSDK(paymentMethod, 'USD', 'en-US', false);
 
