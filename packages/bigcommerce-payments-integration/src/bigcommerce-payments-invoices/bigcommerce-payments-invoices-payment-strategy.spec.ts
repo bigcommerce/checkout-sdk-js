@@ -41,11 +41,9 @@ describe('BigCommercePaymentsInvoicesPaymentStrategy', () => {
 
     describe('#execute()', () => {
         it('throws an error if payload.payment is not provided', async () => {
-            try {
-                await strategy.execute({ ...getOrderRequestBody(), payment: undefined });
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentArgumentInvalidError);
-            }
+            await expect(
+                strategy.execute({ ...getOrderRequestBody(), payment: undefined }),
+            ).rejects.toBeInstanceOf(PaymentArgumentInvalidError);
         });
 
         it('throws an error if payload.payment.methodId is not provided', async () => {
@@ -54,11 +52,9 @@ describe('BigCommercePaymentsInvoicesPaymentStrategy', () => {
                 payment: { methodId: undefined },
             } as unknown as OrderRequestBody;
 
-            try {
-                await strategy.execute(payload);
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentArgumentInvalidError);
-            }
+            await expect(strategy.execute(payload)).rejects.toBeInstanceOf(
+                PaymentArgumentInvalidError,
+            );
         });
 
         it('submits order with provided data', async () => {
