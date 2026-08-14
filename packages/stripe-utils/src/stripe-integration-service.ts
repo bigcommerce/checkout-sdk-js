@@ -19,7 +19,6 @@ import {
     StripeConfirmPaymentData,
     StripeElement,
     StripeElements,
-    StripeElementType,
     StripeError,
     StripePaymentIntentStatus,
     StripeStringConstants,
@@ -28,57 +27,10 @@ import StripePaymentInitializeOptions from './stripe-initialize-options';
 import StripeScriptLoader from './stripe-script-loader';
 
 export default class StripeIntegrationService {
-    private isMounted = false;
-    private checkoutEventsUnsubscribe?: () => void;
-
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private scriptLoader: StripeScriptLoader,
     ) {}
-
-    deinitialize(): void {
-        this.checkoutEventsUnsubscribe?.();
-        this.isMounted = false;
-    }
-
-    initCheckoutEventsSubscription(
-        gatewayId: string,
-        methodId: string,
-        stripeInitializationOptions: StripePaymentInitializeOptions,
-        stripeElements?: StripeElements,
-    ): void {
-        this.checkoutEventsUnsubscribe = this.paymentIntegrationService.subscribe(
-            async () => {
-                const paymentElement = stripeElements?.getElement(StripeElementType.PAYMENT);
-
-                if (!paymentElement) {
-                    return;
-                }
-
-                try {
-                    await this.updateStripePaymentIntent(gatewayId, methodId);
-                } catch (error) {
-                    if (this.isMounted) {
-                        paymentElement.unmount();
-                        this.isMounted = false;
-                    }
-
-                    if (error instanceof Error) {
-                        stripeInitializationOptions.onError?.(error);
-                    }
-
-                    return;
-                }
-
-                if (!this.isMounted) {
-                    await stripeElements?.fetchUpdates();
-                    this.mountElement(paymentElement, stripeInitializationOptions.containerId);
-                }
-            },
-            (state) => state.getCheckout()?.outstandingBalance,
-            (state) => state.getCheckout()?.coupons,
-        );
-    }
 
     mountElement(stripeElement: StripeElement, containerId: string): void {
         if (!document.getElementById(containerId)) {
@@ -86,7 +38,6 @@ export default class StripeIntegrationService {
         }
 
         stripeElement.mount(`#${containerId}`);
-        this.isMounted = true;
     }
 
     mapAppearanceVariables(styles: NonNullable<StripePaymentInitializeOptions['style']>) {

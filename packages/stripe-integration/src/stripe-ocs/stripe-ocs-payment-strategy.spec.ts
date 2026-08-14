@@ -91,7 +91,6 @@ describe('StripeOCSPaymentStrategy', () => {
                     stripeocs: undefined,
                 }),
             ).rejects.toThrow(NotInitializedError);
-            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if no container id in stripe options', async () => {
@@ -105,7 +104,6 @@ describe('StripeOCSPaymentStrategy', () => {
                     },
                 }),
             ).rejects.toThrow(NotInitializedError);
-            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if no gatewayId option', async () => {
@@ -115,7 +113,6 @@ describe('StripeOCSPaymentStrategy', () => {
                     gatewayId: undefined,
                 }),
             ).rejects.toThrow(InvalidArgumentError);
-            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if payment method does not like stripe payment method', async () => {
@@ -185,7 +182,6 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(onErrorMock).not.toHaveBeenCalled();
             expect(togglePreloaderMock).toHaveBeenCalled();
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
-            expect(stripeIntegrationService.initCheckoutEventsSubscription).toHaveBeenCalled();
         });
 
         it('should initialize and get postal code when shipping address unavailable', async () => {
@@ -1675,7 +1671,6 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.initialize(getStripeOCSInitializeOptionsMock());
             await stripeOCSPaymentStrategy.deinitialize();
 
-            expect(stripeIntegrationService.deinitialize).toHaveBeenCalled();
             expect(unmountMock).toHaveBeenCalled();
             expect(destroyMock).toHaveBeenCalled();
         });
@@ -1690,9 +1685,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 }),
             );
 
-            await stripeOCSPaymentStrategy.deinitialize();
-
-            expect(stripeIntegrationService.deinitialize).toHaveBeenCalled();
+            await expect(stripeOCSPaymentStrategy.deinitialize()).resolves.toBeUndefined();
         });
     });
 });

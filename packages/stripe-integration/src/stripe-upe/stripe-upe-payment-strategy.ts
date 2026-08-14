@@ -83,13 +83,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             stripeupe.onError?.(error),
         );
 
-        this.stripeIntegrationService.initCheckoutEventsSubscription(
-            gatewayId,
-            methodId,
-            stripeupe,
-            this._stripeElements,
-        );
-
         return Promise.resolve();
     }
 
@@ -162,7 +155,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     deinitialize(): Promise<void> {
         this._stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
-        this.stripeIntegrationService.deinitialize();
         this._stripeElements = undefined;
         this._stripeUPEClient = undefined;
 

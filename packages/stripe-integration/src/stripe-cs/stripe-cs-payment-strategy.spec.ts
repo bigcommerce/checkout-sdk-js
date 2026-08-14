@@ -98,7 +98,6 @@ describe('StripeOCSPaymentStrategy', () => {
                     stripeocs: undefined,
                 }),
             ).rejects.toThrow(NotInitializedError);
-            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if no container id in stripe options', async () => {
@@ -112,7 +111,6 @@ describe('StripeOCSPaymentStrategy', () => {
                     },
                 }),
             ).rejects.toThrow(NotInitializedError);
-            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if no gatewayId option', async () => {
@@ -122,7 +120,6 @@ describe('StripeOCSPaymentStrategy', () => {
                     gatewayId: undefined,
                 }),
             ).rejects.toThrow(NotInitializedError);
-            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if payment method does not like stripe payment method', async () => {
