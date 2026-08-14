@@ -455,11 +455,147 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('throws error if payment method has not been loaded', async () => {
+            expect.assertions(2);
+
             try {
                 await from(actionCreator.deinitialize({ methodId: 'unknown' })(store)).toPromise();
             } catch (action) {
                 expect((action as Action).payload).toBeInstanceOf(MissingDataError);
             }
+
+            expect(strategy.deinitialize).not.toHaveBeenCalled();
+        });
+
+        describe('when the payment method is removed after initialization', () => {
+            let storeWithMethodRemoved: CheckoutStore;
+
+            beforeEach(async () => {
+                jest.spyOn(strategy, 'initialize').mockReturnValue(
+                    Promise.resolve(store.getState()),
+                );
+
+                // Must run against a store where the method is not already initialized,
+                // otherwise `initialize` short-circuits and nothing is cached.
+                await from(
+                    actionCreator.initialize({
+                        methodId: method.id,
+                        gatewayId: method.gateway,
+                    })(createCheckoutStore(state)),
+                ).toPromise();
+
+                // Do not `merge` the payment methods data - lodash merges arrays
+                // element-wise, which would leave the method in place.
+                storeWithMethodRemoved = createCheckoutStore({
+                    ...merge({}, state, {
+                        paymentStrategies: {
+                            data: { [method.id]: { isInitialized: true } },
+                        },
+                    }),
+                    paymentMethods: { ...state.paymentMethods, data: [] },
+                });
+            });
+
+            it('deinitializes the strategy using the cached payment method', async () => {
+                const actions = await from(
+                    actionCreator.deinitialize({
+                        methodId: method.id,
+                        gatewayId: method.gateway,
+                    })(storeWithMethodRemoved),
+                )
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(strategy.deinitialize).toHaveBeenCalled();
+                expect(actions).toEqual([
+                    {
+                        type: PaymentStrategyActionType.DeinitializeRequested,
+                        meta: { methodId: method.id, gatewayId: method.gateway },
+                    },
+                    {
+                        type: PaymentStrategyActionType.DeinitializeSucceeded,
+                        meta: { methodId: method.id, gatewayId: method.gateway },
+                    },
+                ]);
+            });
+
+            it('resolves the same strategy instance that was initialized', async () => {
+                await from(
+                    actionCreator.deinitialize({
+                        methodId: method.id,
+                        gatewayId: method.gateway,
+                    })(storeWithMethodRemoved),
+                ).toPromise();
+
+                expect(registry.getByMethod).toHaveBeenCalledWith(method);
+            });
+
+            it('does nothing if the removed method was never initialized', async () => {
+                const storeWithoutInitialization = createCheckoutStore({
+                    ...state,
+                    paymentMethods: { ...state.paymentMethods, data: [] },
+                });
+
+                const actions = await from(
+                    actionCreator.deinitialize({
+                        methodId: method.id,
+                        gatewayId: method.gateway,
+                    })(storeWithoutInitialization),
+                )
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(actions).toEqual([]);
+                expect(strategy.deinitialize).not.toHaveBeenCalled();
+            });
+        });
+
+        it('deinitializes a removed method that was initialized with a gateway', async () => {
+            const gatewayMethod = { ...method, id: 'credit_card', gateway: 'checkoutcom' };
+            // The strategy selector keys gateway methods as `methodId.gatewayId`.
+            const cacheKey = `${gatewayMethod.id}.${gatewayMethod.gateway}`;
+
+            const storeWithGatewayMethod = createCheckoutStore({
+                ...state,
+                paymentMethods: { ...state.paymentMethods, data: [gatewayMethod] },
+            });
+
+            jest.spyOn(strategy, 'initialize').mockReturnValue(Promise.resolve(store.getState()));
+
+            await from(
+                actionCreator.initialize({
+                    methodId: gatewayMethod.id,
+                    gatewayId: gatewayMethod.gateway,
+                })(storeWithGatewayMethod),
+            ).toPromise();
+
+            const storeWithMethodRemoved = createCheckoutStore({
+                ...merge({}, state, {
+                    paymentStrategies: { data: { [cacheKey]: { isInitialized: true } } },
+                }),
+                paymentMethods: { ...state.paymentMethods, data: [] },
+            });
+
+            const actions = await from(
+                actionCreator.deinitialize({
+                    methodId: gatewayMethod.id,
+                    gatewayId: gatewayMethod.gateway,
+                })(storeWithMethodRemoved),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(registry.getByMethod).toHaveBeenCalledWith(gatewayMethod);
+            expect(strategy.deinitialize).toHaveBeenCalled();
+            expect(actions).toEqual([
+                {
+                    type: PaymentStrategyActionType.DeinitializeRequested,
+                    meta: { methodId: gatewayMethod.id, gatewayId: gatewayMethod.gateway },
+                },
+                {
+                    type: PaymentStrategyActionType.DeinitializeSucceeded,
+                    meta: { methodId: gatewayMethod.id, gatewayId: gatewayMethod.gateway },
+                },
+            ]);
         });
     });
 

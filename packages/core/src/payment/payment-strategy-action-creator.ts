@@ -45,6 +45,13 @@ import { PaymentStrategy } from './strategies';
 export default class PaymentStrategyActionCreator {
     private _paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator;
 
+    /**
+     * Methods with a live strategy. A payment methods reload can drop a method from
+     * state while its strategy is still running, and tearing that strategy down needs
+     * the original method object to resolve it.
+     */
+    private _initializedMethodsCache = new Map<string, PaymentMethod>();
+
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
         private _strategyRegistryV2: PaymentStrategyRegistryV2,
@@ -207,12 +214,22 @@ export default class PaymentStrategyActionCreator {
                             gatewayId,
                         }),
                     ),
-                    promise.then(() =>
-                        createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, {
-                            methodId,
-                            gatewayId,
-                        }),
-                    ),
+                    promise.then(() => {
+                        // Retained on success only, so this mirrors `isInitialized`.
+                        this._initializedMethodsCache.set(
+                            this._getCacheKey(methodId, gatewayId),
+                            method,
+                        );
+
+                        return createAction(
+                            PaymentStrategyActionType.InitializeSucceeded,
+                            undefined,
+                            {
+                                methodId,
+                                gatewayId,
+                            },
+                        );
+                    }),
                 );
             }).pipe(
                 catchError((error) =>
@@ -232,7 +249,13 @@ export default class PaymentStrategyActionCreator {
         return (store) =>
             defer(() => {
                 const state = store.getState();
-                const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
+                const cacheKey = this._getCacheKey(methodId, gatewayId);
+
+                // Anything never initialized is not cached, so an unknown method still
+                // throws below exactly as it did before.
+                const method =
+                    state.paymentMethods.getPaymentMethod(methodId, gatewayId) ??
+                    this._initializedMethodsCache.get(cacheKey);
 
                 if (!method) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -257,12 +280,19 @@ export default class PaymentStrategyActionCreator {
                             gatewayId,
                         }),
                     ),
-                    promise.then(() =>
-                        createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, {
-                            methodId,
-                            gatewayId,
-                        }),
-                    ),
+                    promise.then(() => {
+                        // Kept on failure, so a failed teardown can be retried.
+                        this._initializedMethodsCache.delete(cacheKey);
+
+                        return createAction(
+                            PaymentStrategyActionType.DeinitializeSucceeded,
+                            undefined,
+                            {
+                                methodId,
+                                gatewayId,
+                            },
+                        );
+                    }),
                 );
             }).pipe(
                 catchError((error) =>
@@ -279,6 +309,10 @@ export default class PaymentStrategyActionCreator {
         options?: PaymentRequestOptions,
     ): Observable<PaymentStrategyWidgetAction> {
         return this._paymentStrategyWidgetActionCreator.widgetInteraction(method, options);
+    }
+
+    private _getCacheKey(methodId: string, gatewayId?: string): string {
+        return gatewayId ? `${methodId}.${gatewayId}` : methodId;
     }
 
     private _getStrategy(method: PaymentMethod): PaymentStrategy | PaymentStrategyV2 {
