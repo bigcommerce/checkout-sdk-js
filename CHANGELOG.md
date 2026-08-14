@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.958.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.957.0...v1.958.0) (2026-08-14)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10199 deinitialize the initialized strategy on method lost after reload ([#3357](https://github.com/bigcommerce/checkout-sdk-js/issues/3357)) ([20a05b7](https://github.com/bigcommerce/checkout-sdk-js/commit/20a05b77d4202b555381ff085db217f25b6cd7db))
+
 ## [1.957.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.956.0...v1.957.0) (2026-08-13)
 
 
