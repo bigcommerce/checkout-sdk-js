@@ -14,7 +14,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { CardinalThreeDSecureToken } from './cardinal';
+import { CardinalThreeDSecureInitializationData, CardinalThreeDSecureToken } from './cardinal';
 import CardinalClient, { CardinalOrderData } from './cardinal-client';
 
 export default class CardinalThreeDSecureFlowV2 {
@@ -24,7 +24,14 @@ export default class CardinalThreeDSecureFlowV2 {
     ) {}
 
     async prepare(method: PaymentMethod): Promise<void> {
-        await this._cardinalClient.load(method.id, method.config.testMode);
+        const initializationData: CardinalThreeDSecureInitializationData =
+            method.initializationData ?? {};
+
+        await this._cardinalClient.load(
+            method.id,
+            method.config.testMode,
+            Boolean(initializationData.isCyberSourceUpdatedTestUrlEnabled),
+        );
     }
 
     async start(
