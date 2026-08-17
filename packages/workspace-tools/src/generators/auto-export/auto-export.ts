@@ -216,7 +216,7 @@ function createApiExtractorConfigs(
             compiler: {
                 overrideTsconfig: {
                     compilerOptions: {
-                        target: 'es5',
+                        target: 'es6',
                         module: 'esnext',
                         moduleResolution: 'node',
                         lib: ['dom', 'dom.iterable', 'esnext', 'scripthost'],

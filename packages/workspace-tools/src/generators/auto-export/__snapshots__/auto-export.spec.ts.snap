@@ -10,7 +10,7 @@ exports[`autoExport() export matching members from files to another file 1`] = `
     "compiler": {
         "overrideTsconfig": {
             "compilerOptions": {
-                "target": "es5",
+                "target": "es6",
                 "module": "esnext",
                 "moduleResolution": "node",
                 "lib": [
