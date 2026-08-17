@@ -75,13 +75,6 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                 stripeocs.onError?.(error);
             }
         }
-
-        this.stripeIntegrationService.initCheckoutEventsSubscription(
-            gatewayId,
-            methodId,
-            stripeocs,
-            this.stripeElements,
-        );
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -132,7 +125,6 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         paymentElement?.unmount();
         paymentElement?.destroy();
-        this.stripeIntegrationService.deinitialize();
         this.stripeElements = undefined;
         this.stripeClient = undefined;
 

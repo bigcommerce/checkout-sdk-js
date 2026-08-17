@@ -86,8 +86,6 @@ describe('StripeUPEPaymentStrategy', () => {
 
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'subscribe');
-
         jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue(getCart());
 
         stripeUPEIntegrationService = new StripeIntegrationService(
@@ -231,12 +229,6 @@ describe('StripeUPEPaymentStrategy', () => {
             await strategy.initialize(options);
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
-        });
-
-        it('loads subscribe once', async () => {
-            await strategy.initialize(options);
-
-            expect(paymentIntegrationService.subscribe).toHaveBeenCalledTimes(1);
         });
 
         it('does not load stripeUPE if initialization options are not provided', async () => {

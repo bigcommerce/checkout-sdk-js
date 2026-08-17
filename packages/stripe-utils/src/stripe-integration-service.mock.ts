@@ -9,8 +9,6 @@ import { getStripeJsMock } from './stripe.mock';
 
 export const getStripeIntegrationServiceMock = () =>
     ({
-        deinitialize: jest.fn(),
-        initCheckoutEventsSubscription: jest.fn(),
         mountElement: jest.fn(),
         mapAppearanceVariables: jest.fn(),
         mapInputAppearanceRules: jest.fn(),

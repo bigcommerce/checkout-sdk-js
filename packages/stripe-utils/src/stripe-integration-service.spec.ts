@@ -98,171 +98,13 @@ describe('StripeIntegrationService', () => {
         jest.clearAllMocks();
     });
 
-    describe('#deinitialize', () => {
-        it('should clear subscription', () => {
-            const subscriptionMock = jest.fn();
-
-            jest.spyOn(paymentIntegrationService, 'subscribe').mockImplementation(
-                () => subscriptionMock,
-            );
-
-            stripeIntegrationService.initCheckoutEventsSubscription(
-                gatewayId,
-                methodId,
-                stripeupeMock,
-                stripeElementsMock,
-            );
-            stripeIntegrationService.deinitialize();
-
-            expect(subscriptionMock).toHaveBeenCalled();
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            expect(stripeIntegrationService['isMounted']).toBe(false);
-        });
-
-        it('should not unsibscribe when subscription is not set', () => {
-            jest.spyOn(paymentIntegrationService, 'subscribe').mockImplementation(undefined);
-
-            stripeIntegrationService.initCheckoutEventsSubscription(
-                gatewayId,
-                methodId,
-                stripeupeMock,
-                stripeElementsMock,
-            );
-            stripeIntegrationService.deinitialize();
-
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            expect(stripeIntegrationService['checkoutEventsUnsubscribe']).toBeUndefined();
-        });
-    });
-
-    describe('#initCheckoutEventsSubscription', () => {
-        beforeEach(() => {
-            const state = paymentIntegrationService.getState();
-
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(state);
-            jest.spyOn(paymentIntegrationService, 'subscribe').mockImplementation(
-                (subscriber, ...filters) => {
-                    subscriber(state);
-                    filters.forEach((filter) => filter(state));
-
-                    return jest.fn();
-                },
-            );
-            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(getStripeMock());
-        });
-
-        it('skip subscription actions if no stripe elements initialized', () => {
-            stripeIntegrationService.initCheckoutEventsSubscription(
-                gatewayId,
-                methodId,
-                stripeupeMock,
-                undefined,
-            );
-
-            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
-        });
-
-        it('skip subscription actions if no stripe payment element found', () => {
-            stripeElementsMock.getElement = () => null;
-
-            stripeIntegrationService.initCheckoutEventsSubscription(
-                gatewayId,
-                methodId,
-                stripeupeMock,
-                stripeElementsMock,
-            );
-
-            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
-        });
-
-        it('throws error if loadPaymentMethod fails', async () => {
-            stripeupeMock.onError = jest.fn();
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValue(
-                new Error(),
-            );
-
-            stripeIntegrationService.initCheckoutEventsSubscription(
-                gatewayId,
-                methodId,
-                stripeupeMock,
-                stripeElementsMock,
-            );
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
-            expect(stripeupeMock.onError).toHaveBeenCalled();
-            expect(stripeElementMock.unmount).not.toHaveBeenCalled();
-        });
-
-        it('unmount stripe payment element if loadPaymentMethod fails', async () => {
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValue(
-                new Error(),
-            );
-            jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
-
-            stripeIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
-            stripeIntegrationService.initCheckoutEventsSubscription(
-                gatewayId,
-                methodId,
-                stripeupeMock,
-                stripeElementsMock,
-            );
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(stripeElementMock.unmount).toHaveBeenCalled();
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            expect(stripeIntegrationService['isMounted']).toBe(false);
-        });
-
-        it('mount stripe payment element if not mounted', async () => {
-            jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
-
-            stripeIntegrationService.initCheckoutEventsSubscription(
-                gatewayId,
-                methodId,
-                stripeupeMock,
-                stripeElementsMock,
-            );
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(stripeElementsMock.fetchUpdates).toHaveBeenCalled();
-            expect(stripeElementMock.mount).toHaveBeenCalled();
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            expect(stripeIntegrationService['isMounted']).toBe(true);
-        });
-
-        it('does not mount stripe payment element if already mounted', async () => {
-            jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
-
-            stripeIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
-            stripeIntegrationService.initCheckoutEventsSubscription(
-                gatewayId,
-                methodId,
-                stripeupeMock,
-                stripeElementsMock,
-            );
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(stripeElementsMock.fetchUpdates).not.toHaveBeenCalled();
-            expect(stripeElementMock.mount).toHaveBeenCalledTimes(1);
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            expect(stripeIntegrationService['isMounted']).toBe(true);
-        });
-    });
-
     describe('#mountElement', () => {
         it('should mount stripe element', () => {
             jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
 
             stripeIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
 
-            expect(stripeElementMock.mount).toHaveBeenCalled();
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            expect(stripeIntegrationService['isMounted']).toBe(true);
+            expect(stripeElementMock.mount).toHaveBeenCalledWith(`#${stripeupeMock.containerId}`);
         });
 
         it('should not mount stripe element if container is not found', () => {
@@ -271,8 +113,6 @@ describe('StripeIntegrationService', () => {
             stripeIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
 
             expect(stripeElementMock.mount).not.toHaveBeenCalled();
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            expect(stripeIntegrationService['isMounted']).toBe(false);
         });
     });
 
@@ -865,6 +705,13 @@ describe('StripeIntegrationService', () => {
     });
 
     describe('#updateStripePaymentIntent', () => {
+        beforeEach(() => {
+            const state = paymentIntegrationService.getState();
+
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(state);
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(getStripeMock());
+        });
+
         it('should trigger payment intent update', async () => {
             await stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
