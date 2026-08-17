@@ -140,6 +140,19 @@ describe('PaymentRequestTransformer', () => {
         );
     });
 
+    it('remaps bigcommerce_payments_invoices id to the bigcommerce_payments provider gateway', () => {
+        const paymentMethod = { ...getAuthorizenet(), id: 'bigcommerce_payments_invoices' };
+
+        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethod);
+
+        const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
+
+        expect(paymentRequestBodyResponse.paymentMethod).toEqual({
+            ...paymentMethod,
+            id: 'bigcommerce_payments',
+        });
+    });
+
     it('transforms from hosted form data', () => {
         const result = paymentRequestTransformer.transformWithHostedFormData(
             {

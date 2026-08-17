@@ -172,6 +172,15 @@ export default class PaymentRequestTransformer {
             return { ...paymentMethod, id: CheckoutButtonMethodType.BRAINTREE_PAYPAL };
         }
 
+        // BigCommerce Payments Invoices: the method is registered as
+        // `bigcommerce_payments_invoices`, but BigPay expects the provider gateway
+        // `bigcommerce_payments` with `method: 'invoice'`. The BigPay client's id mapper
+        // doesn't recognise this method, so it would otherwise fall through and send the
+        // raw method id as the gateway. Remap the id to the provider here.
+        if (paymentMethod.id === 'bigcommerce_payments_invoices') {
+            return { ...paymentMethod, id: 'bigcommerce_payments' };
+        }
+
         return paymentMethod;
     }
 
