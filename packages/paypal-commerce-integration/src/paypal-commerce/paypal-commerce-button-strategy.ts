@@ -66,6 +66,11 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             // Info: default checkout should not be loaded for BuyNow flow,
             // since there is no checkout session available for that.
             await this.paymentIntegrationService.loadDefaultCheckout();
+
+            const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
+            if (checkout.shouldExecuteSpamCheck) {
+                await this.paymentIntegrationService.verifyCheckoutSpamProtection();
+            }
         }
 
         // Info: we are using provided currency code for buy now cart,
