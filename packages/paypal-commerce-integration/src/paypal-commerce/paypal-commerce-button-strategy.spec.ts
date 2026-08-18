@@ -11,6 +11,7 @@ import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
     getCart,
+    getCheckout,
     getConfig,
     getConsignment,
     getShippingOption,
@@ -351,6 +352,39 @@ describe('PayPalCommerceButtonStrategy', () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(paymentIntegrationService.loadDefaultCheckout).not.toHaveBeenCalled();
+        });
+
+        it('verifies checkout spam protection when spam check should be executed', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
+                ...getCheckout(),
+                shouldExecuteSpamCheck: true,
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
+        });
+
+        it('does not verify checkout spam protection when spam check should not be executed', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
+                ...getCheckout(),
+                shouldExecuteSpamCheck: false,
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).not.toHaveBeenCalled();
+        });
+
+        it('does not verify checkout spam protection for Buy Now flow', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
+                ...getCheckout(),
+                shouldExecuteSpamCheck: true,
+            });
+
+            await strategy.initialize(buyNowInitializationOptions);
+
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).not.toHaveBeenCalled();
         });
 
         it('loads paypal commerce sdk script', async () => {
