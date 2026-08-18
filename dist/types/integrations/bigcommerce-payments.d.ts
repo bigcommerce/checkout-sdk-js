@@ -1065,6 +1065,15 @@ declare enum BigCommercePaymentsIntent {
     CAPTURE = "capture"
 }
 
+declare class BigCommercePaymentsInvoicesPaymentStrategy implements PaymentStrategy {
+    private paymentIntegrationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService);
+    initialize(): Promise<void>;
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
+    finalize(): Promise<void>;
+    deinitialize(): Promise<void>;
+}
+
 /**
  *
  * BigCommercePayments Messages
@@ -2125,6 +2134,10 @@ export declare const createBigCommercePaymentsFastlaneCustomerStrategy: import("
 }>;
 
 export declare const createBigCommercePaymentsFastlanePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsFastlanePaymentStrategy>, {
+    id: string;
+}>;
+
+export declare const createBigCommercePaymentsInvoicesPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsInvoicesPaymentStrategy>, {
     id: string;
 }>;
 

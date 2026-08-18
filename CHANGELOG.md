@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.959.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.958.2...v1.959.0) (2026-08-18)
+
+
+### Features
+
+* **payment:** PAYPAL-6698 add BigCommercePayments Invoices payment strategy ([#3355](https://github.com/bigcommerce/checkout-sdk-js/issues/3355)) ([1a71979](https://github.com/bigcommerce/checkout-sdk-js/commit/1a71979fafdd0a869cf32faef2eeee340b1d237e))
+
 ### [1.958.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.958.1...v1.958.2) (2026-08-18)
 
 
