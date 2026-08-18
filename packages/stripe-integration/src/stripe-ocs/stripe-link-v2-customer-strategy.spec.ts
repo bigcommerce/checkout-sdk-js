@@ -46,6 +46,18 @@ describe('StripeLinkV2CustomerStrategy', () => {
     let stripeIntegrationService: StripeIntegrationService;
     let loadingIndicator: LoadingIndicator;
     const stripePaymentMethod = getStripeOCSMock('optimized_checkout');
+    const checkoutSessionGatewayMock = {
+        ...getStripeOCSMock('checkout_session'),
+        initializationData: {
+            ...getStripeOCSMock().initializationData,
+            checkoutSessionEnabled: true,
+        },
+    };
+    const throwOnGatewayMethod = (methodId: string) => {
+        if (methodId === 'stripeocs') {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+    };
 
     const isLoading = jest.fn();
     let confirmPaymentMock: jest.Mock;
@@ -324,16 +336,11 @@ describe('StripeLinkV2CustomerStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...getStripeOCSMock('checkout_session'),
-                initializationData: {
-                    ...getStripeOCSMock().initializationData,
-                    checkoutSessionEnabled: true,
-                },
-            });
+            ).mockReturnValue(checkoutSessionGatewayMock);
 
             await strategy.initialize(initialiseOptions);
 
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledTimes(1);
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('stripeocs', {
                 params: { method: 'checkout_session' },
             });
@@ -342,9 +349,106 @@ describe('StripeLinkV2CustomerStrategy', () => {
         it('loads optimized_checkout payment method if checkout session is disabled and no stripe method is loaded yet', async () => {
             await strategy.initialize(initialiseOptions);
 
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledTimes(1);
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('stripeocs', {
                 params: { method: 'optimized_checkout' },
             });
+        });
+
+        it('reuses the resolved method id when the gateway payment method is no longer in the state', async () => {
+            await strategy.initialize(initialiseOptions);
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation((methodId) => {
+                throwOnGatewayMethod(methodId);
+
+                return stripePaymentMethod;
+            });
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledTimes(2);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenNthCalledWith(
+                2,
+                'stripeocs',
+                { params: { method: 'optimized_checkout' } },
+            );
+            expect(element.mount).toHaveBeenCalledWith('#checkout-button');
+        });
+
+        it('reuses the id of the already loaded stripe method when the state no longer has any stripe method', async () => {
+            const cachedPaymentMethod = getStripeOCSMock('checkout_session');
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockImplementation(
+                (methodId) => (methodId === 'checkout_session' ? cachedPaymentMethod : undefined),
+            );
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue(
+                undefined,
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation((methodId) => {
+                throwOnGatewayMethod(methodId);
+
+                return cachedPaymentMethod;
+            });
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledTimes(1);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('stripeocs', {
+                params: { method: 'checkout_session' },
+            });
+            expect(element.mount).toHaveBeenCalledWith('#checkout-button');
+        });
+
+        it('reuses the resolved checkout_session method id when the gateway payment method is no longer in the state', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(checkoutSessionGatewayMock);
+
+            await strategy.initialize(initialiseOptions);
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation((methodId) => {
+                throwOnGatewayMethod(methodId);
+
+                return checkoutSessionGatewayMock;
+            });
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledTimes(2);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenNthCalledWith(
+                2,
+                'stripeocs',
+                { params: { method: 'checkout_session' } },
+            );
+            expect(element.mount).toHaveBeenCalledWith('#checkout-button');
+        });
+
+        it('throws if the gateway payment method is not in the state and no method id has been resolved yet', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation(() => {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            });
+
+            await expect(strategy.initialize(initialiseOptions)).rejects.toThrow(MissingDataError);
+
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
         });
 
         it('submits payment with the id of the already loaded payment method', async () => {
