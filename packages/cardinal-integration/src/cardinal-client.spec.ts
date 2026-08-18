@@ -118,6 +118,7 @@ describe('CardinalClient', () => {
                     2,
                     expect.stringMatching(/^provider/),
                     true,
+                    false,
                 );
                 expect(sdk.on).toHaveBeenCalledTimes(4);
                 expect(sdk.setup).toHaveBeenCalledTimes(2);
@@ -127,7 +128,12 @@ describe('CardinalClient', () => {
                 await client.configure('sameToken');
                 await client.configure('sameToken');
 
-                expect(cardinalScriptLoader.load).toHaveBeenNthCalledWith(1, 'provider', true);
+                expect(cardinalScriptLoader.load).toHaveBeenNthCalledWith(
+                    1,
+                    'provider',
+                    true,
+                    false,
+                );
                 expect(sdk.on).toHaveBeenCalledTimes(2);
                 expect(sdk.setup).toHaveBeenCalledTimes(1);
             });

@@ -45,17 +45,27 @@ export interface CardinalOrderData {
 export default class CardinalClient {
     private _provider = '';
     private _testMode = false;
+    private _isCyberSourceUpdatedTestUrlEnabled = false;
     private _sdk?: Promise<CardinalSDK>;
     private _configurationToken = '';
 
     constructor(private _scriptLoader: CardinalScriptLoader) {}
 
-    load(provider: string, testMode = false): Promise<void> {
+    load(
+        provider: string,
+        testMode = false,
+        isCyberSourceUpdatedTestUrlEnabled = false,
+    ): Promise<void> {
         this._provider = provider;
         this._testMode = testMode;
+        this._isCyberSourceUpdatedTestUrlEnabled = isCyberSourceUpdatedTestUrlEnabled;
 
         if (!this._sdk) {
-            this._sdk = this._scriptLoader.load(provider, testMode);
+            this._sdk = this._scriptLoader.load(
+                provider,
+                testMode,
+                isCyberSourceUpdatedTestUrlEnabled,
+            );
         }
 
         return this._sdk.then(noop);
@@ -67,7 +77,11 @@ export default class CardinalClient {
                 return Promise.resolve();
             }
 
-            this._sdk = this._scriptLoader.load(`${this._provider}.${Date.now()}`, this._testMode);
+            this._sdk = this._scriptLoader.load(
+                `${this._provider}.${Date.now()}`,
+                this._testMode,
+                this._isCyberSourceUpdatedTestUrlEnabled,
+            );
         }
 
         return this._getClientSDK().then(

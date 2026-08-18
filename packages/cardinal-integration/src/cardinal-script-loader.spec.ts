@@ -27,6 +27,16 @@ describe('CardinalScriptLoader', () => {
         );
     });
 
+    it('loads widget experiment test script when the experiment is on', () => {
+        const testMode = true;
+
+        cardinalScriptLoader.load('provider', testMode, true);
+
+        expect(loadScript).toHaveBeenCalledWith(
+            'https://cas.static.client.cardinaltrusted.com/songbird/v2.0.0/songbird.js?v=provider',
+        );
+    });
+
     it('loads widget production script', () => {
         const testMode = false;
 

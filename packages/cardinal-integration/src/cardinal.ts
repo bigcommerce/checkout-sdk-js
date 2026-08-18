@@ -2,6 +2,10 @@ import { ThreeDSecure, ThreeDSecureToken } from '@bigcommerce/checkout-sdk/payme
 
 export const CardinalSignatureValidationErrors = [100004, 1010, 1011, 1020];
 
+export interface CardinalThreeDSecureInitializationData {
+    isCyberSourceUpdatedTestUrlEnabled?: boolean;
+}
+
 export interface CardinalSDK {
     configure(params: CardinalConfiguration): void;
     on(params: CardinalEventType, callback: CardinalEventMap[CardinalEventType]): void;
