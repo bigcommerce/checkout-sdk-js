@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.958.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.958.1...v1.958.2) (2026-08-18)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-6983 Attempting to use PayPal Checkout on cart page results in user being returned to cart page with no order placed ([#3356](https://github.com/bigcommerce/checkout-sdk-js/issues/3356)) ([bdedf88](https://github.com/bigcommerce/checkout-sdk-js/commit/bdedf8889bcd115722b1a2a7f1cd035af3838e5b))
+
 ### [1.958.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.958.0...v1.958.1) (2026-08-17)
 
 
