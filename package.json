@@ -107,7 +107,6 @@
     "@babel/core": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "@bigcommerce/eslint-config": "^2.13.1",
-    "@bigcommerce/eslint-plugin": "^1.4.1",
     "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/client-preset": "^4.8.1",
     "@graphql-typed-document-node/core": "^3.2.0",
@@ -163,7 +162,10 @@
     "@swc/core-linux-x64-gnu": "^1.5.29"
   },
   "overrides": {
-    "@types/minimatch": "5.1.2"
+    "@types/minimatch": "5.1.2",
+    "@bigcommerce/eslint-config": {
+      "typescript": "$typescript"
+    }
   },
   "standard-version": {
     "scripts": {

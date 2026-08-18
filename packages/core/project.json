@@ -92,7 +92,7 @@
                 "parallel": false,
                 "commands": [
                     "tsc --outDir ../../temp --rootDir .. --declaration --emitDeclarationOnly",
-                    "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json & wait",
+                    "api-extractor run --config api-extractor/checkout-sdk.json & pid1=$!; api-extractor run --config api-extractor/checkout-button.json & pid2=$!; api-extractor run --config api-extractor/embedded-checkout.json & pid3=$!; api-extractor run --config api-extractor/internal-mappers.json & pid4=$!; wait $pid1 && wait $pid2 && wait $pid3 && wait $pid4",
                     "find src/generated/integrations -name 'api-extractor.json' | xargs -I {} -P 8 sh -c 'cd \"$(dirname \"{}\")\" && npx api-extractor run --config api-extractor.json'",
                     "find ../../dist/types -name '*.d.ts' -type f -exec perl -i -ne 'print unless /^export \\{.*\\}\\s*$/' {} +",
                     "rm -rf ../../temp",
