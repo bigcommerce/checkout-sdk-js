@@ -63,28 +63,12 @@ describe('CardinalThreeDSecureFlow', () => {
     });
 
     describe('#prepare', () => {
-        it('loads Cardinal client with the CyberSource test url disabled by default', async () => {
+        it('loads Cardinal client', async () => {
             await threeDSecureFlow.prepare(paymentMethod);
 
             expect(cardinalClient.load).toHaveBeenCalledWith(
                 paymentMethod.id,
                 paymentMethod.config.testMode,
-                false,
-            );
-        });
-
-        it('loads Cardinal client with the CyberSource test url enabled from initializationData', async () => {
-            paymentMethod = {
-                ...paymentMethod,
-                initializationData: { isCyberSourceUpdatedTestUrlEnabled: true },
-            };
-
-            await threeDSecureFlow.prepare(paymentMethod);
-
-            expect(cardinalClient.load).toHaveBeenCalledWith(
-                paymentMethod.id,
-                paymentMethod.config.testMode,
-                true,
             );
         });
 

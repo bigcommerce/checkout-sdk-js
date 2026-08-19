@@ -1,8 +1,8 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    CardinalClient,
-    CardinalScriptLoader,
+    CardinalClientV2,
+    CardinalScriptLoaderV2,
     CardinalThreeDSecureFlowV2,
 } from '@bigcommerce/checkout-sdk/cardinal-integration';
 import {
@@ -19,7 +19,7 @@ const createCyberSourceV2PaymentStrategy: PaymentStrategyFactory<CyberSourceV2Pa
         paymentIntegrationService,
         new CardinalThreeDSecureFlowV2(
             paymentIntegrationService,
-            new CardinalClient(new CardinalScriptLoader(getScriptLoader())),
+            new CardinalClientV2(new CardinalScriptLoaderV2(getScriptLoader())),
         ),
     );
 };

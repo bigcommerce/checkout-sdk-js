@@ -21,12 +21,12 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import CardinalClient from './cardinal-client';
+import CardinalClientV2 from './cardinal-client-v2';
 import CardinalThreeDSecureFlowV2 from './cardinal-three-d-secure-flow-v2';
 
 describe('CardinalBarclaysThreeDSecureFlow', () => {
     let cardinalClient: Pick<
-        CardinalClient,
+        CardinalClientV2,
         'configure' | 'getThreeDSecureData' | 'load' | 'runBinProcess'
     >;
     let threeDSecureFlow: CardinalThreeDSecureFlowV2;
@@ -47,7 +47,7 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
 
         threeDSecureFlow = new CardinalThreeDSecureFlowV2(
             paymentIntegrationService,
-            cardinalClient as CardinalClient,
+            cardinalClient as CardinalClientV2,
         );
     });
 

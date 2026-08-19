@@ -15,12 +15,13 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CardinalThreeDSecureInitializationData, CardinalThreeDSecureToken } from './cardinal';
-import CardinalClient, { CardinalOrderData } from './cardinal-client';
+import { CardinalOrderData } from './cardinal-client';
+import CardinalClientV2 from './cardinal-client-v2';
 
 export default class CardinalThreeDSecureFlowV2 {
     constructor(
         private _paymentIntegrationService: PaymentIntegrationService,
-        private _cardinalClient: CardinalClient,
+        private _cardinalClient: CardinalClientV2,
     ) {}
 
     async prepare(method: PaymentMethod): Promise<void> {

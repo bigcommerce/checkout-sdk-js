@@ -2,7 +2,6 @@ import { includes, noop } from 'lodash';
 
 import {
     Address,
-    BillingAddress,
     CreditCardInstrument,
     MissingDataError,
     MissingDataErrorType,
@@ -11,7 +10,6 @@ import {
     PaymentMethodFailedError,
     ThreeDSecureToken,
     ThreeDsResult,
-    VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -29,33 +27,33 @@ import {
     CardinalValidatedAction,
     CardinalValidatedData,
 } from './cardinal';
-import CardinalScriptLoader from './cardinal-script-loader';
+import { CardinalOrderData } from './cardinal-client';
+import CardinalScriptLoaderV2 from './cardinal-script-loader-v2';
 
-export type CardinalSupportedPaymentInstrument = CreditCardInstrument | VaultedInstrument;
-
-export interface CardinalOrderData {
-    billingAddress: BillingAddress;
-    shippingAddress?: Address;
-    currencyCode: string;
-    id: string;
-    amount: number;
-    paymentData?: CreditCardInstrument;
-}
-
-export default class CardinalClient {
+export default class CardinalClientV2 {
     private _provider = '';
     private _testMode = false;
+    private _isCyberSourceUpdatedTestUrlEnabled = false;
     private _sdk?: Promise<CardinalSDK>;
     private _configurationToken = '';
 
-    constructor(private _scriptLoader: CardinalScriptLoader) {}
+    constructor(private _scriptLoader: CardinalScriptLoaderV2) {}
 
-    load(provider: string, testMode = false): Promise<void> {
+    load(
+        provider: string,
+        testMode = false,
+        isCyberSourceUpdatedTestUrlEnabled = false,
+    ): Promise<void> {
         this._provider = provider;
         this._testMode = testMode;
+        this._isCyberSourceUpdatedTestUrlEnabled = isCyberSourceUpdatedTestUrlEnabled;
 
         if (!this._sdk) {
-            this._sdk = this._scriptLoader.load(provider, testMode);
+            this._sdk = this._scriptLoader.load(
+                provider,
+                testMode,
+                isCyberSourceUpdatedTestUrlEnabled,
+            );
         }
 
         return this._sdk.then(noop);
@@ -67,7 +65,11 @@ export default class CardinalClient {
                 return Promise.resolve();
             }
 
-            this._sdk = this._scriptLoader.load(`${this._provider}.${Date.now()}`, this._testMode);
+            this._sdk = this._scriptLoader.load(
+                `${this._provider}.${Date.now()}`,
+                this._testMode,
+                this._isCyberSourceUpdatedTestUrlEnabled,
+            );
         }
 
         return this._getClientSDK().then(
