@@ -551,6 +551,7 @@
 - [ConsignmentDiscount](type-aliases/ConsignmentDiscount.md)
 - [ConsignmentsRequestBody](type-aliases/ConsignmentsRequestBody.md)
 - [CustomerAddressRequestBody](type-aliases/CustomerAddressRequestBody.md)
+- [CustomerAddressType](type-aliases/CustomerAddressType.md)
 - [CustomerInitializeOptions](type-aliases/CustomerInitializeOptions.md)
 - [ExtensionEvent](type-aliases/ExtensionEvent.md)
 - [ExtensionMessage](type-aliases/ExtensionMessage.md)

@@ -5380,7 +5380,7 @@ declare interface CustomerAccountRequestBody {
 
 declare interface CustomerAddress extends Address {
     id: number;
-    type: string;
+    type: CustomerAddressType;
     /**
      */
     isShipping?: boolean;
@@ -5390,6 +5390,8 @@ declare interface CustomerAddress extends Address {
 }
 
 declare type CustomerAddressRequestBody = AddressRequestBody;
+
+declare type CustomerAddressType = 'residential' | 'commercial' | 'company' | 'paypal-address';
 
 declare interface CustomerCredentials {
     email: string;

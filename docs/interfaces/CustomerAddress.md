@@ -212,4 +212,4 @@
 
 ### type
 
-> **type**: `string`
+> **type**: [`CustomerAddressType`](../type-aliases/CustomerAddressType.md)
