@@ -15,11 +15,11 @@ import {
 } from './cardinal.mock';
 
 import {
-    CardinalClient,
+    CardinalClientV2,
     CardinalEventType,
     CardinalInitializationType,
     CardinalPaymentType,
-    CardinalScriptLoader,
+    CardinalScriptLoaderV2,
     CardinalSDK,
     CardinalSignatureVerification,
     CardinalTriggerEvents,
@@ -50,26 +50,32 @@ const isValidatedType = (
     return false;
 };
 
-describe('CardinalClient', () => {
-    let client: CardinalClient;
-    let cardinalScriptLoader: CardinalScriptLoader;
+describe('CardinalClientV2', () => {
+    let client: CardinalClientV2;
+    let cardinalScriptLoader: CardinalScriptLoaderV2;
     let sdk: CardinalSDK;
     let setupCall: setupCompleteFn;
     let validatedCall: validatedFn;
 
     beforeEach(() => {
-        cardinalScriptLoader = new CardinalScriptLoader(createScriptLoader());
+        cardinalScriptLoader = new CardinalScriptLoaderV2(createScriptLoader());
         sdk = getCardinalSDK();
-        client = new CardinalClient(cardinalScriptLoader);
+        client = new CardinalClientV2(cardinalScriptLoader);
 
         jest.spyOn(cardinalScriptLoader, 'load').mockReturnValue(Promise.resolve(sdk));
     });
 
     describe('#initialize', () => {
-        it('loads the cardinal sdk correctly', async () => {
-            await client.load('provider', false);
+        it('loads the cardinal sdk with the experiment flag', async () => {
+            await client.load('provider', true, true);
 
-            expect(cardinalScriptLoader.load).toHaveBeenCalled();
+            expect(cardinalScriptLoader.load).toHaveBeenCalledWith('provider', true, true);
+        });
+
+        it('loads the cardinal sdk with the experiment disabled by default', async () => {
+            await client.load('provider', true);
+
+            expect(cardinalScriptLoader.load).toHaveBeenCalledWith('provider', true, false);
         });
     });
 
@@ -95,7 +101,7 @@ describe('CardinalClient', () => {
                     completed({ sessionId: '12', modules: [{ loaded: true, module: '123' }] });
                 });
 
-                await client.load('provider', true);
+                await client.load('provider', true, true);
             });
 
             it('completes the setup process', async () => {
@@ -110,13 +116,14 @@ describe('CardinalClient', () => {
                 });
             });
 
-            it('reconfigures the cardinal sdk', async () => {
+            it('reconfigures the cardinal sdk keeping the experiment flag', async () => {
                 await client.configure('firstToken');
                 await client.configure('secondToken');
 
                 expect(cardinalScriptLoader.load).toHaveBeenNthCalledWith(
                     2,
                     expect.stringMatching(/^provider/),
+                    true,
                     true,
                 );
                 expect(sdk.on).toHaveBeenCalledTimes(4);
@@ -127,7 +134,12 @@ describe('CardinalClient', () => {
                 await client.configure('sameToken');
                 await client.configure('sameToken');
 
-                expect(cardinalScriptLoader.load).toHaveBeenNthCalledWith(1, 'provider', true);
+                expect(cardinalScriptLoader.load).toHaveBeenNthCalledWith(
+                    1,
+                    'provider',
+                    true,
+                    true,
+                );
                 expect(sdk.on).toHaveBeenCalledTimes(2);
                 expect(sdk.setup).toHaveBeenCalledTimes(1);
             });
@@ -146,7 +158,7 @@ describe('CardinalClient', () => {
                 validated(getCardinalValidatedData(CardinalValidatedAction.Error, false, 1020), '');
             });
 
-            await client.load('provider', true);
+            await client.load('provider', true, true);
 
             await expect(client.configure('token')).rejects.toThrow(MissingDataError);
         });
@@ -164,7 +176,7 @@ describe('CardinalClient', () => {
                 setupCall({ sessionId: '12', modules: [{ loaded: true, module: '123' }] });
             });
 
-            await client.load('provider', true);
+            await client.load('provider', true, true);
             await client.configure('token');
         });
 
@@ -217,7 +229,7 @@ describe('CardinalClient', () => {
                 setupCall({ sessionId: '12', modules: [{ loaded: true, module: '123' }] });
             });
 
-            await client.load('provider', true);
+            await client.load('provider', true, true);
             await client.configure('token');
         });
 
@@ -238,27 +250,10 @@ describe('CardinalClient', () => {
             expect(promise).toEqual({ token: 'token' });
         });
 
-        it('returns a no action code', async () => {
+        it('returns a failure code', async () => {
             jest.spyOn(sdk, 'continue').mockImplementation(() => {
                 validatedCall(
-                    getCardinalValidatedData(CardinalValidatedAction.NoAction, false, 0),
-                    'token',
-                );
-            });
-
-            const promise = await client.getThreeDSecureData(
-                getCardinalThreeDSResult(),
-                getCardinalOrderData(),
-            );
-
-            expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.Validated, expect.any(Function));
-            expect(promise).toEqual({ token: 'token' });
-        });
-
-        it('returns an error and a no action code', async () => {
-            jest.spyOn(sdk, 'continue').mockImplementation(() => {
-                validatedCall(
-                    getCardinalValidatedData(CardinalValidatedAction.NoAction, false, 3002),
+                    getCardinalValidatedData(CardinalValidatedAction.Failure, false, 3004),
                     'token',
                 );
             });
@@ -270,6 +265,12 @@ describe('CardinalClient', () => {
                 );
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodFailedError);
+
+                if (error instanceof PaymentMethodFailedError) {
+                    expect(error.message).toBe(
+                        'User failed authentication or an error was encountered while processing the transaction.',
+                    );
+                }
             }
         });
 
@@ -297,98 +298,6 @@ describe('CardinalClient', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodFailedError);
             }
-        });
-
-        it('returns an error code', async () => {
-            jest.spyOn(sdk, 'continue').mockImplementation(() => {
-                validatedCall(
-                    getCardinalValidatedData(CardinalValidatedAction.Error, false, 3004),
-                    'token',
-                );
-            });
-
-            try {
-                await client.getThreeDSecureData(
-                    getCardinalThreeDSResult(),
-                    getCardinalOrderData(),
-                );
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentMethodFailedError);
-            }
-        });
-
-        it('returns a failure code', async () => {
-            jest.spyOn(sdk, 'continue').mockImplementation(() => {
-                validatedCall(
-                    getCardinalValidatedData(CardinalValidatedAction.Failure, false, 3004),
-                    'token',
-                );
-            });
-
-            try {
-                await client.getThreeDSecureData(
-                    getCardinalThreeDSResult(),
-                    getCardinalOrderData(),
-                );
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentMethodFailedError);
-
-                if (error instanceof PaymentMethodFailedError) {
-                    expect(error.message).toBe(
-                        'User failed authentication or an error was encountered while processing the transaction.',
-                    );
-                }
-            }
-        });
-
-        it('does not return an action code', async () => {
-            jest.spyOn(sdk, 'continue').mockImplementation(() => {
-                const data = {
-                    ErrorDescription: '',
-                    ErrorNumber: 0,
-                    Validated: true,
-                    Payment: {
-                        ProcessorTransactionId: '',
-                        Type: CardinalPaymentType.CCA,
-                        ExtendedData: {},
-                    },
-                };
-
-                validatedCall(data, 'token');
-            });
-
-            const promise = await client.getThreeDSecureData(
-                getCardinalThreeDSResult(),
-                getCardinalOrderData(),
-            );
-
-            expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.Validated, expect.any(Function));
-            expect(promise).toEqual({ token: 'token' });
-        });
-
-        it('returns an error without an action code', async () => {
-            jest.spyOn(sdk, 'continue').mockImplementation(() => {
-                const data = {
-                    ErrorDescription: 'Custom error',
-                    ErrorNumber: 1533,
-                    Validated: true,
-                    Payment: {
-                        ProcessorTransactionId: '',
-                        Type: CardinalPaymentType.CCA,
-                        ExtendedData: {},
-                    },
-                };
-
-                validatedCall(data, 'token');
-            });
-
-            const promise = await client.getThreeDSecureData(
-                getCardinalThreeDSResult(),
-                getCardinalOrderData(),
-            );
-
-            expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.Validated, expect.any(Function));
-            expect(promise).toEqual({ token: 'token' });
         });
 
         it('returns a response without a jwt', async () => {

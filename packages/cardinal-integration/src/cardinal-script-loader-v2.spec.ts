@@ -4,33 +4,37 @@ import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/p
 
 import { getCardinalScriptMock } from './cardinal.mock';
 
-import { CardinalScriptLoader, CardinalWindow } from './index';
+import { CardinalScriptLoaderV2, CardinalWindow } from './index';
 
-describe('CardinalScriptLoader', () => {
+describe('CardinalScriptLoaderV2', () => {
     const cardinalWindow: CardinalWindow = window;
     const scriptLoader = createScriptLoader();
     const scriptMock = getCardinalScriptMock();
     const loadScript = jest.spyOn(scriptLoader, 'loadScript');
-    let cardinalScriptLoader: CardinalScriptLoader;
+    let cardinalScriptLoader: CardinalScriptLoaderV2;
 
     beforeEach(() => {
-        cardinalScriptLoader = new CardinalScriptLoader(scriptLoader, cardinalWindow);
+        cardinalScriptLoader = new CardinalScriptLoaderV2(scriptLoader, cardinalWindow);
     });
 
-    it('loads widget test script', () => {
-        const testMode = true;
+    it('loads the updated test script when the experiment is on', () => {
+        cardinalScriptLoader.load('provider', true, true);
 
-        cardinalScriptLoader.load('provider', testMode);
+        expect(loadScript).toHaveBeenCalledWith(
+            'https://cas.static.client.cardinaltrusted.com/songbird/v2.0.0/songbird.js?v=provider',
+        );
+    });
+
+    it('loads the default test script when the experiment is off', () => {
+        cardinalScriptLoader.load('provider', true, false);
 
         expect(loadScript).toHaveBeenCalledWith(
             'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js?v=provider',
         );
     });
 
-    it('loads widget production script', () => {
-        const testMode = false;
-
-        cardinalScriptLoader.load('provider', testMode);
+    it('loads the production script when test mode is off', () => {
+        cardinalScriptLoader.load('provider', false, true);
 
         expect(loadScript).toHaveBeenCalledWith(
             'https://static.client.cardinaltrusted.com/songbird/v2.0.0/songbird.js?v=provider',
