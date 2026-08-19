@@ -9,7 +9,11 @@ import {
 
 export default class StoredCardHostedFormService {
     protected _hostedForm?: HostedForm;
-    constructor(protected _host: string, protected _hostedFormFactory: HostedFormFactory) {}
+    constructor(
+        protected _host: string,
+        protected _hostedFormFactory: HostedFormFactory,
+        protected _storefrontHost = '',
+    ) {}
 
     async submitStoredCard(
         fields: StoredCardHostedFormInstrumentFields,
@@ -25,7 +29,7 @@ export default class StoredCardHostedFormService {
     }
 
     initialize(options: LegacyHostedFormOptions): Promise<void> {
-        const form = this._hostedFormFactory.create(this._host, options);
+        const form = this._hostedFormFactory.create(this._host, options, this._storefrontHost);
 
         return form.attach().then(() => {
             this._hostedForm = form;

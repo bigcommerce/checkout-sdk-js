@@ -25,6 +25,7 @@ describe('HostedField', () => {
     let eventPoster: Pick<IframeEventPoster<HostedFieldEvent>, 'post' | 'setTarget'>;
     let eventListener: Pick<IframeEventListener<HostedInputEventMap>, 'listen'>;
     let orderId: number;
+    let storefrontHost: string;
 
     beforeEach(() => {
         container = document.createElement('div');
@@ -32,6 +33,7 @@ describe('HostedField', () => {
         eventPoster = { post: jest.fn(), setTarget: jest.fn() };
         eventListener = { listen: jest.fn() };
         orderId = 1;
+        storefrontHost = 'https://channel.storefront.canonical.com';
 
         container.id = 'field-container-id';
         document.body.appendChild(container);
@@ -46,6 +48,7 @@ describe('HostedField', () => {
             eventListener as IframeEventListener<HostedInputEventMap>,
             detachmentObserver as DetachmentObserver,
             orderId,
+            storefrontHost,
         );
 
         field = new HostedField(
@@ -57,6 +60,8 @@ describe('HostedField', () => {
             eventPoster as IframeEventPoster<HostedFieldEvent>,
             eventListener as IframeEventListener<HostedInputEventMap>,
             detachmentObserver as DetachmentObserver,
+            undefined,
+            storefrontHost,
         );
     });
 
@@ -70,8 +75,37 @@ describe('HostedField', () => {
         expect(document.querySelector('#field-container-id iframe')).toBeDefined();
     });
 
-    it('sets iframe URL with version param', () => {
+    it('sets iframe URL with version param prefixed with the given storefront host when called from shopper account page', () => {
         field.attach();
+
+        // tslint:disable-next-line:no-non-null-assertion
+        expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
+            'https://channel.storefront.canonical.com/account/stored-instruments/hosted-fields?version=1.0.0',
+        );
+    });
+
+    it('ignores the storefront host for the Control Panel iframe URL keeping it same-origin', () => {
+        controlPannelField.attach();
+
+        // tslint:disable-next-line:no-non-null-assertion
+        expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
+            `${location.origin}/admin/payments/${orderId}/hosted-form-field?version=1.0.0`,
+        );
+    });
+
+    it('falls back to a location-relative iframe URL when no storefront host is provided', () => {
+        const fieldWithoutHost = new HostedField(
+            HostedFieldType.CardNumber,
+            'field-container-id',
+            'Enter your card number here',
+            'Card number',
+            { default: { color: 'rgb(0, 0, 0)', fontFamily: 'Open Sans, Arial' } },
+            eventPoster as IframeEventPoster<HostedFieldEvent>,
+            eventListener as IframeEventListener<HostedInputEventMap>,
+            detachmentObserver as DetachmentObserver,
+        );
+
+        fieldWithoutHost.attach();
 
         // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
@@ -79,12 +113,25 @@ describe('HostedField', () => {
         );
     });
 
-    it('sets iframe URL with version param for Control Panel Iframe', () => {
-        controlPannelField.attach();
+    it('falls back to a location-relative iframe URL when host is an empty string', () => {
+        const fieldWithEmptyHost = new HostedField(
+            HostedFieldType.CardNumber,
+            'field-container-id',
+            'Enter your card number here',
+            'Card number',
+            { default: { color: 'rgb(0, 0, 0)', fontFamily: 'Open Sans, Arial' } },
+            eventPoster as IframeEventPoster<HostedFieldEvent>,
+            eventListener as IframeEventListener<HostedInputEventMap>,
+            detachmentObserver as DetachmentObserver,
+            undefined,
+            '',
+        );
+
+        fieldWithEmptyHost.attach();
 
         // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
-            `${location.origin}/admin/payments/${orderId}/hosted-form-field?version=1.0.0`,
+            `${location.origin}/account/stored-instruments/hosted-fields?version=1.0.0`,
         );
     });
 
