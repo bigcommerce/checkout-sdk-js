@@ -124,6 +124,7 @@ declare class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _loadingIndicatorContainer?;
     private _captureMethod?;
     private _currencyCode?;
+    private _cachedMethodId?;
     constructor(paymentIntegrationService: PaymentIntegrationService, scriptLoader: StripeScriptLoader, stripeIntegrationService: StripeIntegrationService, loadingIndicator: LoadingIndicator);
     initialize(options: CustomerInitializeOptions & WithStripeOCSCustomerInitializeOptions): Promise<void>;
     signIn(): Promise<void>;
