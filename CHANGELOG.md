@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.962.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.961.0...v1.962.0) (2026-08-19)
+
+
+### Features
+
+* **payment:** PI-5626 Enable cybersource test url- [#69683](https://github.com/bigcommerce/checkout-sdk-js/issues/69683) ([fe8e8e8](https://github.com/bigcommerce/checkout-sdk-js/commit/fe8e8e8b3ec13825c0a012c65df2bf57490adba8))
+
+
+### Bug Fixes
+
+* **payment:** Stripe Link V2, cache the resolved method id to survive payment methods reload ([#3363](https://github.com/bigcommerce/checkout-sdk-js/issues/3363)) ([505894b](https://github.com/bigcommerce/checkout-sdk-js/commit/505894bd43537d9a0a27c5aacdfebdab207d6e3b))
+
 ### [1.961.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.961.0...v1.961.1) (2026-08-19)
 
 
