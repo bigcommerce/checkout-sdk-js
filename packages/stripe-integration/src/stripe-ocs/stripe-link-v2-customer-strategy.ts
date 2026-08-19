@@ -59,6 +59,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _loadingIndicatorContainer?: string;
     private _captureMethod?: 'automatic' | 'manual';
     private _currencyCode?: string;
+    private _cachedMethodId?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -621,19 +622,24 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             );
 
         if (stripePaymentMethod) {
+            this._cachedMethodId = stripePaymentMethod.id;
+
             return stripePaymentMethod;
         }
 
-        const { initializationData } =
-            state.getPaymentMethodOrThrow<StripeInitializationData>(gatewayId);
-        const methodId = initializationData?.checkoutSessionEnabled
-            ? StripePaymentMethodType.CHECKOUT_SESSION
-            : StripePaymentMethodType.OCS;
+        if (!this._cachedMethodId) {
+            const { initializationData } =
+                state.getPaymentMethodOrThrow<StripeInitializationData>(gatewayId);
+
+            this._cachedMethodId = initializationData?.checkoutSessionEnabled
+                ? StripePaymentMethodType.CHECKOUT_SESSION
+                : StripePaymentMethodType.OCS;
+        }
 
         state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-            params: { method: methodId },
+            params: { method: this._cachedMethodId },
         });
 
-        return state.getPaymentMethodOrThrow(methodId, gatewayId);
+        return state.getPaymentMethodOrThrow(this._cachedMethodId, gatewayId);
     }
 }
