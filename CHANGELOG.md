@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.961.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.960.1...v1.961.0) (2026-08-19)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10232 Add disableWalletButtons capability ([#3362](https://github.com/bigcommerce/checkout-sdk-js/issues/3362)) ([2d6b78a](https://github.com/bigcommerce/checkout-sdk-js/commit/2d6b78a034d0a124f4cf172e7178ef9efd6b31a8))
+
 ### [1.960.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.960.0...v1.960.1) (2026-08-19)
 
 

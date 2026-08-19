@@ -114,6 +114,10 @@
 
 > **disableStoreCredit**: `boolean`
 
+#### disableWalletButtons
+
+> **disableWalletButtons**: `boolean`
+
 #### hasAddressExtraFields
 
 > **hasAddressExtraFields**: `boolean`

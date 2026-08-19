@@ -2380,6 +2380,7 @@ declare interface Capabilities {
         disableEditCart: boolean;
         disableGiftCertificate: boolean;
         disableStoreCredit: boolean;
+        disableWalletButtons: boolean;
         hasCompanyAddressBook: boolean;
         hasAddressExtraFields: boolean;
         hasOrderExtraFields: boolean;
