@@ -15,6 +15,7 @@ import {
 import {
     Cart,
     Customer,
+    CustomerAddress,
     StoreConfig,
     UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -69,7 +70,7 @@ describe('BigCommercePaymentsFastlaneShippingStrategy', () => {
 
     const requestSender = createRequestSender();
 
-    const bcAddressMock = {
+    const bcAddressMock: CustomerAddress = {
         id: 1,
         address1: 'addressLine1',
         address2: 'addressLine2',

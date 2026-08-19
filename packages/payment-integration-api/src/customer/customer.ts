@@ -21,9 +21,11 @@ export default interface Customer {
     customerGroup?: CustomerGroup;
 }
 
+export type CustomerAddressType = 'residential' | 'commercial' | 'company' | 'paypal-address';
+
 export interface CustomerAddress extends Address {
     id: number;
-    type: string;
+    type: CustomerAddressType;
     /**
      */
     isShipping?: boolean;
