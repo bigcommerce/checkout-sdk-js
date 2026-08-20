@@ -43,8 +43,9 @@ declare class HostedField {
     private _eventListener;
     private _detachmentObserver;
     private _orderId?;
+    private _storefrontHost;
     private _iframe;
-    constructor(_type: HostedFieldType, _containerId: string, _placeholder: string, _accessibilityLabel: string, _styles: HostedFieldStylesMap, _eventPoster: IframeEventPoster<HostedFieldEvent>, _eventListener: IframeEventListener<HostedInputEventMap>, _detachmentObserver: DetachmentObserver, _orderId?: number | undefined);
+    constructor(_type: HostedFieldType, _containerId: string, _placeholder: string, _accessibilityLabel: string, _styles: HostedFieldStylesMap, _eventPoster: IframeEventPoster<HostedFieldEvent>, _eventListener: IframeEventListener<HostedInputEventMap>, _detachmentObserver: DetachmentObserver, _orderId?: number | undefined, _storefrontHost?: string);
     private getFrameSrc;
     getType(): HostedFieldType;
     attach(): Promise<void>;
@@ -171,7 +172,13 @@ declare type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, Host
 declare type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'>;
 
 declare class HostedFormFactory {
-    create(host: string, options: HostedFormOptions): HostedForm;
+    /**
+     * @param host - (Payments origin) Used for postMessage target/source validation, because the
+     * hosted-fields route redirects there, making it the iframe's actual document origin.
+     * @param storefrontHost - (Channel's storefront origin) Serving the hosted-fields route,
+     * used only for the iframe src. Only needed by headless storefronts, where it differs from the page's own origin.
+     */
+    create(host: string, options: HostedFormOptions, storefrontHost?: string): HostedForm;
 }
 
 declare interface HostedFormInterface {
@@ -475,8 +482,9 @@ declare interface StoredCardHostedFormInstrumentFields extends StoredCardHostedF
 declare class StoredCardHostedFormService {
     protected _host: string;
     protected _hostedFormFactory: HostedFormFactory;
+    protected _storefrontHost: string;
     protected _hostedForm?: HostedForm;
-    constructor(_host: string, _hostedFormFactory: HostedFormFactory);
+    constructor(_host: string, _hostedFormFactory: HostedFormFactory, _storefrontHost?: string);
     submitStoredCard(fields: StoredCardHostedFormInstrumentFields, data: StoredCardHostedFormData): Promise<void>;
     initialize(options: HostedFormOptions): Promise<void>;
     deinitialize(): void;
@@ -495,7 +503,11 @@ export declare function createHostedFormService(host: string): HostedFormService
  * Creates an instance of `StoredCardHostedFormService`.
  *
  *
- * @param host - Host url string parameter.
+ * @param host - Payments origin. Used for postMessage validation: the hosted-fields route
+ * redirects to the payment provider, so this is the iframe's actual document origin.
+ * @param storefrontHost - Origin serving the hosted-fields route, used only to build the iframe
+ * src. Only needed by headless storefronts, where that route is not on the page's own origin.
+ * Omit it to keep the relative-URL behaviour that resolves same-origin on a standard storefront.
  * @returns An instance of `StoredCardHostedFormService`.
  */
-export declare function createStoredCardHostedFormService(host: string): StoredCardHostedFormService;
+export declare function createStoredCardHostedFormService(host: string, storefrontHost?: string): StoredCardHostedFormService;

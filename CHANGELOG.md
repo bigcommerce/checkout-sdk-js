@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.963.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.962.0...v1.963.0) (2026-08-20)
+
+
+### Features
+
+* **payment:** PAYMENTS-11912 Use channel's SF origin for hosted field iframe src in headles SF ([eb5b376](https://github.com/bigcommerce/checkout-sdk-js/commit/eb5b3761da8e26be1b02833c76674a78b2bdcd0f))
+
 ## [1.962.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.961.0...v1.962.0) (2026-08-19)
 
 
