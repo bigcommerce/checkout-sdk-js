@@ -47,6 +47,7 @@ export default class HostedField {
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _detachmentObserver: DetachmentObserver,
         private _orderId?: number,
+        private _storefrontHost = '',
     ) {
         this._iframe = document.createElement('iframe');
 
@@ -60,7 +61,7 @@ export default class HostedField {
     private getFrameSrc(orderId?: number): string {
         return typeof orderId !== 'undefined'
             ? `/admin/payments/${this._orderId}/hosted-form-field?version=${LIBRARY_VERSION}`
-            : `/account/stored-instruments/hosted-fields?version=${LIBRARY_VERSION}`;
+            : `${this._storefrontHost}/account/stored-instruments/hosted-fields?version=${LIBRARY_VERSION}`;
     }
 
     getType(): HostedFieldType {

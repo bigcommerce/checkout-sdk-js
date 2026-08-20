@@ -60,6 +60,23 @@ describe('StoredCardHostedFormService', () => {
             expect(formFactory.create).toHaveBeenCalledWith(
                 'https://bigpay.integration.zone',
                 initializeOptions,
+                '',
+            );
+        });
+
+        it('forwards the storefront host separately from the payments host', async () => {
+            const headlessService = new StoredCardHostedFormService(
+                'https://bigpay.integration.zone',
+                formFactory,
+                'https://channel.storefront.canonical.com',
+            );
+
+            await headlessService.initialize(initializeOptions);
+
+            expect(formFactory.create).toHaveBeenCalledWith(
+                'https://bigpay.integration.zone',
+                initializeOptions,
+                'https://channel.storefront.canonical.com',
             );
         });
 

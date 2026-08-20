@@ -8,7 +8,13 @@ import HostedForm from './hosted-form';
 import HostedFormOptions from './hosted-form-options';
 
 export default class HostedFormFactory {
-    create(host: string, options: HostedFormOptions): HostedForm {
+    /**
+     * @param host - (Payments origin) Used for postMessage target/source validation, because the
+     * hosted-fields route redirects there, making it the iframe's actual document origin.
+     * @param storefrontHost - (Channel's storefront origin) Serving the hosted-fields route,
+     * used only for the iframe src. Only needed by headless storefronts, where it differs from the page's own origin.
+     */
+    create(host: string, options: HostedFormOptions, storefrontHost = ''): HostedForm {
         const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {
             const fields = options.fields;
@@ -30,6 +36,7 @@ export default class HostedFormFactory {
                     new IframeEventListener(host),
                     new DetachmentObserver(new MutationObserverFactory()),
                     options.orderId,
+                    storefrontHost,
                 ),
             ];
         }, []);
