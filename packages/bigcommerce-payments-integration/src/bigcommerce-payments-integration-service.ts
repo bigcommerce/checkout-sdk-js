@@ -29,6 +29,7 @@ import {
     StyleButtonColor,
     StyleButtonLabel,
     StyleButtonShape,
+    UpdateOrderParams,
 } from './bigcommerce-payments-types';
 
 export default class BigCommercePaymentsIntegrationService {
@@ -132,7 +133,9 @@ export default class BigCommercePaymentsIntegrationService {
         return { orderId, ...(setupToken ? { setupToken } : {}) };
     }
 
-    async updateOrder(isServerSideShippingCallbacksEnabled?: boolean): Promise<void> {
+    async updateOrder(orderParams: UpdateOrderParams): Promise<void> {
+        const { providerId, methodId, orderId, isServerSideShippingCallbacksEnabled } = orderParams;
+
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         let consignment;
@@ -142,7 +145,7 @@ export default class BigCommercePaymentsIntegrationService {
         }
 
         try {
-            await this.bigCommercePaymentsRequestSender.updateOrder({
+            await this.bigCommercePaymentsRequestSender.updateOrder(providerId, {
                 availableShippingOptions: isServerSideShippingCallbacksEnabled
                     ? []
                     : consignment?.availableShippingOptions,
@@ -150,6 +153,8 @@ export default class BigCommercePaymentsIntegrationService {
                 selectedShippingOption: isServerSideShippingCallbacksEnabled
                     ? null
                     : consignment?.selectedShippingOption,
+                ...(methodId ? { methodId } : {}),
+                ...(orderId ? { orderId } : {}),
             });
         } catch (_error) {
             throw new RequestError();
