@@ -4,11 +4,12 @@ aliases:
         name: node/node
         node-version: "22.13.0"
 
-  # npm trusted publishing (OIDC) requires Node >= 22.14.0 and npm >= 11.5.1
+  # npm trusted publishing (OIDC) requires Node >= 22.14.0 and npm >= 11.5.1.
+  # No Node 22.x bundles npm 11, so the release job runs on Node 24 instead.
   - &node_publish_executor
       executor:
         name: node/node
-        node-version: "22.20.0"
+        node-version: "24.19.0"
 
 version: 2.1
 
@@ -109,13 +110,9 @@ jobs:
           command: |
             git push --follow-tags origin $CIRCLE_BRANCH
       - run:
-          name: "Upgrade npm for trusted publishing"
-          command: |
-            npm install --global npm@^11.5.1
-            npm --version
-      - run:
           name: "Publish release to NPM"
           command: |
+            npm --version
             export NPM_ID_TOKEN="$(
               circleci run oidc get \
                 --claims '{"aud": "npm:registry.npmjs.org"}'
