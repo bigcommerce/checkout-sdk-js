@@ -111,7 +111,7 @@ jobs:
       - run:
           name: "Upgrade npm for trusted publishing"
           command: |
-            npm install --global npm@^11.5.1
+            sudo npm install --global npm@^11.5.1
             npm --version
       - run:
           name: "Publish release to NPM"
@@ -190,5 +190,7 @@ workflows:
             - lint
             - build
       - npm_release:
+          context:
+            - npmjs-publish
           requires:
             - approve_npm_release
