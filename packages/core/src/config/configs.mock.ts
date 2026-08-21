@@ -22,7 +22,7 @@ export function getConfig(): Config {
                 features: {},
                 checkoutBillingSameAsShippingEnabled: true,
                 checkoutUserExperienceSettings: {
-                    checkoutV2Theme: false,
+                    enhancedCheckoutThemeV1: false,
                     walletButtonsOnTop: false,
                     floatingLabelEnabled: false,
                 },

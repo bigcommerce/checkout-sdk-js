@@ -102,7 +102,7 @@ export interface StoreCurrency {
 }
 
 export interface UserExperienceSettings {
-    checkoutV2Theme: boolean;
+    enhancedCheckoutThemeV1: boolean;
     walletButtonsOnTop: boolean;
     floatingLabelEnabled: boolean;
 }

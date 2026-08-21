@@ -8,9 +8,9 @@
 
 ## Properties
 
-### checkoutV2Theme
+### enhancedCheckoutThemeV1
 
-> **checkoutV2Theme**: `boolean`
+> **enhancedCheckoutThemeV1**: `boolean`
 
 ***
 
