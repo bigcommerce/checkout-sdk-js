@@ -110,7 +110,7 @@
     "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/client-preset": "^4.8.1",
     "@graphql-typed-document-node/core": "^3.2.0",
-    "@microsoft/api-extractor": "^6.3.0",
+    "@microsoft/api-extractor": "^7.58.9",
     "@nx/devkit": "19.8.9",
     "@nx/eslint": "19.8.9",
     "@nx/eslint-plugin": "19.8.9",
@@ -151,7 +151,7 @@
     "ts-loader": "^9.5.1",
     "typedoc": "^0.28.19",
     "typedoc-plugin-markdown": "^4.11.0",
-    "typescript": "~5.8.3",
+    "typescript": "6.0.3",
     "webpack": "^5.101.3",
     "webpack-assets-manifest": "^5.1.0",
     "webpack-bundle-analyzer": "^4.5.0",
@@ -160,6 +160,12 @@
   },
   "optionalDependencies": {
     "@swc/core-linux-x64-gnu": "^1.5.29"
+  },
+  "overrides": {
+    "@types/minimatch": "5.1.2",
+    "@bigcommerce/eslint-config": {
+      "typescript": "$typescript"
+    }
   },
   "standard-version": {
     "scripts": {
