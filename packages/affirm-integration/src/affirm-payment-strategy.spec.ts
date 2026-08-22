@@ -13,6 +13,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getConfig,
     getOrderRequestBody,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -166,10 +167,6 @@ describe('AffirmPaymentStrategy', () => {
                     phone_number: '555-555-5555',
                 },
                 discounts: {
-                    '279F507D817E3E7': {
-                        discount_amount: 500,
-                        discount_display_name: '$5.00 off the shipping total',
-                    },
                     DISCOUNTED_AMOUNT: {
                         discount_amount: 1000,
                         discount_display_name: 'discount',
@@ -190,12 +187,29 @@ describe('AffirmPaymentStrategy', () => {
                         unit_price: 19000,
                     },
                     {
+                        categories: [['Cat 1'], ['Cat 2'], ['Cat 3']],
+                        display_name: 'Digital Book',
+                        item_image_url: '/images/digital-book.jpg',
+                        item_url: '/digital-book/',
+                        qty: 1,
+                        sku: 'CLX',
+                        unit_price: 20000,
+                    },
+                    {
                         display_name: '$100 Gift Certificate',
                         item_image_url: '',
                         item_url: '',
                         qty: 1,
                         sku: '',
                         unit_price: 10000,
+                    },
+                    {
+                        display_name: 'Custom item',
+                        item_image_url: '',
+                        item_url: '',
+                        qty: 2,
+                        sku: 'custom-sku',
+                        unit_price: 1000,
                     },
                 ],
                 merchant: {
@@ -342,10 +356,6 @@ describe('AffirmPaymentStrategy', () => {
                     phone_number: '555-555-5555',
                 },
                 discounts: {
-                    '279F507D817E3E7': {
-                        discount_amount: 500,
-                        discount_display_name: '$5.00 off the shipping total',
-                    },
                     DISCOUNTED_AMOUNT: {
                         discount_amount: 1000,
                         discount_display_name: 'discount',
@@ -366,12 +376,29 @@ describe('AffirmPaymentStrategy', () => {
                         unit_price: 19000,
                     },
                     {
+                        categories: [['Cat 1'], ['Cat 2'], ['Cat 3']],
+                        display_name: 'Digital Book',
+                        item_image_url: '/images/digital-book.jpg',
+                        item_url: '/digital-book/',
+                        qty: 1,
+                        sku: 'CLX',
+                        unit_price: 20000,
+                    },
+                    {
                         display_name: '$100 Gift Certificate',
                         item_image_url: '',
                         item_url: '',
                         qty: 1,
                         sku: '',
                         unit_price: 10000,
+                    },
+                    {
+                        display_name: 'Custom item',
+                        item_image_url: '',
+                        item_url: '',
+                        qty: 2,
+                        sku: 'custom-sku',
+                        unit_price: 1000,
                     },
                 ],
                 merchant: {
@@ -453,15 +480,64 @@ describe('AffirmPaymentStrategy', () => {
             await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
         });
 
-        it('does not create affirm object if order does not exist', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(undefined);
-
-            await strategy.initialize({
-                methodId: paymentMethod.id,
-                gatewayId: paymentMethod.gateway,
+        it('opens Affirm modal before submitting order when postponeOrderCreation is enabled', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+                getConfig().storeConfig,
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: { postponeOrderCreation: true },
             });
 
-            await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
+            const callOrder: string[] = [];
+
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(() => {
+                callOrder.push('submitOrder');
+
+                return Promise.resolve(paymentIntegrationService.getState());
+            });
+            jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onSuccess }) => {
+                callOrder.push('affirmOpen');
+                onSuccess({ checkout_token: '1234', created: '1234' });
+            });
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+            await strategy.execute(payload);
+
+            expect(callOrder).toEqual(['affirmOpen', 'submitOrder']);
+        });
+
+        it('submits order before opening Affirm modal when postponeOrderCreation is disabled', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+                getConfig().storeConfig,
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: { postponeOrderCreation: false },
+            });
+
+            const callOrder: string[] = [];
+
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(() => {
+                callOrder.push('submitOrder');
+
+                return Promise.resolve(paymentIntegrationService.getState());
+            });
+            jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onSuccess }) => {
+                callOrder.push('affirmOpen');
+                onSuccess({ checkout_token: '1234', created: '1234' });
+            });
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+            await strategy.execute(payload);
+
+            expect(callOrder).toEqual(['submitOrder', 'affirmOpen']);
         });
     });
 

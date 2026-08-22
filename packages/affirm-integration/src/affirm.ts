@@ -93,6 +93,10 @@ export interface AffirmAddress {
     email?: string;
 }
 
+export interface AffirmInitializationData {
+    postponeOrderCreation?: boolean;
+}
+
 export enum AFFIRM_SCRIPTS {
     PROD = '//cdn1.affirm.com/js/v2/affirm.js',
     SANDBOX = '//cdn1-sandbox.affirm.com/js/v2/affirm.js',
