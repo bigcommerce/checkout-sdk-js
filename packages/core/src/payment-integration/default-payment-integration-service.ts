@@ -2,6 +2,7 @@ import {
     BillingAddressRequestBody,
     BuyNowCartRequestBody,
     Cart,
+    FeeRequestBody,
     HostedForm,
     HostedFormOptions,
     InitializeOffsitePaymentConfig,
@@ -19,6 +20,7 @@ import { Checkout, CheckoutActionCreator, CheckoutStore, CheckoutValidator } fro
 import { DataStoreProjection } from '../common/data-store';
 import CouponActionCreator from '../coupon/coupon-action-creator';
 import { CustomerActionCreator, CustomerCredentials } from '../customer';
+import { FeeActionCreator } from '../fee';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { PaymentAdditionalAction } from '../payment';
@@ -55,6 +57,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _customerActionCreator: CustomerActionCreator,
         private _cartRequestSender: CartRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
+        private _feeActionCreator: FeeActionCreator,
         private _couponActionCreator: CouponActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
@@ -215,6 +218,15 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         await this._store.dispatch(
             this._storeCreditActionCreator.applyStoreCredit(useStoreCredit, options),
         );
+
+        return this._storeProjection.getState();
+    }
+
+    async applyFees(
+        fees: FeeRequestBody[],
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._feeActionCreator.applyFees(fees, options));
 
         return this._storeProjection.getState();
     }

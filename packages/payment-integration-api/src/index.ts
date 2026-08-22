@@ -19,6 +19,7 @@ export {
     PhysicalItem,
 } from './cart';
 export { Checkout } from './checkout';
+export { Fee, FeeRequestBody } from './fee';
 export { BrowserInfo, getBrowserInfo } from './common/browser-info';
 export { CancellablePromise } from './common/cancellable-promise';
 export { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from './common/http-request';
@@ -204,3 +205,10 @@ export { default as isResolvableModule } from './is-resolvable-module';
 export { default as toResolvableModule } from './to-resolvable-module';
 export { RemoteCheckoutActionType } from './remote-checkout';
 export { default as UnsupportedBrowserError } from './unsupported-browser-error';
+export {
+    SurchargeActionHandler,
+    SurchargeRequestSender,
+    SurchargeCheckInput,
+    SurchargeCheckResponse,
+    SURCHARGE_FEE_NAME,
+} from './surcharge';

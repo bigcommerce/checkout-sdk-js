@@ -88,6 +88,7 @@ const signInCustomer = jest.fn();
 const signOutCustomer = jest.fn();
 const selectShippingOption = jest.fn();
 const applyStoreCredit = jest.fn();
+const applyFees = jest.fn();
 const verifyCheckoutSpamProtection = jest.fn();
 const updatePaymentProviderCustomer = jest.fn();
 const initializePayment = jest.fn();
@@ -127,6 +128,7 @@ const PaymentIntegrationServiceMock = jest
             signOutCustomer,
             selectShippingOption,
             applyStoreCredit,
+            applyFees,
             applyCoupon,
             removeCoupon,
             verifyCheckoutSpamProtection,
