@@ -196,8 +196,7 @@ export default class HostedField {
         const hostname = 'fonts.googleapis.com';
         const links = document.querySelectorAll(`link[href*='${hostname}'][rel='stylesheet']`);
 
-        return Array.prototype.slice
-            .call(links)
+        return Array.from(links as NodeListOf<HTMLLinkElement>)
             .filter((link) => parseUrl(link.href).hostname === hostname)
             .filter((link) =>
                 values(this._styles)
