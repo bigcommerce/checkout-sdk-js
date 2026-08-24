@@ -196,18 +196,22 @@ export default class HostedField {
         const hostname = 'fonts.googleapis.com';
         const links = document.querySelectorAll(`link[href*='${hostname}'][rel='stylesheet']`);
 
+        // Pre-cache font names for O(1) lookup
+        const fontNames = new Set<string>();
+        values(this._styles)
+            .map((style) => style && style.fontFamily)
+            .filter((family): family is string => typeof family === 'string')
+            .forEach((family) => {
+                family.split(/,\s/).forEach((name) => {
+                    fontNames.add(name.replace(' ', '+'));
+                });
+            });
+
         return Array.prototype.slice
             .call(links)
             .filter((link) => parseUrl(link.href).hostname === hostname)
             .filter((link) =>
-                values(this._styles)
-                    .map((style) => style && style.fontFamily)
-                    .filter((family): family is string => typeof family === 'string')
-                    .some((family) =>
-                        family
-                            .split(/,\s/)
-                            .some((name) => link.href.indexOf(name.replace(' ', '+')) !== -1),
-                    ),
+                Array.from(fontNames).some((name) => link.href.indexOf(name) !== -1),
             )
             .map((link) => link.href);
     }
