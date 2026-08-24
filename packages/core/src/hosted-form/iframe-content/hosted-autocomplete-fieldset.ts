@@ -22,6 +22,8 @@ export default class HostedAutocompleteFieldset {
 
     detach(): void {
         this._inputs.forEach((input) => {
+            input.removeEventListener('change', this._handleChange);
+
             if (!input.parentElement) {
                 return;
             }
