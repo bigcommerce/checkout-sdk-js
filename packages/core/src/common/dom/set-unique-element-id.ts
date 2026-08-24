@@ -17,7 +17,7 @@ export default function setUniqueElementId(selector: string, idPrefix: string): 
         );
     }
 
-    return Array.prototype.slice.call(containers).map((container: HTMLElement) => {
+    return Array.from(containers as NodeListOf<HTMLElement>).map((container: HTMLElement) => {
         if (!container.id) {
             container.id = getUniqId(idPrefix);
         }
