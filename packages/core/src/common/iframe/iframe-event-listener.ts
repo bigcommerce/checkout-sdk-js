@@ -11,13 +11,13 @@ export default class IframeEventListener<
 > {
     private _isListening: boolean;
     private _listeners: EventListeners<TEventMap, TContext>;
-    private _sourceOrigins: string[];
+    private _sourceOrigins: Set<string>;
 
     constructor(sourceOrigin: string) {
-        this._sourceOrigins = [
+        this._sourceOrigins = new Set([
             parseUrl(sourceOrigin).origin,
             appendWww(parseUrl(sourceOrigin)).origin,
-        ];
+        ]);
         this._isListening = false;
         this._listeners = {};
     }
@@ -87,7 +87,7 @@ export default class IframeEventListener<
     @bind
     private _handleMessage(messageEvent: MessageEvent): void {
         if (
-            this._sourceOrigins.indexOf(messageEvent.origin) === -1 ||
+            !this._sourceOrigins.has(messageEvent.origin) ||
             !isIframeEvent(messageEvent.data as TEventMap[keyof TEventMap], messageEvent.data.type)
         ) {
             return;
