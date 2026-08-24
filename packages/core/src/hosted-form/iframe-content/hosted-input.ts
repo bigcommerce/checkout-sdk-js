@@ -101,6 +101,9 @@ export default class HostedInput {
             this._input.parentElement.removeChild(this._input);
         }
 
+        this._input.removeEventListener('input', this._handleInput);
+        this._input.removeEventListener('blur', this._handleBlur);
+        this._input.removeEventListener('focus', this._handleFocus);
         this._form.removeEventListener('submit', this._handleSubmit);
         this._unloadFonts();
 
@@ -182,7 +185,12 @@ export default class HostedInput {
 
         this._fontLinks = this._fontUrls
             .filter((url) => parseUrl(url).hostname === 'fonts.googleapis.com')
-            .filter((url) => !document.querySelector(`link[href='${url}'][rel='stylesheet']`))
+            .filter((url) => {
+                // Check if link with this href already exists
+                return !Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some(
+                    (link) => (link as HTMLLinkElement).href === url,
+                );
+            })
             .map((url) => {
                 const link = document.createElement('link');
 
@@ -235,7 +243,7 @@ export default class HostedInput {
         this._isTouched = true;
 
         this._formatValue(value);
-        this._validateForm();
+        void this._validateForm();
         this._notifyChange(value);
 
         this._previousValue = value;
@@ -249,7 +257,7 @@ export default class HostedInput {
 
     private _handleBlur: (event: Event) => void = () => {
         this._applyStyles(this._styles.default);
-        this._validateForm();
+        void this._validateForm();
 
         this._eventPoster.post({
             type: HostedInputEventType.Blurred,
@@ -271,7 +279,7 @@ export default class HostedInput {
     };
 
     private _handleValidate: (event: HostedFieldValidateRequestEvent) => void = () => {
-        this._validateForm();
+        void this._validateForm();
     };
 
     private _handleSubmit: (event: Event) => void = (event) => {
