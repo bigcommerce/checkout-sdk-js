@@ -3,8 +3,6 @@ import { concat, defer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { Address } from '../address';
-// TODO: CHECKOUT-9979 remove this import before delivery
-import { resolveB2bAppClientId, resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { B2BTokenRequestSender } from '../b2b-token';
 import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
@@ -72,9 +70,7 @@ export default class B2BPostOrderActionCreator {
             const state = store.getState();
             const orderId = state.order.getOrderOrThrow().orderId;
             const b2bToken = state.b2bToken.getToken();
-            const b2bBaseUrl = resolveB2bBaseUrl(
-                state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
-            );
+            const b2bBaseUrl = state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '';
             const storeConfig = state.config.getStoreConfig();
             const quoteId = storeConfig?.checkoutSettings.capabilities?.userJourney.quoteConfig?.id;
 
@@ -125,9 +121,7 @@ export default class B2BPostOrderActionCreator {
                             let bcToken: string | undefined;
 
                             if (!b2bToken && !isGuest) {
-                                const b2bClientId = resolveB2bAppClientId(
-                                    storeConfig?.b2bApiSettings?.clientId ?? '',
-                                );
+                                const b2bClientId = storeConfig?.b2bApiSettings?.clientId ?? '';
 
                                 bcToken = await this._b2bTokenRequestSender.getCurrentCustomerJWT(
                                     b2bClientId,
