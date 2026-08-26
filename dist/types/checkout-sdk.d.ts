@@ -9243,7 +9243,7 @@ declare enum UntrustedShippingCardVerificationType {
 }
 
 declare interface UserExperienceSettings {
-    checkoutV2Theme: boolean;
+    enhancedCheckoutThemeV1: boolean;
     walletButtonsOnTop: boolean;
     floatingLabelEnabled: boolean;
 }
