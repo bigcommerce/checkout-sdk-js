@@ -70,6 +70,7 @@ export {
     PaymentExecuteError,
     PaymentInvalidFormError,
     type PaymentInvalidFormErrorDetails,
+    PaymentMethodBankDeclinedAuthenticationError,
     PaymentMethodCancelledError,
     PaymentMethodClientUnavailableError,
     PaymentMethodInvalidError,

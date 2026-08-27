@@ -10,6 +10,7 @@ export {
 export { default as OrderFinalizationNotCompletedError } from './order-finalization-not-completed-error';
 export { default as OrderFinalizationNotRequiredError } from './order-finalization-not-required-error';
 export { default as PaymentArgumentInvalidError } from './payment-argument-invalid-error';
+export { default as PaymentMethodBankDeclinedAuthenticationError } from './payment-method-bank-declined-authentication-error';
 export { default as PaymentMethodCancelledError } from './payment-method-cancelled-error';
 export { default as PaymentMethodClientUnavailableError } from './payment-method-client-unavailable-error';
 export { default as PaymentMethodFailedError } from './payment-method-failed-error';
