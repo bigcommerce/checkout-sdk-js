@@ -2,8 +2,6 @@ import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-// TODO: CHECKOUT-9979 remove this import before delivery
-import { resolveB2bAppClientId, resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
@@ -22,10 +20,8 @@ export default class B2BTokenActionCreator {
             const state = store.getState();
             const storeConfig = state.config.getStoreConfigOrThrow();
             const { storeHash } = storeConfig.storeProfile;
-            // TODO: CHECKOUT-9979 revert to `const { baseUrl: b2bBaseUrl = '', clientId: b2bClientId = '' } = storeConfig.b2bApiSettings ?? {};` before delivery
-            const { baseUrl = '', clientId = '' } = storeConfig.b2bApiSettings ?? {};
-            const b2bClientId = resolveB2bAppClientId(clientId);
-            const b2bBaseUrl = resolveB2bBaseUrl(baseUrl);
+            const { baseUrl: b2bBaseUrl = '', clientId: b2bClientId = '' } =
+                storeConfig.b2bApiSettings ?? {};
 
             if (!b2bBaseUrl || !b2bClientId) {
                 throw new MissingDataError(MissingDataErrorType.MissingB2BConfig);

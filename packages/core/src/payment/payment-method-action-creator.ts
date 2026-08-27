@@ -1,7 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
-import { resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
@@ -179,9 +178,7 @@ export default class PaymentMethodActionCreator {
         const customer = state.customer.getCustomerOrThrow();
         const cart = state.cart.getCartOrThrow();
         const b2bToken = state.b2bToken.getToken();
-        const baseUrl = resolveB2bBaseUrl(
-            state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '',
-        );
+        const baseUrl = state.config.getStoreConfig()?.b2bApiSettings?.baseUrl ?? '';
 
         if (customer.isGuest || !baseUrl || !cart.companyId || !b2bToken) {
             return methods;

@@ -1,4 +1,3 @@
-import { resolveB2bBaseUrl } from '../b2b-dev-tools';
 import { ReadableCheckoutStore } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -64,7 +63,7 @@ export default class B2BStorefrontTokenService {
 
         const token = await this._requestSender.createStorefrontToken(
             b2bToken,
-            resolveB2bBaseUrl(baseUrl),
+            baseUrl,
             {
                 storeHash,
                 channelId,
