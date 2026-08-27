@@ -519,6 +519,31 @@ describe('BraintreeFastlaneUtils', () => {
             );
         });
 
+        it('does not authenticate customer if profileData is undefined', async () => {
+            jest.spyOn(
+                braintreeFastlaneMock.identity,
+                'triggerAuthenticationFlow',
+            ).mockResolvedValue({
+                authenticationState: BraintreeFastlaneAuthenticationState.FAILED,
+                profileData: undefined,
+            });
+
+            const updatePaymentProviderCustomerPayload = {
+                authenticationState: BraintreeFastlaneAuthenticationState.FAILED,
+                addresses: [],
+                instruments: [],
+            };
+
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
+
+            expect(CookieStorage.remove).toHaveBeenCalledWith('bc-fastlane-sessionId');
+            expect(braintreeFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
+                updatePaymentProviderCustomerPayload,
+            );
+        });
+
         it('preselects billing address with first paypal fastlane billing address', async () => {
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow();

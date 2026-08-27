@@ -130,7 +130,10 @@ export default class BraintreeFastlaneUtils {
 
             const phoneNumber = profileData?.shippingAddress?.phoneNumber || '';
 
-            if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
+            if (
+                authenticationState === BraintreeFastlaneAuthenticationState.CANCELED ||
+                !profileData
+            ) {
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
                     authenticationState,
                     addresses: [],

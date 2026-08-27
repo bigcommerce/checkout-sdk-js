@@ -515,13 +515,13 @@ export interface BraintreeFastlaneStylesOption {
 export enum BraintreeFastlaneAuthenticationState {
     SUCCEEDED = 'succeeded',
     FAILED = 'failed',
-    CANCELED = 'cancelled',
+    CANCELED = 'canceled',
     UNRECOGNIZED = 'unrecognized',
 }
 
 export interface BraintreeFastlaneAuthenticationCustomerResult {
     authenticationState: BraintreeFastlaneAuthenticationState;
-    profileData: BraintreeFastlaneProfileData;
+    profileData?: BraintreeFastlaneProfileData;
 }
 
 export interface BraintreeFastlaneProfileData {
