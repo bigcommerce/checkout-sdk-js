@@ -223,13 +223,16 @@ describe('BigCommercePaymentsIntegrationService', () => {
                 statusCode: 200,
             });
 
-            await subject.updateOrder();
+            await subject.updateOrder({ providerId: 'bigcommerce_payments' });
 
-            expect(bigCommercePaymentsRequestSender.updateOrder).toHaveBeenCalledWith({
-                availableShippingOptions: consignments[0].availableShippingOptions,
-                cartId: cart.id,
-                selectedShippingOption: consignments[0].selectedShippingOption,
-            });
+            expect(bigCommercePaymentsRequestSender.updateOrder).toHaveBeenCalledWith(
+                'bigcommerce_payments',
+                {
+                    availableShippingOptions: consignments[0].availableShippingOptions,
+                    cartId: cart.id,
+                    selectedShippingOption: consignments[0].selectedShippingOption,
+                },
+            );
         });
 
         it('successfully updates order when server side shipping callbacks is on', async () => {
@@ -237,13 +240,19 @@ describe('BigCommercePaymentsIntegrationService', () => {
                 statusCode: 200,
             });
 
-            await subject.updateOrder(true);
-
-            expect(bigCommercePaymentsRequestSender.updateOrder).toHaveBeenCalledWith({
-                availableShippingOptions: [],
-                cartId: cart.id,
-                selectedShippingOption: null,
+            await subject.updateOrder({
+                providerId: 'bigcommerce_payments',
+                isServerSideShippingCallbacksEnabled: true,
             });
+
+            expect(bigCommercePaymentsRequestSender.updateOrder).toHaveBeenCalledWith(
+                'bigcommerce_payments',
+                {
+                    availableShippingOptions: [],
+                    cartId: cart.id,
+                    selectedShippingOption: null,
+                },
+            );
         });
 
         it('throws an error if something went wrong during order update process', async () => {
@@ -252,7 +261,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
             );
 
             try {
-                await subject.updateOrder();
+                await subject.updateOrder({ providerId: 'bigcommerce_payments' });
             } catch (error) {
                 expect(error).toBeInstanceOf(RequestError);
             }
