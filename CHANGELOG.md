@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.964.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.964.0...v1.964.1) (2026-08-27)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-9979 Remove b2b-dev-tools ([#3376](https://github.com/bigcommerce/checkout-sdk-js/issues/3376)) ([ae69559](https://github.com/bigcommerce/checkout-sdk-js/commit/ae69559e0f6239517eb92c51f8acc9da67b69509))
+
 ## [1.964.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.963.2...v1.964.0) (2026-08-26)
 
 
