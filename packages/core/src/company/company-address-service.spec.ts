@@ -16,7 +16,7 @@ describe('CompanyAddressService', () => {
     let storefrontTokenRequestSender: B2BStorefrontTokenRequestSender;
     let requestSender: CompanyAddressRequestSender;
 
-    const result: CompanyAddressSearchResult = { company: null };
+    const result: CompanyAddressSearchResult = { customer: null };
 
     const createService = (store: ReadableCheckoutStore) => {
         storefrontTokenRequestSender = new B2BStorefrontTokenRequestSender(createRequestSender());

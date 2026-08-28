@@ -10,7 +10,7 @@ describe('CompanyAddressRequestSender', () => {
     let graphQLRequestSender: GraphQLRequestSender;
     let companyAddressRequestSender: CompanyAddressRequestSender;
 
-    const result: CompanyAddressSearchResult = { company: null };
+    const result: CompanyAddressSearchResult = { customer: null };
 
     beforeEach(() => {
         graphQLRequestSender = new GraphQLRequestSender(createRequestSender());

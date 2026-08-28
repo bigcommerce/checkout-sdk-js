@@ -4,36 +4,42 @@ query SearchCompanyAddresses(
     $isShipping: Boolean
     $isBilling: Boolean
 ) {
-    company {
-        addresses(
-            first: $first
-            filters: { searchQuery: $searchQuery, isShipping: $isShipping, isBilling: $isBilling }
-            sort: [{ field: CREATED_AT, direction: DESC }]
-        ) {
-            edges {
-                node {
-                    entityId
-                    firstName
-                    lastName
-                    address1
-                    address2
-                    city
-                    stateOrProvince
-                    stateOrProvinceCode
-                    postalCode
-                    country
-                    countryCode
-                    phone
-                    label
-                    isDefaultShipping
-                    isDefaultBilling
-                    isShipping
-                    isBilling
+    customer {
+        activeCompany {
+            addresses(
+                first: $first
+                filters: {
+                    searchQuery: $searchQuery
+                    isShipping: $isShipping
+                    isBilling: $isBilling
                 }
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
+                sort: [{ field: CREATED_AT, direction: DESC }]
+            ) {
+                edges {
+                    node {
+                        entityId
+                        firstName
+                        lastName
+                        address1
+                        address2
+                        city
+                        stateOrProvince
+                        stateOrProvinceCode
+                        postalCode
+                        country
+                        countryCode
+                        phone
+                        label
+                        isDefaultShipping
+                        isDefaultBilling
+                        isShipping
+                        isBilling
+                    }
+                }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
             }
         }
     }

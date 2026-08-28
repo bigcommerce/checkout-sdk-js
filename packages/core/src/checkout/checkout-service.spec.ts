@@ -706,7 +706,7 @@ describe('CheckoutService', () => {
 
     describe('#searchCompanyAddresses()', () => {
         it('delegates to the company address service and returns its payload', async () => {
-            const result = { company: null };
+            const result = { customer: null };
 
             jest.spyOn(companyAddressService, 'searchAddresses').mockResolvedValue(result);
 
