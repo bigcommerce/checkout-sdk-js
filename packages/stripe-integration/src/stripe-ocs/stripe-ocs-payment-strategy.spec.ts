@@ -1,4 +1,5 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { noop } from 'lodash';
 
 import {
     InvalidArgumentError,
@@ -1360,6 +1361,105 @@ describe('StripeOCSPaymentStrategy', () => {
                         }),
                     }),
                 );
+            });
+        });
+
+        describe('asyncPaymentValidation', () => {
+            const mockPaymentMethodWithFlag = (asyncPaymentValidation: boolean) => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...getStripeOCSMock(),
+                    initializationData: {
+                        ...getStripeOCSMock().initializationData,
+                        asyncPaymentValidation,
+                    },
+                });
+            };
+
+            const mockStripeClientWithConfirm = (confirmFn: jest.Mock) => {
+                stripeUPEJsMock = {
+                    ...getStripeJsMock(),
+                    confirmPayment: confirmFn,
+                    retrievePaymentIntent: jest.fn(),
+                };
+                jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
+                    jest.fn(() => Promise.resolve(stripeUPEJsMock)),
+                );
+            };
+
+            it('resolves without waiting for the second submitPayment response when flag is true', async () => {
+                mockPaymentMethodWithFlag(true);
+                mockFirstPaymentRequest(errorResponse);
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                    new Promise<never>(noop),
+                );
+                confirmPaymentMock = jest.fn().mockResolvedValue({
+                    paymentIntent: {
+                        id: 'paymentIntentId',
+                        client_secret: 'paymentIntentClientSecret',
+                    },
+                });
+                mockStripeClientWithConfirm(confirmPaymentMock);
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
+                ).resolves.not.toThrow();
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+            });
+
+            it('resolves and ignores error when second submitPayment request fails', async () => {
+                mockPaymentMethodWithFlag(true);
+                mockFirstPaymentRequest(errorResponse);
+                mockFirstPaymentRequest(new Error('second submitPayment error'));
+                confirmPaymentMock = jest.fn().mockResolvedValue({
+                    paymentIntent: {
+                        id: 'paymentIntentId',
+                        client_secret: 'paymentIntentClientSecret',
+                    },
+                });
+                mockStripeClientWithConfirm(confirmPaymentMock);
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
+                ).resolves.not.toThrow();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(
+                    stripeIntegrationService.throwPaymentConfirmationProceedMessage,
+                ).not.toHaveBeenCalled();
+            });
+
+            it('waits for the second submitPayment response when flag is false', async () => {
+                mockPaymentMethodWithFlag(false);
+                mockFirstPaymentRequest(errorResponse);
+                mockFirstPaymentRequest(new Error('second submitPayment error'));
+                confirmPaymentMock = jest.fn().mockResolvedValue({
+                    paymentIntent: {
+                        id: 'paymentIntentId',
+                        client_secret: 'paymentIntentClientSecret',
+                    },
+                });
+                mockStripeClientWithConfirm(confirmPaymentMock);
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
+                ).rejects.toThrow(PaymentMethodFailedError);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                expect(
+                    stripeIntegrationService.throwPaymentConfirmationProceedMessage,
+                ).toHaveBeenCalled();
             });
         });
     });

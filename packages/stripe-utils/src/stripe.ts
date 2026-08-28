@@ -804,6 +804,7 @@ export interface StripeInitializationData {
     sendSecondPaymentRequestOnStripeError?: boolean;
     adaptivePricingEnabled?: boolean;
     hasSectionOnTopOfPaymentsList?: boolean;
+    asyncPaymentValidation?: boolean;
 }
 
 export interface StripeElementUpdateOptions {
