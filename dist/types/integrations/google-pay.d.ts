@@ -11,14 +11,16 @@ import { CustomerStrategy } from '@bigcommerce/checkout-sdk/payment-integration-
 import { CustomerStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ExecutePaymentMethodCheckoutOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { FormPoster } from '@bigcommerce/form-poster';
-import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 declare enum CallbackIntentsType {
@@ -34,6 +36,158 @@ declare enum CallbackTriggerType {
     SHIPPING_ADDRESS = "SHIPPING_ADDRESS",
     OFFER = "OFFER"
 }
+
+export declare const createGooglePayAdyenV2ButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayAdyenV2CustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayAdyenV2PaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayAdyenV3ButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayAdyenV3CustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayAdyenV3PaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayAuthorizeDotNetButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayAuthorizeDotNetCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayAuthorizeNetPaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayBigCommercePaymentsButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayBigCommercePaymentsCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayBigCommercePaymentsPaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayBnzCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayBraintreeButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayBraintreeCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayBraintreePaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayCheckoutComButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayCheckoutComCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayCheckoutComPaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayCybersourceButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayCybersourceCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayCybersourcePaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayOrbitalButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayOrbitalCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayOrbitalPaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayPayPalCommerceButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayPayPalCommerceCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayPPCPPaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayStripeButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayStripeCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayStripePaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayStripeUpeCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayTdOnlineMartButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayTdOnlineMartCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayTdOnlineMartPaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayWorldpayAccessButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayWorldpayAccessCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayWorldpayAccessPaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
 
 declare enum ErrorReasonType {
     OFFER_INVALID = "OFFER_INVALID",
@@ -337,7 +491,7 @@ declare class GooglePayGateway {
     getCardParameters(): GooglePayCardParameters;
     initialize(getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>, isBuyNowFlow?: boolean, currencyCode?: string): Promise<void>;
     handleShippingAddressChange(shippingAddress?: GooglePayFullBillingAddress): Promise<ShippingOptionParameters | undefined>;
-    handleShippingOptionChange(optionId: string): Promise<import("@bigcommerce/checkout-sdk/payment-integration-api").PaymentIntegrationSelectors | undefined>;
+    handleShippingOptionChange(optionId: string): Promise<PaymentIntegrationSelectors | undefined>;
     getTotalPrice(): string;
     handleCoupons(offerData: IntermediatePaymentData['offerData']): Promise<HandleCouponsOut>;
     getAppliedCoupons(): GooglePayPaymentDataRequest['offerInfo'];
@@ -398,6 +552,13 @@ declare enum GooglePayKey {
     TD_ONLINE_MART = "googlepaytdonlinemart"
 }
 
+declare interface GooglePaymentsClient {
+    isReadyToPay(request: GooglePayIsReadyToPayRequest): Promise<GooglePayIsReadyToPayResponse>;
+    createButton(options: GooglePayButtonOptions): HTMLElement;
+    loadPaymentData(request: GooglePayPaymentDataRequest): Promise<GooglePayCardDataResponse>;
+    prefetchPaymentData(request: GooglePayPaymentDataRequest): void;
+}
+
 declare interface GooglePayMerchantInfo {
     merchantName: string;
     merchantId: string;
@@ -409,26 +570,6 @@ declare interface GooglePayMinBillingAddress {
     postalCode: string;
     countryCode: string;
     phoneNumber?: string;
-}
-
-declare interface GooglePayPayPalCommerceInitializationData extends GooglePayBaseInitializationData {
-    merchantId?: string;
-    clientId: string;
-    attributionId?: string;
-    availableAlternativePaymentMethods: FundingType;
-    buttonStyle?: PayPalButtonStyleOptions;
-    buyerCountry?: string;
-    clientToken?: string;
-    enabledAlternativePaymentMethods: FundingType;
-    isDeveloperModeApplicable?: boolean;
-    intent?: PayPalCommerceIntent;
-    isHostedCheckoutEnabled?: boolean;
-    isPayPalCreditAvailable?: boolean;
-    isVenmoEnabled?: boolean;
-    isGooglePayEnabled?: boolean;
-    orderId?: string;
-    shouldRenderFields?: boolean;
-    paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 
 declare interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest {
@@ -603,8 +744,8 @@ declare class GooglePayPaymentProcessor {
     initialize(getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>, googlePayPaymentOptions?: GooglePayPaymentOptions, isBuyNowFlow?: boolean, currencyCode?: string): Promise<void>;
     initializeWidget(): Promise<void>;
     getNonce(methodId: string): Promise<string>;
-    extraPaymentData(): Promise<import("./types").ExtraPaymentData | undefined>;
-    addPaymentButton(containerId: string, options: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>): HTMLElement | undefined;
+    extraPaymentData(): Promise<ExtraPaymentData | undefined>;
+    addPaymentButton(containerId: string, options: Omit_2<GooglePayButtonOptions, 'allowedPaymentMethods'>): HTMLElement | undefined;
     showPaymentSheet(): Promise<GooglePayCardDataResponse>;
     setExternalCheckoutXhr(provider: string, response: GooglePayCardDataResponse): Promise<void>;
     setExternalCheckoutForm(provider: string, response: GooglePayCardDataResponse, siteLink?: string): Promise<void>;
@@ -613,7 +754,7 @@ declare class GooglePayPaymentProcessor {
     processAdditionalAction(error: unknown, methodId?: string): Promise<void>;
     signOut(providerId: string): Promise<void>;
     getCallbackTriggers(): {
-        [key: string]: import("./types").CallbackTriggerType[];
+        [key: string]: CallbackTriggerType[];
     };
     setShouldRequestShipping(isRequired: boolean): void;
     handleShippingAddressChange(shippingAddress: GooglePayFullBillingAddress): Promise<ShippingOptionParameters | undefined>;
@@ -649,10 +790,10 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     execute({ payment }: OrderRequestBody): Promise<void>;
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
-    protected _addPaymentButton(walletButton: string, callbacks: Omit<GooglePayPaymentInitializeOptions, 'walletButton'>): void;
+    protected _addPaymentButton(walletButton: string, callbacks: Omit_2<GooglePayPaymentInitializeOptions, 'walletButton'>): void;
     protected _addPaymentButtonToContainer(googlePayOptions: GooglePayPaymentInitializeOptions): void;
     protected _handleContainerButtonClick(onError: GooglePayPaymentInitializeOptions['onError']): (event: MouseEvent) => Promise<void>;
-    protected _handleClick({ onPaymentSelect, onError, }: Omit<GooglePayPaymentInitializeOptions, 'walletButton'>): (event: MouseEvent) => unknown;
+    protected _handleClick({ onPaymentSelect, onError, }: Omit_2<GooglePayPaymentInitializeOptions, 'walletButton'>): (event: MouseEvent) => unknown;
     protected _interactWithPaymentSheetAndPay(): Promise<void>;
     protected _completeCheckoutFlow(): void;
     protected _interactWithPaymentSheet(): Promise<void>;
@@ -664,6 +805,26 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     private _isDirectPayOnClickEnabled;
     private _toggleBlockDeinitialization;
     private _toggleLoadingIndicator;
+}
+
+declare interface GooglePayPayPalCommerceInitializationData extends GooglePayBaseInitializationData {
+    merchantId?: string;
+    clientId: string;
+    attributionId?: string;
+    availableAlternativePaymentMethods: FundingType;
+    buttonStyle?: PayPalButtonStyleOptions;
+    buyerCountry?: string;
+    clientToken?: string;
+    enabledAlternativePaymentMethods: FundingType;
+    isDeveloperModeApplicable?: boolean;
+    intent?: PayPalCommerceIntent;
+    isHostedCheckoutEnabled?: boolean;
+    isPayPalCreditAvailable?: boolean;
+    isVenmoEnabled?: boolean;
+    isGooglePayEnabled?: boolean;
+    orderId?: string;
+    shouldRenderFields?: boolean;
+    paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 
 declare interface GooglePayRegularGatewayParameters extends GooglePayGatewayBaseParameters {
@@ -711,13 +872,6 @@ declare interface GooglePayTransactionInfo {
     totalPrice: string;
 }
 
-declare interface GooglePaymentsClient {
-    isReadyToPay(request: GooglePayIsReadyToPayRequest): Promise<GooglePayIsReadyToPayResponse>;
-    createButton(options: GooglePayButtonOptions): HTMLElement;
-    loadPaymentData(request: GooglePayPaymentDataRequest): Promise<GooglePayCardDataResponse>;
-    prefetchPaymentData(request: GooglePayPaymentDataRequest): void;
-}
-
 declare interface GoogleShippingOption {
     id: string;
     label?: string;
@@ -761,6 +915,10 @@ declare interface OfferInfoItem {
 declare interface Offers {
     offers: OfferInfoItem[];
 }
+
+declare type onPaymentDataChangedOut = Promise<(NewTransactionInfo & NewShippingOptionParameters & NewOfferInfo & {
+    error?: GooglePayError;
+}) | void>;
 
 declare interface PayPalButtonStyleOptions {
     color?: StyleButtonColor;
@@ -830,158 +988,3 @@ declare type WithGooglePayPaymentInitializeOptions = {
     [k in GooglePayKey]?: GooglePayPaymentInitializeOptions;
 };
 
-export declare const createGooglePayAdyenV2ButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayAdyenV2CustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayAdyenV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayAdyenV3ButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayAdyenV3CustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayAdyenV3PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayAuthorizeDotNetButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayAuthorizeDotNetCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayAuthorizeNetPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayBigCommercePaymentsButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayBigCommercePaymentsCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayBigCommercePaymentsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayBnzCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayBraintreeButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayBraintreeCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayBraintreePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayCheckoutComButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayCheckoutComCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayCheckoutComPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayCybersourceButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayCybersourceCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayCybersourcePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayOrbitalButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayOrbitalCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayOrbitalPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayPPCPPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayPayPalCommerceButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayPayPalCommerceCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayStripeButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayStripeCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayStripePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayStripeUpeCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayTdOnlineMartButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayTdOnlineMartCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayTdOnlineMartPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayWorldpayAccessButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<GooglePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayWorldpayAccessCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createGooglePayWorldpayAccessPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
-    id: string;
-}>;
-
-declare type onPaymentDataChangedOut = Promise<(NewTransactionInfo & NewShippingOptionParameters & NewOfferInfo & {
-    error?: GooglePayError;
-}) | void>;

@@ -6,4 +6,4 @@
 
 # Type Alias: HostedCreditCardInstrument
 
-> **HostedCreditCardInstrument** = [`Omit`](Omit.md)\<[`CreditCardInstrument`](../interfaces/CreditCardInstrument.md), `"ccExpiry"` \| `"ccName"` \| `"ccNumber"` \| `"ccCvv"`\>
+> **HostedCreditCardInstrument** = [`Omit_2`](Omit_2.md)\<[`CreditCardInstrument`](../interfaces/CreditCardInstrument.md), `"ccExpiry"` \| `"ccName"` \| `"ccNumber"` \| `"ccCvv"`\>

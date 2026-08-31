@@ -5,6 +5,11 @@ import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createPayPalProPaymentStrategy: ResolvableModule<CheckoutButtonStrategyFactory<PaypalProPaymentStrategy>, {
+id: string;
+}>;
 
 declare class PaypalProPaymentStrategy extends CreditCardPaymentStrategy {
     protected paymentIntegrationService: PaymentIntegrationService;
@@ -14,6 +19,3 @@ declare class PaypalProPaymentStrategy extends CreditCardPaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
 }
 
-export declare const createPayPalProPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PaypalProPaymentStrategy>, {
-    id: string;
-}>;

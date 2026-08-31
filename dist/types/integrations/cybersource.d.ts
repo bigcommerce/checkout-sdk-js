@@ -6,6 +6,15 @@ import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-inte
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createCyberSourcePaymentStrategy: ResolvableModule<PaymentStrategyFactory<CyberSourcePaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createCyberSourceV2PaymentStrategy: ResolvableModule<PaymentStrategyFactory<CyberSourceV2PaymentStrategy>, {
+id: string;
+}>;
 
 declare class CyberSourcePaymentStrategy extends CreditCardPaymentStrategy {
     private _threeDSecureFlow;
@@ -21,10 +30,3 @@ declare class CyberSourceV2PaymentStrategy extends CreditCardPaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
 }
 
-export declare const createCyberSourcePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CyberSourcePaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createCyberSourceV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CyberSourceV2PaymentStrategy>, {
-    id: string;
-}>;

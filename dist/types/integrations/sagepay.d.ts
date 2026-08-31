@@ -4,6 +4,11 @@ import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createSagePayPaymentStrategy: ResolvableModule<PaymentStrategyFactory<SagePayPaymentStrategy>, {
+id: string;
+}>;
 
 declare class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     private paymentIntegrationService;
@@ -14,6 +19,3 @@ declare class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     private _isThreeDSTwoExperimentOn;
 }
 
-export declare const createSagePayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<SagePayPaymentStrategy>, {
-    id: string;
-}>;

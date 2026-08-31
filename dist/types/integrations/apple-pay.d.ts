@@ -14,6 +14,7 @@ import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integra
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 /**
@@ -207,6 +208,18 @@ declare class ApplePaySessionFactory {
     create(request: ApplePayJS.ApplePayPaymentRequest): ApplePaySession;
 }
 
+export declare const createApplePayButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<ApplePayButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createApplePayCustomerStrategy: ResolvableModule<CustomerStrategyFactory<ApplePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createApplePayPaymentStrategy: ResolvableModule<PaymentStrategyFactory<ApplePayPaymentStrategy>, {
+id: string;
+}>;
+
 declare interface WithApplePayButtonInitializeOptions {
     applepay?: ApplePayButtonInitializeOptions;
 }
@@ -227,14 +240,3 @@ declare interface WithApplePayPaymentInitializeOptions {
     applepay?: ApplePayPaymentInitializeOptions;
 }
 
-export declare const createApplePayButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<ApplePayButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createApplePayCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<ApplePayCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createApplePayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<ApplePayPaymentStrategy>, {
-    id: string;
-}>;

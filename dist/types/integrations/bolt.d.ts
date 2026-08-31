@@ -15,6 +15,7 @@ import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integra
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 declare interface BoltAuthorization {
@@ -267,6 +268,18 @@ declare interface BoltTransaction {
     authorization: BoltAuthorization;
 }
 
+export declare const createBoltButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<BoltButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createBoltCustomerStrategy: ResolvableModule<CustomerStrategyFactory<BoltCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createBoltPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BoltPaymentStrategy>, {
+id: string;
+}>;
+
 declare enum StyleButtonShape {
     Pill = "pill",
     Rect = "rect"
@@ -298,14 +311,3 @@ declare interface WithBoltPaymentInitializeOptions {
     bolt?: BoltPaymentInitializeOptions;
 }
 
-export declare const createBoltButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BoltButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createBoltCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BoltCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createBoltPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BoltPaymentStrategy>, {
-    id: string;
-}>;

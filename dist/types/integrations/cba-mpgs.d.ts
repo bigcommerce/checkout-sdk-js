@@ -4,6 +4,7 @@ import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-inte
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 declare interface AuthenticatePayerOptionalParams {
@@ -35,6 +36,10 @@ declare class CBAMPGSScriptLoader {
     constructor(_scriptLoader: ScriptLoader, _window?: CBAMPGSHostWindow);
     load(testMode?: boolean): Promise<ThreeDSjs>;
 }
+
+export declare const createCBAMPGSPaymentStrategy: ResolvableModule<PaymentStrategyFactory<CBAMPGSPaymentStrategy>, {
+id: string;
+}>;
 
 declare interface RestApiResponse {
     transaction: {
@@ -73,6 +78,3 @@ declare interface ThreeDSjs {
     authenticatePayer(orderId: string, transactionId: string, callback: (data: ThreeDSAuthenticationResponse) => void, optionalParams?: AuthenticatePayerOptionalParams): void;
 }
 
-export declare const createCBAMPGSPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CBAMPGSPaymentStrategy>, {
-    id: string;
-}>;

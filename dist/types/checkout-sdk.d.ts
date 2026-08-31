@@ -9,30 +9,31 @@ import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integra
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CardInstrument as CardInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { createTimeout } from '@bigcommerce/request-sender';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import { Currency as Currency_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerAddress as CustomerAddress_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { HostedForm as HostedForm_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedInstrument as HostedInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { InitButtonActions } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Observable } from 'rxjs';
-import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Omit as Omit_3 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentProviderCustomer as PaymentProviderCustomer_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { PayPalFastlaneStylesOption as PayPalFastlaneStylesOption_2 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneStylesOption as PayPalFastlaneStylesOption_3 } from '@bigcommerce/checkout-sdk/paypal-utils';
-import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaypalStyleOptions as PaypalStyleOptions_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { ReadableDataStore } from '@bigcommerce/data-store';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
-import { Response } from '@bigcommerce/request-sender';
+import { Response as Response_2 } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StorefrontErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -48,7 +49,6 @@ import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-int
 import { WithEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithPayByBankInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithSepaInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { createTimeout } from '@bigcommerce/request-sender';
 
 declare type AccountInstrument = PayPalInstrument | BankInstrument | AchInstrument;
 
@@ -177,8 +177,6 @@ declare interface AdyenComponent {
     submit(): void;
 }
 
-declare type AdyenComponentEventState = CardState | BoletoState | WechatState;
-
 declare interface AdyenComponentEvents {
     /**
      * Called when the shopper enters data in the card input fields.
@@ -196,6 +194,8 @@ declare interface AdyenComponentEvents {
     onError?(state: AdyenValidationState, component: AdyenComponent): void;
     onFieldValid?(state: AdyenValidationState, component: AdyenComponent): void;
 }
+
+declare type AdyenComponentEventState = CardState | BoletoState | WechatState;
 
 declare interface AdyenComponentState {
     data?: CardStateData | IdealStateData | SepaStateData;
@@ -375,7 +375,7 @@ declare interface AdyenV2PaymentInitializeOptions {
     /**
      * Optional. Overwriting the default options
      */
-    options?: Omit_2<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
+    options?: Omit_3<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
     shouldShowNumberField?: boolean;
     validateCardFields(validateState: AdyenValidationState): void;
 }
@@ -459,7 +459,7 @@ declare interface AdyenV3PaymentInitializeOptions {
     /**
      * Optional. Overwriting the default options
      */
-    options?: Omit_2<AdyenCreditCardComponentOptions, 'onChange'>;
+    options?: Omit_3<AdyenCreditCardComponentOptions, 'onChange'>;
     shouldShowNumberField?: boolean;
     validateCardFields(validateState: AdyenValidationState): void;
 }
@@ -680,6 +680,8 @@ declare interface ApplePayPaymentInitializeOptions {
     subtotalLabel?: string;
 }
 
+export declare const B2B_EXTRA_FIELD_PREFIX = "b2bExtraField_";
+
 declare interface B2BApiSettings {
     clientId: string;
     baseUrl: string;
@@ -712,8 +714,6 @@ declare interface B2BTokenSelector {
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
-
-export declare const B2B_EXTRA_FIELD_PREFIX = "b2bExtraField_";
 
 declare interface BankInstrument extends BaseAccountInstrument {
     accountNumber: string;
@@ -2463,6 +2463,10 @@ declare interface CardExpiryElementOptions extends BaseIndividualElementOptions 
     placeholder?: string;
 }
 
+declare interface CardingProtectionActionData {
+    human_verification_token?: string;
+}
+
 declare interface CardInstrument extends BaseInstrument {
     brand: string;
     expiryMonth: string;
@@ -2509,10 +2513,6 @@ declare interface CardStateData {
 
 declare interface CardStateErrors {
     [key: string]: string;
-}
-
-declare interface CardingProtectionActionData {
-    human_verification_token?: string;
 }
 
 declare interface Cart {
@@ -2802,15 +2802,15 @@ declare interface CheckoutButtonState {
     };
 }
 
+declare interface CheckoutButtonStatusesState {
+    isInitializing?: boolean;
+    isDeinitializing?: boolean;
+}
+
 declare class CheckoutButtonStatusSelector {
     private _checkoutButton;
     isInitializingButton(methodId?: CheckoutButtonMethodType): boolean;
     isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
-}
-
-declare interface CheckoutButtonStatusesState {
-    isInitializing?: boolean;
-    isDeinitializing?: boolean;
 }
 
 declare type CheckoutIncludeParam = {
@@ -5088,6 +5088,14 @@ declare interface ConsignmentPickupOption {
     pickupMethodId: number;
 }
 
+declare interface ConsignmentsChangedEvent {
+    type: ExtensionEventType.ConsignmentsChanged;
+    payload: {
+        consignments: Consignment[];
+        previousConsignments: Consignment[];
+    };
+}
+
 declare interface ConsignmentSelector {
     getConsignments(): Consignment[] | undefined;
     getConsignmentsOrThrow(): Consignment[];
@@ -5111,6 +5119,8 @@ declare interface ConsignmentSelector {
     isUpdatingShippingOption(consignmentId?: string): boolean;
 }
 
+declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
+
 declare interface ConsignmentUpdateRequestBody {
     id: string;
     address?: AddressRequestBody;
@@ -5119,16 +5129,6 @@ declare interface ConsignmentUpdateRequestBody {
     pickupOption?: ConsignmentPickupOption;
     shippingOptionId?: string;
 }
-
-declare interface ConsignmentsChangedEvent {
-    type: ExtensionEventType.ConsignmentsChanged;
-    payload: {
-        consignments: Consignment[];
-        previousConsignments: Consignment[];
-    };
-}
-
-declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
 
 declare interface ContextConfig {
     checkoutId?: string;
@@ -5175,6 +5175,194 @@ declare interface CouponSelector {
     isApplying(): boolean;
     isRemoving(): boolean;
 }
+
+/**
+ * Creates an instance of `BodlService`.
+ *
+ * @remarks
+ *
+ * ```js
+ * const bodlService = BodlService();
+ * bodlService.checkoutBegin();
+ *
+ * ```
+ *
+ * @param subscribe - The callback function, what get a subscriber as a property, that subscribes to state changes.
+ * @returns an instance of `BodlService`.
+ */
+export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
+
+/**
+ * Creates an instance of `BraintreeAnalyticTrackerService`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const braintreeAnalyticTracker = createBraintreeAnalyticTracker(checkoutService);
+ *
+ * braintreeAnalyticTracker.customerPaymentMethodExecuted();
+ * braintreeAnalyticTracker.paymentComplete();
+ * braintreeAnalyticTracker.selectedPaymentMethod('applepay');
+ * braintreeAnalyticTracker.walletButtonClick('paypal');
+ * ```
+ *
+ * @returns an instance of `BraintreeAnalyticTrackerService`.
+ */
+export declare function createBraintreeAnalyticTracker(checkoutService: CheckoutService): BraintreeAnalyticTrackerService;
+
+/**
+ * Creates an instance of `CheckoutButtonInitializer`.
+ *
+ * @remarks
+ * ```js
+ * const initializer = createCheckoutButtonInitializer();
+ *
+ * initializer.initializeButton({
+ *     methodId: 'braintreepaypal',
+ *     braintreepaypal: {
+ *         container: '#checkoutButton',
+ *     },
+ * });
+ * ```
+ *
+ * @alpha
+ * Please note that `CheckoutButtonInitializer` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutButtonInitializer`.
+ */
+export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
+
+/**
+ * Creates an instance of `CheckoutService`.
+ *
+ * @remarks
+ * ```js
+ * const service = createCheckoutService();
+ *
+ * service.subscribe(state => {
+ *     console.log(state);
+ * });
+ *
+ * service.loadCheckout();
+ * ```
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutService`.
+ */
+export declare function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService;
+
+/**
+ * Creates an instance of `CurrencyService`.
+ *
+ * @remarks
+ * ```js
+ * const { data } = checkoutService.getState();
+ * const config = data.getConfig();
+ * const checkout = data.getCheckout();
+ * const currencyService = createCurrencyService(config);
+ *
+ * currencyService.toStoreCurrency(checkout.grandTotal);
+ * currencyService.toCustomerCurrency(checkout.grandTotal);
+ * ```
+ *
+ * @param config - The config object containing the currency configuration
+ * @returns an instance of `CurrencyService`.
+ */
+export declare function createCurrencyService(config: StoreConfig): CurrencyService;
+
+/**
+ * Create an instance of `EmbeddedCheckoutMessenger`.
+ *
+ * @remarks
+ * The object is responsible for posting messages to the parent window from the
+ * iframe when certain events have occurred. For example, when the checkout
+ * form is first loaded, you should notify the parent window about it.
+ *
+ * The iframe can only be embedded in domains that are allowed by the store.
+ *
+ * ```ts
+ * const messenger = createEmbeddedCheckoutMessenger({
+ *     parentOrigin: 'https://some/website',
+ * });
+ *
+ * messenger.postFrameLoaded();
+ * ```
+ *
+ * @alpha
+ * Please note that this feature is currently in an early stage of development.
+ * Therefore the API is unstable and not ready for public consumption.
+ *
+ * @param options - Options for creating `EmbeddedCheckoutMessenger`
+ * @returns - An instance of `EmbeddedCheckoutMessenger`
+ */
+export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger;
+
+/**
+ * Creates an instance of `LanguageService`.
+ *
+ * @remarks
+ * ```js
+ * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
+ * const service = createLanguageService(language);
+ *
+ * console.log(service.translate('address.city_label'));
+ * ```
+ *
+ * @param config - A configuration object.
+ * @returns An instance of `LanguageService`.
+ */
+export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
+
+/**
+ * Creates an instance of `PayPalCommerceAnalyticTrackerService`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const paypalCommerceAnalyticTracker = createPayPalCommerceAnalyticTracker(checkoutService);
+ *
+ * paypalCommerceAnalyticTracker.customerPaymentMethodExecuted();
+ * paypalCommerceAnalyticTracker.paymentComplete();
+ * paypalCommerceAnalyticTracker.selectedPaymentMethod('applepay');
+ * paypalCommerceAnalyticTracker.walletButtonClick('paypal');
+ * ```
+ *
+ * @returns an instance of `PayPalCommerceAnalyticTrackerService`.
+ */
+export declare function createPayPalCommerceAnalyticTracker(checkoutService: CheckoutService): PayPalCommerceAnalyticTrackerService;
+
+/**
+ * Creates an instance of `StepTracker`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const stepTracker = createStepTracker(checkoutService);
+ *
+ * stepTracker.trackCheckoutStarted();
+ * ```
+ *
+ * @param CheckoutService - An instance of CheckoutService
+ * @param StepTrackerConfig - A step tracker config object
+ * @returns an instance of `StepTracker`.
+ */
+export declare function createStepTracker(checkoutService: CheckoutService, stepTrackerConfig?: StepTrackerConfig): StepTracker;
+
+/**
+ * Creates an instance of `StoredCardHostedFormService`.
+ *
+ *
+ * @param host - Host url string parameter.
+ * @returns An instance of `StoredCardHostedFormService`.
+ */
+export declare function createStoredCardHostedFormService(host: string): StoredCardHostedFormService;
+
 
 declare interface CreditCardInstrument {
     ccCustomerCode?: string;
@@ -5331,21 +5519,6 @@ declare class CurrencyService {
     toStoreCurrency(amount: number): string;
 }
 
-declare interface CustomError extends Error {
-    message: string;
-    type: string;
-    subtype?: string;
-}
-
-declare interface CustomItem {
-    id: string;
-    listPrice: number;
-    extendedListPrice: number;
-    name: string;
-    quantity: number;
-    sku: string;
-}
-
 declare interface Customer {
     id: number;
     addresses: CustomerAddress[];
@@ -5426,6 +5599,12 @@ declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
 }
 
+declare interface CustomError extends Error {
+    message: string;
+    type: string;
+    subtype?: string;
+}
+
 declare interface CustomerSelector {
     getCustomer(): Customer | undefined;
     getCustomerOrThrow(): Customer;
@@ -5447,6 +5626,15 @@ declare interface CustomerStrategySelector {
     isInitializing(methodId?: string): boolean;
     isInitialized(methodId: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
+}
+
+declare interface CustomItem {
+    id: string;
+    listPrice: number;
+    extendedListPrice: number;
+    name: string;
+    quantity: number;
+    sku: string;
 }
 
 declare interface CustomizationConfig {
@@ -5473,6 +5661,26 @@ declare interface Discount {
 declare interface DisplaySettings {
     hidePriceFromGuests: boolean;
 }
+
+/**
+ * Embed the checkout form in an iframe.
+ *
+ * @remarks
+ * Once the iframe is embedded, it will automatically resize according to the
+ * size of the checkout form. It will also notify the parent window when certain
+ * events have occurred. i.e.: when the form is loaded and ready to be used.
+ *
+ * ```js
+ * embedCheckout({
+ *     url: 'https://checkout/url',
+ *     containerId: 'container-id',
+ * });
+ * ```
+ *
+ * @param options - Options for embedding the checkout form.
+ * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
+ */
+export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;
 
 declare class EmbeddedCheckout {
     private _iframeCreator;
@@ -5698,12 +5906,12 @@ declare interface ExtraFieldConfig {
     options?: string[];
 }
 
-declare type ExtraFieldType = 'text' | 'multiline_text' | 'number' | 'dropdown';
-
 declare interface ExtraFields {
     address: ExtraField[];
     order: ExtraField[];
 }
+
+declare type ExtraFieldType = 'text' | 'multiline_text' | 'number' | 'dropdown';
 
 /**
  * A set of options that are required to initialize the shipping step of
@@ -5783,13 +5991,13 @@ declare interface FormFieldOptions {
     rows?: number;
 }
 
-declare type FormFieldType = 'array' | 'date' | 'integer' | 'string';
-
 declare interface FormFields {
     customerAccount: FormField[];
     shippingAddress: FormField[];
     billingAddress: FormField[];
 }
+
+declare type FormFieldType = 'array' | 'date' | 'integer' | 'string';
 
 declare interface FormSelector {
     getShippingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
@@ -6119,7 +6327,7 @@ declare interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardNumber]: HostedCardFieldOptions;
 }
 
-declare type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
+declare type HostedCreditCardInstrument = Omit_2<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
 
 declare class HostedField {
     private _type;
@@ -6215,7 +6423,7 @@ declare interface HostedFieldValidateRequestEvent {
     type: HostedFieldEventType.ValidateRequested;
 }
 
-declare class HostedForm implements HostedFormInterface {
+declare class HostedForm implements HostedForm_2 {
     private _fields;
     private _eventListener;
     private _payloadTransformer;
@@ -6371,7 +6579,7 @@ declare interface HostedInputStoredCardErrorEvent {
     payload?: {
         errors?: string[];
         error?: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>;
+        response?: Response_2<PaymentErrorResponseBody>;
     };
 }
 
@@ -6385,14 +6593,14 @@ declare interface HostedInputSubmitErrorEvent {
     type: HostedInputEventType.SubmitFailed;
     payload: {
         error: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>;
+        response?: Response_2<PaymentErrorResponseBody>;
     };
 }
 
 declare interface HostedInputSubmitSuccessEvent {
     type: HostedInputEventType.SubmitSucceeded;
     payload: {
-        response: Response<unknown>;
+        response: Response_2<unknown>;
     };
 }
 
@@ -6435,7 +6643,7 @@ declare interface HostedStoredCardFieldOptionsMap {
     [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
 }
 
-declare type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
+declare type HostedVaultedInstrument = Omit_2<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
 declare interface IbanElementOptions extends BaseElementOptions {
     /**
@@ -6492,11 +6700,6 @@ declare type IframeEventMap<TType extends string | number | symbol = string> = {
     [key in TType]: IframeEvent<TType>;
 };
 
-declare interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
-    errorType?: TErrorEvent['type'];
-    successType?: TSuccessEvent['type'];
-}
-
 declare class IframeEventPoster<TEvent, TContext = undefined> {
     private _targetWindow?;
     private _context?;
@@ -6506,6 +6709,11 @@ declare class IframeEventPoster<TEvent, TContext = undefined> {
     post<TSuccessEvent extends IframeEvent = IframeEvent, TErrorEvent extends IframeEvent = IframeEvent>(event: TEvent, options: IframeEventPostOptions<TSuccessEvent, TErrorEvent>): Promise<TSuccessEvent>;
     setTarget(window: Window): void;
     setContext(context: TContext): void;
+}
+
+declare interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
+    errorType?: TErrorEvent['type'];
+    successType?: TSuccessEvent['type'];
 }
 
 declare interface IndividualCardElementOptions {
@@ -6678,6 +6886,8 @@ declare interface InventorySettings {
     defaultShippingExpectationPrompt: string | null;
     shouldDisplayBackorderMessagesOnStorefront: boolean;
 }
+
+export declare function isExtraField(field: FormField): boolean;
 
 declare interface Item {
     variantId: number;
@@ -6938,9 +7148,9 @@ declare interface NonceInstrument {
     tokenType?: string;
 }
 
-declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+declare type Omit_2<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-declare interface Option {
+declare interface Option_2 {
     pickupMethod: PickupMethod;
     itemQuantities: Item;
 }
@@ -7142,6 +7352,192 @@ declare interface PasswordRequirements {
     error: string;
 }
 
+declare interface PaymentAdditionalAction {
+    type: string;
+    data: CardingProtectionActionData;
+}
+
+declare class PaymentHumanVerificationHandler {
+    private _googleRecaptcha;
+    constructor(_googleRecaptcha: GoogleRecaptcha);
+    handle(error: any): Promise<PaymentAdditionalAction>;
+    handle(id: string, key: string): Promise<PaymentAdditionalAction>;
+    private handleWithPaymentHumanVerificationRequestError;
+    private handleWithRecaptchaSitekey;
+    private _performRecaptcha;
+    private _initialize;
+    private _isPaymentHumanVerificationRequest;
+}
+
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsInvoicesPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBlueSnapV2PaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreePaypalPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithPaypalExpressPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+
+declare type PaymentInstrument = CardInstrument | AccountInstrument;
+
+declare interface PaymentInstrumentMeta {
+    deviceSessionId?: string;
+}
+
+declare interface PaymentMethod<T = any> {
+    id: string;
+    config: PaymentMethodConfig;
+    method: string;
+    supportedCards: string[];
+    type: string;
+    clientToken?: string;
+    gateway?: string;
+    logoUrl?: string;
+    nonce?: string;
+    initializationData?: T;
+    returnUrl?: string;
+    initializationStrategy?: InitializationStrategy;
+    skipRedirectConfirmationAlert: boolean;
+}
+
+declare interface PaymentMethodConfig {
+    cardCode?: boolean;
+    displayName?: string;
+    enablePaypal?: boolean;
+    hasDefaultStoredInstrument?: boolean;
+    helpText?: string;
+    is3dsEnabled?: boolean;
+    isHostedFormEnabled?: boolean;
+    isVaultingCvvEnabled?: boolean;
+    isVaultingEnabled?: boolean;
+    isVisaCheckoutEnabled?: boolean;
+    logo?: string;
+    merchantId?: string;
+    redirectUrl?: string;
+    requireCustomerCode?: boolean;
+    returnUrl?: string;
+    shouldVaultAllPayments?: boolean;
+    showCardHolderName?: boolean;
+    testMode?: boolean;
+}
+
+declare interface PaymentMethodMeta {
+    deviceSessionId: string;
+    sessionHash: string;
+}
+
+declare interface PaymentMethodSelector {
+    getPaymentMethods(): PaymentMethod[] | undefined;
+    getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
+    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
+    getPaymentMethodOrThrow(methodId: string, gatewayId?: string): PaymentMethod;
+    getLoadError(): Error | undefined;
+    getLoadMethodError(methodId?: string): Error | undefined;
+    isLoading(): boolean;
+    isLoadingMethod(methodId?: string): boolean;
+}
+
+declare type PaymentProviderCustomer = PaymentProviderCustomer_2;
+
+declare interface PaymentProviderCustomerSelector {
+    getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
+    getPaymentProviderCustomerOrThrow(): PaymentProviderCustomer;
+}
+
+/**
+ * The set of options for configuring any requests related to the payment step of
+ * the current checkout flow.
+ */
+declare interface PaymentRequestOptions extends RequestOptions {
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+    /**
+     * The identifier of the payment provider providing the payment method. This
+     * option is only required if the provider offers multiple payment options.
+     * i.e.: Adyen and Klarna.
+     */
+    gatewayId?: string;
+}
+
+declare interface PaymentSelector {
+    getPaymentId(): {
+        providerId: string;
+        gatewayId?: string;
+    } | undefined;
+    getPaymentIdOrThrow(): {
+        providerId: string;
+        gatewayId?: string;
+    };
+    getPaymentStatus(): string | undefined;
+    getPaymentStatusOrThrow(): string;
+    getPaymentToken(): string | undefined;
+    getPaymentTokenOrThrow(): string;
+    getPaymentRedirectUrl(): string | undefined;
+    getPaymentRedirectUrlOrThrow(): string;
+    isPaymentDataRequired(useStoreCredit?: boolean): boolean;
+    isPaymentDataSubmitted(paymentMethod?: PaymentMethod): boolean;
+}
+
+declare interface PaymentSettings {
+    bigpayBaseUrl: string;
+    clientSidePaymentProviders: string[];
+}
+
+declare interface PaymentStrategySelector {
+    getInitializeError(methodId?: string): Error | undefined;
+    getExecuteError(methodId?: string): Error | undefined;
+    getFinalizeError(methodId?: string): Error | undefined;
+    getWidgetInteractingError(methodId?: string): Error | undefined;
+    isInitializing(methodId?: string): boolean;
+    isInitialized(query: InitiaizedQuery): boolean;
+    isExecuting(methodId?: string): boolean;
+    isFinalizing(methodId?: string): boolean;
+    isWidgetInteracting(methodId?: string): boolean;
+}
+
+declare interface PaypalButtonInitializeOptions {
+    /**
+     * The Client ID of the Paypal App
+     */
+    clientId: string;
+    /**
+     * Whether or not to show a credit button.
+     */
+    allowCredit?: boolean;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
+    /**
+     * A callback that gets called if unable to authorize and tokenize payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onAuthorizeError?(error: StandardError): void;
+    /**
+     * A callback that gets called if unable to submit payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onPaymentError?(error: StandardError): void;
+}
+
+declare enum PaypalButtonStyleColorOption {
+    GOLD = "gold",
+    BLUE = "blue",
+    SIlVER = "silver",
+    BLACK = "black",
+    WHITE = "white"
+}
+
+declare enum PaypalButtonStyleLabelOption {
+    CHECKOUT = "checkout",
+    PAY = "pay",
+    BUYNOW = "buynow",
+    PAYPAL = "paypal",
+    CREDIT = "credit"
+}
+
+declare enum PaypalButtonStyleLayoutOption {
+    HORIZONTAL = "horizontal",
+    VERTICAL = "vertical"
+}
+
 declare interface PayPalButtonStyleOptions {
     color?: StyleButtonColor;
     shape?: StyleButtonShape;
@@ -7154,6 +7550,18 @@ declare interface PayPalButtonStyleOptions_2 {
     shape?: StyleButtonShape_3;
     height?: number;
     label?: StyleButtonLabel_2;
+}
+
+declare enum PaypalButtonStyleShapeOption {
+    PILL = "pill",
+    RECT = "rect"
+}
+
+declare enum PaypalButtonStyleSizeOption {
+    SMALL = "small",
+    MEDIUM = "medium",
+    LARGE = "large",
+    RESPONSIVE = "responsive"
 }
 
 /**
@@ -7833,6 +8241,38 @@ declare interface PayPalCommercePaymentInitializeOptions {
     submitForm?(): void;
 }
 
+declare interface PaypalCommerceRatePay {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * The CSS selector of a container where the legal text should be inserted into.
+     */
+    legalTextContainer: string;
+    /**
+     * The CSS selector of a container where loading indicator should be rendered
+     */
+    loadingContainerId: string;
+    /**
+     * A callback that gets form values
+     */
+    getFieldsValues?(): {
+        ratepayBirthDate: BirthDate_2;
+        ratepayPhoneNumber: string;
+        ratepayPhoneCountryCode: string;
+    };
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
+}
+
 declare interface PayPalCommerceVenmoButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
@@ -7952,236 +8392,6 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare interface PaymentAdditionalAction {
-    type: string;
-    data: CardingProtectionActionData;
-}
-
-declare class PaymentHumanVerificationHandler {
-    private _googleRecaptcha;
-    constructor(_googleRecaptcha: GoogleRecaptcha);
-    handle(error: any): Promise<PaymentAdditionalAction>;
-    handle(id: string, key: string): Promise<PaymentAdditionalAction>;
-    private handleWithPaymentHumanVerificationRequestError;
-    private handleWithRecaptchaSitekey;
-    private _performRecaptcha;
-    private _initialize;
-    private _isPaymentHumanVerificationRequest;
-}
-
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsInvoicesPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBlueSnapV2PaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreePaypalPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithBraintreeCreditCardPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithPaypalExpressPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
-
-declare type PaymentInstrument = CardInstrument | AccountInstrument;
-
-declare interface PaymentInstrumentMeta {
-    deviceSessionId?: string;
-}
-
-declare interface PaymentMethod<T = any> {
-    id: string;
-    config: PaymentMethodConfig;
-    method: string;
-    supportedCards: string[];
-    type: string;
-    clientToken?: string;
-    gateway?: string;
-    logoUrl?: string;
-    nonce?: string;
-    initializationData?: T;
-    returnUrl?: string;
-    initializationStrategy?: InitializationStrategy;
-    skipRedirectConfirmationAlert: boolean;
-}
-
-declare interface PaymentMethodConfig {
-    cardCode?: boolean;
-    displayName?: string;
-    enablePaypal?: boolean;
-    hasDefaultStoredInstrument?: boolean;
-    helpText?: string;
-    is3dsEnabled?: boolean;
-    isHostedFormEnabled?: boolean;
-    isVaultingCvvEnabled?: boolean;
-    isVaultingEnabled?: boolean;
-    isVisaCheckoutEnabled?: boolean;
-    logo?: string;
-    merchantId?: string;
-    redirectUrl?: string;
-    requireCustomerCode?: boolean;
-    returnUrl?: string;
-    shouldVaultAllPayments?: boolean;
-    showCardHolderName?: boolean;
-    testMode?: boolean;
-}
-
-declare interface PaymentMethodMeta {
-    deviceSessionId: string;
-    sessionHash: string;
-}
-
-declare interface PaymentMethodSelector {
-    getPaymentMethods(): PaymentMethod[] | undefined;
-    getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
-    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
-    getPaymentMethodOrThrow(methodId: string, gatewayId?: string): PaymentMethod;
-    getLoadError(): Error | undefined;
-    getLoadMethodError(methodId?: string): Error | undefined;
-    isLoading(): boolean;
-    isLoadingMethod(methodId?: string): boolean;
-}
-
-declare type PaymentProviderCustomer = PaymentProviderCustomerType;
-
-declare interface PaymentProviderCustomerSelector {
-    getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
-    getPaymentProviderCustomerOrThrow(): PaymentProviderCustomer;
-}
-
-/**
- * The set of options for configuring any requests related to the payment step of
- * the current checkout flow.
- */
-declare interface PaymentRequestOptions extends RequestOptions {
-    /**
-     * The identifier of the payment method.
-     */
-    methodId: string;
-    /**
-     * The identifier of the payment provider providing the payment method. This
-     * option is only required if the provider offers multiple payment options.
-     * i.e.: Adyen and Klarna.
-     */
-    gatewayId?: string;
-}
-
-declare interface PaymentSelector {
-    getPaymentId(): {
-        providerId: string;
-        gatewayId?: string;
-    } | undefined;
-    getPaymentIdOrThrow(): {
-        providerId: string;
-        gatewayId?: string;
-    };
-    getPaymentStatus(): string | undefined;
-    getPaymentStatusOrThrow(): string;
-    getPaymentToken(): string | undefined;
-    getPaymentTokenOrThrow(): string;
-    getPaymentRedirectUrl(): string | undefined;
-    getPaymentRedirectUrlOrThrow(): string;
-    isPaymentDataRequired(useStoreCredit?: boolean): boolean;
-    isPaymentDataSubmitted(paymentMethod?: PaymentMethod): boolean;
-}
-
-declare interface PaymentSettings {
-    bigpayBaseUrl: string;
-    clientSidePaymentProviders: string[];
-}
-
-declare interface PaymentStrategySelector {
-    getInitializeError(methodId?: string): Error | undefined;
-    getExecuteError(methodId?: string): Error | undefined;
-    getFinalizeError(methodId?: string): Error | undefined;
-    getWidgetInteractingError(methodId?: string): Error | undefined;
-    isInitializing(methodId?: string): boolean;
-    isInitialized(query: InitiaizedQuery): boolean;
-    isExecuting(methodId?: string): boolean;
-    isFinalizing(methodId?: string): boolean;
-    isWidgetInteracting(methodId?: string): boolean;
-}
-
-declare interface PaypalButtonInitializeOptions {
-    /**
-     * The Client ID of the Paypal App
-     */
-    clientId: string;
-    /**
-     * Whether or not to show a credit button.
-     */
-    allowCredit?: boolean;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
-    /**
-     * A callback that gets called if unable to authorize and tokenize payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onAuthorizeError?(error: StandardError): void;
-    /**
-     * A callback that gets called if unable to submit payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onPaymentError?(error: StandardError): void;
-}
-
-declare enum PaypalButtonStyleColorOption {
-    GOLD = "gold",
-    BLUE = "blue",
-    SIlVER = "silver",
-    BLACK = "black",
-    WHITE = "white"
-}
-
-declare enum PaypalButtonStyleLabelOption {
-    CHECKOUT = "checkout",
-    PAY = "pay",
-    BUYNOW = "buynow",
-    PAYPAL = "paypal",
-    CREDIT = "credit"
-}
-
-declare enum PaypalButtonStyleLayoutOption {
-    HORIZONTAL = "horizontal",
-    VERTICAL = "vertical"
-}
-
-declare enum PaypalButtonStyleShapeOption {
-    PILL = "pill",
-    RECT = "rect"
-}
-
-declare enum PaypalButtonStyleSizeOption {
-    SMALL = "small",
-    MEDIUM = "medium",
-    LARGE = "large",
-    RESPONSIVE = "responsive"
-}
-
-declare interface PaypalCommerceRatePay {
-    /**
-     * The CSS selector of a container where the payment widget should be inserted into.
-     */
-    container: string;
-    /**
-     * The CSS selector of a container where the legal text should be inserted into.
-     */
-    legalTextContainer: string;
-    /**
-     * The CSS selector of a container where loading indicator should be rendered
-     */
-    loadingContainerId: string;
-    /**
-     * A callback that gets form values
-     */
-    getFieldsValues?(): {
-        ratepayBirthDate: BirthDate_2;
-        ratepayPhoneNumber: string;
-        ratepayPhoneCountryCode: string;
-    };
-    /**
-     * A callback right before render Smart Payment Button that gets called when
-     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
-     */
-    onRenderButton?(): void;
-    /**
-     * A callback for displaying error popup. This callback requires error object as parameter.
-     */
-    onError?(error: unknown): void;
-}
-
 declare interface PaypalStyleOptions {
     layout?: PaypalButtonStyleLayoutOption;
     size?: PaypalButtonStyleSizeOption;
@@ -8225,7 +8435,7 @@ declare interface PickupOptionRequestBody {
 }
 
 declare interface PickupOptionResult {
-    options: Option[];
+    options: Option_2[];
 }
 
 declare interface PickupOptionSelector {
@@ -8246,14 +8456,6 @@ declare interface Radius {
 declare enum RadiusUnit {
     KM = "KM",
     MI = "MI"
-}
-
-declare interface ReRenderShippingForm {
-    type: ExtensionCommandType.ReRenderShippingForm;
-}
-
-declare interface ReRenderShippingStep {
-    type: ExtensionCommandType.ReRenderShippingStep;
 }
 
 declare type ReadableCheckoutStore = ReadableDataStore<InternalCheckoutSelectors>;
@@ -8294,7 +8496,7 @@ declare class RequestError<TBody = any> extends StandardError {
         message?: string;
     }>;
     status: number;
-    constructor(response?: Response<TBody | object>, { message, errors, }?: {
+    constructor(response?: Response_2<TBody | object>, { message, errors, }?: {
         message?: string;
         errors?: Array<{
             code: string;
@@ -8321,6 +8523,14 @@ declare interface RequestOptions<TParams = object> {
      * The version of the checkout, used for optimistic concurrency control.
      */
     version?: number;
+}
+
+declare interface ReRenderShippingForm {
+    type: ExtensionCommandType.ReRenderShippingForm;
+}
+
+declare interface ReRenderShippingStep {
+    type: ExtensionCommandType.ReRenderShippingStep;
 }
 
 declare interface SearchArea {
@@ -8653,30 +8863,6 @@ declare interface StoreCurrency {
     thousandsSeparator: string;
 }
 
-declare interface StoreLinks {
-    baseUrl?: string | null;
-    cartLink: string;
-    checkoutLink: string;
-    createAccountLink: string;
-    forgotPasswordLink: string;
-    loginLink: string;
-    logoutLink: string;
-    siteLink: string;
-    orderConfirmationLink: string;
-}
-
-declare interface StoreProfile {
-    orderEmail: string;
-    shopPath: string;
-    storeCountry: string;
-    storeCountryCode: string;
-    storeHash: string;
-    storeId: string;
-    storeName: string;
-    storePhoneNumber: string;
-    storeLanguage: string;
-}
-
 declare interface StoredCardHostedFormBillingAddress {
     address1: string;
     address2?: string;
@@ -8712,6 +8898,58 @@ declare class StoredCardHostedFormService {
     submitStoredCard(fields: StoredCardHostedFormInstrumentFields, data: StoredCardHostedFormData): Promise<void>;
     initialize(options: LegacyHostedFormOptions): Promise<void>;
     deinitialize(): void;
+}
+
+declare interface StoreLinks {
+    baseUrl?: string | null;
+    cartLink: string;
+    checkoutLink: string;
+    createAccountLink: string;
+    forgotPasswordLink: string;
+    loginLink: string;
+    logoutLink: string;
+    siteLink: string;
+    orderConfirmationLink: string;
+}
+
+declare interface StoreProfile {
+    orderEmail: string;
+    shopPath: string;
+    storeCountry: string;
+    storeCountryCode: string;
+    storeHash: string;
+    storeId: string;
+    storeName: string;
+    storePhoneNumber: string;
+    storeLanguage: string;
+}
+
+declare interface StripeElementClasses {
+    /**
+     * The base class applied to the container. Defaults to StripeElement.
+     */
+    base?: string;
+    /**
+     * The class name to apply when the Element is complete. Defaults to StripeElement--complete.
+     */
+    complete?: string;
+    /**
+     * The class name to apply when the Element is empty. Defaults to StripeElement--empty.
+     */
+    empty?: string;
+    /**
+     * The class name to apply when the Element is focused. Defaults to StripeElement--focus.
+     */
+    focus?: string;
+    /**
+     * The class name to apply when the Element is invalid. Defaults to StripeElement--invalid.
+     */
+    invalid?: string;
+    /**
+     * The class name to apply when the Element has its value autofilled by the browser
+     * (only on Chrome and Safari). Defaults to StripeElement--webkit-autofill.
+     */
+    webkitAutoFill?: string;
 }
 
 /**
@@ -8792,34 +9030,6 @@ declare interface StripeElementCSSProperties {
      * The [text-transform](https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform) CSS property.
      */
     textTransform?: string;
-}
-
-declare interface StripeElementClasses {
-    /**
-     * The base class applied to the container. Defaults to StripeElement.
-     */
-    base?: string;
-    /**
-     * The class name to apply when the Element is complete. Defaults to StripeElement--complete.
-     */
-    complete?: string;
-    /**
-     * The class name to apply when the Element is empty. Defaults to StripeElement--empty.
-     */
-    empty?: string;
-    /**
-     * The class name to apply when the Element is focused. Defaults to StripeElement--focus.
-     */
-    focus?: string;
-    /**
-     * The class name to apply when the Element is invalid. Defaults to StripeElement--invalid.
-     */
-    invalid?: string;
-    /**
-     * The class name to apply when the Element has its value autofilled by the browser
-     * (only on Chrome and Safari). Defaults to StripeElement--webkit-autofill.
-     */
-    webkitAutoFill?: string;
 }
 
 declare type StripeElementOptions = CardElementOptions | CardExpiryElementOptions | CardNumberElementOptions | CardCvcElementOptions | IdealElementOptions | IbanElementOptions | ZipCodeElementOptions;
@@ -9694,211 +9904,3 @@ declare interface ZipCodeElementOptions {
     containerId: string;
 }
 
-/**
- * Creates an instance of `BodlService`.
- *
- * @remarks
- *
- * ```js
- * const bodlService = BodlService();
- * bodlService.checkoutBegin();
- *
- * ```
- *
- * @param subscribe - The callback function, what get a subscriber as a property, that subscribes to state changes.
- * @returns an instance of `BodlService`.
- */
-export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
-
-/**
- * Creates an instance of `BraintreeAnalyticTrackerService`.
- *
- * @remarks
- * ```js
- * const checkoutService = createCheckoutService();
- * await checkoutService.loadCheckout();
- * const braintreeAnalyticTracker = createBraintreeAnalyticTracker(checkoutService);
- *
- * braintreeAnalyticTracker.customerPaymentMethodExecuted();
- * braintreeAnalyticTracker.paymentComplete();
- * braintreeAnalyticTracker.selectedPaymentMethod('applepay');
- * braintreeAnalyticTracker.walletButtonClick('paypal');
- * ```
- *
- * @returns an instance of `BraintreeAnalyticTrackerService`.
- */
-export declare function createBraintreeAnalyticTracker(checkoutService: CheckoutService): BraintreeAnalyticTrackerService;
-
-/**
- * Creates an instance of `CheckoutButtonInitializer`.
- *
- * @remarks
- * ```js
- * const initializer = createCheckoutButtonInitializer();
- *
- * initializer.initializeButton({
- *     methodId: 'braintreepaypal',
- *     braintreepaypal: {
- *         container: '#checkoutButton',
- *     },
- * });
- * ```
- *
- * @alpha
- * Please note that `CheckoutButtonInitializer` is currently in an early stage
- * of development. Therefore the API is unstable and not ready for public
- * consumption.
- *
- * @param options - A set of construction options.
- * @returns an instance of `CheckoutButtonInitializer`.
- */
-export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
-
-/**
- * Creates an instance of `CheckoutService`.
- *
- * @remarks
- * ```js
- * const service = createCheckoutService();
- *
- * service.subscribe(state => {
- *     console.log(state);
- * });
- *
- * service.loadCheckout();
- * ```
- *
- * @param options - A set of construction options.
- * @returns an instance of `CheckoutService`.
- */
-export declare function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService;
-
-/**
- * Creates an instance of `CurrencyService`.
- *
- * @remarks
- * ```js
- * const { data } = checkoutService.getState();
- * const config = data.getConfig();
- * const checkout = data.getCheckout();
- * const currencyService = createCurrencyService(config);
- *
- * currencyService.toStoreCurrency(checkout.grandTotal);
- * currencyService.toCustomerCurrency(checkout.grandTotal);
- * ```
- *
- * @param config - The config object containing the currency configuration
- * @returns an instance of `CurrencyService`.
- */
-export declare function createCurrencyService(config: StoreConfig): CurrencyService;
-
-/**
- * Create an instance of `EmbeddedCheckoutMessenger`.
- *
- * @remarks
- * The object is responsible for posting messages to the parent window from the
- * iframe when certain events have occurred. For example, when the checkout
- * form is first loaded, you should notify the parent window about it.
- *
- * The iframe can only be embedded in domains that are allowed by the store.
- *
- * ```ts
- * const messenger = createEmbeddedCheckoutMessenger({
- *     parentOrigin: 'https://some/website',
- * });
- *
- * messenger.postFrameLoaded();
- * ```
- *
- * @alpha
- * Please note that this feature is currently in an early stage of development.
- * Therefore the API is unstable and not ready for public consumption.
- *
- * @param options - Options for creating `EmbeddedCheckoutMessenger`
- * @returns - An instance of `EmbeddedCheckoutMessenger`
- */
-export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger;
-
-/**
- * Creates an instance of `LanguageService`.
- *
- * @remarks
- * ```js
- * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
- * const service = createLanguageService(language);
- *
- * console.log(service.translate('address.city_label'));
- * ```
- *
- * @param config - A configuration object.
- * @returns An instance of `LanguageService`.
- */
-export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
-
-/**
- * Creates an instance of `PayPalCommerceAnalyticTrackerService`.
- *
- * @remarks
- * ```js
- * const checkoutService = createCheckoutService();
- * await checkoutService.loadCheckout();
- * const paypalCommerceAnalyticTracker = createPayPalCommerceAnalyticTracker(checkoutService);
- *
- * paypalCommerceAnalyticTracker.customerPaymentMethodExecuted();
- * paypalCommerceAnalyticTracker.paymentComplete();
- * paypalCommerceAnalyticTracker.selectedPaymentMethod('applepay');
- * paypalCommerceAnalyticTracker.walletButtonClick('paypal');
- * ```
- *
- * @returns an instance of `PayPalCommerceAnalyticTrackerService`.
- */
-export declare function createPayPalCommerceAnalyticTracker(checkoutService: CheckoutService): PayPalCommerceAnalyticTrackerService;
-
-/**
- * Creates an instance of `StepTracker`.
- *
- * @remarks
- * ```js
- * const checkoutService = createCheckoutService();
- * await checkoutService.loadCheckout();
- * const stepTracker = createStepTracker(checkoutService);
- *
- * stepTracker.trackCheckoutStarted();
- * ```
- *
- * @param CheckoutService - An instance of CheckoutService
- * @param StepTrackerConfig - A step tracker config object
- * @returns an instance of `StepTracker`.
- */
-export declare function createStepTracker(checkoutService: CheckoutService, stepTrackerConfig?: StepTrackerConfig): StepTracker;
-
-/**
- * Creates an instance of `StoredCardHostedFormService`.
- *
- *
- * @param host - Host url string parameter.
- * @returns An instance of `StoredCardHostedFormService`.
- */
-export declare function createStoredCardHostedFormService(host: string): StoredCardHostedFormService;
-
-/**
- * Embed the checkout form in an iframe.
- *
- * @remarks
- * Once the iframe is embedded, it will automatically resize according to the
- * size of the checkout form. It will also notify the parent window when certain
- * events have occurred. i.e.: when the form is loaded and ready to be used.
- *
- * ```js
- * embedCheckout({
- *     url: 'https://checkout/url',
- *     containerId: 'container-id',
- * });
- * ```
- *
- * @param options - Options for embedding the checkout form.
- * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
- */
-export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;
-
-export declare function isExtraField(field: FormField): boolean;

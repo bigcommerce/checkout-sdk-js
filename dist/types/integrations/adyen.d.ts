@@ -6,6 +6,7 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithAdyenV2PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/adyen-utils';
 import { WithAdyenV3PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/adyen-utils';
 
@@ -67,10 +68,11 @@ declare class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _waitForMountContainer;
 }
 
-export declare const createAdyenV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<AdyenV2PaymentStrategy>, {
-    gateway: string;
+export declare const createAdyenV2PaymentStrategy: ResolvableModule<PaymentStrategyFactory<AdyenV2PaymentStrategy>, {
+gateway: string;
 }>;
 
-export declare const createAdyenV3PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<Adyenv3PaymentStrategy>, {
-    gateway: string;
+export declare const createAdyenV3PaymentStrategy: ResolvableModule<PaymentStrategyFactory<Adyenv3PaymentStrategy>, {
+gateway: string;
 }>;
+

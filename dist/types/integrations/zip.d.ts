@@ -3,7 +3,12 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StorefrontPaymentRequestSender } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createZipPaymentStrategy: ResolvableModule<PaymentStrategyFactory<ZipPaymentStrategy>, {
+id: string;
+}>;
 
 declare class ZipPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
@@ -16,6 +21,3 @@ declare class ZipPaymentStrategy implements PaymentStrategy {
     private _prepareForReferredRegistration;
 }
 
-export declare const createZipPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<ZipPaymentStrategy>, {
-    id: string;
-}>;

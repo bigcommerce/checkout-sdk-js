@@ -199,15 +199,6 @@ declare interface Currency {
     decimalPlaces: number;
 }
 
-declare interface CustomItem {
-    id: string;
-    listPrice: number;
-    extendedListPrice: number;
-    name: string;
-    quantity: number;
-    sku: string;
-}
-
 declare interface Customer {
     id: number;
     addresses: CustomerAddress[];
@@ -245,6 +236,15 @@ declare type CustomerAddressType = 'residential' | 'commercial' | 'company' | 'p
 declare interface CustomerGroup {
     id: number;
     name: string;
+}
+
+declare interface CustomItem {
+    id: string;
+    listPrice: number;
+    extendedListPrice: number;
+    name: string;
+    quantity: number;
+    sku: string;
 }
 
 declare interface DigitalItem extends LineItem {
@@ -654,6 +654,83 @@ declare interface LineItemSocialData {
     link: string;
 }
 
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalAddress(address: Address | BillingAddress, consignments?: Consignment[]): InternalAddress<any>;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalCart(checkout: Checkout): InternalCart;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalCoupon(coupon: Coupon): InternalCoupon;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalCustomer(customer: Customer, billingAddress: OrderBillingAddress): InternalCustomer;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalGiftCertificate(giftCertificate: GiftCertificate): InternalGiftCertificate;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalLineItem(item: LineItem, type: string, decimalPlaces: number, idKey?: keyof LineItem): InternalLineItem;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalLineItems(itemMap: LineItemMap, decimalPlaces: number, idKey?: keyof LineItem): InternalLineItem[];
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalOrder(order: Order, orderMeta?: OrderMetaState): InternalOrder;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalQuote(checkout: Checkout, shippingAddress?: Address): InternalQuote;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalShippingOption(option: ShippingOption, isSelected: boolean): InternalShippingOption;
+
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
+export declare function mapToInternalShippingOptions(consignments: Consignment[]): InternalShippingOptionList;
+
 declare interface Order {
     baseAmount: number;
     billingAddress: OrderBillingAddress;
@@ -809,79 +886,3 @@ declare interface Tax {
     amount: number;
 }
 
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalAddress(address: Address | BillingAddress, consignments?: Consignment[]): InternalAddress<any>;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalCart(checkout: Checkout): InternalCart;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalCoupon(coupon: Coupon): InternalCoupon;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalCustomer(customer: Customer, billingAddress: OrderBillingAddress): InternalCustomer;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalGiftCertificate(giftCertificate: GiftCertificate): InternalGiftCertificate;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalLineItem(item: LineItem, type: string, decimalPlaces: number, idKey?: keyof LineItem): InternalLineItem;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalLineItems(itemMap: LineItemMap, decimalPlaces: number, idKey?: keyof LineItem): InternalLineItem[];
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalOrder(order: Order, orderMeta?: OrderMetaState): InternalOrder;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalQuote(checkout: Checkout, shippingAddress?: Address): InternalQuote;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalShippingOption(option: ShippingOption, isSelected: boolean): InternalShippingOption;
-
-/**
- * @deprecated This mapper is only for internal use only. It is required during
- * the transition period as we are moving to adopt the new storefront API object
- * schema.
- */
-export declare function mapToInternalShippingOptions(consignments: Consignment[]): InternalShippingOptionList;

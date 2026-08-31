@@ -1,5 +1,5 @@
 import { RequestSender } from '@bigcommerce/request-sender';
-import { Response } from '@bigcommerce/request-sender';
+import { Response as Response_2 } from '@bigcommerce/request-sender';
 
 declare interface HostedFieldAttachEvent {
     type: HostedFieldEventType.AttachRequested;
@@ -237,7 +237,7 @@ declare interface HostedInputStoredCardErrorEvent {
     payload?: {
         errors?: string[];
         error?: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>;
+        response?: Response_2<PaymentErrorResponseBody>;
     };
 }
 
@@ -266,14 +266,14 @@ declare interface HostedInputSubmitManualOrderErrorEvent {
     type: HostedInputEventType.SubmitManualOrderFailed;
     payload: {
         error: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>;
+        response?: Response_2<PaymentErrorResponseBody>;
     };
 }
 
 declare interface HostedInputSubmitManualOrderSuccessEvent {
     type: HostedInputEventType.SubmitManualOrderSucceeded;
     payload: {
-        response: Response<unknown>;
+        response: Response_2<unknown>;
     };
 }
 
@@ -345,11 +345,6 @@ declare type IframeEventMap<TType extends string | number | symbol = string> = {
     [key in TType]: IframeEvent<TType>;
 };
 
-declare interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
-    errorType?: TErrorEvent['type'];
-    successType?: TSuccessEvent['type'];
-}
-
 declare class IframeEventPoster<TEvent, TContext = undefined> {
     private _targetWindow?;
     private _context?;
@@ -361,12 +356,21 @@ declare class IframeEventPoster<TEvent, TContext = undefined> {
     setContext(context: TContext): void;
 }
 
+declare interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
+    errorType?: TErrorEvent['type'];
+    successType?: TSuccessEvent['type'];
+}
+
+export declare function initializeHostedInput(options: HostedInputOptions): Promise<HostedInput>;
+
 declare class ManualOrderPaymentRequestSender {
     private _requestSender;
     private _paymentOrigin;
     constructor(_requestSender: RequestSender, _paymentOrigin: string);
-    submitPayment(requestInitializationData: HostedFormManualOrderData, instrumentFormData: HostedInputValues, nonce?: string): Promise<Response<unknown>>;
+    submitPayment(requestInitializationData: HostedFormManualOrderData, instrumentFormData: HostedInputValues, nonce?: string): Promise<Response_2<unknown>>;
 }
+
+export declare function notifyInitializeError(error: HostedInputInitializeErrorData): void;
 
 declare interface PaymentErrorData {
     code: string;
@@ -426,6 +430,3 @@ declare class StorefrontStoredCardRequestSender {
     submitPaymentInstrument(requestInitializationData: StoredCardHostedFormData, storeInstrumentFormData: StoredCardHostedFormInstrumentForm): Promise<void>;
 }
 
-export declare function initializeHostedInput(options: HostedInputOptions): Promise<HostedInput>;
-
-export declare function notifyInitializeError(error: HostedInputInitializeErrorData): void;

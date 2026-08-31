@@ -3,6 +3,11 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createNoPaymentStrategy: ResolvableModule<PaymentStrategyFactory<NoPaymentDataRequiredPaymentStrategy>, {
+id: string;
+}>;
 
 declare class NoPaymentDataRequiredPaymentStrategy implements PaymentStrategy {
     private _paymentIntegrationService;
@@ -13,6 +18,3 @@ declare class NoPaymentDataRequiredPaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void>;
 }
 
-export declare const createNoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<NoPaymentDataRequiredPaymentStrategy>, {
-    id: string;
-}>;

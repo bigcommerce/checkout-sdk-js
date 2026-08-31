@@ -4,6 +4,7 @@ import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 declare class CheckoutComCreditCardPaymentStrategy extends CreditCardPaymentStrategy {
     private paymentIntegrationService;
@@ -29,36 +30,37 @@ declare class CheckoutComFawryPaymentStrategy extends CheckoutComCustomPaymentSt
     private _createFormattedPayload;
 }
 
-declare class CheckoutComSEPAPaymentStrategy extends CheckoutComCustomPaymentStrategy {
-    protected _executeWithoutHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
-    private _createFormattedPayload;
-}
-
 declare class CheckoutComiDealPaymentStrategy extends CheckoutComCustomPaymentStrategy {
     protected _executeWithoutHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     private _createFormattedPayload;
 }
 
-export declare const createCheckoutComAPMPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComCustomPaymentStrategy>, {
-    gateway: string;
+declare class CheckoutComSEPAPaymentStrategy extends CheckoutComCustomPaymentStrategy {
+    protected _executeWithoutHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
+    private _createFormattedPayload;
+}
+
+export declare const createCheckoutComAPMPaymentStrategy: ResolvableModule<PaymentStrategyFactory<CheckoutComCustomPaymentStrategy>, {
+gateway: string;
 }>;
 
-export declare const createCheckoutComCreditCardPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComCreditCardPaymentStrategy>, {
-    gateway: string;
-    id: string;
+export declare const createCheckoutComCreditCardPaymentStrategy: ResolvableModule<PaymentStrategyFactory<CheckoutComCreditCardPaymentStrategy>, {
+gateway: string;
+id: string;
 }>;
 
-export declare const createCheckoutComFawryPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComFawryPaymentStrategy>, {
-    gateway: string;
-    id: string;
+export declare const createCheckoutComFawryPaymentStrategy: ResolvableModule<PaymentStrategyFactory<CheckoutComFawryPaymentStrategy>, {
+gateway: string;
+id: string;
 }>;
 
-export declare const createCheckoutComIdealPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComiDealPaymentStrategy>, {
-    gateway: string;
-    id: string;
+export declare const createCheckoutComIdealPaymentStrategy: ResolvableModule<PaymentStrategyFactory<CheckoutComiDealPaymentStrategy>, {
+gateway: string;
+id: string;
 }>;
 
-export declare const createCheckoutComSepaPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CheckoutComSEPAPaymentStrategy>, {
-    gateway: string;
-    id: string;
+export declare const createCheckoutComSepaPaymentStrategy: ResolvableModule<PaymentStrategyFactory<CheckoutComSEPAPaymentStrategy>, {
+gateway: string;
+id: string;
 }>;
+

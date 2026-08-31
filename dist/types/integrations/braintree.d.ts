@@ -5,16 +5,16 @@ import { BraintreeFastlane } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeFastlaneVaultedInstrument } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeFormOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { BraintreeHostWindow } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeHostedFields } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeHostedFieldsCreatorConfig } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeHostWindow } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeMessages } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeOrderStatusData } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreePaypalWalletService } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { BraintreeSDKVersionManager } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeSDKVersionManager } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeThreeDSecureOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -38,6 +38,7 @@ import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integr
 import { PaypalStyleOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { TokenizationPayload } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
@@ -1022,6 +1023,78 @@ declare interface BuyNowInitializeOptions {
     getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
 }
 
+export declare const createBraintreeAchPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BraintreeAchPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeCreditCardPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BraintreeCreditCardPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeFastlaneCustomerStrategy: ResolvableModule<CustomerStrategyFactory<BraintreeFastlaneCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeFastlanePaymentStrategy: ResolvableModule<PaymentStrategyFactory<BraintreeFastlanePaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeLocalMethodsPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BraintreeLocalMethodsPaymentStrategy>, {
+gateway: string;
+}>;
+
+export declare const createBraintreePaypalButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<BraintreePaypalButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreePaypalCreditButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<BraintreePaypalCreditButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreePaypalCreditCustomerStrategy: ResolvableModule<CustomerStrategyFactory<BraintreePaypalCreditCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreePaypalCreditWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreePaypalCreditWalletStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreePaypalCustomerStrategy: ResolvableModule<CustomerStrategyFactory<BraintreePaypalCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreePaypalPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BraintreePaypalPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreePaypalWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreePaypalWalletStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeVenmoButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVenmoButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeVenmoPaymentStrategy: ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVenmoPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeVenmoWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreeVenmoWalletStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeVisaCheckoutButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVisaCheckoutButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeVisaCheckoutCustomerStrategy: ResolvableModule<CustomerStrategyFactory<BraintreeVisaCheckoutCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createBraintreeVisaCheckoutPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BraintreeVisaCheckoutPaymentStrategy>, {
+id: string;
+}>;
+
 declare interface WithBraintreeAchPaymentInitializeOptions {
     /**
      * The options that are required to initialize the Braintree ACH payment
@@ -1123,74 +1196,3 @@ declare interface WithBraintreeVisaCheckoutPaymentInitializeOptions {
     braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
 }
 
-export declare const createBraintreeAchPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeAchPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeCreditCardPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeCreditCardPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeFastlaneCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreeFastlaneCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeFastlanePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeFastlanePaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeLocalMethodsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeLocalMethodsPaymentStrategy>, {
-    gateway: string;
-}>;
-
-export declare const createBraintreePaypalButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreePaypalButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreePaypalCreditButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreePaypalCreditButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreePaypalCreditCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreePaypalCreditCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreePaypalCreditWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreePaypalCreditWalletStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreePaypalCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreePaypalCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreePaypalPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreePaypalPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreePaypalWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreePaypalWalletStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeVenmoButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVenmoButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeVenmoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVenmoPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeVenmoWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<BraintreeVenmoWalletStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeVisaCheckoutButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<BraintreeVisaCheckoutButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeVisaCheckoutCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<BraintreeVisaCheckoutCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createBraintreeVisaCheckoutPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BraintreeVisaCheckoutPaymentStrategy>, {
-    id: string;
-}>;

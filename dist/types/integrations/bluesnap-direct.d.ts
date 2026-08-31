@@ -7,6 +7,7 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { WithCreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
 
@@ -69,6 +70,17 @@ declare interface BlueSnapDirectCardData {
     last4Digits: string;
 }
 
+declare enum BlueSnapDirectCardType {
+    AMEX = "american-express",
+    CHINA_UNION_PAY = "unionpay",
+    DINERS = "diners-club",
+    DISCOVER = "discover",
+    JCB = "jcb",
+    MASTERCARD = "mastercard",
+    UNKNOWN = "unknown",
+    VISA = "visa"
+}
+
 declare type BlueSnapDirectCardTypeValues = keyof typeof BlueSnapDirectCardType;
 
 declare class BlueSnapDirectCreditCardPaymentStrategy implements PaymentStrategy {
@@ -113,10 +125,6 @@ declare enum BlueSnapDirectErrorDescription {
 declare enum BlueSnapDirectEventOrigin {
     ON_BLUR = "onBlur",
     ON_SUBMIT = "onSubmit"
-}
-
-declare interface BlueSnapDirectHostWindow extends Window {
-    bluesnap?: BlueSnapDirectSdk;
 }
 
 declare enum BlueSnapDirectHostedFieldTagId {
@@ -166,7 +174,26 @@ declare interface BlueSnapDirectHostedPaymentFieldsOptions {
     '3DS'?: boolean;
 }
 
+declare interface BlueSnapDirectHostWindow extends Window {
+    bluesnap?: BlueSnapDirectSdk;
+}
+
 declare type BlueSnapDirectInputValidationErrorDescription = Extract<BlueSnapDirectErrorDescription, BlueSnapDirectErrorDescription.EMPTY | BlueSnapDirectErrorDescription.INVALID>;
+
+declare class BluesnapDirectNameOnCardInput {
+    private _input?;
+    private _style?;
+    attach({ style, onFieldEventHandler: { onFocus, onBlur, onValid, onError, onEnter }, }: BlueSnapDirectHostedPaymentFieldsOptions, accessibilityLabel?: string, placeholder?: string): void;
+    getValue(): string;
+    detach(): void;
+    private _handleFocus;
+    private _handleBlur;
+    private _handleEnter;
+    private _applyStyles;
+    private _configureInput;
+    private _getInput;
+    private _create;
+}
 
 declare interface BlueSnapDirectPreviouslyUsedCard {
     last4Digits?: string;
@@ -321,20 +348,18 @@ declare interface BlueSnapV2StyleProps {
     width?: string;
 }
 
-declare class BluesnapDirectNameOnCardInput {
-    private _input?;
-    private _style?;
-    attach({ style, onFieldEventHandler: { onFocus, onBlur, onValid, onError, onEnter }, }: BlueSnapDirectHostedPaymentFieldsOptions, accessibilityLabel?: string, placeholder?: string): void;
-    getValue(): string;
-    detach(): void;
-    private _handleFocus;
-    private _handleBlur;
-    private _handleEnter;
-    private _applyStyles;
-    private _configureInput;
-    private _getInput;
-    private _create;
-}
+export declare const createBlueSnapDirectAPMPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BlueSnapDirectAPMPaymentStrategy>, {
+gateway: string;
+}>;
+
+export declare const createBlueSnapDirectCreditCardPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BlueSnapDirectCreditCardPaymentStrategy>, {
+id: string;
+gateway: string;
+}>;
+
+export declare const createBlueSnapV2PaymentStrategy: ResolvableModule<PaymentStrategyFactory<BlueSnapV2PaymentStrategy>, {
+gateway: string;
+}>;
 
 declare interface WithBlueSnapDirectCardHolderName {
     cardHolderName?: string;
@@ -344,15 +369,3 @@ declare interface WithBlueSnapV2PaymentInitializeOptions {
     bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
 }
 
-export declare const createBlueSnapDirectAPMPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BlueSnapDirectAPMPaymentStrategy>, {
-    gateway: string;
-}>;
-
-export declare const createBlueSnapDirectCreditCardPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BlueSnapDirectCreditCardPaymentStrategy>, {
-    id: string;
-    gateway: string;
-}>;
-
-export declare const createBlueSnapV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<BlueSnapV2PaymentStrategy>, {
-    gateway: string;
-}>;

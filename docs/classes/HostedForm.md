@@ -54,7 +54,7 @@
 
 #### Implementation of
 
-`HostedFormInterface.attach`
+`HostedForm_2.attach`
 
 ***
 
@@ -68,7 +68,7 @@
 
 #### Implementation of
 
-`HostedFormInterface.detach`
+`HostedForm_2.detach`
 
 ***
 
@@ -82,7 +82,7 @@
 
 #### Implementation of
 
-`HostedFormInterface.getBin`
+`HostedForm_2.getBin`
 
 ***
 
@@ -96,7 +96,7 @@
 
 #### Implementation of
 
-`HostedFormInterface.getCardType`
+`HostedForm_2.getCardType`
 
 ***
 
@@ -120,7 +120,7 @@
 
 #### Implementation of
 
-`HostedFormInterface.submit`
+`HostedForm_2.submit`
 
 ***
 
@@ -156,4 +156,4 @@
 
 #### Implementation of
 
-`HostedFormInterface.validate`
+`HostedForm_2.validate`

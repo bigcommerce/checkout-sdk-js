@@ -3,10 +3,10 @@ import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-ut
 import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { BraintreeError } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { createTimeout } from '@bigcommerce/request-sender';
 import { PaypalStyleOptions as PaypalStyleOptions_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
-import { createTimeout } from '@bigcommerce/request-sender';
 
 /**
  * The required config to render the AmazonPayV2 button.
@@ -379,6 +379,32 @@ declare class CheckoutButtonStatusSelector {
     isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
 }
 
+/**
+ * Creates an instance of `CheckoutButtonInitializer`.
+ *
+ * @remarks
+ * ```js
+ * const initializer = createCheckoutButtonInitializer();
+ *
+ * initializer.initializeButton({
+ *     methodId: 'braintreepaypal',
+ *     braintreepaypal: {
+ *         container: '#checkoutButton',
+ *     },
+ * });
+ * ```
+ *
+ * @alpha
+ * Please note that `CheckoutButtonInitializer` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutButtonInitializer`.
+ */
+export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
+
+
 declare interface CustomError extends Error {
     message: string;
     type: string;
@@ -433,6 +459,54 @@ declare enum GooglePayKey {
     TD_ONLINE_MART = "googlepaytdonlinemart"
 }
 
+declare interface PaypalButtonInitializeOptions {
+    /**
+     * The Client ID of the Paypal App
+     */
+    clientId: string;
+    /**
+     * Whether or not to show a credit button.
+     */
+    allowCredit?: boolean;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
+    /**
+     * A callback that gets called if unable to authorize and tokenize payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onAuthorizeError?(error: StandardError): void;
+    /**
+     * A callback that gets called if unable to submit payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onPaymentError?(error: StandardError): void;
+}
+
+declare enum PaypalButtonStyleColorOption {
+    GOLD = "gold",
+    BLUE = "blue",
+    SIlVER = "silver",
+    BLACK = "black",
+    WHITE = "white"
+}
+
+declare enum PaypalButtonStyleLabelOption {
+    CHECKOUT = "checkout",
+    PAY = "pay",
+    BUYNOW = "buynow",
+    PAYPAL = "paypal",
+    CREDIT = "credit"
+}
+
+declare enum PaypalButtonStyleLayoutOption {
+    HORIZONTAL = "horizontal",
+    VERTICAL = "vertical"
+}
+
 declare interface PayPalButtonStyleOptions {
     color?: StyleButtonColor;
     shape?: StyleButtonShape;
@@ -445,6 +519,18 @@ declare interface PayPalButtonStyleOptions_2 {
     shape?: StyleButtonShape_3;
     height?: number;
     label?: StyleButtonLabel_2;
+}
+
+declare enum PaypalButtonStyleShapeOption {
+    PILL = "pill",
+    RECT = "rect"
+}
+
+declare enum PaypalButtonStyleSizeOption {
+    SMALL = "small",
+    MEDIUM = "medium",
+    LARGE = "large",
+    RESPONSIVE = "responsive"
 }
 
 /**
@@ -540,66 +626,6 @@ declare interface PayPalCommerceVenmoButtonInitializeOptions {
      *
      */
     onEligibilityFailure?(): void;
-}
-
-declare interface PaypalButtonInitializeOptions {
-    /**
-     * The Client ID of the Paypal App
-     */
-    clientId: string;
-    /**
-     * Whether or not to show a credit button.
-     */
-    allowCredit?: boolean;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
-    /**
-     * A callback that gets called if unable to authorize and tokenize payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onAuthorizeError?(error: StandardError): void;
-    /**
-     * A callback that gets called if unable to submit payment.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onPaymentError?(error: StandardError): void;
-}
-
-declare enum PaypalButtonStyleColorOption {
-    GOLD = "gold",
-    BLUE = "blue",
-    SIlVER = "silver",
-    BLACK = "black",
-    WHITE = "white"
-}
-
-declare enum PaypalButtonStyleLabelOption {
-    CHECKOUT = "checkout",
-    PAY = "pay",
-    BUYNOW = "buynow",
-    PAYPAL = "paypal",
-    CREDIT = "credit"
-}
-
-declare enum PaypalButtonStyleLayoutOption {
-    HORIZONTAL = "horizontal",
-    VERTICAL = "vertical"
-}
-
-declare enum PaypalButtonStyleShapeOption {
-    PILL = "pill",
-    RECT = "rect"
-}
-
-declare enum PaypalButtonStyleSizeOption {
-    SMALL = "small",
-    MEDIUM = "medium",
-    LARGE = "large",
-    RESPONSIVE = "responsive"
 }
 
 declare interface PaypalStyleOptions {
@@ -767,27 +793,3 @@ declare interface WithPayPalCommerceVenmoButtonInitializeOptions {
     paypalcommercevenmo?: PayPalCommerceVenmoButtonInitializeOptions;
 }
 
-/**
- * Creates an instance of `CheckoutButtonInitializer`.
- *
- * @remarks
- * ```js
- * const initializer = createCheckoutButtonInitializer();
- *
- * initializer.initializeButton({
- *     methodId: 'braintreepaypal',
- *     braintreepaypal: {
- *         container: '#checkoutButton',
- *     },
- * });
- * ```
- *
- * @alpha
- * Please note that `CheckoutButtonInitializer` is currently in an early stage
- * of development. Therefore the API is unstable and not ready for public
- * consumption.
- *
- * @param options - A set of construction options.
- * @returns an instance of `CheckoutButtonInitializer`.
- */
-export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;

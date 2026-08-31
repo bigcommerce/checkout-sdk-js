@@ -5,6 +5,7 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 declare interface ClearpayDisplayOptions {
@@ -46,10 +47,11 @@ declare interface ClearpayWindow extends Window {
     AfterPay?: ClearpaySdk;
 }
 
-export declare const createClearpayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<ClearpayPaymentStrategy>, {
-    gateway: string;
-    id?: undefined;
+export declare const createClearpayPaymentStrategy: ResolvableModule<PaymentStrategyFactory<ClearpayPaymentStrategy>, {
+gateway: string;
+id?: undefined;
 } | {
-    id: string;
-    gateway?: undefined;
+id: string;
+gateway?: undefined;
 }>;
+

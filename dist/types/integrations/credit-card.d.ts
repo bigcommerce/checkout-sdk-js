@@ -6,6 +6,11 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createCreditCardPaymentStrategy: ResolvableModule<PaymentStrategyFactory<CreditCardPaymentStrategy>, {
+default: boolean;
+}>;
 
 /**
  * A set of options to initialize credit card payment methods, unless those
@@ -108,6 +113,3 @@ declare interface WithCreditCardPaymentInitializeOptions {
     creditCard?: CreditCardPaymentInitializeOptions;
 }
 
-export declare const createCreditCardPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<CreditCardPaymentStrategy>, {
-    default: boolean;
-}>;

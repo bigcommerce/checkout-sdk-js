@@ -10,4 +10,4 @@
 
 ### options
 
-> **options**: [`Option`](Option.md)[]
+> **options**: [`Option_2`](Option_2.md)[]

@@ -6,4 +6,4 @@
 
 # Type Alias: HostedVaultedInstrument
 
-> **HostedVaultedInstrument** = [`Omit`](Omit.md)\<[`VaultedInstrument`](../interfaces/VaultedInstrument.md), `"ccNumber"` \| `"ccCvv"`\>
+> **HostedVaultedInstrument** = [`Omit_2`](Omit_2.md)\<[`VaultedInstrument`](../interfaces/VaultedInstrument.md), `"ccNumber"` \| `"ccCvv"`\>

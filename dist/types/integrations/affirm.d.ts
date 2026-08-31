@@ -4,6 +4,7 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 declare interface Affirm {
     checkout: AffirmCheckout;
@@ -125,6 +126,7 @@ declare interface AffirmSuccessResponse {
     created: string;
 }
 
-export declare const createAffirmPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<AffirmPaymentStrategy>, {
-    id: string;
+export declare const createAffirmPaymentStrategy: ResolvableModule<PaymentStrategyFactory<AffirmPaymentStrategy>, {
+id: string;
 }>;
+

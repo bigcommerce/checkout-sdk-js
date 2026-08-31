@@ -3,6 +3,11 @@ import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createMonerisPaymentStrategy: ResolvableModule<PaymentStrategyFactory<MonerisPaymentStrategy>, {
+id: string;
+}>;
 
 /**
  * A set of options that are required to initialize the Moneris payment method.
@@ -135,6 +140,3 @@ declare interface WithMonerisPaymentInitializeOptions {
     moneris?: MonerisPaymentInitializeOptions;
 }
 
-export declare const createMonerisPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<MonerisPaymentStrategy>, {
-    id: string;
-}>;

@@ -6,8 +6,17 @@ import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integra
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { Response } from '@bigcommerce/request-sender';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Response as Response_2 } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
+
+export declare const createKlarnaPaymentStrategy: ResolvableModule<PaymentStrategyFactory<KlarnaPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createKlarnaV2PaymentStrategy: ResolvableModule<PaymentStrategyFactory<KlarnaV2PaymentStrategy>, {
+gateway: string;
+}>;
 
 declare interface KlarnaAddress {
     street_address: string;
@@ -152,6 +161,12 @@ declare interface KlarnaPaymentInitializeOptions {
     onLoad?(response: KlarnaLoadResponse): void;
 }
 
+declare interface KlarnaPayments {
+    authorize(options: KlarnaAuthorizeOptions, data: KlarnaUpdateSessionParams_2, callback: (res: KlarnaAuthorizationResponse_2) => void): void;
+    init(params: KlarnaInitParams_2): void;
+    load(params: KlarnaLoadParams_2, callback: (res: KlarnaLoadResponse_2) => void): void;
+}
+
 declare class KlarnaPaymentStrategy {
     private paymentIntegrationService;
     private klarnaScriptLoader;
@@ -167,12 +182,6 @@ declare class KlarnaPaymentStrategy {
     private needsStateCode;
     private mapToKlarnaAddress;
     private authorize;
-}
-
-declare interface KlarnaPayments {
-    authorize(options: KlarnaAuthorizeOptions, data: KlarnaUpdateSessionParams_2, callback: (res: KlarnaAuthorizationResponse_2) => void): void;
-    init(params: KlarnaInitParams_2): void;
-    load(params: KlarnaLoadParams_2, callback: (res: KlarnaLoadResponse_2) => void): void;
 }
 
 declare class KlarnaScriptLoader {
@@ -270,7 +279,7 @@ declare class KlarnaV2ScriptLoader {
 declare class KlarnaV2TokenUpdater {
     private requestSender;
     constructor(requestSender: RequestSender);
-    updateClientToken(gatewayId: string, { timeout, params }?: RequestOptions): Promise<Response<PaymentMethod>>;
+    updateClientToken(gatewayId: string, { timeout, params }?: RequestOptions): Promise<Response_2<PaymentMethod>>;
     klarnaOrderInitialization(cartId: string, clientToken: string | undefined): Promise<void>;
 }
 
@@ -294,10 +303,3 @@ declare interface WithKlarnaV2PaymentInitializeOptions {
     klarnav2?: KlarnaV2PaymentInitializeOptions;
 }
 
-export declare const createKlarnaPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<KlarnaPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createKlarnaV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<KlarnaV2PaymentStrategy>, {
-    gateway: string;
-}>;

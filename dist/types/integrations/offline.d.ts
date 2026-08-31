@@ -3,6 +3,11 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createOfflinePaymentStrategy: ResolvableModule<PaymentStrategyFactory<OfflinePaymentStrategy>, {
+type: string;
+}>;
 
 declare class OfflinePaymentStrategy implements PaymentStrategy {
     private _paymentIntegrationService;
@@ -13,6 +18,3 @@ declare class OfflinePaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void>;
 }
 
-export declare const createOfflinePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<OfflinePaymentStrategy>, {
-    type: string;
-}>;

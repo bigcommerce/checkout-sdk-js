@@ -6,4 +6,4 @@
 
 # Type Alias: PaymentProviderCustomer
 
-> **PaymentProviderCustomer** = `PaymentProviderCustomerType`
+> **PaymentProviderCustomer** = `PaymentProviderCustomer_2`

@@ -6,7 +6,16 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
+
+export declare const createMolliePaymentStrategy: ResolvableModule<PaymentStrategyFactory<MolliePaymentStrategy>, {
+gateway: string;
+id?: undefined;
+} | {
+gateway: string;
+id: string;
+}>;
 
 declare interface MollieClient {
     createComponent(type: string, options?: object): MollieElement;
@@ -154,10 +163,3 @@ declare interface WithMolliePaymentInitializeOptions {
     mollie?: MolliePaymentInitializeOptions;
 }
 
-export declare const createMolliePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<MolliePaymentStrategy>, {
-    gateway: string;
-    id?: undefined;
-} | {
-    gateway: string;
-    id: string;
-}>;

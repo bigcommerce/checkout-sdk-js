@@ -17,7 +17,8 @@ import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-a
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { Response } from '@bigcommerce/request-sender';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Response as Response_2 } from '@bigcommerce/request-sender';
 
 /**
  * The required config to render the AmazonPayV2 button.
@@ -129,7 +130,7 @@ declare class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 declare class AmazonPayV2RequestSender {
     private _requestSender;
     constructor(_requestSender: RequestSender);
-    createCheckoutConfig(cartId: string): Promise<Response<CheckoutConfig>>;
+    createCheckoutConfig(cartId: string): Promise<Response_2<CheckoutConfig>>;
 }
 
 declare interface CheckoutConfig {
@@ -137,6 +138,18 @@ declare interface CheckoutConfig {
     signature: string;
     public_key: string;
 }
+
+export declare const createAmazonPayV2ButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<AmazonPayV2ButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createAmazonPayV2CustomerStrategy: ResolvableModule<CustomerStrategyFactory<AmazonPayV2CustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createAmazonPayV2PaymentStrategy: ResolvableModule<PaymentStrategyFactory<AmazonPayV2PaymentStrategy>, {
+id: string;
+}>;
 
 declare interface WithAmazonPayV2ButtonInitializeOptions {
     amazonpay?: AmazonPayV2ButtonInitializeOptions;
@@ -159,14 +172,3 @@ declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
     };
 }
 
-export declare const createAmazonPayV2ButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<AmazonPayV2ButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createAmazonPayV2CustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<AmazonPayV2CustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createAmazonPayV2PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<AmazonPayV2PaymentStrategy>, {
-    id: string;
-}>;

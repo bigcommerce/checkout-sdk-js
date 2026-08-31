@@ -15,10 +15,6 @@ import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration
 import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
-import { PayPalFastlaneUtils } from '@bigcommerce/checkout-sdk/paypal-utils';
-import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
-import { PayPalSdkScriptLoader } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -27,8 +23,13 @@ import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-a
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaypalButtonCreationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
+import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PayPalFastlaneUtils } from '@bigcommerce/checkout-sdk/paypal-utils';
+import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
+import { PayPalSdkScriptLoader } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { VaultedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -95,6 +96,75 @@ declare interface ConfirmOrderData {
     };
     type: string;
 }
+
+export declare const createPayPalCommerceAlternativeMethodsPaymentStrategy: ResolvableModule<PaymentStrategyFactory<PayPalCommerceAlternativeMethodsPaymentStrategy>, {
+gateway: string;
+}>;
+
+export declare const createPayPalCommerceButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceCreditButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceCreditButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceCreditCardsPaymentStrategy: ResolvableModule<PaymentStrategyFactory<PayPalCommerceCreditCardsPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceCreditCustomerStrategy: ResolvableModule<CustomerStrategyFactory<PayPalCommerceCreditCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceCreditPaymentStrategy: ResolvableModule<PaymentStrategyFactory<PayPalCommerceCreditPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceCreditWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<PayPalCommerceCreditWalletStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceCustomerStrategy: ResolvableModule<CustomerStrategyFactory<PayPalCommerceCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceFastlaneCustomerStrategy: ResolvableModule<CustomerStrategyFactory<PayPalCommerceFastlaneCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceFastlanePaymentStrategy: ResolvableModule<PaymentStrategyFactory<PaypalCommerceFastlanePaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommercePaymentStrategy: ResolvableModule<PaymentStrategyFactory<PayPalCommercePaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceRatePayPaymentStrategy: ResolvableModule<PaymentStrategyFactory<PaypalCommerceRatepayPaymentStrategy>, {
+gateway: string;
+id: string;
+}>;
+
+export declare const createPayPalCommerceVenmoButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceVenmoButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceVenmoCustomerStrategy: ResolvableModule<CustomerStrategyFactory<PayPalCommerceVenmoCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceVenmoPaymentStrategy: ResolvableModule<PaymentStrategyFactory<PayPalCommerceVenmoPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceVenmoWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<PayPalCommerceVenmoWalletStrategy>, {
+id: string;
+}>;
+
+export declare const createPayPalCommerceWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<PaypalCommerceWalletStrategy>, {
+id: string;
+}>;
 
 /**
  *
@@ -374,16 +444,6 @@ declare interface PayPalCommerceButtonInitializeOptions {
     onEligibilityFailure?(): void;
 }
 
-declare class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
-    private paymentIntegrationService;
-    private paypalIntegrationService;
-    private paypalButtonCreationService;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalButtonCreationService: PaypalButtonCreationService);
-    initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions): Promise<void>;
-    deinitialize(): Promise<void>;
-    private renderButton;
-}
-
 /**
  *
  * PayPal Commerce Buttons
@@ -410,6 +470,16 @@ declare interface PayPalCommerceButtonsOptions {
     onCancel?(): void;
     onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
     onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
+}
+
+declare class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
+    private paymentIntegrationService;
+    private paypalIntegrationService;
+    private paypalButtonCreationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalButtonCreationService: PaypalButtonCreationService);
+    initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
 }
 
 declare interface PayPalCommerceCardFields {
@@ -1092,6 +1162,66 @@ declare interface PayPalCommerceFastlanePaymentInitializeOptions {
     onErrorLog?: (error: unknown) => void;
 }
 
+declare class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
+    private paymentIntegrationService;
+    private paypalCommerceRequestSender;
+    private paypalSdkScriptLoader;
+    private paypalFastlaneUtils;
+    private paypalComponentMethods?;
+    private paypalFastlaneSdk?;
+    private threeDSVerificationMethod?;
+    private paypalcommercefastlane?;
+    private orderId?;
+    private methodId?;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceRequestSender: PayPalCommerceRequestSender, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
+    /**
+     *
+     * Default methods
+     *
+     * */
+    initialize(options: PaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions): Promise<void>;
+    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
+    finalize(): Promise<void>;
+    deinitialize(): Promise<void>;
+    /**
+     *
+     * Authentication flow methods
+     *
+     */
+    private shouldRunAuthenticationFlow;
+    private runPayPalAuthenticationFlowOrThrow;
+    /**
+     *
+     * PayPal Fastlane Card Component rendering method
+     *
+     */
+    private initializePayPalPaymentComponent;
+    private renderPayPalPaymentComponent;
+    private getPayPalComponentMethodsOrThrow;
+    /**
+     *
+     * Payment Payload preparation methods
+     *
+     */
+    private prepareVaultedInstrumentPaymentPayload;
+    private preparePaymentPayload;
+    private createOrder;
+    /**
+     *
+     * 3DSecure methods
+     *
+     * */
+    private get3DSNonce;
+    /**
+     *
+     * PayPal Fastlane instrument change
+     *
+     */
+    private handlePayPalStoredInstrumentChange;
+    private handleError;
+    private handleErrorLog;
+}
+
 declare interface PayPalCommerceFields {
     render(container: HTMLElement | string): Promise<void>;
     clear(): void;
@@ -1500,22 +1630,85 @@ declare class PayPalCommercePaymentStrategy implements PaymentStrategy {
     private getSmartButtonContainerId;
 }
 
+declare interface PaypalCommerceRatePay {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * The CSS selector of a container where the legal text should be inserted into.
+     */
+    legalTextContainer: string;
+    /**
+     * The CSS selector of a container where loading indicator should be rendered
+     */
+    loadingContainerId: string;
+    /**
+     * A callback that gets form values
+     */
+    getFieldsValues?(): {
+        ratepayBirthDate: BirthDate;
+        ratepayPhoneNumber: string;
+        ratepayPhoneCountryCode: string;
+    };
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
+}
+
+declare class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
+    private paymentIntegrationService;
+    private paypalCommerceService;
+    private loadingIndicator;
+    private pollingInterval;
+    private maxPollingIntervalTime;
+    private guid?;
+    private paypalcommerceratepay?;
+    private loadingIndicatorContainer?;
+    private pollingTimer;
+    private stopPolling;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceService: PayPalIntegrationService, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
+    initialize(options: PaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions): Promise<void>;
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
+    finalize(): Promise<void>;
+    deinitialize(): Promise<void>;
+    private normalizeDate;
+    private formatDate;
+    private renderLegalText;
+    private handleError;
+    private createFraudNetScript;
+    private generateGUID;
+    private loadFraudnetConfig;
+    private reinitializeStrategy;
+    /**
+     *
+     * Polling mechanism
+     *
+     *
+     * */
+    private initializePollingMechanism;
+    private deinitializePollingMechanism;
+    private resetPollingMechanism;
+    /**
+     *
+     * Loading Indicator methods
+     *
+     * */
+    private toggleLoadingIndicator;
+}
+
 declare class PayPalCommerceRequestSender {
     private requestSender;
     constructor(requestSender: RequestSender);
     createOrder(providerId: string, requestBody: Partial<PayPalCreateOrderRequestBody>): Promise<PayPalOrderData>;
     updateOrder(requestBody: PayPalUpdateOrderRequestBody): Promise<PayPalUpdateOrderResponse>;
     getOrderStatus(methodId?: string, options?: RequestOptions): Promise<PayPalOrderStatusData>;
-}
-
-declare interface PayPalCommerceSDKFunding {
-    CARD: string;
-    PAYPAL: string;
-    CREDIT: string;
-    PAYLATER: string;
-    OXXO: string;
-    SEPA: string;
-    VENMO: string;
 }
 
 declare class PayPalCommerceScriptLoader {
@@ -1526,6 +1719,16 @@ declare class PayPalCommerceScriptLoader {
     private loadPayPalSDK;
     private getPayPalSdkScriptConfigOrThrow;
     private transformConfig;
+}
+
+declare interface PayPalCommerceSDKFunding {
+    CARD: string;
+    PAYPAL: string;
+    CREDIT: string;
+    PAYLATER: string;
+    OXXO: string;
+    SEPA: string;
+    VENMO: string;
 }
 
 declare interface PayPalCommerceVenmoButtonInitializeOptions {
@@ -1721,6 +1924,14 @@ declare interface PayPalCommerceWalletInitializeOptions {
     clientToken: string;
 }
 
+declare class PaypalCommerceWalletStrategy implements CheckoutButtonStrategy {
+    private paypalCommerceHeadlessWalletButtonService;
+    constructor(paypalCommerceHeadlessWalletButtonService: PaypalCommerceWalletService);
+    initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
+}
+
 declare interface PayPalCreateOrderCardFieldsResponse {
     orderId: string;
     setupToken?: string;
@@ -1835,147 +2046,6 @@ declare interface PayPalUpdateOrderResponse {
     statusCode: number;
 }
 
-declare class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
-    private paymentIntegrationService;
-    private paypalCommerceRequestSender;
-    private paypalSdkScriptLoader;
-    private paypalFastlaneUtils;
-    private paypalComponentMethods?;
-    private paypalFastlaneSdk?;
-    private threeDSVerificationMethod?;
-    private paypalcommercefastlane?;
-    private orderId?;
-    private methodId?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceRequestSender: PayPalCommerceRequestSender, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
-    /**
-     *
-     * Default methods
-     *
-     * */
-    initialize(options: PaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions): Promise<void>;
-    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
-    finalize(): Promise<void>;
-    deinitialize(): Promise<void>;
-    /**
-     *
-     * Authentication flow methods
-     *
-     */
-    private shouldRunAuthenticationFlow;
-    private runPayPalAuthenticationFlowOrThrow;
-    /**
-     *
-     * PayPal Fastlane Card Component rendering method
-     *
-     */
-    private initializePayPalPaymentComponent;
-    private renderPayPalPaymentComponent;
-    private getPayPalComponentMethodsOrThrow;
-    /**
-     *
-     * Payment Payload preparation methods
-     *
-     */
-    private prepareVaultedInstrumentPaymentPayload;
-    private preparePaymentPayload;
-    private createOrder;
-    /**
-     *
-     * 3DSecure methods
-     *
-     * */
-    private get3DSNonce;
-    /**
-     *
-     * PayPal Fastlane instrument change
-     *
-     */
-    private handlePayPalStoredInstrumentChange;
-    private handleError;
-    private handleErrorLog;
-}
-
-declare interface PaypalCommerceRatePay {
-    /**
-     * The CSS selector of a container where the payment widget should be inserted into.
-     */
-    container: string;
-    /**
-     * The CSS selector of a container where the legal text should be inserted into.
-     */
-    legalTextContainer: string;
-    /**
-     * The CSS selector of a container where loading indicator should be rendered
-     */
-    loadingContainerId: string;
-    /**
-     * A callback that gets form values
-     */
-    getFieldsValues?(): {
-        ratepayBirthDate: BirthDate;
-        ratepayPhoneNumber: string;
-        ratepayPhoneCountryCode: string;
-    };
-    /**
-     * A callback right before render Smart Payment Button that gets called when
-     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
-     */
-    onRenderButton?(): void;
-    /**
-     * A callback for displaying error popup. This callback requires error object as parameter.
-     */
-    onError?(error: unknown): void;
-}
-
-declare class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
-    private paymentIntegrationService;
-    private paypalCommerceService;
-    private loadingIndicator;
-    private pollingInterval;
-    private maxPollingIntervalTime;
-    private guid?;
-    private paypalcommerceratepay?;
-    private loadingIndicatorContainer?;
-    private pollingTimer;
-    private stopPolling;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceService: PayPalIntegrationService, loadingIndicator: LoadingIndicator, pollingInterval?: number, maxPollingIntervalTime?: number);
-    initialize(options: PaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions): Promise<void>;
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
-    finalize(): Promise<void>;
-    deinitialize(): Promise<void>;
-    private normalizeDate;
-    private formatDate;
-    private renderLegalText;
-    private handleError;
-    private createFraudNetScript;
-    private generateGUID;
-    private loadFraudnetConfig;
-    private reinitializeStrategy;
-    /**
-     *
-     * Polling mechanism
-     *
-     *
-     * */
-    private initializePollingMechanism;
-    private deinitializePollingMechanism;
-    private resetPollingMechanism;
-    /**
-     *
-     * Loading Indicator methods
-     *
-     * */
-    private toggleLoadingIndicator;
-}
-
-declare class PaypalCommerceWalletStrategy implements CheckoutButtonStrategy {
-    private paypalCommerceHeadlessWalletButtonService;
-    constructor(paypalCommerceHeadlessWalletButtonService: PaypalCommerceWalletService);
-    initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceWalletInitializeOptions): Promise<void>;
-    deinitialize(): Promise<void>;
-    private renderButton;
-}
-
 declare interface ShippingAddressChangeCallbackPayload {
     orderId: string;
     shippingAddress: PayPalAddress;
@@ -2083,71 +2153,3 @@ declare interface WithPayPalCommerceWalletInitializeOptions {
     paypalcommercepaypal?: PayPalCommerceWalletInitializeOptions;
 }
 
-export declare const createPayPalCommerceAlternativeMethodsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceAlternativeMethodsPaymentStrategy>, {
-    gateway: string;
-}>;
-
-export declare const createPayPalCommerceButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceCreditButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceCreditButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceCreditCardsPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceCreditCardsPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceCreditCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<PayPalCommerceCreditCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceCreditPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceCreditPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceCreditWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<PayPalCommerceCreditWalletStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<PayPalCommerceCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceFastlaneCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<PayPalCommerceFastlaneCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceFastlanePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PaypalCommerceFastlanePaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommercePaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommercePaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceRatePayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PaypalCommerceRatepayPaymentStrategy>, {
-    gateway: string;
-    id: string;
-}>;
-
-export declare const createPayPalCommerceVenmoButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PayPalCommerceVenmoButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceVenmoCustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<PayPalCommerceVenmoCustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceVenmoPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PayPalCommerceVenmoPaymentStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceVenmoWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<PayPalCommerceVenmoWalletStrategy>, {
-    id: string;
-}>;
-
-export declare const createPayPalCommerceWalletStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<WalletPaymentButtonStrategyFactory<PaypalCommerceWalletStrategy>, {
-    id: string;
-}>;

@@ -5,6 +5,7 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 declare interface Classes {
@@ -14,6 +15,10 @@ declare interface Classes {
     focus?: string;
     error?: string;
 }
+
+export declare const createTDOnlineMartPaymentStrategy: ResolvableModule<PaymentStrategyFactory<TDOnlineMartPaymentStrategy>, {
+id: string;
+}>;
 
 declare interface CreateTokenError {
     field: string;
@@ -69,6 +74,15 @@ declare interface TDCustomCheckoutSDK {
     createToken(callback: (result: CreateTokenResponse) => void): void;
 }
 
+declare interface TdOnlineMartElement {
+    mount(cssSelector: string): void;
+    unmount(): void;
+}
+
+declare interface TdOnlineMartHostWindow extends Window {
+    customcheckout?(): TDCustomCheckoutSDK;
+}
+
 declare class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private tdOnlineMartScriptLoader;
@@ -98,15 +112,3 @@ declare class TDOnlineMartScriptLoader {
     load(): Promise<TDCustomCheckoutSDK>;
 }
 
-declare interface TdOnlineMartElement {
-    mount(cssSelector: string): void;
-    unmount(): void;
-}
-
-declare interface TdOnlineMartHostWindow extends Window {
-    customcheckout?(): TDCustomCheckoutSDK;
-}
-
-export declare const createTDOnlineMartPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<TDOnlineMartPaymentStrategy>, {
-    id: string;
-}>;

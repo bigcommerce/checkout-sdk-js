@@ -4,6 +4,20 @@ import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-inte
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createWorldpayAccessOpenBankingPaymentStrategy: ResolvableModule<PaymentStrategyFactory<WorldpayAccessOpenBankingPaymentStrategy>, {
+id: string;
+gateway: string;
+}>;
+
+export declare const createWorldpayAccessPaymentStrategy: ResolvableModule<PaymentStrategyFactory<WorldpayAccessPaymentStrategy>, {
+gateway: string;
+id: string;
+} | {
+id: string;
+gateway?: undefined;
+}>;
 
 declare interface WithWorldpayAccessPaymentInitializeOptions {
     /**
@@ -49,15 +63,3 @@ declare class WorldpayAccessPaymentStrategy extends CreditCardPaymentStrategy {
     private _isValidJsonWithSessionId;
 }
 
-export declare const createWorldpayAccessOpenBankingPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<WorldpayAccessOpenBankingPaymentStrategy>, {
-    id: string;
-    gateway: string;
-}>;
-
-export declare const createWorldpayAccessPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<WorldpayAccessPaymentStrategy>, {
-    gateway: string;
-    id: string;
-} | {
-    id: string;
-    gateway?: undefined;
-}>;

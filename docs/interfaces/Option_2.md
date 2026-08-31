@@ -2,9 +2,9 @@
 
 ***
 
-[@bigcommerce/checkout-sdk](../README.md) / Option
+[@bigcommerce/checkout-sdk](../README.md) / Option\_2
 
-# Interface: Option
+# Interface: Option\_2
 
 ## Properties
 

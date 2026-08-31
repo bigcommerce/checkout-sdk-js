@@ -14,6 +14,7 @@ import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integra
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StripeAppearanceOptions } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { StripeAppearanceValues } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -22,6 +23,40 @@ import { StripeElementUpdateOptions } from '@bigcommerce/checkout-sdk/stripe-uti
 import { StripeIntegrationService } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { StripePaymentInitializeOptions } from '@bigcommerce/checkout-sdk/stripe-utils';
 import { StripeScriptLoader } from '@bigcommerce/checkout-sdk/stripe-utils';
+
+export declare const createLinkV2ButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<StripeLinkV2ButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createStripeCSPaymentStrategy: ResolvableModule<PaymentStrategyFactory<StripeCSPaymentStrategy>, {
+gateway: string;
+id: string;
+}>;
+
+export declare const createStripeLinkV2CustomerStrategy: ResolvableModule<CustomerStrategyFactory<StripeLinkV2CustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createStripeOCSPaymentStrategy: ResolvableModule<PaymentStrategyFactory<StripeOCSPaymentStrategy>, {
+gateway: string;
+id: string;
+}>;
+
+export declare const createStripeUPECustomerStrategy: ResolvableModule<CustomerStrategyFactory<StripeUPECustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createStripeUPEPaymentStrategy: ResolvableModule<PaymentStrategyFactory<StripeUPEPaymentStrategy>, {
+gateway: string;
+id?: undefined;
+} | {
+gateway: string;
+id: string;
+}>;
+
+export declare const createStripeV3PaymentStrategy: ResolvableModule<PaymentStrategyFactory<any>, {
+gateway: string;
+}>;
 
 declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private readonly paymentIntegrationService;
@@ -386,36 +421,3 @@ declare interface WithStripeUPEPaymentInitializeOptions {
     stripeupe?: StripeUPEPaymentInitializeOptions;
 }
 
-export declare const createLinkV2ButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<StripeLinkV2ButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createStripeCSPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<StripeCSPaymentStrategy>, {
-    gateway: string;
-    id: string;
-}>;
-
-export declare const createStripeLinkV2CustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<StripeLinkV2CustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createStripeOCSPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<StripeOCSPaymentStrategy>, {
-    gateway: string;
-    id: string;
-}>;
-
-export declare const createStripeUPECustomerStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CustomerStrategyFactory<StripeUPECustomerStrategy>, {
-    id: string;
-}>;
-
-export declare const createStripeUPEPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<StripeUPEPaymentStrategy>, {
-    gateway: string;
-    id?: undefined;
-} | {
-    gateway: string;
-    id: string;
-}>;
-
-export declare const createStripeV3PaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<any>, {
-    gateway: string;
-}>;

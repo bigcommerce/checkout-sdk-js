@@ -10,7 +10,29 @@ import { PaymentInstrumentMeta } from '@bigcommerce/checkout-sdk/payment-integra
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentMethodMeta } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { Response } from '@bigcommerce/request-sender';
+import { Response as Response_2 } from '@bigcommerce/request-sender';
+
+/**
+ * Creates an instance of `HostedFormService`.
+ *
+ *
+ * @param host - Host url string parameter.
+ * @returns An instance of `HostedFormService`.
+ */
+export declare function createHostedFormService(host: string): HostedFormService;
+
+/**
+ * Creates an instance of `StoredCardHostedFormService`.
+ *
+ *
+ * @param host - Payments origin. Used for postMessage validation: the hosted-fields route
+ * redirects to the payment provider, so this is the iframe's actual document origin.
+ * @param storefrontHost - Origin serving the hosted-fields route, used only to build the iframe
+ * src. Only needed by headless storefronts, where that route is not on the page's own origin.
+ * Omit it to keep the relative-URL behaviour that resolves same-origin on a standard storefront.
+ * @returns An instance of `StoredCardHostedFormService`.
+ */
+export declare function createStoredCardHostedFormService(host: string, storefrontHost?: string): StoredCardHostedFormService;
 
 declare class DetachmentObserver {
     private _mutationObserver;
@@ -332,7 +354,7 @@ declare interface HostedInputStoredCardErrorEvent {
     payload?: {
         errors?: string[];
         error?: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>;
+        response?: Response_2<PaymentErrorResponseBody>;
     };
 }
 
@@ -346,21 +368,21 @@ declare interface HostedInputSubmitManualOrderErrorEvent {
     type: HostedInputEventType.SubmitManualOrderFailed;
     payload: {
         error: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>;
+        response?: Response_2<PaymentErrorResponseBody>;
     };
 }
 
 export declare interface HostedInputSubmitManualOrderSuccessEvent {
     type: HostedInputEventType.SubmitManualOrderSucceeded;
     payload: {
-        response: Response<unknown>;
+        response: Response_2<unknown>;
     };
 }
 
 declare interface HostedInputSubmitSuccessEvent {
     type: HostedInputEventType.SubmitSucceeded;
     payload: {
-        response: Response<unknown>;
+        response: Response_2<unknown>;
     };
 }
 
@@ -411,11 +433,6 @@ declare type IframeEventMap<TType extends string | number | symbol = string> = {
     [key in TType]: IframeEvent<TType>;
 };
 
-declare interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
-    errorType?: TErrorEvent['type'];
-    successType?: TSuccessEvent['type'];
-}
-
 declare class IframeEventPoster<TEvent, TContext = undefined> {
     private _targetWindow?;
     private _context?;
@@ -425,6 +442,11 @@ declare class IframeEventPoster<TEvent, TContext = undefined> {
     post<TSuccessEvent extends IframeEvent = IframeEvent, TErrorEvent extends IframeEvent = IframeEvent>(event: TEvent, options: IframeEventPostOptions<TSuccessEvent, TErrorEvent>): Promise<TSuccessEvent>;
     setTarget(window: Window): void;
     setContext(context: TContext): void;
+}
+
+declare interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
+    errorType?: TErrorEvent['type'];
+    successType?: TSuccessEvent['type'];
 }
 
 declare interface MutationObeserverCreator {
@@ -490,24 +512,3 @@ declare class StoredCardHostedFormService {
     deinitialize(): void;
 }
 
-/**
- * Creates an instance of `HostedFormService`.
- *
- *
- * @param host - Host url string parameter.
- * @returns An instance of `HostedFormService`.
- */
-export declare function createHostedFormService(host: string): HostedFormService;
-
-/**
- * Creates an instance of `StoredCardHostedFormService`.
- *
- *
- * @param host - Payments origin. Used for postMessage validation: the hosted-fields route
- * redirects to the payment provider, so this is the iframe's actual document origin.
- * @param storefrontHost - Origin serving the hosted-fields route, used only to build the iframe
- * src. Only needed by headless storefronts, where that route is not on the page's own origin.
- * Omit it to keep the relative-URL behaviour that resolves same-origin on a standard storefront.
- * @returns An instance of `StoredCardHostedFormService`.
- */
-export declare function createStoredCardHostedFormService(host: string, storefrontHost?: string): StoredCardHostedFormService;

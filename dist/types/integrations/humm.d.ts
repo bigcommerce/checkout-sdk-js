@@ -4,6 +4,11 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createHummPaymentStrategy: ResolvableModule<PaymentStrategyFactory<HummPaymentStrategy>, {
+id: string;
+}>;
 
 declare class HummPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
@@ -17,6 +22,3 @@ declare class HummPaymentStrategy implements PaymentStrategy {
     private isOffsiteRedirectResponse;
 }
 
-export declare const createHummPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<HummPaymentStrategy>, {
-    id: string;
-}>;

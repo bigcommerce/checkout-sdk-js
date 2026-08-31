@@ -5,6 +5,7 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 declare interface AfterpayDisplayOptions {
@@ -47,10 +48,11 @@ declare interface AfterpaySdk {
     redirect(options: AfterpayDisplayOptions): void;
 }
 
-export declare const createAfterpayPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<AfterpayPaymentStrategy>, {
-    gateway: string;
-    id?: undefined;
+export declare const createAfterpayPaymentStrategy: ResolvableModule<PaymentStrategyFactory<AfterpayPaymentStrategy>, {
+gateway: string;
+id?: undefined;
 } | {
-    id: string;
-    gateway?: undefined;
+id: string;
+gateway?: undefined;
 }>;
+

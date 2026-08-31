@@ -2,15 +2,25 @@ import { CheckoutButtonInitializeOptions } from '@bigcommerce/checkout-sdk/payme
 import { CheckoutButtonStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CheckoutButtonStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { FormPoster } from '@bigcommerce/form-poster';
-import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export declare const createPaypalExpressButtonStrategy: ResolvableModule<CheckoutButtonStrategyFactory<PaypalButtonStrategy>, {
+id: string;
+}>;
+
+export declare const createPaypalExpressPaymentStrategy: ResolvableModule<PaymentStrategyFactory<PaypalExpressPaymentStrategy>, {
+id: string;
+type: string;
+}>;
 
 declare interface MessagingOptions {
     amount: number;
@@ -134,7 +144,7 @@ declare interface PaypalExpressButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Omit<PaypalStyleOptions, 'height'>;
+    style?: Omit_2<PaypalStyleOptions, 'height'>;
     /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *
@@ -229,19 +239,19 @@ declare interface PaypalRequestActions {
     }>;
 }
 
+declare class PaypalScriptLoader {
+    private scriptLoader;
+    private window;
+    constructor(scriptLoader: ScriptLoader);
+    loadPaypalSDK(merchantId?: string): Promise<PaypalSDK>;
+}
+
 declare interface PaypalSDK {
     Button: PaypalButton;
     checkout: PaypalExpressCheckout;
     FUNDING: PaypalFundingTypeList;
     Messages(options: MessagingOptions): MessagingRender;
     Buttons(options: PaypalButtonOptions): PaypalButtonRender;
-}
-
-declare class PaypalScriptLoader {
-    private scriptLoader;
-    private window;
-    constructor(scriptLoader: ScriptLoader);
-    loadPaypalSDK(merchantId?: string): Promise<PaypalSDK>;
 }
 
 declare interface PaypalStyleOptions {
@@ -295,11 +305,3 @@ declare interface WithPaypalExpressPaymentInitializeOptions {
     };
 }
 
-export declare const createPaypalExpressButtonStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<CheckoutButtonStrategyFactory<PaypalButtonStrategy>, {
-    id: string;
-}>;
-
-export declare const createPaypalExpressPaymentStrategy: import("@bigcommerce/checkout-sdk/payment-integration-api").ResolvableModule<PaymentStrategyFactory<PaypalExpressPaymentStrategy>, {
-    id: string;
-    type: string;
-}>;
