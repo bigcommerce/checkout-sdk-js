@@ -209,6 +209,16 @@ export default class StripeIntegrationService {
         this.scriptLoader.updateStripeElements({ clientSecret: clientToken });
     }
 
+    async applyStoreCreditIfNeeded(useStoreCredit?: boolean): Promise<void> {
+        const { isStoreCreditApplied } = this.paymentIntegrationService
+            .getState()
+            .getCheckoutOrThrow();
+
+        if (useStoreCredit !== undefined && useStoreCredit !== isStoreCreditApplied) {
+            await this.paymentIntegrationService.applyStoreCredit(useStoreCredit);
+        }
+    }
+
     mapStripeAddress(address?: Address): AddressOptions {
         if (address) {
             const {

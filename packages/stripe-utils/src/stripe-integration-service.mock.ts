@@ -40,6 +40,7 @@ export const getStripeIntegrationServiceMock = () =>
         isRedirectAction: jest.fn(() => false),
         isOnPageAdditionalAction: jest.fn(() => false),
         updateStripePaymentIntent: jest.fn(() => Promise.resolve()),
+        applyStoreCreditIfNeeded: jest.fn(() => Promise.resolve()),
         throwStripeError: jest.fn(() => {
             throw new Error('throw stripe error');
         }),

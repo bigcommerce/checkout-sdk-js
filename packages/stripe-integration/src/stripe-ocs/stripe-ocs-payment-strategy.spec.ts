@@ -11,7 +11,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCart,
-    getCheckout,
     getErrorPaymentResponseBody,
     getResponse,
     PaymentIntegrationServiceMock,
@@ -551,19 +550,27 @@ describe('StripeOCSPaymentStrategy', () => {
             ).rejects.toThrow(InvalidArgumentError);
         });
 
-        it('execute with store credits', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getCheckoutOrThrow',
-            ).mockReturnValueOnce({
-                ...getCheckout(),
-                isStoreCreditApplied: true,
+        it('applies store credit via stripe integration service', async () => {
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+            await stripeOCSPaymentStrategy.execute({
+                ...getStripeOCSOrderRequestBodyMock(),
+                useStoreCredit: true,
             });
 
+            expect(stripeIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(true);
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                expect.objectContaining({ useStoreCredit: true }),
+                undefined,
+            );
+        });
+
+        it('calls applyStoreCreditIfNeeded with undefined when useStoreCredit is not provided', async () => {
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
-            expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(true);
+            expect(stripeIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(
+                undefined,
+            );
         });
 
         it('execute without additional actions with selected method in accordion', async () => {

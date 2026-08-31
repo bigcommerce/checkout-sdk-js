@@ -34,6 +34,7 @@ import {
     StripeInitializationData,
     StripeIntegrationService,
     StripeJsVersion,
+    StripeLoadActionsResultType,
     StripePaymentMethodType,
     StripeScriptLoader,
     StripeSelectedPaymentMethod,
@@ -87,9 +88,13 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             const stripeActions = await this._getStripeActionsOrThrow();
 
             await this._updateStripeShopperData(stripeActions);
+            await this._updateStripeCheckoutSessionState(stripeActions);
+
             this._initializePaymentElement(stripeocs, paymentMethod);
             this._initializeAdaptivePricingElement(stripeocs, paymentMethod);
         } catch (error) {
+            await this.deinitialize();
+
             if (error instanceof Error) {
                 stripeocs.onError?.(error);
             }
@@ -98,6 +103,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = orderRequest;
+        const { useStoreCredit } = orderRequest;
         const { methodId, gatewayId } = payment || {};
 
         if (!this.stripeClient) {
@@ -111,7 +117,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
 
         const [, stripeActions] = await Promise.all([
-            this._applyStoreCreditIfNeeded(),
+            this.stripeIntegrationService.applyStoreCreditIfNeeded(useStoreCredit),
             this._getStripeActionsOrThrow(),
         ]);
 
@@ -249,16 +255,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         );
     }
 
-    private async _applyStoreCreditIfNeeded(): Promise<void> {
-        const { isStoreCreditApplied } = this.paymentIntegrationService
-            .getState()
-            .getCheckoutOrThrow();
-
-        if (isStoreCreditApplied) {
-            await this.paymentIntegrationService.applyStoreCredit(isStoreCreditApplied);
-        }
-    }
-
     private async _getStripeActionsOrThrow(): Promise<StripeCheckoutSessionActions> {
         if (!this.stripeCheckout) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -308,9 +304,11 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         await this._updateStripeShopperData(stripeActions);
 
         // INFO: to trigger checkout session data update on the BE side we need to make stripe config request
-        await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-            params: { method: methodId },
-        });
+        await this._updateStripeCheckoutSessionState(stripeActions, () =>
+            this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+                params: { method: methodId },
+            }),
+        );
     }
 
     private _getPaymentPayload(
@@ -429,6 +427,17 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         await this._updateStripeEmail(stripeActions);
         await this._updateStripeShippingAddress(stripeActions);
         await this._updateStripeBillingAddress(stripeActions);
+    }
+
+    private async _updateStripeCheckoutSessionState(
+        stripeActions: StripeCheckoutSessionActions,
+        updateFn: () => Promise<unknown> = () => Promise.resolve(),
+    ): Promise<void> {
+        const { type, error } = await stripeActions.runServerUpdate(updateFn);
+
+        if (error || type === StripeLoadActionsResultType.ERROR) {
+            throw new PaymentMethodFailedError(error?.message);
+        }
     }
 
     private async _updateStripeEmail(stripeActions: StripeCheckoutSessionActions): Promise<void> {

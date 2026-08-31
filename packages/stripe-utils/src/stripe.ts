@@ -576,6 +576,7 @@ export interface StripeCheckoutSessionActions {
     confirm(
         options: StripeCheckoutSessionConfirmPaymentData,
     ): Promise<StripeCheckoutSessionActionResult>;
+    runServerUpdate(update: () => Promise<unknown>): Promise<StripeCheckoutSessionActionResult>;
 }
 
 export interface StripeSavedPaymentMethod {
