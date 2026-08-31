@@ -4,7 +4,9 @@ import { SearchCompanyAddressesQuery } from '../generated-codegen/graphql';
 export type CompanyAddressSearchResult = SearchCompanyAddressesQuery;
 
 export type CompanyAddress = NonNullable<
-    NonNullable<CompanyAddressSearchResult['company']>['addresses']['edges']
+    NonNullable<
+        NonNullable<CompanyAddressSearchResult['customer']>['activeCompany']
+    >['addresses']['edges']
 >[number]['node'];
 
 export interface CompanyAddressSearchOptions extends RequestOptions {

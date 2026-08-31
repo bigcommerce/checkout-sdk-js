@@ -4,6 +4,28 @@ type AccountCreationDisabledError implements Error {
   message: String!
 }
 
+"The current customer's active B2B company."
+type ActiveCompany @cacheControl(maxAge: 0) @accessScope(scopes: [TOKEN_SCOPE_B2B]) {
+  "Paginated list of addresses associated with the customer's company."
+  addresses(before: String, after: String, first: Int, last: Int, filters: CompanyAddressFiltersInput, sort: [CompanyAddressSortInput!], includesExtraFields: Boolean = false): CompanyAddressConnection!
+
+  "The authenticated B2B company user, or null if the caller is not a company user, B2B is disabled, or the feature flag is off."
+  companyUser: CompanyUser
+
+  "A single company address by id."
+  address(
+    "The id of the company address to fetch."
+    entityId: Int!): CompanyAddress @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "A paginated list of orders placed under the current customer's company."
+  orders(before: String, after: String, first: Int, last: Int, filters: CompanyOrdersFiltersInput, sortBy: OrdersSortInput): OrdersConnection @cacheControl(maxAge: 0) @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "Company members who have placed at least one order."
+  customersWithOrders(
+    "Filters to apply to customers with orders."
+    filters: CustomerWithOrdersFiltersInput, before: String, after: String, first: Int, last: Int): CompanyCustomerConnection @cacheControl(maxAge: 0) @deprecated(reason: "Alpha version. Do not use in production.")
+}
+
 "Add cart line items data object"
 input AddCartLineItemsDataInput {
   "List of cart line items"
@@ -79,6 +101,15 @@ type AddCheckoutShippingConsignmentsResult {
   checkout: Checkout
 }
 
+"An error encountered while adding a company address."
+type AddCompanyAddressError {
+  "A human-readable description of the error."
+  message: String!
+
+  "A machine-readable error code, if available."
+  code: String
+}
+
 "Input for adding a company address."
 input AddCompanyAddressInput {
   "First name of the address owner."
@@ -112,10 +143,31 @@ input AddCompanyAddressInput {
   extraFields: CompanyExtraFieldsInput
 }
 
+"The result of adding a company address."
+type AddCompanyAddressResult @cacheControl(maxAge: 0) {
+  "The id of the address that was added, or null if the mutation failed."
+  entityId: Int
+
+  "Errors encountered while adding the address, empty on success."
+  errors: [AddCompanyAddressError!]!
+}
+
 "Add company file input object."
 input AddCompanyFileInput {
   "The uploaded file ID."
   fileId: String!
+
+  "The URL of the uploaded file."
+  fileUrl: String
+
+  "The name of the uploaded file."
+  fileName: String
+
+  "The MIME content type of the uploaded file."
+  contentType: String
+
+  "The size (in bytes) of the uploaded file."
+  fileSize: Long
 }
 
 "Add company users data object."
@@ -625,6 +677,9 @@ interface BaseOrder @accessScope(scopes: [TOKEN_SCOPE_CUSTOMER]) {
   "The total shipping cost to be shown to shopper in the summary as struck-through."
   comparisonShippingCost: Money
 
+  "Order-level fees applied to the order."
+  fees: [OrderFee!]!
+
   "Metafield data related to an order."
   metafields(
     "Metafield namespace filter"
@@ -643,6 +698,27 @@ interface BaseOrder @accessScope(scopes: [TOKEN_SCOPE_CUSTOMER]) {
 
   "Permalink URL for the order confirmation page. Returns a URL for supported orders, null for unsupported orders."
   permalink: String @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "Purchase order number associated with the order."
+  poNumber: String @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "Buyer reference associated with the order."
+  reference: String @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B company attributed to the order."
+  company: OrderCompany @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B order history events."
+  history: [OrderHistoryEvent!] @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B order extra fields."
+  extraFields: [OrderExtraFieldValue!] @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "Invoice associated with the order, when the order has one."
+  invoice: OrderInvoice @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "The B2B user who placed the order, or null when attribution is unavailable."
+  placedBy: OrderPlacedBy @accessScope(scopes: [TOKEN_SCOPE_B2B])
 }
 
 "The `BigDecimal` scalar type represents signed fractional values with arbitrary precision."
@@ -732,6 +808,9 @@ type BlogIndexPage implements WebPage & Node @accessScope(scopes: [TOKEN_SCOPE_U
 
   "Locale paths and URLs."
   locales(before: String, after: String, first: Int, last: Int): LocaleAlternateConnection! @cacheControl(maxAge: 60, scope: PUBLIC)
+
+  "Whether to show a link to the guest return portal."
+  showLinkToGuestReturnPortal: Boolean!
 }
 
 "Blog post details."
@@ -1713,6 +1792,11 @@ type CartMutations {
   createCartRedirectUrls(
     "Create cart redirect URLs input object."
     input: CreateCartRedirectUrlsInput): CreateCartRedirectUrlsResult!
+
+  "Update locale of the cart."
+  updateCartLocale(
+    "Update cart locale input object"
+    input: UpdateCartLocaleInput!): UpdateCartLocaleResult @deprecated(reason: "Alpha version. Do not use in production.")
 }
 
 "Cart physical item."
@@ -3036,6 +3120,9 @@ type CheckoutCoupon @cacheControl(maxAge: 0) {
   "The coupon ID."
   entityId: Int!
 
+  "The ID of the promotion that generated this coupon."
+  promotionEntityId: Int!
+
   "The coupon code."
   code: String!
 
@@ -3068,6 +3155,18 @@ type CheckoutCouponError implements Error {
 
   "A description of the error in user language."
   message: String!
+}
+
+"An allocation of a checkout promotion discount to a cart item or consignment."
+type CheckoutDiscountAllocation @cacheControl(maxAge: 0) {
+  "The ID of the cart item or consignment the discount has been applied to."
+  entityId: String!
+
+  "The amount discounted from this allocation."
+  discountedAmount: Money!
+
+  "The amount discounted from this allocation in display currency."
+  discountedAmountInDisplayCurrency: Money!
 }
 
 "Specific causes for checkout-flow failures (used by CheckoutShippingConsignmentError, CheckoutBillingAddressError and CheckoutCouponError)."
@@ -3269,6 +3368,18 @@ type CheckoutMutations @accessScope(scopes: [TOKEN_SCOPE_UNAUTHENTICATED]) {
 type CheckoutPromotion @cacheControl(maxAge: 0) {
   "The checkout promotion banners."
   banners: [CheckoutPromotionBanner!]!
+
+  "The ID of the promotion rule. Null for manual discounts."
+  entityId: Int
+
+  "The display name of the promotion. Null when not available."
+  displayName: String
+
+  "Order in which the promotion rule is applied. The lower the value, the higher the priority. Null for manual discounts."
+  priority: Int
+
+  "The discounts applied by this promotion. Empty when the discount details are not available."
+  discounts: [CheckoutPromotionDiscount!]!
 }
 
 "The checkout promotion banner"
@@ -3300,6 +3411,38 @@ enum CheckoutPromotionBannerType {
   ELIGIBLE
   PROMOTION
   UPSELL
+}
+
+"The discount applied by a checkout promotion."
+type CheckoutPromotionDiscount @cacheControl(maxAge: 0) {
+  "The amount discounted by this promotion."
+  discountedAmount: Money!
+
+  "The amount discounted by this promotion in display currency."
+  discountedAmountInDisplayCurrency: Money!
+
+  "The type of the discount applied by this promotion."
+  type: CheckoutPromotionType
+
+  "The target the discount is applied to."
+  target: CheckoutPromotionTarget
+
+  "The list of cart items or consignments the promotion has been applied to."
+  allocations: [CheckoutDiscountAllocation!]!
+}
+
+"The target a checkout promotion discount is applied to."
+enum CheckoutPromotionTarget {
+  ORDER
+  PRODUCT
+  SHIPPING
+}
+
+"The type of discount applied by a checkout promotion."
+enum CheckoutPromotionType {
+  AUTOMATIC
+  COUPON
+  MANUAL
 }
 
 "Selected shipping option."
@@ -3507,6 +3650,12 @@ type CompanyAddress @cacheControl(maxAge: 0) {
 
   "Extra fields defined by the merchant."
   extraFields: [ExtraFieldValue!]! @cacheControl(maxAge: 0)
+
+  "When the address was created, or null if unknown."
+  createdAt: DateTime
+
+  "When the address was last updated, or null if unknown."
+  updatedAt: DateTime
 }
 
 "A paginated list of company addresses."
@@ -3543,6 +3692,18 @@ input CompanyAddressFiltersInput {
 
   "Text search applied to address fields."
   searchQuery: String
+
+  "Filter to addresses in this city."
+  city: String
+
+  "Filter to addresses in this state or province."
+  state: String
+
+  "Filter to addresses in this country."
+  country: String
+
+  "Filter to addresses belonging to these company ids."
+  companyIds: [ID!]
 }
 
 "Sort direction for company address results."
@@ -3563,6 +3724,39 @@ input CompanyAddressSortInput {
 
   "The sort direction."
   direction: CompanyAddressSortDirection!
+}
+
+"A company member who has placed at least one order."
+type CompanyCustomer {
+  "The unique numeric identifier of the customer."
+  entityId: Int!
+
+  "The first name of the customer."
+  firstName: String!
+
+  "The last name of the customer."
+  lastName: String!
+
+  "The email address of the customer."
+  email: String!
+}
+
+"A connection to company customers with orders."
+type CompanyCustomerConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo! @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+
+  "A list of company customer edges."
+  edges: [CompanyCustomerEdge!] @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+}
+
+"An edge in a company customer connection."
+type CompanyCustomerEdge {
+  "The customer."
+  node: CompanyCustomer! @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+
+  "A cursor for use in pagination."
+  cursor: String!
 }
 
 "The input for the filled out company extra fields."
@@ -3587,10 +3781,40 @@ type CompanyMutations @accessScope(scopes: [TOKEN_SCOPE_B2B]) {
     "The values to use for company registration."
     input: RegisterCompanyInput!): RegisterCompanyResult!
 
+  "Add a new address to the customer's company."
+  addAddress(
+    "The values for the new company address."
+    input: AddCompanyAddressInput!): AddCompanyAddressResult! @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "Update an existing company address. Only provided fields are changed."
+  updateAddress(
+    "The id of the address to update and the fields to change."
+    input: UpdateCompanyAddressInput!): UpdateCompanyAddressResult! @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "Delete an existing company address."
+  deleteAddress(
+    "The id of the address to delete."
+    input: DeleteCompanyAddressInput!): DeleteCompanyAddressResult! @deprecated(reason: "Alpha version. Do not use in production.")
+
   "Update the authenticated B2B company user's account settings."
   updateCompanyUser(
     "The values to update on the company user's account."
     input: UpdateCompanyUserInput!): UpdateCompanyUserResult!
+}
+
+"Filters to apply when querying company orders."
+input CompanyOrdersFiltersInput {
+  "Filter by order status labels."
+  status: [String!]
+
+  "Filter by the BigCommerce customer IDs of the users who placed the orders."
+  customerId: [Int!]
+
+  "Filter to specific company or subsidiary IDs within the caller's authorised company hierarchy."
+  companyIds: [ID!]
+
+  "Filter by the order's created date."
+  dateRange: OrderDateRangeFilterInput
 }
 
 "Queries for B2B company data."
@@ -3600,6 +3824,11 @@ type CompanyQueries @cacheControl(maxAge: 0) @accessScope(scopes: [TOKEN_SCOPE_B
 
   "The authenticated B2B company user, or null if the caller is not a company user, B2B is disabled, or the feature flag is off."
   companyUser: CompanyUser
+
+  "A single company address by id."
+  address(
+    "The id of the company address to fetch."
+    entityId: Int!): CompanyAddress @deprecated(reason: "Alpha version. Do not use in production.")
 }
 
 "The status of a company."
@@ -3645,18 +3874,6 @@ type CompanyUser @cacheControl(maxAge: 0) {
 
   "Name of the company role assigned to the user, if any."
   companyRoleName: String
-}
-
-"The company user form fields to set, grouped by value type."
-input CompanyUserFormFieldsInput {
-  "Text form field values to set."
-  texts: [TextCompanyUserFormFieldInput!]
-
-  "Number form field values to set."
-  numbers: [NumberCompanyUserFormFieldInput!]
-
-  "Multiple choice form field values to set."
-  multipleChoices: [MultipleChoiceCompanyUserFormFieldInput!]
 }
 
 "Possible response error when attempting to use the completeCheckout mutation."
@@ -3747,6 +3964,9 @@ type ContactPage implements WebPage & Node @accessScope(scopes: [TOKEN_SCOPE_UNA
 
   "Locale paths and URLs."
   locales(before: String, after: String, first: Int, last: Int): LocaleAlternateConnection! @cacheControl(maxAge: 60, scope: PUBLIC)
+
+  "Whether to show a link to the guest return portal."
+  showLinkToGuestReturnPortal: Boolean!
 }
 
 "The page content."
@@ -3803,6 +4023,9 @@ type Country @cacheControl(scope: PUBLIC, inheritMaxAge: true) {
 
   "A country's states or provinces."
   statesOrProvinces: [StateOrProvince!]!
+
+  "Whether a state or province is required when entering an address for this country."
+  stateRequired: Boolean!
 }
 
 "A country's currency."
@@ -4175,6 +4398,24 @@ type CreateSubscriberUnexpectedError implements Error {
   message: String!
 }
 
+"Error when creating a vault access token."
+type CreateVaultAccessTokenError implements Error {
+  "A description of the error in user language."
+  message: String!
+}
+
+"Result of a createVaultAccessToken mutation. Empty errors indicates success."
+type CreateVaultAccessTokenResult @cacheControl(maxAge: 0) {
+  "The generated vault access token."
+  vaultAccessToken: String
+
+  "The date and time when the vault access token expires."
+  expiresAt: DateTime
+
+  "Errors encountered while creating the vault access token."
+  errors: [CreateVaultAccessTokenError!]!
+}
+
 "Create wishlist input object"
 input CreateWishlistInput {
   "A wishlist name"
@@ -4382,6 +4623,9 @@ type Customer @cacheControl(maxAge: 0) {
 
   "Customer addresses."
   addresses(before: String, after: String, first: Int, last: Int): AddressConnection! @accessScope(scopes: [TOKEN_SCOPE_CUSTOMER])
+
+  "The customer's active company context, or null when the shopper is not an authenticated customer."
+  activeCompany: ActiveCompany @accessScope(scopes: [TOKEN_SCOPE_B2B])
 
   "Metafield data related to a customer."
   metafields(
@@ -4615,6 +4859,19 @@ type CustomerMutations {
 
     "Input for deleting a customer address."
     input: DeleteCustomerAddressInput!): DeleteCustomerAddressResult!
+
+  "Delete a stored payment instrument for the authenticated customer."
+  deleteStoredPaymentInstrument(
+    "Input for deleting a stored payment instrument."
+    input: DeleteStoredPaymentInstrumentInput!): DeleteStoredPaymentInstrumentResult @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "Update a stored payment instrument for the authenticated customer."
+  updateStoredPaymentInstrument(
+    "Input for updating a stored payment instrument."
+    input: UpdateStoredPaymentInstrumentInput!): UpdateStoredPaymentInstrumentResult @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "Stored payment instruments mutations."
+  storedPaymentInstruments: StoredPaymentInstrumentMutations! @deprecated(reason: "Alpha version. Do not use in production.")
 }
 
 "An error due to not supplying a customer ID either via customer-id header (when using a customer impersonation token) or by logging into the storefront as a customer."
@@ -4633,6 +4890,12 @@ type CustomerPasswordError implements Error {
 type CustomerRegistrationError implements Error {
   "A description of the error in user language."
   message: String!
+}
+
+"Filters applied to customers with orders."
+input CustomerWithOrdersFiltersInput {
+  "Filter customers by company IDs."
+  companyIds: [ID!]
 }
 
 "Customers settings."
@@ -4803,6 +5066,30 @@ type DeleteCheckoutConsignmentResult {
   checkout: Checkout
 }
 
+"An error encountered while deleting a company address."
+type DeleteCompanyAddressError {
+  "A human-readable description of the error."
+  message: String!
+
+  "A machine-readable error code, if available."
+  code: String
+}
+
+"Input for deleting a company address."
+input DeleteCompanyAddressInput {
+  "The id of the address to delete."
+  entityId: Int!
+}
+
+"The result of deleting a company address."
+type DeleteCompanyAddressResult @cacheControl(maxAge: 0) {
+  "The id of the address that was deleted, or null if the mutation failed."
+  entityId: Int
+
+  "Errors encountered while deleting the address, empty on success."
+  errors: [DeleteCompanyAddressError!]!
+}
+
 "Possible response errors when attempting to delete a customer address."
 union DeleteCustomerAddressError = CustomerNotLoggedInError | CustomerAddressDeletionError
 
@@ -4816,6 +5103,24 @@ input DeleteCustomerAddressInput {
 type DeleteCustomerAddressResult {
   "Response errors that occurred while attempting to delete a customer address."
   errors: [DeleteCustomerAddressError!]!
+}
+
+"Error when deleting a stored payment instrument."
+type DeleteStoredPaymentInstrumentError implements Error {
+  "A description of the error in user language."
+  message: String!
+}
+
+"Input for deleting a stored payment instrument."
+input DeleteStoredPaymentInstrumentInput {
+  "Token of the stored payment instrument to delete."
+  token: String!
+}
+
+"Result of a deleteStoredPaymentInstrument mutation. Empty errors indicates success."
+type DeleteStoredPaymentInstrumentResult @cacheControl(maxAge: 0) {
+  "Errors encountered while deleting the stored payment instrument."
+  errors: [DeleteStoredPaymentInstrumentError!]!
 }
 
 "Delete wishlist items input object"
@@ -4941,6 +5246,9 @@ type ExternalLinkPage implements WebPage {
 
   "Locale paths and URLs."
   locales(before: String, after: String, first: Int, last: Int): LocaleAlternateConnection! @cacheControl(maxAge: 60, scope: PUBLIC)
+
+  "Whether to show a link to the guest return portal."
+  showLinkToGuestReturnPortal: Boolean!
 }
 
 "A name/value pair representing a single extra field on a B2B entity."
@@ -4953,7 +5261,7 @@ interface ExtraFieldValue {
 }
 
 "A featured promotion callout."
-type FeaturedPromotion @cacheControl(maxAge: 0) {
+type FeaturedPromotion @cacheControl(maxAge: 60, scope: PUBLIC) {
   "Promotion identifier."
   entityId: Int!
 
@@ -4977,7 +5285,7 @@ enum FeaturedPromotionCategory {
 }
 
 "A connection to a list of items."
-type FeaturedPromotionConnection @cacheControl(maxAge: 0) {
+type FeaturedPromotionConnection @cacheControl(maxAge: 60, scope: PUBLIC) {
   "Information to aid in pagination."
   pageInfo: PageInfo! @cacheControl(scope: PUBLIC, inheritMaxAge: true)
 
@@ -5129,7 +5437,13 @@ type GenerateMcpSessionSyncTokenData {
 }
 
 "Error that occurred as a result of generateSessionSyncToken mutation."
-union GenerateMcpSessionSyncTokenError = GenerateMcpSessionSyncTokenNoSession
+union GenerateMcpSessionSyncTokenError = GenerateMcpSessionSyncTokenNoSession | GenerateMcpSessionSyncTokenMissingCookies
+
+"The request's session cookies did not match the session: a cookie the session expects is missing or its value differs."
+type GenerateMcpSessionSyncTokenMissingCookies implements Error {
+  "A description of the error in user language."
+  message: String!
+}
 
 "No storefront session available to sync."
 type GenerateMcpSessionSyncTokenNoSession implements Error {
@@ -5826,10 +6140,10 @@ type Locale {
   isDefault: Boolean!
 
   "The full path of the locale."
-  fullPath: String! @deprecated(reason: "Alpha version. Do not use in production.")
+  fullPath: String!
 
   "The locale path segment (subfolder), e.g. \"fr\"."
-  path: String! @deprecated(reason: "Alpha version. Do not use in production.")
+  path: String!
 }
 
 "Locale path and URLs."
@@ -5857,6 +6171,12 @@ type LocaleAlternateEdge {
 
   "A cursor for use in pagination."
   cursor: String!
+}
+
+"Error indicating the locale value provided is not supported by this store."
+type LocaleInvalidError implements Error {
+  "A description of the error in user language."
+  message: String!
 }
 
 "A connection to a list of items."
@@ -6114,15 +6434,6 @@ type MultilineTextFormFieldValue implements CustomerFormFieldValue {
 
   "The name of the form field that the value is for."
   name: String!
-}
-
-"A multiple choice company user form field value to set."
-input MultipleChoiceCompanyUserFormFieldInput {
-  "The label/name of the form field."
-  name: String!
-
-  "The selected choice values."
-  values: [String!]!
 }
 
 "The user input for multiple choice extra fields."
@@ -6386,6 +6697,9 @@ type NormalPage implements WebPage & Node @accessScope(scopes: [TOKEN_SCOPE_UNAU
 
   "Locale paths and URLs."
   locales(before: String, after: String, first: Int, last: Int): LocaleAlternateConnection! @cacheControl(maxAge: 60, scope: PUBLIC)
+
+  "Whether to show a link to the guest return portal."
+  showLinkToGuestReturnPortal: Boolean!
 }
 
 "The not authorized to perform operation error."
@@ -6404,15 +6718,6 @@ type NotAuthorizedToAddProductReviewError implements Error {
 type NotFoundError implements Error {
   "A description of the error in user language."
   message: String!
-}
-
-"A number company user form field value to set."
-input NumberCompanyUserFormFieldInput {
-  "The label/name of the form field."
-  name: String!
-
-  "The value."
-  value: BigDecimal!
 }
 
 "The user input for number extra fields."
@@ -6673,6 +6978,9 @@ type Order implements Node & BaseOrder @accessScope(scopes: [TOKEN_SCOPE_CUSTOME
   "The total shipping cost to be shown to shopper in the summary as struck-through."
   comparisonShippingCost: Money
 
+  "Order-level fees applied to the order."
+  fees: [OrderFee!]!
+
   "Metafield data related to an order."
   metafields(
     "Metafield namespace filter"
@@ -6691,6 +6999,27 @@ type Order implements Node & BaseOrder @accessScope(scopes: [TOKEN_SCOPE_CUSTOME
 
   "Permalink URL for the order confirmation page. Returns a URL for supported orders, null for unsupported orders."
   permalink: String @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "Purchase order number associated with the order."
+  poNumber: String @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "Buyer reference associated with the order."
+  reference: String @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B company attributed to the order."
+  company: OrderCompany @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B order history events."
+  history: [OrderHistoryEvent!] @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B order extra fields."
+  extraFields: [OrderExtraFieldValue!] @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "Invoice associated with the order, when the order has one."
+  invoice: OrderInvoice @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "The B2B user who placed the order, or null when attribution is unavailable."
+  placedBy: OrderPlacedBy @accessScope(scopes: [TOKEN_SCOPE_B2B])
 }
 
 "An address for an order."
@@ -6786,6 +7115,15 @@ type OrderBillingAddress implements OrderAddress {
   email: String
 }
 
+"A B2B company attributed to an order."
+type OrderCompany @cacheControl(maxAge: 0) {
+  "The company's unique numeric identifier."
+  entityId: Int!
+
+  "Company name."
+  name: String!
+}
+
 "A consignment for an order."
 type OrderConsignments @cacheControl(maxAge: 0) {
   "Download consignments."
@@ -6832,6 +7170,9 @@ type OrderDigitalLineItem implements OrderLineItemInterface {
 
   "Digital line item sku."
   sku: String!
+
+  "ID of the variant."
+  variantEntityId: Int
 
   "Quantity."
   quantity: Int!
@@ -6921,6 +7262,33 @@ type OrderEmailConsignments @cacheControl(maxAge: 0) {
   giftCertificates(before: String, after: String, first: Int, last: Int): OrderGiftCertificateConsignmentConnection!
 }
 
+"A merchant-defined extra field captured on the order."
+type OrderExtraFieldValue @cacheControl(maxAge: 0) {
+  "The extra field identifier (e.g. \"extra_int_1\")."
+  name: String!
+
+  "The extra field value serialized as a string."
+  value: String!
+}
+
+"A fee applied to an order."
+type OrderFee @cacheControl(maxAge: 0) {
+  "Fee ID."
+  entityId: String!
+
+  "Fee type."
+  feeType: FeeType!
+
+  "Fee display name shown to the customer."
+  displayName: String!
+
+  "Fee cost amount."
+  cost: Money!
+
+  "Source of the fee."
+  source: String!
+}
+
 "Filter for order query."
 input OrderFilterInput {
   "Order id."
@@ -6993,6 +7361,39 @@ type OrderGiftCertificateLineItemEdge {
   cursor: String!
 }
 
+"A B2B order lifecycle event."
+type OrderHistoryEvent @cacheControl(maxAge: 0) {
+  "Event ID."
+  id: ID!
+
+  "The type of lifecycle event."
+  eventType: OrderHistoryEventType!
+
+  "Order status label captured for the event."
+  statusLabel: String!
+
+  "Where the event originated (e.g. B2B, webhook, sync job)."
+  source: String
+
+  "Date and time when the event occurred."
+  createdAt: DateTime!
+}
+
+"The type of B2B order lifecycle event."
+enum OrderHistoryEventType {
+  "The order was created."
+  ORDER_CREATED
+
+  "The order was updated."
+  ORDER_UPDATED
+}
+
+"A B2B invoice reference for an order."
+type OrderInvoice @cacheControl(maxAge: 0) {
+  "The invoice's unique identifier."
+  id: ID!
+}
+
 "An interface for different order line item types"
 interface OrderLineItemInterface {
   "Line item ID."
@@ -7015,6 +7416,12 @@ type OrderLineItemProductOption @cacheControl(maxAge: 0) {
 
   "Product option value."
   value: String!
+
+  "The product option ID."
+  productAttributeEntityId: Int
+
+  "The product option value ID."
+  productAttributeValueEntityId: Int
 }
 
 "A wrapping for an order line item."
@@ -7118,6 +7525,9 @@ type OrderPhysicalLineItem implements OrderLineItemInterface {
 
   "Physical line item sku."
   sku: String!
+
+  "ID of the variant."
+  variantEntityId: Int
 
   "Quantity."
   quantity: Int!
@@ -7252,6 +7662,21 @@ type OrderPickupLocationAddress @cacheControl(maxAge: 0) {
   phone: String
 }
 
+"The B2B user attribution for who placed an order."
+type OrderPlacedBy @cacheControl(maxAge: 0) {
+  "The BC customer ID of the user who placed the order."
+  entityId: Int!
+
+  "The first name of the user who placed the order."
+  firstName: String
+
+  "The last name of the user who placed the order."
+  lastName: String
+
+  "The email address of the user who placed the order."
+  email: String
+}
+
 "Return information of a given order."
 type OrderReturn {
   "ID of created Return of a given order."
@@ -7269,11 +7694,17 @@ type OrderReturn {
   "Items information associated with a Return."
   items: [OrderReturnItem!]!
 
+  "Sum of the discounted prices of all items in the Return. 0 when all return items prices sum to 0."
+  itemsTotalPrice: Money!
+
   "The date time the return was first submitted."
   dateSubmitted: DateTime!
 
   "The date time when any change was last made to the return."
   lastUpdated: DateTime!
+
+  "Optional free-text note that a shopper or merchant supplied when creating the return."
+  note: String
 }
 
 "Error when the return has already been cancelled."
@@ -7343,6 +7774,9 @@ type OrderReturnItem @cacheControl(scope: PUBLIC, inheritMaxAge: true) {
 
   "Snapshot of the return reason taken when the return was initiated."
   reasonSnapshot: OrderReturnReasonSnapshot!
+
+  "Image representing the product being returned. This is the current product image sourced from the catalog, and may not match the image that was displayed to the shopper at the time of purchase."
+  image: Image
 }
 
 "Pricing details for a returned item."
@@ -7508,6 +7942,9 @@ type OrderShipment @cacheControl(maxAge: 0) {
 
   "Shipping provider name."
   shippingProviderName: String!
+
+  "The human-readable shipping provider name."
+  shippingProviderDisplayName: String! @deprecated(reason: "Alpha version. Do not use in production.")
 
   "Shipping method name."
   shippingMethodName: String!
@@ -7767,6 +8204,9 @@ type OrderWithPayments implements Node & BaseOrder @accessScope(scopes: [TOKEN_S
   "The total shipping cost to be shown to shopper in the summary as struck-through."
   comparisonShippingCost: Money
 
+  "Order-level fees applied to the order."
+  fees: [OrderFee!]!
+
   "Metafield data related to an order."
   metafields(
     "Metafield namespace filter"
@@ -7785,6 +8225,27 @@ type OrderWithPayments implements Node & BaseOrder @accessScope(scopes: [TOKEN_S
 
   "Permalink URL for the order confirmation page. Returns a URL for supported orders, null for unsupported orders."
   permalink: String @deprecated(reason: "Alpha version. Do not use in production.")
+
+  "Purchase order number associated with the order."
+  poNumber: String @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "Buyer reference associated with the order."
+  reference: String @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B company attributed to the order."
+  company: OrderCompany @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B order history events."
+  history: [OrderHistoryEvent!] @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "B2B order extra fields."
+  extraFields: [OrderExtraFieldValue!] @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "Invoice associated with the order, when the order has one."
+  invoice: OrderInvoice @accessScope(scopes: [TOKEN_SCOPE_B2B])
+
+  "The B2B user who placed the order, or null when attribution is unavailable."
+  placedBy: OrderPlacedBy @accessScope(scopes: [TOKEN_SCOPE_B2B])
 }
 
 "A connection to a list of orders."
@@ -7794,6 +8255,9 @@ type OrdersConnection {
 
   "A list of edges."
   edges: [OrdersEdge!] @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+
+  "Additional information about the collection."
+  collectionInfo: CollectionInfo @cacheControl(scope: PUBLIC, inheritMaxAge: true)
 }
 
 "An edge in an orders connection."
@@ -7827,6 +8291,21 @@ type OrdersReturnsSettings @cacheControl(maxAge: 0) @accessScope(scopes: [TOKEN_
 
   "Merchant-defined resolutions with their active status."
   returnCustomResolutions: [ReturnCustomResolution!]!
+}
+
+"Specifies the field and direction to sort company orders by."
+enum OrdersSortInput {
+  "Sort by order creation date, newest first."
+  CREATED_AT_NEWEST
+
+  "Sort by order creation date, oldest first."
+  CREATED_AT_OLDEST
+
+  "Sort by order ID in ascending order."
+  ID_A_TO_Z
+
+  "Sort by order ID in descending order."
+  ID_Z_TO_A
 }
 
 "Other Filter"
@@ -8062,6 +8541,33 @@ type Payment @cacheControl(maxAge: 0) {
 
 "The specific details of the instrument used for this payment."
 union PaymentInstrument = GiftCertificatePaymentInstrument | CreditCardPaymentInstrument
+
+"A payment method enabled for the store."
+type PaymentMethod @accessScope(scopes: [TOKEN_SCOPE_UNAUTHENTICATED]) {
+  "The unique identifier of the payment method."
+  entityId: String!
+
+  "The display name of the payment method."
+  name: String!
+}
+
+"A connection to a list of payment methods."
+type PaymentMethodConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo! @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+
+  "A list of edges."
+  edges: [PaymentMethodEdge!] @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+}
+
+"An edge in a connection."
+type PaymentMethodEdge {
+  "The item at the end of the edge."
+  node: PaymentMethod! @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+
+  "A cursor for use in pagination."
+  cursor: String!
+}
 
 "The payment mutations."
 type PaymentMutations {
@@ -8398,6 +8904,9 @@ type Product implements Node @accessScope(scopes: [TOKEN_SCOPE_UNAUTHENTICATED])
   "Absolute URL path for adding a product to customer's wishlist."
   addToWishlistUrl: String! @deprecated(reason: "Deprecated.")
 
+  "Indicates whether the product's price is hidden on storefront pages. Defaults to false. This is true when \"Show 'Call for pricing' message instead of the price\" is enabled for the product. It does not take store-wide product price display settings into account."
+  isPriceHidden: Boolean!
+
   "Prices object determined by supplied product ID, variant ID, and selected option IDs."
   prices(
     "Tax will be included if enabled"
@@ -8530,14 +9039,14 @@ type Product implements Node @accessScope(scopes: [TOKEN_SCOPE_UNAUTHENTICATED])
   "A list of the videos for a product."
   videos(before: String, after: String, first: Int, last: Int): VideoConnection!
 
+  "Featured promotion callouts eligible for this product on the storefront."
+  featuredPromotions(before: String, after: String, first: Int, last: Int): FeaturedPromotionConnection!
+
   "Locale paths and URLs."
   locales(before: String, after: String, first: Int, last: Int): LocaleAlternateConnection! @cacheControl(maxAge: 60, scope: PUBLIC)
 
   "List of catalog attributes (display name and resolved value) assigned to the product."
   attributes(before: String, after: String, first: Int, last: Int): CatalogProductAttributeConnection! @cacheControl(maxAge: 60, scope: PUBLIC)
-
-  "Featured promotion callouts eligible for this product on the storefront."
-  featuredPromotions(before: String, after: String, first: Int, last: Int): FeaturedPromotionConnection! @deprecated(reason: "Alpha version. Do not use in production.")
 }
 
 "Product Attribute Filter"
@@ -9167,6 +9676,9 @@ type RawHtmlPage implements WebPage & Node @accessScope(scopes: [TOKEN_SCOPE_UNA
 
   "Locale paths and URLs."
   locales(before: String, after: String, first: Int, last: Int): LocaleAlternateConnection! @cacheControl(maxAge: 60, scope: PUBLIC)
+
+  "Whether to show a link to the guest return portal."
+  showLinkToGuestReturnPortal: Boolean!
 }
 
 "ReCaptcha settings."
@@ -9662,6 +10174,9 @@ input ScriptsFilters {
 type Search {
   "Product filtering enabled."
   productFilteringEnabled: Boolean!
+
+  "The default sort order applied to search product listings."
+  defaultSearchProductSort: SearchProductsSort!
 }
 
 "Input object for fields related to a search product event."
@@ -9779,6 +10294,19 @@ input SearchProductsFiltersInput {
 
   "Filter by products belonging to any or all of the specified Categories. Intended for Advanced Search and Faceted Search/Product Filtering use cases, not for a page for a specific Category."
   categoryIdsFilter: CategoryEntityIdsFilterInput
+}
+
+"Sort order for product search results."
+enum SearchProductsSort {
+  A_TO_Z
+  BEST_REVIEWED
+  BEST_SELLING
+  FEATURED
+  HIGHEST_PRICE
+  LOWEST_PRICE
+  NEWEST
+  RELEVANCE
+  Z_TO_A
 }
 
 "Sort to use for the product results. Relevance is the default for textual search terms, and \u201CFeatured\u201D is the default for category page contexts without a search term."
@@ -10169,6 +10697,9 @@ type Site @cacheControl(maxAge: 60, scope: PUBLIC) @accessScope(scopes: [TOKEN_S
     "The gift certificate code."
     code: String!): GiftCertificate @cacheControl(maxAge: 0)
 
+  "List of enabled payment methods for the current store and channel. Alpha: do not use in production."
+  paymentMethods(before: String, after: String, first: Int, last: Int): PaymentMethodConnection @cacheControl(maxAge: 0) @deprecated(reason: "Alpha version. Do not use in production.")
+
   "Details of a brand."
   brand(
     "Brand ID."
@@ -10204,6 +10735,9 @@ type Site @cacheControl(maxAge: 60, scope: PUBLIC) @accessScope(scopes: [TOKEN_S
 
   "Promotion for the current shopper."
   promotion: Promotion! @cacheControl(maxAge: 0)
+
+  "The stored instruments manifest, resolved for the current environment."
+  storedInstrumentsManifest: StoredInstrumentsManifest @cacheControl(maxAge: 60, scope: PUBLIC) @deprecated(reason: "Alpha version. Do not use in production.")
 }
 
 "The social media link."
@@ -10413,6 +10947,30 @@ type StoredCardExpiry @cacheControl(maxAge: 0) {
   year: Int!
 }
 
+"The stored instruments manifest, resolved for the current environment."
+type StoredInstrumentsManifest {
+  "The base URL of the manifest CDN for the current environment."
+  baseUrl: String!
+
+  "The manifest version."
+  version: String!
+
+  "The application version (git SHA) of the deployed manifest."
+  appVersion: String!
+
+  "The JavaScript bundle files required to load the stored instruments UI, in load order."
+  scripts: [StoredInstrumentsManifestScript!]!
+}
+
+"A JavaScript bundle file for the stored instruments UI."
+type StoredInstrumentsManifestScript @cacheControl(scope: PUBLIC, inheritMaxAge: true) {
+  "The source URL of the script file."
+  src: String! @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+
+  "The Subresource Integrity (SRI) hash for the script file."
+  integrity: String! @cacheControl(scope: PUBLIC, inheritMaxAge: true)
+}
+
 "A customer's stored payment instrument (card, PayPal account, or bank account)."
 type StoredPaymentInstrument @cacheControl(maxAge: 0) {
   "Unique identifier for this stored payment instrument."
@@ -10423,6 +10981,45 @@ type StoredPaymentInstrument @cacheControl(maxAge: 0) {
 
   "Type-specific instrument details."
   details: StoredPaymentInstrumentDetails! @cacheControl(maxAge: 0)
+}
+
+"Billing address input for updating a stored payment instrument."
+input StoredPaymentInstrumentBillingAddressInput {
+  "First name on the billing address."
+  firstName: String!
+
+  "Last name on the billing address."
+  lastName: String
+
+  "Email on the billing address."
+  email: String
+
+  "Company on the billing address."
+  company: String
+
+  "First line of the billing address."
+  address1: String!
+
+  "Second line of the billing address."
+  address2: String
+
+  "City of the billing address."
+  city: String!
+
+  "State or province of the billing address."
+  stateOrProvince: String
+
+  "State or province code of the billing address."
+  stateOrProvinceCode: String
+
+  "Postal code of the billing address."
+  postalCode: String
+
+  "Country code of the billing address."
+  countryCode: String!
+
+  "Phone number on the billing address."
+  phone: String
 }
 
 "Paginated connection of stored payment instruments for a customer."
@@ -10447,6 +11044,12 @@ type StoredPaymentInstrumentEdge {
 
   "A cursor for use in pagination."
   cursor: String!
+}
+
+"Stored payment instrument mutations."
+type StoredPaymentInstrumentMutations {
+  "Create a vault access token for the authenticated customer."
+  createVaultAccessToken: CreateVaultAccessTokenResult @deprecated(reason: "Alpha version. Do not use in production.")
 }
 
 "Object containing the filters for querying stored payment instruments."
@@ -10623,15 +11226,6 @@ enum TaxPriceDisplay {
   BOTH
   EX
   INC
-}
-
-"A text company user form field value to set."
-input TextCompanyUserFormFieldInput {
-  "The label/name of the form field."
-  name: String!
-
-  "The value."
-  value: String!
 }
 
 "The user input for text extra fields."
@@ -10866,6 +11460,33 @@ type UpdateCartLineItemResult {
   cart: Cart
 }
 
+"Update cart locale data object"
+input UpdateCartLocaleDataInput {
+  "Locale code (e.g. en, fr, de)"
+  locale: String!
+}
+
+"Errors that may occur as a result of updateCartLocale mutation."
+union UpdateCartLocaleError = NotFoundError | LocaleInvalidError
+
+"Update cart locale input object"
+input UpdateCartLocaleInput {
+  "The cart id"
+  cartEntityId: String!
+
+  "Update cart locale data object"
+  data: UpdateCartLocaleDataInput!
+}
+
+"Update cart locale result"
+type UpdateCartLocaleResult {
+  "The Cart that is updated as a result of mutation. Null when errors are returned."
+  cart: Cart
+
+  "Errors encountered during the mutation. Empty when the mutation succeeds."
+  errors: [UpdateCartLocaleError!]!
+}
+
 "Update cart's metafield data."
 input UpdateCartMetafieldDataInput {
   "New key for cart metafield."
@@ -11019,6 +11640,72 @@ type UpdateCheckoutShippingConsignmentResult {
   checkout: Checkout
 }
 
+"An error encountered while updating a company address."
+type UpdateCompanyAddressError {
+  "A human-readable description of the error."
+  message: String!
+
+  "A machine-readable error code, if available."
+  code: String
+}
+
+"Input for updating an existing company address. Only provided fields are changed."
+input UpdateCompanyAddressInput {
+  "The id of the address to update."
+  entityId: Int!
+
+  "First name of the address owner."
+  firstName: String
+
+  "Last name of the address owner."
+  lastName: String
+
+  "First line for the street address."
+  address1: String
+
+  "Second line for the street address."
+  address2: String
+
+  "City."
+  city: String
+
+  "2-letter country code."
+  countryCode: String
+
+  "Name of State or Province."
+  stateOrProvince: String
+
+  "Phone number."
+  phone: String
+
+  "Postal code."
+  postalCode: String
+
+  "Extra fields defined by merchant."
+  extraFields: CompanyExtraFieldsInput
+
+  "Whether this is a shipping address."
+  isShipping: Boolean
+
+  "Whether this is a billing address."
+  isBilling: Boolean
+
+  "Set as the default shipping address."
+  isDefaultShipping: Boolean
+
+  "Set as the default billing address."
+  isDefaultBilling: Boolean
+}
+
+"The result of updating a company address."
+type UpdateCompanyAddressResult @cacheControl(maxAge: 0) {
+  "The id of the address that was updated, or null if the mutation failed."
+  entityId: Int
+
+  "Errors encountered while updating the address, empty on success."
+  errors: [UpdateCompanyAddressError!]!
+}
+
 "An error that occurred while updating the company user."
 type UpdateCompanyUserError {
   "The input field associated with the error."
@@ -11052,7 +11739,7 @@ input UpdateCompanyUserInput {
   newPassword: String
 
   "Account form fields to set."
-  formFields: CompanyUserFormFieldsInput
+  formFields: CustomerFormFieldsInput
 
   "B2B extra fields to set."
   extraFields: CompanyExtraFieldsInput
@@ -11158,6 +11845,36 @@ type UpdateCustomerResult {
 enum UpdateStockBehavior {
   ORDER_COMPLETED_OR_SHIPPED
   ORDER_PLACED
+}
+
+"Error when updating a stored payment instrument."
+type UpdateStoredPaymentInstrumentError implements Error {
+  "A description of the error in user language."
+  message: String!
+}
+
+"Input for updating a stored payment instrument."
+input UpdateStoredPaymentInstrumentInput {
+  "Token of the stored payment instrument to update."
+  token: String!
+
+  "Make this instrument the customer's default. Promote-only: cannot un-set - omit or false leaves the default unchanged."
+  setAsDefault: Boolean
+
+  "Updated billing address for the stored payment instrument."
+  billingAddress: StoredPaymentInstrumentBillingAddressInput
+}
+
+"Result of an updateStoredPaymentInstrument mutation. Empty errors indicates success."
+type UpdateStoredPaymentInstrumentResult @cacheControl(maxAge: 0) {
+  "The updated stored payment instrument, if successful."
+  storedPaymentInstrument: StoredPaymentInstrument
+
+  "Token of the customer's default stored payment instrument after the update."
+  defaultStoredPaymentInstrumentToken: String
+
+  "Errors encountered while updating the stored payment instrument."
+  errors: [UpdateStoredPaymentInstrumentError!]!
 }
 
 "Update wishlist input object"
@@ -11342,9 +12059,6 @@ type Variant implements Node @accessScope(scopes: [TOKEN_SCOPE_UNAUTHENTICATED])
 
   "Whether the product can be purchased"
   isPurchasable: Boolean!
-
-  "Featured promotion callouts eligible for this variant on the storefront."
-  featuredPromotions(before: String, after: String, first: Int, last: Int): FeaturedPromotionConnection! @deprecated(reason: "Alpha version. Do not use in production.")
 }
 
 "A connection to a list of items."
@@ -11471,6 +12185,9 @@ interface WebPage @accessScope(scopes: [TOKEN_SCOPE_UNAUTHENTICATED]) {
 
   "Locale paths and URLs."
   locales(before: String, after: String, first: Int, last: Int): LocaleAlternateConnection! @cacheControl(maxAge: 60, scope: PUBLIC)
+
+  "Whether to show a link to the guest return portal."
+  showLinkToGuestReturnPortal: Boolean!
 }
 
 "Object containing filters for querying web pages"
@@ -12078,6 +12795,7 @@ enum currencyCode {
   MNT
   MOP
   MRO
+  MRU
   MTL
   MTP
   MUR
@@ -12136,6 +12854,7 @@ enum currencyCode {
   SRG
   SSP
   STD
+  STN
   SUR
   SVC
   SYP
