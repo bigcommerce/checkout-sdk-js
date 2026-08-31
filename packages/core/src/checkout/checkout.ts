@@ -29,7 +29,15 @@ export default interface Checkout {
      * Whether the current checkout must execute spam protection
      * before placing the order.
      *
-     * Note: You need to enable Google ReCAPTCHA bot protection in your Checkout Settings.
+     * Note: **this can be `true` even when the store has no reCAPTCHA
+     * configured.** Spam protection is not limited to stores that enable
+     * Google reCAPTCHA in Checkout Settings — after repeated order creation
+     * attempts on a cart, BigCommerce requires a challenge using its own
+     * reCAPTCHA site key, served to you as
+     * `checkoutSettings.googleRecaptchaSitekey`. Always render the challenge
+     * when this flag is `true` by calling `CheckoutService#executeSpamCheck`;
+     * otherwise order creation fails with a 429 and a `spam_protection_failed`
+     * error.
      */
     shouldExecuteSpamCheck: boolean;
     handlingCostTotal: number;
