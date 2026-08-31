@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.964.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.964.2...v1.964.3) (2026-08-31)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-7024 BT fastlane authentication flow ([#3377](https://github.com/bigcommerce/checkout-sdk-js/issues/3377)) ([4721b34](https://github.com/bigcommerce/checkout-sdk-js/commit/4721b34ed60a4e0b08bb677571d6b4ab27a0ace3))
+
 ### [1.964.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.964.1...v1.964.2) (2026-08-31)
 
 ### [1.964.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.964.0...v1.964.1) (2026-08-27)
