@@ -460,6 +460,42 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             });
         });
 
+        it('update payment provider customer with empty addresses if profileData is undefined', async () => {
+            const updatePaymentProviderCustomerMock = jest.fn();
+
+            const lookupCustomerByEmailMock = () => ({ customerContextId: 'asd' });
+            const triggerAuthenticationFlowMock = jest.fn().mockImplementation(() => ({
+                authenticationState: BraintreeFastlaneAuthenticationState.FAILED,
+                profileData: undefined,
+            }));
+
+            jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
+                () => ({
+                    identity: {
+                        lookupCustomerByEmail: lookupCustomerByEmailMock,
+                        triggerAuthenticationFlow: triggerAuthenticationFlowMock,
+                    },
+                }),
+            );
+
+            jest.spyOn(
+                paymentProviderCustomerActionCreator,
+                'updatePaymentProviderCustomer',
+            ).mockImplementation(updatePaymentProviderCustomerMock);
+
+            const strategy = createStrategy();
+
+            await strategy.initialize(defaultOptions);
+
+            expect(triggerAuthenticationFlowMock).toHaveBeenCalled();
+            expect(CookieStorage.remove).toHaveBeenCalledWith('bc-fastlane-sessionId');
+            expect(updatePaymentProviderCustomerMock).toHaveBeenCalledWith({
+                authenticationState: BraintreeFastlaneAuthenticationState.FAILED,
+                addresses: [],
+                instruments: [],
+            });
+        });
+
         it('update billing address for digital product', async () => {
             const updatePaymentProviderCustomerMock = jest.fn();
             const updateBillingAddressMock = jest.fn();

@@ -185,7 +185,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
             customerContextId,
         );
 
-        if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
+        if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED || !profileData) {
             await this._store.dispatch(
                 this._paymentProviderCustomerActionCreator.updatePaymentProviderCustomer({
                     authenticationState,
