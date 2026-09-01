@@ -10,6 +10,6 @@
 
 ## Properties
 
-### company?
+### customer?
 
-> `optional` **company?**: \{ `addresses`: \{ `edges?`: `object`[] \| `null`; `pageInfo`: \{ `endCursor?`: `string` \| `null`; `hasNextPage`: `boolean`; \}; \}; \} \| `null`
+> `optional` **customer?**: \{ `activeCompany?`: \{ `addresses`: \{ `edges?`: `object`[] \| `null`; `pageInfo`: \{ `endCursor?`: `string` \| `null`; `hasNextPage`: `boolean`; \}; \}; \} \| `null`; \} \| `null`

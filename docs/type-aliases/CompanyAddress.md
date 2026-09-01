@@ -6,4 +6,4 @@
 
 # Type Alias: CompanyAddress
 
-> **CompanyAddress** = `NonNullable`\<`NonNullable`\<[`CompanyAddressSearchResult`](CompanyAddressSearchResult.md)\[`"company"`\]\>\[`"addresses"`\]\[`"edges"`\]\>\[`number`\]\[`"node"`\]
+> **CompanyAddress** = `NonNullable`\<`NonNullable`\<`NonNullable`\<[`CompanyAddressSearchResult`](CompanyAddressSearchResult.md)\[`"customer"`\]\>\[`"activeCompany"`\]\>\[`"addresses"`\]\[`"edges"`\]\>\[`number`\]\[`"node"`\]

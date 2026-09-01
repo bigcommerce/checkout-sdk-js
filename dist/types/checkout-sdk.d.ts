@@ -2614,7 +2614,15 @@ declare interface Checkout {
      * Whether the current checkout must execute spam protection
      * before placing the order.
      *
-     * Note: You need to enable Google ReCAPTCHA bot protection in your Checkout Settings.
+     * Note: **this can be `true` even when the store has no reCAPTCHA
+     * configured.** Spam protection is not limited to stores that enable
+     * Google reCAPTCHA in Checkout Settings — after repeated order creation
+     * attempts on a cart, BigCommerce requires a challenge using its own
+     * reCAPTCHA site key, served to you as
+     * `checkoutSettings.googleRecaptchaSitekey`. Always render the challenge
+     * when this flag is `true` by calling `CheckoutService#executeSpamCheck`;
+     * otherwise order creation fails with a 429 and a `spam_protection_failed`
+     * error.
      */
     shouldExecuteSpamCheck: boolean;
     handlingCostTotal: number;
@@ -3411,7 +3419,7 @@ declare class CheckoutService {
      *
      * const result = await service.searchCompanyAddresses('main st', { first: 5 });
      *
-     * console.log(result.company?.addresses.edges);
+     * console.log(result.customer?.activeCompany?.addresses.edges);
      * ```
      *
      * @alpha
@@ -3420,8 +3428,8 @@ declare class CheckoutService {
      * @param options - Options for the search, such as the maximum number of
      * addresses to return, or restricting results to shipping/billing addresses.
      * @returns A promise that resolves to the search payload returned by the
-     * GraphQL API. `company` is `null` when the shopper is not signed in or
-     * the store does not have B2B enabled.
+     * GraphQL API. `customer.activeCompany` is `null` when the shopper is not
+     * signed in or the store does not have B2B enabled.
      */
     searchCompanyAddresses(searchQuery: string, options?: CompanyAddressSearchOptions): Promise<CompanyAddressSearchResult>;
     /**
@@ -4994,7 +5002,7 @@ declare interface CheckoutStoreStatusSelector {
     isLoadingPickupOptions(): boolean;
 }
 
-export declare type CompanyAddress = NonNullable<NonNullable<CompanyAddressSearchResult['company']>['addresses']['edges']>[number]['node'];
+export declare type CompanyAddress = NonNullable<NonNullable<NonNullable<CompanyAddressSearchResult['customer']>['activeCompany']>['addresses']['edges']>[number]['node'];
 
 export declare interface CompanyAddressSearchOptions extends RequestOptions {
     first?: number;
@@ -8539,34 +8547,36 @@ declare interface SearchArea {
 }
 
 declare type SearchCompanyAddressesQuery = {
-    company?: {
-        addresses: {
-            edges?: Array<{
-                node: {
-                    entityId: number;
-                    firstName: string;
-                    lastName: string;
-                    address1: string;
-                    address2?: string | null;
-                    city: string;
-                    stateOrProvince?: string | null;
-                    stateOrProvinceCode?: string | null;
-                    postalCode?: string | null;
-                    country: string;
-                    countryCode: string;
-                    phone?: string | null;
-                    label?: string | null;
-                    isDefaultShipping?: boolean | null;
-                    isDefaultBilling?: boolean | null;
-                    isShipping?: boolean | null;
-                    isBilling?: boolean | null;
+    customer?: {
+        activeCompany?: {
+            addresses: {
+                edges?: Array<{
+                    node: {
+                        entityId: number;
+                        firstName: string;
+                        lastName: string;
+                        address1: string;
+                        address2?: string | null;
+                        city: string;
+                        stateOrProvince?: string | null;
+                        stateOrProvinceCode?: string | null;
+                        postalCode?: string | null;
+                        country: string;
+                        countryCode: string;
+                        phone?: string | null;
+                        label?: string | null;
+                        isDefaultShipping?: boolean | null;
+                        isDefaultBilling?: boolean | null;
+                        isShipping?: boolean | null;
+                        isBilling?: boolean | null;
+                    };
+                }> | null;
+                pageInfo: {
+                    hasNextPage: boolean;
+                    endCursor?: string | null;
                 };
-            }> | null;
-            pageInfo: {
-                hasNextPage: boolean;
-                endCursor?: string | null;
             };
-        };
+        } | null;
     } | null;
 };
 

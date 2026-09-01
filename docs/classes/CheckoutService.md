@@ -1645,7 +1645,7 @@ await service.getB2BToken();
 
 const result = await service.searchCompanyAddresses('main st', { first: 5 });
 
-console.log(result.company?.addresses.edges);
+console.log(result.customer?.activeCompany?.addresses.edges);
 ```
 
 #### Parameters
@@ -1669,8 +1669,8 @@ addresses to return, or restricting results to shipping/billing addresses.
 `Promise`\<[`SearchCompanyAddressesQuery`](../type-aliases/SearchCompanyAddressesQuery.md)\>
 
 A promise that resolves to the search payload returned by the
-GraphQL API. `company` is `null` when the shopper is not signed in or
-the store does not have B2B enabled.
+GraphQL API. `customer.activeCompany` is `null` when the shopper is not
+signed in or the store does not have B2B enabled.
 
 ***
 
