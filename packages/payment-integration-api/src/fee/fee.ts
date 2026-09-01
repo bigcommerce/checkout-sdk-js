@@ -6,3 +6,12 @@ export default interface Fee {
     cost: number;
     source: string;
 }
+
+export interface FeeRequestBody {
+    type: 'custom_fee';
+    name: string;
+    display_name: string;
+    cost: number;
+    source: string;
+    tax_class_id?: number;
+}

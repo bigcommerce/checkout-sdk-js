@@ -2,6 +2,7 @@ import { BillingAddressRequestBody } from './billing';
 import { BuyNowCartRequestBody, Cart } from './cart';
 import { Checkout } from './checkout';
 import { CustomerCredentials } from './customer';
+import { FeeRequestBody } from './fee';
 import { HostedForm, HostedFormOptions } from './hosted-form';
 import { OrderRequestBody } from './order';
 import { InitializeOffsitePaymentConfig, Payment, PaymentAdditionalAction } from './payment';
@@ -74,6 +75,12 @@ export default interface PaymentIntegrationService {
 
     applyStoreCredit(
         useStoreCredit: boolean,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors>;
+
+    // apply custom fees (e.g. a surcharge) to the checkout.
+    applyFees(
+        fees: FeeRequestBody[],
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 

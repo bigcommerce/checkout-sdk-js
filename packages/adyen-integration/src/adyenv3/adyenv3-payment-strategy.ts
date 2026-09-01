@@ -43,6 +43,7 @@ import {
     PaymentMethodCancelledError,
     PaymentRequestOptions,
     PaymentStrategy,
+    SurchargeActionHandler,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class Adyenv3PaymentStrategy implements PaymentStrategy {
@@ -54,10 +55,13 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private componentState?: AdyenComponentEventState;
     private paymentComponent?: AdyenComponent;
     private paymentInitializeOptions?: AdyenV3PaymentInitializeOptions;
+    private _methodId?: string;
+    private _bin?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private scriptLoader: AdyenV3ScriptLoader,
+        private surchargeActionHandler: SurchargeActionHandler,
     ) {}
 
     async initialize(
@@ -72,6 +76,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         }
 
         this.paymentInitializeOptions = adyenv3;
+        this._methodId = options.methodId;
 
         const paymentMethod = this.paymentIntegrationService
             .getState()
@@ -278,6 +283,28 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
     private _updateComponentState(componentState: AdyenComponentEventState) {
         this.componentState = componentState;
+
+        // Surcharging: while the card is valid, run the surcharge check (BE) and, if a
+        // surcharge applies, add it as a checkout fee — so the shopper sees it in the order
+        // summary before Place Order. The handler dedupes by BIN, so this re-runs only when
+        // the card changes (not once per keystroke).
+        if (isCardState(componentState) && componentState.isValid) {
+            const pm = componentState.data.paymentMethod;
+
+            void this.surchargeActionHandler
+                .applyInFlight({
+                    methodId: this._methodId ?? 'adyenv3',
+                    cardData: {
+                        encryptedCardNumber: pm.encryptedCardNumber,
+                        brand: (pm as unknown as { brand?: string }).brand,
+                        bin: this._bin,
+                    },
+                })
+                .catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.error('[surcharge][adyen] in-flight surcharge failed', error);
+                });
+        }
     }
 
     private _getCheckoutAttemptId(componentState?: AdyenComponentEventState): string | null {
@@ -469,6 +496,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             showEmailAddress: false,
             onChange: (componentState) => this._updateComponentState(componentState),
             onSubmit: (componentState) => this._updateComponentState(componentState),
+            onBinValue: (binData) => {
+                this._bin = binData.binValue;
+            },
             ...(billingAddress
                 ? { data: this._mapAdyenPlaceholderData(billingAddress, prefillCardHolderName) }
                 : {}),
