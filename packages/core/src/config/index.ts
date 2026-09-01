@@ -1,6 +1,6 @@
 export * from './config-actions';
 
-export {
+export type {
     default as Config,
     StoreConfig,
     StoreProfile,
@@ -12,11 +12,11 @@ export {
 } from './config';
 export { default as ConfigActionCreator } from './config-action-creator';
 export {
-    default as ConfigSelector,
-    ConfigSelectorFactory,
+    type default as ConfigSelector,
+    type ConfigSelectorFactory,
     createConfigSelectorFactory,
 } from './config-selector';
 export { default as configReducer } from './config-reducer';
 export { default as ConfigRequestSender } from './config-request-sender';
-export { default as ConfigState, DEFAULT_STATE } from './config-state';
-export { default as ConfigWindow } from './config-window';
+export { type default as ConfigState, DEFAULT_STATE } from './config-state';
+export type { default as ConfigWindow } from './config-window';

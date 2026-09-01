@@ -1,4 +1,4 @@
-export {
+export type {
     default as PaymentInstrument,
     AccountInstrument,
     CardInstrument,
@@ -7,9 +7,9 @@ export {
 export { default as InstrumentActionCreator } from './instrument-action-creator';
 export { default as InstrumentRequestSender } from './instrument-request-sender';
 export {
-    default as InstrumentSelector,
-    InstrumentSelectorFactory,
+    type default as InstrumentSelector,
+    type InstrumentSelectorFactory,
     createInstrumentSelectorFactory,
 } from './instrument-selector';
-export { default as InstrumentState } from './instrument-state';
+export type { default as InstrumentState } from './instrument-state';
 export { default as instrumentReducer } from './instrument-reducer';

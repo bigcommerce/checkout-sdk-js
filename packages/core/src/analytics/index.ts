@@ -1,12 +1,12 @@
 export { default as createStepTracker } from './create-step-tracker';
-export { default as StepTracker } from './step-tracker';
+export type { default as StepTracker } from './step-tracker';
 
 export {
     createBraintreeAnalyticTracker,
-    BraintreeAnalyticTrackerService,
+    type BraintreeAnalyticTrackerService,
 } from './braintree-analytic-tracker';
 
 export {
     createPayPalCommerceAnalyticTracker,
-    PayPalCommerceAnalyticTrackerService,
+    type PayPalCommerceAnalyticTrackerService,
 } from './paypal-commerce-analytic-tracker';

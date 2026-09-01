@@ -1,4 +1,4 @@
-export {
+export type {
     ExtensionChangeSubscriber,
     ExtensionChangeUnsubscriber,
 } from './extension-change-subscriber';

@@ -9,9 +9,9 @@ export type { GraphQLError } from './graphql-request-error';
 export { default as GraphQLRequestSender } from './graphql-request-sender';
 export type { GraphQLDocument, GraphQLRequestOptions } from './graphql-request-sender';
 
-export { default as InternalResponseBody } from './internal-response-body';
+export type { default as InternalResponseBody } from './internal-response-body';
 export { default as ContentType } from './content-type';
-export { default as RequestOptions } from './request-options';
+export type { default as RequestOptions } from './request-options';
 export { default as joinIncludes } from './join-includes';
 export { default as joinOrMergeIncludes } from './join-or-merge-includes';
 export { default as isResponse } from './is-response';

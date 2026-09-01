@@ -1,5 +1,5 @@
 export { default as createCreditCardPaymentStrategy } from './create-credit-card-payment-strategy';
-export {
+export type {
     CreditCardPaymentInitializeOptions,
     WithCreditCardPaymentInitializeOptions,
 } from './credit-card-payment-initialize-options';

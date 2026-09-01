@@ -1,1 +1,1 @@
-export { default as BrowserInfo } from './browser';
+export type { default as BrowserInfo } from './browser';

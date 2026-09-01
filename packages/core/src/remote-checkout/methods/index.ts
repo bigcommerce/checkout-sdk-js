@@ -1,1 +1,1 @@
-export { default as AmazonPayRemoteCheckout } from './amazon-pay-remote-checkout';
+export type { default as AmazonPayRemoteCheckout } from './amazon-pay-remote-checkout';

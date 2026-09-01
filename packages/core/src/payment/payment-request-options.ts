@@ -6,7 +6,7 @@ import {
 
 import { RequestOptions } from '../common/http-request';
 
-export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
+export type { PaymentInitializeOptions } from '../generated/payment-initialize-options';
 
 /**
  * The set of options for configuring any requests related to the payment step of

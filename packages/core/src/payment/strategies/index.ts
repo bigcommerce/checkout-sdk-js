@@ -1,1 +1,1 @@
-export { default as PaymentStrategy } from './payment-strategy';
+export type { default as PaymentStrategy } from './payment-strategy';

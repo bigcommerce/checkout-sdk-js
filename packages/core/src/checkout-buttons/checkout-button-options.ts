@@ -3,7 +3,7 @@ import { RequestOptions } from '../common/http-request';
 import { CheckoutButtonMethodType } from './strategies';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
 
-export { CheckoutButtonInitializeOptions } from '../generated/checkout-button-initialize-options';
+export type { CheckoutButtonInitializeOptions } from '../generated/checkout-button-initialize-options';
 
 /**
  * The set of options for configuring the checkout button.

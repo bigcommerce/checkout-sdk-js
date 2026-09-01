@@ -1,17 +1,17 @@
-export { PaymentProviderCustomer } from './payment-provider-customer';
+export type { PaymentProviderCustomer } from './payment-provider-customer';
 export {
     PaymentProviderCustomerType,
-    PaymentProviderCustomerAction,
-    UpdatePaymentProviderCustomerAction,
+    type PaymentProviderCustomerAction,
+    type UpdatePaymentProviderCustomerAction,
 } from './payment-provider-customer-actions';
 export { default as PaymentProviderCustomerActionCreator } from './payment-provider-customer-actions-creator';
 export { default as paymentProviderCustomerReducer } from './payment-provider-customer-reducer';
 export {
-    default as PaymentProviderCustomerSelector,
+    type default as PaymentProviderCustomerSelector,
     createPaymentProviderCustomerSelectorFactory,
-    PaymentProviderCustomerSelectorFactory,
+    type PaymentProviderCustomerSelectorFactory,
 } from './payment-provider-customer-selector';
 export {
-    default as PaymentProviderCustomerState,
+    type default as PaymentProviderCustomerState,
     DEFAULT_STATE,
 } from './payment-provider-customer-state';

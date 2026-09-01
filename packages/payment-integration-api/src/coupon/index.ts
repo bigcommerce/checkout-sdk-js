@@ -1,4 +1,4 @@
-export { default as Coupon } from './coupon';
-export { default as GiftCertificate } from './gift-certificate';
-export { default as InternalCoupon } from './internal-coupon';
-export { default as InternalGiftCertificate } from './internal-gift-certificate';
+export type { default as Coupon } from './coupon';
+export type { default as GiftCertificate } from './gift-certificate';
+export type { default as InternalCoupon } from './internal-coupon';
+export type { default as InternalGiftCertificate } from './internal-gift-certificate';

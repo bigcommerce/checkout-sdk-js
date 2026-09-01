@@ -1,6 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
-export { WalletButtonInitializeOptions } from '../generated/wallet-button-initialize-options';
+export type { WalletButtonInitializeOptions } from '../generated/wallet-button-initialize-options';
 
 export enum WalletButtonMethodType {
     PAYPALCOMMERCE = 'paypalcommercepaypal',

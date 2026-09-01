@@ -2,7 +2,7 @@ import { Address } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export * from './braintree';
 export * from './paypal';
-export * from './visacheckout';
+export type * from './visacheckout';
 
 /**
  *

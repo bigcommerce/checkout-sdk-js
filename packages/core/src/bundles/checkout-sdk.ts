@@ -14,9 +14,9 @@ export {
 } from '../analytics';
 export { createStoredCardHostedFormService } from '../hosted-form';
 export { createBodlService } from '../bodl';
-export {
+export type {
     CompanyAddress,
     CompanyAddressSearchOptions,
     CompanyAddressSearchResult,
 } from '../company';
-export { ExtensionCommandType, ExtensionQueryType, ExtensionQueryMap } from '../extension';
+export { ExtensionCommandType, ExtensionQueryType, type ExtensionQueryMap } from '../extension';

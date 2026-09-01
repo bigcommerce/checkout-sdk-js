@@ -4,7 +4,7 @@ import { ExtensionCommand } from './extension-commands';
 import { ExtensionEvent } from './extension-events';
 import { ExtensionQuery } from './extension-queries';
 
-export const enum ExtensionMessageType {
+export enum ExtensionMessageType {
     GetConsignments = 'EXTENSION:GET_CONSIGNMENTS',
 }
 

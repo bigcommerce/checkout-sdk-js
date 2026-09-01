@@ -1,6 +1,6 @@
-export { WithGooglePayPaymentInitializeOptions } from './google-pay-payment-initialize-options';
-export { WithGooglePayCustomerInitializeOptions } from './google-pay-customer-initialize-options';
-export { WithGooglePayButtonInitializeOptions } from './google-pay-button-initialize-options';
+export type { WithGooglePayPaymentInitializeOptions } from './google-pay-payment-initialize-options';
+export type { WithGooglePayCustomerInitializeOptions } from './google-pay-customer-initialize-options';
+export type { WithGooglePayButtonInitializeOptions } from './google-pay-button-initialize-options';
 
 export { default as createGooglePayAdyenV2PaymentStrategy } from './factories/payment/create-google-pay-adyenv2-payment-strategy';
 export { default as createGooglePayAdyenV3PaymentStrategy } from './factories/payment/create-google-pay-adyenv3-payment-strategy';

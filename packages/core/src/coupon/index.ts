@@ -1,26 +1,26 @@
 export * from './coupon-actions';
 export * from './gift-certificate-actions';
 
-export { default as Coupon } from './coupon';
-export { default as CouponState } from './coupon-state';
-export { default as InternalCoupon } from './internal-coupon';
+export type { default as Coupon } from './coupon';
+export type { default as CouponState } from './coupon-state';
+export type { default as InternalCoupon } from './internal-coupon';
 export { default as CouponActionCreator } from './coupon-action-creator';
 export { default as CouponRequestSender } from './coupon-request-sender';
 export {
-    default as CouponSelector,
-    CouponSelectorFactory,
+    type default as CouponSelector,
+    type CouponSelectorFactory,
     createCouponSelectorFactory,
 } from './coupon-selector';
 export { default as couponReducer } from './coupon-reducer';
 
-export { default as GiftCertificate } from './gift-certificate';
-export { default as GiftCertificateState } from './gift-certificate-state';
-export { default as InternalGiftCertificate } from './internal-gift-certificate';
+export type { default as GiftCertificate } from './gift-certificate';
+export type { default as GiftCertificateState } from './gift-certificate-state';
+export type { default as InternalGiftCertificate } from './internal-gift-certificate';
 export { default as GiftCertificateActionCreator } from './gift-certificate-action-creator';
 export { default as GiftCertificateRequestSender } from './gift-certificate-request-sender';
 export {
-    default as GiftCertificateSelector,
-    GiftCertificateSelectorFactory,
+    type default as GiftCertificateSelector,
+    type GiftCertificateSelectorFactory,
     createGiftCertificateSelectorFactory,
 } from './gift-certificate-selector';
 export { default as giftCertificateReducer } from './gift-certificate-reducer';

@@ -1,8 +1,8 @@
-export { default as BuyNowCartRequestBody } from './buy-now-cart-request-body';
-export { default as Cart } from './cart';
+export type { default as BuyNowCartRequestBody } from './buy-now-cart-request-body';
+export type { default as Cart } from './cart';
 export { CartSource } from './cart-source';
-export { default as InternalLineItem } from './internal-line-item';
-export {
+export type { default as InternalLineItem } from './internal-line-item';
+export type {
     PhysicalItem,
     DigitalItem,
     GiftCertificateItem,
@@ -11,4 +11,4 @@ export {
     LineItem,
     StockPosition,
 } from './line-item';
-export { default as LineItemMap } from './line-item-map';
+export type { default as LineItemMap } from './line-item-map';

@@ -1,2 +1,2 @@
-export { default as Discount } from './discount';
-export { default as DiscountNotification } from './discount-notification';
+export type { default as Discount } from './discount';
+export type { default as DiscountNotification } from './discount-notification';

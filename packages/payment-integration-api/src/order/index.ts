@@ -1,4 +1,4 @@
-export {
+export type {
     default as Order,
     GatewayOrderPayment,
     GiftCertificateOrderPayment,
@@ -7,17 +7,17 @@ export {
     OrderShippingConsignment,
     OrderShippingConsignmentDiscount,
 } from './order';
-export {
+export type {
     default as OrderRequestBody,
     OrderExtraFieldValue,
     OrderPaymentRequestBody,
 } from './order-request-body';
 export {
-    LoadOrderAction,
-    FinalizeOrderAction,
-    LoadOrderSucceededAction,
+    type LoadOrderAction,
+    type FinalizeOrderAction,
+    type LoadOrderSucceededAction,
     OrderActionType,
-    SubmitOrderAction,
+    type SubmitOrderAction,
 } from './order-actions';
-export { OrderMetaState } from './order-state';
-export { default as InternalOrder, InternalIncompleteOrder } from './internal-order';
+export type { OrderMetaState } from './order-state';
+export type { default as InternalOrder, InternalIncompleteOrder } from './internal-order';

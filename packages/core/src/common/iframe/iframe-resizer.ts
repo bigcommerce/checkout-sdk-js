@@ -1,6 +1,6 @@
 import { IFrameComponent, IFrameOptions } from 'iframe-resizer';
 
-export {
+export type {
     HeightCalculationMethod,
     IFrameComponent,
     IFrameMessageData,

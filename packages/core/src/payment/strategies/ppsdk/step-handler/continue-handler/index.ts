@@ -1,1 +1,6 @@
-export { isContinue, Continue, ContinueCallbacks, ContinueHandler } from './continue-handler';
+export {
+    isContinue,
+    type Continue,
+    type ContinueCallbacks,
+    ContinueHandler,
+} from './continue-handler';

@@ -1,5 +1,5 @@
-export { default as Address, AddressKey, AddressRequestBody } from './address';
-export { default as InternalAddress } from './internal-address';
+export type { default as Address, AddressKey, AddressRequestBody } from './address';
+export type { default as InternalAddress } from './internal-address';
 
 export { default as isAddressEqual } from './is-address-equal';
 export { default as isInternalAddressEqual } from './is-internal-address-equal';

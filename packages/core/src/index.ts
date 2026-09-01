@@ -1,35 +1,39 @@
-export { BillingAddress, BillingAddressRequestBody, BillingAddressActionCreator } from './billing';
+export {
+    type BillingAddress,
+    type BillingAddressRequestBody,
+    BillingAddressActionCreator,
+} from './billing';
 export { getBillingAddress } from './billing/billing-addresses.mock';
-export { createDataStoreProjection, DataStoreProjection } from './common/data-store';
+export { createDataStoreProjection, type DataStoreProjection } from './common/data-store';
 export { cloneResult as clone } from './common/utility';
-export { Cart } from './cart';
+export type { Cart } from './cart';
 export {
     createCheckoutStore,
     createInternalCheckoutSelectors,
-    Checkout,
+    type Checkout,
     CheckoutActionCreator,
-    CheckoutStore,
-    InternalCheckoutSelectors,
-    ReadableCheckoutStore,
+    type CheckoutStore,
+    type InternalCheckoutSelectors,
+    type ReadableCheckoutStore,
 } from './checkout';
 export { getCheckoutStoreStateWithOrder } from './checkout/checkouts.mock';
-export { StoreConfig } from './config';
-export { Customer } from './customer';
-export { Order, OrderActionCreator, OrderRequestBody } from './order';
+export type { StoreConfig } from './config';
+export type { Customer } from './customer';
+export { type Order, OrderActionCreator, type OrderRequestBody } from './order';
 export { getOrder } from './order/orders.mock';
 export {
-    Payment,
+    type Payment,
     PaymentActionCreator,
     PaymentMethodActionCreator,
-    PaymentMethod,
+    type PaymentMethod,
 } from './payment';
-export { PaymentProviderCustomer } from './payment-provider-customer';
+export type { PaymentProviderCustomer } from './payment-provider-customer';
 export { getPayment } from './payment/payments.mock';
-export { CardInstrument } from './payment/instrument';
+export type { CardInstrument } from './payment/instrument';
 export {
-    Consignment,
+    type Consignment,
     ConsignmentActionCreator,
-    ShippingAddress,
-    ShippingAddressRequestBody,
+    type ShippingAddress,
+    type ShippingAddressRequestBody,
 } from './shipping';
 export { getShippingAddress } from './shipping/shipping-addresses.mock';

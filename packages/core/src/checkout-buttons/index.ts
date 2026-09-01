@@ -1,13 +1,13 @@
 export { default as createCheckoutButtonInitializer } from './create-checkout-button-initializer';
 export { default as checkoutButtonReducer } from './checkout-button-reducer';
 export {
-    default as CheckoutButtonSelector,
-    CheckoutButtonSelectorFactory,
+    type default as CheckoutButtonSelector,
+    type CheckoutButtonSelectorFactory,
     createCheckoutButtonSelectorFactory,
 } from './checkout-button-selector';
-export { default as CheckoutButtonState } from './checkout-button-state';
-export { CheckoutButtonStrategy, CheckoutButtonMethodType } from './strategies';
-export {
+export type { default as CheckoutButtonState } from './checkout-button-state';
+export { type CheckoutButtonStrategy, CheckoutButtonMethodType } from './strategies';
+export type {
     BaseCheckoutButtonInitializeOptions,
     CheckoutButtonOptions,
     CheckoutButtonInitializeOptions,

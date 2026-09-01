@@ -1,1 +1,1 @@
-export { default as Promotion } from './promotion';
+export type { default as Promotion } from './promotion';

@@ -12,19 +12,19 @@ export { default as StripeUPECustomerStrategy } from './stripe-upe/stripe-upe-cu
 export { default as StripeOCSPaymentStrategy } from './stripe-ocs/stripe-ocs-payment-strategy';
 export { default as StripeCSPaymentStrategy } from './stripe-cs/stripe-cs-payment-strategy';
 
-export {
+export type {
     default as StripeV3PaymentInitializeOption,
     WithStripeV3PaymentInitializeOptions,
 } from './stripev3/stripev3-initialize-options';
-export {
+export type {
     default as StripeUPEPaymentInitializeOption,
     WithStripeUPEPaymentInitializeOptions,
 } from './stripe-upe/stripe-upe-initialize-options';
-export {
+export type {
     default as StripeUPECustomerInitializeOption,
     WithStripeUPECustomerInitializeOptions,
 } from './stripe-upe/stripeupe-customer-initialize-options';
-export {
+export type {
     default as StripeOCSPaymentInitializeOption,
     WithStripeOCSPaymentInitializeOptions,
 } from './stripe-ocs/stripe-ocs-initialize-options';
