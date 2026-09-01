@@ -79,6 +79,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = orderRequest;
+        const { useStoreCredit } = orderRequest;
         const { methodId, gatewayId } = payment || {};
 
         if (!this.stripeClient) {
@@ -91,15 +92,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             );
         }
 
-        const { isStoreCreditApplied } = this.paymentIntegrationService
-            .getState()
-            .getCheckoutOrThrow();
-
-        if (isStoreCreditApplied) {
-            await this.paymentIntegrationService.applyStoreCredit(isStoreCreditApplied);
-        }
-
-        await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+        await this.stripeIntegrationService.applyStoreCreditIfNeeded(useStoreCredit);
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
@@ -294,6 +287,16 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         if (!this.stripeClient || !this.stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        // INFO: refetch the PaymentIntent from Stripe directly (no BigCommerce backend call) so the
+        // Stripe Elements reflect any amount change the backend already applied during order submission.
+        const { clientToken } = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow(methodId, gatewayId);
+
+        if (clientToken) {
+            await this.scriptLoader.updateStripeElements({ clientSecret: clientToken });
         }
 
         const { data: additionalActionData } = error.body.additional_action_required;

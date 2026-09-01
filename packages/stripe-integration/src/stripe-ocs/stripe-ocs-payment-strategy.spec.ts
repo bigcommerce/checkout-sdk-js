@@ -12,7 +12,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCart,
-    getCheckout,
     getErrorPaymentResponseBody,
     getResponse,
     PaymentIntegrationServiceMock,
@@ -552,19 +551,27 @@ describe('StripeOCSPaymentStrategy', () => {
             ).rejects.toThrow(InvalidArgumentError);
         });
 
-        it('execute with store credits', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getCheckoutOrThrow',
-            ).mockReturnValueOnce({
-                ...getCheckout(),
-                isStoreCreditApplied: true,
+        it('applies store credit via stripe integration service', async () => {
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+            await stripeOCSPaymentStrategy.execute({
+                ...getStripeOCSOrderRequestBodyMock(),
+                useStoreCredit: true,
             });
 
+            expect(stripeIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(true);
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                expect.objectContaining({ useStoreCredit: true }),
+                undefined,
+            );
+        });
+
+        it('calls applyStoreCreditIfNeeded with undefined when useStoreCredit is not provided', async () => {
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
-            expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(true);
+            expect(stripeIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(
+                undefined,
+            );
         });
 
         it('execute without additional actions with selected method in accordion', async () => {
@@ -572,10 +579,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.applyStoreCredit).not.toHaveBeenCalled();
-            expect(stripeIntegrationService.updateStripePaymentIntent).toHaveBeenCalledWith(
-                gatewayId,
-                methodId,
-            );
+            expect(stripeIntegrationService.updateStripePaymentIntent).not.toHaveBeenCalled();
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId,
@@ -934,6 +938,36 @@ describe('StripeOCSPaymentStrategy', () => {
 
             expect(confirmPaymentMock).not.toHaveBeenCalled();
             expect(retrievePaymentIntentMock).toHaveBeenCalled();
+        });
+
+        it('refreshes the Stripe PaymentIntent from Stripe directly, without a backend call, before confirming', async () => {
+            mockFirstPaymentRequest(errorResponse);
+            confirmPaymentMock = jest.fn().mockResolvedValue({ paymentIntent: {} });
+
+            stripeUPEJsMock = {
+                ...getStripeJsMock(),
+                confirmPayment: confirmPaymentMock,
+                retrievePaymentIntent: jest.fn(),
+            };
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
+                jest.fn(() => Promise.resolve(stripeUPEJsMock)),
+            );
+
+            const updateStripeElementsSpy = jest
+                .spyOn(stripeScriptLoader, 'updateStripeElements')
+                .mockResolvedValue(undefined);
+
+            await stripeOCSPaymentStrategy.initialize(stripeOptions);
+            await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+            expect(updateStripeElementsSpy).toHaveBeenCalledWith({ clientSecret: 'clientToken' });
+            expect(stripeIntegrationService.updateStripePaymentIntent).not.toHaveBeenCalled();
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
+
+            const updateOrder = updateStripeElementsSpy.mock.invocationCallOrder[0];
+            const confirmOrder = confirmPaymentMock.mock.invocationCallOrder[0];
+
+            expect(updateOrder).toBeLessThan(confirmOrder);
         });
 
         it('throw stripe error', async () => {

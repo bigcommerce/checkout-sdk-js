@@ -14,7 +14,6 @@ import {
 import {
     getBillingAddress,
     getCart,
-    getCheckout,
     getErrorPaymentResponseBody,
     getResponse,
     getShippingAddress,
@@ -217,6 +216,32 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(togglePreloaderMock).toHaveBeenCalled();
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
             expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
+        });
+
+        it('triggers stripe checkout session server update on initialize', async () => {
+            const runServerUpdateMock = jest.fn(async (update: () => Promise<unknown>) => {
+                await update();
+
+                return { type: StripeLoadActionsResultType.SUCCESS };
+            });
+
+            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                Promise.resolve({
+                    ...getStripeCheckoutInstanceMock(),
+                    loadActions: () =>
+                        Promise.resolve({
+                            type: StripeLoadActionsResultType.SUCCESS,
+                            actions: {
+                                ...getStripeCheckoutSessionActionsMock(),
+                                runServerUpdate: runServerUpdateMock,
+                            },
+                        }),
+                }),
+            );
+
+            await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+            expect(runServerUpdateMock).toHaveBeenCalledTimes(1);
         });
 
         it('should call render when payment element ready event fires', async () => {
@@ -990,19 +1015,68 @@ describe('StripeOCSPaymentStrategy', () => {
             ).rejects.toThrow(InvalidArgumentError);
         });
 
-        it('execute with store credits', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getCheckoutOrThrow',
-            ).mockReturnValueOnce({
-                ...getCheckout(),
-                isStoreCreditApplied: true,
+        it('applies store credit via stripe integration service', async () => {
+            await stripeCSPaymentStrategy.initialize(stripeOptions);
+            await stripeCSPaymentStrategy.execute({
+                ...getStripeOCSOrderRequestBodyMock(methodId),
+                useStoreCredit: true,
             });
 
+            expect(stripeIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(true);
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                expect.objectContaining({ useStoreCredit: true }),
+                undefined,
+            );
+        });
+
+        it('calls applyStoreCreditIfNeeded with undefined when useStoreCredit is not provided', async () => {
             await stripeCSPaymentStrategy.initialize(stripeOptions);
             await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
 
-            expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(true);
+            expect(stripeIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(
+                undefined,
+            );
+        });
+
+        it('throws not initialized error on execute if initialization failed', async () => {
+            const onErrorMock = jest.fn();
+
+            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                Promise.resolve({
+                    ...getStripeCheckoutInstanceMock(),
+                    loadActions: () =>
+                        Promise.resolve({
+                            type: StripeLoadActionsResultType.SUCCESS,
+                            actions: {
+                                ...getStripeCheckoutSessionActionsMock(),
+                                runServerUpdate: jest.fn(() =>
+                                    Promise.resolve({
+                                        type: StripeLoadActionsResultType.ERROR,
+                                        error: { message: 'stripe server update error' },
+                                    }),
+                                ),
+                            },
+                        }),
+                }),
+            );
+
+            await stripeCSPaymentStrategy.initialize({
+                ...stripeOptions,
+                stripeocs: {
+                    ...stripeOptions.stripeocs,
+                    containerId: 'containerId',
+                    render: jest.fn(),
+                    onError: onErrorMock,
+                },
+            });
+
+            expect(onErrorMock).toHaveBeenCalledWith(expect.any(PaymentMethodFailedError));
+
+            await expect(
+                stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+            ).rejects.toThrow(NotInitializedError);
+
+            expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
         });
 
         it('execute without additional actions with selected method in accordion', async () => {
@@ -1010,9 +1084,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
 
             expect(paymentIntegrationService.applyStoreCredit).not.toHaveBeenCalled();
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(gatewayId, {
-                params: { method: methodId },
-            });
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId,
@@ -1057,50 +1129,6 @@ describe('StripeOCSPaymentStrategy', () => {
                     paymentData: {
                         formattedPayload: expect.objectContaining({
                             credit_card_token: { token: 'cs_live_session_id' },
-                        }),
-                    },
-                }),
-            );
-        });
-
-        it('reads clientToken from fresh state after loadPaymentMethod runs', async () => {
-            const staleMethod = { ...getStripeOCSMock(), clientToken: 'stale_token' };
-            const freshMethod = { ...getStripeOCSMock(), clientToken: 'fresh_token' };
-
-            const getPaymentMethodSpy = jest
-                .spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow')
-                .mockReturnValue(staleMethod);
-
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementation(() => {
-                getPaymentMethodSpy.mockReturnValue(freshMethod);
-
-                return Promise.resolve(paymentIntegrationService.getState());
-            });
-
-            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
-                Promise.resolve({
-                    ...getStripeCheckoutInstanceMock(),
-                    loadActions: () =>
-                        Promise.resolve({
-                            type: StripeLoadActionsResultType.SUCCESS,
-                            actions: {
-                                ...getStripeCheckoutSessionActionsMock(),
-                                getSession: jest.fn(() =>
-                                    Promise.resolve({ id: '' } as StripeCheckoutSession),
-                                ),
-                            },
-                        }),
-                }),
-            );
-
-            await stripeCSPaymentStrategy.initialize(stripeOptions);
-            await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
-
-            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    paymentData: {
-                        formattedPayload: expect.objectContaining({
-                            credit_card_token: { token: 'fresh_token' },
                         }),
                     },
                 }),
@@ -1402,6 +1430,49 @@ describe('StripeOCSPaymentStrategy', () => {
             await expect(
                 stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
             ).rejects.toThrow(Error);
+        });
+
+        it('refreshes the CheckoutSession from Stripe directly, without a backend call, then throws if that refresh fails', async () => {
+            mockFirstPaymentRequest(errorResponse);
+
+            // First call happens during initialize(); only the second call (from
+            // _processAdditionalAction, after the first submitPayment 400s) should fail.
+            const runServerUpdateMock = jest
+                .fn()
+                .mockResolvedValueOnce({ type: StripeLoadActionsResultType.SUCCESS })
+                .mockResolvedValue({
+                    type: StripeLoadActionsResultType.ERROR,
+                    error: { message: 'stripe server update error' },
+                });
+
+            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                Promise.resolve({
+                    ...getStripeCheckoutInstanceMock(),
+                    loadActions: () =>
+                        Promise.resolve({
+                            type: StripeLoadActionsResultType.SUCCESS,
+                            actions: {
+                                ...getStripeCheckoutSessionActionsMock(),
+                                confirm: confirmPaymentMock,
+                                runServerUpdate: runServerUpdateMock,
+                            },
+                        }),
+                }),
+            );
+
+            await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+            await expect(
+                stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+            ).rejects.toThrow(PaymentMethodFailedError);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalledWith(
+                gatewayId,
+                { params: { method: methodId } },
+            );
+            expect(runServerUpdateMock).toHaveBeenCalledWith(expect.any(Function));
+            expect(confirmPaymentMock).not.toHaveBeenCalled();
         });
 
         describe('session expired error', () => {
