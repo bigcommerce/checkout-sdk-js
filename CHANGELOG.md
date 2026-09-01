@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.966.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.965.0...v1.966.0) (2026-09-01)
+
+
+### Features
+
+* **payment:** Stripe OCS, make payment validation request non-blocking ([#3381](https://github.com/bigcommerce/checkout-sdk-js/issues/3381)) ([e3793ff](https://github.com/bigcommerce/checkout-sdk-js/commit/e3793ff18a2876dc0d553d3ab36d075422d222eb))
+
 ## [1.965.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.964.3...v1.965.0) (2026-09-01)
 
 
