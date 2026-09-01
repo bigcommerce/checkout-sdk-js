@@ -1,4 +1,4 @@
-import { cloneDeep, merge } from 'lodash';
+import { cloneDeep, merge, noop } from 'lodash';
 
 import {
     InvalidArgumentError,
@@ -368,7 +368,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const { initializationData } = this.paymentIntegrationService
             .getState()
             .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
-        const { sendSecondPaymentRequestOnStripeError } = initializationData || {};
+        const { sendSecondPaymentRequestOnStripeError, asyncPaymentValidation } =
+            initializationData || {};
 
         if (stripeError || !stripeCheckoutSession) {
             if (sendSecondPaymentRequestOnStripeError) {
@@ -393,6 +394,15 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             }
 
             throw new PaymentMethodFailedError(stripeError?.message);
+        }
+
+        if (asyncPaymentValidation) {
+            // INFO: await is skipped and errors are ignored here intentionally, because the payment
+            // is already confirmed on the Stripe side, so the order status will be updated
+            // by webhooks even if this request fails.
+            this.paymentIntegrationService.submitPayment(paymentPayload).catch(noop);
+
+            return;
         }
 
         try {
