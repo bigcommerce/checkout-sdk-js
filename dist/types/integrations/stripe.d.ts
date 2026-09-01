@@ -74,7 +74,6 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _initStripeCheckoutSession;
     private _initializePaymentElement;
     private _loadStripeJs;
-    private _applyStoreCreditIfNeeded;
     private _getStripeActionsOrThrow;
     private _getStripeElement;
     private _onStripeElementChange;
@@ -84,6 +83,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _processAdditionalAction;
     private _confirmStripePayment;
     private _updateStripeShopperData;
+    private _updateStripeCheckoutSessionState;
     private _updateStripeEmail;
     private _updateStripeShippingAddress;
     private _updateStripeBillingAddress;
