@@ -79,6 +79,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = orderRequest;
+        const { useStoreCredit } = orderRequest;
         const { methodId, gatewayId } = payment || {};
 
         if (!this.stripeClient) {
@@ -91,13 +92,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             );
         }
 
-        const { isStoreCreditApplied } = this.paymentIntegrationService
-            .getState()
-            .getCheckoutOrThrow();
-
-        if (isStoreCreditApplied) {
-            await this.paymentIntegrationService.applyStoreCredit(isStoreCreditApplied);
-        }
+        await this.stripeIntegrationService.applyStoreCreditIfNeeded(useStoreCredit);
 
         await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 

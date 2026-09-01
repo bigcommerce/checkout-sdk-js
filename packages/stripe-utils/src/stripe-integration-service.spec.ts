@@ -735,6 +735,48 @@ describe('StripeIntegrationService', () => {
         });
     });
 
+    describe('#applyStoreCreditIfNeeded', () => {
+        it('applies store credit when useStoreCredit is true and store credit is not applied', async () => {
+            await stripeIntegrationService.applyStoreCreditIfNeeded(true);
+
+            expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(true);
+        });
+
+        it('removes store credit when useStoreCredit is false and store credit is applied', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getCheckoutOrThrow',
+            ).mockReturnValueOnce({
+                ...getCheckout(),
+                isStoreCreditApplied: true,
+            });
+
+            await stripeIntegrationService.applyStoreCreditIfNeeded(false);
+
+            expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(false);
+        });
+
+        it('does not apply store credit when useStoreCredit matches checkout state', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getCheckoutOrThrow',
+            ).mockReturnValueOnce({
+                ...getCheckout(),
+                isStoreCreditApplied: true,
+            });
+
+            await stripeIntegrationService.applyStoreCreditIfNeeded(true);
+
+            expect(paymentIntegrationService.applyStoreCredit).not.toHaveBeenCalled();
+        });
+
+        it('does not apply store credit when useStoreCredit is not provided', async () => {
+            await stripeIntegrationService.applyStoreCreditIfNeeded();
+
+            expect(paymentIntegrationService.applyStoreCredit).not.toHaveBeenCalled();
+        });
+    });
+
     describe('#mapStripeAddress', () => {
         it('should map address fields to Stripe format', () => {
             const address = getShippingAddress();
