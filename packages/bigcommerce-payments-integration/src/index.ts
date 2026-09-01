@@ -100,3 +100,6 @@ export { WithBigCommercePaymentsVenmoCustomerInitializeOptions } from './bigcomm
 
 export { default as createBigCommercePaymentsVenmoPaymentStrategy } from './bigcommerce-payments-venmo/create-bigcommerce-payments-venmo-payment-strategy';
 export { WithBigCommercePaymentsVenmoPaymentInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-payment-initialize-options';
+
+export { default as createBigCommercePaymentsVenmoWalletStrategy } from './bigcommerce-payments-venmo/create-bigcommerce-payments-venmo-wallet-strategy';
+export { WithBigCommercePaymentsVenmoWalletInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-wallet-initialize-options';
