@@ -49,7 +49,7 @@
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
     "prepare": "check-node-version --node '>=22' --npm '>=10'",
-    "build": "npm run typecheck & pid1=$!; npm run bundle && npm run bundle-dts & pid2=$!; wait $pid1 && wait $pid2",
+    "build": "npm run typecheck && npm run bundle && npm run bundle-dts",
     "build:link": "rm -rf dist && npx nx run core:build --skip-nx-cache && npm run bundle-dts",
     "prebuild-cdn": "rm -rf dist-cdn",
     "build-cdn": "npx nx run core:build-cdn",
