@@ -72,6 +72,7 @@
     "test:core": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run core:test -- --coverage --runInBand",
     "test:others": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run-many --all --target=test --exclude core --parallel=5 -- --runInBand",
     "test:watch": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run-many --all --target=test --parallel -- --watch",
+    "pretypecheck": "npm run generate && npm run codegen",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "jest-junit": {
