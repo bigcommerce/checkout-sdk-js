@@ -1,4 +1,4 @@
-export { ExtensionRegion, type Extension } from './extension';
+export { ExtensionRegion, ExtensionType, type Extension } from './extension';
 export { getExtensions } from './extension.mock';
 export { ExtensionActionType } from './extension-actions';
 export { ExtensionActionCreator } from './extension-action-creator';
