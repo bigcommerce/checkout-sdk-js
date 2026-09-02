@@ -230,11 +230,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 this._googlePayPaymentProcessor.setShouldRequestShipping(false);
                 await this._googlePayPaymentProcessor.initializeWidget();
 
-                if (this._isDirectPayOnClickEnabled()) {
-                    await this._interactWithPaymentSheetAndPay();
-                } else {
-                    await this._interactWithPaymentSheet();
-                }
+                await this._interactWithPaymentSheetAndPay();
             });
 
             onPaymentSelect?.();
@@ -286,33 +282,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
     protected _completeCheckoutFlow(): void {
         window.location.replace('/checkout/order-confirmation');
-        this._toggleLoadingIndicator(false);
-        this._toggleBlockDeinitialization(false);
-    }
-
-    protected async _interactWithPaymentSheet(): Promise<void> {
-        const response = await this._googlePayPaymentProcessor.showPaymentSheet();
-        const state = this._paymentIntegrationService.getState();
-        const { features } = state.getStoreConfigOrThrow().checkoutSettings;
-        const isGooglePayDontOverrideAddresssExperimentOn = isExperimentEnabled(
-            features,
-            'PI-5031.google_pay_dont_override_address',
-        );
-
-        this._toggleBlockDeinitialization(true);
-        this._toggleLoadingIndicator(true);
-
-        const billingAddress =
-            this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);
-
-        if (billingAddress && !isGooglePayDontOverrideAddresssExperimentOn) {
-            await this._paymentIntegrationService.updateBillingAddress(billingAddress);
-        }
-
-        await this._googlePayPaymentProcessor.setExternalCheckoutXhr(this._getMethodId(), response);
-
-        await this._paymentIntegrationService.loadCheckout();
-        await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
         this._toggleLoadingIndicator(false);
         this._toggleBlockDeinitialization(false);
     }
@@ -455,14 +424,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         } finally {
             this._toggleBlockDeinitialization(false);
         }
-    }
-
-    private _isDirectPayOnClickEnabled(): boolean {
-        const { features } = this._paymentIntegrationService
-            .getState()
-            .getStoreConfigOrThrow().checkoutSettings;
-
-        return isExperimentEnabled(features, 'PI-5111.google_pay_direct_pay_on_click');
     }
 
     private _toggleBlockDeinitialization(isBlocked: boolean) {

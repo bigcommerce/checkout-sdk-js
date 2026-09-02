@@ -302,6 +302,8 @@ describe('GooglePayPaymentStrategy', () => {
 
             jest.spyOn(processor, 'initialize').mockImplementation(() => {
                 callOrder.push('initialize');
+
+                return Promise.resolve();
             });
 
             await strategy.initialize(options);
@@ -755,32 +757,16 @@ describe('GooglePayPaymentStrategy', () => {
             });
         });
 
-        describe('when PI-5111.google_pay_direct_pay_on_click is enabled', () => {
-            const directPayStoreConfig = {
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PI-5111.google_pay_direct_pay_on_click': true,
-                    },
-                },
-            };
-
-            let interactWithPaymentSheetSpy: jest.SpyInstance;
+        describe('direct pay on click', () => {
             let completeCheckoutFlowSpy: jest.SpyInstance;
 
             beforeEach(async () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getStoreConfigOrThrow',
-                ).mockReturnValue(directPayStoreConfig);
+                ).mockReturnValue(storeConfig);
 
                 jest.spyOn(processor, 'mapToBillingAddressRequestBody').mockReturnValue(undefined);
-
-                interactWithPaymentSheetSpy = jest
-                    .spyOn(Object.getPrototypeOf(strategy), '_interactWithPaymentSheet')
-                    .mockResolvedValue(undefined);
 
                 completeCheckoutFlowSpy = jest
                     .spyOn(Object.getPrototypeOf(strategy), '_completeCheckoutFlow')
@@ -790,7 +776,6 @@ describe('GooglePayPaymentStrategy', () => {
             });
 
             afterEach(() => {
-                interactWithPaymentSheetSpy.mockRestore();
                 completeCheckoutFlowSpy.mockRestore();
             });
 
@@ -891,7 +876,6 @@ describe('GooglePayPaymentStrategy', () => {
                         ...storeConfig.checkoutSettings,
                         features: {
                             ...storeConfig.checkoutSettings.features,
-                            'PI-5111.google_pay_direct_pay_on_click': true,
                             'PI-5031.google_pay_dont_override_address': false,
                         },
                     },
@@ -924,7 +908,6 @@ describe('GooglePayPaymentStrategy', () => {
                         ...storeConfig.checkoutSettings,
                         features: {
                             ...storeConfig.checkoutSettings.features,
-                            'PI-5111.google_pay_direct_pay_on_click': true,
                             'PI-5031.google_pay_dont_override_address': true,
                         },
                     },
@@ -1096,7 +1079,7 @@ describe('GooglePayPaymentStrategy', () => {
                 completeCheckoutFlowSpy.mockRestore();
             });
 
-            it('should run direct pay flow via _interactWithPaymentSheetAndPay without PI-5111 experiment', async () => {
+            it('should run direct pay flow via _interactWithPaymentSheetAndPay', async () => {
                 const executeSpy = jest.spyOn(strategy, 'execute');
 
                 brandedButton.click();
