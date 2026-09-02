@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.968.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.968.0...v1.968.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-10379 Export enums explicitly ([#3386](https://github.com/bigcommerce/checkout-sdk-js/issues/3386)) ([34b16d5](https://github.com/bigcommerce/checkout-sdk-js/commit/34b16d5d5957488d1e309a6baff379eef499bdc6))
+
 ## [1.968.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.967.1...v1.968.0) (2026-09-02)
 
 
