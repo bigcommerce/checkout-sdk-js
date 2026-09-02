@@ -1,1 +1,1 @@
-export { default as Checkout } from './checkout';
+export type { default as Checkout } from './checkout';

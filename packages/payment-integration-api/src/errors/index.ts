@@ -5,7 +5,7 @@ export { default as NotImplementedError } from './not-implemented-error';
 export { default as NotInitializedError, NotInitializedErrorType } from './not-initialized-error';
 export {
     default as PaymentInvalidFormError,
-    PaymentInvalidFormErrorDetails,
+    type PaymentInvalidFormErrorDetails,
 } from './payment-invalid-form-error';
 export { default as OrderFinalizationNotCompletedError } from './order-finalization-not-completed-error';
 export { default as OrderFinalizationNotRequiredError } from './order-finalization-not-required-error';
@@ -15,7 +15,7 @@ export { default as PaymentMethodClientUnavailableError } from './payment-method
 export { default as PaymentMethodFailedError } from './payment-method-failed-error';
 export { default as RequestError } from './request-error';
 export { default as isRequestError } from './is-request-error';
-export {
+export type {
     default as ErrorResponseBody,
     StorefrontErrorResponseBody,
     PaymentErrorResponseBody,

@@ -1,1 +1,1 @@
-export { default as CustomerStrategy } from './customer-strategy';
+export type { default as CustomerStrategy } from './customer-strategy';

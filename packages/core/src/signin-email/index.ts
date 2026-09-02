@@ -1,12 +1,12 @@
 export * from './signin-email-actions';
-export { SignInEmail, SignInEmailRequestBody } from './signin-email';
+export type { SignInEmail, SignInEmailRequestBody } from './signin-email';
 
 export { default as SignInEmailRequestSender } from './signin-email-request-sender';
 export { default as SignInEmailActionCreator } from './signin-email-action-creator';
-export { default as SignInEmailState } from './signin-email-state';
+export type { default as SignInEmailState } from './signin-email-state';
 export { default as signInEmailReducer } from './signin-email-reducer';
 export {
-    default as SignInEmailSelector,
-    SignInEmailSelectorFactory,
+    type default as SignInEmailSelector,
+    type SignInEmailSelectorFactory,
     createSignInEmailSelectorFactory,
 } from './signin-email-selector';

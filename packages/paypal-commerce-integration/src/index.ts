@@ -8,13 +8,13 @@ export { default as PayPalCommerceScriptLoader } from './paypal-commerce-script-
  *
  */
 export { default as createPayPalCommerceButtonStrategy } from './paypal-commerce/create-paypal-commerce-button-strategy';
-export { WithPayPalCommerceButtonInitializeOptions } from './paypal-commerce/paypal-commerce-button-initialize-options';
+export type { WithPayPalCommerceButtonInitializeOptions } from './paypal-commerce/paypal-commerce-button-initialize-options';
 
 export { default as createPayPalCommerceCustomerStrategy } from './paypal-commerce/create-paypal-commerce-customer-strategy';
-export { WithPayPalCommerceCustomerInitializeOptions } from './paypal-commerce/paypal-commerce-customer-initialize-options';
+export type { WithPayPalCommerceCustomerInitializeOptions } from './paypal-commerce/paypal-commerce-customer-initialize-options';
 
 export { default as createPayPalCommercePaymentStrategy } from './paypal-commerce/create-paypal-commerce-payment-strategy';
-export { WithPayPalCommercePaymentInitializeOptions } from './paypal-commerce/paypal-commerce-payment-initialize-options';
+export type { WithPayPalCommercePaymentInitializeOptions } from './paypal-commerce/paypal-commerce-payment-initialize-options';
 
 /**
  *
@@ -22,13 +22,13 @@ export { WithPayPalCommercePaymentInitializeOptions } from './paypal-commerce/pa
  *
  */
 export { default as createPayPalCommerceCreditButtonStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-button-strategy';
-export { WithPayPalCommerceCreditButtonInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-button-initialize-options';
+export type { WithPayPalCommerceCreditButtonInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-button-initialize-options';
 
 export { default as createPayPalCommerceCreditCustomerStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-customer-strategy';
-export { WithPayPalCommerceCreditCustomerInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-customer-initialize-options';
+export type { WithPayPalCommerceCreditCustomerInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-customer-initialize-options';
 
 export { default as createPayPalCommerceCreditPaymentStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-payment-strategy';
-export { WithPayPalCommerceCreditPaymentInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-payment-initialize-options';
+export type { WithPayPalCommerceCreditPaymentInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-payment-initialize-options';
 
 /**
  *
@@ -36,13 +36,13 @@ export { WithPayPalCommerceCreditPaymentInitializeOptions } from './paypal-comme
  *
  */
 export { default as createPayPalCommerceVenmoButtonStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-button-strategy';
-export { WithPayPalCommerceVenmoButtonInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-button-initialize-options';
+export type { WithPayPalCommerceVenmoButtonInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-button-initialize-options';
 
 export { default as createPayPalCommerceVenmoCustomerStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-customer-strategy';
-export { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-customer-initialize-options';
+export type { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-customer-initialize-options';
 
 export { default as createPayPalCommerceVenmoPaymentStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-payment-strategy';
-export { WithPayPalCommerceVenmoPaymentInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-payment-initialize-options';
+export type { WithPayPalCommerceVenmoPaymentInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-payment-initialize-options';
 
 /**
  *
@@ -50,7 +50,7 @@ export { WithPayPalCommerceVenmoPaymentInitializeOptions } from './paypal-commer
  *
  */
 export { default as createPayPalCommerceAlternativeMethodsPaymentStrategy } from './paypal-commerce-alternative-methods/create-paypal-commerce-alternative-methods-payment-strategy';
-export { WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-payment-initialize-options';
+export type { WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-payment-initialize-options';
 
 /**
  *
@@ -58,7 +58,7 @@ export { WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions } from './
  *
  */
 export { default as createPayPalCommerceCreditCardsPaymentStrategy } from './paypal-commerce-credit-card/create-paypal-commerce-credit-cards-payment-strategy';
-export { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-commerce-credit-card/paypal-commerce-credit-cards-payment-initialize-options';
+export type { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-commerce-credit-card/paypal-commerce-credit-cards-payment-initialize-options';
 
 /**
  *
@@ -66,7 +66,7 @@ export { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-
  *
  */
 export { default as createPayPalCommerceRatePayPaymentStrategy } from './paypal-commerce-ratepay/create-paypal-commerce-ratepay-payment-strategy';
-export { WithPayPalCommerceRatePayPaymentInitializeOptions } from './paypal-commerce-ratepay/paypal-commerce-ratepay-initialize-options';
+export type { WithPayPalCommerceRatePayPaymentInitializeOptions } from './paypal-commerce-ratepay/paypal-commerce-ratepay-initialize-options';
 
 /**
  *
@@ -74,10 +74,10 @@ export { WithPayPalCommerceRatePayPaymentInitializeOptions } from './paypal-comm
  *
  */
 export { default as createPayPalCommerceFastlaneCustomerStrategy } from './paypal-commerce-fastlane/create-paypal-commerce-fastlane-customer-strategy';
-export { WithPayPalCommerceFastlaneCustomerInitializeOptions } from './paypal-commerce-fastlane/paypal-commerce-fastlane-customer-initialize-options';
+export type { WithPayPalCommerceFastlaneCustomerInitializeOptions } from './paypal-commerce-fastlane/paypal-commerce-fastlane-customer-initialize-options';
 
 export { default as createPayPalCommerceFastlanePaymentStrategy } from './paypal-commerce-fastlane/create-paypal-commerce-fastlane-payment-strategy';
-export { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane/paypal-commerce-fastlane-payment-initialize-options';
+export type { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane/paypal-commerce-fastlane-payment-initialize-options';
 
 /**
  *
@@ -85,10 +85,10 @@ export { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-com
  *
  */
 export { default as createPayPalCommerceWalletStrategy } from './paypal-commerce/create-paypal-commerce-wallet-strategy';
-export { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce/paypal-commerce-wallet-initialize-options';
+export type { WithPayPalCommerceWalletInitializeOptions } from './paypal-commerce/paypal-commerce-wallet-initialize-options';
 
 export { default as createPayPalCommerceCreditWalletStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-wallet-strategy';
-export { WithPayPalCommerceCreditWalletInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-wallet-initialize-options';
+export type { WithPayPalCommerceCreditWalletInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-wallet-initialize-options';
 
 export { default as createPayPalCommerceVenmoWalletStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-wallet-strategy';
-export { WithPayPalCommerceVenmoWalletInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-wallet-initialize-options';
+export type { WithPayPalCommerceVenmoWalletInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-wallet-initialize-options';

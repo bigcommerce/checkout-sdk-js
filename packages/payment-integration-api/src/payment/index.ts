@@ -1,15 +1,15 @@
-export { default as InitializeOffsitePaymentConfig } from './initialize-offsite-payment-config';
+export type { default as InitializeOffsitePaymentConfig } from './initialize-offsite-payment-config';
 export {
-    default as PaymentInstrument,
-    AccountInstrument,
-    CardInstrument,
+    type default as PaymentInstrument,
+    type AccountInstrument,
+    type CardInstrument,
     UntrustedShippingCardVerificationType,
-    PayPalInstrument,
+    type PayPalInstrument,
 } from './instrument';
 
-export { InstrumentMeta } from './instrument-state';
+export type { InstrumentMeta } from './instrument-state';
 
-export {
+export type {
     default as Payment,
     IdealPayload,
     BlueSnapDirectEcpPayload,
@@ -51,17 +51,17 @@ export {
     isFormattedVaultedInstrument,
 } from './is-vaulted-instrument';
 
-export { PaymentActionType, SubmitPaymentAction } from './payment-actions';
+export { PaymentActionType, type SubmitPaymentAction } from './payment-actions';
 export { PaymentMethodActionType } from './payment-method-actions';
-export { default as PaymentAdditionalAction } from './payment-additional-action';
-export { PaymentInitializeOptions } from './payment-initialize-options';
-export { PaymentRequestOptions } from './payment-request-options';
-export { default as PaymentMethod } from './payment-method';
-export { default as PaymentResponse } from './payment-response';
-export { default as PaymentResponseBody, ThreeDsResult } from './payment-response-body';
-export { default as PaymentStrategy } from './payment-strategy';
-export { default as PaymentStrategyFactory } from './payment-strategy-factory';
-export { default as PaymentStrategyResolveId } from './payment-strategy-resolve-id';
+export type { default as PaymentAdditionalAction } from './payment-additional-action';
+export type { PaymentInitializeOptions } from './payment-initialize-options';
+export type { PaymentRequestOptions } from './payment-request-options';
+export type { default as PaymentMethod } from './payment-method';
+export type { default as PaymentResponse } from './payment-response';
+export type { default as PaymentResponseBody, ThreeDsResult } from './payment-response-body';
+export type { default as PaymentStrategy } from './payment-strategy';
+export type { default as PaymentStrategyFactory } from './payment-strategy-factory';
+export type { default as PaymentStrategyResolveId } from './payment-strategy-resolve-id';
 export { default as PaymentStatusTypes } from './payment-status-types';
-export { default as PaymentMethodMeta } from './payment-method-meta';
+export type { default as PaymentMethodMeta } from './payment-method-meta';
 export { default as StorefrontPaymentRequestSender } from './storefront-payment-request-sender';

@@ -1,8 +1,8 @@
-export { default as BuyNowCartRequestBody } from './buy-now-cart-request-body';
-export { default as Cart } from './cart';
-export { default as InternalCart } from './internal-cart';
-export { default as InternalLineItem } from './internal-line-item';
-export {
+export type { default as BuyNowCartRequestBody } from './buy-now-cart-request-body';
+export type { default as Cart } from './cart';
+export type { default as InternalCart } from './internal-cart';
+export type { default as InternalLineItem } from './internal-line-item';
+export type {
     DigitalItem,
     GiftCertificateItem,
     LineItem,
@@ -10,17 +10,17 @@ export {
     PhysicalItem,
     StockPosition,
 } from './line-item';
-export { default as LineItemMap } from './line-item-map';
+export type { default as LineItemMap } from './line-item-map';
 
 export { default as CartComparator } from './cart-comparator';
 export { default as CartRequestSender } from './cart-request-sender';
 export { default as cartReducer } from './cart-reducer';
 export {
-    default as CartSelector,
-    CartSelectorFactory,
+    type default as CartSelector,
+    type CartSelectorFactory,
     createCartSelectorFactory,
 } from './cart-selector';
-export { default as CartState } from './cart-state';
+export type { default as CartState } from './cart-state';
 
 export { default as map } from './map-to-internal-cart';
 export { default as mapGiftCertificateToInternalLineItem } from './map-gift-certificate-to-internal-line-item';

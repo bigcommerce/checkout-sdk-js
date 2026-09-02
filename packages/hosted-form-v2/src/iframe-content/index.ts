@@ -4,10 +4,10 @@ export { default as initializeHostedInput } from './initialize-hosted-input';
 export { default as notifyInitializeError } from './notify-initialize-error';
 export { default as CardExpiryFormatter } from './card-expiry-formatter';
 export { default as CardNumberFormatter } from './card-number-formatter';
-export { default as HostedInputStyles } from './hosted-input-styles';
-export { default as HostedInputValues } from './hosted-input-values';
-export {
+export type { default as HostedInputStyles } from './hosted-input-styles';
+export type { default as HostedInputValues } from './hosted-input-values';
+export type {
     default as HostedInputValidateErrorData,
     HostedInputValidateErrorDataMap,
 } from './hosted-input-validate-error-data';
-export { default as HostedInputValidateResults } from './hosted-input-validate-results';
+export type { default as HostedInputValidateResults } from './hosted-input-validate-results';

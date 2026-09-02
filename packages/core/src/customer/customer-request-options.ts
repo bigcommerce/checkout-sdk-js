@@ -5,7 +5,7 @@ import {
 
 import { RequestOptions } from '../common/http-request';
 
-export { CustomerInitializeOptions } from '../generated/customer-initialize-options';
+export type { CustomerInitializeOptions } from '../generated/customer-initialize-options';
 
 /**
  * A set of options for configuring any requests related to the customer step of

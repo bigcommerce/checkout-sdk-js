@@ -2,9 +2,9 @@ export { default as createBlueSnapDirectCreditCardPaymentStrategy } from './blue
 export { default as createBlueSnapDirectAPMPaymentStrategy } from './bluesnap-direct-apm/create-bluesnap-direct-apm-payment-strategy';
 export { default as createBlueSnapV2PaymentStrategy } from './bluesnapv2/create-bluesnapv2-payment-strategy';
 
-export {
+export type {
     BlueSnapDirectAPMInitializeOptions,
     WithBlueSnapDirectAPMPaymentInitializeOptions,
 } from './types';
 
-export { WithBlueSnapV2PaymentInitializeOptions } from './bluesnapv2/bluesnapv2-payment-options';
+export type { WithBlueSnapV2PaymentInitializeOptions } from './bluesnapv2/bluesnapv2-payment-options';

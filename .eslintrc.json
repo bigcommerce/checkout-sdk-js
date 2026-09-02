@@ -20,6 +20,12 @@
         {
             "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
             "rules": {
+                "@typescript-eslint/consistent-type-exports": [
+                    "error",
+                    {
+                        "fixMixedExportsWithInlineTypeSpecifier": true
+                    }
+                ],
                 "prettier/prettier": [
                     "error",
                     {
@@ -85,6 +91,12 @@
                         ]
                     }
                 ]
+            }
+        },
+        {
+            "files": ["**/__fixtures__/**/*.ts"],
+            "rules": {
+                "@typescript-eslint/consistent-type-exports": "off"
             }
         },
         {

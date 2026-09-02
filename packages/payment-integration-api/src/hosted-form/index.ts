@@ -1,4 +1,4 @@
-export {
+export type {
     default as HostedFormOptions,
     HostedCardFieldOptions,
     HostedCardFieldOptionsMap,
@@ -13,9 +13,9 @@ export {
     HostedStoredCardFieldOptionsMap,
 } from './hosted-form-options';
 export { default as HostedFieldType } from './hosted-field-type';
-export { HostedForm } from './hosted-form';
-export { HostedInputEventType, HostedInputSubmitSuccessEvent } from './hosted-input-events';
-export {
+export type { HostedForm } from './hosted-form';
+export { HostedInputEventType, type HostedInputSubmitSuccessEvent } from './hosted-input-events';
+export type {
     HostedInputBlurEvent,
     HostedInputCardTypeChangeEvent,
     HostedInputEnterEvent,

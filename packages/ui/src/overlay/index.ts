@@ -1,1 +1,1 @@
-export { default as Overlay, OverlayShowOptions } from './overlay';
+export { default as Overlay, type OverlayShowOptions } from './overlay';

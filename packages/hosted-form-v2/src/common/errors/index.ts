@@ -1,4 +1,4 @@
-export { default as CustomError, isCustomError } from './custom-error';
+export { type default as CustomError, isCustomError } from './custom-error';
 export { default as InvalidArgumentError } from './invalid-argument-error';
 export { default as NotInitializedError, NotInitializedErrorType } from './not-initialized-error';
 export { default as RequestError } from './request-error';

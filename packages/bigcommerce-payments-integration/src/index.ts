@@ -8,16 +8,16 @@ export { default as BigCommercePaymentsScriptLoader } from './bigcommerce-paymen
  *
  */
 export { default as createBigCommercePaymentsButtonStrategy } from './bigcommerce-payments/create-bigcommerce-payments-button-strategy';
-export { WithBigCommercePaymentsButtonInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-button-initialize-options';
+export type { WithBigCommercePaymentsButtonInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-button-initialize-options';
 
 export { default as createBigCommercePaymentsCustomerStrategy } from './bigcommerce-payments/create-bigcommerce-payments-customer-strategy';
-export { WithBigCommercePaymentsCustomerInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-customer-initialize-options';
+export type { WithBigCommercePaymentsCustomerInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-customer-initialize-options';
 
 export { default as createBigCommercePaymentsPaymentStrategy } from './bigcommerce-payments/create-bigcommerce-payments-payment-strategy';
-export { WithBigCommercePaymentsPaymentInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-payment-initialize-options';
+export type { WithBigCommercePaymentsPaymentInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-payment-initialize-options';
 
 export { default as createBigCommercePaymentsWalletStrategy } from './bigcommerce-payments/create-bigcommerce-payments-wallet-strategy';
-export { WithBigCommercePaymentsWalletInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-wallet-initialize-options';
+export type { WithBigCommercePaymentsWalletInitializeOptions } from './bigcommerce-payments/bigcommerce-payments-wallet-initialize-options';
 
 /**
  *
@@ -25,10 +25,10 @@ export { WithBigCommercePaymentsWalletInitializeOptions } from './bigcommerce-pa
  *
  */
 export { default as createBigCommercePaymentsFastlaneCustomerStrategy } from './bigcommerce-payments-fastlane/create-bigcommerce-payments-fastlane-customer-strategy';
-export { WithBigCommercePaymentsFastlaneCustomerInitializeOptions } from './bigcommerce-payments-fastlane/bigcommerce-payments-fastlane-customer-initialize-options';
+export type { WithBigCommercePaymentsFastlaneCustomerInitializeOptions } from './bigcommerce-payments-fastlane/bigcommerce-payments-fastlane-customer-initialize-options';
 
 export { default as createBigCommercePaymentsFastlanePaymentStrategy } from './bigcommerce-payments-fastlane/create-bigcommerce-payments-fastlane-payment-strategy';
-export { WithBigCommercePaymentsFastlanePaymentInitializeOptions } from './bigcommerce-payments-fastlane/bigcommerce-payments-fastlane-payment-initialize-options';
+export type { WithBigCommercePaymentsFastlanePaymentInitializeOptions } from './bigcommerce-payments-fastlane/bigcommerce-payments-fastlane-payment-initialize-options';
 
 /**
  *
@@ -36,16 +36,16 @@ export { WithBigCommercePaymentsFastlanePaymentInitializeOptions } from './bigco
  *
  */
 export { default as createBigCommercePaymentsPayLaterButtonStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-button-strategy';
-export { WithBigCommercePaymentsPayLaterButtonInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-button-initialize-options';
+export type { WithBigCommercePaymentsPayLaterButtonInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-button-initialize-options';
 
 export { default as createBigCommercePaymentsPayLaterCustomerStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-customer-strategy';
-export { WithBigCommercePaymentsPayLaterCustomerInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-customer-initialize-options';
+export type { WithBigCommercePaymentsPayLaterCustomerInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-customer-initialize-options';
 
 export { default as createBigCommercePaymentsPayLaterPaymentStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-payment-strategy';
-export { WithBigCommercePaymentsPayLaterPaymentInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-payment-initialize-options';
+export type { WithBigCommercePaymentsPayLaterPaymentInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-payment-initialize-options';
 
 export { default as createBigCommercePaymentsPayLaterWalletStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-wallet-strategy';
-export { WithBigCommercePaymentsPayLaterWalletInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-wallet-initialize-options';
+export type { WithBigCommercePaymentsPayLaterWalletInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-wallet-initialize-options';
 
 /**
  *
@@ -53,7 +53,7 @@ export { WithBigCommercePaymentsPayLaterWalletInitializeOptions } from './bigcom
  *
  */
 export { default as createBigCommercePaymentsRatePayPayPaymentStrategy } from './bigcommerce-payments-ratepay/create-bigcommerce-payments-ratepay-payment-strategy';
-export { WithBigCommercePaymentsRatePayPaymentInitializeOptions } from './bigcommerce-payments-ratepay/bigcommerce-payments-ratepay-initialize-options';
+export type { WithBigCommercePaymentsRatePayPaymentInitializeOptions } from './bigcommerce-payments-ratepay/bigcommerce-payments-ratepay-initialize-options';
 
 /**
  *
@@ -61,7 +61,7 @@ export { WithBigCommercePaymentsRatePayPaymentInitializeOptions } from './bigcom
  *
  */
 export { default as createBigCommercePaymentsCreditCardsPaymentStrategy } from './bigcommerce-payments-credit-cards/create-bigcommerce-payments-credit-cards-payment-strategy';
-export { WithBigCommercePaymentsCreditCardsPaymentInitializeOptions } from './bigcommerce-payments-credit-cards/bigcommerce-payments-credit-cards-payment-initialize-options';
+export type { WithBigCommercePaymentsCreditCardsPaymentInitializeOptions } from './bigcommerce-payments-credit-cards/bigcommerce-payments-credit-cards-payment-initialize-options';
 
 /**
  *
@@ -69,7 +69,7 @@ export { WithBigCommercePaymentsCreditCardsPaymentInitializeOptions } from './bi
  *
  */
 export { default as createBigCommercePaymentsInvoicesPaymentStrategy } from './bigcommerce-payments-invoices/create-bigcommerce-payments-invoices-payment-strategy';
-export { WithBigCommercePaymentsInvoicesPaymentInitializeOptions } from './bigcommerce-payments-invoices/bigcommerce-payments-invoices-payment-initialize-options';
+export type { WithBigCommercePaymentsInvoicesPaymentInitializeOptions } from './bigcommerce-payments-invoices/bigcommerce-payments-invoices-payment-initialize-options';
 
 /**
  *
@@ -77,7 +77,7 @@ export { WithBigCommercePaymentsInvoicesPaymentInitializeOptions } from './bigco
  *
  */
 export { default as createBigCommercePaymentsAlternativeMethodsPaymentStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-payment-strategy';
-export { WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-payment-initialize-options';
+export type { WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-payment-initialize-options';
 
 /**
  *
@@ -85,7 +85,7 @@ export { WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions } fro
  *
  */
 export { default as createBigCommercePaymentsRedirectAlternativeMethodsPaymentStrategy } from './bigcommerce-payments-redirect-alternative-methods/create-bigcommerce-payments-redirect-alternative-methods-payment-strategy';
-export { WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions } from './bigcommerce-payments-redirect-alternative-methods/bigcomemrce-payments-redirect-alternative-methods-payment-initialize-options';
+export type { WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptions } from './bigcommerce-payments-redirect-alternative-methods/bigcomemrce-payments-redirect-alternative-methods-payment-initialize-options';
 
 /**
  *
@@ -93,10 +93,10 @@ export { WithBigCommercePaymentsRedirectAlternativeMethodsPaymentInitializeOptio
  *
  */
 export { default as createBigCommercePaymentsVenmoButtonStrategy } from './bigcommerce-payments-venmo/create-bigcommerce-payments-venmo-button-strategy';
-export { WithBigCommercePaymentsVenmoButtonInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-button-initialize-options';
+export type { WithBigCommercePaymentsVenmoButtonInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-button-initialize-options';
 
 export { default as createBigCommercePaymentsVenmoCustomerStrategy } from './bigcommerce-payments-venmo/create-bigcommerce-payments-venmo-customer-strategy';
-export { WithBigCommercePaymentsVenmoCustomerInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-customer-initialize-options';
+export type { WithBigCommercePaymentsVenmoCustomerInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-customer-initialize-options';
 
 export { default as createBigCommercePaymentsVenmoPaymentStrategy } from './bigcommerce-payments-venmo/create-bigcommerce-payments-venmo-payment-strategy';
-export { WithBigCommercePaymentsVenmoPaymentInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-payment-initialize-options';
+export type { WithBigCommercePaymentsVenmoPaymentInitializeOptions } from './bigcommerce-payments-venmo/bigcommerce-payments-venmo-payment-initialize-options';

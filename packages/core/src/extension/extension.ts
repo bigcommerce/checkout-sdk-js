@@ -11,7 +11,7 @@ export interface ExtensionIframeConfig {
     parentOrigin: string;
 }
 
-export const enum ExtensionRegion {
+export enum ExtensionRegion {
     ShippingShippingAddressFormBefore = 'shipping.shippingAddressForm.before',
     ShippingShippingAddressFormAfter = 'shipping.shippingAddressForm.after',
     ShippingSelectedShippingMethod = 'shipping.selectedShippingMethod',
@@ -21,7 +21,7 @@ export const enum ExtensionRegion {
     GlobalWebWorker = 'global',
 }
 
-export const enum ExtensionType {
+export enum ExtensionType {
     Iframe = 'iframe',
     Worker = 'worker',
 }

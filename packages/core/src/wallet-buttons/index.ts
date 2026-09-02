@@ -1,6 +1,6 @@
 export { default as createWalletButtonInitializer } from './create-wallet-button-initializer';
 export {
-    BaseWalletButtonInitializeOptions,
+    type BaseWalletButtonInitializeOptions,
     WalletButtonMethodType,
-    WalletButtonOptions,
+    type WalletButtonOptions,
 } from './wallet-button-options';

@@ -1,6 +1,6 @@
 export * from './form-fields-actions';
 
-export {
+export type {
     ExtraField,
     ExtraFieldConfig,
     ExtraFields,
@@ -8,16 +8,16 @@ export {
     AddressExtraFieldValue,
 } from './extra-field';
 export {
-    default as FormSelector,
-    FormSelectorFactory,
+    type default as FormSelector,
+    type FormSelectorFactory,
     createFormSelectorFactory,
 } from './form-selector';
-export { default as FormField, FormFields } from './form-field';
+export type { default as FormField, FormFields } from './form-field';
 export { default as FormFieldsRequestSender } from './form-fields-request-sender';
 
 export { default as FormFieldsActionCreator } from './form-fields-action-creator';
 export { default as formFieldsReducer } from './form-fields-reducer';
-export { default as FormFieldsState, DEFAULT_STATE } from './form-fields-state';
+export { type default as FormFieldsState, DEFAULT_STATE } from './form-fields-state';
 export {
     default as mapExtraFieldToFormField,
     isExtraField,

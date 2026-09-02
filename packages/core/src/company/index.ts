@@ -2,7 +2,7 @@ export { default as B2BStorefrontTokenRequestSender } from './b2b-storefront-tok
 export { default as B2BStorefrontTokenService } from './b2b-storefront-token-service';
 export { default as CompanyAddressRequestSender } from './company-address-request-sender';
 export { default as CompanyAddressService } from './company-address-service';
-export {
+export type {
     CompanyAddress,
     CompanyAddressSearchOptions,
     CompanyAddressSearchResult,

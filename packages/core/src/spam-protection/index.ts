@@ -1,5 +1,5 @@
 export * from './spam-protection-actions';
-export * from './spam-protection-options';
+export type * from './spam-protection-options';
 
 export { default as createSpamProtection } from './create-spam-protection';
 export { default as PaymentHumanVerificationHandler } from './payment-human-verification-handler';
@@ -9,5 +9,5 @@ export { default as SpamProtectionRequestSender } from './spam-protection-reques
 export { default as isSpamProtectionExecuteSucceededAction } from './is-spam-protection-succeeded-action';
 export {
     default as GoogleRecaptchaScriptLoader,
-    GoogleRecaptchaWindow,
+    type GoogleRecaptchaWindow,
 } from './google-recaptcha-script-loader';

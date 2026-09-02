@@ -1,1 +1,1 @@
-export { default as Country, Region } from './country';
+export type { default as Country, Region } from './country';

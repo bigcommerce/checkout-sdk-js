@@ -1,2 +1,2 @@
-export { default as Config, StoreConfig, CheckoutSettings, StoreProfile } from './config';
-export { Capabilities } from './capabilities';
+export type { default as Config, StoreConfig, CheckoutSettings, StoreProfile } from './config';
+export type { Capabilities } from './capabilities';

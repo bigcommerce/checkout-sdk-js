@@ -1,1 +1,1 @@
-export { isRedirect, handleRedirect, Redirect } from './redirect';
+export { isRedirect, handleRedirect, type Redirect } from './redirect';

@@ -1,5 +1,5 @@
 export {
     isHumanVerification,
     handleHumanVerification,
-    HumanVerification,
+    type HumanVerification,
 } from './human-verification';

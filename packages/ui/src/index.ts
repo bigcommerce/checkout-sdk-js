@@ -1,6 +1,6 @@
 export { Overlay } from './overlay';
 export {
     LoadingIndicator,
-    LoadingIndicatorStyles,
+    type LoadingIndicatorStyles,
     DEFAULT_CONTAINER_STYLES,
 } from './loading-indicator';
