@@ -524,10 +524,6 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         );
 
         it('surfaces the actionable bank-declined error from submitHostedForm', async () => {
-            // Reproduce the real PayPal SDK behaviour: `submit()` invokes
-            // `onApprove` with a bank decline, swallows the error it throws and
-            // rejects with its own error. The strategy must still surface the
-            // actionable bank-declined error rather than the generic one.
             jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
                 (options: PaypalCardFieldsConfig) => {
                     return Promise.resolve({
