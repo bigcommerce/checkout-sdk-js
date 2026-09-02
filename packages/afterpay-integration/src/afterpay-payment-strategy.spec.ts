@@ -32,7 +32,6 @@ describe('AfterpayPaymentStrategy', () => {
     let scriptLoader: AfterpayScriptLoader;
     let strategy: AfterpayPaymentStrategy;
     const storeConfig = getConfig().storeConfig;
-    const withHttpsExperimentName = 'PI-4789.afterpay_script_use_https';
 
     const afterpaySdk = {
         initialize: jest.fn(),
@@ -70,16 +69,9 @@ describe('AfterpayPaymentStrategy', () => {
             paymentMethod,
         );
 
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue({
-            ...storeConfig,
-            checkoutSettings: {
-                ...storeConfig.checkoutSettings,
-                features: {
-                    ...storeConfig.checkoutSettings.features,
-                    [withHttpsExperimentName]: true,
-                },
-            },
-        });
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfig,
+        );
     });
 
     afterEach(() => {
@@ -106,30 +98,7 @@ describe('AfterpayPaymentStrategy', () => {
                 gatewayId: paymentMethod.gateway,
             });
 
-            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, 'US', true);
-        });
-
-        it('loads script when initializing strategy with NO https', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        [withHttpsExperimentName]: false,
-                    },
-                },
-            });
-
-            await strategy.initialize({
-                methodId: paymentMethod.id,
-                gatewayId: paymentMethod.gateway,
-            });
-
-            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, 'US', false);
+            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, 'US');
         });
 
         it('loads script when initializing strategy with NZD', async () => {
@@ -143,7 +112,7 @@ describe('AfterpayPaymentStrategy', () => {
                 gatewayId: paymentMethod.gateway,
             });
 
-            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, 'NZ', true);
+            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, 'NZ');
         });
     });
 
