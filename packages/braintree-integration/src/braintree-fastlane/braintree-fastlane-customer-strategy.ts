@@ -9,6 +9,7 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
     MissingDataError,
+    MissingDataErrorType,
     PaymentIntegrationService,
     PaymentMethod,
     RequestOptions,
@@ -63,9 +64,13 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow.
-            // MissingDataError here means the payment method config is incomplete (e.g. missing
+            // MissingPaymentMethod here means the payment method config is incomplete (e.g. missing
             // clientToken), which is a known/expected backend state and not worth logging.
-            if (!(error instanceof MissingDataError)) {
+            const isMissingPaymentMethodError =
+                error instanceof MissingDataError &&
+                error.subtype === MissingDataErrorType.MissingPaymentMethod;
+
+            if (!isMissingPaymentMethodError) {
                 // Tag the payment method id so error tracking can tell which gateway config is inconsistent.
                 if (error && typeof error === 'object') {
                     (error as { methodId?: string }).methodId = paymentMethod.id;
