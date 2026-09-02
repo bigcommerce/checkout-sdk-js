@@ -5863,7 +5863,7 @@ declare enum ExtensionEventType {
 
 declare type ExtensionMessage = ExtensionEvent | GetConsignmentsMessage;
 
-declare const enum ExtensionMessageType {
+declare enum ExtensionMessageType {
     GetConsignments = "EXTENSION:GET_CONSIGNMENTS"
 }
 
@@ -5875,7 +5875,7 @@ export declare enum ExtensionQueryType {
     GetConsignments = "EXTENSION:GET_CONSIGNMENTS"
 }
 
-declare const enum ExtensionRegion {
+declare enum ExtensionRegion {
     ShippingShippingAddressFormBefore = "shipping.shippingAddressForm.before",
     ShippingShippingAddressFormAfter = "shipping.shippingAddressForm.after",
     ShippingSelectedShippingMethod = "shipping.selectedShippingMethod",
@@ -5892,7 +5892,7 @@ declare interface ExtensionSelector {
     isLoading(): boolean;
 }
 
-declare const enum ExtensionType {
+declare enum ExtensionType {
     Iframe = "iframe",
     Worker = "worker"
 }
