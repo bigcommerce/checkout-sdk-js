@@ -236,9 +236,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                     liabilityShift === LiabilityShiftEnum.No ||
                     liabilityShift === LiabilityShiftEnum.Unknown
                 ) {
-                    // The PayPal SDK swallows errors thrown here and rejects
-                    // `submit()` with its own error, so we record the decline
-                    // and surface the actionable error from `submitHostedForm`.
                     this.isBankDeclinedAuthentication = true;
 
                     throw new PaymentMethodBankDeclinedAuthenticationError();
