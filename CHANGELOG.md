@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.968.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.967.1...v1.968.0) (2026-09-02)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10352 Add support for isPhoneNumberValidation setting ([#3380](https://github.com/bigcommerce/checkout-sdk-js/issues/3380)) ([7d00671](https://github.com/bigcommerce/checkout-sdk-js/commit/7d0067197cb0cf5d0be01b0815921641a16a6510))
+
 ### [1.967.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.967.0...v1.967.1) (2026-09-02)
 
 ## [1.967.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.966.0...v1.967.0) (2026-09-01)

@@ -114,6 +114,12 @@
 
 ***
 
+### isPhoneNumberValidationEnabled?
+
+> `optional` **isPhoneNumberValidationEnabled?**: `boolean`
+
+***
+
 ### isSignInEmailEnabled
 
 > **isSignInEmailEnabled**: `boolean`
