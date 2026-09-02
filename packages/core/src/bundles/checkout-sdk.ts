@@ -19,4 +19,11 @@ export type {
     CompanyAddressSearchOptions,
     CompanyAddressSearchResult,
 } from '../company';
-export { ExtensionCommandType, ExtensionQueryType, type ExtensionQueryMap } from '../extension';
+export {
+    ExtensionCommandType,
+    ExtensionMessageType,
+    ExtensionQueryType,
+    ExtensionRegion,
+    ExtensionType,
+    type ExtensionQueryMap,
+} from '../extension';
