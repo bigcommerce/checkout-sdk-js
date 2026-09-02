@@ -8,6 +8,8 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -221,6 +223,22 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
             ).resolves.toBeUndefined();
 
             expect(onErrorLog).toHaveBeenCalledWith(error);
+        });
+
+        it('does not log the error via onErrorLog when clientToken not defined', async () => {
+            const error = new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            const onErrorLog = jest.fn();
+
+            jest.spyOn(
+                braintreeFastlaneUtils,
+                'initializeBraintreeFastlaneOrThrow',
+            ).mockRejectedValue(error);
+
+            await expect(
+                strategy.initialize({ ...initializationOptions, onErrorLog }),
+            ).resolves.toBeUndefined();
+
+            expect(onErrorLog).not.toHaveBeenCalled();
         });
 
         it('does not call onErrorLog when Fastlane initialization succeeds', async () => {
