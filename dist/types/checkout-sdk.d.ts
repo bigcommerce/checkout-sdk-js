@@ -4075,7 +4075,6 @@ declare interface CheckoutSettings {
     isSignInEmailEnabled: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
-    isPhoneNumberValidationEnabled?: boolean;
     isSpamProtectionEnabled: boolean;
     isTrustedShippingAddressEnabled: boolean;
     orderTermsAndConditions: string;
