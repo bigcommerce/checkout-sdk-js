@@ -70,6 +70,16 @@ jobs:
           name: "Run lint"
           command: npm run lint
 
+  typecheck:
+    <<: *node_executor
+    resource_class: large
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run typecheck"
+          command: npm run typecheck
+
   build:
     <<: *node_executor
     resource_class: xlarge
@@ -145,6 +155,7 @@ workflows:
       - test-core
       - test-packages
       - lint
+      - typecheck
       - build
 
       # Only build and push CDN artifact when commits are merged to canonical repo
@@ -157,6 +168,7 @@ workflows:
             - test-core
             - test-packages
             - lint
+            - typecheck
             - build
       - ci/build-js-artifact:
           context: "GCR + Artifact Bucket Access"
@@ -188,6 +200,7 @@ workflows:
             - test-core
             - test-packages
             - lint
+            - typecheck
             - build
       - npm_release:
           context:

@@ -57,7 +57,17 @@ export function getThreeDSecureMock(): BraintreeThreeDSecure {
                 callback({ code: '' }, { nonce: 'fastlane_token_mock' });
             }
 
-            return Promise.resolve('fastlane_token_mock');
+            return Promise.resolve({
+                nonce: 'fastlane_token_mock',
+                details: {
+                    cardType: 'Visa',
+                    lastFour: '1111',
+                    lastTwo: '11',
+                },
+                description: 'a description',
+                liabilityShiftPossible: true,
+                liabilityShifted: true,
+            });
         },
         cancelVerifyCard: jest.fn(),
         on: jest.fn(),

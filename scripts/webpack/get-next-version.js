@@ -4,7 +4,17 @@ const semver = require('semver');
 
 const packageJson = require('../../package.json');
 
+let cachedVersion;
+
 function getNextVersion() {
+    if (cachedVersion === undefined) {
+        cachedVersion = computeNextVersion();
+    }
+
+    return cachedVersion;
+}
+
+function computeNextVersion() {
     return new Promise((resolve, reject) => {
         // If webpack in the watch mode or the current commit is the latest tagged commit, just return current
         // version because there is no new commit ahead of it.

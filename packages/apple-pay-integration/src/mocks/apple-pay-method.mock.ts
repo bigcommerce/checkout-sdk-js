@@ -31,5 +31,6 @@ export function getApplePay(): PaymentMethod {
             merchantId: 'abc',
             paymentsUrl: 'https://url',
         },
+        skipRedirectConfirmationAlert: true,
     };
 }

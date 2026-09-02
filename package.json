@@ -49,7 +49,7 @@
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
     "prepare": "check-node-version --node '>=22' --npm '>=10'",
-    "build": "npm run bundle && npm run bundle-dts",
+    "build": "npm run typecheck & pid1=$!; npm run bundle && npm run bundle-dts & pid2=$!; wait $pid1 && wait $pid2",
     "build:link": "rm -rf dist && npx nx run core:build --skip-nx-cache && npm run bundle-dts",
     "prebuild-cdn": "rm -rf dist-cdn",
     "build-cdn": "npx nx run core:build-cdn",
@@ -71,7 +71,8 @@
     "test:series": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run-many --all --target=test --parallel=5 -- --runInBand",
     "test:core": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run core:test -- --coverage --runInBand",
     "test:others": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run-many --all --target=test --exclude core --parallel=5 -- --runInBand",
-    "test:watch": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run-many --all --target=test --parallel -- --watch"
+    "test:watch": "NODE_OPTIONS='--unhandled-rejections=warn' npx nx run-many --all --target=test --parallel -- --watch",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "jest-junit": {
     "addFileAttribute": "true"

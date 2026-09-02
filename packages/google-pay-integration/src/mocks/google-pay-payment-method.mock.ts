@@ -137,5 +137,6 @@ export function getGeneric(): PaymentMethod<GooglePayInitializationData> {
             platformToken: 'foo.bar.baz',
             storeCountry: 'US',
         },
+        skipRedirectConfirmationAlert: true,
     };
 }
