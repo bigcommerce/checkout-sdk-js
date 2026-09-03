@@ -39,7 +39,7 @@ declare class AfterpayScriptLoader {
      *
      * @param {PaymentMethod} method the payment method data
      */
-    load(method: PaymentMethod, countryCode: string, withHttps?: boolean): Promise<AfterpaySdk>;
+    load(method: PaymentMethod, countryCode: string): Promise<AfterpaySdk>;
     private _getScriptURI;
 }
 

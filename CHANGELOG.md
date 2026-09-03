@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.969.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.968.3...v1.969.0) (2026-09-03)
+
+
+### Features
+
+* **payment:** PI-4870 [FE] Remove experiment PI-4789.afterpay_script_use_https ([831bef0](https://github.com/bigcommerce/checkout-sdk-js/commit/831bef0047b5dd10f8479549c5b96871aeb4ab06))
+
 ### [1.968.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.968.2...v1.968.3) (2026-09-03)
 
 
