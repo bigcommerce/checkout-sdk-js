@@ -8,6 +8,8 @@ import {
     CustomerStrategy,
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
     PaymentIntegrationService,
     PaymentMethod,
     RequestOptions,
@@ -62,7 +64,13 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
-            this.handleErrorLog(error);
+            const isMissingPaymentMethodError =
+                error instanceof MissingDataError &&
+                error.subtype === MissingDataErrorType.MissingPaymentMethod;
+
+            if (!isMissingPaymentMethodError) {
+                this.handleErrorLog(error);
+            }
         }
 
         return Promise.resolve();
