@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.968.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.968.2...v1.968.3) (2026-09-03)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-7021 removed logger to avoid error spamming ([#3389](https://github.com/bigcommerce/checkout-sdk-js/issues/3389)) ([9a021db](https://github.com/bigcommerce/checkout-sdk-js/commit/9a021db9786c8854fb1e04096aa3e9515e116816))
+
 ### [1.968.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.968.1...v1.968.2) (2026-09-03)
 
 ### [1.968.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.968.0...v1.968.1) (2026-09-02)
