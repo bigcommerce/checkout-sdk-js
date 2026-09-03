@@ -49,6 +49,7 @@ export default interface Checkout {
     channelId: number;
     fees: Fee[];
     totalDiscount: number;
+    version: number;
 }
 
 export interface CheckoutRequestBody {

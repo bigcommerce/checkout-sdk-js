@@ -55,6 +55,7 @@ export default function getCheckout(): Checkout {
             },
         ],
         totalDiscount: 0,
+        version: 1,
     };
 }
 

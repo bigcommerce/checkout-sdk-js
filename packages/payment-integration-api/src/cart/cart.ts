@@ -23,4 +23,5 @@ export default interface Cart {
     updatedTime: string;
     source?: CartSource;
     locale: string;
+    version: number;
 }
