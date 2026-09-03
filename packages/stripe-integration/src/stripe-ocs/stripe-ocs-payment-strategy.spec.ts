@@ -25,6 +25,7 @@ import {
     StripeInstrumentSetupFutureUsage,
     StripeIntegrationService,
     StripeJsVersion,
+    StripePaymentMethodType,
     StripePIPaymentMethodOptions,
     StripeScriptLoader,
     StripeStringConstants,
@@ -690,7 +691,53 @@ describe('StripeOCSPaymentStrategy', () => {
                     },
                 },
             });
-            expect(paymentMethodSelectMock).toHaveBeenCalledWith(`${gatewayId}-${methodId}`);
+            expect(paymentMethodSelectMock).toHaveBeenCalledWith(
+                `${gatewayId}-${methodId}`,
+                StripePaymentMethodType.CreditCard,
+            );
+        });
+
+        it('passes the selected sub method type to paymentMethodSelect', async () => {
+            const eventMock = {
+                ...StripeEventMock,
+                collapsed: false,
+                value: {
+                    type: StripePaymentMethodType.ACH,
+                },
+            };
+            const createMock = jest.fn().mockImplementation(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(eventMock)),
+                update: jest.fn(),
+                destroy: jest.fn(),
+            }));
+            const paymentMethodSelectMock = jest.fn();
+
+            jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
+                Promise.resolve({
+                    ...stripeUPEJsMock.elements({}),
+                    create: createMock,
+                }),
+            );
+
+            await stripeOCSPaymentStrategy.initialize({
+                ...stripeOptions,
+                stripeocs: {
+                    render: jest.fn(),
+                    containerId: 'containerId',
+                    paymentMethodSelect: paymentMethodSelectMock,
+                },
+            });
+            await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+            expect(paymentMethodSelectMock).toHaveBeenCalledWith(
+                `${gatewayId}-${methodId}`,
+                StripePaymentMethodType.ACH,
+            );
+            expect(stripeOCSPaymentStrategy.getSelectedSubMethodId()).toBe(
+                StripePaymentMethodType.ACH,
+            );
         });
 
         it('does not change selected payment method id if accordion collapsed', async () => {
@@ -1746,6 +1793,12 @@ describe('StripeOCSPaymentStrategy', () => {
             await expect(stripeOCSPaymentStrategy.finalize()).rejects.toBeInstanceOf(
                 OrderFinalizationNotRequiredError,
             );
+        });
+    });
+
+    describe('#getSelectedSubMethodId()', () => {
+        it('returns undefined before any payment method has been selected', () => {
+            expect(stripeOCSPaymentStrategy.getSelectedSubMethodId()).toBeUndefined();
         });
     });
 

@@ -8,11 +8,12 @@ import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { FormFieldsActionCreator } from '../form';
 
-import Checkout, { CheckoutRequestBody } from './checkout';
+import Checkout, { CheckoutEventRequestBody, CheckoutRequestBody } from './checkout';
 import {
     CheckoutActionType,
     DeleteCheckoutAction,
     LoadCheckoutAction,
+    ReportCheckoutEventAction,
     UpdateCheckoutAction,
 } from './checkout-actions';
 import { withCapabilityIncludes } from './checkout-capability-includes';
@@ -160,6 +161,38 @@ export default class CheckoutActionCreator {
                         observer.error(
                             createErrorAction(CheckoutActionType.DeleteCheckoutFailed, response),
                         );
+                    });
+            });
+    }
+
+    reportCheckoutEvent(
+        body: CheckoutEventRequestBody,
+        options?: RequestOptions,
+    ): ThunkAction<ReportCheckoutEventAction, InternalCheckoutSelectors> {
+        return (store) =>
+            new Observable((observer) => {
+                const state = store.getState();
+                const checkout = state.checkout.getCheckout();
+
+                if (!checkout) {
+                    observer.complete();
+
+                    return;
+                }
+
+                observer.next(createAction(CheckoutActionType.ReportCheckoutEventRequested));
+
+                this._checkoutRequestSender
+                    .reportCheckoutEvent(checkout.id, body, options)
+                    .then(() => {
+                        observer.next(
+                            createAction(CheckoutActionType.ReportCheckoutEventSucceeded),
+                        );
+                        observer.complete();
+                    })
+                    .catch(() => {
+                        observer.next(createAction(CheckoutActionType.ReportCheckoutEventFailed));
+                        observer.complete();
                     });
             });
     }

@@ -126,6 +126,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
+    getSelectedSubMethodId(): string | undefined {
+        return this.selectedMethodId;
+    }
+
     private async _initializeStripeElement(
         stripe: StripeOCSPaymentInitializeOptions,
         gatewayId: string,
@@ -381,14 +385,14 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         event: StripeEventType,
         gatewayId: string,
         methodId: string,
-        paymentMethodSelect?: (id: string) => void,
+        paymentMethodSelect?: (id: string, selectedSubMethod?: string) => void,
     ) {
         if (!isStripePaymentEvent(event) || event.collapsed) {
             return;
         }
 
         this.selectedMethodId = event.value.type;
-        paymentMethodSelect?.(`${gatewayId}-${methodId}`);
+        paymentMethodSelect?.(`${gatewayId}-${methodId}`, this.selectedMethodId);
     }
 
     private _shouldSaveInstrument(paymentMethodOptions?: StripePIPaymentMethodSavingOptions) {
