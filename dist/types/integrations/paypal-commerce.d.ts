@@ -696,6 +696,7 @@ declare class PayPalCommerceCreditCardsPaymentStrategy implements PaymentStrateg
     private hostedFormOptions?;
     private returnedOrderId?;
     private returnedVaultedToken?;
+    private isBankDeclinedAuthentication;
     constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, paypalFastlaneUtils: PayPalFastlaneUtils);
     initialize(options: PaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;

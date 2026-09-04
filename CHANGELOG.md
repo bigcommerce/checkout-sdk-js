@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.971.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.970.0...v1.971.0) (2026-09-04)
+
+
+### Features
+
+* **payment:** PAYPAL-6634 Improve Error Messaging for Bank-Declined 3DS Authentication (PayPal PPCP) ([#3378](https://github.com/bigcommerce/checkout-sdk-js/issues/3378)) ([5e93be5](https://github.com/bigcommerce/checkout-sdk-js/commit/5e93be53c9401261604e115a5f999a116a74c6d2))
+
 ## [1.970.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.969.0...v1.970.0) (2026-09-04)
 
 
