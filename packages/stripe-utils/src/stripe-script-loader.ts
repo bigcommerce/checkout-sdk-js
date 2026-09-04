@@ -84,6 +84,10 @@ export default class StripeScriptLoader {
             stripeCheckout = await stripeClient.initCheckout(options);
 
             Object.assign(this.stripeWindow, { bcStripeCheckout: stripeCheckout });
+        } else {
+            const { actions } = await stripeCheckout.loadActions();
+
+            await actions?.runServerUpdate(() => Promise.resolve());
         }
 
         return stripeCheckout;

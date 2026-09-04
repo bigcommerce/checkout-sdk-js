@@ -218,7 +218,7 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
         });
 
-        it('triggers stripe checkout session server update on initialize', async () => {
+        it('does not trigger stripe checkout session server update on initialize', async () => {
             const runServerUpdateMock = jest.fn(async (update: () => Promise<unknown>) => {
                 await update();
 
@@ -241,7 +241,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeCSPaymentStrategy.initialize(stripeOptions);
 
-            expect(runServerUpdateMock).toHaveBeenCalledTimes(1);
+            expect(runServerUpdateMock).not.toHaveBeenCalled();
         });
 
         it('should call render when payment element ready event fires', async () => {
@@ -1039,13 +1039,10 @@ describe('StripeOCSPaymentStrategy', () => {
         });
 
         it('throws error if stripe checkout session server update fails', async () => {
-            const runServerUpdateMock = jest
-                .fn()
-                .mockResolvedValueOnce({ type: StripeLoadActionsResultType.SUCCESS })
-                .mockResolvedValue({
-                    type: StripeLoadActionsResultType.ERROR,
-                    error: { message: 'stripe server update error' },
-                });
+            const runServerUpdateMock = jest.fn().mockResolvedValue({
+                type: StripeLoadActionsResultType.ERROR,
+                error: { message: 'stripe server update error' },
+            });
 
             jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
                 Promise.resolve({
@@ -1078,16 +1075,8 @@ describe('StripeOCSPaymentStrategy', () => {
                     ...getStripeCheckoutInstanceMock(),
                     loadActions: () =>
                         Promise.resolve({
-                            type: StripeLoadActionsResultType.SUCCESS,
-                            actions: {
-                                ...getStripeCheckoutSessionActionsMock(),
-                                runServerUpdate: jest.fn(() =>
-                                    Promise.resolve({
-                                        type: StripeLoadActionsResultType.ERROR,
-                                        error: { message: 'stripe server update error' },
-                                    }),
-                                ),
-                            },
+                            type: StripeLoadActionsResultType.ERROR,
+                            error: { message: 'stripe checkout actions error' },
                         }),
                 }),
             );
@@ -1109,6 +1098,47 @@ describe('StripeOCSPaymentStrategy', () => {
             ).rejects.toThrow(NotInitializedError);
 
             expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+        });
+
+        describe('skipUnchangedCheckoutSessionUpdate', () => {
+            const configRequest = [gatewayId, { params: { method: methodId } }];
+
+            it('updates checkout session data if the checkout state changed', async () => {
+                jest.spyOn(
+                    stripeIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(false);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+                await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
+
+                expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                    ...configRequest,
+                );
+            });
+
+            it('skips checkout session data update if the checkout state is unchanged', async () => {
+                jest.spyOn(
+                    stripeIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(true);
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+                await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
+
+                expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            });
+
+            it('caches checkout state versions on initialize and clears them on deinitialize', async () => {
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(stripeIntegrationService.cacheCheckoutStateVersions).toHaveBeenCalled();
+
+                await stripeCSPaymentStrategy.deinitialize();
+
+                expect(stripeIntegrationService.clearCheckoutStateVersions).toHaveBeenCalled();
+            });
         });
 
         it('execute without additional actions with selected method in accordion', async () => {
