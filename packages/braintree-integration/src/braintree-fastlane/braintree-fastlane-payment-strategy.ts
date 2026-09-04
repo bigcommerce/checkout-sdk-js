@@ -266,6 +266,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
                     amount: order?.orderAmount,
                     nonce,
                     bin,
+                    collectDeviceData: true,
                     onLookupComplete: (_data, next) => {
                         threeDSecure.on('customer-canceled', () => {
                             if (typeof this.onError === 'function') {

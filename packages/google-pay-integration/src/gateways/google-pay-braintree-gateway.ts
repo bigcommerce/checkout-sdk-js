@@ -172,6 +172,7 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
                 amount,
                 bin,
                 nonce,
+                collectDeviceData: true,
                 onLookupComplete: (_data, next) => {
                     next();
                 },
