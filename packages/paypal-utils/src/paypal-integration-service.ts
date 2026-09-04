@@ -103,12 +103,12 @@ export default class PayPalIntegrationService {
      *
      */
     async createOrder(
-        providerId: string,
+        methodId: string,
         requestBody?: Partial<PayPalCreateOrderRequestBody>,
     ): Promise<string> {
         const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
 
-        const { orderId } = await this.paypalRequestSender.createOrder(providerId, {
+        const { orderId } = await this.paypalRequestSender.createOrder(methodId, {
             cartId,
             ...requestBody,
         });
