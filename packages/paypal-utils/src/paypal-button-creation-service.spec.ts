@@ -289,7 +289,7 @@ describe('PayPalButtonCreationService', () => {
 
         await new Promise((resolve) => process.nextTick(resolve));
 
-        expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith('paypalcommerce');
+        expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith('paypalcommercecredit');
     });
 
     it('creates paypal order if buy now initialisation options is passed', async () => {
@@ -310,7 +310,7 @@ describe('PayPalButtonCreationService', () => {
 
         expect(paypalIntegrationService.createBuyNowCartOrThrow).toHaveBeenCalled();
         expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledWith(buyNowCart.id);
-        expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith('paypalcommerce');
+        expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith('paypalcommercecredit');
     });
 
     it('throw an error if fundingSource is not valid', () => {

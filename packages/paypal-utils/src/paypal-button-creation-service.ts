@@ -82,7 +82,7 @@ class PaypalButtonCreationService {
                     await this.paymentIntegrationService.loadCheckout(buyNowCart.id);
                 }
 
-                return this.paypalIntegrationService.createOrder(providerId);
+                return this.paypalIntegrationService.createOrder(methodId);
             },
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalIntegrationService.tokenizePayment(methodId, orderID),
