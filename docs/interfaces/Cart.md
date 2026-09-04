@@ -113,3 +113,9 @@ This is the total amount of discount applied on cart including coupons and line_
 ### updatedTime
 
 > **updatedTime**: `string`
+
+***
+
+### version
+
+> **version**: `number`

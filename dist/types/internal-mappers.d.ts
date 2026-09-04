@@ -94,6 +94,7 @@ declare interface Cart {
     updatedTime: string;
     source?: CartSource;
     locale: string;
+    version: number;
 }
 
 declare interface Checkout {

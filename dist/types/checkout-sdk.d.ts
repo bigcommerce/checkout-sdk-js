@@ -2542,6 +2542,7 @@ declare interface Cart {
     updatedTime: string;
     source?: CartSource;
     locale: string;
+    version: number;
 }
 
 declare class CartChangedError extends StandardError {
