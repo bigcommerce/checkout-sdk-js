@@ -13,6 +13,8 @@ import {
     PaymentIntegrationService,
     PaymentInvalidFormError,
     PaymentMethod,
+    PaymentMethodBankDeclinedAuthenticationError,
+    PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
@@ -495,6 +497,84 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeDefined();
             }
+        });
+
+        it.each([LiabilityShiftEnum.No, LiabilityShiftEnum.Unknown])(
+            'throws an actionable bank-declined error when liabilityShift is %s',
+            async (liabilityShift) => {
+                let onApproveCallback: PaypalCardFieldsConfig['onApprove'] | undefined;
+
+                jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
+                    (options: PaypalCardFieldsConfig) => {
+                        onApproveCallback = options.onApprove;
+
+                        return Promise.resolve(cardFieldsInstanceMock);
+                    },
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                expect(() =>
+                    onApproveCallback?.({
+                        orderID: hostedFormOrderId,
+                        liabilityShift,
+                    }),
+                ).toThrow(new PaymentMethodBankDeclinedAuthenticationError());
+            },
+        );
+
+        it('surfaces the actionable bank-declined error from submitHostedForm', async () => {
+            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
+                (options: PaypalCardFieldsConfig) => {
+                    return Promise.resolve({
+                        ...cardFieldsInstanceMock,
+                        submit: jest.fn(() => {
+                            try {
+                                options.onApprove?.({
+                                    orderID: hostedFormOrderId,
+                                    liabilityShift: LiabilityShiftEnum.No,
+                                });
+                            } catch (_) {
+                                // swallowed by the PayPal SDK
+                            }
+
+                            return Promise.reject(new Error('sdk error'));
+                        }),
+                    });
+                },
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            await expect(
+                strategy.execute({
+                    payment: {
+                        methodId: 'paypalcommercecreditcards',
+                        paymentData: {},
+                    },
+                }),
+            ).rejects.toThrow(new PaymentMethodBankDeclinedAuthenticationError());
+        });
+
+        it('falls back to the generic error when submitHostedForm fails for other reasons', async () => {
+            jest.spyOn(cardFieldsInstanceMock, 'submit').mockRejectedValueOnce(
+                new Error('network'),
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            await expect(
+                strategy.execute({
+                    payment: {
+                        methodId: 'paypalcommercecreditcards',
+                        paymentData: {},
+                    },
+                }),
+            ).rejects.toThrow(
+                new PaymentMethodFailedError(
+                    'Failed authentication. Please try to authorize again.',
+                ),
+            );
         });
 
         it('submits payment with vaulted(stored) instrument', async () => {

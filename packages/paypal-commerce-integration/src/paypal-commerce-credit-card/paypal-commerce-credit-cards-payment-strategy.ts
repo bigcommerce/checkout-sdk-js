@@ -30,6 +30,7 @@ import {
     PaymentIntegrationService,
     PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
+    PaymentMethodBankDeclinedAuthenticationError,
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
@@ -71,6 +72,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     private hostedFormOptions?: HostedFormOptions;
     private returnedOrderId?: string;
     private returnedVaultedToken?: string;
+    private isBankDeclinedAuthentication = false;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -234,7 +236,9 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                     liabilityShift === LiabilityShiftEnum.No ||
                     liabilityShift === LiabilityShiftEnum.Unknown
                 ) {
-                    throw new Error();
+                    this.isBankDeclinedAuthentication = true;
+
+                    throw new PaymentMethodBankDeclinedAuthenticationError();
                 }
 
                 return this.handleApprove({ orderID, vaultSetupToken });
@@ -462,6 +466,8 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             },
         };
 
+        this.isBankDeclinedAuthentication = false;
+
         try {
             if (this.isCreditCardVaultedForm) {
                 await cardFields.submit();
@@ -469,6 +475,10 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                 await cardFields.submit(submitConfig);
             }
         } catch (_) {
+            if (this.isBankDeclinedAuthentication) {
+                throw new PaymentMethodBankDeclinedAuthenticationError();
+            }
+
             throw new PaymentMethodFailedError(
                 'Failed authentication. Please try to authorize again.',
             );
