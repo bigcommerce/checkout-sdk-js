@@ -70,6 +70,8 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         try {
             await this._initializeStripeElement(stripeocs, gatewayId, methodId);
+
+            this.stripeIntegrationService.cacheCheckoutStateVersions();
         } catch (error) {
             if (error instanceof Error) {
                 stripeocs.onError?.(error);
@@ -94,7 +96,9 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         await this.stripeIntegrationService.applyStoreCreditIfNeeded(useStoreCredit);
 
-        await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+        if (!this.stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId)) {
+            await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+        }
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
@@ -122,6 +126,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         paymentElement?.destroy();
         this.stripeElements = undefined;
         this.stripeClient = undefined;
+        this.stripeIntegrationService.clearCheckoutStateVersions();
 
         return Promise.resolve();
     }

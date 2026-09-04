@@ -806,6 +806,7 @@ export interface StripeInitializationData {
     adaptivePricingEnabled?: boolean;
     hasSectionOnTopOfPaymentsList?: boolean;
     asyncPaymentValidation?: boolean;
+    skipUnchangedCheckoutSessionUpdate?: boolean;
 }
 
 export interface StripeElementUpdateOptions {

@@ -9,6 +9,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCart,
     getCheckout,
     getConfig,
     getShippingAddress,
@@ -854,6 +855,82 @@ describe('StripeIntegrationService', () => {
             await stripeIntegrationService.verifyCheckoutSpamProtection();
 
             expect(paymentIntegrationService.verifyCheckoutSpamProtection).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#shouldSkipCheckoutStateUpdate', () => {
+        const methodId = 'checkout_session';
+        const gatewayId = 'stripeocs';
+
+        function mockSkipUnchangedCheckoutSessionUpdate(enabled: boolean) {
+            const paymentMethod = getStripeMock();
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    skipUnchangedCheckoutSessionUpdate: enabled,
+                },
+            });
+        }
+
+        it('returns false if the flag is disabled', () => {
+            mockSkipUnchangedCheckoutSessionUpdate(false);
+            stripeIntegrationService.cacheCheckoutStateVersions();
+
+            expect(
+                stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId),
+            ).toBe(false);
+        });
+
+        it('returns true if cart and checkout versions are unchanged', () => {
+            mockSkipUnchangedCheckoutSessionUpdate(true);
+            stripeIntegrationService.cacheCheckoutStateVersions();
+
+            expect(
+                stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId),
+            ).toBe(true);
+        });
+
+        it('returns false if the cart version changed', () => {
+            mockSkipUnchangedCheckoutSessionUpdate(true);
+            stripeIntegrationService.cacheCheckoutStateVersions();
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue({
+                ...getCart(),
+                version: getCart().version + 1,
+            });
+
+            expect(
+                stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId),
+            ).toBe(false);
+        });
+
+        it('returns false if the checkout version changed', () => {
+            mockSkipUnchangedCheckoutSessionUpdate(true);
+            stripeIntegrationService.cacheCheckoutStateVersions();
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckout').mockReturnValue({
+                ...getCheckout(),
+                version: getCheckout().version + 1,
+            });
+
+            expect(
+                stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId),
+            ).toBe(false);
+        });
+
+        it('returns false if cached versions were cleared', () => {
+            mockSkipUnchangedCheckoutSessionUpdate(true);
+            stripeIntegrationService.cacheCheckoutStateVersions();
+            stripeIntegrationService.clearCheckoutStateVersions();
+
+            expect(
+                stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId),
+            ).toBe(false);
         });
     });
 });

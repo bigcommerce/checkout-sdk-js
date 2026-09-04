@@ -574,6 +574,46 @@ describe('StripeOCSPaymentStrategy', () => {
             );
         });
 
+        describe('skipUnchangedCheckoutSessionUpdate', () => {
+            it('updates stripe payment intent if the checkout state changed', async () => {
+                jest.spyOn(
+                    stripeIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(false);
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+                await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+                expect(stripeIntegrationService.updateStripePaymentIntent).toHaveBeenCalledWith(
+                    gatewayId,
+                    methodId,
+                );
+            });
+
+            it('skips stripe payment intent update if the checkout state is unchanged', async () => {
+                jest.spyOn(
+                    stripeIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(true);
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+                await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+                expect(stripeIntegrationService.updateStripePaymentIntent).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            });
+
+            it('caches checkout state versions on initialize and clears them on deinitialize', async () => {
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+                expect(stripeIntegrationService.cacheCheckoutStateVersions).toHaveBeenCalled();
+
+                await stripeOCSPaymentStrategy.deinitialize();
+
+                expect(stripeIntegrationService.clearCheckoutStateVersions).toHaveBeenCalled();
+            });
+        });
+
         it('execute without additional actions with selected method in accordion', async () => {
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());

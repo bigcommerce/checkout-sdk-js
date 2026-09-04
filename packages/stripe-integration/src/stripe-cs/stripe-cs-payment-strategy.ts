@@ -81,6 +81,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         }
 
         this.stripeInitializationOptions = stripeocs;
+        this.stripeIntegrationService.cacheCheckoutStateVersions();
 
         try {
             await this._initStripeCheckoutSession(stripeocs, paymentMethod);
@@ -88,7 +89,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             const stripeActions = await this._getStripeActionsOrThrow();
 
             await this._updateStripeShopperData(stripeActions);
-            await this._updateStripeCheckoutSessionState(stripeActions);
 
             this._initializePaymentElement(stripeocs, paymentMethod);
             this._initializeAdaptivePricingElement(stripeocs, paymentMethod);
@@ -121,7 +121,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             this._getStripeActionsOrThrow(),
         ]);
 
-        await this._updateCheckoutSessionData(gatewayId, methodId, stripeActions);
+        await this._updateCheckoutSessionDataBeforePay(gatewayId, methodId, stripeActions);
         await this.paymentIntegrationService.submitOrder(order, options);
 
         const { id: stripeSessionId } = await stripeActions.getSession();
@@ -157,6 +157,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         this.stripeClient = undefined;
         this.selectedMethod = undefined;
         this.stripeInitializationOptions = undefined;
+        this.stripeIntegrationService.clearCheckoutStateVersions();
 
         return Promise.resolve();
     }
@@ -296,11 +297,15 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         stripeElement?.collapse();
     }
 
-    private async _updateCheckoutSessionData(
+    private async _updateCheckoutSessionDataBeforePay(
         gatewayId: string,
         methodId: string,
         stripeActions: StripeCheckoutSessionActions,
     ): Promise<void> {
+        if (this.stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId)) {
+            return;
+        }
+
         await this._updateStripeShopperData(stripeActions);
 
         // INFO: to trigger checkout session data update on the BE side we need to make stripe config request
@@ -441,7 +446,7 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
 
     private async _updateStripeCheckoutSessionState(
         stripeActions: StripeCheckoutSessionActions,
-        updateFn: () => Promise<unknown> = () => Promise.resolve(),
+        updateFn: () => Promise<unknown>,
     ): Promise<void> {
         const { type, error } = await stripeActions.runServerUpdate(updateFn);
 
