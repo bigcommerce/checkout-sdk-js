@@ -161,6 +161,10 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
+    getSelectedSubMethodId(): string | undefined {
+        return this.selectedMethod?.type;
+    }
+
     private async _initStripeCheckoutSession(
         stripe: StripeOCSPaymentInitializeOptions,
         paymentMethod: PaymentMethod<StripeInitializationData>,
@@ -280,14 +284,14 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         event: StripeEventType,
         gatewayId: string,
         methodId: string,
-        paymentMethodSelect?: (id: string) => void,
+        paymentMethodSelect?: (id: string, selectedSubMethod?: string) => void,
     ) {
         if (!isStripePaymentEvent(event) || event.collapsed) {
             return;
         }
 
         this.selectedMethod = event.value;
-        paymentMethodSelect?.(`${gatewayId}-${methodId}`);
+        paymentMethodSelect?.(`${gatewayId}-${methodId}`, this.selectedMethod?.type);
     }
 
     private _collapseStripeElement() {

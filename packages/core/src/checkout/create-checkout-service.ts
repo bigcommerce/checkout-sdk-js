@@ -224,6 +224,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
+            store,
+            checkoutActionCreator,
         ),
         new PickupOptionActionCreator(new PickupOptionRequestSender(experimentRequestSender)),
         new ShippingCountryActionCreator(

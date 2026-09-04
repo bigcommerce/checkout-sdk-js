@@ -169,4 +169,42 @@ describe('CheckoutRequestSender', () => {
             ).rejects.toThrow(EmptyCartError);
         });
     });
+
+    describe('reportCheckoutEvent', () => {
+        beforeEach(() => {
+            jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse(undefined));
+        });
+
+        it('sends expected params to requestSender', async () => {
+            await checkoutRequestSender.reportCheckoutEvent(
+                '6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
+                { event: 'order_placement_started' },
+            );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4/event',
+                {
+                    body: { event: 'order_placement_started' },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    timeout: undefined,
+                },
+            );
+        });
+
+        it('returns the response of the requestSender', async () => {
+            const eventResponse = getResponse(undefined);
+
+            jest.spyOn(requestSender, 'post').mockResolvedValue(eventResponse);
+
+            expect(
+                await checkoutRequestSender.reportCheckoutEvent(
+                    '6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
+                    { event: 'order_placement_started' },
+                ),
+            ).toEqual(eventResponse);
+        });
+    });
 });

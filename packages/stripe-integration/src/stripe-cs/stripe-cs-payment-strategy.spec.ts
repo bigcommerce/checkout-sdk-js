@@ -922,6 +922,12 @@ describe('StripeOCSPaymentStrategy', () => {
         });
     });
 
+    describe('#getSelectedSubMethodId()', () => {
+        it('returns undefined before any payment method has been selected', () => {
+            expect(stripeCSPaymentStrategy.getSelectedSubMethodId()).toBeUndefined();
+        });
+    });
+
     describe('#deinitialize()', () => {
         let unmountMock: jest.Mock;
         let destroyMock: jest.Mock;
@@ -1311,7 +1317,60 @@ describe('StripeOCSPaymentStrategy', () => {
                     },
                 },
             });
-            expect(paymentMethodSelectMock).toHaveBeenCalledWith(`${gatewayId}-${methodId}`);
+            expect(paymentMethodSelectMock).toHaveBeenCalledWith(
+                `${gatewayId}-${methodId}`,
+                StripePaymentMethodType.CreditCard,
+            );
+        });
+
+        it('passes the selected sub method type to paymentMethodSelect', async () => {
+            const eventMock = {
+                ...StripeEventMock,
+                collapsed: false,
+                value: {
+                    type: StripePaymentMethodType.ACH,
+                },
+            };
+            const createMock = jest.fn().mockImplementation(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(eventMock)),
+                update: jest.fn(),
+                destroy: jest.fn(),
+            }));
+            const paymentMethodSelectMock = jest.fn();
+
+            jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                Promise.resolve({
+                    ...getStripeCheckoutInstanceMock(),
+                    createPaymentElement: jest.fn(() => createMock()),
+                }),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getStripeOCSMock(methodId));
+
+            await stripeCSPaymentStrategy.initialize({
+                ...stripeOptions,
+                methodId,
+                stripeocs: {
+                    ...stripeOptions.stripeocs,
+                    render: jest.fn(),
+                    containerId: 'containerId',
+                    paymentMethodSelect: paymentMethodSelectMock,
+                },
+            });
+            await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
+
+            expect(paymentMethodSelectMock).toHaveBeenCalledWith(
+                `${gatewayId}-${methodId}`,
+                StripePaymentMethodType.ACH,
+            );
+            expect(stripeCSPaymentStrategy.getSelectedSubMethodId()).toBe(
+                StripePaymentMethodType.ACH,
+            );
         });
 
         it('does not change selected payment method id if accordion collapsed', async () => {
