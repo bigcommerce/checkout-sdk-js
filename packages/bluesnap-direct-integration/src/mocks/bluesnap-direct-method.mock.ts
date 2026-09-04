@@ -14,5 +14,6 @@ export function getBlueSnapDirect(): PaymentMethod {
         method: 'credit_card',
         supportedCards: ['AMEX', 'CUP', 'DINERS', 'DISCOVER', 'JCB', 'MC', 'VISA'],
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }

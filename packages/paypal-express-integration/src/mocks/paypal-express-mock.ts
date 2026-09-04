@@ -13,6 +13,7 @@ export function getPaypalExpress(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }
 

@@ -14,5 +14,6 @@ export function getAfterpay(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        skipRedirectConfirmationAlert: true,
     };
 }

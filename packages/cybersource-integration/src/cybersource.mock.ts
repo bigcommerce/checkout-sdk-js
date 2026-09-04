@@ -13,5 +13,6 @@ export function getCybersource(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'cyberToken',
+        skipRedirectConfirmationAlert: true,
     };
 }

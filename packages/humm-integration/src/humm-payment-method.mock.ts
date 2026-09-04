@@ -10,5 +10,6 @@ export function getHumm(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }

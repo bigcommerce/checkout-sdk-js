@@ -16,5 +16,6 @@ export function getBraintreeAchPaymentMethod(): PaymentMethod {
             isAcceleratedCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }

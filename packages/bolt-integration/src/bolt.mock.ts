@@ -83,5 +83,6 @@ export function getBolt(): PaymentMethod {
             embeddedOneClickEnabled: false,
         },
         clientToken: 'clientToken',
+        skipRedirectConfirmationAlert: true,
     };
 }

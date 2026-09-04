@@ -42,7 +42,6 @@ async function getBaseConfig(_options, argv = {}) {
             buildDependencies: {
                 config: [__filename],
             },
-            version: libraryVersion,
         },
         stats: {
             errorDetails: true,
@@ -62,7 +61,7 @@ async function getBaseConfig(_options, argv = {}) {
                     },
                 },
                 {
-                    test: /\.[tj]s$/,
+                    test: /\.js$/,
                     enforce: 'pre',
                     loader: require.resolve('source-map-loader'),
                 },

@@ -24,5 +24,6 @@ export function getSquareV2(isSquareV2ApiV2Enabled: boolean): PaymentMethod {
                 nonce: undefined,
             },
         },
+        skipRedirectConfirmationAlert: true,
     };
 }

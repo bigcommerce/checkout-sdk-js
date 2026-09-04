@@ -165,5 +165,6 @@ export function getMollie(): PaymentMethod {
             locale: 'en-US',
         },
         type: 'PAYMENT_TYPE_API',
+        skipRedirectConfirmationAlert: true,
     };
 }

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const packagesDir = path.join(__dirname, '../../packages');
-const tsConfigFile = path.join(__dirname, '../../tsconfig.base.json');
+const tsConfigFile = path.join(__dirname, '../../tsconfig.typecheck.json');
 const projects = Object.fromEntries(
     fs
         .readdirSync(packagesDir, { withFileTypes: true })
@@ -27,6 +27,7 @@ for (const [packageName, packagePath] of Object.entries(projects)) {
         options: {
             configFile: tsConfigFile,
             onlyCompileBundledFiles: true,
+            transpileOnly: true,
         },
     });
 
