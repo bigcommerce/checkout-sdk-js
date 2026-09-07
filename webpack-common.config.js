@@ -35,6 +35,8 @@ const libraryEntries = {
 
 async function getBaseConfig(_options, argv = {}) {
     const libraryVersion = await getNextVersion();
+    const isWatch = Boolean(process.env.WATCH);
+    const mode = isWatch ? 'development' : 'production';
 
     return {
         cache: {
@@ -48,7 +50,7 @@ async function getBaseConfig(_options, argv = {}) {
             logging: 'verbose',
         },
         devtool: 'source-map',
-        mode: 'production',
+        mode,
         resolve: {
             extensions: ['.ts', '.js'],
             alias,
@@ -71,14 +73,21 @@ async function getBaseConfig(_options, argv = {}) {
         plugins: [
             new DefinePlugin({
                 LIBRARY_VERSION: JSON.stringify(libraryVersion),
-                'process.env.NODE_ENV': JSON.stringify(
-                    process.env.NODE_ENV || argv.mode || 'production',
-                ),
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || mode),
                 'process.env.ESSENTIAL_BUILD': JSON.stringify(
                     process.env.ESSENTIAL_BUILD || argv.essentialBuild || false,
                 ),
             }),
         ],
+        ...(isWatch && {
+            optimization: {
+                minimize: false,
+            },
+            watchOptions: {
+                ignored: /node_modules/,
+                aggregateTimeout: 300,
+            },
+        }),
     };
 }
 
