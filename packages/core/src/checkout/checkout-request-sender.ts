@@ -8,7 +8,7 @@ import {
     SDK_VERSION_HEADERS,
 } from '../common/http-request';
 
-import Checkout, { CheckoutRequestBody } from './checkout';
+import Checkout, { CheckoutEventRequestBody, CheckoutRequestBody } from './checkout';
 import CHECKOUT_DEFAULT_INCLUDES from './checkout-default-includes';
 import CheckoutParams from './checkout-params';
 import { CheckoutNotAvailableError } from './errors';
@@ -80,5 +80,19 @@ export default class CheckoutRequestSender {
         };
 
         return this._requestSender.delete<void>(url, { headers, timeout });
+    }
+
+    reportCheckoutEvent(
+        id: string,
+        body: CheckoutEventRequestBody,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<void>> {
+        const url = `/api/storefront/checkout/${id}/event`;
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
+
+        return this._requestSender.post<void>(url, { body, headers, timeout });
     }
 }

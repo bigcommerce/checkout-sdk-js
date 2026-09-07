@@ -50,6 +50,10 @@ describe('CheckoutActionCreator', () => {
             Promise.resolve(getResponse(getCheckout())),
         );
 
+        jest.spyOn(checkoutRequestSender, 'reportCheckoutEvent').mockReturnValue(
+            Promise.resolve(getResponse(undefined)),
+        );
+
         configActionCreator = new ConfigActionCreator(configRequestSender);
 
         jest.spyOn(configActionCreator, 'loadConfig');
@@ -283,6 +287,65 @@ describe('CheckoutActionCreator', () => {
                     payload: getErrorResponse(),
                 },
             ]);
+        });
+    });
+
+    describe('#reportCheckoutEvent', () => {
+        it('calls checkout request sender with the current checkout id', async () => {
+            await from(
+                actionCreator.reportCheckoutEvent({ event: 'order_placement_started' })(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(checkoutRequestSender.reportCheckoutEvent).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                { event: 'order_placement_started' },
+                undefined,
+            );
+        });
+
+        it('emits action to notify reporting progress', async () => {
+            const actions = await from(
+                actionCreator.reportCheckoutEvent({ event: 'order_placement_started' })(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CheckoutActionType.ReportCheckoutEventRequested },
+                { type: CheckoutActionType.ReportCheckoutEventSucceeded },
+            ]);
+        });
+
+        it('emits a failed action but does not throw if the request fails', async () => {
+            jest.spyOn(checkoutRequestSender, 'reportCheckoutEvent').mockReturnValue(
+                Promise.reject(getErrorResponse()),
+            );
+
+            const actions = await from(
+                actionCreator.reportCheckoutEvent({ event: 'order_placement_started' })(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CheckoutActionType.ReportCheckoutEventRequested },
+                { type: CheckoutActionType.ReportCheckoutEventFailed },
+            ]);
+        });
+
+        it('completes without emitting an action if there is no current checkout', async () => {
+            store = createCheckoutStore();
+
+            const actions = await from(
+                actionCreator.reportCheckoutEvent({ event: 'order_placement_started' })(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([]);
+            expect(checkoutRequestSender.reportCheckoutEvent).not.toHaveBeenCalled();
         });
     });
 

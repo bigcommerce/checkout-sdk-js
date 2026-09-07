@@ -17,9 +17,17 @@ export enum CheckoutActionType {
     DeleteCheckoutRequested = 'DELETE_CHECKOUT_REQUESTED',
     DeleteCheckoutSucceeded = 'DELETE_CHECKOUT_SUCCEEDED',
     DeleteCheckoutFailed = 'DELETE_CHECKOUT_FAILED',
+
+    ReportCheckoutEventRequested = 'REPORT_CHECKOUT_EVENT_REQUESTED',
+    ReportCheckoutEventSucceeded = 'REPORT_CHECKOUT_EVENT_SUCCEEDED',
+    ReportCheckoutEventFailed = 'REPORT_CHECKOUT_EVENT_FAILED',
 }
 
-export type CheckoutAction = LoadCheckoutAction | UpdateCheckoutAction | DeleteCheckoutAction;
+export type CheckoutAction =
+    | LoadCheckoutAction
+    | UpdateCheckoutAction
+    | DeleteCheckoutAction
+    | ReportCheckoutEventAction;
 
 export type LoadCheckoutAction =
     | LoadCheckoutRequestedAction
@@ -37,6 +45,11 @@ export type DeleteCheckoutAction =
     | DeleteCheckoutRequestedAction
     | DeleteCheckoutSucceededAction
     | DeleteCheckoutFailedAction;
+
+export type ReportCheckoutEventAction =
+    | ReportCheckoutEventRequestedAction
+    | ReportCheckoutEventSucceededAction
+    | ReportCheckoutEventFailedAction;
 
 export interface LoadCheckoutRequestedAction extends Action {
     type: CheckoutActionType.LoadCheckoutRequested;
@@ -72,4 +85,16 @@ export interface DeleteCheckoutSucceededAction extends Action {
 
 export interface DeleteCheckoutFailedAction extends Action<Error> {
     type: CheckoutActionType.DeleteCheckoutFailed;
+}
+
+export interface ReportCheckoutEventRequestedAction extends Action {
+    type: CheckoutActionType.ReportCheckoutEventRequested;
+}
+
+export interface ReportCheckoutEventSucceededAction extends Action {
+    type: CheckoutActionType.ReportCheckoutEventSucceeded;
+}
+
+export interface ReportCheckoutEventFailedAction extends Action {
+    type: CheckoutActionType.ReportCheckoutEventFailed;
 }

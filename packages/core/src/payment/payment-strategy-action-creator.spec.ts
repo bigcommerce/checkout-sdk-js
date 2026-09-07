@@ -21,6 +21,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    CheckoutActionCreator,
     CheckoutRequestSender,
     CheckoutStore,
     CheckoutStoreState,
@@ -34,6 +35,7 @@ import {
 } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { ResolveIdRegistry } from '../common/registry';
+import { getConfig } from '../config/configs.mock';
 import { getCustomerState } from '../customer/customers.mock';
 import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { HostedFormFactory } from '../hosted-form';
@@ -56,7 +58,9 @@ import PaymentActionCreator from './payment-action-creator';
 import { getPaymentMethod } from './payment-methods.mock';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
-import PaymentStrategyActionCreator from './payment-strategy-action-creator';
+import PaymentStrategyActionCreator, {
+    ORDER_PLACEMENT_START_SERVER_EVENT,
+} from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import { PaymentStrategy } from './strategies';
@@ -78,6 +82,7 @@ describe('PaymentStrategyActionCreator', () => {
     let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let actionCreator: PaymentStrategyActionCreator;
     let paymentIntegrationService: PaymentIntegrationService;
+    let checkoutActionCreator: CheckoutActionCreator;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
@@ -120,12 +125,19 @@ describe('PaymentStrategyActionCreator', () => {
             spamProtection,
             new SpamProtectionRequestSender(requestSender),
         );
+        checkoutActionCreator = {
+            reportCheckoutEvent: jest
+                .fn()
+                .mockReturnValue(of(createAction('REPORT_CHECKOUT_EVENT'))),
+        } as unknown as CheckoutActionCreator;
         actionCreator = new PaymentStrategyActionCreator(
             registry,
             registryV2,
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
+            store,
+            checkoutActionCreator,
         );
 
         jest.spyOn(registry, 'getByMethod').mockReturnValue(strategy);
@@ -269,6 +281,8 @@ describe('PaymentStrategyActionCreator', () => {
                     orderActionCreator,
                     spamProtectionActionCreator,
                     paymentIntegrationService,
+                    store,
+                    checkoutActionCreator,
                 );
             });
 
@@ -701,6 +715,88 @@ describe('PaymentStrategyActionCreator', () => {
             ]);
         });
 
+        describe('order placement start event', () => {
+            const enableExperiment = (enabled: boolean) => {
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {
+                            [ORDER_PLACEMENT_START_SERVER_EVENT]: enabled,
+                        },
+                    },
+                });
+            };
+
+            it('reports the event when the experiment is enabled', async () => {
+                enableExperiment(true);
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(checkoutActionCreator.reportCheckoutEvent).toHaveBeenCalledWith({
+                    event: 'order_placement_started',
+                    payment_provider_id: 'authorizenet',
+                    payment_method_id: 'authorizenet',
+                });
+            });
+
+            it('dispatches the event on its own queue', async () => {
+                enableExperiment(true);
+                jest.spyOn(store, 'dispatch');
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(store.dispatch).toHaveBeenCalledWith(expect.anything(), {
+                    queueId: 'reportCheckoutEvent',
+                });
+            });
+
+            it('does not report the event when the experiment is disabled', async () => {
+                enableExperiment(false);
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(checkoutActionCreator.reportCheckoutEvent).not.toHaveBeenCalled();
+            });
+
+            it('does not report the event when the feature key is missing entirely', async () => {
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {},
+                    },
+                });
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(checkoutActionCreator.reportCheckoutEvent).not.toHaveBeenCalled();
+            });
+
+            it('uses the sub-method id exposed by the strategy when available', async () => {
+                enableExperiment(true);
+                (
+                    strategy as unknown as { getSelectedSubMethodId: () => string }
+                ).getSelectedSubMethodId = jest.fn().mockReturnValue('klarna');
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(checkoutActionCreator.reportCheckoutEvent).toHaveBeenCalledWith(
+                    expect.objectContaining({ payment_method_id: 'klarna' }),
+                );
+            });
+        });
+
         it('throws error if payment method is not found or loaded', async () => {
             store = createCheckoutStore({
                 ...state,
@@ -714,6 +810,8 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
                 paymentIntegrationService,
+                store,
+                checkoutActionCreator,
             );
 
             try {
@@ -743,6 +841,8 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
                 paymentIntegrationService,
+                store,
+                checkoutActionCreator,
             );
             const payload = { ...getOrderRequestBody(), useStoreCredit: true };
 
@@ -752,6 +852,50 @@ describe('PaymentStrategyActionCreator', () => {
             expect(noPaymentDataStrategy.execute).toHaveBeenCalledWith(payload, {
                 methodId: payload.payment && payload.payment.methodId,
                 gatewayId: payload.payment && payload.payment.gatewayId,
+            });
+        });
+
+        it('reports the event when the nopaymentrequired strategy is used', async () => {
+            store = createCheckoutStore({
+                ...state,
+                customer: merge({}, getCustomerState(), {
+                    data: {
+                        storeCredit: 9999,
+                    },
+                }),
+            });
+
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        [ORDER_PLACEMENT_START_SERVER_EVENT]: true,
+                    },
+                },
+            });
+
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
+
+            jest.spyOn(registryV2, 'get').mockReturnValue(noPaymentDataStrategy);
+
+            const actionCreator = new PaymentStrategyActionCreator(
+                registry,
+                registryV2,
+                orderActionCreator,
+                spamProtectionActionCreator,
+                paymentIntegrationService,
+                store,
+                checkoutActionCreator,
+            );
+            const payload = { ...getOrderRequestBody(), useStoreCredit: true };
+
+            await from(actionCreator.execute(payload)(store)).toPromise();
+
+            expect(checkoutActionCreator.reportCheckoutEvent).toHaveBeenCalledWith({
+                event: 'order_placement_started',
+                payment_provider_id: 'authorizenet',
+                payment_method_id: 'authorizenet',
             });
         });
     });
@@ -853,6 +997,8 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
                 paymentIntegrationService,
+                store,
+                checkoutActionCreator,
             );
             const strategyV2 = new CreditCardPaymentStrategyV2(
                 createPaymentIntegrationService(store),
@@ -886,6 +1032,8 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
                 paymentIntegrationService,
+                store,
+                checkoutActionCreator,
             );
 
             try {

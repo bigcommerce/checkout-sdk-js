@@ -121,6 +121,7 @@ import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-cre
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import CheckoutActionCreator from './checkout-action-creator';
+import { CheckoutActionType } from './checkout-actions';
 import CheckoutInitialState from './checkout-initial-state';
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutSelectors from './checkout-selectors';
@@ -324,6 +325,9 @@ describe('CheckoutService', () => {
         jest.spyOn(checkoutRequestSender, 'updateCheckout').mockResolvedValue(
             getResponse(getCheckout()),
         );
+        jest.spyOn(checkoutRequestSender, 'reportCheckoutEvent').mockResolvedValue(
+            getResponse(undefined),
+        );
 
         couponRequestSender = new CouponRequestSender(requestSender);
 
@@ -449,6 +453,8 @@ describe('CheckoutService', () => {
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
+            store,
+            checkoutActionCreator,
         );
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
@@ -638,6 +644,39 @@ describe('CheckoutService', () => {
             const state = await checkoutService.loadCheckout();
 
             expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
+        });
+    });
+
+    describe('#reportCheckoutEvent()', () => {
+        const body = { event: 'order_placement_started' };
+
+        beforeEach(() => {
+            jest.spyOn(checkoutActionCreator, 'reportCheckoutEvent');
+        });
+
+        it('calls reportCheckoutEvent action creator with the given body', () => {
+            checkoutService.reportCheckoutEvent(body);
+
+            expect(checkoutActionCreator.reportCheckoutEvent).toHaveBeenCalledWith(body, undefined);
+        });
+
+        it('dispatches on its own queue so it never blocks other checkout actions', () => {
+            const action = () => of(createAction(CheckoutActionType.ReportCheckoutEventRequested));
+
+            jest.spyOn(checkoutActionCreator, 'reportCheckoutEvent').mockReturnValue(action);
+            jest.spyOn(store, 'dispatch');
+
+            checkoutService.reportCheckoutEvent(body);
+
+            expect(store.dispatch).toHaveBeenCalledWith(action, {
+                queueId: 'reportCheckoutEvent',
+            });
+        });
+
+        it('returns a promise that resolves to the current state', async () => {
+            const state = await checkoutService.reportCheckoutEvent(body);
+
+            expect(state).toEqual(checkoutService.getState());
         });
     });
 

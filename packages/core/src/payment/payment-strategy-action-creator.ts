@@ -7,7 +7,12 @@ import {
     PaymentStrategy as PaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutStore,
+    InternalCheckoutSelectors,
+    ReadableCheckoutStore,
+} from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -42,6 +47,8 @@ import PaymentStrategyType from './payment-strategy-type';
 import PaymentStrategyWidgetActionCreator from './payment-strategy-widget-action-creator';
 import { PaymentStrategy } from './strategies';
 
+export const ORDER_PLACEMENT_START_SERVER_EVENT = 'PROJECT-8686.order_placement_start_server_event';
+
 export default class PaymentStrategyActionCreator {
     private _paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator;
 
@@ -58,6 +65,8 @@ export default class PaymentStrategyActionCreator {
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentIntegrationService: PaymentIntegrationService,
+        private _store: CheckoutStore,
+        private _checkoutActionCreator: CheckoutActionCreator,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -99,6 +108,8 @@ export default class PaymentStrategyActionCreator {
                             id: PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED,
                         });
                     }
+
+                    this._reportOrderPlacementStart(strategy, payment);
 
                     const promise: Promise<InternalCheckoutSelectors | void> = strategy.execute(
                         payload,
@@ -313,6 +324,31 @@ export default class PaymentStrategyActionCreator {
 
     private _getCacheKey(methodId: string, gatewayId?: string): string {
         return gatewayId ? `${methodId}.${gatewayId}` : methodId;
+    }
+
+    private _reportOrderPlacementStart(
+        strategy: PaymentStrategy | PaymentStrategyV2,
+        payment: OrderPaymentRequestBody,
+    ): void {
+        const checkoutSettings = this._store.getState().config.getStoreConfig()?.checkoutSettings;
+
+        if (!checkoutSettings?.features[ORDER_PLACEMENT_START_SERVER_EVENT]) {
+            return;
+        }
+
+        const selectedSubMethodId =
+            'getSelectedSubMethodId' in strategy ? strategy.getSelectedSubMethodId?.() : undefined;
+
+        this._store
+            .dispatch(
+                this._checkoutActionCreator.reportCheckoutEvent({
+                    event: 'order_placement_started',
+                    payment_provider_id: payment.gatewayId ?? payment.methodId,
+                    payment_method_id: selectedSubMethodId ?? payment.methodId,
+                }),
+                { queueId: 'reportCheckoutEvent' },
+            )
+            .catch(() => {});
     }
 
     private _getStrategy(method: PaymentMethod): PaymentStrategy | PaymentStrategyV2 {

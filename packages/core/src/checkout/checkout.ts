@@ -64,6 +64,12 @@ export interface CheckoutRequestBody {
     customerMessage: string;
 }
 
+export interface CheckoutEventRequestBody {
+    event: string;
+    payment_provider_id?: string;
+    payment_method_id?: string;
+}
+
 export interface CheckoutPayment {
     detail: {
         step: string;

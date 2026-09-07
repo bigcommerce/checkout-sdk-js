@@ -68,7 +68,7 @@ import { SpamProtectionActionCreator, SpamProtectionOptions } from '../spam-prot
 import { StoreCreditActionCreator } from '../store-credit';
 import { Subscriptions, SubscriptionsActionCreator } from '../subscription';
 
-import { CheckoutRequestBody } from './checkout';
+import { CheckoutEventRequestBody, CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutInitialState from './checkout-initial-state';
 import CheckoutParams from './checkout-params';
@@ -284,6 +284,15 @@ export default class CheckoutService {
         const action = this._checkoutActionCreator.deleteCheckout(options);
 
         return this._dispatch(action);
+    }
+
+    reportCheckoutEvent(
+        body: CheckoutEventRequestBody,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
+        const action = this._checkoutActionCreator.reportCheckoutEvent(body, options);
+
+        return this._dispatch(action, { queueId: 'reportCheckoutEvent' });
     }
 
     /**

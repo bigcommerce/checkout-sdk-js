@@ -15,3 +15,7 @@ export default interface StripePaymentInitializeOptions {
 
     render(): void;
 }
+
+export interface WithSelectedSubMethod {
+    paymentMethodSelect?(methodId: string, selectedSubMethod?: string): void;
+}

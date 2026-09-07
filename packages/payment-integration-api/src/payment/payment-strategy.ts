@@ -11,4 +11,6 @@ export default interface PaymentStrategy {
     initialize(options?: PaymentInitializeOptions): Promise<void>;
 
     deinitialize(options?: PaymentRequestOptions): Promise<void>;
+
+    getSelectedSubMethodId?(): string | undefined;
 }
