@@ -790,6 +790,32 @@ describe('GooglePayButtonStrategy', () => {
                 expect(processor.setIsWebViewExperimentOn).toHaveBeenCalledWith(false);
             });
 
+            it('should forward filterAvailableShippingOptions to the processor', async () => {
+                const filterAvailableShippingOptions = jest.fn();
+
+                jest.spyOn(processor, 'setFilterAvailableShippingOptions');
+
+                await buttonStrategy.initialize({
+                    ...withBuyNowOptions,
+                    googlepaybraintree: {
+                        ...withBuyNowOptions.googlepaybraintree,
+                        filterAvailableShippingOptions,
+                    },
+                });
+
+                expect(processor.setFilterAvailableShippingOptions).toHaveBeenCalledWith(
+                    filterAvailableShippingOptions,
+                );
+            });
+
+            it('should forward undefined to the processor when no filter is provided', async () => {
+                jest.spyOn(processor, 'setFilterAvailableShippingOptions');
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                expect(processor.setFilterAvailableShippingOptions).toHaveBeenCalledWith(undefined);
+            });
+
             it('should call setIsWebViewExperimentOn before processor.initialize', async () => {
                 const callOrder: string[] = [];
 

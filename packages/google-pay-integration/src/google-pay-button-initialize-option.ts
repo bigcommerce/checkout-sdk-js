@@ -1,3 +1,5 @@
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { GooglePayKey } from './google-pay-payment-initialize-options';
 import {
     GooglePayButtonColor,
@@ -30,6 +32,15 @@ export interface GooglePayButtonInitializeOptions {
      * The option that is required to load payment method configuration for provided currency code in Buy Now flow.
      */
     currencyCode?: string;
+
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (
+        shippingOptions: ShippingOption[],
+    ) => Promise<ShippingOption[]>;
 
     /**
      * A callback that gets called when GooglePay fails to initialize or
