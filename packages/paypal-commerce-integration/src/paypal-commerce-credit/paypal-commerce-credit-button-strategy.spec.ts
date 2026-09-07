@@ -23,6 +23,7 @@ import {
     getPayPalPaymentMethod,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
+    PaypalButtonCreationService,
     PayPalButtonsOptions,
     PayPalHostWindow,
     PayPalIntegrationService,
@@ -42,6 +43,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
     let paypalButtonElement: HTMLDivElement;
     let paypalCommerceIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
+    let paypalButtonCreationService: PaypalButtonCreationService;
 
     const defaultMethodId = 'paypalcommercecredit';
     const defaultButtonContainerId = 'paypal-commerce-credit-button-mock-id';
@@ -109,10 +111,15 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         paymentMethod = getPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        paypalButtonCreationService = new PaypalButtonCreationService(
+            paymentIntegrationService,
+            paypalCommerceIntegrationService,
+        );
 
         strategy = new PayPalCommerceCreditButtonStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
+            paypalButtonCreationService,
         );
 
         paypalButtonElement = document.createElement('div');

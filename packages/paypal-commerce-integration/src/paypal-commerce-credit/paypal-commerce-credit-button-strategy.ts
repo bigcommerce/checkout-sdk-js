@@ -2,19 +2,13 @@ import {
     CheckoutButtonInitializeOptions,
     CheckoutButtonStrategy,
     InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    ApproveCallbackActions,
-    ApproveCallbackPayload,
-    PayPalButtonsOptions,
+    PaypalButtonCreationService,
     PayPalBuyNowInitializeOptions,
     PayPalInitializationData,
     PayPalIntegrationService,
-    ShippingAddressChangeCallbackPayload,
-    ShippingOptionChangeCallbackPayload,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceCreditButtonInitializeOptions, {
@@ -25,6 +19,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalIntegrationService: PayPalIntegrationService,
+        private paypalButtonCreationService: PaypalButtonCreationService,
     ) {}
 
     async initialize(
@@ -107,32 +102,9 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         const { isHostedCheckoutEnabled, isServerSideShippingCallbacksEnabled } =
             paymentMethod.initializationData || {};
 
-        const defaultCallbacks = {
-            createOrder: () => this.paypalIntegrationService.createOrder('paypalcommercecredit'),
-            onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalIntegrationService.tokenizePayment(methodId, orderID),
-        };
-
         const buyNowFlowCallbacks = {
             onClick: () => this.handleClick(buyNowInitializeOptions),
             onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
-        };
-
-        const hostedCheckoutCallbacks = {
-            ...(!isServerSideShippingCallbacksEnabled && {
-                onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                    this.onShippingAddressChange(data),
-                onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                    this.onShippingOptionsChange(data),
-            }),
-            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this.onHostedCheckoutApprove(
-                    data,
-                    actions,
-                    methodId,
-                    onComplete,
-                    isServerSideShippingCallbacksEnabled,
-                ),
         };
 
         const fundingSources = [paypalSdk.FUNDING.PAYLATER, paypalSdk.FUNDING.CREDIT];
@@ -140,15 +112,22 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
 
         fundingSources.forEach((fundingSource) => {
             if (!hasRenderedSmartButton) {
-                const buttonRenderOptions: PayPalButtonsOptions = {
+                const buttonRenderOptions = {
                     fundingSource,
                     style: this.paypalIntegrationService.getValidButtonStyle(style),
-                    ...defaultCallbacks,
+                    isHostedCheckoutEnabled,
+                    isServerSideShippingCallbacksEnabled,
+                    buyNowInitializeOptions,
+                    ...(isHostedCheckoutEnabled &&
+                        onComplete && { onPaymentComplete: () => onComplete() }),
                     ...(buyNowInitializeOptions && buyNowFlowCallbacks),
-                    ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
                 };
 
-                const paypalButton = paypalSdk.Buttons(buttonRenderOptions);
+                const paypalButton = this.paypalButtonCreationService.createPayPalButton(
+                    'paypalcommerce',
+                    methodId,
+                    buttonRenderOptions,
+                );
 
                 if (paypalButton.isEligible()) {
                     paypalButton.render(`#${containerId}`);
@@ -173,120 +152,6 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
             );
 
             await this.paymentIntegrationService.loadCheckout(buyNowCart.id);
-        }
-    }
-
-    private async onHostedCheckoutApprove(
-        data: ApproveCallbackPayload,
-        actions: ApproveCallbackActions,
-        methodId: string,
-        onComplete?: () => void,
-        isServerSideShippingCallbacksEnabled?: boolean,
-    ): Promise<boolean> {
-        if (!data.orderID) {
-            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
-        }
-
-        const state = this.paymentIntegrationService.getState();
-        const cart = state.getCartOrThrow();
-
-        try {
-            const hasPhysicalItems = cart.lineItems.physicalItems.length > 0;
-
-            if (!isServerSideShippingCallbacksEnabled) {
-                const orderDetails = await actions.order.get();
-
-                const billingAddress =
-                    this.paypalIntegrationService.getBillingAddressFromOrderDetails(orderDetails);
-
-                await this.paymentIntegrationService.updateBillingAddress(billingAddress);
-
-                if (hasPhysicalItems) {
-                    const shippingAddress =
-                        this.paypalIntegrationService.getShippingAddressFromOrderDetails(
-                            orderDetails,
-                        );
-
-                    await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                }
-            }
-
-            if (hasPhysicalItems) {
-                await this.paypalIntegrationService.updateOrder(
-                    'paypalcommerce',
-                    undefined,
-                    undefined,
-                    isServerSideShippingCallbacksEnabled,
-                );
-            }
-
-            if (isServerSideShippingCallbacksEnabled) {
-                await this.paymentIntegrationService.loadCheckout();
-            }
-
-            await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
-
-            await this.paypalIntegrationService.submitPayment(methodId, data.orderID);
-
-            if (onComplete && typeof onComplete === 'function') {
-                onComplete();
-            }
-
-            return true; // FIXME: Do we really need to return true here?
-        } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
-        }
-    }
-
-    private async onShippingAddressChange(
-        data: ShippingAddressChangeCallbackPayload,
-    ): Promise<void> {
-        const address = this.paypalIntegrationService.getAddress({
-            city: data.shippingAddress.city,
-            countryCode: data.shippingAddress.countryCode,
-            postalCode: data.shippingAddress.postalCode,
-            stateOrProvinceCode: data.shippingAddress.state,
-        });
-
-        try {
-            // Info: we use the same address to fill billing and shipping addresses to have valid quota on BE for order updating process
-            // on this stage we don't have access to valid customer's address accept shipping data
-            await this.paymentIntegrationService.updateBillingAddress(address);
-            await this.paymentIntegrationService.updateShippingAddress(address);
-
-            const shippingOption = this.paypalIntegrationService.getShippingOptionOrThrow();
-
-            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalIntegrationService.updateOrder('paypalcommerce');
-        } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
-        }
-    }
-
-    private async onShippingOptionsChange(
-        data: ShippingOptionChangeCallbackPayload,
-    ): Promise<void> {
-        const shippingOption = this.paypalIntegrationService.getShippingOptionOrThrow(
-            data.selectedShippingOption.id,
-        );
-
-        try {
-            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalIntegrationService.updateOrder('paypalcommerce');
-        } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
         }
     }
 }

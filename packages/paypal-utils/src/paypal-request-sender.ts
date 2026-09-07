@@ -19,10 +19,10 @@ export default class PayPalRequestSender {
     constructor(private requestSender: RequestSender) {}
 
     async createOrder(
-        providerId: string,
+        methodId: string,
         requestBody: Partial<PayPalCreateOrderRequestBody>,
     ): Promise<PayPalOrderData> {
-        const url = `/api/storefront/payment/${providerId}`;
+        const url = `/api/storefront/payment/${methodId}`;
         const body = requestBody;
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
