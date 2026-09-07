@@ -5,7 +5,9 @@ import { EventEmitter } from 'events';
 
 import {
     BillingAddressRequestBody,
+    consumePendingAdditionalActionRedirect,
     InvalidArgumentError,
+    markPendingAdditionalActionRedirect,
     MissingDataError,
     MissingDataErrorType,
     OrderFinalizationNotRequiredError,
@@ -16,6 +18,7 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
+    PaymentStatusTypes,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCart,
@@ -396,6 +399,14 @@ describe('GooglePayPaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(processor.processAdditionalAction).toHaveBeenCalledWith('error', 'example');
+        });
+
+        it('marks the method as pending an additional-action redirect before processing it', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
+
+            await strategy.execute(payload);
+
+            expect(consumePendingAdditionalActionRedirect('example')).toBe(true);
         });
 
         describe('should fail if:', () => {
@@ -1155,8 +1166,72 @@ describe('GooglePayPaymentStrategy', () => {
     });
 
     describe('#finalize', () => {
-        it('should finalize the strategy', async () => {
+        beforeEach(() => {
+            // `finalizeOrder`/`getPaymentStatus` are module-level singleton
+            // mocks shared by every `PaymentIntegrationServiceMock` instance,
+            // so a `mockReturnValue`/`mockRejectedValue` set by one test would
+            // otherwise leak into the next.
+            window.sessionStorage.clear();
+            jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReset();
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReset();
+        });
+
+        it('rejects with OrderFinalizationNotRequiredError when payment status is not FINALIZE', async () => {
             const finalize = strategy.finalize();
+
+            await expect(finalize).rejects.toThrow(OrderFinalizationNotRequiredError);
+        });
+
+        it('finalizes the order when returning from a 3DS redirect with a pending payment status', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.FINALIZE,
+            );
+
+            await strategy.finalize();
+
+            expect(paymentIntegrationService.finalizeOrder).toHaveBeenCalled();
+        });
+
+        it('surfaces the finalize order error instead of swallowing it', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.FINALIZE,
+            );
+            jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockRejectedValue(
+                new Error('Payment was declined'),
+            );
+
+            await expect(strategy.finalize()).rejects.toThrow('Payment was declined');
+        });
+
+        it('finalizes the order when payment status is still INITIALIZE but this method was pending an additional-action redirect', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.INITIALIZE,
+            );
+            markPendingAdditionalActionRedirect('googlepaycheckoutcom');
+
+            await strategy.finalize({ methodId: 'googlepaycheckoutcom' });
+
+            expect(paymentIntegrationService.finalizeOrder).toHaveBeenCalled();
+        });
+
+        it('does not finalize when payment status is INITIALIZE and no redirect was pending for this method', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.INITIALIZE,
+            );
+
+            const finalize = strategy.finalize({ methodId: 'googlepaycheckoutcom' });
+
+            await expect(finalize).rejects.toThrow(OrderFinalizationNotRequiredError);
+            expect(paymentIntegrationService.finalizeOrder).not.toHaveBeenCalled();
+        });
+
+        it('does not finalize when payment status is INITIALIZE and the pending redirect was for a different method', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.INITIALIZE,
+            );
+            markPendingAdditionalActionRedirect('adyenv3');
+
+            const finalize = strategy.finalize({ methodId: 'googlepaycheckoutcom' });
 
             await expect(finalize).rejects.toThrow(OrderFinalizationNotRequiredError);
         });

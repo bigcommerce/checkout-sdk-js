@@ -1,6 +1,8 @@
 import {
+    consumePendingAdditionalActionRedirect,
     guard,
     InvalidArgumentError,
+    markPendingAdditionalActionRedirect,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -13,6 +15,8 @@ import {
     PaymentIntegrationService,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
+    PaymentRequestOptions,
+    PaymentStatusTypes,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { DEFAULT_CONTAINER_STYLES, LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -128,11 +132,47 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 paymentData: { nonce, ...extraData },
             });
         } catch (error) {
+            // The additional action may resolve entirely in-page (e.g. an
+            // iframe challenge), or it may fall back to a full-page browser
+            // redirect to the issuer's ACS page. Mark that we may be about
+            // to lose the JS session so `finalize()` can recognise the
+            // return trip even if the reloaded order/payment status hasn't
+            // advanced past its initial state by then.
+            markPendingAdditionalActionRedirect(payment.methodId);
+
             await this._googlePayPaymentProcessor.processAdditionalAction(error, payment.methodId);
         }
     }
 
-    finalize(): Promise<void> {
+    async finalize(options?: PaymentRequestOptions): Promise<void> {
+        const state = this._paymentIntegrationService.getState();
+        const order = state.getOrder();
+        const status = state.getPaymentStatus();
+
+        // On return from a 3DS challenge (e.g. bank ACS redirect), the order
+        // may still be awaiting finalization. Ask BigPay for the real outcome
+        // instead of silently doing nothing, so a decline/failure surfaces as
+        // a `finalizeOrderError` the checkout UI can render, and so the order
+        // is not left in a pending state that a later "Place Order" click
+        // would resubmit with a stale payment nonce/token.
+        //
+        // The reported status alone isn't a reliable signal here: Google Pay
+        // can still show `INITIALIZE` after returning from a declined 3DS
+        // redirect (the update that would normally move it to FINALIZE can
+        // lag behind the browser's return), so also treat "we just sent this
+        // method through an additional-action redirect" as needing finalize.
+        const isReturningFromRedirect = consumePendingAdditionalActionRedirect(options?.methodId);
+
+        if (
+            order &&
+            (status === PaymentStatusTypes.FINALIZE ||
+                (status === PaymentStatusTypes.INITIALIZE && isReturningFromRedirect))
+        ) {
+            await this._paymentIntegrationService.finalizeOrder(options);
+
+            return;
+        }
+
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
