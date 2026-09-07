@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.973.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.972.0...v1.973.0) (2026-09-07)
+
+
+### Features
+
+* **provider:** STRIPE-1555 report order placement start event for all orders (with correct Stripe OCS payment method) ([25992ba](https://github.com/bigcommerce/checkout-sdk-js/commit/25992ba72d80a4e9e8a8427e3971ae96a732987d))
+
 ## [1.972.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.971.1...v1.972.0) (2026-09-07)
 
 

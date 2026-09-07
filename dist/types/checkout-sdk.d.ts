@@ -2822,6 +2822,12 @@ declare class CheckoutButtonStatusSelector {
     isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
 }
 
+declare interface CheckoutEventRequestBody {
+    event: string;
+    payment_provider_id?: string;
+    payment_method_id?: string;
+}
+
 declare type CheckoutIncludeParam = {
     [key in CheckoutIncludes]?: boolean;
 };
@@ -3047,6 +3053,7 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     deleteCheckout(options?: RequestOptions): Promise<CheckoutSelectors>;
+    reportCheckoutEvent(body: CheckoutEventRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Loads an order by an id.
      *
@@ -9132,7 +9139,7 @@ declare interface StripeOCSPaymentInitializeOptions extends StripePaymentInitial
     fonts?: StripeCustomFont[];
     onError?(error?: Error): void;
     render(): void;
-    paymentMethodSelect?(id: string): void;
+    paymentMethodSelect?(methodId: string, selectedSubMethod?: string): void;
     handleClosePaymentMethod?(collapseElement: () => void): void;
     togglePreloader?(showLoader: boolean): void;
 }

@@ -1626,6 +1626,26 @@ A promise that resolves to the current state.
 
 ***
 
+### reportCheckoutEvent()
+
+> **reportCheckoutEvent**(`body`, `options?`): `Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+#### Parameters
+
+##### body
+
+[`CheckoutEventRequestBody`](../interfaces/CheckoutEventRequestBody.md)
+
+##### options?
+
+[`RequestOptions`](../interfaces/RequestOptions.md)\<`object`\>
+
+#### Returns
+
+`Promise`\<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+***
+
 ### searchCompanyAddresses()
 
 > **searchCompanyAddresses**(`searchQuery`, `options?`): `Promise`\<[`SearchCompanyAddressesQuery`](../type-aliases/SearchCompanyAddressesQuery.md)\>

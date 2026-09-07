@@ -71,6 +71,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
+    getSelectedSubMethodId(): string | undefined;
     private _initStripeCheckoutSession;
     private _initializePaymentElement;
     private _loadStripeJs;
@@ -266,7 +267,7 @@ declare interface StripeOCSPaymentInitializeOptions extends StripePaymentInitial
     fonts?: StripeCustomFont[];
     onError?(error?: Error): void;
     render(): void;
-    paymentMethodSelect?(id: string): void;
+    paymentMethodSelect?(methodId: string, selectedSubMethod?: string): void;
     handleClosePaymentMethod?(collapseElement: () => void): void;
     togglePreloader?(showLoader: boolean): void;
 }
@@ -283,6 +284,7 @@ declare class StripeOCSPaymentStrategy implements PaymentStrategy {
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
+    getSelectedSubMethodId(): string | undefined;
     private _initializeStripeElement;
     private _loadStripeJs;
     private _collapseStripeElement;

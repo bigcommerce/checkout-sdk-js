@@ -184,6 +184,7 @@
 - [CheckoutButtonSelectors](interfaces/CheckoutButtonSelectors.md)
 - [CheckoutButtonState](interfaces/CheckoutButtonState.md)
 - [CheckoutButtonStatusesState](interfaces/CheckoutButtonStatusesState.md)
+- [CheckoutEventRequestBody](interfaces/CheckoutEventRequestBody.md)
 - [CheckoutInitialState](interfaces/CheckoutInitialState.md)
 - [CheckoutParams](interfaces/CheckoutParams.md)
 - [CheckoutPayment](interfaces/CheckoutPayment.md)

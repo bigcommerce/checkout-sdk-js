@@ -127,11 +127,15 @@ Checkout styles from store theme
 
 ### paymentMethodSelect()?
 
-> `optional` **paymentMethodSelect**(`id`): `void`
+> `optional` **paymentMethodSelect**(`methodId`, `selectedSubMethod?`): `void`
 
 #### Parameters
 
-##### id
+##### methodId
+
+`string`
+
+##### selectedSubMethod?
 
 `string`
 
