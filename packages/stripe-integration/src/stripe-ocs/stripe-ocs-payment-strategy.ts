@@ -390,14 +390,14 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         event: StripeEventType,
         gatewayId: string,
         methodId: string,
-        paymentMethodSelect?: (id: string, selectedSubMethod?: string) => void,
+        paymentMethodSelect?: (id: string) => void,
     ) {
         if (!isStripePaymentEvent(event) || event.collapsed) {
             return;
         }
 
         this.selectedMethodId = event.value.type;
-        paymentMethodSelect?.(`${gatewayId}-${methodId}`, this.selectedMethodId);
+        paymentMethodSelect?.(`${gatewayId}-${methodId}`);
     }
 
     private _shouldSaveInstrument(paymentMethodOptions?: StripePIPaymentMethodSavingOptions) {
