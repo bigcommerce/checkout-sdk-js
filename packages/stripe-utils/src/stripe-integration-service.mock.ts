@@ -40,6 +40,9 @@ export const getStripeIntegrationServiceMock = () =>
         isRedirectAction: jest.fn(() => false),
         isOnPageAdditionalAction: jest.fn(() => false),
         updateStripePaymentIntent: jest.fn(() => Promise.resolve()),
+        cacheCheckoutStateVersions: jest.fn(),
+        clearCheckoutStateVersions: jest.fn(),
+        shouldSkipCheckoutStateUpdate: jest.fn(() => false),
         applyStoreCreditIfNeeded: jest.fn(() => Promise.resolve()),
         throwStripeError: jest.fn(() => {
             throw new Error('throw stripe error');

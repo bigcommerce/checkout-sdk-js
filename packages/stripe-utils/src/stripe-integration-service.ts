@@ -20,6 +20,7 @@ import {
     StripeElement,
     StripeElements,
     StripeError,
+    StripeInitializationData,
     StripePaymentIntentStatus,
     StripeStringConstants,
 } from './stripe';
@@ -27,6 +28,9 @@ import StripePaymentInitializeOptions from './stripe-initialize-options';
 import StripeScriptLoader from './stripe-script-loader';
 
 export default class StripeIntegrationService {
+    private cachedCartVersion?: number;
+    private cachedCheckoutVersion?: number;
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private scriptLoader: StripeScriptLoader,
@@ -207,6 +211,36 @@ export default class StripeIntegrationService {
         }
 
         this.scriptLoader.updateStripeElements({ clientSecret: clientToken });
+    }
+
+    cacheCheckoutStateVersions(): void {
+        const state = this.paymentIntegrationService.getState();
+
+        this.cachedCartVersion = state.getCart()?.version;
+        this.cachedCheckoutVersion = state.getCheckout()?.version;
+    }
+
+    clearCheckoutStateVersions(): void {
+        this.cachedCartVersion = undefined;
+        this.cachedCheckoutVersion = undefined;
+    }
+
+    shouldSkipCheckoutStateUpdate(methodId: string, gatewayId: string): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const { initializationData } = state.getPaymentMethodOrThrow<StripeInitializationData>(
+            methodId,
+            gatewayId,
+        );
+        const { skipUnchangedCheckoutSessionUpdate } = initializationData || {};
+
+        if (!skipUnchangedCheckoutSessionUpdate) {
+            return false;
+        }
+
+        return (
+            this.cachedCartVersion === state.getCart()?.version &&
+            this.cachedCheckoutVersion === state.getCheckout()?.version
+        );
     }
 
     async applyStoreCreditIfNeeded(useStoreCredit?: boolean): Promise<void> {

@@ -189,11 +189,15 @@ describe('StripePayScriptLoader', () => {
         let stripeJsMock: StripeClient;
         let checkoutSessionOptions: StripeInitCheckoutOptions;
         let getSessionMock: jest.Mock;
+        let runServerUpdateMock: jest.Mock;
 
         beforeEach(() => {
             checkoutSessionOptions = { clientSecret: 'session_id_secret_id' };
             getSessionMock = jest.fn(() =>
                 Promise.resolve({ id: 'session_id' } as StripeCheckoutSession),
+            );
+            runServerUpdateMock = jest.fn(() =>
+                Promise.resolve({ type: StripeLoadActionsResultType.SUCCESS }),
             );
 
             const checkoutSessionMock = {
@@ -205,6 +209,7 @@ describe('StripePayScriptLoader', () => {
                             updateEmail: jest.fn(),
                             getSession: getSessionMock,
                             confirm: jest.fn(),
+                            runServerUpdate: runServerUpdateMock,
                         },
                     }),
             };
@@ -222,6 +227,16 @@ describe('StripePayScriptLoader', () => {
 
             expect(initCheckoutMock).toHaveBeenCalledTimes(1);
             expect(initCheckoutMock).toHaveBeenCalledWith({ clientSecret: 'session_id_secret_id' });
+        });
+
+        it('runs checkout session server update only when an existing session is reused', async () => {
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+
+            expect(runServerUpdateMock).not.toHaveBeenCalled();
+
+            await stripeScriptLoader.getStripeCheckout(stripeJsMock, checkoutSessionOptions);
+
+            expect(runServerUpdateMock).toHaveBeenCalledTimes(1);
         });
 
         it('reinitializes stripe checkout if checkout session id is different', async () => {
