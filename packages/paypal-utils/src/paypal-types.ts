@@ -78,6 +78,7 @@ export interface PayPalInitializationData {
  */
 export interface PayPalHostWindow extends Window {
     paypal?: PayPalSDK;
+    bigCommercePaymentsPayPalSDK?: PayPalSDK;
     paypalFastlane?: PayPalFastlane;
     paypalFastlaneSdk?: PayPalFastlaneSdk;
     paypalMessages?: PayPalMessagesSdk;

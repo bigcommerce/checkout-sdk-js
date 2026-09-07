@@ -24,10 +24,10 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 import { isBaseInstrument } from '@bigcommerce/checkout-sdk/utility';
 
-import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
 import {
     ApproveCallbackPayload,
     BigCommercePaymentsButtons,
@@ -48,7 +48,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
         private paypalSdkHelper: PayPalSdkHelper,
         private loadingIndicator: LoadingIndicator,
     ) {}
@@ -131,7 +131,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
 
         this.loadingIndicatorContainer = container?.split('#')[1];
 
-        await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(methodId);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId);
 
         if (bigcommerce_payments.onInit && typeof bigcommerce_payments.onInit === 'function') {
             bigcommerce_payments.onInit(() => this.renderButton(methodId, bigcommerce_payments));
@@ -172,7 +172,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error: unknown) {
             if (this.isProviderError(error)) {
-                await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(payment.methodId);
+                await this.paypalIntegrationService.loadPayPalSdk(payment.methodId);
 
                 await new Promise((_resolve, reject) => {
                     if (this.bigcommerce_payments) {
@@ -275,7 +275,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
         methodId: string,
         bigcommerce_payments: BigCommercePaymentsPaymentInitializeOptions,
     ): void {
-        const paypalSdk = this.bigCommercePaymentsIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
@@ -292,9 +292,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
 
         const buttonOptions: BigCommercePaymentsButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.bigCommercePaymentsIntegrationService.getValidButtonStyle(
-                checkoutPaymentButtonStyles,
-            ),
+            style: this.paypalIntegrationService.getValidButtonStyle(checkoutPaymentButtonStyles),
             createOrder: () => this.createOrder(),
             onClick: (_, actions) => this.handleClick(actions, onValidate),
             onApprove: (data) => this.handleApprove(data, submitForm),
@@ -353,12 +351,9 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
     private async createOrder(): Promise<string> {
         const fieldsValues = this.getFieldsValues();
 
-        return this.bigCommercePaymentsIntegrationService.createOrder(
-            'bigcommerce_paymentscheckout',
-            {
-                shouldSaveInstrument: fieldsValues?.shouldSaveInstrument || false,
-            },
-        );
+        return this.paypalIntegrationService.createOrder('bigcommerce_paymentscheckout', {
+            shouldSaveInstrument: fieldsValues?.shouldSaveInstrument || false,
+        });
     }
 
     /**

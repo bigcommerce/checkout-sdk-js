@@ -34,7 +34,9 @@ export default class PayPalSdkScriptLoader {
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
     ): Promise<PayPalSDK> {
-        if (!this.window.paypal || forceLoad) {
+        const isBigCommercePayments = this.isBigCommercePaymentsMethod(paymentMethod.id);
+
+        if (!this.getLoadedPayPalSdk(isBigCommercePayments) || forceLoad) {
             const paypalSdkScriptConfig = this.getPayPalSdkScriptConfigOrThrow(
                 paymentMethod,
                 currencyCode,
@@ -43,13 +45,15 @@ export default class PayPalSdkScriptLoader {
             );
 
             await this.loadPayPalSdk(paypalSdkScriptConfig);
-
-            if (!this.window.paypal) {
-                throw new PaymentMethodClientUnavailableError();
-            }
         }
 
-        return this.window.paypal;
+        const paypalSdk = this.getLoadedPayPalSdk(isBigCommercePayments);
+
+        if (!paypalSdk) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return paypalSdk;
     }
 
     async getPayPalFastlaneSdk(
@@ -143,6 +147,16 @@ export default class PayPalSdkScriptLoader {
         }
 
         return this.window.paypalMessages;
+    }
+
+    private isBigCommercePaymentsMethod(methodId: string): boolean {
+        return methodId.startsWith('bigcommerce_payments');
+    }
+
+    private getLoadedPayPalSdk(isBigCommercePayments: boolean): PayPalSDK | undefined {
+        return isBigCommercePayments
+            ? this.window.bigCommercePaymentsPayPalSDK
+            : this.window.paypal;
     }
 
     /**
@@ -254,6 +268,9 @@ export default class PayPalSdkScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
+                ...(this.isBigCommercePaymentsMethod(id) && {
+                    'data-namespace': 'bigCommercePaymentsPayPalSDK',
+                }),
             },
         };
     }

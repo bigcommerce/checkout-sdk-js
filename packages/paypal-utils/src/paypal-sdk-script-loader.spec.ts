@@ -63,6 +63,7 @@ describe('PayPalSdkLoader', () => {
 
         jest.spyOn(loader, 'loadScript').mockImplementation(() => {
             (window as PayPalHostWindow).paypal = paypalSdk;
+            (window as PayPalHostWindow).bigCommercePaymentsPayPalSDK = paypalSdk;
             (window as PayPalHostWindow).paypalFastlaneSdk = paypalFastlaneSdk;
             (window as PayPalHostWindow).paypalMessages = paypalMessagesSdk;
             (window as PayPalHostWindow).paypalApms = paypalApmsSdk;
@@ -74,6 +75,7 @@ describe('PayPalSdkLoader', () => {
 
     afterEach(() => {
         (window as PayPalHostWindow).paypal = undefined;
+        (window as PayPalHostWindow).bigCommercePaymentsPayPalSDK = undefined;
         (window as PayPalHostWindow).paypalFastlaneSdk = undefined;
         (window as PayPalHostWindow).paypalMessages = undefined;
         (window as PayPalHostWindow).paypalApms = undefined;
@@ -382,6 +384,7 @@ describe('PayPalSdkLoader', () => {
             const paypalSdkAttributes = {
                 'data-client-token': paymentMethod.clientToken,
                 'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+                'data-namespace': 'bigCommercePaymentsPayPalSDK',
             };
 
             expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
