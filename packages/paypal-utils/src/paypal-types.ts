@@ -7,6 +7,8 @@ import {
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { PayPalSdkNamespace } from './paypal-constants';
+
 /**
  *
  * PayPal Funding sources
@@ -77,13 +79,13 @@ export interface PayPalInitializationData {
  *
  */
 export interface PayPalHostWindow extends Window {
-    paypal?: PayPalSDK;
-    bigCommercePaymentsPayPalSDK?: PayPalSDK;
-    paypalFastlane?: PayPalFastlane;
-    paypalFastlaneSdk?: PayPalFastlaneSdk;
-    paypalMessages?: PayPalMessagesSdk;
-    paypalApms?: PayPalApmSdk;
-    paypalGooglePay?: PayPalGooglePaySdk;
+    [PayPalSdkNamespace.PayPal]?: PayPalSDK;
+    [PayPalSdkNamespace.BigCommercePaymentsPayPalSDK]?: PayPalSDK;
+    [PayPalSdkNamespace.PayPalFastlane]?: PayPalFastlane;
+    [PayPalSdkNamespace.PayPalFastlaneSdk]?: PayPalFastlaneSdk;
+    [PayPalSdkNamespace.PayPalMessages]?: PayPalMessagesSdk;
+    [PayPalSdkNamespace.PayPalApms]?: PayPalApmSdk;
+    [PayPalSdkNamespace.PayPalGooglePay]?: PayPalGooglePaySdk;
 }
 
 /**

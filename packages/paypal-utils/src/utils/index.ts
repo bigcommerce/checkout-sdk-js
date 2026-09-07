@@ -5,3 +5,4 @@ export { default as getPaypalMessagesStylesFromBNPLConfig } from './get-paypal-m
 export { default as isRedirectActionError } from './is-redirect-action-error';
 export { default as isPaypalFastlaneRequestError } from './is-paypal-fastlane-request-error';
 export { default as transformLocaleToPayPalFormat } from './transform-locale-to-paypal-format';
+export { default as getPayPalSdkModule } from './get-paypal-sdk-module';

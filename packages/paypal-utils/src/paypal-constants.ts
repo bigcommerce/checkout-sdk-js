@@ -4,6 +4,20 @@ export const LOADING_INDICATOR_STYLES = {
 };
 
 /**
+ * PayPalSdkNamespace maps each PayPal SDK module to the
+ * window global it registers under (also used as the `data-namespace` attribute)
+ */
+export enum PayPalSdkNamespace {
+    PayPal = 'paypal',
+    BigCommercePaymentsPayPalSDK = 'bigCommercePaymentsPayPalSDK',
+    PayPalFastlaneSdk = 'paypalFastlaneSdk',
+    PayPalFastlane = 'paypalFastlane',
+    PayPalGooglePay = 'paypalGooglePay',
+    PayPalApms = 'paypalApms',
+    PayPalMessages = 'paypalMessages',
+}
+
+/**
  * PayPal SDK supported locales
  * https://developer.paypal.com/sdk/js/configuration/#link-locale
  */
