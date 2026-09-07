@@ -579,14 +579,12 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
 declare class PayPalCommerceCreditButtonStrategy implements CheckoutButtonStrategy {
     private paymentIntegrationService;
     private paypalIntegrationService;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService);
+    private paypalButtonCreationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalButtonCreationService: PaypalButtonCreationService);
     initialize(options: CheckoutButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     private renderButton;
     private handleClick;
-    private onHostedCheckoutApprove;
-    private onShippingAddressChange;
-    private onShippingOptionsChange;
 }
 
 /**
@@ -824,19 +822,15 @@ declare interface PayPalCommerceCreditCustomerInitializeOptions {
 
 declare class PayPalCommerceCreditCustomerStrategy implements CustomerStrategy {
     private paymentIntegrationService;
-    private paypalCommerceIntegrationService;
-    private onError;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalCommerceIntegrationService: PayPalCommerceIntegrationService);
+    private paypalIntegrationService;
+    private paypalButtonCreationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalButtonCreationService: PaypalButtonCreationService);
     initialize(options: CustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
     signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void>;
     signOut(options?: RequestOptions): Promise<void>;
     executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<void>;
     private renderButton;
-    private onHostedCheckoutApprove;
-    private onShippingAddressChange;
-    private onShippingOptionsChange;
-    private handleError;
 }
 
 /**
