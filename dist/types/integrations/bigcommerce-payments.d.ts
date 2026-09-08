@@ -25,6 +25,7 @@ import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integr
 import { PayPalBNPLConfigurationItem } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PayPalSdkHelper } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
@@ -1420,14 +1421,14 @@ declare interface BigCommercePaymentsPaymentInitializeOptions {
 
 declare class BigCommercePaymentsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
-    private bigCommercePaymentsIntegrationService;
+    private paypalIntegrationService;
     private paypalSdkHelper;
     private loadingIndicator;
     private loadingIndicatorContainer?;
     private orderId?;
     private paypalButton?;
     private bigcommerce_payments?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService, paypalSdkHelper: PayPalSdkHelper, loadingIndicator: LoadingIndicator);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalSdkHelper: PayPalSdkHelper, loadingIndicator: LoadingIndicator);
     initialize(options?: PaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
