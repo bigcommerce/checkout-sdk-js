@@ -3,10 +3,10 @@ import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { createPayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import { LOADING_INDICATOR_STYLES } from '../bigcommerce-payments-constants';
-import createBigCommercePaymentsIntegrationService from '../create-bigcommerce-payments-integration-service';
 
 import BigCommercePaymentsPaymentStrategy from './bigcommerce-payments-payment-strategy';
 
@@ -15,7 +15,7 @@ const createBigCommercePaymentsPaymentStrategy: PaymentStrategyFactory<
 > = (paymentIntegrationService) =>
     new BigCommercePaymentsPaymentStrategy(
         paymentIntegrationService,
-        createBigCommercePaymentsIntegrationService(paymentIntegrationService),
+        createPayPalIntegrationService(paymentIntegrationService),
         createBigCommercePaymentsSdk(),
         new LoadingIndicator({
             containerStyles: LOADING_INDICATOR_STYLES,

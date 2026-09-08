@@ -7,6 +7,7 @@ import {
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { PayPalSdkNamespace } from './paypal-constants';
 import {
     FundingType,
     PayPalFastlaneSdk,
@@ -18,7 +19,7 @@ import {
     PayPalSdkComponents,
     PayPalSdkConfig,
 } from './paypal-types';
-import { transformLocaleToPayPalFormat } from './utils';
+import { getPayPalSdkModule, transformLocaleToPayPalFormat } from './utils';
 
 export default class PayPalSdkScriptLoader {
     private window: PayPalHostWindow;
@@ -34,7 +35,11 @@ export default class PayPalSdkScriptLoader {
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
     ): Promise<PayPalSDK> {
-        if (!this.window.paypal || forceLoad) {
+        const namespace = this.isBigCommercePaymentsMethod(paymentMethod.id)
+            ? PayPalSdkNamespace.BigCommercePaymentsPayPalSDK
+            : PayPalSdkNamespace.PayPal;
+
+        if (!getPayPalSdkModule(namespace) || forceLoad) {
             const paypalSdkScriptConfig = this.getPayPalSdkScriptConfigOrThrow(
                 paymentMethod,
                 currencyCode,
@@ -43,13 +48,15 @@ export default class PayPalSdkScriptLoader {
             );
 
             await this.loadPayPalSdk(paypalSdkScriptConfig);
-
-            if (!this.window.paypal) {
-                throw new PaymentMethodClientUnavailableError();
-            }
         }
 
-        return this.window.paypal;
+        const paypalSdk = getPayPalSdkModule(namespace);
+
+        if (!paypalSdk) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return paypalSdk;
     }
 
     async getPayPalFastlaneSdk(
@@ -143,6 +150,10 @@ export default class PayPalSdkScriptLoader {
         }
 
         return this.window.paypalMessages;
+    }
+
+    private isBigCommercePaymentsMethod(methodId: string): boolean {
+        return methodId.startsWith('bigcommerce_payments');
     }
 
     /**
@@ -254,6 +265,9 @@ export default class PayPalSdkScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
+                ...(this.isBigCommercePaymentsMethod(id) && {
+                    'data-namespace': PayPalSdkNamespace.BigCommercePaymentsPayPalSDK,
+                }),
             },
         };
     }
@@ -292,7 +306,7 @@ export default class PayPalSdkScriptLoader {
             },
             attributes: {
                 'data-client-metadata-id': sessionId.replace(/-/g, ''),
-                'data-namespace': 'paypalFastlaneSdk',
+                'data-namespace': PayPalSdkNamespace.PayPalFastlaneSdk,
                 'data-partner-attribution-id': attributionId,
                 'data-sdk-client-token': clientToken,
             },
@@ -339,7 +353,7 @@ export default class PayPalSdkScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
-                'data-namespace': 'paypalGooglePay',
+                'data-namespace': PayPalSdkNamespace.PayPalGooglePay,
             },
         };
     }
@@ -390,7 +404,7 @@ export default class PayPalSdkScriptLoader {
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
-                'data-namespace': 'paypalApms',
+                'data-namespace': PayPalSdkNamespace.PayPalApms,
             },
         };
     }
@@ -421,7 +435,7 @@ export default class PayPalSdkScriptLoader {
                 ...(locale && { locale }),
             },
             attributes: {
-                'data-namespace': 'paypalMessages',
+                'data-namespace': PayPalSdkNamespace.PayPalMessages,
                 'data-partner-attribution-id': attributionId,
             },
         };

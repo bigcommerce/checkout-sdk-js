@@ -1,4 +1,4 @@
-import { PAYPAL_SDK_SUPPORTED_LOCALES } from '../paypal-commerce-constants';
+import { PAYPAL_SDK_SUPPORTED_LOCALES } from '../paypal-constants';
 
 /**
  * Transforms store language to PayPal SDK locale format.
