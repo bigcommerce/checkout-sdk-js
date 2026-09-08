@@ -285,14 +285,14 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         event: StripeEventType,
         gatewayId: string,
         methodId: string,
-        paymentMethodSelect?: (id: string, selectedSubMethod?: string) => void,
+        paymentMethodSelect?: (id: string) => void,
     ) {
         if (!isStripePaymentEvent(event) || event.collapsed) {
             return;
         }
 
         this.selectedMethod = event.value;
-        paymentMethodSelect?.(`${gatewayId}-${methodId}`, this.selectedMethod?.type);
+        paymentMethodSelect?.(`${gatewayId}-${methodId}`);
     }
 
     private _collapseStripeElement() {

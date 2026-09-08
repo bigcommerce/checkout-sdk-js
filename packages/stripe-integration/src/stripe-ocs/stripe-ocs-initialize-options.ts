@@ -63,7 +63,7 @@ export default interface StripeOCSPaymentInitializeOptions extends StripePayment
 
     render(): void;
 
-    paymentMethodSelect?(methodId: string, selectedSubMethod?: string): void;
+    paymentMethodSelect?(id: string): void;
 
     handleClosePaymentMethod?(collapseElement: () => void): void;
 

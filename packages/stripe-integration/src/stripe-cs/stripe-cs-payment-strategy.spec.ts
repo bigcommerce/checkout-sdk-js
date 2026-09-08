@@ -1347,13 +1347,10 @@ describe('StripeOCSPaymentStrategy', () => {
                     },
                 },
             });
-            expect(paymentMethodSelectMock).toHaveBeenCalledWith(
-                `${gatewayId}-${methodId}`,
-                StripePaymentMethodType.CreditCard,
-            );
+            expect(paymentMethodSelectMock).toHaveBeenCalledWith(`${gatewayId}-${methodId}`);
         });
 
-        it('passes the selected sub method type to paymentMethodSelect', async () => {
+        it('tracks the selected sub method type without exposing it via paymentMethodSelect', async () => {
             const eventMock = {
                 ...StripeEventMock,
                 collapsed: false,
@@ -1394,10 +1391,7 @@ describe('StripeOCSPaymentStrategy', () => {
             });
             await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
 
-            expect(paymentMethodSelectMock).toHaveBeenCalledWith(
-                `${gatewayId}-${methodId}`,
-                StripePaymentMethodType.ACH,
-            );
+            expect(paymentMethodSelectMock).toHaveBeenCalledWith(`${gatewayId}-${methodId}`);
             expect(stripeCSPaymentStrategy.getSelectedSubMethodId()).toBe(
                 StripePaymentMethodType.ACH,
             );
