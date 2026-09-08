@@ -267,7 +267,7 @@ declare interface StripeOCSPaymentInitializeOptions extends StripePaymentInitial
     fonts?: StripeCustomFont[];
     onError?(error?: Error): void;
     render(): void;
-    paymentMethodSelect?(methodId: string, selectedSubMethod?: string): void;
+    paymentMethodSelect?(id: string): void;
     handleClosePaymentMethod?(collapseElement: () => void): void;
     togglePreloader?(showLoader: boolean): void;
 }

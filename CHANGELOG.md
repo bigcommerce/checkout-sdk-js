@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.975.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.974.1...v1.975.0) (2026-09-08)
+
+
+### Features
+
+* **payment:** PI-5218 [FE] [FE] Remove experiment PI-5111.google_pay_direct_pay_on_click ([f7c7ecc](https://github.com/bigcommerce/checkout-sdk-js/commit/f7c7ecc924b602471e2ec887784a67b193de62e9))
+
 ### [1.974.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.974.0...v1.974.1) (2026-09-08)
 
 
