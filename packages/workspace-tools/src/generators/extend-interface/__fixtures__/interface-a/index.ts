@@ -1,1 +1,1 @@
-export { default as InterfaceA } from './interface-a';
+export { type default as InterfaceA } from './interface-a';
