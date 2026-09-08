@@ -4,9 +4,6 @@
         "build": {
             "cache": true
         },
-        "build-watch": {
-            "cache": true
-        },
         "lint": {
             "cache": true
         },

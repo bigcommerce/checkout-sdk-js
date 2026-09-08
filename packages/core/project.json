@@ -48,7 +48,7 @@
         "build-watch": {
             "executor": "nx:run-commands",
             "options": {
-                "command": "webpack --config webpack.config.js --config-name esm --watch --progress"
+                "command": "webpack --config webpack.config.js --config-name esm --watch"
             },
             "dependsOn": [
                 {
