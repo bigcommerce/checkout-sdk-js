@@ -1,1 +1,1 @@
-export { default as FoobarInterface } from './foobar-interface';
+export { type default as FoobarInterface } from './foobar-interface';
