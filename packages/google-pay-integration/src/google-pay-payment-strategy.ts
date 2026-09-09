@@ -474,7 +474,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         try {
             await this._paymentIntegrationService.loadPaymentMethod(methodId);
         } catch {
-            // If the reload fails, the stale state will persist 
+            // If the reload fails, the stale state will persist
             // until the next successful reload.
         }
     }
