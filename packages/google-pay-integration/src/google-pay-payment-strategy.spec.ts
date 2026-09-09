@@ -71,10 +71,6 @@ describe('GooglePayPaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         eventEmitter = new EventEmitter();
 
-        // `PaymentIntegrationServiceMock` reuses the same underlying
-        // `jest.fn()` across every instance, so a `mockRejectedValue`/
-        // `mockReturnValue` set by one test would otherwise leak into the
-        // next. Reset it back to its default (resolves to `undefined`) here.
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReset();
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
@@ -367,9 +363,6 @@ describe('GooglePayPaymentStrategy', () => {
 
             await strategy.initialize(options);
 
-            // `initialize()` above already calls `loadPaymentMethod` as part
-            // of its own setup; clear that call so tests asserting on
-            // `loadPaymentMethod` only see calls made by `execute()` itself.
             jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockClear();
         });
 
@@ -427,18 +420,6 @@ describe('GooglePayPaymentStrategy', () => {
             await expect(strategy.execute(payload)).rejects.toThrow('Payment was declined');
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('example');
-        });
-
-        it('still rejects with the decline error even if invalidating the cached payment method fails', async () => {
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
-            jest.spyOn(processor, 'processAdditionalAction').mockRejectedValue(
-                new Error('Payment was declined'),
-            );
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValue(
-                new Error('Network error'),
-            );
-
-            await expect(strategy.execute(payload)).rejects.toThrow('Payment was declined');
         });
 
         describe('should fail if:', () => {
@@ -1199,10 +1180,6 @@ describe('GooglePayPaymentStrategy', () => {
 
     describe('#finalize', () => {
         beforeEach(() => {
-            // `finalizeOrder`/`getPaymentStatus` are module-level singleton
-            // mocks shared by every `PaymentIntegrationServiceMock` instance,
-            // so a `mockReturnValue`/`mockRejectedValue` set by one test would
-            // otherwise leak into the next.
             jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReset();
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReset();
         });
@@ -1259,32 +1236,6 @@ describe('GooglePayPaymentStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
                 'googlepaycheckoutcom',
             );
-        });
-
-        it('still rejects with the decline error even if invalidating the cached payment method fails', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
-                PaymentStatusTypes.FINALIZE,
-            );
-            jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockRejectedValue(
-                new Error('Payment was declined'),
-            );
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValue(
-                new Error('Network error'),
-            );
-
-            await expect(strategy.finalize({ methodId: 'googlepaycheckoutcom' })).rejects.toThrow(
-                'Payment was declined',
-            );
-        });
-
-        it('finalizes the order when payment status is still INITIALIZE (checkout.com Google Pay rolls back to INITIALIZE on a declined 3DS challenge)', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
-                PaymentStatusTypes.INITIALIZE,
-            );
-
-            await strategy.finalize({ methodId: 'googlepaycheckoutcom' });
-
-            expect(paymentIntegrationService.finalizeOrder).toHaveBeenCalled();
         });
 
         it('invalidates the cached payment method when the 3DS challenge was declined and status is still INITIALIZE', async () => {

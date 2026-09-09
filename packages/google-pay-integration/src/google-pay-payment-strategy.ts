@@ -136,13 +136,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                     payment.methodId,
                 );
             } catch (additionalActionError) {
-                // Not a 3DS/additional-action redirect after all - a hard
-                // decline. The Google Pay nonce we just submitted is now
-                // spent; BigPay will keep rejecting it on every subsequent
-                // attempt. Drop the cached copy so the shopper has to go
-                // through the Google Pay button again for a fresh one
-                // instead of "Place Order" silently resubmitting a dead
-                // token.
                 await this._invalidateStalePaymentToken(payment.methodId);
 
                 throw additionalActionError;
@@ -155,21 +148,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         const order = state.getOrder();
         const status = state.getPaymentStatus();
 
-        // On return from a 3DS challenge (e.g. bank ACS redirect), the order
-        // may still be awaiting finalization. Ask BigPay for the real outcome
-        // instead of silently doing nothing, so a decline/failure surfaces as
-        // a `finalizeOrderError` the checkout UI can render, and so the order
-        // is not left in a pending state that a later "Place Order" click
-        // would resubmit with a stale payment nonce/token.
-        //
-        // Checkout.com's Google Pay flow rolls the payment record's step
-        // back to INITIALIZE on a declined 3DS challenge instead of
-        // advancing it to FINALIZE like every other redirect-based
-        // strategy, so INITIALIZE has to be treated as "needs finalizing"
-        // too for this method. This can't produce a false positive on a
-        // fresh, never-attempted checkout: getPaymentStatus() only reports
-        // INITIALIZE/FINALIZE once a payment record exists for this method
-        // at all - before any attempt, it reports `undefined`.
         if (
             order &&
             (status === PaymentStatusTypes.FINALIZE || status === PaymentStatusTypes.INITIALIZE)
@@ -177,11 +155,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             try {
                 await this._paymentIntegrationService.finalizeOrder(options);
             } catch (error) {
-                // The 3DS challenge was declined. The Google Pay nonce used
-                // for this attempt is now spent; drop the cached copy so the
-                // shopper has to go through the Google Pay button again for
-                // a fresh one instead of "Place Order" silently resubmitting
-                // a dead token.
                 if (options?.methodId) {
                     await this._invalidateStalePaymentToken(options.methodId);
                 }
@@ -497,18 +470,12 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    /**
-     * Best-effort refresh of the payment method so any spent Google Pay
-     * nonce/card summary cached in `initializationData` is replaced with
-     * whatever the storefront now reports. If the reload itself fails, the
-     * original decline error still takes priority - the stale UI state will
-     * simply persist until the next successful reload.
-     */
     private async _invalidateStalePaymentToken(methodId: string): Promise<void> {
         try {
             await this._paymentIntegrationService.loadPaymentMethod(methodId);
         } catch {
-            // ignore - see comment above
+            // If the reload fails, the stale state will persist 
+            // until the next successful reload.
         }
     }
 }
