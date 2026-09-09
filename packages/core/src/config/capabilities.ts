@@ -25,6 +25,7 @@ export interface Capabilities {
     };
     customer: {
         superAdminCompanySelector: boolean;
+        reloadPageAfterSignIn: boolean;
     };
     shipping: {
         restrictManualAddressEntry: boolean;
