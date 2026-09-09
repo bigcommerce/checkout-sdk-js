@@ -73,6 +73,12 @@ describe('GooglePayPaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         eventEmitter = new EventEmitter();
 
+        // `PaymentIntegrationServiceMock` reuses the same underlying
+        // `jest.fn()` across every instance, so a `mockRejectedValue`/
+        // `mockReturnValue` set by one test would otherwise leak into the
+        // next. Reset it back to its default (resolves to `undefined`) here.
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReset();
+
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getGeneric(),
         );
@@ -362,6 +368,11 @@ describe('GooglePayPaymentStrategy', () => {
             });
 
             await strategy.initialize(options);
+
+            // `initialize()` above already calls `loadPaymentMethod` as part
+            // of its own setup; clear that call so tests asserting on
+            // `loadPaymentMethod` only see calls made by `execute()` itself.
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockClear();
         });
 
         it('should execute the strategy', async () => {
@@ -407,6 +418,37 @@ describe('GooglePayPaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(consumePendingAdditionalActionRedirect('example')).toBe(true);
+        });
+
+        it('does not invalidate the cached payment method when the additional action is a redirect', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
+        });
+
+        it('invalidates the cached payment method when the additional action is a hard decline', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
+            jest.spyOn(processor, 'processAdditionalAction').mockRejectedValue(
+                new Error('Payment was declined'),
+            );
+
+            await expect(strategy.execute(payload)).rejects.toThrow('Payment was declined');
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('example');
+        });
+
+        it('still rejects with the decline error even if invalidating the cached payment method fails', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
+            jest.spyOn(processor, 'processAdditionalAction').mockRejectedValue(
+                new Error('Payment was declined'),
+            );
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValue(
+                new Error('Network error'),
+            );
+
+            await expect(strategy.execute(payload)).rejects.toThrow('Payment was declined');
         });
 
         describe('should fail if:', () => {
@@ -1201,6 +1243,49 @@ describe('GooglePayPaymentStrategy', () => {
             );
 
             await expect(strategy.finalize()).rejects.toThrow('Payment was declined');
+        });
+
+        it('does not invalidate the cached payment method when finalize succeeds', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.FINALIZE,
+            );
+
+            await strategy.finalize({ methodId: 'googlepaycheckoutcom' });
+
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
+        });
+
+        it('invalidates the cached payment method when the 3DS challenge was declined', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.FINALIZE,
+            );
+            jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockRejectedValue(
+                new Error('Payment was declined'),
+            );
+
+            await expect(strategy.finalize({ methodId: 'googlepaycheckoutcom' })).rejects.toThrow(
+                'Payment was declined',
+            );
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                'googlepaycheckoutcom',
+            );
+        });
+
+        it('still rejects with the decline error even if invalidating the cached payment method fails', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
+                PaymentStatusTypes.FINALIZE,
+            );
+            jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockRejectedValue(
+                new Error('Payment was declined'),
+            );
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValue(
+                new Error('Network error'),
+            );
+
+            await expect(strategy.finalize({ methodId: 'googlepaycheckoutcom' })).rejects.toThrow(
+                'Payment was declined',
+            );
         });
 
         it('finalizes the order when payment status is still INITIALIZE but this method was pending an additional-action redirect', async () => {

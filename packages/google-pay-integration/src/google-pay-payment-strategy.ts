@@ -60,6 +60,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     async initialize(
         options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions,
     ): Promise<void> {
+        console.log('initialize 1508');
         if (!options?.methodId || !isGooglePayKey(options.methodId)) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" is not a valid key.',
@@ -140,7 +141,23 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             // advanced past its initial state by then.
             markPendingAdditionalActionRedirect(payment.methodId);
 
-            await this._googlePayPaymentProcessor.processAdditionalAction(error, payment.methodId);
+            try {
+                await this._googlePayPaymentProcessor.processAdditionalAction(
+                    error,
+                    payment.methodId,
+                );
+            } catch (additionalActionError) {
+                // Not a 3DS/additional-action redirect after all - a hard
+                // decline. The Google Pay nonce we just submitted is now
+                // spent; BigPay will keep rejecting it on every subsequent
+                // attempt. Drop the cached copy so the shopper has to go
+                // through the Google Pay button again for a fresh one
+                // instead of "Place Order" silently resubmitting a dead
+                // token.
+                await this._invalidateStalePaymentToken(payment.methodId);
+
+                throw additionalActionError;
+            }
         }
     }
 
@@ -168,12 +185,40 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             (status === PaymentStatusTypes.FINALIZE ||
                 (status === PaymentStatusTypes.INITIALIZE && isReturningFromRedirect))
         ) {
-            await this._paymentIntegrationService.finalizeOrder(options);
+            try {
+                await this._paymentIntegrationService.finalizeOrder(options);
+            } catch (error) {
+                // The 3DS challenge was declined. The Google Pay nonce used
+                // for this attempt is now spent; drop the cached copy so the
+                // shopper has to go through the Google Pay button again for
+                // a fresh one instead of "Place Order" silently resubmitting
+                // a dead token.
+                if (options?.methodId) {
+                    await this._invalidateStalePaymentToken(options.methodId);
+                }
+
+                throw error;
+            }
 
             return;
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    /**
+     * Best-effort refresh of the payment method so any spent Google Pay
+     * nonce/card summary cached in `initializationData` is replaced with
+     * whatever the storefront now reports. If the reload itself fails, the
+     * original decline error still takes priority - the stale UI state will
+     * simply persist until the next successful reload.
+     */
+    private async _invalidateStalePaymentToken(methodId: string): Promise<void> {
+        try {
+            await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        } catch {
+            // ignore - see comment above
+        }
     }
 
     deinitialize(): Promise<void> {
