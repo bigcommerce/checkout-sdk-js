@@ -60,7 +60,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     async initialize(
         options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions,
     ): Promise<void> {
-        console.log('initialize 1508');
         if (!options?.methodId || !isGooglePayKey(options.methodId)) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" is not a valid key.',
@@ -204,21 +203,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
-    }
-
-    /**
-     * Best-effort refresh of the payment method so any spent Google Pay
-     * nonce/card summary cached in `initializationData` is replaced with
-     * whatever the storefront now reports. If the reload itself fails, the
-     * original decline error still takes priority - the stale UI state will
-     * simply persist until the next successful reload.
-     */
-    private async _invalidateStalePaymentToken(methodId: string): Promise<void> {
-        try {
-            await this._paymentIntegrationService.loadPaymentMethod(methodId);
-        } catch {
-            // ignore - see comment above
-        }
     }
 
     deinitialize(): Promise<void> {
@@ -520,6 +504,21 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             this._loadingIndicator.show(this._loadingIndicatorContainer);
         } else {
             this._loadingIndicator.hide();
+        }
+    }
+
+    /**
+     * Best-effort refresh of the payment method so any spent Google Pay
+     * nonce/card summary cached in `initializationData` is replaced with
+     * whatever the storefront now reports. If the reload itself fails, the
+     * original decline error still takes priority - the stale UI state will
+     * simply persist until the next successful reload.
+     */
+    private async _invalidateStalePaymentToken(methodId: string): Promise<void> {
+        try {
+            await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        } catch {
+            // ignore - see comment above
         }
     }
 }
