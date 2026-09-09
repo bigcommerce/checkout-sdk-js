@@ -1,8 +1,6 @@
 import {
-    consumePendingAdditionalActionRedirect,
     guard,
     InvalidArgumentError,
-    markPendingAdditionalActionRedirect,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -132,14 +130,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 paymentData: { nonce, ...extraData },
             });
         } catch (error) {
-            // The additional action may resolve entirely in-page (e.g. an
-            // iframe challenge), or it may fall back to a full-page browser
-            // redirect to the issuer's ACS page. Mark that we may be about
-            // to lose the JS session so `finalize()` can recognise the
-            // return trip even if the reloaded order/payment status hasn't
-            // advanced past its initial state by then.
-            markPendingAdditionalActionRedirect(payment.methodId);
-
             try {
                 await this._googlePayPaymentProcessor.processAdditionalAction(
                     error,
@@ -172,17 +162,17 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         // is not left in a pending state that a later "Place Order" click
         // would resubmit with a stale payment nonce/token.
         //
-        // The reported status alone isn't a reliable signal here: Google Pay
-        // can still show `INITIALIZE` after returning from a declined 3DS
-        // redirect (the update that would normally move it to FINALIZE can
-        // lag behind the browser's return), so also treat "we just sent this
-        // method through an additional-action redirect" as needing finalize.
-        const isReturningFromRedirect = consumePendingAdditionalActionRedirect(options?.methodId);
-
+        // Checkout.com's Google Pay flow rolls the payment record's step
+        // back to INITIALIZE on a declined 3DS challenge instead of
+        // advancing it to FINALIZE like every other redirect-based
+        // strategy, so INITIALIZE has to be treated as "needs finalizing"
+        // too for this method. This can't produce a false positive on a
+        // fresh, never-attempted checkout: getPaymentStatus() only reports
+        // INITIALIZE/FINALIZE once a payment record exists for this method
+        // at all - before any attempt, it reports `undefined`.
         if (
             order &&
-            (status === PaymentStatusTypes.FINALIZE ||
-                (status === PaymentStatusTypes.INITIALIZE && isReturningFromRedirect))
+            (status === PaymentStatusTypes.FINALIZE || status === PaymentStatusTypes.INITIALIZE)
         ) {
             try {
                 await this._paymentIntegrationService.finalizeOrder(options);

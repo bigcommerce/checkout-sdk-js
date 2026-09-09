@@ -5,9 +5,7 @@ import { EventEmitter } from 'events';
 
 import {
     BillingAddressRequestBody,
-    consumePendingAdditionalActionRedirect,
     InvalidArgumentError,
-    markPendingAdditionalActionRedirect,
     MissingDataError,
     MissingDataErrorType,
     OrderFinalizationNotRequiredError,
@@ -410,14 +408,6 @@ describe('GooglePayPaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(processor.processAdditionalAction).toHaveBeenCalledWith('error', 'example');
-        });
-
-        it('marks the method as pending an additional-action redirect before processing it', async () => {
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
-
-            await strategy.execute(payload);
-
-            expect(consumePendingAdditionalActionRedirect('example')).toBe(true);
         });
 
         it('does not invalidate the cached payment method when the additional action is a redirect', async () => {
@@ -1213,12 +1203,11 @@ describe('GooglePayPaymentStrategy', () => {
             // mocks shared by every `PaymentIntegrationServiceMock` instance,
             // so a `mockReturnValue`/`mockRejectedValue` set by one test would
             // otherwise leak into the next.
-            window.sessionStorage.clear();
             jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReset();
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReset();
         });
 
-        it('rejects with OrderFinalizationNotRequiredError when payment status is not FINALIZE', async () => {
+        it('rejects with OrderFinalizationNotRequiredError when payment status is neither FINALIZE nor INITIALIZE', async () => {
             const finalize = strategy.finalize();
 
             await expect(finalize).rejects.toThrow(OrderFinalizationNotRequiredError);
@@ -1288,37 +1277,31 @@ describe('GooglePayPaymentStrategy', () => {
             );
         });
 
-        it('finalizes the order when payment status is still INITIALIZE but this method was pending an additional-action redirect', async () => {
+        it('finalizes the order when payment status is still INITIALIZE (checkout.com Google Pay rolls back to INITIALIZE on a declined 3DS challenge)', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
                 PaymentStatusTypes.INITIALIZE,
             );
-            markPendingAdditionalActionRedirect('googlepaycheckoutcom');
 
             await strategy.finalize({ methodId: 'googlepaycheckoutcom' });
 
             expect(paymentIntegrationService.finalizeOrder).toHaveBeenCalled();
         });
 
-        it('does not finalize when payment status is INITIALIZE and no redirect was pending for this method', async () => {
+        it('invalidates the cached payment method when the 3DS challenge was declined and status is still INITIALIZE', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
                 PaymentStatusTypes.INITIALIZE,
             );
-
-            const finalize = strategy.finalize({ methodId: 'googlepaycheckoutcom' });
-
-            await expect(finalize).rejects.toThrow(OrderFinalizationNotRequiredError);
-            expect(paymentIntegrationService.finalizeOrder).not.toHaveBeenCalled();
-        });
-
-        it('does not finalize when payment status is INITIALIZE and the pending redirect was for a different method', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReturnValue(
-                PaymentStatusTypes.INITIALIZE,
+            jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockRejectedValue(
+                new Error('Payment was declined'),
             );
-            markPendingAdditionalActionRedirect('adyenv3');
 
-            const finalize = strategy.finalize({ methodId: 'googlepaycheckoutcom' });
+            await expect(strategy.finalize({ methodId: 'googlepaycheckoutcom' })).rejects.toThrow(
+                'Payment was declined',
+            );
 
-            await expect(finalize).rejects.toThrow(OrderFinalizationNotRequiredError);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                'googlepaycheckoutcom',
+            );
         });
     });
 

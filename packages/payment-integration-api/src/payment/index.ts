@@ -53,10 +53,6 @@ export {
 
 export { PaymentActionType, type SubmitPaymentAction } from './payment-actions';
 export { PaymentMethodActionType } from './payment-method-actions';
-export {
-    markPendingAdditionalActionRedirect,
-    consumePendingAdditionalActionRedirect,
-} from './pending-additional-action-redirect';
 export type { default as PaymentAdditionalAction } from './payment-additional-action';
 export type { PaymentInitializeOptions } from './payment-initialize-options';
 export type { PaymentRequestOptions } from './payment-request-options';

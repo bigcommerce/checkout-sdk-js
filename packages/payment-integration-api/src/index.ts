@@ -185,8 +185,6 @@ export {
     type ThreeDsResult,
     type InstrumentMeta,
     StorefrontPaymentRequestSender,
-    markPendingAdditionalActionRedirect,
-    consumePendingAdditionalActionRedirect,
 } from './payment';
 export { StoreCreditActionType } from './store-credit';
 
