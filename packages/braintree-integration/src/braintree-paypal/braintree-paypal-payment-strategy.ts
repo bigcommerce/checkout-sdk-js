@@ -221,13 +221,18 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             ? mapToBraintreeShippingAddressOverride(shippingAddress)
             : undefined;
 
+        const cart = state.getCart();
+        const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
+        const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
+
         return Promise.all([
             this.braintreeIntegrationService.paypal({
                 amount: grandTotal,
                 locale: storeLanguage,
                 currency: currency.code,
                 offerCredit: this.paymentMethod.id === 'braintreepaypalcredit',
-                shippingAddressOverride,
+                shippingAddressOverride: isOnlyDigitalItems ? undefined : shippingAddressOverride,
+                enableShippingAddress: !isOnlyDigitalItems,
                 shouldSaveInstrument: shouldSaveInstrument || false,
                 shippingAddressEditable: false,
             }),
@@ -421,11 +426,15 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 ? mapToBraintreeShippingAddressOverride(address)
                 : undefined;
 
+            const cart = state.getCart();
+            const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
+            const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
+
             return await braintreePaypalCheckout.createPayment({
                 flow: 'checkout',
-                enableShippingAddress: true,
+                enableShippingAddress: !isOnlyDigitalItems,
                 shippingAddressEditable: false,
-                shippingAddressOverride,
+                shippingAddressOverride: isOnlyDigitalItems ? undefined : shippingAddressOverride,
                 amount,
                 currency: currencyCode,
                 offerCredit: false,
