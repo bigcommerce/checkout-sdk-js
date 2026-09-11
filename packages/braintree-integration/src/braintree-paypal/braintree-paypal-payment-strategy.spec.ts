@@ -15,6 +15,7 @@ import {
     BraintreeSDKVersionManager,
     getBraintreePaypal,
     getBraintreePaypalMock,
+    getCartMockWithDigitalItemsOnly,
     getClientMock,
     getModuleCreatorMock,
     getPayPalCheckoutCreatorMock,
@@ -723,6 +724,54 @@ describe('BraintreePaypalPaymentStrategy', () => {
                         recipientName: 'Test Tester',
                         state: 'CA',
                     },
+                });
+            });
+
+            it('createPayment and hides ship to section in PayPal modal', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                    throw providerError;
+                });
+
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    getCartMockWithDigitalItemsOnly(),
+                );
+
+                const braintreeOptions = {
+                    ...options,
+                    braintree: {
+                        onError: jest.fn(),
+                        containerId: '#checkout-button-container',
+                    },
+                };
+
+                await strategy.initialize(braintreeOptions);
+
+                try {
+                    await strategy.execute(orderRequestBody, options);
+                } catch (error) {
+                    expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
+                        new Error('INSTRUMENT_DECLINED'),
+                    );
+                }
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(
+                    jest.fn(),
+                );
+
+                eventEmitter.emit('createOrder');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                await strategy.execute(orderRequestBody, options);
+
+                expect(braintreePaypalCheckoutMock.createPayment).toHaveBeenCalledWith({
+                    amount: 190,
+                    currency: 'USD',
+                    enableShippingAddress: false,
+                    flow: 'checkout',
+                    offerCredit: false,
+                    shippingAddressEditable: false,
+                    shippingAddressOverride: undefined,
                 });
             });
         });

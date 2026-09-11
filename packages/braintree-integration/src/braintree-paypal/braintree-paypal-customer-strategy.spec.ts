@@ -11,7 +11,7 @@ import {
     BraintreePaypalCheckoutCreator,
     BraintreeScriptLoader,
     BraintreeSDKVersionManager,
-    getBraintree,
+    getBraintree, getCartMockWithDigitalItemsOnly,
     getDataCollectorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
@@ -439,6 +439,37 @@ describe('BraintreePaypalCustomerStrategy', () => {
         });
 
         it('sets up PayPal payment flow with current checkout details when customer is ready to pay', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(braintreePaypalCheckoutMock.createPayment).toHaveBeenCalledWith({
+                amount: 190,
+                currency: 'USD',
+                enableShippingAddress: true,
+                flow: 'checkout',
+                offerCredit: false,
+                shippingAddressEditable: false,
+                shippingAddressOverride: {
+                    city: 'Some City',
+                    countryCode: 'US',
+                    line1: '12345 Testing Way',
+                    line2: '',
+                    phone: '555-555-5555',
+                    postalCode: '95555',
+                    recipientName: 'Test Tester',
+                    state: 'CA',
+                },
+            });
+        });
+
+        it('calls createPayment and hides ship to section in PayPal modal', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                getCartMockWithDigitalItemsOnly(),
+            );
+
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');

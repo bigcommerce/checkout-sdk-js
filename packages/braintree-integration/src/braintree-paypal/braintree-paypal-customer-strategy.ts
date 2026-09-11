@@ -190,7 +190,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 ? this.braintreeIntegrationService.mapToBraintreeShippingAddressOverride(address)
                 : undefined;
 
-            const cart = state.getCart();
+            const cart = state.getCartOrThrow();
             const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
             const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
 

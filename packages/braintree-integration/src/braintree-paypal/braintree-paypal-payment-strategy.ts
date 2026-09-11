@@ -426,7 +426,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 ? mapToBraintreeShippingAddressOverride(address)
                 : undefined;
 
-            const cart = state.getCart();
+            const cart = state.getCartOrThrow();
             const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
             const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
 
