@@ -13,6 +13,8 @@ import {
     PaymentIntegrationService,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
+    PaymentRequestOptions,
+    PaymentStatusTypes,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { DEFAULT_CONTAINER_STYLES, LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -128,11 +130,41 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 paymentData: { nonce, ...extraData },
             });
         } catch (error) {
-            await this._googlePayPaymentProcessor.processAdditionalAction(error, payment.methodId);
+            try {
+                await this._googlePayPaymentProcessor.processAdditionalAction(
+                    error,
+                    payment.methodId,
+                );
+            } catch (additionalActionError) {
+                await this._invalidateStalePaymentToken(payment.methodId);
+
+                throw additionalActionError;
+            }
         }
     }
 
-    finalize(): Promise<void> {
+    async finalize(options?: PaymentRequestOptions): Promise<void> {
+        const state = this._paymentIntegrationService.getState();
+        const order = state.getOrder();
+        const status = state.getPaymentStatus();
+
+        if (
+            order &&
+            (status === PaymentStatusTypes.FINALIZE || status === PaymentStatusTypes.INITIALIZE)
+        ) {
+            try {
+                await this._paymentIntegrationService.finalizeOrder(options);
+            } catch (error) {
+                if (options?.methodId) {
+                    await this._invalidateStalePaymentToken(options.methodId);
+                }
+
+                throw error;
+            }
+
+            return;
+        }
+
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
@@ -435,6 +467,15 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             this._loadingIndicator.show(this._loadingIndicatorContainer);
         } else {
             this._loadingIndicator.hide();
+        }
+    }
+
+    private async _invalidateStalePaymentToken(methodId: string): Promise<void> {
+        try {
+            await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        } catch {
+            // If the reload fails, the stale state will persist
+            // until the next successful reload.
         }
     }
 }
