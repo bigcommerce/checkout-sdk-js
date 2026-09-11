@@ -465,7 +465,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
             });
         });
 
-        it('calls createPayment and hides ship to section in PayPal modal', async () => {
+        it('calls createPayment and hides ship to section in PayPal modal and hides ship to section', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
                 getCartMockWithDigitalItemsOnly(),
             );
@@ -479,20 +479,11 @@ describe('BraintreePaypalCustomerStrategy', () => {
             expect(braintreePaypalCheckoutMock.createPayment).toHaveBeenCalledWith({
                 amount: 190,
                 currency: 'USD',
-                enableShippingAddress: true,
+                enableShippingAddress: false,
                 flow: 'checkout',
                 offerCredit: false,
                 shippingAddressEditable: false,
-                shippingAddressOverride: {
-                    city: 'Some City',
-                    countryCode: 'US',
-                    line1: '12345 Testing Way',
-                    line2: '',
-                    phone: '555-555-5555',
-                    postalCode: '95555',
-                    recipientName: 'Test Tester',
-                    state: 'CA',
-                },
+                shippingAddressOverride: undefined,
             });
         });
 
