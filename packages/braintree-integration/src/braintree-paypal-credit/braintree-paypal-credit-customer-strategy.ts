@@ -203,11 +203,15 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
                 ? this.braintreeIntegrationService.mapToBraintreeShippingAddressOverride(address)
                 : undefined;
 
+            const cart = state.getCart();
+            const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
+            const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
+
             return await braintreePaypalCheckout.createPayment({
                 flow: 'checkout',
-                enableShippingAddress: true,
+                enableShippingAddress: !isOnlyDigitalItems,
                 shippingAddressEditable: false,
-                shippingAddressOverride,
+                shippingAddressOverride: isOnlyDigitalItems ? undefined : shippingAddressOverride,
                 amount,
                 currency,
                 offerCredit: true,
