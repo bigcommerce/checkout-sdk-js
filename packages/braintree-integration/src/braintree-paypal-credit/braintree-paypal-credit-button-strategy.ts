@@ -224,7 +224,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
                 ? mapToBraintreeShippingAddressOverride(address)
                 : undefined;
 
-            const cart = buyNowCart ? buyNowCart : state.getCartOrThrow();
+            const cart = buyNowCart ?? state.getCartOrThrow();
             const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
             const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
 
