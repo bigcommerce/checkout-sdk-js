@@ -1,5 +1,6 @@
 import {
-    Cart, DigitalItem,
+    Cart,
+    DigitalItem,
     OrderPaymentRequestBody,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -501,9 +502,9 @@ export function getCartMockWithDigitalItemsOnly(): Cart {
     };
 }
 
-export function getDigitalItem():DigitalItem {
-   return {
-       id: '667',
+export function getDigitalItem(): DigitalItem {
+    return {
+        id: '667',
         variantId: 72,
         productId: 104,
         sku: 'CLX',
@@ -537,6 +538,5 @@ export function getDigitalItem():DigitalItem {
         ],
         categoryNames: ['Ebooks', 'Audio Books'],
         retailPrice: 1,
-   }
+    };
 }
-

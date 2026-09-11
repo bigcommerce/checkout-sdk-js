@@ -11,7 +11,8 @@ import {
     BraintreePaypalCheckoutCreator,
     BraintreeScriptLoader,
     BraintreeSDKVersionManager,
-    getBraintree, getCartMockWithDigitalItemsOnly,
+    getBraintree,
+    getCartMockWithDigitalItemsOnly,
     getDataCollectorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
@@ -647,7 +648,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         it('sets up PayPal payment flow with current checkout details when customer is ready to pay and hides ship to section', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
                 getCartMockWithDigitalItemsOnly(),
-            )
+            );
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
