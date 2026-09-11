@@ -274,6 +274,33 @@ describe('GooglePayCustomerStrategy', () => {
 
             expect(callOrder).toStrictEqual(['setIsWebViewExperimentOn', 'initialize']);
         });
+
+        it('should forward filterAvailableShippingOptions to the processor', async () => {
+            const filterAvailableShippingOptions = jest.fn();
+
+            jest.spyOn(processor, 'setFilterAvailableShippingOptions');
+
+            await strategy.initialize({
+                ...options,
+                googlepayworldpayaccess: {
+                    ...options.googlepayworldpayaccess,
+                    container: CONTAINER_ID,
+                    filterAvailableShippingOptions,
+                },
+            });
+
+            expect(processor.setFilterAvailableShippingOptions).toHaveBeenCalledWith(
+                filterAvailableShippingOptions,
+            );
+        });
+
+        it('should forward undefined to the processor when no filter is provided', async () => {
+            jest.spyOn(processor, 'setFilterAvailableShippingOptions');
+
+            await strategy.initialize(options);
+
+            expect(processor.setFilterAvailableShippingOptions).toHaveBeenCalledWith(undefined);
+        });
     });
 
     describe('#getGooglePayClientOptions with WebView', () => {

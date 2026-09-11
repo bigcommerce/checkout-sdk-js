@@ -760,6 +760,140 @@ describe('GooglePayGateway', () => {
             });
             expect(selectShippingOptionMock).not.toHaveBeenCalled();
         });
+
+        describe('with filterAvailableShippingOptions', () => {
+            const pickUpOption = {
+                ...getShippingOption(),
+                id: 'pick-up-in-store',
+                type: 'shipping_pickupinstore',
+                description: 'Pick Up',
+                isRecommended: false,
+            };
+            const consignmentWithTwoOptions = {
+                ...getConsignment(),
+                selectedShippingOption: undefined,
+                availableShippingOptions: [pickUpOption, getShippingOption()],
+            };
+
+            it('should only return the options kept by the filter', async () => {
+                await gateway.initialize(getGeneric);
+                gateway.setFilterAvailableShippingOptions((shippingOptions) =>
+                    Promise.resolve(
+                        shippingOptions.filter(
+                            (option) => option.type !== 'shipping_pickupinstore',
+                        ),
+                    ),
+                );
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignments',
+                ).mockReturnValueOnce([consignmentWithTwoOptions]);
+
+                await expect(
+                    gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+                ).resolves.toStrictEqual({
+                    defaultSelectedOptionId: getShippingOption().id,
+                    shippingOptions: [
+                        {
+                            id: getShippingOption().id,
+                            label: `$0.00 ${getShippingOption().description}`,
+                            description: getShippingOption().additionalDescription,
+                        },
+                    ],
+                });
+            });
+
+            it('should fall back to the unfiltered options if the filter rejects', async () => {
+                jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+                await gateway.initialize(getGeneric);
+                gateway.setFilterAvailableShippingOptions(() =>
+                    Promise.reject(new Error('Filtering failed')),
+                );
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignments',
+                ).mockReturnValueOnce([consignmentWithTwoOptions]);
+
+                const result = await gateway.handleShippingAddressChange(
+                    defaultGPayShippingAddress,
+                );
+
+                expect(result?.shippingOptions).toHaveLength(2);
+            });
+
+            it('should re-select a remaining option when the selected one is filtered out', async () => {
+                const selectShippingOptionMock = jest.spyOn(
+                    paymentIntegrationService,
+                    'selectShippingOption',
+                );
+
+                await gateway.initialize(getGeneric);
+                gateway.setFilterAvailableShippingOptions((shippingOptions) =>
+                    Promise.resolve(
+                        shippingOptions.filter(
+                            (option) => option.type !== 'shipping_pickupinstore',
+                        ),
+                    ),
+                );
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignments',
+                ).mockReturnValueOnce([
+                    {
+                        ...consignmentWithTwoOptions,
+                        selectedShippingOption: pickUpOption,
+                    },
+                ]);
+
+                await expect(
+                    gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+                ).resolves.toStrictEqual(
+                    expect.objectContaining({
+                        defaultSelectedOptionId: getShippingOption().id,
+                    }),
+                );
+                expect(selectShippingOptionMock).toHaveBeenCalledWith(getShippingOption().id);
+            });
+
+            it('should keep the selected option when the filter retains it', async () => {
+                const selectShippingOptionMock = jest.spyOn(
+                    paymentIntegrationService,
+                    'selectShippingOption',
+                );
+
+                await gateway.initialize(getGeneric);
+                gateway.setFilterAvailableShippingOptions((shippingOptions) =>
+                    Promise.resolve(
+                        shippingOptions.filter(
+                            (option) => option.type !== 'shipping_pickupinstore',
+                        ),
+                    ),
+                );
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignments',
+                ).mockReturnValueOnce([
+                    {
+                        ...consignmentWithTwoOptions,
+                        selectedShippingOption: getShippingOption(),
+                    },
+                ]);
+
+                await expect(
+                    gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+                ).resolves.toStrictEqual(
+                    expect.objectContaining({
+                        defaultSelectedOptionId: getShippingOption().id,
+                    }),
+                );
+                expect(selectShippingOptionMock).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('#handleShippingOptionChange', () => {

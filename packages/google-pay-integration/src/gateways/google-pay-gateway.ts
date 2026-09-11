@@ -49,6 +49,9 @@ export default class GooglePayGateway {
     private _currencyCode?: string;
     private _currencyService?: CurrencyService;
     private _isWebViewExperimentOn: null | boolean = null;
+    private _filterAvailableShippingOptions?: (
+        shippingOptions: ShippingOption[],
+    ) => Promise<ShippingOption[]>;
 
     constructor(
         private _gatewayIdentifier: string,
@@ -241,6 +244,14 @@ export default class GooglePayGateway {
         this._isWebViewExperimentOn = isWebViewExperimentOn;
     }
 
+    setFilterAvailableShippingOptions(
+        filterAvailableShippingOptions?: (
+            shippingOptions: ShippingOption[],
+        ) => Promise<ShippingOption[]>,
+    ): void {
+        this._filterAvailableShippingOptions = filterAvailableShippingOptions;
+    }
+
     getPaymentGatewayParameters():
         | Promise<GooglePayGatewayParameters>
         | GooglePayGatewayParameters {
@@ -319,21 +330,38 @@ export default class GooglePayGateway {
             this._currencyService = createCurrencyService(storeConfig);
         }
 
-        const availableShippingOptions = (consignment.availableShippingOptions || []).map(
+        let filteredShippingOptions = consignment.availableShippingOptions || [];
+
+        if (typeof this._filterAvailableShippingOptions === 'function') {
+            try {
+                filteredShippingOptions = await this._filterAvailableShippingOptions(
+                    filteredShippingOptions,
+                );
+            } catch (error) {
+                console.error('Failed to filter available shipping options:', error);
+            }
+        }
+
+        const availableShippingOptions = filteredShippingOptions.map(
             this._getGooglePayShippingOption.bind(this),
         );
 
-        const recommendedShippingOption = consignment.availableShippingOptions?.find(
+        const recommendedShippingOption = filteredShippingOptions.find(
             (shippingOption) => shippingOption.isRecommended,
         );
 
+        const isSelectedOptionAvailable = filteredShippingOptions.some(
+            (shippingOption) => shippingOption.id === consignment.selectedShippingOption?.id,
+        );
+        const selectedId = isSelectedOptionAvailable
+            ? consignment.selectedShippingOption?.id
+            : undefined;
+
         if (availableShippingOptions.length) {
             const selectedShippingOptionId =
-                consignment.selectedShippingOption?.id ||
-                recommendedShippingOption?.id ||
-                availableShippingOptions[0]?.id;
+                selectedId || recommendedShippingOption?.id || availableShippingOptions[0]?.id;
 
-            if (!consignment.selectedShippingOption?.id && availableShippingOptions[0]) {
+            if (!selectedId && availableShippingOptions[0]) {
                 await this.handleShippingOptionChange(
                     recommendedShippingOption?.id || availableShippingOptions[0].id,
                 );
