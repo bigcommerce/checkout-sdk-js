@@ -587,7 +587,7 @@ describe('BraintreePaypalButtonStrategy', () => {
         it('sets up PayPal payment flow with current checkout details when customer is ready to pay and hides ship to section', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
                 getCartMockWithDigitalItemsOnly(),
-            )
+            );
 
             await strategy.initialize(initializationOptions);
 
@@ -603,7 +603,7 @@ describe('BraintreePaypalButtonStrategy', () => {
                 intent: undefined,
                 offerCredit: false,
                 shippingAddressEditable: false,
-                shippingAddressOverride: undefined
+                shippingAddressOverride: undefined,
             });
         });
 
