@@ -122,7 +122,7 @@ export interface BraintreePaypalRequest {
     billingAgreementDescription?: string;
     currency?: string;
     displayName?: string;
-    enableShippingAddress: true;
+    enableShippingAddress: boolean;
     flow: 'checkout' | 'vault';
     intent?: 'authorize' | 'order' | 'sale';
     landingPageType?: 'login' | 'billing';

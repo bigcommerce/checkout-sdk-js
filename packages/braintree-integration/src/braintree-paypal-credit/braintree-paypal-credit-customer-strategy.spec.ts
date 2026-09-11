@@ -12,6 +12,7 @@ import {
     BraintreeScriptLoader,
     BraintreeSDKVersionManager,
     getBraintree,
+    getCartMockWithDigitalItemsOnly,
     getDataCollectorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
@@ -533,6 +534,27 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                     recipientName: 'Test Tester',
                     state: 'CA',
                 },
+            });
+        });
+
+        it('sets up PayPal payment flow with current checkout details when customer is ready to pay and hides ship to section', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                getCartMockWithDigitalItemsOnly(),
+            );
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(braintreePaypalCheckoutMock.createPayment).toHaveBeenCalledWith({
+                amount: 190,
+                currency: 'USD',
+                enableShippingAddress: false,
+                flow: 'checkout',
+                offerCredit: true,
+                shippingAddressEditable: false,
+                shippingAddressOverride: undefined,
             });
         });
 
