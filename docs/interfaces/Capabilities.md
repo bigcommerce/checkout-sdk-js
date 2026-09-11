@@ -26,6 +26,10 @@
 
 > **customer**: `object`
 
+#### reloadPageAfterSignIn
+
+> **reloadPageAfterSignIn**: `boolean`
+
 #### superAdminCompanySelector
 
 > **superAdminCompanySelector**: `boolean`
