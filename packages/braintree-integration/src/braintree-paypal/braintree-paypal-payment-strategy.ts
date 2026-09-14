@@ -7,6 +7,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getIsOnlyDigitalProduct,
     MessagingPlacements,
     PaypalAuthorizeData,
     PaypalButtonRender,
@@ -221,9 +222,8 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             ? mapToBraintreeShippingAddressOverride(shippingAddress)
             : undefined;
 
-        const cart = state.getCart();
-        const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
-        const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
+        const cart = state.getCartOrThrow();
+        const isOnlyDigitalItems = getIsOnlyDigitalProduct(cart);
 
         return Promise.all([
             this.braintreeIntegrationService.paypal({
@@ -427,8 +427,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 : undefined;
 
             const cart = state.getCartOrThrow();
-            const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
-            const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
+            const isOnlyDigitalItems = getIsOnlyDigitalProduct(cart);
 
             return await braintreePaypalCheckout.createPayment({
                 flow: 'checkout',

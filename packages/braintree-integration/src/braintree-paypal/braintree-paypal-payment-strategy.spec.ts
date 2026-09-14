@@ -37,6 +37,7 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getCart,
     getOrderRequestBody,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -839,6 +840,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
             });
 
             it('submitPayment with the right information and sets credit to true', async () => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    getCart(),
+                );
                 const expected = {
                     ...orderRequestBody.payment,
                     paymentData: {

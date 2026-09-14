@@ -8,6 +8,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getIsOnlyDigitalProduct,
     isBraintreeError,
     PaypalAuthorizeData,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -194,8 +195,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 : undefined;
 
             const cart = buyNowCart ?? state.getCartOrThrow();
-            const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
-            const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
+            const isOnlyDigitalItems = getIsOnlyDigitalProduct(cart);
 
             return await braintreePaypalCheckout.createPayment({
                 flow: 'checkout',

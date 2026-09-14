@@ -29,3 +29,5 @@ export {
     isBraintreeFormFieldsMap,
     isBraintreeStoredCardFieldsMap,
 } from './utils/is-braintree-form-fields-map';
+
+export { default as getIsOnlyDigitalProduct } from './getIsOnlyDigitalProducts';

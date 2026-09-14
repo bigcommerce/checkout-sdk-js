@@ -8,6 +8,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getIsOnlyDigitalProduct,
     isBraintreeError,
     PaypalAuthorizeData,
     PaypalButtonStyleLabelOption,
@@ -225,8 +226,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
                 : undefined;
 
             const cart = buyNowCart ?? state.getCartOrThrow();
-            const { physicalItems = [], digitalItems = [] } = cart?.lineItems ?? {};
-            const isOnlyDigitalItems = physicalItems.length === 0 && digitalItems.length > 0;
+            const isOnlyDigitalItems = getIsOnlyDigitalProduct(cart);
 
             return await braintreePaypalCheckout.createPayment({
                 flow: 'checkout',
