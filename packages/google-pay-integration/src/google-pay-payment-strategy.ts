@@ -119,6 +119,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
+        const isHandleUnsuccessful3dsCheckExperimentOn =
+            this._isHandleUnsuccessful3dsCheckExperimentOn();
+
         await this._paymentIntegrationService.submitOrder();
 
         const nonce = await this._googlePayPaymentProcessor.getNonce(payment.methodId);
@@ -136,7 +139,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                     payment.methodId,
                 );
             } catch (additionalActionError) {
-                await this._invalidateStalePaymentToken(payment.methodId);
+                if (isHandleUnsuccessful3dsCheckExperimentOn) {
+                    await this._invalidateStalePaymentToken(payment.methodId);
+                }
 
                 throw additionalActionError;
             }
@@ -144,6 +149,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     }
 
     async finalize(options?: PaymentRequestOptions): Promise<void> {
+        if (!this._isHandleUnsuccessful3dsCheckExperimentOn()) {
+            return Promise.reject(new OrderFinalizationNotRequiredError());
+        }
+
         const state = this._paymentIntegrationService.getState();
         const order = state.getOrder();
         const status = state.getPaymentStatus();
@@ -477,5 +486,17 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             // If the reload fails, the stale state will persist
             // until the next successful reload.
         }
+    }
+
+    private _isHandleUnsuccessful3dsCheckExperimentOn(): boolean {
+        const { features } = this._paymentIntegrationService
+            .getState()
+            .getStoreConfigOrThrow().checkoutSettings;
+
+        return isExperimentEnabled(
+            features,
+            'PI-5643_google_pay_handle_unsuccessful_3ds_check',
+            false,
+        );
     }
 }

@@ -411,15 +411,46 @@ describe('GooglePayPaymentStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
         });
 
-        it('invalidates the cached payment method when the additional action is a hard decline', async () => {
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
-            jest.spyOn(processor, 'processAdditionalAction').mockRejectedValue(
-                new Error('Payment was declined'),
-            );
+        describe('when the PI-5643_google_pay_handle_unsuccessful_3ds_check experiment is on', () => {
+            beforeEach(() => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue({
+                    ...storeConfig,
+                    checkoutSettings: {
+                        ...storeConfig.checkoutSettings,
+                        features: {
+                            ...storeConfig.checkoutSettings.features,
+                            'PI-5643_google_pay_handle_unsuccessful_3ds_check': true,
+                        },
+                    },
+                });
+            });
 
-            await expect(strategy.execute(payload)).rejects.toThrow('Payment was declined');
+            it('invalidates the cached payment method when the additional action is a hard decline', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
+                jest.spyOn(processor, 'processAdditionalAction').mockRejectedValue(
+                    new Error('Payment was declined'),
+                );
 
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('example');
+                await expect(strategy.execute(payload)).rejects.toThrow('Payment was declined');
+
+                expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('example');
+            });
+        });
+
+        describe('when the PI-5643_google_pay_handle_unsuccessful_3ds_check experiment is off', () => {
+            it('does not invalidate the cached payment method when the additional action is a hard decline', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
+                jest.spyOn(processor, 'processAdditionalAction').mockRejectedValue(
+                    new Error('Payment was declined'),
+                );
+
+                await expect(strategy.execute(payload)).rejects.toThrow('Payment was declined');
+
+                expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
+            });
         });
 
         describe('should fail if:', () => {
@@ -1182,6 +1213,20 @@ describe('GooglePayPaymentStrategy', () => {
         beforeEach(() => {
             jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReset();
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentStatus').mockReset();
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PI-5643_google_pay_handle_unsuccessful_3ds_check': true,
+                    },
+                },
+            });
         });
 
         it('rejects with OrderFinalizationNotRequiredError when payment status is neither FINALIZE nor INITIALIZE', async () => {
@@ -1253,6 +1298,36 @@ describe('GooglePayPaymentStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
                 'googlepaycheckoutcom',
             );
+        });
+
+        describe('when the PI-5643_google_pay_handle_unsuccessful_3ds_check experiment is off', () => {
+            beforeEach(() => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue({
+                    ...storeConfig,
+                    checkoutSettings: {
+                        ...storeConfig.checkoutSettings,
+                        features: {
+                            ...storeConfig.checkoutSettings.features,
+                            'PI-5643_google_pay_handle_unsuccessful_3ds_check': false,
+                        },
+                    },
+                });
+            });
+
+            it('always rejects with OrderFinalizationNotRequiredError regardless of payment status', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentStatus',
+                ).mockReturnValue(PaymentStatusTypes.INITIALIZE);
+
+                const finalize = strategy.finalize({ methodId: 'googlepaycheckoutcom' });
+
+                await expect(finalize).rejects.toThrow(OrderFinalizationNotRequiredError);
+                expect(paymentIntegrationService.finalizeOrder).not.toHaveBeenCalled();
+            });
         });
     });
 
