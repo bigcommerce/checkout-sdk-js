@@ -138,6 +138,10 @@
 
 > **hasOrderExtraFields**: `boolean`
 
+#### invoiceConfig
+
+> **invoiceConfig**: \{ `invoiceListUrl`: `string`; `receiptUrlTemplate`: `string`; \} \| `null`
+
 #### quoteConfig
 
 > **quoteConfig**: \{ `id`: `number`; \} \| `null`

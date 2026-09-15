@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.977.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.976.0...v1.977.0) (2026-09-15)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10377 Add invoiceConfig ([#3408](https://github.com/bigcommerce/checkout-sdk-js/issues/3408)) ([848333f](https://github.com/bigcommerce/checkout-sdk-js/commit/848333fd67cf72ecfda006af3e164aa457e378c0))
+
 ## [1.976.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.975.0...v1.976.0) (2026-09-11)
 
 

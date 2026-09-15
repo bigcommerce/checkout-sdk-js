@@ -2389,6 +2389,10 @@ declare interface Capabilities {
         quoteConfig: {
             id: number;
         } | null;
+        invoiceConfig: {
+            invoiceListUrl: string;
+            receiptUrlTemplate: string;
+        } | null;
     };
     customer: {
         superAdminCompanySelector: boolean;
