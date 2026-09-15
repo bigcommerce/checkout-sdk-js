@@ -495,7 +495,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         return isExperimentEnabled(
             features,
-            'PI-5643_google_pay_handle_unsuccessful_3ds_check',
+            'PI-5643.google_pay_handle_unsuccessful_3ds_check',
             false,
         );
     }

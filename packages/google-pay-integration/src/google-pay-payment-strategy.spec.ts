@@ -411,7 +411,7 @@ describe('GooglePayPaymentStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
         });
 
-        describe('when the PI-5643_google_pay_handle_unsuccessful_3ds_check experiment is on', () => {
+        describe('when the PI-5643.google_pay_handle_unsuccessful_3ds_check experiment is on', () => {
             beforeEach(() => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
@@ -422,7 +422,7 @@ describe('GooglePayPaymentStrategy', () => {
                         ...storeConfig.checkoutSettings,
                         features: {
                             ...storeConfig.checkoutSettings.features,
-                            'PI-5643_google_pay_handle_unsuccessful_3ds_check': true,
+                            'PI-5643.google_pay_handle_unsuccessful_3ds_check': true,
                         },
                     },
                 });
@@ -440,7 +440,7 @@ describe('GooglePayPaymentStrategy', () => {
             });
         });
 
-        describe('when the PI-5643_google_pay_handle_unsuccessful_3ds_check experiment is off', () => {
+        describe('when the PI-5643.google_pay_handle_unsuccessful_3ds_check experiment is off', () => {
             it('does not invalidate the cached payment method when the additional action is a hard decline', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
                 jest.spyOn(processor, 'processAdditionalAction').mockRejectedValue(
@@ -1223,7 +1223,7 @@ describe('GooglePayPaymentStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PI-5643_google_pay_handle_unsuccessful_3ds_check': true,
+                        'PI-5643.google_pay_handle_unsuccessful_3ds_check': true,
                     },
                 },
             });
@@ -1300,7 +1300,7 @@ describe('GooglePayPaymentStrategy', () => {
             );
         });
 
-        describe('when the PI-5643_google_pay_handle_unsuccessful_3ds_check experiment is off', () => {
+        describe('when the PI-5643.google_pay_handle_unsuccessful_3ds_check experiment is off', () => {
             beforeEach(() => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
@@ -1311,7 +1311,7 @@ describe('GooglePayPaymentStrategy', () => {
                         ...storeConfig.checkoutSettings,
                         features: {
                             ...storeConfig.checkoutSettings.features,
-                            'PI-5643_google_pay_handle_unsuccessful_3ds_check': false,
+                            'PI-5643.google_pay_handle_unsuccessful_3ds_check': false,
                         },
                     },
                 });
