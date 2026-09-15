@@ -121,6 +121,8 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
             this._getStripeActionsOrThrow(),
         ]);
 
+        await this._validateStripeElementsOrThrow(stripeActions);
+
         await this._updateCheckoutSessionDataBeforePay(gatewayId, methodId, stripeActions);
         await this.paymentIntegrationService.submitOrder(order, options);
 
@@ -299,6 +301,18 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const stripeElement = this.stripeCheckout?.getPaymentElement();
 
         stripeElement?.collapse();
+    }
+
+    // INFO: validating mounted elements before order creation allows to fail fast on invalid
+    // payment data, so no order and no payment request are created for it.
+    private async _validateStripeElementsOrThrow(
+        stripeActions: StripeCheckoutSessionActions,
+    ): Promise<void> {
+        const { type, error } = await stripeActions.validateElements();
+
+        if (error || type === StripeLoadActionsResultType.ERROR) {
+            throw new PaymentMethodFailedError(error?.message);
+        }
     }
 
     private async _updateCheckoutSessionDataBeforePay(

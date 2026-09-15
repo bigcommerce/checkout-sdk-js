@@ -38,6 +38,8 @@ export {
     type StripeCheckoutSessionActionResult,
     type StripeCheckoutSessionActions,
     type StripeCheckoutSessionConfirmationError,
+    type StripeValidateElementsError,
+    type StripeValidateElementsResult,
     StripeCheckoutSessionPaymentStatus,
     type StripeSelectedPaymentMethod,
     type StripeSavedPaymentMethod,
