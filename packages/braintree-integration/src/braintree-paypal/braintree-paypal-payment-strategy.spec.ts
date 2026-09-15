@@ -15,6 +15,7 @@ import {
     BraintreeSDKVersionManager,
     getBraintreePaypal,
     getBraintreePaypalMock,
+    getCartMockWithDigitalItemsOnly,
     getClientMock,
     getModuleCreatorMock,
     getPayPalCheckoutCreatorMock,
@@ -36,6 +37,7 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getCart,
     getOrderRequestBody,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -406,6 +408,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 shouldSaveInstrument: false,
                 offerCredit: false,
                 shippingAddressEditable: false,
+                enableShippingAddress: true,
                 shippingAddressOverride,
             });
 
@@ -431,6 +434,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 shouldSaveInstrument: false,
                 offerCredit: false,
                 shippingAddressEditable: false,
+                enableShippingAddress: true,
                 shippingAddressOverride,
             });
 
@@ -441,6 +445,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 amount: 190,
                 locale: 'en_US',
                 currency: 'USD',
+                enableShippingAddress: true,
                 shouldSaveInstrument: false,
                 shippingAddressEditable: false,
                 offerCredit: false,
@@ -722,6 +727,54 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     },
                 });
             });
+
+            it('createPayment and hides ship to section in PayPal modal', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                    throw providerError;
+                });
+
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    getCartMockWithDigitalItemsOnly(),
+                );
+
+                const braintreeOptions = {
+                    ...options,
+                    braintree: {
+                        onError: jest.fn(),
+                        containerId: '#checkout-button-container',
+                    },
+                };
+
+                await strategy.initialize(braintreeOptions);
+
+                try {
+                    await strategy.execute(orderRequestBody, options);
+                } catch (error) {
+                    expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
+                        new Error('INSTRUMENT_DECLINED'),
+                    );
+                }
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(
+                    jest.fn(),
+                );
+
+                eventEmitter.emit('createOrder');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                await strategy.execute(orderRequestBody, options);
+
+                expect(braintreePaypalCheckoutMock.createPayment).toHaveBeenCalledWith({
+                    amount: 190,
+                    currency: 'USD',
+                    enableShippingAddress: false,
+                    flow: 'checkout',
+                    offerCredit: false,
+                    shippingAddressEditable: false,
+                    shippingAddressOverride: undefined,
+                });
+            });
         });
 
         describe('when paying with a vaulted instrument', () => {
@@ -787,6 +840,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
             });
 
             it('submitPayment with the right information and sets credit to true', async () => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    getCart(),
+                );
                 const expected = {
                     ...orderRequestBody.payment,
                     paymentData: {
@@ -809,6 +865,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     amount: 190,
                     locale: 'en_US',
                     currency: 'USD',
+                    enableShippingAddress: true,
                     shouldSaveInstrument: false,
                     offerCredit: true,
                     shippingAddressEditable: false,

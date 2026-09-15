@@ -1,4 +1,6 @@
 import {
+    Cart,
+    DigitalItem,
     OrderPaymentRequestBody,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -470,5 +472,71 @@ export function getBraintreeAddress(): BraintreeShippingAddressOverride {
         postalCode: '95555',
         phone: '555-555-5555',
         recipientName: 'Test Tester',
+    };
+}
+
+export function getCartMockWithDigitalItemsOnly(): Cart {
+    return {
+        id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+        customerId: 4,
+        companyId: 1,
+        companyName: null,
+        currency: { name: 'US Dollar', code: 'USD', symbol: '$', decimalPlaces: 2 },
+        email: 'foo@bar.com',
+        isTaxIncluded: false,
+        baseAmount: 200,
+        discountAmount: 10,
+        cartAmount: 190,
+        coupons: [],
+        discounts: [],
+        lineItems: {
+            physicalItems: [],
+            digitalItems: [getDigitalItem()],
+            giftCertificates: [],
+            customItems: [],
+        },
+        createdTime: '2018-03-06T04:41:49+00:00',
+        updatedTime: '2018-03-07T03:44:51+00:00',
+        locale: 'en',
+        version: 1,
+    };
+}
+
+export function getDigitalItem(): DigitalItem {
+    return {
+        id: '667',
+        variantId: 72,
+        productId: 104,
+        sku: 'CLX',
+        name: 'Digital Book',
+        url: '/digital-book/',
+        quantity: 1,
+        brand: 'Digitalia',
+        isTaxable: true,
+        imageUrl: '/images/digital-book.jpg',
+        discounts: [],
+        discountAmount: 0,
+        couponAmount: 0,
+        listPrice: 100,
+        salePrice: 100,
+        comparisonPrice: 200,
+        downloadPageUrl: 'url.php',
+        downloadFileUrls: [],
+        downloadSize: '',
+        extendedListPrice: 200,
+        extendedSalePrice: 200,
+        extendedComparisonPrice: 250,
+        addedByPromotion: false,
+        addedByAttributeId: null,
+        options: [
+            {
+                name: 'm',
+                nameId: 2,
+                value: 'l',
+                valueId: 4,
+            },
+        ],
+        categoryNames: ['Ebooks', 'Audio Books'],
+        retailPrice: 1,
     };
 }
