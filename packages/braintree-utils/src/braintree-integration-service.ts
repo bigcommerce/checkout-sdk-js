@@ -55,6 +55,7 @@ export interface PaypalConfig {
     shippingAddressEditable?: boolean;
     shippingAddressOverride?: BraintreeShippingAddressOverride;
     shouldSaveInstrument?: boolean;
+    enableShippingAddress?: boolean;
 }
 
 // Info: this class is deprecated and will be removed in a nearest future. Please, do not add anything here.

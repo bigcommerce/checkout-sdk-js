@@ -406,6 +406,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 shouldSaveInstrument: false,
                 offerCredit: false,
                 shippingAddressEditable: false,
+                enableShippingAddress: true,
                 shippingAddressOverride,
             });
 
@@ -431,6 +432,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 shouldSaveInstrument: false,
                 offerCredit: false,
                 shippingAddressEditable: false,
+                enableShippingAddress: true,
                 shippingAddressOverride,
             });
 
@@ -441,6 +443,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 amount: 190,
                 locale: 'en_US',
                 currency: 'USD',
+                enableShippingAddress: true,
                 shouldSaveInstrument: false,
                 shippingAddressEditable: false,
                 offerCredit: false,
@@ -809,6 +812,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     amount: 190,
                     locale: 'en_US',
                     currency: 'USD',
+                    enableShippingAddress: true,
                     shouldSaveInstrument: false,
                     offerCredit: true,
                     shippingAddressEditable: false,
