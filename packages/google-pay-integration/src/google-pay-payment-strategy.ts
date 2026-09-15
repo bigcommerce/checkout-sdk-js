@@ -119,9 +119,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const isHandleUnsuccessful3dsCheckExperimentOn =
-            this._isHandleUnsuccessful3dsCheckExperimentOn();
-
         await this._paymentIntegrationService.submitOrder();
 
         const nonce = await this._googlePayPaymentProcessor.getNonce(payment.methodId);
@@ -133,18 +130,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 paymentData: { nonce, ...extraData },
             });
         } catch (error) {
-            try {
-                await this._googlePayPaymentProcessor.processAdditionalAction(
-                    error,
-                    payment.methodId,
-                );
-            } catch (additionalActionError) {
-                if (isHandleUnsuccessful3dsCheckExperimentOn) {
-                    await this._invalidateStalePaymentToken(payment.methodId);
-                }
-
-                throw additionalActionError;
-            }
+            await this._handleSubmitPaymentFailure(error, payment.methodId);
         }
     }
 
@@ -194,6 +180,21 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         this._isContainerMode = false;
 
         return Promise.resolve();
+    }
+
+    protected async _handleSubmitPaymentFailure(error: unknown, methodId: string): Promise<void> {
+        const isHandleUnsuccessful3dsCheckExperimentOn =
+            this._isHandleUnsuccessful3dsCheckExperimentOn();
+
+        try {
+            await this._googlePayPaymentProcessor.processAdditionalAction(error, methodId);
+        } catch (additionalActionError) {
+            if (isHandleUnsuccessful3dsCheckExperimentOn) {
+                await this._invalidateStalePaymentToken(methodId);
+            }
+
+            throw additionalActionError;
+        }
     }
 
     protected _addPaymentButton(
