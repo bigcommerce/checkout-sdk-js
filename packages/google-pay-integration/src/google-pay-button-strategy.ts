@@ -65,8 +65,14 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             throw new InvalidArgumentError('Unable to proceed without valid options.');
         }
 
-        const { buyNowInitializeOptions, currencyCode, buttonColor, buttonType, onError } =
-            googlePayOptions;
+        const {
+            buyNowInitializeOptions,
+            currencyCode,
+            buttonColor,
+            buttonType,
+            onError,
+            filterAvailableShippingOptions,
+        } = googlePayOptions;
 
         let state = this._paymentIntegrationService.getState();
         let paymentMethod: PaymentMethod<GooglePayInitializationData>;
@@ -83,6 +89,9 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         this._countryCode = paymentMethod.initializationData?.storeCountry;
         this._googlePayPaymentProcessor.setIsWebViewExperimentOn(
             !!paymentMethod.initializationData?.isWebViewExperimentOn,
+        );
+        this._googlePayPaymentProcessor.setFilterAvailableShippingOptions(
+            filterAvailableShippingOptions,
         );
 
         if (buyNowInitializeOptions) {

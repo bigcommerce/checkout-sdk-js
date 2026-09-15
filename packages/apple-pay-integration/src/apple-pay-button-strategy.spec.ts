@@ -13,6 +13,7 @@ import {
     InvalidArgumentError,
     MissingDataError,
     PaymentIntegrationService,
+    ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBuyNowCart,
@@ -253,6 +254,110 @@ describe('ApplePayButtonStrategy', () => {
                     expect(applePaySession.completeShippingContactSelection).toHaveBeenCalled();
                 }
             }
+        });
+
+        describe('with filterAvailableShippingOptions', () => {
+            const pickUpOption = {
+                ...getShippingOption(),
+                id: 'pick-up-in-store',
+                type: 'shipping_pickupinstore',
+                description: 'Pick Up',
+                isRecommended: false,
+            };
+            const deliveryOption = {
+                ...getShippingOption(),
+                id: 'delivery',
+                description: 'Delivery',
+                isRecommended: true,
+            };
+            const filterOutPickUp = (shippingOptions: ShippingOption[]) =>
+                Promise.resolve(
+                    shippingOptions.filter((option) => option.type !== 'shipping_pickupinstore'),
+                );
+
+            const initializeWithFilter = async (
+                filterAvailableShippingOptions: (
+                    shippingOptions: ShippingOption[],
+                ) => Promise<ShippingOption[]>,
+                selectedShippingOption?: ShippingOption,
+            ) => {
+                const options = getApplePayButtonInitializationOptions();
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCheckoutOrThrow',
+                ).mockReturnValue({
+                    ...getCheckout(),
+                    consignments: [
+                        {
+                            ...getConsignment(),
+                            selectedShippingOption,
+                            availableShippingOptions: [pickUpOption, deliveryOption],
+                        },
+                    ],
+                });
+
+                await strategy.initialize({
+                    ...options,
+                    applepay: {
+                        ...options.applepay!,
+                        filterAvailableShippingOptions,
+                    },
+                });
+
+                const button = container.firstChild as HTMLElement;
+
+                button.click();
+
+                await applePaySession.onshippingcontactselected({
+                    shippingContact: getContactAddress(),
+                } as ApplePayJS.ApplePayShippingContactSelectedEvent);
+            };
+
+            it('only shows the options kept by the filter', async () => {
+                await initializeWithFilter(filterOutPickUp);
+
+                expect(applePaySession.completeShippingContactSelection).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        newShippingMethods: [
+                            {
+                                label: deliveryOption.description,
+                                amount: deliveryOption.cost.toFixed(2),
+                                detail: deliveryOption.additionalDescription,
+                                identifier: deliveryOption.id,
+                            },
+                        ],
+                    }),
+                );
+            });
+
+            it('falls back to the unfiltered options if the filter rejects', async () => {
+                jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+                await initializeWithFilter(() => Promise.reject(new Error('Filtering failed')));
+
+                const [[{ newShippingMethods }]] = (
+                    applePaySession.completeShippingContactSelection as jest.Mock
+                ).mock.calls;
+
+                expect(newShippingMethods).toHaveLength(2);
+            });
+
+            it('re-selects a remaining option when the selected one is filtered out', async () => {
+                await initializeWithFilter(filterOutPickUp, pickUpOption);
+
+                expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                    deliveryOption.id,
+                );
+            });
+
+            it('keeps the selected option when the filter retains it', async () => {
+                await initializeWithFilter(filterOutPickUp, deliveryOption);
+
+                expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                    deliveryOption.id,
+                );
+            });
         });
 
         it('throws error if call to update address fails', async () => {

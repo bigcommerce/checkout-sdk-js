@@ -1,3 +1,5 @@
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 /**
  * A set of options that are required to initialize the customer step of
  * checkout in order to support ApplePay.
@@ -20,6 +22,15 @@ export default interface ApplePayCustomerInitializeOptions {
      * Sub total label to be passed to apple sheet.
      */
     subtotalLabel?: string;
+
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (
+        shippingOptions: ShippingOption[],
+    ) => Promise<ShippingOption[]>;
 
     /**
      * A callback that gets called when a payment is successfully completed.

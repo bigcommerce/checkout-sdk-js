@@ -47,6 +47,9 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _hasApplePaySession = false;
+    private _filterAvailableShippingOptions?: (
+        availableShippingOptions: ShippingOption[],
+    ) => Promise<ShippingOption[]>;
 
     constructor(
         private _requestSender: RequestSender,
@@ -72,6 +75,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             onError = noop,
             onClick = noop,
             onPaymentAuthorize,
+            filterAvailableShippingOptions,
         } = applepay;
 
         this._shippingLabel = shippingLabel || DefaultLabels.Shipping;
@@ -79,6 +83,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         this._onAuthorizeCallback = onPaymentAuthorize;
         this._onError = onError;
         this._onClick = onClick;
+        this._filterAvailableShippingOptions = filterAvailableShippingOptions;
 
         let state = this._paymentIntegrationService.getState();
 
@@ -311,7 +316,16 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         } = state.getCartOrThrow();
         let checkout = state.getCheckoutOrThrow();
         const selectionShippingOptionId = checkout.consignments[0].selectedShippingOption?.id;
-        const availableOptions = checkout.consignments[0].availableShippingOptions;
+        let availableOptions = checkout.consignments[0].availableShippingOptions;
+
+        if (typeof this._filterAvailableShippingOptions === 'function' && availableOptions) {
+            try {
+                availableOptions = await this._filterAvailableShippingOptions(availableOptions);
+            } catch (error) {
+                console.error('Failed to filter available shipping options:', error);
+            }
+        }
+
         const selectedOption = availableOptions?.find(({ id }) => id === selectionShippingOptionId);
         const unselectedOptions = availableOptions?.filter(
             (option) => option.id !== selectionShippingOptionId,

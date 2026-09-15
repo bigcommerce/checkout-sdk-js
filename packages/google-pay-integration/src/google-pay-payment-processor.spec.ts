@@ -598,6 +598,32 @@ describe('GooglePayPaymentProcessor', () => {
         });
     });
 
+    describe('#setFilterAvailableShippingOptions', () => {
+        it('should delegate to the gateway', async () => {
+            const filterAvailableShippingOptions = jest.fn();
+
+            jest.spyOn(gateway, 'setFilterAvailableShippingOptions');
+
+            await processor.initialize(getGeneric);
+
+            processor.setFilterAvailableShippingOptions(filterAvailableShippingOptions);
+
+            expect(gateway.setFilterAvailableShippingOptions).toHaveBeenCalledWith(
+                filterAvailableShippingOptions,
+            );
+        });
+
+        it('should delegate undefined to the gateway', async () => {
+            jest.spyOn(gateway, 'setFilterAvailableShippingOptions');
+
+            await processor.initialize(getGeneric);
+
+            processor.setFilterAvailableShippingOptions(undefined);
+
+            expect(gateway.setFilterAvailableShippingOptions).toHaveBeenCalledWith(undefined);
+        });
+    });
+
     describe('#initializeWidget in WebView', () => {
         it('should build payment data request with shippingOptionRequired false when in webview', async () => {
             jest.spyOn(gateway, 'isWebViewWithRestrictions').mockReturnValue(true);

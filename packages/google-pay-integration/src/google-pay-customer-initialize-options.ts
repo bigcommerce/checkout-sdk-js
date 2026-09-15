@@ -1,3 +1,5 @@
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { GooglePayKey } from './google-pay-payment-initialize-options';
 import { GooglePayButtonColor, GooglePayButtonType } from './types';
 
@@ -29,6 +31,15 @@ export default interface GooglePayCustomerInitializeOptions {
      * for backwards compatability.
      */
     buttonType?: GooglePayButtonType;
+
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (
+        shippingOptions: ShippingOption[],
+    ) => Promise<ShippingOption[]>;
 
     /**
      * A callback that gets called when GooglePay fails to initialize or

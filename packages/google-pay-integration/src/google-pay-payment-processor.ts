@@ -11,6 +11,7 @@ import {
     PaymentMethod,
     PaymentMethodFailedError,
     SDK_VERSION_HEADERS,
+    ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import GooglePayGateway from './gateways/google-pay-gateway';
@@ -211,6 +212,14 @@ export default class GooglePayPaymentProcessor {
 
     setIsWebViewExperimentOn(isWebViewExperimentOn: boolean): void {
         return this._gateway.setIsWebViewExperimentOn(isWebViewExperimentOn);
+    }
+
+    setFilterAvailableShippingOptions(
+        filterAvailableShippingOptions?: (
+            shippingOptions: ShippingOption[],
+        ) => Promise<ShippingOption[]>,
+    ): void {
+        return this._gateway.setFilterAvailableShippingOptions(filterAvailableShippingOptions);
     }
 
     private _prefetchGooglePaymentData(): void {

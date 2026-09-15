@@ -66,6 +66,9 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             this._googlePayPaymentProcessor.setIsWebViewExperimentOn(
                 !!paymentMethod.initializationData?.isWebViewExperimentOn,
             );
+            this._googlePayPaymentProcessor.setFilterAvailableShippingOptions(
+                googlePayOptions.filterAvailableShippingOptions,
+            );
             await this._googlePayPaymentProcessor.initialize(
                 () => paymentMethod,
                 this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),

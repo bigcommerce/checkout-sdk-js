@@ -1,4 +1,7 @@
-import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    BuyNowCartRequestBody,
+    ShippingOption,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  * A set of options that are required to initialize ApplePay in cart.
@@ -18,6 +21,15 @@ export default interface ApplePayButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (
+        shippingOptions: ShippingOption[],
+    ) => Promise<ShippingOption[]>;
 
     /**
      * A callback that gets called when a payment is successfully completed.
