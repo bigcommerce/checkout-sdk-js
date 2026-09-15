@@ -182,6 +182,12 @@ export function getStripeCheckoutSessionActionsMock(): StripeCheckoutSessionActi
 
             return { type: StripeLoadActionsResultType.SUCCESS };
         }),
+        validateElements: jest.fn(() =>
+            Promise.resolve({
+                type: StripeLoadActionsResultType.SUCCESS,
+                session: {} as StripeCheckoutSession,
+            }),
+        ),
     };
 }
 
