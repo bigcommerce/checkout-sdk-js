@@ -5,6 +5,7 @@ import { BraintreeError } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 import { PaypalStyleOptions as PaypalStyleOptions_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 
@@ -30,6 +31,12 @@ declare interface ApplePayButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>;
     /**
      * A callback that gets called when a payment is successfully completed.
      */
@@ -434,6 +441,12 @@ declare interface GooglePayButtonInitializeOptions {
      * for backwards compatability.
      */
     buttonType?: GooglePayButtonType;
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>;
 }
 
 declare type GooglePayButtonType = 'book' | 'buy' | 'checkout' | 'donate' | 'order' | 'pay' | 'plain' | 'subscribe' | 'long' | 'short';

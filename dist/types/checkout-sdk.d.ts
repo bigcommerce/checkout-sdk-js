@@ -35,6 +35,7 @@ import { ReadableDataStore } from '@bigcommerce/data-store';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response as Response_2 } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
+import { ShippingOption as ShippingOption_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StorefrontErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StripeAppearanceOptions } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -608,6 +609,12 @@ declare interface ApplePayButtonInitializeOptions {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
     /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption_2[]) => Promise<ShippingOption_2[]>;
+    /**
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;
@@ -633,6 +640,12 @@ declare interface ApplePayCustomerInitializeOptions {
      * Sub total label to be passed to apple sheet.
      */
     subtotalLabel?: string;
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption_2[]) => Promise<ShippingOption_2[]>;
     /**
      * A callback that gets called when a payment is successfully completed.
      */
@@ -6122,6 +6135,12 @@ declare interface GooglePayButtonInitializeOptions {
      * for backwards compatability.
      */
     buttonType?: GooglePayButtonType;
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption_2[]) => Promise<ShippingOption_2[]>;
 }
 
 declare type GooglePayButtonSizeMode = 'static' | 'fill';
@@ -6154,6 +6173,12 @@ declare interface GooglePayCustomerInitializeOptions {
      * for backwards compatability.
      */
     buttonType?: GooglePayButtonType;
+    /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption_2[]) => Promise<ShippingOption_2[]>;
     /**
      * A callback that gets called when GooglePay fails to initialize or
      * selects a payment option.

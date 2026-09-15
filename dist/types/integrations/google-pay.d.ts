@@ -22,6 +22,7 @@ import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integr
 import { RequestSender } from '@bigcommerce/request-sender';
 import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 declare enum CallbackIntentsType {
     OFFER = "OFFER",
@@ -301,6 +302,12 @@ declare interface GooglePayButtonInitializeOptions {
      */
     currencyCode?: string;
     /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>;
+    /**
      * A callback that gets called when GooglePay fails to initialize or
      * selects a payment option.
      *
@@ -418,6 +425,12 @@ declare interface GooglePayCustomerInitializeOptions {
      */
     buttonType?: GooglePayButtonType;
     /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>;
+    /**
      * A callback that gets called when GooglePay fails to initialize or
      * selects a payment option.
      *
@@ -472,6 +485,7 @@ declare class GooglePayGateway {
     private _currencyCode?;
     private _currencyService?;
     private _isWebViewExperimentOn;
+    private _filterAvailableShippingOptions?;
     constructor(_gatewayIdentifier: string, _paymentIntegrationService: PaymentIntegrationService);
     mapToShippingAddressRequestBody({ shippingAddress, }: GooglePayCardDataResponse): AddressRequestBody | undefined;
     mapToBillingAddressRequestBody(response: GooglePayCardDataResponse): BillingAddressRequestBody | undefined;
@@ -487,6 +501,7 @@ declare class GooglePayGateway {
     getTransactionInfo(): GooglePayTransactionInfo;
     isWebViewWithRestrictions(): boolean;
     setIsWebViewExperimentOn(isWebViewExperimentOn: boolean): void;
+    setFilterAvailableShippingOptions(filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>): void;
     getPaymentGatewayParameters(): Promise<GooglePayGatewayParameters> | GooglePayGatewayParameters;
     getCardParameters(): GooglePayCardParameters;
     initialize(getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>, isBuyNowFlow?: boolean, currencyCode?: string): Promise<void>;
@@ -764,6 +779,7 @@ declare class GooglePayPaymentProcessor {
     _setExternalCheckout(provider: string, response: GooglePayCardDataResponse, useFormPoster?: boolean, siteLink?: string): Promise<void>;
     isWebViewWithRestrictions(): boolean;
     setIsWebViewExperimentOn(isWebViewExperimentOn: boolean): void;
+    setFilterAvailableShippingOptions(filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>): void;
     private _prefetchGooglePaymentData;
     private _determineReadinessToPay;
     private _buildButtonPayloads;

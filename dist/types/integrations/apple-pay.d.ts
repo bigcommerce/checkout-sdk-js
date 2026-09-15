@@ -16,6 +16,7 @@ import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integr
 import { RequestSender } from '@bigcommerce/request-sender';
 import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  * A set of options that are required to initialize ApplePay in cart.
@@ -35,6 +36,12 @@ declare interface ApplePayButtonInitializeOptions {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
     /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>;
+    /**
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;
@@ -53,6 +60,7 @@ declare class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _onAuthorizeCallback;
     private _subTotalLabel;
     private _shippingLabel;
+    private _filterAvailableShippingOptions?;
     constructor(_requestSender: RequestSender, _paymentIntegrationService: PaymentIntegrationService, _sessionFactory: ApplePaySessionFactory, _braintreeSdk: BraintreeSdk, _applePayScriptLoader: ApplePayScriptLoader);
     initialize(options: CheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;
@@ -95,6 +103,12 @@ declare interface ApplePayCustomerInitializeOptions {
      */
     subtotalLabel?: string;
     /**
+     * @param shippingOptions - The available shipping options.
+     * @returns The filtered shipping options.
+     * A function that filters the available shipping options.
+     */
+    filterAvailableShippingOptions?: (shippingOptions: ShippingOption[]) => Promise<ShippingOption[]>;
+    /**
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;
@@ -125,6 +139,7 @@ declare class ApplePayCustomerStrategy implements CustomerStrategy {
     private _subTotalLabel;
     private _shippingLabel;
     private _hasApplePaySession;
+    private _filterAvailableShippingOptions?;
     constructor(_requestSender: RequestSender, _paymentIntegrationService: PaymentIntegrationService, _sessionFactory: ApplePaySessionFactory, _braintreeSdk: BraintreeSdk, _applePayScriptLoader: ApplePayScriptLoader);
     initialize(options: CustomerInitializeOptions & WithApplePayCustomerInitializeOptions): Promise<void>;
     deinitialize(): Promise<void>;

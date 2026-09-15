@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.978.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.977.0...v1.978.0) (2026-09-15)
+
+
+### Features
+
+* **payment:** add shipping options filtering callback for Apple Pay and Google Pay ([#3398](https://github.com/bigcommerce/checkout-sdk-js/issues/3398)) ([b36e1a8](https://github.com/bigcommerce/checkout-sdk-js/commit/b36e1a8df8a61adddda0f6f555de115afac3193f))
+
 ## [1.977.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.976.0...v1.977.0) (2026-09-15)
 
 

@@ -33,3 +33,24 @@ subscribe: The "Subscribe with Google Pay" payment button.
 
 Note: "long" and "short" button types have been renamed to "buy" and "plain", but are still valid button types
 for backwards compatability.
+
+***
+
+### filterAvailableShippingOptions?
+
+> `optional` **filterAvailableShippingOptions?**: (`shippingOptions`) => `Promise`\<`ShippingOption`[]\>
+
+#### Parameters
+
+##### shippingOptions
+
+`ShippingOption`[]
+
+The available shipping options.
+
+#### Returns
+
+`Promise`\<`ShippingOption`[]\>
+
+The filtered shipping options.
+A function that filters the available shipping options.

@@ -29,6 +29,27 @@ The options that are required to initialize Buy Now functionality.
 
 ***
 
+### filterAvailableShippingOptions?
+
+> `optional` **filterAvailableShippingOptions?**: (`shippingOptions`) => `Promise`\<`ShippingOption`[]\>
+
+#### Parameters
+
+##### shippingOptions
+
+`ShippingOption`[]
+
+The available shipping options.
+
+#### Returns
+
+`Promise`\<`ShippingOption`[]\>
+
+The filtered shipping options.
+A function that filters the available shipping options.
+
+***
+
 ### requiresShipping?
 
 > `optional` **requiresShipping?**: `boolean`
