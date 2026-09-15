@@ -13,6 +13,8 @@ import {
     PaymentIntegrationService,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
+    PaymentRequestOptions,
+    PaymentStatusTypes,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { DEFAULT_CONTAINER_STYLES, LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -128,11 +130,36 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 paymentData: { nonce, ...extraData },
             });
         } catch (error) {
-            await this._googlePayPaymentProcessor.processAdditionalAction(error, payment.methodId);
+            await this._handleSubmitPaymentFailure(error, payment.methodId);
         }
     }
 
-    finalize(): Promise<void> {
+    async finalize(options?: PaymentRequestOptions): Promise<void> {
+        if (!this._isHandleUnsuccessful3dsCheckExperimentOn()) {
+            return Promise.reject(new OrderFinalizationNotRequiredError());
+        }
+
+        const state = this._paymentIntegrationService.getState();
+        const order = state.getOrder();
+        const status = state.getPaymentStatus();
+
+        if (
+            order &&
+            (status === PaymentStatusTypes.FINALIZE || status === PaymentStatusTypes.INITIALIZE)
+        ) {
+            try {
+                await this._paymentIntegrationService.finalizeOrder(options);
+            } catch (error) {
+                if (options?.methodId) {
+                    await this._invalidateStalePaymentToken(options.methodId);
+                }
+
+                throw error;
+            }
+
+            return;
+        }
+
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
@@ -153,6 +180,21 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         this._isContainerMode = false;
 
         return Promise.resolve();
+    }
+
+    protected async _handleSubmitPaymentFailure(error: unknown, methodId: string): Promise<void> {
+        const isHandleUnsuccessful3dsCheckExperimentOn =
+            this._isHandleUnsuccessful3dsCheckExperimentOn();
+
+        try {
+            await this._googlePayPaymentProcessor.processAdditionalAction(error, methodId);
+        } catch (additionalActionError) {
+            if (isHandleUnsuccessful3dsCheckExperimentOn) {
+                await this._invalidateStalePaymentToken(methodId);
+            }
+
+            throw additionalActionError;
+        }
     }
 
     protected _addPaymentButton(
@@ -436,5 +478,26 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         } else {
             this._loadingIndicator.hide();
         }
+    }
+
+    private async _invalidateStalePaymentToken(methodId: string): Promise<void> {
+        try {
+            await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        } catch {
+            // If the reload fails, the stale state will persist
+            // until the next successful reload.
+        }
+    }
+
+    private _isHandleUnsuccessful3dsCheckExperimentOn(): boolean {
+        const { features } = this._paymentIntegrationService
+            .getState()
+            .getStoreConfigOrThrow().checkoutSettings;
+
+        return isExperimentEnabled(
+            features,
+            'PI-5643.google_pay_handle_unsuccessful_3ds_check',
+            false,
+        );
     }
 }
