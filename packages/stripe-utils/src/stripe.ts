@@ -564,6 +564,17 @@ export interface StripeCheckoutSessionActionResult {
     session?: StripeCheckoutSession;
 }
 
+export interface StripeValidateElementsError {
+    code: 'validation_error' | 'no_elements' | null;
+    message: string;
+}
+
+export interface StripeValidateElementsResult {
+    type: StripeLoadActionsResultType;
+    error?: StripeValidateElementsError;
+    session?: StripeCheckoutSession;
+}
+
 export interface StripeCheckoutSessionActions {
     updateEmail(email: string): Promise<StripeCheckoutSessionActionResult>;
     updateShippingAddress(
@@ -577,6 +588,7 @@ export interface StripeCheckoutSessionActions {
         options: StripeCheckoutSessionConfirmPaymentData,
     ): Promise<StripeCheckoutSessionActionResult>;
     runServerUpdate(update: () => Promise<unknown>): Promise<StripeCheckoutSessionActionResult>;
+    validateElements(): Promise<StripeValidateElementsResult>;
 }
 
 export interface StripeSavedPaymentMethod {
