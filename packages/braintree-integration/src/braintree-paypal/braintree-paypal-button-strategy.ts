@@ -8,6 +8,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getIsOnlyDigitalProduct,
     isBraintreeError,
     PaypalAuthorizeData,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -193,11 +194,14 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 ? mapToBraintreeShippingAddressOverride(address)
                 : undefined;
 
+            const cart = buyNowCart ?? state.getCartOrThrow();
+            const isOnlyDigitalItems = getIsOnlyDigitalProduct(cart);
+
             return await braintreePaypalCheckout.createPayment({
                 flow: 'checkout',
-                enableShippingAddress: true,
+                enableShippingAddress: !isOnlyDigitalItems,
                 shippingAddressEditable: false,
-                shippingAddressOverride,
+                shippingAddressOverride: isOnlyDigitalItems ? undefined : shippingAddressOverride,
                 amount,
                 currency: currencyCode,
                 offerCredit: false,
