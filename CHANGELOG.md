@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.979.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.978.0...v1.979.0) (2026-09-16)
+
+
+### Features
+
+* **payment:** PAYPAL-7073 hide BT ship to section inside PayPal modal for digital products ([#3406](https://github.com/bigcommerce/checkout-sdk-js/issues/3406)) ([0903158](https://github.com/bigcommerce/checkout-sdk-js/commit/0903158a0c29ece08f6ac94e2d711fec0f059acb))
+
 ## [1.978.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.977.0...v1.978.0) (2026-09-15)
 
 
