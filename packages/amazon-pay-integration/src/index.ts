@@ -6,3 +6,9 @@ export { default as createAmazonPayV2CustomerStrategy } from './create-amazon-pa
 
 export type { WithAmazonPayV2PaymentInitializeOptions } from './amazon-pay-v2-payment-initialize-options';
 export { default as createAmazonPayV2PaymentStrategy } from './create-amazon-pay-v2-payment-strategy';
+
+/**
+ * Amazon Pay headless wallet-button strategy (POC).
+ */
+export type { WithAmazonPayWalletInitializeOptions } from './amazon-pay-wallet-initialize-options';
+export { default as createAmazonPayWalletStrategy } from './create-amazon-pay-wallet-strategy';
