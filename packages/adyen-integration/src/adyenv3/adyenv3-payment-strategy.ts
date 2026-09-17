@@ -523,7 +523,13 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             billingAddressRequired: false,
             showEmailAddress: false,
             onChange: (componentState) => this._updateComponentState(componentState),
-            onSubmit: (componentState) => this._updateComponentState(componentState),
+            onSubmit: (componentState, _component, actions) => {
+                this._updateComponentState(componentState);
+
+                if (this.isAdyenSdkUpgradeEnabled) {
+                    actions?.resolve();
+                }
+            },
             ...(billingAddress
                 ? { data: this._mapAdyenPlaceholderData(billingAddress, prefillCardHolderName) }
                 : {}),

@@ -248,6 +248,18 @@ describe('AdyenV3PaymentStrategy', () => {
                         }),
                     );
                 });
+
+                it('does not resolve submit actions', async () => {
+                    await strategy.initialize(options);
+
+                    const { onSubmit } = (adyenCheckout.create as jest.Mock).mock.calls[0][1];
+                    const actions = { resolve: jest.fn(), reject: jest.fn() };
+
+                    onSubmit(getComponentCCEventState(), paymentComponent, actions);
+
+                    expect(actions.resolve).not.toHaveBeenCalled();
+                    expect(actions.reject).not.toHaveBeenCalled();
+                });
             });
 
             describe('when the PI-5661.adyen_sdk_upgrade experiment is enabled', () => {
@@ -299,6 +311,19 @@ describe('AdyenV3PaymentStrategy', () => {
                             onError: expect.anything(),
                         }),
                     );
+                });
+
+                it('resolves the submit actions so the component does not hang waiting for a response', async () => {
+                    await strategy.initialize(options);
+
+                    const { onSubmit } = (adyenCheckout.createComponent as jest.Mock).mock
+                        .calls[0][1];
+                    const actions = { resolve: jest.fn(), reject: jest.fn() };
+
+                    onSubmit(getComponentCCEventState(), paymentComponent, actions);
+
+                    expect(actions.resolve).toHaveBeenCalled();
+                    expect(actions.reject).not.toHaveBeenCalled();
                 });
             });
 

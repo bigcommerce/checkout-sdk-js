@@ -245,6 +245,20 @@ export interface AdyenBaseCardComponentOptions {
     showBrandsUnderCardNumber?: boolean;
 }
 
+export interface AdyenActions {
+    /**
+     * Continues the payment flow. Call this, passing the resultCode, even when the
+     * payment is unsuccessful.
+     */
+    resolve(data?: unknown): void;
+
+    /**
+     * Stops the payment flow. Only call this when the request to the payment provider's
+     * API fails, or when there are network connection issues.
+     */
+    reject(error?: unknown): void;
+}
+
 export interface AdyenComponentEvents {
     /**
      * Called when the shopper enters data in the card input fields.
@@ -254,8 +268,16 @@ export interface AdyenComponentEvents {
 
     /**
      * Called when the shopper selects the Pay button and payment details are valid.
+     *
+     * With the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+), this callback
+     * receives a third `actions` argument. The Component's internal submit flow will not
+     * continue until `actions.resolve()` or `actions.reject()` is called.
      */
-    onSubmit?(state: AdyenComponentEventState, component: AdyenComponent): void;
+    onSubmit?(
+        state: AdyenComponentEventState,
+        component: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
 
     /**
      * Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
