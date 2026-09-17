@@ -17,6 +17,7 @@ import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-inte
 import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
@@ -804,8 +805,9 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     constructor(_paymentIntegrationService: PaymentIntegrationService, _googlePayPaymentProcessor: GooglePayPaymentProcessor);
     initialize(options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions): Promise<void>;
     execute({ payment }: OrderRequestBody): Promise<void>;
-    finalize(): Promise<void>;
+    finalize(options?: PaymentRequestOptions): Promise<void>;
     deinitialize(): Promise<void>;
+    protected _handleSubmitPaymentFailure(error: unknown, methodId: string): Promise<void>;
     protected _addPaymentButton(walletButton: string, callbacks: Omit_2<GooglePayPaymentInitializeOptions, 'walletButton'>): void;
     protected _addPaymentButtonToContainer(googlePayOptions: GooglePayPaymentInitializeOptions): void;
     protected _handleContainerButtonClick(onError: GooglePayPaymentInitializeOptions['onError']): (event: MouseEvent) => Promise<void>;
@@ -819,6 +821,8 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     private _runGooglePayWidgetInteractionWithErrorHandling;
     private _toggleBlockDeinitialization;
     private _toggleLoadingIndicator;
+    private _invalidateStalePaymentToken;
+    private _isHandleUnsuccessful3dsCheckExperimentOn;
 }
 
 declare interface GooglePayPayPalCommerceInitializationData extends GooglePayBaseInitializationData {
