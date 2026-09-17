@@ -20,6 +20,7 @@ import {
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentInvalidFormError,
     PaymentMethodCancelledError,
@@ -201,6 +202,7 @@ describe('AdyenV3PaymentStrategy', () => {
                 expect(strategy.initialize(options));
                 expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
                     expect.objectContaining({ locale: 'es' }),
+                    expect.any(Boolean),
                 );
             });
 
@@ -212,7 +214,117 @@ describe('AdyenV3PaymentStrategy', () => {
                 expect(strategy.initialize(options));
                 expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
                     expect.objectContaining({ locale: 'en_US' }),
+                    expect.any(Boolean),
                 );
+            });
+
+            describe('when the PI-5661.adyen_sdk_upgrade experiment is disabled', () => {
+                it('loads the script loader without the experiment flag enabled', async () => {
+                    await strategy.initialize(options);
+
+                    expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                        expect.not.objectContaining({ countryCode: expect.anything() }),
+                        false,
+                    );
+                });
+
+                it('sets showBrandsUnderCardNumber to false on the payment component', async () => {
+                    await strategy.initialize(options);
+
+                    expect(adyenCheckout.create).toHaveBeenCalledWith(
+                        'scheme',
+                        expect.objectContaining({ showBrandsUnderCardNumber: false }),
+                    );
+                });
+
+                it('uses onError/onFieldValid for the card verification component', async () => {
+                    await strategy.initialize(options);
+
+                    expect(adyenCheckout.create).toHaveBeenCalledWith(
+                        AdyenComponentType.SecuredFields,
+                        expect.objectContaining({
+                            onError: expect.any(Function),
+                            onFieldValid: expect.any(Function),
+                        }),
+                    );
+                });
+
+                it('does not resolve submit actions', async () => {
+                    await strategy.initialize(options);
+
+                    const { onSubmit } = (adyenCheckout.create as jest.Mock).mock.calls[0][1];
+                    const actions = { resolve: jest.fn(), reject: jest.fn() };
+
+                    onSubmit(getComponentCCEventState(), paymentComponent, actions);
+
+                    expect(actions.resolve).not.toHaveBeenCalled();
+                    expect(actions.reject).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('when the PI-5661.adyen_sdk_upgrade experiment is enabled', () => {
+                beforeEach(() => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getStoreConfigOrThrow',
+                    ).mockReturnValueOnce({
+                        checkoutSettings: {
+                            features: { 'PI-5661.adyen_sdk_upgrade': true },
+                        },
+                    } as unknown as ReturnType<PaymentIntegrationSelectors['getStoreConfigOrThrow']>);
+
+                    adyenCheckout.createComponent = jest.fn(adyenCheckout.create);
+                });
+
+                it('loads the script loader with the experiment flag enabled and countryCode', async () => {
+                    await strategy.initialize(options);
+
+                    expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                        expect.objectContaining({ countryCode: 'US' }),
+                        true,
+                    );
+                });
+
+                it('does not set showBrandsUnderCardNumber on the payment component', async () => {
+                    await strategy.initialize(options);
+
+                    expect(adyenCheckout.createComponent).toHaveBeenCalledWith(
+                        'scheme',
+                        expect.not.objectContaining({
+                            showBrandsUnderCardNumber: expect.anything(),
+                        }),
+                    );
+                });
+
+                it('uses onValidationError for the card verification component', async () => {
+                    await strategy.initialize(options);
+
+                    expect(adyenCheckout.createComponent).toHaveBeenCalledWith(
+                        AdyenComponentType.SecuredFields,
+                        expect.objectContaining({
+                            onValidationError: expect.any(Function),
+                        }),
+                    );
+                    expect(adyenCheckout.createComponent).not.toHaveBeenCalledWith(
+                        AdyenComponentType.SecuredFields,
+                        expect.objectContaining({
+                            onError: expect.anything(),
+                        }),
+                    );
+                });
+
+                it('resolves the submit actions so the component does not hang waiting for a response', async () => {
+                    await strategy.initialize(options);
+
+                    const { onSubmit } = (adyenCheckout.createComponent as jest.Mock).mock
+                        .calls[0][1];
+                    const actions = { resolve: jest.fn(), reject: jest.fn() };
+
+                    onSubmit(getComponentCCEventState(), paymentComponent, actions);
+
+                    expect(actions.resolve).toHaveBeenCalled();
+                    expect(actions.reject).not.toHaveBeenCalled();
+                });
             });
 
             it('does not hide shopper input fields for non-Oney payment methods', async () => {

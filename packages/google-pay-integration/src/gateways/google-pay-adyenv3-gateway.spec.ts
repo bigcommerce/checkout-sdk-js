@@ -2,10 +2,14 @@ import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loa
 
 import { AdyenV3ScriptLoader } from '@bigcommerce/checkout-sdk/adyen-utils';
 import {
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { getAdyenV3 } from '../mocks/google-pay-payment-method.mock';
 
@@ -42,6 +46,28 @@ describe('GooglePayAdyenV3Gateway', () => {
         await gateway.initialize(getAdyenV3);
 
         expect(adyenV3ScriptLoader.load).toHaveBeenCalled();
+    });
+
+    describe('PI-5661.adyen_sdk_upgrade experiment', () => {
+        it('loads the script loader without the experiment flag enabled by default', async () => {
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(expect.anything(), false);
+        });
+
+        it('loads the script loader with the experiment flag enabled', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: { 'PI-5661.adyen_sdk_upgrade': true },
+                },
+            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(expect.anything(), true);
+        });
     });
 
     it('#processAdditionalAction', async () => {
