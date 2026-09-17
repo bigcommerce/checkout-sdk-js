@@ -1106,6 +1106,97 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
         });
 
+        describe('stripe elements validation', () => {
+            const mockStripeCheckoutActions = (
+                actions: Partial<ReturnType<typeof getStripeCheckoutSessionActionsMock>>,
+            ) => {
+                jest.spyOn(stripeScriptLoader, 'getStripeCheckout').mockReturnValue(
+                    Promise.resolve({
+                        ...getStripeCheckoutInstanceMock(),
+                        loadActions: () =>
+                            Promise.resolve({
+                                type: StripeLoadActionsResultType.SUCCESS,
+                                actions: {
+                                    ...getStripeCheckoutSessionActionsMock(),
+                                    ...actions,
+                                },
+                            }),
+                    }),
+                );
+            };
+
+            const getValidElementsMock = () =>
+                jest.fn().mockResolvedValue({
+                    type: StripeLoadActionsResultType.SUCCESS,
+                    session: {} as StripeCheckoutSession,
+                });
+
+            const getInvalidElementsMock = () =>
+                jest.fn().mockResolvedValue({
+                    type: StripeLoadActionsResultType.ERROR,
+                    error: {
+                        code: 'validation_error',
+                        message: 'Your card number is incomplete.',
+                        validation_errors: [{ elementType: 'payment' }],
+                    },
+                });
+
+            it('validates stripe elements before creating an order', async () => {
+                const validateElements = getValidElementsMock();
+
+                mockStripeCheckoutActions({ validateElements });
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+                await stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId));
+
+                expect(validateElements).toHaveBeenCalledTimes(1);
+                expect(validateElements.mock.invocationCallOrder[0]).toBeLessThan(
+                    (paymentIntegrationService.submitOrder as jest.Mock).mock
+                        .invocationCallOrder[0],
+                );
+            });
+
+            it('throws stripe validation message for invalid elements', async () => {
+                mockStripeCheckoutActions({ validateElements: getInvalidElementsMock() });
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+                ).rejects.toThrow('Your card number is incomplete.');
+            });
+
+            it('does not create an order for invalid elements', async () => {
+                mockStripeCheckoutActions({ validateElements: getInvalidElementsMock() });
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+                ).rejects.toThrow(PaymentMethodFailedError);
+
+                expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
+            });
+
+            it('does not update the stripe checkout session for invalid elements', async () => {
+                const runServerUpdate = jest.fn();
+
+                mockStripeCheckoutActions({
+                    validateElements: getInvalidElementsMock(),
+                    runServerUpdate,
+                });
+
+                await stripeCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock(methodId)),
+                ).rejects.toThrow(PaymentMethodFailedError);
+
+                expect(runServerUpdate).not.toHaveBeenCalled();
+            });
+        });
+
         describe('skipUnchangedCheckoutSessionUpdate', () => {
             const configRequest = [gatewayId, { params: { method: methodId } }];
 

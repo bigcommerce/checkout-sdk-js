@@ -460,6 +460,11 @@ interface CustomerDefaultValues {
     };
 }
 
+export interface StripeElementsSubmitResult {
+    error?: StripeError;
+    selectedPaymentMethod?: string;
+}
+
 export interface StripeElements {
     /**
      * Creates an Elements instance, which manages a group of elements.
@@ -486,6 +491,12 @@ export interface StripeElements {
      * https://stripe.com/docs/js/elements_object/fetch_updates
      */
     fetchUpdates(): Promise<void>;
+
+    /**
+     * Validates the state of the Payment Element and collects any data required for wallets.
+     * https://docs.stripe.com/js/elements/submit
+     */
+    submit(): Promise<StripeElementsSubmitResult>;
 }
 
 export enum StripeCheckoutSessionStatusType {
@@ -564,6 +575,17 @@ export interface StripeCheckoutSessionActionResult {
     session?: StripeCheckoutSession;
 }
 
+export interface StripeValidateElementsError {
+    code: 'validation_error' | 'no_elements' | null;
+    message: string;
+}
+
+export interface StripeValidateElementsResult {
+    type: StripeLoadActionsResultType;
+    error?: StripeValidateElementsError;
+    session?: StripeCheckoutSession;
+}
+
 export interface StripeCheckoutSessionActions {
     updateEmail(email: string): Promise<StripeCheckoutSessionActionResult>;
     updateShippingAddress(
@@ -577,6 +599,7 @@ export interface StripeCheckoutSessionActions {
         options: StripeCheckoutSessionConfirmPaymentData,
     ): Promise<StripeCheckoutSessionActionResult>;
     runServerUpdate(update: () => Promise<unknown>): Promise<StripeCheckoutSessionActionResult>;
+    validateElements(): Promise<StripeValidateElementsResult>;
 }
 
 export interface StripeSavedPaymentMethod {
