@@ -31,6 +31,7 @@ import {
     STRIPE_UPE_CLIENT_API_VERSION,
     STRIPE_UPE_CLIENT_BETAS,
     StripeClient,
+    StripeElements,
     StripeElementsOptions,
     StripeElementType,
     StripeElementUpdateOptions,
@@ -145,6 +146,7 @@ describe('StripeUPEPaymentStrategy', () => {
                 getElement: getElementMock,
                 update: jest.fn(),
                 fetchUpdates: jest.fn(),
+                submit: jest.fn(() => Promise.resolve({})),
             };
 
             stripeUPEJsMock = {
@@ -169,12 +171,12 @@ describe('StripeUPEPaymentStrategy', () => {
             stripeUPEJsMock = getStripeJsMock();
             options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
 
-            const { create, getElement, update, fetchUpdates } =
+            const { create, getElement, update, fetchUpdates, submit } =
                 stripeUPEJsMock.elements(elementsOptions);
 
             stripeUPEJsMock.elements = jest
                 .fn()
-                .mockReturnValue({ create, getElement, update, fetchUpdates });
+                .mockReturnValue({ create, getElement, update, fetchUpdates, submit });
             jest.spyOn(stripeScriptLoader, 'getStripeClient').mockReturnValueOnce(
                 Promise.resolve(stripeUPEJsMock),
             );
@@ -662,8 +664,8 @@ describe('StripeUPEPaymentStrategy', () => {
             expect(stripeUPEIntegrationService.updateStripePaymentIntent).not.toHaveBeenCalled();
         });
 
-        it('should update PI', () => {
-            strategy.execute(getStripeUPEOrderRequestBodyMock());
+        it('should update PI', async () => {
+            await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
             expect(stripeUPEIntegrationService.updateStripePaymentIntent).toHaveBeenCalled();
         });
@@ -700,6 +702,112 @@ describe('StripeUPEPaymentStrategy', () => {
             expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
                 getBillingAddress(),
             );
+        });
+
+        describe('stripe elements validation', () => {
+            let submit: jest.Mock;
+            let originalSubmit: StripeElements['submit'];
+
+            const mockElementsSubmit = (
+                submitResult: { error?: { type: string; message: string } } = {},
+            ) => {
+                submit = jest.fn().mockResolvedValue(submitResult);
+
+                // UPE initialize() does not await Elements load; use the instance from beforeEach.
+                const stripeElements = (
+                    strategy as unknown as { _stripeElements?: StripeElements }
+                )._stripeElements;
+
+                if (!stripeElements) {
+                    throw new Error('Expected Stripe Elements to be initialized');
+                }
+
+                originalSubmit = stripeElements.submit;
+                stripeElements.submit = submit;
+            };
+
+            afterEach(() => {
+                const stripeElements = (
+                    strategy as unknown as { _stripeElements?: StripeElements }
+                )._stripeElements;
+
+                if (stripeElements && originalSubmit) {
+                    stripeElements.submit = originalSubmit;
+                }
+            });
+
+            it('validates stripe elements before creating an order', async () => {
+                mockElementsSubmit();
+
+                await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                expect(submit).toHaveBeenCalledTimes(1);
+                expect(submit.mock.invocationCallOrder[0]).toBeLessThan(
+                    (paymentIntegrationService.submitOrder as jest.Mock).mock
+                        .invocationCallOrder[0],
+                );
+            });
+
+            it('throws stripe validation message for invalid elements', async () => {
+                mockElementsSubmit({
+                    error: {
+                        type: 'validation_error',
+                        message: 'Your card number is incomplete.',
+                    },
+                });
+
+                await expect(
+                    strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                ).rejects.toThrow('Your card number is incomplete.');
+            });
+
+            it('does not create an order for invalid elements', async () => {
+                mockElementsSubmit({
+                    error: {
+                        type: 'validation_error',
+                        message: 'Your card number is incomplete.',
+                    },
+                });
+
+                await expect(
+                    strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                ).rejects.toThrow(PaymentMethodFailedError);
+
+                expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
+            });
+
+            it('does not update the stripe payment intent for invalid elements', async () => {
+                mockElementsSubmit({
+                    error: {
+                        type: 'validation_error',
+                        message: 'Your card number is incomplete.',
+                    },
+                });
+
+                await expect(
+                    strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                ).rejects.toThrow(PaymentMethodFailedError);
+
+                expect(stripeUPEIntegrationService.updateStripePaymentIntent).not.toHaveBeenCalled();
+            });
+
+            it('skips elements validation for vaulted instruments', async () => {
+                mockElementsSubmit({
+                    error: {
+                        type: 'validation_error',
+                        message: 'Your card number is incomplete.',
+                    },
+                });
+
+                await strategy.execute(
+                    getStripeUPEOrderRequestBodyVaultMock(StripePaymentMethodType.CreditCard, true),
+                );
+
+                expect(submit).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+            });
         });
 
         describe('vaulted instrument', () => {

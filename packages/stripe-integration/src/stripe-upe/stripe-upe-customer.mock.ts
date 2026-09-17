@@ -26,6 +26,7 @@ export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): Strip
             getElement: jest.fn().mockReturnValue(returnElement),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
+            submit: jest.fn(() => Promise.resolve({})),
         })),
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),

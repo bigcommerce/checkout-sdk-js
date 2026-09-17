@@ -92,6 +92,7 @@ describe('StripeIntegrationService', () => {
             getElement: jest.fn(() => stripeElementMock),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
+            submit: jest.fn(() => Promise.resolve({})),
         };
     });
 

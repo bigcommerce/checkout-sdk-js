@@ -8,6 +8,7 @@ export {
     StripeElementEvent,
     type StripeElements,
     type StripeElementsCreateOptions,
+    type StripeElementsSubmitResult,
     StripeElementType,
     type StripeElementUpdateOptions,
     type StripeError,

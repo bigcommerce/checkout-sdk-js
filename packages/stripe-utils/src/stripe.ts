@@ -460,6 +460,11 @@ interface CustomerDefaultValues {
     };
 }
 
+export interface StripeElementsSubmitResult {
+    error?: StripeError;
+    selectedPaymentMethod?: string;
+}
+
 export interface StripeElements {
     /**
      * Creates an Elements instance, which manages a group of elements.
@@ -486,6 +491,12 @@ export interface StripeElements {
      * https://stripe.com/docs/js/elements_object/fetch_updates
      */
     fetchUpdates(): Promise<void>;
+
+    /**
+     * Validates the state of the Payment Element and collects any data required for wallets.
+     * https://docs.stripe.com/js/elements/submit
+     */
+    submit(): Promise<StripeElementsSubmitResult>;
 }
 
 export enum StripeCheckoutSessionStatusType {
