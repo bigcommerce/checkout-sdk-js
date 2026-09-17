@@ -1784,6 +1784,24 @@ declare class BigCommercePaymentsVenmoPaymentStrategy implements PaymentStrategy
     private toggleLoadingIndicator;
 }
 
+declare interface BigCommercePaymentsVenmoWalletInitializeOptions {
+    cartId: string;
+    currency: {
+        code: string;
+    };
+    initializationData: string;
+    clientToken: string;
+}
+
+declare class BigCommercePaymentsVenmoWalletStrategy implements CheckoutButtonStrategy {
+    private bigCommercePaymentsVenmoWalletService;
+    constructor(bigCommercePaymentsVenmoWalletService: PaypalCommerceWalletService);
+    initialize(options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsVenmoWalletInitializeOptions): Promise<void>;
+    deinitialize(): Promise<void>;
+    private renderButton;
+    private getValidVenmoButtonStyles;
+}
+
 declare interface BigCommercePaymentsWalletInitializeOptions {
     cartId: string;
     currency: {
@@ -1900,6 +1918,10 @@ id: string;
 }>;
 
 export declare const createBigCommercePaymentsVenmoPaymentStrategy: ResolvableModule<PaymentStrategyFactory<BigCommercePaymentsVenmoPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createBigCommercePaymentsVenmoWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<BigCommercePaymentsVenmoWalletStrategy>, {
 id: string;
 }>;
 
@@ -2183,6 +2205,10 @@ declare interface WithBigCommercePaymentsVenmoCustomerInitializeOptions {
 
 declare interface WithBigCommercePaymentsVenmoPaymentInitializeOptions {
     bigcommerce_payments_venmo?: BigCommercePaymentsVenmoPaymentInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsVenmoWalletInitializeOptions {
+    bigcommerce_paymentsvenmo?: BigCommercePaymentsVenmoWalletInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsWalletInitializeOptions {
