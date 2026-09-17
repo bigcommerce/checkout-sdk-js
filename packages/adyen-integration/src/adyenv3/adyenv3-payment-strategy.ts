@@ -44,6 +44,9 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
+
+const ADYEN_SDK_UPGRADE_EXPERIMENT = 'PI-5661.adyen_sdk_upgrade';
 
 export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private static readonly mountContainerMaxWaitMs = 5000;
@@ -52,6 +55,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private adyenClient?: AdyenClient;
     private cardVerificationComponent?: AdyenComponent;
     private componentState?: AdyenComponentEventState;
+    private isAdyenSdkUpgradeEnabled = false;
     private paymentComponent?: AdyenComponent;
     private paymentInitializeOptions?: AdyenV3PaymentInitializeOptions;
 
@@ -73,40 +77,63 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         this.paymentInitializeOptions = adyenv3;
 
+        const { checkoutSettings } = this.paymentIntegrationService.getState().getStoreConfigOrThrow();
+
+        this.isAdyenSdkUpgradeEnabled = isExperimentEnabled(
+            checkoutSettings.features,
+            ADYEN_SDK_UPGRADE_EXPERIMENT,
+            false,
+        );
+
         const { getBillingAddress, getPaymentMethodOrThrow } = this.paymentIntegrationService.getState();
         const paymentMethod = getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(options.methodId);
-        const { environment, clientKey, paymentMethodsResponse } =
+        const { environment, clientKey, paymentMethodsResponse, installmentOptions } =
             paymentMethod.initializationData || {};
         const billingAddress = getBillingAddress();
 
-        this.adyenClient = await this.scriptLoader.load({
-            paymentMethodsConfiguration: {
-                klarna: {
-                    useKlarnaWidget: true,
+        this.adyenClient = await this.scriptLoader.load(
+            {
+                paymentMethodsConfiguration: {
+                    klarna: {
+                        useKlarnaWidget: true,
+                    },
+                    klarna_account: {
+                        useKlarnaWidget: true,
+                    },
+                    klarna_paynow: {
+                        useKlarnaWidget: true,
+                    },
+                    ...(!this.isAdyenSdkUpgradeEnabled && installmentOptions
+                        ? {
+                              card: {
+                                  installmentOptions: {
+                                      showInstallmentAmounts: true,
+                                      ...installmentOptions,
+                                  },
+                              },
+                          }
+                        : {}),
                 },
-                klarna_account: {
-                    useKlarnaWidget: true,
-                },
-                klarna_paynow: {
-                    useKlarnaWidget: true,
+                environment,
+                locale: this._getLocale(),
+                clientKey,
+                ...(this.isAdyenSdkUpgradeEnabled
+                    ? { countryCode: billingAddress?.countryCode }
+                    : {}),
+                paymentMethodsResponse,
+                showPayButton: false,
+                translations: {
+                    es: { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-AR': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-ES': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-MX': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-CL': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-CO': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-PE': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
                 },
             },
-            environment,
-            locale: this._getLocale(),
-            clientKey,
-            countryCode: billingAddress?.countryCode,
-            paymentMethodsResponse,
-            showPayButton: false,
-            translations: {
-                es: { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-AR': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-ES': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-MX': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-CL': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-CO': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-PE': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-            },
-        });
+            this.isAdyenSdkUpgradeEnabled,
+        );
 
         this.paymentComponent = await this._mountPaymentComponent(paymentMethod);
 
@@ -422,7 +449,15 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 },
             },
             onChange: (componentState) => this._updateComponentState(componentState),
-            onValidationError: (validateState) => adyenv3.validateCardFields(validateState),
+            ...(this.isAdyenSdkUpgradeEnabled
+                ? {
+                      onValidationError: (validateState) =>
+                          adyenv3.validateCardFields(validateState),
+                  }
+                : {
+                      onError: (validateState) => adyenv3.validateCardFields(validateState),
+                      onFieldValid: (validateState) => adyenv3.validateCardFields(validateState),
+                  }),
         });
 
         try {
@@ -454,7 +489,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                   }
                 : {}),
             ...adyenv3.options,
-            ...(installmentOptions
+            ...(this.isAdyenSdkUpgradeEnabled && installmentOptions
                 ? {
                       installmentOptions: {
                           showInstallmentAmounts: true,
@@ -462,6 +497,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                       },
                   }
                 : {}),
+            ...(!this.isAdyenSdkUpgradeEnabled ? { showBrandsUnderCardNumber: false } : {}),
             billingAddressRequired: false,
             showEmailAddress: false,
             onChange: (componentState) => this._updateComponentState(componentState),
