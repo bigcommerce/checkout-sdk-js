@@ -56,10 +56,7 @@ describe('GooglePayAdyenV3Gateway', () => {
         });
 
         it('loads the script loader with the experiment flag enabled', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfig',
-            ).mockReturnValueOnce({
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
                 ...getConfig().storeConfig,
                 checkoutSettings: {
                     ...getConfig().storeConfig.checkoutSettings,

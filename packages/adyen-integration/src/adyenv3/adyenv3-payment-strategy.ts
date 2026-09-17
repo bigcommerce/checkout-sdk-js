@@ -78,7 +78,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         this.paymentInitializeOptions = adyenv3;
 
-        const { checkoutSettings } = this.paymentIntegrationService.getState().getStoreConfigOrThrow();
+        const { checkoutSettings } = this.paymentIntegrationService
+            .getState()
+            .getStoreConfigOrThrow();
 
         this.isAdyenSdkUpgradeEnabled = isExperimentEnabled(
             checkoutSettings.features,
@@ -86,8 +88,11 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             false,
         );
 
-        const { getBillingAddress, getPaymentMethodOrThrow } = this.paymentIntegrationService.getState();
-        const paymentMethod = getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(options.methodId);
+        const { getBillingAddress, getPaymentMethodOrThrow } =
+            this.paymentIntegrationService.getState();
+        const paymentMethod = getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(
+            options.methodId,
+        );
         const { environment, clientKey, paymentMethodsResponse, installmentOptions } =
             paymentMethod.initializationData || {};
         const billingAddress = getBillingAddress();
