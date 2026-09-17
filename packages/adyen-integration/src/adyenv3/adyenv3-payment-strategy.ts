@@ -7,6 +7,7 @@ import {
     AdyenClient,
     AdyenComponent,
     AdyenComponentEventState,
+    AdyenComponentOptions,
     AdyenComponentType,
     AdyenError,
     AdyenPaymentMethodType,
@@ -430,6 +431,22 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         };
     }
 
+    private _createComponent(
+        adyenClient: AdyenClient,
+        type: string,
+        componentOptions: AdyenComponentOptions,
+    ): AdyenComponent {
+        if (this.isAdyenSdkUpgradeEnabled) {
+            if (!adyenClient.createComponent) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+
+            return adyenClient.createComponent(type, componentOptions);
+        }
+
+        return adyenClient.create(type, componentOptions);
+    }
+
     private async _mountCardVerificationComponent(): Promise<AdyenComponent | undefined> {
         const adyenv3 = this._getPaymentInitializeOptions();
         const adyenClient = this._getAdyenClient();
@@ -438,27 +455,32 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             return undefined;
         }
 
-        const cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
-            ...adyenv3.options,
-            styles: {
-                ...adyenv3.options?.styles,
-                placeholder: {
-                    color: 'transparent',
-                    caretColor: '#000',
-                    ...adyenv3.options?.styles?.placeholder,
+        const cardVerificationComponent = this._createComponent(
+            adyenClient,
+            AdyenComponentType.SecuredFields,
+            {
+                ...adyenv3.options,
+                styles: {
+                    ...adyenv3.options?.styles,
+                    placeholder: {
+                        color: 'transparent',
+                        caretColor: '#000',
+                        ...adyenv3.options?.styles?.placeholder,
+                    },
                 },
+                onChange: (componentState) => this._updateComponentState(componentState),
+                ...(this.isAdyenSdkUpgradeEnabled
+                    ? {
+                          onValidationError: (validateState) =>
+                              adyenv3.validateCardFields(validateState),
+                      }
+                    : {
+                          onError: (validateState) => adyenv3.validateCardFields(validateState),
+                          onFieldValid: (validateState) =>
+                              adyenv3.validateCardFields(validateState),
+                      }),
             },
-            onChange: (componentState) => this._updateComponentState(componentState),
-            ...(this.isAdyenSdkUpgradeEnabled
-                ? {
-                      onValidationError: (validateState) =>
-                          adyenv3.validateCardFields(validateState),
-                  }
-                : {
-                      onError: (validateState) => adyenv3.validateCardFields(validateState),
-                      onFieldValid: (validateState) => adyenv3.validateCardFields(validateState),
-                  }),
-        });
+        );
 
         try {
             await this._mountElement(
@@ -478,7 +500,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
         const { prefillCardHolderName, installmentOptions } = paymentMethod.initializationData;
 
-        const paymentComponent = adyenClient.create(paymentMethod.method, {
+        const paymentComponent = this._createComponent(adyenClient, paymentMethod.method, {
             ...(this._isOneyPaymentMethod(paymentMethod.method)
                 ? {
                       visibility: {

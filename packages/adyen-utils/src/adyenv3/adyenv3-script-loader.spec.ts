@@ -121,6 +121,7 @@ describe('AdyenV3ScriptLoader', () => {
                 scriptLoader.loadScript = jest.fn(() => {
                     mockWindow.AdyenWeb = {
                         AdyenCheckout: jest.fn(() => Promise.resolve(adyenClient)),
+                        createComponent: jest.fn(),
                     };
 
                     return Promise.resolve();
@@ -160,6 +161,19 @@ describe('AdyenV3ScriptLoader', () => {
                 } catch (error) {
                     expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
                 }
+            });
+
+            it('attaches a createComponent method that delegates to window.AdyenWeb.createComponent', async () => {
+                const adyenJs = await adyenV3ScriptLoader.load(configuration, true);
+                const componentOptions = { onChange: jest.fn() };
+
+                adyenJs.createComponent?.('scheme', componentOptions);
+
+                expect(mockWindow.AdyenWeb?.createComponent).toHaveBeenCalledWith(
+                    'scheme',
+                    adyenJs,
+                    componentOptions,
+                );
             });
         });
     });

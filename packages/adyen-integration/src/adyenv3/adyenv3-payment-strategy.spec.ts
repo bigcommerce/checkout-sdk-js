@@ -255,11 +255,13 @@ describe('AdyenV3PaymentStrategy', () => {
                     jest.spyOn(
                         paymentIntegrationService.getState(),
                         'getStoreConfigOrThrow',
-                    ).mockReturnValue({
+                    ).mockReturnValueOnce({
                         checkoutSettings: {
                             features: { 'PI-5661.adyen_sdk_upgrade': true },
                         },
                     } as unknown as ReturnType<PaymentIntegrationSelectors['getStoreConfigOrThrow']>);
+
+                    adyenCheckout.createComponent = jest.fn(adyenCheckout.create);
                 });
 
                 it('loads the script loader with the experiment flag enabled and countryCode', async () => {
@@ -274,7 +276,7 @@ describe('AdyenV3PaymentStrategy', () => {
                 it('does not set showBrandsUnderCardNumber on the payment component', async () => {
                     await strategy.initialize(options);
 
-                    expect(adyenCheckout.create).toHaveBeenCalledWith(
+                    expect(adyenCheckout.createComponent).toHaveBeenCalledWith(
                         'scheme',
                         expect.not.objectContaining({
                             showBrandsUnderCardNumber: expect.anything(),
@@ -285,13 +287,13 @@ describe('AdyenV3PaymentStrategy', () => {
                 it('uses onValidationError for the card verification component', async () => {
                     await strategy.initialize(options);
 
-                    expect(adyenCheckout.create).toHaveBeenCalledWith(
+                    expect(adyenCheckout.createComponent).toHaveBeenCalledWith(
                         AdyenComponentType.SecuredFields,
                         expect.objectContaining({
                             onValidationError: expect.any(Function),
                         }),
                     );
-                    expect(adyenCheckout.create).not.toHaveBeenCalledWith(
+                    expect(adyenCheckout.createComponent).not.toHaveBeenCalledWith(
                         AdyenComponentType.SecuredFields,
                         expect.objectContaining({
                             onError: expect.anything(),

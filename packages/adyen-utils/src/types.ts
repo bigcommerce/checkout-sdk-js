@@ -279,7 +279,15 @@ export interface AdyenComponentEvents {
 }
 
 export interface AdyenClient {
+    /**
+     * Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
+     */
     create(type: string, componentOptions?: AdyenComponentOptions): AdyenComponent;
+
+    /**
+     * Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+) only.
+     */
+    createComponent?(type: string, componentOptions?: AdyenComponentOptions): AdyenComponent;
 
     createFromAction(
         action: AdyenV2Action | AdyenV3Action,
@@ -535,6 +543,11 @@ export interface AdyenV3HostWindow extends Window {
      */
     AdyenWeb?: {
         AdyenCheckout: AdyenClientConstructor;
+        createComponent(
+            type: string,
+            checkout: AdyenClient,
+            componentOptions?: AdyenComponentOptions,
+        ): AdyenComponent;
     };
 }
 

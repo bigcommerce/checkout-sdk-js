@@ -58,11 +58,18 @@ export default class AdyenV3ScriptLoader {
         ]);
 
         if (isAdyenSdkUpgradeEnabled) {
-            if (!this._window.AdyenWeb) {
+            const adyenWeb = this._window.AdyenWeb;
+
+            if (!adyenWeb) {
                 throw new PaymentMethodClientUnavailableError();
             }
 
-            return this._window.AdyenWeb.AdyenCheckout(configuration);
+            const checkout = await adyenWeb.AdyenCheckout(configuration);
+
+            checkout.createComponent = (type, componentOptions) =>
+                adyenWeb.createComponent(type, checkout, componentOptions);
+
+            return checkout;
         }
 
         if (!this._window.AdyenCheckout) {
