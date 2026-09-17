@@ -73,11 +73,11 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         this.paymentInitializeOptions = adyenv3;
 
-        const paymentMethod = this.paymentIntegrationService
-            .getState()
-            .getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(options.methodId);
-        const { environment, clientKey, paymentMethodsResponse, installmentOptions } =
+        const { getBillingAddress, getPaymentMethodOrThrow } = this.paymentIntegrationService.getState();
+        const paymentMethod = getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(options.methodId);
+        const { environment, clientKey, paymentMethodsResponse } =
             paymentMethod.initializationData || {};
+        const billingAddress = getBillingAddress();
 
         this.adyenClient = await this.scriptLoader.load({
             paymentMethodsConfiguration: {
@@ -90,20 +90,11 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 klarna_paynow: {
                     useKlarnaWidget: true,
                 },
-                ...(installmentOptions
-                    ? {
-                          card: {
-                              installmentOptions: {
-                                  showInstallmentAmounts: true,
-                                  ...installmentOptions,
-                              },
-                          },
-                      }
-                    : {}),
             },
             environment,
             locale: this._getLocale(),
             clientKey,
+            countryCode: billingAddress?.countryCode,
             paymentMethodsResponse,
             showPayButton: false,
             translations: {
@@ -431,8 +422,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 },
             },
             onChange: (componentState) => this._updateComponentState(componentState),
-            onError: (validateState) => adyenv3.validateCardFields(validateState),
-            onFieldValid: (validateState) => adyenv3.validateCardFields(validateState),
+            onValidationError: (validateState) => adyenv3.validateCardFields(validateState),
         });
 
         try {
@@ -451,7 +441,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         const adyenv3 = this._getPaymentInitializeOptions();
         const adyenClient = this._getAdyenClient();
         const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
-        const { prefillCardHolderName } = paymentMethod.initializationData;
+        const { prefillCardHolderName, installmentOptions } = paymentMethod.initializationData;
 
         const paymentComponent = adyenClient.create(paymentMethod.method, {
             ...(this._isOneyPaymentMethod(paymentMethod.method)
@@ -464,7 +454,14 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                   }
                 : {}),
             ...adyenv3.options,
-            showBrandsUnderCardNumber: false,
+            ...(installmentOptions
+                ? {
+                      installmentOptions: {
+                          showInstallmentAmounts: true,
+                          ...installmentOptions,
+                      },
+                  }
+                : {}),
             billingAddressRequired: false,
             showEmailAddress: false,
             onChange: (componentState) => this._updateComponentState(componentState),

@@ -237,8 +237,6 @@ export interface AdyenBaseCardComponentOptions {
      * for a list of supported properties.
      */
     styles?: StyleOptions;
-
-    showBrandsUnderCardNumber?: boolean;
 }
 
 export interface AdyenComponentEvents {
@@ -254,12 +252,21 @@ export interface AdyenComponentEvents {
     onSubmit?(state: AdyenComponentEventState, component: AdyenComponent): void;
 
     /**
-     * Called in case of an invalid card number, invalid expiry date, or
-     *  incomplete field. Called again when errors are cleared.
+     * Adyen v2/Adyen v3 (SDK <5) only. Called in case of an invalid card number, invalid expiry date, or
+     * incomplete field. Called again when errors are cleared.
      */
     onError?(state: AdyenValidationState, component: AdyenComponent): void;
 
+    /**
+     * Adyen v2/Adyen v3 (SDK <5) only. Called when a field becomes valid.
+     */
     onFieldValid?(state: AdyenValidationState, component: AdyenComponent): void;
+
+    /**
+     * Adyen v3 (SDK 6+) only. Called in case of an invalid card number, invalid expiry date,
+     * or incomplete field, and again when a field becomes valid or errors are cleared.
+     */
+    onValidationError?(state: AdyenValidationState, component: AdyenComponent): void;
 }
 
 export interface AdyenClient {
@@ -309,6 +316,12 @@ export interface AdyenConfiguration {
     clientKey?: string;
 
     /*
+     * The shopper's country code. This is used to filter the list of available payment methods
+     * to your shopper.
+     */
+    countryCode?: string;
+
+    /*
      * Supported from Components version 3.0.0 and later. The full paymentMethods response,
      * returned in step 1. We recommend that you pass this on the AdyenCheckout instance.
      * Otherwise, you need to pass the specific payment method details separately for each
@@ -328,31 +341,6 @@ export interface AdyenConfiguration {
         };
         klarna_paynow: {
             useKlarnaWidget: boolean;
-        };
-        card?: {
-            installmentOptions?: {
-                card?: {
-                    values: number[];
-                    plans?: string[];
-                };
-                visa?: {
-                    values: number[];
-                    plans?: string[];
-                };
-                mc?: {
-                    values: number[];
-                    plans?: string[];
-                };
-                diners?: {
-                    values: number[];
-                    plans?: string[];
-                };
-                jcb?: {
-                    values: number[];
-                    plans?: string[];
-                };
-                showInstallmentAmounts?: boolean;
-            };
         };
     };
 
@@ -444,6 +432,33 @@ export interface AdyenCreditCardComponentOptions
      * Specify the sample values you want to appear for card detail input fields.
      */
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
+
+    /**
+     * Configure the number of installments and whether to display them, per card brand.
+     */
+    installmentOptions?: {
+        card?: {
+            values: number[];
+            plans?: string[];
+        };
+        visa?: {
+            values: number[];
+            plans?: string[];
+        };
+        mc?: {
+            values: number[];
+            plans?: string[];
+        };
+        diners?: {
+            values: number[];
+            plans?: string[];
+        };
+        jcb?: {
+            values: number[];
+            plans?: string[];
+        };
+        showInstallmentAmounts?: boolean;
+    };
 }
 
 export interface AdyenCustomCardComponentOptions
