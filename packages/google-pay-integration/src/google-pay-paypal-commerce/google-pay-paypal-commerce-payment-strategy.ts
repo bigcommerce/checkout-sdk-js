@@ -6,6 +6,7 @@ import {
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
+    OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
@@ -74,8 +75,12 @@ export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPay
                 paymentData,
             });
         } catch (error) {
-            await this._googlePayPaymentProcessor.processAdditionalAction(error);
+            await this._handleSubmitPaymentFailure(error, payment.methodId);
         }
+    }
+
+    finalize(): Promise<void> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     private async confirmOrder(orderId: string, confirmOrderData: ConfirmOrderData) {

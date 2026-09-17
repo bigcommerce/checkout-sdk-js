@@ -5,12 +5,16 @@ import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader'
 import {
     MissingDataError,
     MissingDataErrorType,
+    OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import { WithGooglePayPaymentInitializeOptions } from '../google-pay-payment-initialize-options';
@@ -175,7 +179,37 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(processor.processAdditionalAction).toHaveBeenCalledWith('error');
+            expect(processor.processAdditionalAction).toHaveBeenCalledWith('error', 'example');
+        });
+
+        describe('when the PI-5643.google_pay_handle_unsuccessful_3ds_check experiment is on', () => {
+            beforeEach(() => {
+                const storeConfig = getConfig().storeConfig;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue({
+                    ...storeConfig,
+                    checkoutSettings: {
+                        ...storeConfig.checkoutSettings,
+                        features: {
+                            'PI-5643.google_pay_handle_unsuccessful_3ds_check': true,
+                        },
+                    },
+                });
+            });
+
+            it('invalidates the cached payment method when the additional action itself fails', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
+                jest.spyOn(processor, 'processAdditionalAction').mockRejectedValue(
+                    new Error('Payment was declined'),
+                );
+
+                await expect(strategy.execute(payload)).rejects.toThrow('Payment was declined');
+
+                expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('example');
+            });
         });
 
         it('should initiate payer action', async () => {
@@ -226,6 +260,31 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
 
                 await expect(execute()).rejects.toThrow(MissingDataError);
             });
+        });
+    });
+
+    describe('#finalize', () => {
+        it('always rejects with OrderFinalizationNotRequiredError', async () => {
+            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
+        });
+
+        it('always rejects with OrderFinalizationNotRequiredError even when the experiment is on', async () => {
+            const storeConfig = getConfig().storeConfig;
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PI-5643.google_pay_handle_unsuccessful_3ds_check': true,
+                    },
+                },
+            });
+
+            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         });
     });
 });
