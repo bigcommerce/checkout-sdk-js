@@ -36,6 +36,7 @@ import {
     StripeElementType,
     StripeElementUpdateOptions,
     StripeEventType,
+    StripeHostWindow,
     StripeIntegrationService,
     StripeJsVersion,
     StripePaymentMethodType,
@@ -708,28 +709,29 @@ describe('StripeUPEPaymentStrategy', () => {
             let submit: jest.Mock;
             let originalSubmit: StripeElements['submit'];
 
+            const getInitializedStripeElements = (): StripeElements => {
+                const stripeElements = (window as StripeHostWindow).bcStripeElements;
+
+                if (!stripeElements) {
+                    throw new Error('Expected Stripe Elements to be initialized');
+                }
+
+                return stripeElements;
+            };
+
             const mockElementsSubmit = (
                 submitResult: { error?: { type: string; message: string } } = {},
             ) => {
                 submit = jest.fn().mockResolvedValue(submitResult);
 
-                // UPE initialize() does not await Elements load; use the instance from beforeEach.
-                const stripeElements = (
-                    strategy as unknown as { _stripeElements?: StripeElements }
-                )._stripeElements;
-
-                if (!stripeElements) {
-                    throw new Error('Expected Stripe Elements to be initialized');
-                }
+                const stripeElements = getInitializedStripeElements();
 
                 originalSubmit = stripeElements.submit;
                 stripeElements.submit = submit;
             };
 
             afterEach(() => {
-                const stripeElements = (
-                    strategy as unknown as { _stripeElements?: StripeElements }
-                )._stripeElements;
+                const stripeElements = (window as StripeHostWindow).bcStripeElements;
 
                 if (stripeElements && originalSubmit) {
                     stripeElements.submit = originalSubmit;
@@ -756,9 +758,9 @@ describe('StripeUPEPaymentStrategy', () => {
                     },
                 });
 
-                await expect(
-                    strategy.execute(getStripeUPEOrderRequestBodyMock()),
-                ).rejects.toThrow('Your card number is incomplete.');
+                await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toThrow(
+                    'Your card number is incomplete.',
+                );
             });
 
             it('does not create an order for invalid elements', async () => {
@@ -769,9 +771,9 @@ describe('StripeUPEPaymentStrategy', () => {
                     },
                 });
 
-                await expect(
-                    strategy.execute(getStripeUPEOrderRequestBodyMock()),
-                ).rejects.toThrow(PaymentMethodFailedError);
+                await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toThrow(
+                    PaymentMethodFailedError,
+                );
 
                 expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
                 expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
@@ -785,11 +787,13 @@ describe('StripeUPEPaymentStrategy', () => {
                     },
                 });
 
-                await expect(
-                    strategy.execute(getStripeUPEOrderRequestBodyMock()),
-                ).rejects.toThrow(PaymentMethodFailedError);
+                await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toThrow(
+                    PaymentMethodFailedError,
+                );
 
-                expect(stripeUPEIntegrationService.updateStripePaymentIntent).not.toHaveBeenCalled();
+                expect(
+                    stripeUPEIntegrationService.updateStripePaymentIntent,
+                ).not.toHaveBeenCalled();
             });
 
             it('skips elements validation for vaulted instruments', async () => {
