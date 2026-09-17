@@ -1,7 +1,7 @@
 import {
     AmazonPayV2ButtonColor,
     AmazonPayV2LedgerCurrency,
-    AmazonPayWalletService,
+    AmazonPayV2PaymentProcessor,
 } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import {
     CheckoutButtonInitializeOptions,
@@ -13,7 +13,7 @@ import AmazonPayWalletStrategy from './amazon-pay-wallet-strategy';
 
 describe('AmazonPayWalletStrategy', () => {
     let strategy: AmazonPayWalletStrategy;
-    let amazonPayWalletService: jest.Mocked<AmazonPayWalletService>;
+    let processor: jest.Mocked<AmazonPayV2PaymentProcessor>;
 
     const defaultContainerId = 'amazon-pay-wallet-button';
     const defaultMethodId = 'amazonpay';
@@ -25,10 +25,10 @@ describe('AmazonPayWalletStrategy', () => {
         publicKeyId: 'SANDBOX-PUBLIC-KEY',
     };
 
-    // A serialized PaymentMethod<AmazonPayV2InitializeOptions> as the host page would
-    // hand it to the headless button (Base64-encoded, no checkout session required).
-    // initializationData.createCheckoutSessionConfig is the server-signed payload
-    // sourced upstream from paymentWalletWithInitializationData.
+    // A serialized PaymentMethod<AmazonPayV2InitializeOptions> as the host page would hand
+    // it to the headless button (Base64-encoded, no checkout session required).
+    // initializationData.createCheckoutSessionConfig is the server-signed payload sourced
+    // upstream from paymentWalletWithInitializationData.
     const paymentMethod = {
         id: defaultMethodId,
         config: { merchantId: 'MERCHANT_ID', testMode: true },
@@ -53,29 +53,15 @@ describe('AmazonPayWalletStrategy', () => {
         },
     };
 
-    let onClickCallback: () => void | Promise<void>;
-    const amazonPayButton = {
-        onClick: jest.fn((cb: () => void | Promise<void>) => {
-            onClickCallback = cb;
-        }),
-        initCheckout: jest.fn(),
-    };
-    const amazonPaySdk = {
-        Pay: {
-            renderButton: jest.fn().mockReturnValue(amazonPayButton),
-        },
-    };
-
     beforeEach(() => {
-        amazonPayWalletService = {
-            loadAmazonPaySdk: jest.fn().mockResolvedValue(amazonPaySdk),
-            getAmazonPaySdkOrThrow: jest.fn().mockReturnValue(amazonPaySdk),
-            getCheckoutSessionConfigOrThrow: jest.fn().mockReturnValue(signedConfig),
-            getValidButtonColor: jest.fn().mockReturnValue(AmazonPayV2ButtonColor.Gold),
-            removeElement: jest.fn(),
-        } as unknown as jest.Mocked<AmazonPayWalletService>;
+        processor = {
+            initialize: jest.fn().mockResolvedValue(undefined),
+            createButton: jest.fn(),
+            prepareCheckout: jest.fn(),
+            deinitialize: jest.fn().mockResolvedValue(undefined),
+        } as unknown as jest.Mocked<AmazonPayV2PaymentProcessor>;
 
-        strategy = new AmazonPayWalletStrategy(amazonPayWalletService);
+        strategy = new AmazonPayWalletStrategy(processor);
     });
 
     afterEach(() => {
@@ -122,23 +108,34 @@ describe('AmazonPayWalletStrategy', () => {
         );
     });
 
-    it('loads the SDK and renders the Amazon Pay button without a checkout session', async () => {
+    it('loads the SDK and renders the button without a checkout session', async () => {
         await strategy.initialize(initializationOptions);
 
-        expect(amazonPayWalletService.loadAmazonPaySdk).toHaveBeenCalled();
-        expect(amazonPaySdk.Pay.renderButton).toHaveBeenCalledWith(
-            `#${defaultContainerId}`,
+        expect(processor.initialize).toHaveBeenCalled();
+        expect(processor.createButton).toHaveBeenCalledWith(
+            defaultContainerId,
             expect.objectContaining({
                 merchantId: 'MERCHANT_ID',
                 ledgerCurrency: AmazonPayV2LedgerCurrency.USD,
                 placement: 'Cart',
                 publicKeyId: 'SANDBOX-PUBLIC-KEY',
-                sandbox: true,
+                estimatedOrderAmount: { amount: '100', currencyCode: 'USD' },
             }),
         );
     });
 
+    it('binds the decoupled checkout initiation with the signed config', async () => {
+        await strategy.initialize(initializationOptions);
+
+        expect(processor.prepareCheckout).toHaveBeenCalledWith(signedConfig);
+    });
+
     it('hides the button when required payment method data is missing', async () => {
+        const container = document.createElement('div');
+
+        container.id = defaultContainerId;
+        document.body.appendChild(container);
+
         const options = {
             ...initializationOptions,
             amazonpayamazonpay: {
@@ -149,26 +146,15 @@ describe('AmazonPayWalletStrategy', () => {
 
         await strategy.initialize(options);
 
-        expect(amazonPayWalletService.removeElement).toHaveBeenCalledWith(defaultContainerId);
-        expect(amazonPaySdk.Pay.renderButton).not.toHaveBeenCalled();
+        expect(processor.createButton).not.toHaveBeenCalled();
+        expect(container.style.display).toBe('none');
+
+        document.body.removeChild(container);
     });
 
-    it('initiates checkout with the signed config on click (no BC create-order call)', async () => {
-        await strategy.initialize(initializationOptions);
+    it('deinitializes via the processor', async () => {
+        await strategy.deinitialize();
 
-        await onClickCallback();
-
-        expect(amazonPayWalletService.getCheckoutSessionConfigOrThrow).toHaveBeenCalled();
-        expect(amazonPayButton.initCheckout).toHaveBeenCalledWith(
-            expect.objectContaining({
-                createCheckoutSessionConfig: signedConfig,
-                productType: 'PayAndShip',
-                estimatedOrderAmount: { amount: '100', currencyCode: 'USD' },
-            }),
-        );
-    });
-
-    it('deinitializes without error', async () => {
-        await expect(strategy.deinitialize()).resolves.toBeUndefined();
+        expect(processor.deinitialize).toHaveBeenCalled();
     });
 });
