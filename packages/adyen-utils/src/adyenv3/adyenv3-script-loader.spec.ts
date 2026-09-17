@@ -46,7 +46,9 @@ describe('AdyenV3ScriptLoader', () => {
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.AdyenCheckout = jest.fn(() => Promise.resolve(adyenClient));
+                mockWindow.AdyenWeb = {
+                    AdyenCheckout: jest.fn(() => Promise.resolve(adyenClient)),
+                };
 
                 return Promise.resolve();
             });
@@ -79,7 +81,7 @@ describe('AdyenV3ScriptLoader', () => {
 
         it('throws an error when window is not set', async () => {
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.AdyenCheckout = undefined;
+                mockWindow.AdyenWeb = undefined;
 
                 return Promise.resolve();
             });

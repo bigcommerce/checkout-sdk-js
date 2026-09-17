@@ -41,11 +41,11 @@ export default class AdyenV3ScriptLoader {
             ),
         ]);
 
-        if (!this._window.AdyenCheckout) {
+        if (!this._window.AdyenWeb) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        const checkout = await this._window.AdyenCheckout(configuration);
+        const checkout = await this._window.AdyenWeb.AdyenCheckout(configuration);
 
         return checkout;
     }

@@ -468,7 +468,9 @@ export interface AdyenError {
 }
 
 export interface AdyenV3HostWindow extends Window {
-    AdyenCheckout?: AdyenClientConstructor;
+    AdyenWeb?: {
+        AdyenCheckout: AdyenClientConstructor;
+    };
 }
 
 export interface AdyenV2HostWindow extends Window {
