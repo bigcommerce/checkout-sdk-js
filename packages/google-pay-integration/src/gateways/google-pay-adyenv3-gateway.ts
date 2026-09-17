@@ -20,10 +20,13 @@ import {
     PaymentMethod,
     PaymentMethodCancelledError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { GooglePayInitializationData } from '../types';
 
 import GooglePayGateway from './google-pay-gateway';
+
+const ADYEN_SDK_UPGRADE_EXPERIMENT = 'PI-5661.adyen_sdk_upgrade';
 
 export default class GooglePayAdyenV3 extends GooglePayGateway {
     private _adyenClient?: AdyenClient;
@@ -50,10 +53,19 @@ export default class GooglePayAdyenV3 extends GooglePayGateway {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
-        this._adyenClient = await this._scriptLoader.load({
-            environment: paymentMethod.config.testMode ? 'test' : 'live',
-            locale: storeConfig.storeProfile.storeLanguage,
-        });
+        const isAdyenSdkUpgradeEnabled = isExperimentEnabled(
+            storeConfig.checkoutSettings.features,
+            ADYEN_SDK_UPGRADE_EXPERIMENT,
+            false,
+        );
+
+        this._adyenClient = await this._scriptLoader.load(
+            {
+                environment: paymentMethod.config.testMode ? 'test' : 'live',
+                locale: storeConfig.storeProfile.storeLanguage,
+            },
+            isAdyenSdkUpgradeEnabled,
+        );
 
         return Promise.resolve();
     }
