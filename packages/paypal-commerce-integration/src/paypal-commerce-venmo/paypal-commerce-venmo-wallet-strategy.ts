@@ -50,6 +50,8 @@ export default class PayPalCommerceVenmoWalletStrategy implements CheckoutButton
             throw new InvalidArgumentError("Failed to parse payment method 'initializationData'.");
         }
 
+        parsedInitializationData.id = parsedInitializationData.id || methodId;
+
         const buttonStyle =
             parsedInitializationData.initializationData?.paymentButtonStyles?.cartButtonStyles;
 

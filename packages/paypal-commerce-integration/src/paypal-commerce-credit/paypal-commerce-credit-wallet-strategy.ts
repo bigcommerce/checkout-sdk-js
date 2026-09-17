@@ -52,6 +52,8 @@ export default class PayPalCommerceCreditWalletStrategy implements CheckoutButto
             throw new InvalidArgumentError("Failed to parse payment method 'initializationData'.");
         }
 
+        parsedInitializationData.id = parsedInitializationData.id || methodId;
+
         await this.paypalCommerceHeadlessWalletButtonService.loadPayPalSdk(
             parsedInitializationData,
             paypalcommercepaypalcredit.currency.code,
