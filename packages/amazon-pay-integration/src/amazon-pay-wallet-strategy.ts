@@ -18,27 +18,6 @@ import AmazonPayWalletInitializeOptions, {
     WithAmazonPayWalletInitializeOptions,
 } from './amazon-pay-wallet-initialize-options';
 
-/**
- * Headless "wallet button" strategy for Amazon Pay.
- *
- * Wallet entity id: `amazonpay.amazonpay` (provider "Amazon Pay").
- *
- * Renders the Amazon Pay button on a PDP/cart page and initiates a purchase without
- * `PaymentIntegrationService`, `loadDefaultCheckout`, or `getCartOrThrow`. All data it
- * needs arrives up front in the Base64 `PaymentMethod` (`options.amazonpayamazonpay.
- * initializationData`), whose `createCheckoutSessionConfig` is the server-signed payload
- * sourced upstream from `paymentWalletWithInitializationData`.
- *
- * It reuses the existing {@link AmazonPayV2PaymentProcessor} rather than a bespoke wallet
- * service: `initialize` (SDK load), `createButton` (render), and `prepareCheckout`
- * (`onClick → initCheckout`, incl. `publicKeyId` environment handling). The processor's
- * checkout-state-coupled entry point (`renderAmazonPayButton` / `getAmazonPayV2ButtonOptions`)
- * is deliberately bypassed — button params are built here from the parsed payment method.
- *
- * Unlike the PayPal/Braintree wallet strategies there is no `createOrder`/`onApprove`
- * callback and no `WalletButtonIntegrationService` call: Amazon Pay owns the approval +
- * redirect, and address capture + order completion happen server-side afterwards.
- */
 export default class AmazonPayWalletStrategy implements CheckoutButtonStrategy {
     constructor(private amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor) {}
 
@@ -90,9 +69,8 @@ export default class AmazonPayWalletStrategy implements CheckoutButtonStrategy {
         const { config, initializationData } = paymentMethod;
         const merchantId = config?.merchantId;
         const ledgerCurrency = initializationData?.ledgerCurrency;
-        const signedConfig = this.getRequiredCheckoutSessionConfig(initializationData);
 
-        if (!merchantId || !ledgerCurrency || !signedConfig) {
+        if (!merchantId || !ledgerCurrency) {
             this.removeElement(containerId);
 
             return;
@@ -118,10 +96,14 @@ export default class AmazonPayWalletStrategy implements CheckoutButtonStrategy {
             }),
         };
 
-        // Render, then bind the decoupled onClick → initCheckout(signedConfig). The
-        // processor handles the publicKeyId stripping for env-specific credentials.
         this.amazonPayV2PaymentProcessor.createButton(containerId, buttonParams);
-        this.amazonPayV2PaymentProcessor.prepareCheckout(signedConfig);
+
+        // TODO(PAYPAL-7057): `initializationData.createCheckoutSessionConfig` is undefined
+        const signedConfig = this.getRequiredCheckoutSessionConfig(initializationData);
+
+        if (signedConfig) {
+            this.amazonPayV2PaymentProcessor.prepareCheckout(signedConfig);
+        }
     }
 
     private getRequiredCheckoutSessionConfig(
