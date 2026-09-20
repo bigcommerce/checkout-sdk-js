@@ -4,8 +4,6 @@ import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wa
 
 import AmazonPayWalletStrategy from './amazon-pay-wallet-strategy';
 
-// The factory receives `walletButtonIntegrationService` per the wallet-button contract,
-// but Amazon Pay's headless legs use none of its GraphQL primitives, so it is not used.
 const createAmazonPayWalletStrategy: WalletPaymentButtonStrategyFactory<
     AmazonPayWalletStrategy
 > = () => new AmazonPayWalletStrategy(createAmazonPayV2PaymentProcessor());

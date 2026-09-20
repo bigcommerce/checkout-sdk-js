@@ -39,7 +39,5 @@ export default interface AmazonPayWalletInitializeOptions {
 }
 
 export interface WithAmazonPayWalletInitializeOptions {
-    // Key matches the wallet resolve id (dot-stripped entity id `amazonpay.amazonpay`),
-    // following the PayPal/Braintree/BigCommerce Payments convention.
     amazonpayamazonpay?: AmazonPayWalletInitializeOptions;
 }
