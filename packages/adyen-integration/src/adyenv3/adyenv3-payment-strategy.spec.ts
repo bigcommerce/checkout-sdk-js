@@ -117,7 +117,8 @@ describe('AdyenV3PaymentStrategy', () => {
                         handleOnChange = onChange;
                     }
 
-                    return _method === AdyenComponentType.SecuredFields
+                    return _method === AdyenComponentType.SecuredFields ||
+                        _method === AdyenComponentType.CustomCard
                         ? cardVerificationComponent
                         : paymentComponent;
                 }),
@@ -260,6 +261,24 @@ describe('AdyenV3PaymentStrategy', () => {
                     expect(actions.resolve).not.toHaveBeenCalled();
                     expect(actions.reject).not.toHaveBeenCalled();
                 });
+
+                it('sets useKlarnaWidget via paymentMethodsConfiguration for klarna', async () => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getPaymentMethodOrThrow',
+                    ).mockReturnValue(getAdyenV3('klarna'));
+
+                    await strategy.initialize(options);
+
+                    expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            paymentMethodsConfiguration: expect.objectContaining({
+                                klarna: { useKlarnaWidget: true },
+                            }),
+                        }),
+                        false,
+                    );
+                });
             });
 
             describe('when the PI-5661.adyen_sdk_upgrade experiment is enabled', () => {
@@ -285,6 +304,31 @@ describe('AdyenV3PaymentStrategy', () => {
                     );
                 });
 
+                it('does not pass paymentMethodsConfiguration, which is Drop-in only in SDK 6+', async () => {
+                    await strategy.initialize(options);
+
+                    expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                        expect.not.objectContaining({
+                            paymentMethodsConfiguration: expect.anything(),
+                        }),
+                        true,
+                    );
+                });
+
+                it('sets useKlarnaWidget on the klarna component instead of paymentMethodsConfiguration', async () => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getPaymentMethodOrThrow',
+                    ).mockReturnValue(getAdyenV3('klarna'));
+
+                    await strategy.initialize(options);
+
+                    expect(adyenCheckout.createComponent).toHaveBeenCalledWith(
+                        'klarna',
+                        expect.objectContaining({ useKlarnaWidget: true }),
+                    );
+                });
+
                 it('does not set showBrandsUnderCardNumber on the payment component', async () => {
                     await strategy.initialize(options);
 
@@ -296,17 +340,21 @@ describe('AdyenV3PaymentStrategy', () => {
                     );
                 });
 
-                it('uses onValidationError for the card verification component', async () => {
+                it('uses the customcard type and onValidationError for the card verification component', async () => {
                     await strategy.initialize(options);
 
                     expect(adyenCheckout.createComponent).toHaveBeenCalledWith(
-                        AdyenComponentType.SecuredFields,
+                        AdyenComponentType.CustomCard,
                         expect.objectContaining({
                             onValidationError: expect.any(Function),
                         }),
                     );
                     expect(adyenCheckout.createComponent).not.toHaveBeenCalledWith(
                         AdyenComponentType.SecuredFields,
+                        expect.anything(),
+                    );
+                    expect(adyenCheckout.createComponent).not.toHaveBeenCalledWith(
+                        AdyenComponentType.CustomCard,
                         expect.objectContaining({
                             onError: expect.anything(),
                         }),

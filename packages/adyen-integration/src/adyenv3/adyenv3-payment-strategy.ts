@@ -99,27 +99,31 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         this.adyenClient = await this.scriptLoader.load(
             {
-                paymentMethodsConfiguration: {
-                    klarna: {
-                        useKlarnaWidget: true,
-                    },
-                    klarna_account: {
-                        useKlarnaWidget: true,
-                    },
-                    klarna_paynow: {
-                        useKlarnaWidget: true,
-                    },
-                    ...(!this.isAdyenSdkUpgradeEnabled && installmentOptions
-                        ? {
-                              card: {
-                                  installmentOptions: {
-                                      showInstallmentAmounts: true,
-                                      ...installmentOptions,
-                                  },
+                ...(!this.isAdyenSdkUpgradeEnabled
+                    ? {
+                          paymentMethodsConfiguration: {
+                              klarna: {
+                                  useKlarnaWidget: true,
                               },
-                          }
-                        : {}),
-                },
+                              klarna_account: {
+                                  useKlarnaWidget: true,
+                              },
+                              klarna_paynow: {
+                                  useKlarnaWidget: true,
+                              },
+                              ...(installmentOptions
+                                  ? {
+                                        card: {
+                                            installmentOptions: {
+                                                showInstallmentAmounts: true,
+                                                ...installmentOptions,
+                                            },
+                                        },
+                                    }
+                                  : {}),
+                          },
+                      }
+                    : {}),
                 environment,
                 locale: this._getLocale(),
                 clientKey,
@@ -462,7 +466,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         const cardVerificationComponent = this._createComponent(
             adyenClient,
-            AdyenComponentType.SecuredFields,
+            this.isAdyenSdkUpgradeEnabled
+                ? AdyenComponentType.CustomCard
+                : AdyenComponentType.SecuredFields,
             {
                 ...adyenv3.options,
                 styles: {
@@ -524,6 +530,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                       },
                   }
                 : {}),
+            ...(this.isAdyenSdkUpgradeEnabled && this._isKlarnaPaymentMethod(paymentMethod.method)
+                ? { useKlarnaWidget: true }
+                : {}),
             ...(!this.isAdyenSdkUpgradeEnabled ? { showBrandsUnderCardNumber: false } : {}),
             billingAddressRequired: false,
             showEmailAddress: false,
@@ -551,6 +560,14 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
     private _isOneyPaymentMethod(method: string): boolean {
         return method.startsWith('facilypay');
+    }
+
+    private _isKlarnaPaymentMethod(method: string): boolean {
+        return (
+            method === AdyenPaymentMethodType.Klarna ||
+            method === AdyenPaymentMethodType.KlarnaAccount ||
+            method === AdyenPaymentMethodType.KlarnaPayNow
+        );
     }
 
     private async _processAdditionalAction(

@@ -60,7 +60,16 @@ export enum AdyenV2ActionType {
 }
 
 export enum AdyenComponentType {
+    /**
+     * Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled (SDK <6).
+     */
     SecuredFields = 'securedfields',
+
+    /**
+     * Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+). Replaces
+     * SecuredFields as the type key for the custom card component.
+     */
+    CustomCard = 'customcard',
 }
 
 export enum AdyenPaymentMethodType {
@@ -584,6 +593,15 @@ export interface AdyenIdealComponentOptions
      * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
     showImage?: boolean;
+}
+
+export interface AdyenKlarnaComponentOptions extends AdyenComponentEvents {
+    /**
+     * Set to true to use Klarna's own widget. With the PI-5661.adyen_sdk_upgrade experiment
+     * enabled (SDK 6+), this must be set on the Klarna Component's own configuration instead
+     * of the top-level AdyenCheckout's paymentMethodsConfiguration, which is Drop-in only.
+     */
+    useKlarnaWidget?: boolean;
 }
 
 export type AdyenComponentFieldVisibility = 'hidden' | 'readOnly' | 'editable';
@@ -1176,7 +1194,8 @@ export type AdyenComponentOptions =
     | AdyenCreditCardComponentOptions
     | AdyenIdealComponentOptions
     | AdyenBoletoComponentOptions
-    | AdyenCustomCardComponentOptions;
+    | AdyenCustomCardComponentOptions
+    | AdyenKlarnaComponentOptions;
 
 export interface AdyenV3PaymentMethodInitializationData {
     clientKey?: string;
