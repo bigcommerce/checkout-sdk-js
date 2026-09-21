@@ -364,13 +364,17 @@ describe('AdyenV3PaymentStrategy', () => {
                 it('normalizes each onValidationError array entry into a single validateCardFields call', async () => {
                     await strategy.initialize(options);
 
-                    const { onValidationError } = (adyenCheckout.createComponent as jest.Mock).mock.calls.find(
-                        ([type]) => type === AdyenComponentType.CustomCard,
-                    )[1];
+                    const { onValidationError } = (
+                        adyenCheckout.createComponent as jest.Mock
+                    ).mock.calls.find(([type]) => type === AdyenComponentType.CustomCard)[1];
 
                     onValidationError([
                         { fieldType: 'encryptedSecurityCode', error: '' },
-                        { fieldType: 'encryptedCardNumber', isValid: false, error: 'incomplete field' },
+                        {
+                            fieldType: 'encryptedCardNumber',
+                            isValid: false,
+                            error: 'incomplete field',
+                        },
                     ]);
 
                     expect(options.adyenv3?.validateCardFields).toHaveBeenCalledWith({
