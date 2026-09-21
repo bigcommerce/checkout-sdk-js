@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.981.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.981.0...v1.981.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-7005 remove ppcp wallet billing-address mutation ([#3413](https://github.com/bigcommerce/checkout-sdk-js/issues/3413)) ([3d3e2c5](https://github.com/bigcommerce/checkout-sdk-js/commit/3d3e2c578b04a0215636129eec74d428fdbe0320))
+
 ## [1.981.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.980.0...v1.981.0) (2026-09-17)
 
 
