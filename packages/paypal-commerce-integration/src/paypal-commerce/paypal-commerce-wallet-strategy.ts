@@ -8,7 +8,6 @@ import { PayPalCommerceInitializationData } from '@bigcommerce/checkout-sdk/payp
 import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
-    ApproveCallbackActions,
     ApproveCallbackPayload,
     PayPalButtonStyleOptions,
     PayPalCommerceButtonsOptions,
@@ -87,20 +86,7 @@ export default class PaypalCommerceWalletStrategy implements CheckoutButtonStrat
                     providerId,
                     cartId,
                 ),
-            onApprove: async (
-                { orderID }: ApproveCallbackPayload,
-                actions: ApproveCallbackActions,
-            ) => {
-                const orderDetails = await actions.order.get();
-                const billingAddress =
-                    this.paypalCommerceHeadlessWalletButtonService.mapOrderDetailsToBillingAddress(
-                        orderDetails,
-                    );
-
-                await this.paypalCommerceHeadlessWalletButtonService.addBillingAddress(
-                    cartId,
-                    billingAddress,
-                );
+            onApprove: async ({ orderID }: ApproveCallbackPayload) => {
                 await this.paypalCommerceHeadlessWalletButtonService.proxyTokenizationPayment(
                     cartId,
                     providerId,

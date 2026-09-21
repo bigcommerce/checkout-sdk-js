@@ -42,7 +42,6 @@ describe('PayPalCommerceVenmoWalletStrategy', () => {
         const paypalSdk = getPayPalSDKMock();
 
         paypalCommerceWalletService = {
-            addBillingAddress: jest.fn(),
             createPaymentOrderIntent: jest.fn().mockResolvedValue(defaultOrderId),
             getPayPalSdkOrThrow: jest.fn().mockReturnValue(paypalSdk),
             getValidButtonStyle: jest.fn().mockReturnValue({ height: 45 }),
@@ -136,7 +135,6 @@ describe('PayPalCommerceVenmoWalletStrategy', () => {
             },
         );
 
-        expect(paypalCommerceWalletService.addBillingAddress).not.toHaveBeenCalled();
         expect(paypalCommerceWalletService.proxyTokenizationPayment).toHaveBeenCalledWith(
             defaultCartId,
             'paypalcommerce.venmo',

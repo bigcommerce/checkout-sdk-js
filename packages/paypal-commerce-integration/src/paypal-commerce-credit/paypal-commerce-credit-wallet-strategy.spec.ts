@@ -19,23 +19,6 @@ describe('PayPalCommerceCreditWalletStrategy', () => {
     const defaultOrderId = 'ORDER_ID';
     const defaultButtonStyle = { color: 'gold', label: 'checkout' };
 
-    const orderDetails = {
-        payer: {
-            name: { given_name: 'Jane', surname: 'Smith' },
-            email_address: 'jane@smith.com',
-            address: {
-                address_line_1: '456 Oak Ave',
-                address_line_2: 'Apt 200',
-                admin_area_2: 'Denver',
-                admin_area_1: 'CO',
-                postal_code: '80202',
-                country_code: 'US',
-            },
-        },
-        purchase_units: [],
-    };
-    const mappedBillingAddress = { firstName: 'Jane', lastName: 'Smith' };
-
     const initializationOptions: CheckoutButtonInitializeOptions &
         WithPayPalCommerceCreditWalletInitializeOptions = {
         methodId: defaultMethodId,
@@ -63,12 +46,10 @@ describe('PayPalCommerceCreditWalletStrategy', () => {
         const paypalSdk = getPayPalSDKMock();
 
         paypalCommerceWalletService = {
-            addBillingAddress: jest.fn(),
             createPaymentOrderIntent: jest.fn().mockResolvedValue(defaultOrderId),
             getPayPalSdkOrThrow: jest.fn().mockReturnValue(paypalSdk),
             getValidButtonStyle: jest.fn().mockReturnValue({ height: 45 }),
             loadPayPalSdk: jest.fn(),
-            mapOrderDetailsToBillingAddress: jest.fn().mockReturnValue(mappedBillingAddress),
             proxyTokenizationPayment: jest.fn(),
             removeElement: jest.fn(),
         } as unknown as jest.Mocked<PaypalCommerceWalletService>;
@@ -199,7 +180,7 @@ describe('PayPalCommerceCreditWalletStrategy', () => {
         );
     });
 
-    it('adds billing address and proxies tokenization on approve', async () => {
+    it('proxies tokenization on approve', async () => {
         const paypalButtons = {
             close: jest.fn(),
             isEligible: jest.fn().mockReturnValue(true),
@@ -216,18 +197,11 @@ describe('PayPalCommerceCreditWalletStrategy', () => {
             { orderID: defaultOrderId },
             {
                 order: {
-                    get: jest.fn().mockResolvedValue(orderDetails),
+                    get: jest.fn(),
                 },
             },
         );
 
-        expect(paypalCommerceWalletService.mapOrderDetailsToBillingAddress).toHaveBeenCalledWith(
-            orderDetails,
-        );
-        expect(paypalCommerceWalletService.addBillingAddress).toHaveBeenCalledWith(
-            defaultCartId,
-            mappedBillingAddress,
-        );
         expect(paypalCommerceWalletService.proxyTokenizationPayment).toHaveBeenCalledWith(
             defaultCartId,
             'paypalcommerce.paypalcredit',
