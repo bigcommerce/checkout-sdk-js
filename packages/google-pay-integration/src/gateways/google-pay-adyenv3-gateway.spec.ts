@@ -68,6 +68,32 @@ describe('GooglePayAdyenV3Gateway', () => {
 
             expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(expect.anything(), true);
         });
+
+        it('sets countryCode from the billing address when the experiment is enabled', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: { 'PI-5661.adyen_sdk_upgrade': true },
+                },
+            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                expect.objectContaining({ countryCode: 'US' }),
+                true,
+            );
+        });
+
+        it('does not set countryCode when the experiment is disabled', async () => {
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                expect.not.objectContaining({ countryCode: expect.anything() }),
+                false,
+            );
+        });
     });
 
     it('#processAdditionalAction', async () => {

@@ -361,6 +361,58 @@ describe('AdyenV3PaymentStrategy', () => {
                     );
                 });
 
+                it('normalizes each onValidationError array entry into a single validateCardFields call', async () => {
+                    await strategy.initialize(options);
+
+                    const { onValidationError } = (adyenCheckout.createComponent as jest.Mock).mock.calls.find(
+                        ([type]) => type === AdyenComponentType.CustomCard,
+                    )[1];
+
+                    onValidationError([
+                        { fieldType: 'encryptedSecurityCode', error: '' },
+                        { fieldType: 'encryptedCardNumber', isValid: false, error: 'incomplete field' },
+                    ]);
+
+                    expect(options.adyenv3?.validateCardFields).toHaveBeenCalledWith({
+                        fieldType: 'encryptedSecurityCode',
+                        valid: true,
+                        error: '',
+                        errorKey: undefined,
+                    });
+                    expect(options.adyenv3?.validateCardFields).toHaveBeenCalledWith({
+                        fieldType: 'encryptedCardNumber',
+                        valid: false,
+                        error: 'incomplete field',
+                        errorKey: undefined,
+                    });
+                });
+
+                it('sets brands to the vaulted instrument brand for the card verification component', async () => {
+                    if (options.adyenv3) {
+                        options.adyenv3.cardVerificationBrand = 'visa';
+                    }
+
+                    await strategy.initialize(options);
+
+                    expect(adyenCheckout.createComponent).toHaveBeenCalledWith(
+                        AdyenComponentType.CustomCard,
+                        expect.objectContaining({ brands: ['visa'] }),
+                    );
+                });
+
+                it('does not set brands on the payment component even when cardVerificationBrand is set', async () => {
+                    if (options.adyenv3) {
+                        options.adyenv3.cardVerificationBrand = 'visa';
+                    }
+
+                    await strategy.initialize(options);
+
+                    expect(adyenCheckout.createComponent).toHaveBeenCalledWith(
+                        'scheme',
+                        expect.not.objectContaining({ brands: expect.anything() }),
+                    );
+                });
+
                 it('resolves the submit actions so the component does not hang waiting for a response', async () => {
                     await strategy.initialize(options);
 

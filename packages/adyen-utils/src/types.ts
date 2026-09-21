@@ -303,10 +303,10 @@ export interface AdyenComponentEvents {
 
     /**
      * Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+) only.
-     * Called in case of an invalid card number, invalid expiry date, or incomplete field,
-     * and again when a field becomes valid or errors are cleared.
+     * Called with one entry per field in case of an invalid card number, invalid expiry
+     * date, or incomplete field, and again when a field becomes valid or errors are cleared.
      */
-    onValidationError?(state: AdyenValidationState, component: AdyenComponent): void;
+    onValidationError?(state: AdyenFieldValidationResult[], component: AdyenComponent): void;
 }
 
 export interface AdyenClient {
@@ -1180,6 +1180,14 @@ export interface AdyenValidationState {
     i18n?: string;
     error?: string;
     errorKey?: string;
+}
+
+export interface AdyenFieldValidationResult {
+    fieldType: AdyenCardFields;
+    isValid?: boolean;
+    error?: string;
+    errorMessage?: string;
+    errorI18n?: string;
 }
 
 export enum AdyenCardFields {

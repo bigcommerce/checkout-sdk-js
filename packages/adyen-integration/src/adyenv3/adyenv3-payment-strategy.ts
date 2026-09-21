@@ -482,14 +482,25 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 onChange: (componentState) => this._updateComponentState(componentState),
                 ...(this.isAdyenSdkUpgradeEnabled
                     ? {
-                          onValidationError: (validateState) =>
-                              adyenv3.validateCardFields(validateState),
+                          onValidationError: (fieldResults) => {
+                              fieldResults.forEach((fieldResult) => {
+                                  adyenv3.validateCardFields({
+                                      fieldType: fieldResult.fieldType,
+                                      valid: !fieldResult.error,
+                                      error: fieldResult.error,
+                                      errorKey: fieldResult.errorMessage,
+                                  });
+                              });
+                          },
                       }
                     : {
                           onError: (validateState) => adyenv3.validateCardFields(validateState),
                           onFieldValid: (validateState) =>
                               adyenv3.validateCardFields(validateState),
                       }),
+                ...(this.isAdyenSdkUpgradeEnabled && adyenv3.cardVerificationBrand
+                    ? { brands: [adyenv3.cardVerificationBrand] }
+                    : {}),
             },
         );
 

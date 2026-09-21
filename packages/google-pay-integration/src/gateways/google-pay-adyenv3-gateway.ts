@@ -63,6 +63,13 @@ export default class GooglePayAdyenV3 extends GooglePayGateway {
             {
                 environment: paymentMethod.config.testMode ? 'test' : 'live',
                 locale: storeConfig.storeProfile.storeLanguage,
+                ...(isAdyenSdkUpgradeEnabled
+                    ? {
+                          countryCode:
+                              state.getBillingAddress()?.countryCode ||
+                              storeConfig.storeProfile.storeCountryCode,
+                      }
+                    : {}),
             },
             isAdyenSdkUpgradeEnabled,
         );
