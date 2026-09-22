@@ -25,6 +25,9 @@ Array of card brands that will be recognized by the component.
 
 > `optional` **showBrandsUnderCardNumber?**: `boolean`
 
+Adyen v2/Adyen v3 (SDK <6, behind the PI-5661.adyen_sdk_upgrade experiment) only.
+No longer used in Adyen v3 (SDK 6+).
+
 ***
 
 ### styles?

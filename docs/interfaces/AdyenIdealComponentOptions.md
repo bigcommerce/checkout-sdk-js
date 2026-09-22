@@ -28,6 +28,9 @@ Array of card brands that will be recognized by the component.
 
 > `optional` **showBrandsUnderCardNumber?**: `boolean`
 
+Adyen v2/Adyen v3 (SDK <6, behind the PI-5661.adyen_sdk_upgrade experiment) only.
+No longer used in Adyen v3 (SDK 6+).
+
 #### Inherited from
 
 [`AdyenBaseCardComponentOptions`](AdyenBaseCardComponentOptions.md).[`showBrandsUnderCardNumber`](AdyenBaseCardComponentOptions.md#showbrandsundercardnumber)
@@ -86,8 +89,9 @@ Here you have the option to override your main Adyen Checkout configuration.
 
 > `optional` **onError**(`state`, `component`): `void`
 
-Called in case of an invalid card number, invalid expiry date, or
- incomplete field. Called again when errors are cleared.
+Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
+Called in case of an invalid card number, invalid expiry date, or incomplete field.
+Called again when errors are cleared.
 
 #### Parameters
 
@@ -113,6 +117,9 @@ Called in case of an invalid card number, invalid expiry date, or
 
 > `optional` **onFieldValid**(`state`, `component`): `void`
 
+Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
+Called when a field becomes valid.
+
 #### Parameters
 
 ##### state
@@ -135,9 +142,13 @@ Called in case of an invalid card number, invalid expiry date, or
 
 ### onSubmit()?
 
-> `optional` **onSubmit**(`state`, `component`): `void`
+> `optional` **onSubmit**(`state`, `component`, `actions?`): `void`
 
 Called when the shopper selects the Pay button and payment details are valid.
+
+With the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+), this callback
+receives a third `actions` argument. The Component's internal submit flow will not
+continue until `actions.resolve()` or `actions.reject()` is called.
 
 #### Parameters
 
@@ -149,6 +160,10 @@ Called when the shopper selects the Pay button and payment details are valid.
 
 [`AdyenComponent`](AdyenComponent.md)
 
+##### actions?
+
+[`AdyenActions`](AdyenActions.md)
+
 #### Returns
 
 `void`
@@ -156,3 +171,31 @@ Called when the shopper selects the Pay button and payment details are valid.
 #### Inherited from
 
 [`AdyenComponentEvents`](AdyenComponentEvents.md).[`onSubmit`](AdyenComponentEvents.md#onsubmit)
+
+***
+
+### onValidationError()?
+
+> `optional` **onValidationError**(`state`, `component`): `void`
+
+Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+) only.
+Called with one entry per field in case of an invalid card number, invalid expiry
+date, or incomplete field, and again when a field becomes valid or errors are cleared.
+
+#### Parameters
+
+##### state
+
+[`AdyenFieldValidationResult`](AdyenFieldValidationResult.md)[]
+
+##### component
+
+[`AdyenComponent`](AdyenComponent.md)
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[`AdyenComponentEvents`](AdyenComponentEvents.md).[`onValidationError`](AdyenComponentEvents.md#onvalidationerror)

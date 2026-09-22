@@ -107,6 +107,19 @@ declare interface AddressRequestBody {
     label?: string;
 }
 
+declare interface AdyenActions {
+    /**
+     * Continues the payment flow. Call this, passing the resultCode, even when the
+     * payment is unsuccessful.
+     */
+    resolve(data?: unknown): void;
+    /**
+     * Stops the payment flow. Only call this when the request to the payment provider's
+     * API fails, or when there are network connection issues.
+     */
+    reject(error?: unknown): void;
+}
+
 declare interface AdyenAdditionalActionCallbacks {
     /**
      * A callback that gets called before adyen component is loaded
@@ -156,6 +169,10 @@ declare interface AdyenBaseCardComponentOptions {
      * for a list of supported properties.
      */
     styles?: StyleOptions;
+    /**
+     * Adyen v2/Adyen v3 (SDK <6, behind the PI-5661.adyen_sdk_upgrade experiment) only.
+     * No longer used in Adyen v3 (SDK 6+).
+     */
     showBrandsUnderCardNumber?: boolean;
 }
 
@@ -186,14 +203,29 @@ declare interface AdyenComponentEvents {
     onChange?(state: AdyenComponentEventState, component: AdyenComponent): void;
     /**
      * Called when the shopper selects the Pay button and payment details are valid.
+     *
+     * With the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+), this callback
+     * receives a third `actions` argument. The Component's internal submit flow will not
+     * continue until `actions.resolve()` or `actions.reject()` is called.
      */
-    onSubmit?(state: AdyenComponentEventState, component: AdyenComponent): void;
+    onSubmit?(state: AdyenComponentEventState, component: AdyenComponent, actions?: AdyenActions): void;
     /**
-     * Called in case of an invalid card number, invalid expiry date, or
-     *  incomplete field. Called again when errors are cleared.
+     * Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
+     * Called in case of an invalid card number, invalid expiry date, or incomplete field.
+     * Called again when errors are cleared.
      */
     onError?(state: AdyenValidationState, component: AdyenComponent): void;
+    /**
+     * Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
+     * Called when a field becomes valid.
+     */
     onFieldValid?(state: AdyenValidationState, component: AdyenComponent): void;
+    /**
+     * Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+) only.
+     * Called with one entry per field in case of an invalid card number, invalid expiry
+     * date, or incomplete field, and again when a field becomes valid or errors are cleared.
+     */
+    onValidationError?(state: AdyenFieldValidationResult[], component: AdyenComponent): void;
 }
 
 declare type AdyenComponentEventState = CardState | BoletoState | WechatState;
@@ -241,6 +273,42 @@ declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponent
      * Specify the sample values you want to appear for card detail input fields.
      */
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
+    /**
+     * Configure the number of installments and whether to display them, per card brand.
+     * Only used when the PI-5661.adyen_sdk_upgrade experiment is enabled (mandatory location
+     * from Adyen Web SDK 6+ — previously set on the top-level AdyenCheckout configuration).
+     */
+    installmentOptions?: {
+        card?: {
+            values: number[];
+            plans?: string[];
+        };
+        visa?: {
+            values: number[];
+            plans?: string[];
+        };
+        mc?: {
+            values: number[];
+            plans?: string[];
+        };
+        diners?: {
+            values: number[];
+            plans?: string[];
+        };
+        jcb?: {
+            values: number[];
+            plans?: string[];
+        };
+        showInstallmentAmounts?: boolean;
+    };
+}
+
+declare interface AdyenFieldValidationResult {
+    fieldType: AdyenCardFields;
+    isValid?: boolean;
+    error?: string;
+    errorMessage?: string;
+    errorI18n?: string;
 }
 
 declare interface AdyenIdealComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
@@ -453,6 +521,13 @@ declare interface AdyenV3PaymentInitializeOptions {
      * True if the Adyen component has some Vaulted instrument
      */
     hasVaultedInstruments?: boolean;
+    /**
+     * The brand (e.g. "visa", "mc", "amex") of the vaulted instrument being re-verified,
+     * used only for the card verification component. With the PI-5661.adyen_sdk_upgrade
+     * experiment enabled (SDK 6+), a single secured field (the CVV-only re-entry field)
+     * requires its "brands" to be set to an array containing this specific brand.
+     */
+    cardVerificationBrand?: string;
     /**
      * A set of options that are required to initialize additional payment actions.
      */

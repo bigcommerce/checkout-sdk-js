@@ -74,6 +74,17 @@ A set of options that are required to initialize additional payment actions.
 
 ***
 
+### cardVerificationBrand?
+
+> `optional` **cardVerificationBrand?**: `string`
+
+The brand (e.g. "visa", "mc", "amex") of the vaulted instrument being re-verified,
+used only for the card verification component. With the PI-5661.adyen_sdk_upgrade
+experiment enabled (SDK 6+), a single secured field (the CVV-only re-entry field)
+requires its "brands" to be set to an array containing this specific brand.
+
+***
+
 ### cardVerificationContainerId?
 
 > `optional` **cardVerificationContainerId?**: `string`

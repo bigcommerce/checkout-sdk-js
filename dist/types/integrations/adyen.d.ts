@@ -44,6 +44,7 @@ declare class Adyenv3PaymentStrategy implements PaymentStrategy {
     private adyenClient?;
     private cardVerificationComponent?;
     private componentState?;
+    private isAdyenSdkUpgradeEnabled;
     private paymentComponent?;
     private paymentInitializeOptions?;
     constructor(paymentIntegrationService: PaymentIntegrationService, scriptLoader: AdyenV3ScriptLoader);
@@ -58,9 +59,11 @@ declare class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _getPaymentInitializeOptions;
     private _handleAction;
     private _mapAdyenPlaceholderData;
+    private _createComponent;
     private _mountCardVerificationComponent;
     private _mountPaymentComponent;
     private _isOneyPaymentMethod;
+    private _isKlarnaPaymentMethod;
     private _processAdditionalAction;
     private _validateCardData;
     private _mapCardErrors;
