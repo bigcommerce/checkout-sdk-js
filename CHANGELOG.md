@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.981.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.981.2...v1.981.3) (2026-09-22)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-10425 Support B2B gateway Filtering ([#3416](https://github.com/bigcommerce/checkout-sdk-js/issues/3416)) ([31ac92a](https://github.com/bigcommerce/checkout-sdk-js/commit/31ac92a27585cf386935ec4ca1d4a87d440c9eea))
+
 ### [1.981.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.981.1...v1.981.2) (2026-09-22)
 
 
