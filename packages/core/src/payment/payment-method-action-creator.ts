@@ -6,7 +6,10 @@ import { ActionOptions, cachableAction } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
 import { B2BPaymentMethodFilterType } from '../config/capabilities';
 
-import filterPaymentMethodsByB2BCompanyAllowList from './b2b-company-payment-method-filter-transformer';
+import {
+    filterPaymentMethodsByB2BCompanyAllowList,
+    filterPaymentMethodsByB2BInvoiceAllowList,
+} from './b2b-company-payment-method-filter-transformer';
 import B2BCompanyPaymentMethodRequestSender from './b2b-company-payment-method-request-sender';
 import {
     LoadPaymentMethodAction,
@@ -225,6 +228,6 @@ export default class PaymentMethodActionCreator {
                 options,
             );
 
-        return methods.filter((method) => new Set(body.data.allowedMethods).has(method.id));
+        return filterPaymentMethodsByB2BInvoiceAllowList(methods, body);
     }
 }
