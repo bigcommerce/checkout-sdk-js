@@ -49,35 +49,13 @@ describe('GooglePayAdyenV3Gateway', () => {
     });
 
     describe('PI-5661.adyen_sdk_upgrade experiment', () => {
-        it('loads the script loader without the experiment flag enabled by default', async () => {
-            await gateway.initialize(getAdyenV3);
-
-            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(expect.anything(), false);
-        });
-
-        it('loads the script loader with the experiment flag enabled', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
-                ...getConfig().storeConfig,
-                checkoutSettings: {
-                    ...getConfig().storeConfig.checkoutSettings,
-                    features: { 'PI-5661.adyen_sdk_upgrade': true },
-                },
-            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
-
+        it('loads the script loader with the experiment flag enabled by default', async () => {
             await gateway.initialize(getAdyenV3);
 
             expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(expect.anything(), true);
         });
 
-        it('sets countryCode from the billing address when the experiment is enabled', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
-                ...getConfig().storeConfig,
-                checkoutSettings: {
-                    ...getConfig().storeConfig.checkoutSettings,
-                    features: { 'PI-5661.adyen_sdk_upgrade': true },
-                },
-            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
-
+        it('sets countryCode from the billing address by default', async () => {
             await gateway.initialize(getAdyenV3);
 
             expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
@@ -86,7 +64,50 @@ describe('GooglePayAdyenV3Gateway', () => {
             );
         });
 
-        it('does not set countryCode when the experiment is disabled', async () => {
+        it('falls back to the store country code when there is no billing address', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+                ...getConfig().storeConfig,
+                storeProfile: {
+                    ...getConfig().storeConfig.storeProfile,
+                    storeCountryCode: 'CA',
+                },
+            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddress',
+            ).mockReturnValueOnce(undefined);
+
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                expect.objectContaining({ countryCode: 'CA' }),
+                true,
+            );
+        });
+
+        it('loads the script loader without the experiment flag when explicitly disabled', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: { 'PI-5661.adyen_sdk_upgrade': false },
+                },
+            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(expect.anything(), false);
+        });
+
+        it('does not set countryCode when the experiment is explicitly disabled', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: { 'PI-5661.adyen_sdk_upgrade': false },
+                },
+            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+
             await gateway.initialize(getAdyenV3);
 
             expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(

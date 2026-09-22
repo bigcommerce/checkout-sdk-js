@@ -123,6 +123,8 @@ describe('AdyenV3PaymentStrategy', () => {
                         : paymentComponent;
                 }),
             );
+
+            adyenCheckout.createComponent = jest.fn(adyenCheckout.create);
         });
 
         afterEach(() => {
@@ -220,6 +222,17 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             describe('when the PI-5661.adyen_sdk_upgrade experiment is disabled', () => {
+                beforeEach(() => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getStoreConfigOrThrow',
+                    ).mockReturnValueOnce({
+                        checkoutSettings: {
+                            features: { 'PI-5661.adyen_sdk_upgrade': false },
+                        },
+                    } as unknown as ReturnType<PaymentIntegrationSelectors['getStoreConfigOrThrow']>);
+                });
+
                 it('loads the script loader without the experiment flag enabled', async () => {
                     await strategy.initialize(options);
 
@@ -291,8 +304,6 @@ describe('AdyenV3PaymentStrategy', () => {
                             features: { 'PI-5661.adyen_sdk_upgrade': true },
                         },
                     } as unknown as ReturnType<PaymentIntegrationSelectors['getStoreConfigOrThrow']>);
-
-                    adyenCheckout.createComponent = jest.fn(adyenCheckout.create);
                 });
 
                 it('loads the script loader with the experiment flag enabled and countryCode', async () => {
@@ -1229,6 +1240,7 @@ describe('AdyenV3PaymentStrategy', () => {
 
             jest.spyOn(adyenV3ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
             jest.spyOn(adyenClient, 'create').mockReturnValue(adyenComponent);
+            adyenClient.createComponent = jest.fn().mockReturnValue(adyenComponent);
 
             await strategy.initialize(getInitializeOptions());
 
