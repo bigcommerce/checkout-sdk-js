@@ -18,6 +18,7 @@ import {
     SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import getApprovalBillingAddress from '../get-approval-billing-address';
 import GooglePayPaymentProcessor from '../google-pay-payment-processor';
 import GooglePayPaymentStrategy from '../google-pay-payment-strategy';
 import {
@@ -109,9 +110,13 @@ export default class GooglePayBigCommercePaymentsPaymentStrategy extends GoogleP
             true,
         );
 
-        const { status } = await payPalSDK
-            .Googlepay()
-            .confirmOrder({ orderId, paymentMethodData: confirmOrderData });
+        const billingAddress = getApprovalBillingAddress(this._paymentIntegrationService);
+
+        const { status } = await payPalSDK.Googlepay().confirmOrder({
+            orderId,
+            paymentMethodData: confirmOrderData,
+            ...(billingAddress && { billingAddress }),
+        });
 
         if (status === ConfirmOrderStatus.PayerActionRequired) {
             await payPalSDK.Googlepay().initiatePayerAction({ orderId });
