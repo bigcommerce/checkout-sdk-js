@@ -13,6 +13,13 @@ function makeMethod(id: string): PaymentMethod {
     };
 }
 
+function makeGatewayMethod(id: string, gateway: string): PaymentMethod {
+    return { ...makeMethod(id), gateway };
+}
+
+const blueSnapDirect = makeGatewayMethod('credit_card', 'bluesnapdirect');
+const worldpayAccess = makeGatewayMethod('credit_card', 'worldpayaccess');
+
 describe('filterPaymentMethodsByB2BCompanyAllowList', () => {
     it('returns only methods whose id is in the allow-list', () => {
         const methods = [makeMethod('cheque'), makeMethod('stripev3'), makeMethod('braintree')];
@@ -77,6 +84,18 @@ describe('filterPaymentMethodsByB2BCompanyAllowList', () => {
         expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual(methods);
     });
 
+    it('matches a legacy provider on its raw code as well as its mapped code', () => {
+        const methods = [makeMethod('quickbooks'), makeMethod('elavon')];
+        const body: B2BCompanyPaymentMethodsResponseBody = {
+            data: [
+                { code: 'quickbooks', name: 'QuickBooks', isEnabled: '1', paymentId: 1 },
+                { code: 'elavon', name: 'Elavon', isEnabled: '1', paymentId: 2 },
+            ],
+        };
+
+        expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual(methods);
+    });
+
     it('preserves the order of the input methods', () => {
         const methods = [makeMethod('stripev3'), makeMethod('braintree'), makeMethod('cheque')];
         const body: B2BCompanyPaymentMethodsResponseBody = {
@@ -90,5 +109,79 @@ describe('filterPaymentMethodsByB2BCompanyAllowList', () => {
             makeMethod('stripev3'),
             makeMethod('cheque'),
         ]);
+    });
+
+    describe('matching on gateway', () => {
+        it('keeps a method whose gateway is allow-listed', () => {
+            const body: B2BCompanyPaymentMethodsResponseBody = {
+                data: [
+                    {
+                        code: 'bluesnapdirect',
+                        name: 'BlueSnap Direct',
+                        isEnabled: '1',
+                        paymentId: 59126,
+                    },
+                ],
+            };
+
+            expect(filterPaymentMethodsByB2BCompanyAllowList([blueSnapDirect], body)).toEqual([
+                blueSnapDirect,
+            ]);
+        });
+
+        it('drops a method whose gateway record is disabled', () => {
+            const body: B2BCompanyPaymentMethodsResponseBody = {
+                data: [
+                    {
+                        code: 'bluesnapdirect',
+                        name: 'BlueSnap Direct',
+                        isEnabled: '0',
+                        paymentId: 59126,
+                    },
+                ],
+            };
+
+            expect(filterPaymentMethodsByB2BCompanyAllowList([blueSnapDirect], body)).toEqual([]);
+        });
+
+        it('distinguishes two providers sharing the credit_card method id', () => {
+            const methods = [worldpayAccess, blueSnapDirect];
+            const body: B2BCompanyPaymentMethodsResponseBody = {
+                data: [
+                    {
+                        code: 'bluesnapdirect',
+                        name: 'BlueSnap Direct',
+                        isEnabled: '1',
+                        paymentId: 59126,
+                    },
+                    {
+                        code: 'worldpayaccess',
+                        name: 'Access Worldpay',
+                        isEnabled: '0',
+                        paymentId: 52099,
+                    },
+                ],
+            };
+
+            expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual([
+                blueSnapDirect,
+            ]);
+        });
+
+        it('keeps every provider sharing a method id when that id is allow-listed', () => {
+            const methods = [worldpayAccess, blueSnapDirect];
+            const body: B2BCompanyPaymentMethodsResponseBody = {
+                data: [
+                    {
+                        code: 'credit_card',
+                        name: 'Access Worldpay',
+                        isEnabled: '1',
+                        paymentId: 58757,
+                    },
+                ],
+            };
+
+            expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual(methods);
+        });
     });
 });
