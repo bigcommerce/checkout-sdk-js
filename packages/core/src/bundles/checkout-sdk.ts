@@ -27,3 +27,4 @@ export {
     ExtensionType,
     type ExtensionQueryMap,
 } from '../extension';
+export { RequestError } from '../common/error/errors';
