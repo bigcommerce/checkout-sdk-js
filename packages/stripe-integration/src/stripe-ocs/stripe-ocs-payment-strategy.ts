@@ -13,6 +13,7 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
+    PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -95,6 +96,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         }
 
         await this.stripeIntegrationService.applyStoreCreditIfNeeded(useStoreCredit);
+        await this._validateStripeElementsOrThrow();
 
         if (!this.stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId)) {
             await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
@@ -255,6 +257,18 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         const stripeElement = this.stripeElements?.getElement(StripeElementType.PAYMENT);
 
         stripeElement?.collapse();
+    }
+
+    private async _validateStripeElementsOrThrow(): Promise<void> {
+        if (!this.stripeElements) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const { error } = await this.stripeElements.submit();
+
+        if (error) {
+            throw new PaymentMethodFailedError(error.message);
+        }
     }
 
     private _getPaymentPayload(

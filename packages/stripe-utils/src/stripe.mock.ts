@@ -74,6 +74,7 @@ export function getStripeJsMock(): StripeClient {
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
+            submit: jest.fn(() => Promise.resolve({})),
         })),
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
@@ -89,6 +90,7 @@ export function getFailingStripeJsMock(): StripeClient {
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
+            submit: jest.fn(() => Promise.resolve({})),
         })),
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
@@ -182,6 +184,12 @@ export function getStripeCheckoutSessionActionsMock(): StripeCheckoutSessionActi
 
             return { type: StripeLoadActionsResultType.SUCCESS };
         }),
+        validateElements: jest.fn(() =>
+            Promise.resolve({
+                type: StripeLoadActionsResultType.SUCCESS,
+                session: {} as StripeCheckoutSession,
+            }),
+        ),
     };
 }
 

@@ -641,6 +641,88 @@ describe('StripeOCSPaymentStrategy', () => {
             });
         });
 
+        describe('stripe elements validation', () => {
+            const mockStripeElements = (elements: Record<string, unknown>) => {
+                jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
+                    Promise.resolve({
+                        ...stripeUPEJsMock.elements({}),
+                        ...elements,
+                    }),
+                );
+            };
+
+            it('validates stripe elements before creating an order', async () => {
+                const submit = jest.fn().mockResolvedValue({});
+
+                mockStripeElements({ submit });
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+                await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
+
+                expect(submit).toHaveBeenCalledTimes(1);
+                expect(submit.mock.invocationCallOrder[0]).toBeLessThan(
+                    (paymentIntegrationService.submitOrder as jest.Mock).mock
+                        .invocationCallOrder[0],
+                );
+            });
+
+            it('throws stripe validation message for invalid elements', async () => {
+                mockStripeElements({
+                    submit: jest.fn().mockResolvedValue({
+                        error: {
+                            type: 'validation_error',
+                            message: 'Your card number is incomplete.',
+                        },
+                    }),
+                });
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
+                ).rejects.toThrow('Your card number is incomplete.');
+            });
+
+            it('does not create an order for invalid elements', async () => {
+                mockStripeElements({
+                    submit: jest.fn().mockResolvedValue({
+                        error: {
+                            type: 'validation_error',
+                            message: 'Your card number is incomplete.',
+                        },
+                    }),
+                });
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
+                ).rejects.toThrow(PaymentMethodFailedError);
+
+                expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
+            });
+
+            it('does not update the stripe payment intent for invalid elements', async () => {
+                mockStripeElements({
+                    submit: jest.fn().mockResolvedValue({
+                        error: {
+                            type: 'validation_error',
+                            message: 'Your card number is incomplete.',
+                        },
+                    }),
+                });
+
+                await stripeOCSPaymentStrategy.initialize(stripeOptions);
+
+                await expect(
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
+                ).rejects.toThrow(PaymentMethodFailedError);
+
+                expect(stripeIntegrationService.updateStripePaymentIntent).not.toHaveBeenCalled();
+            });
+        });
+
         it('execute with selected payment method id without ui handled', async () => {
             const eventMock = {
                 ...StripeEventMock,

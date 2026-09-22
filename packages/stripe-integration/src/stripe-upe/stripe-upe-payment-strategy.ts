@@ -17,6 +17,7 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
+    PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
     RequestError,
@@ -115,6 +116,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.applyStoreCredit(useStoreCredit);
         }
 
+        if (!isVaultedInstrument(paymentData)) {
+            await this._validateStripeElementsOrThrow();
+        }
+
         if (gatewayId) {
             await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
@@ -159,6 +164,18 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         this._stripeUPEClient = undefined;
 
         return Promise.resolve();
+    }
+
+    private async _validateStripeElementsOrThrow(): Promise<void> {
+        if (!this._stripeElements) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const { error } = await this._stripeElements.submit();
+
+        if (error) {
+            throw new PaymentMethodFailedError(error.message);
+        }
     }
 
     private async _executeWithStripeConfirmation(
