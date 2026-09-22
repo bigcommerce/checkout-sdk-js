@@ -56,7 +56,7 @@ export default class GooglePayAdyenV3 extends GooglePayGateway {
         const isAdyenSdkUpgradeEnabled = isExperimentEnabled(
             storeConfig.checkoutSettings.features,
             ADYEN_SDK_UPGRADE_EXPERIMENT,
-            false,
+            true,
         );
 
         this._adyenClient = await this._scriptLoader.load(

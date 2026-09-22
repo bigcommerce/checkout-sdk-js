@@ -85,7 +85,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         this.isAdyenSdkUpgradeEnabled = isExperimentEnabled(
             checkoutSettings.features,
             ADYEN_SDK_UPGRADE_EXPERIMENT,
-            false,
+            true,
         );
 
         const { getBillingAddress, getPaymentMethodOrThrow } =
