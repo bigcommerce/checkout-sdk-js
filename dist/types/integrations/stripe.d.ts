@@ -79,6 +79,7 @@ declare class StripeCSPaymentStrategy implements PaymentStrategy {
     private _getStripeElement;
     private _onStripeElementChange;
     private _collapseStripeElement;
+    private _validateStripeElementsOrThrow;
     private _updateCheckoutSessionDataBeforePay;
     private _getPaymentPayload;
     private _processAdditionalAction;
@@ -288,6 +289,7 @@ declare class StripeOCSPaymentStrategy implements PaymentStrategy {
     private _initializeStripeElement;
     private _loadStripeJs;
     private _collapseStripeElement;
+    private _validateStripeElementsOrThrow;
     private _getPaymentPayload;
     private _processAdditionalAction;
     private _confirmStripePaymentOrThrow;
@@ -390,6 +392,7 @@ declare class StripeUPEPaymentStrategy implements PaymentStrategy {
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
+    private _validateStripeElementsOrThrow;
     private _executeWithStripeConfirmation;
     private _executeWithVaulted;
     private _loadStripeElement;

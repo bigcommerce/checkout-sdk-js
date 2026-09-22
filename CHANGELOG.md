@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.982.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.981.3...v1.982.0) (2026-09-22)
+
+
+### Features
+
+* **payment:** STRIPE-1694 Validate stripe elements before order creation ([#3409](https://github.com/bigcommerce/checkout-sdk-js/issues/3409)) ([8c5bf8f](https://github.com/bigcommerce/checkout-sdk-js/commit/8c5bf8f2d09c2c40f647c3c3b79d963e9b450c88))
+
 ### [1.981.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.981.2...v1.981.3) (2026-09-22)
 
 
