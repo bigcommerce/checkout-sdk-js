@@ -8533,7 +8533,7 @@ declare interface RemoteCheckoutStateData {
  * Throw this error if we are unable to make a request to the server. It wraps
  * any server response into a JS error object.
  */
-declare class RequestError<TBody = any> extends StandardError {
+export declare class RequestError<TBody = any> extends StandardError {
     body: TBody | object;
     headers: {
         [key: string]: any;
