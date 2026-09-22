@@ -8,9 +8,11 @@ const legacyProviderCodeMap: { [methodId: string]: string } = {
 
 /**
  * Intersects the storefront payment method list against a B2B company's
- * allow-list. Matches on `PaymentMethod.id === b2bMethod.code` (translating
- * legacy provider IDs whose setup code differs from their checkout ID) and
- * drops disabled methods (`isEnabled !== '1'`).
+ * allow-list. A method is kept when `b2bMethod.code` matches its
+ * `PaymentMethod.id`, its `PaymentMethod.gateway` (gateway-based providers are
+ * registered under the gateway code, e.g. `credit_card`/`bluesnapdirect`), or
+ * the translation of a legacy provider ID whose setup code differs from its
+ * checkout ID. Disabled methods (`isEnabled !== '1'`) are dropped.
  */
 export default function filterPaymentMethodsByB2BCompanyAllowList(
     methods: PaymentMethod[],
@@ -18,7 +20,13 @@ export default function filterPaymentMethodsByB2BCompanyAllowList(
 ): PaymentMethod[] {
     const allowedCodes = new Set(body.data.filter((m) => m.isEnabled === '1').map((m) => m.code));
 
-    return methods.filter((method) =>
-        allowedCodes.has(legacyProviderCodeMap[method.id] ?? method.id),
-    );
+    return methods.filter((method) => {
+        const legacyCode = legacyProviderCodeMap[method.id];
+
+        return (
+            allowedCodes.has(method.id) ||
+            (method.gateway !== undefined && allowedCodes.has(method.gateway)) ||
+            (legacyCode !== undefined && allowedCodes.has(legacyCode))
+        );
+    });
 }
