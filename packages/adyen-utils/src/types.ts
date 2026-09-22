@@ -60,7 +60,16 @@ export enum AdyenV2ActionType {
 }
 
 export enum AdyenComponentType {
+    /**
+     * Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled (SDK <6).
+     */
     SecuredFields = 'securedfields',
+
+    /**
+     * Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+). Replaces
+     * SecuredFields as the type key for the custom card component.
+     */
+    CustomCard = 'customcard',
 }
 
 export enum AdyenPaymentMethodType {
@@ -238,7 +247,25 @@ export interface AdyenBaseCardComponentOptions {
      */
     styles?: StyleOptions;
 
+    /**
+     * Adyen v2/Adyen v3 (SDK <6, behind the PI-5661.adyen_sdk_upgrade experiment) only.
+     * No longer used in Adyen v3 (SDK 6+).
+     */
     showBrandsUnderCardNumber?: boolean;
+}
+
+export interface AdyenActions {
+    /**
+     * Continues the payment flow. Call this, passing the resultCode, even when the
+     * payment is unsuccessful.
+     */
+    resolve(data?: unknown): void;
+
+    /**
+     * Stops the payment flow. Only call this when the request to the payment provider's
+     * API fails, or when there are network connection issues.
+     */
+    reject(error?: unknown): void;
 }
 
 export interface AdyenComponentEvents {
@@ -250,20 +277,48 @@ export interface AdyenComponentEvents {
 
     /**
      * Called when the shopper selects the Pay button and payment details are valid.
+     *
+     * With the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+), this callback
+     * receives a third `actions` argument. The Component's internal submit flow will not
+     * continue until `actions.resolve()` or `actions.reject()` is called.
      */
-    onSubmit?(state: AdyenComponentEventState, component: AdyenComponent): void;
+    onSubmit?(
+        state: AdyenComponentEventState,
+        component: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
 
     /**
-     * Called in case of an invalid card number, invalid expiry date, or
-     *  incomplete field. Called again when errors are cleared.
+     * Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
+     * Called in case of an invalid card number, invalid expiry date, or incomplete field.
+     * Called again when errors are cleared.
      */
     onError?(state: AdyenValidationState, component: AdyenComponent): void;
 
+    /**
+     * Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
+     * Called when a field becomes valid.
+     */
     onFieldValid?(state: AdyenValidationState, component: AdyenComponent): void;
+
+    /**
+     * Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+) only.
+     * Called with one entry per field in case of an invalid card number, invalid expiry
+     * date, or incomplete field, and again when a field becomes valid or errors are cleared.
+     */
+    onValidationError?(state: AdyenFieldValidationResult[], component: AdyenComponent): void;
 }
 
 export interface AdyenClient {
+    /**
+     * Adyen v2, and Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled.
+     */
     create(type: string, componentOptions?: AdyenComponentOptions): AdyenComponent;
+
+    /**
+     * Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+) only.
+     */
+    createComponent?(type: string, componentOptions?: AdyenComponentOptions): AdyenComponent;
 
     createFromAction(
         action: AdyenV2Action | AdyenV3Action,
@@ -309,6 +364,13 @@ export interface AdyenConfiguration {
     clientKey?: string;
 
     /*
+     * The shopper's country code. This is used to filter the list of available payment methods
+     * to your shopper. Only used when the PI-5661.adyen_sdk_upgrade experiment is enabled
+     * (mandatory from Adyen Web SDK 6+).
+     */
+    countryCode?: string;
+
+    /*
      * Supported from Components version 3.0.0 and later. The full paymentMethods response,
      * returned in step 1. We recommend that you pass this on the AdyenCheckout instance.
      * Otherwise, you need to pass the specific payment method details separately for each
@@ -329,6 +391,11 @@ export interface AdyenConfiguration {
         klarna_paynow: {
             useKlarnaWidget: boolean;
         };
+
+        /**
+         * Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled. From SDK 6+,
+         * set installmentOptions directly in the Card component configuration instead.
+         */
         card?: {
             installmentOptions?: {
                 card?: {
@@ -444,6 +511,35 @@ export interface AdyenCreditCardComponentOptions
      * Specify the sample values you want to appear for card detail input fields.
      */
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
+
+    /**
+     * Configure the number of installments and whether to display them, per card brand.
+     * Only used when the PI-5661.adyen_sdk_upgrade experiment is enabled (mandatory location
+     * from Adyen Web SDK 6+ — previously set on the top-level AdyenCheckout configuration).
+     */
+    installmentOptions?: {
+        card?: {
+            values: number[];
+            plans?: string[];
+        };
+        visa?: {
+            values: number[];
+            plans?: string[];
+        };
+        mc?: {
+            values: number[];
+            plans?: string[];
+        };
+        diners?: {
+            values: number[];
+            plans?: string[];
+        };
+        jcb?: {
+            values: number[];
+            plans?: string[];
+        };
+        showInstallmentAmounts?: boolean;
+    };
 }
 
 export interface AdyenCustomCardComponentOptions
@@ -468,7 +564,22 @@ export interface AdyenError {
 }
 
 export interface AdyenV3HostWindow extends Window {
+    /**
+     * Adyen v3 unless the PI-5661.adyen_sdk_upgrade experiment is enabled (SDK <6).
+     */
     AdyenCheckout?: AdyenClientConstructor;
+
+    /**
+     * Adyen v3 with the PI-5661.adyen_sdk_upgrade experiment enabled (SDK 6+).
+     */
+    AdyenWeb?: {
+        AdyenCheckout: AdyenClientConstructor;
+        createComponent(
+            type: string,
+            checkout: AdyenClient,
+            componentOptions?: AdyenComponentOptions,
+        ): AdyenComponent;
+    };
 }
 
 export interface AdyenV2HostWindow extends Window {
@@ -482,6 +593,15 @@ export interface AdyenIdealComponentOptions
      * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
     showImage?: boolean;
+}
+
+export interface AdyenKlarnaComponentOptions extends AdyenComponentEvents {
+    /**
+     * Set to true to use Klarna's own widget. With the PI-5661.adyen_sdk_upgrade experiment
+     * enabled (SDK 6+), this must be set on the Klarna Component's own configuration instead
+     * of the top-level AdyenCheckout's paymentMethodsConfiguration, which is Drop-in only.
+     */
+    useKlarnaWidget?: boolean;
 }
 
 export type AdyenComponentFieldVisibility = 'hidden' | 'readOnly' | 'editable';
@@ -1062,6 +1182,14 @@ export interface AdyenValidationState {
     errorKey?: string;
 }
 
+export interface AdyenFieldValidationResult {
+    fieldType: AdyenCardFields;
+    isValid?: boolean;
+    error?: string;
+    errorMessage?: string;
+    errorI18n?: string;
+}
+
 export enum AdyenCardFields {
     CardNumber = 'encryptedCardNumber',
     SecurityCode = 'encryptedSecurityCode',
@@ -1074,7 +1202,8 @@ export type AdyenComponentOptions =
     | AdyenCreditCardComponentOptions
     | AdyenIdealComponentOptions
     | AdyenBoletoComponentOptions
-    | AdyenCustomCardComponentOptions;
+    | AdyenCustomCardComponentOptions
+    | AdyenKlarnaComponentOptions;
 
 export interface AdyenV3PaymentMethodInitializationData {
     clientKey?: string;

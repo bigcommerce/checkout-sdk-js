@@ -7,6 +7,7 @@ import {
     AdyenClient,
     AdyenComponent,
     AdyenComponentEventState,
+    AdyenComponentOptions,
     AdyenComponentType,
     AdyenError,
     AdyenPaymentMethodType,
@@ -44,6 +45,9 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
+
+const ADYEN_SDK_UPGRADE_EXPERIMENT = 'PI-5661.adyen_sdk_upgrade';
 
 export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private static readonly mountContainerMaxWaitMs = 5000;
@@ -52,6 +56,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private adyenClient?: AdyenClient;
     private cardVerificationComponent?: AdyenComponent;
     private componentState?: AdyenComponentEventState;
+    private isAdyenSdkUpgradeEnabled = false;
     private paymentComponent?: AdyenComponent;
     private paymentInitializeOptions?: AdyenV3PaymentInitializeOptions;
 
@@ -73,49 +78,72 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         this.paymentInitializeOptions = adyenv3;
 
-        const paymentMethod = this.paymentIntegrationService
+        const { checkoutSettings } = this.paymentIntegrationService
             .getState()
-            .getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(options.methodId);
+            .getStoreConfigOrThrow();
+
+        this.isAdyenSdkUpgradeEnabled = isExperimentEnabled(
+            checkoutSettings.features,
+            ADYEN_SDK_UPGRADE_EXPERIMENT,
+            true,
+        );
+
+        const { getBillingAddress, getPaymentMethodOrThrow } =
+            this.paymentIntegrationService.getState();
+        const paymentMethod = getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(
+            options.methodId,
+        );
         const { environment, clientKey, paymentMethodsResponse, installmentOptions } =
             paymentMethod.initializationData || {};
+        const billingAddress = getBillingAddress();
 
-        this.adyenClient = await this.scriptLoader.load({
-            paymentMethodsConfiguration: {
-                klarna: {
-                    useKlarnaWidget: true,
-                },
-                klarna_account: {
-                    useKlarnaWidget: true,
-                },
-                klarna_paynow: {
-                    useKlarnaWidget: true,
-                },
-                ...(installmentOptions
+        this.adyenClient = await this.scriptLoader.load(
+            {
+                ...(!this.isAdyenSdkUpgradeEnabled
                     ? {
-                          card: {
-                              installmentOptions: {
-                                  showInstallmentAmounts: true,
-                                  ...installmentOptions,
+                          paymentMethodsConfiguration: {
+                              klarna: {
+                                  useKlarnaWidget: true,
                               },
+                              klarna_account: {
+                                  useKlarnaWidget: true,
+                              },
+                              klarna_paynow: {
+                                  useKlarnaWidget: true,
+                              },
+                              ...(installmentOptions
+                                  ? {
+                                        card: {
+                                            installmentOptions: {
+                                                showInstallmentAmounts: true,
+                                                ...installmentOptions,
+                                            },
+                                        },
+                                    }
+                                  : {}),
                           },
                       }
                     : {}),
+                environment,
+                locale: this._getLocale(),
+                clientKey,
+                ...(this.isAdyenSdkUpgradeEnabled
+                    ? { countryCode: billingAddress?.countryCode }
+                    : {}),
+                paymentMethodsResponse,
+                showPayButton: false,
+                translations: {
+                    es: { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-AR': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-ES': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-MX': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-CL': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-CO': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                    'es-PE': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                },
             },
-            environment,
-            locale: this._getLocale(),
-            clientKey,
-            paymentMethodsResponse,
-            showPayButton: false,
-            translations: {
-                es: { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-AR': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-ES': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-MX': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-CL': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-CO': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-                'es-PE': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
-            },
-        });
+            this.isAdyenSdkUpgradeEnabled,
+        );
 
         this.paymentComponent = await this._mountPaymentComponent(paymentMethod);
 
@@ -412,6 +440,22 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         };
     }
 
+    private _createComponent(
+        adyenClient: AdyenClient,
+        type: string,
+        componentOptions: AdyenComponentOptions,
+    ): AdyenComponent {
+        if (this.isAdyenSdkUpgradeEnabled) {
+            if (!adyenClient.createComponent) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+
+            return adyenClient.createComponent(type, componentOptions);
+        }
+
+        return adyenClient.create(type, componentOptions);
+    }
+
     private async _mountCardVerificationComponent(): Promise<AdyenComponent | undefined> {
         const adyenv3 = this._getPaymentInitializeOptions();
         const adyenClient = this._getAdyenClient();
@@ -420,20 +464,45 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             return undefined;
         }
 
-        const cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
-            ...adyenv3.options,
-            styles: {
-                ...adyenv3.options?.styles,
-                placeholder: {
-                    color: 'transparent',
-                    caretColor: '#000',
-                    ...adyenv3.options?.styles?.placeholder,
+        const cardVerificationComponent = this._createComponent(
+            adyenClient,
+            this.isAdyenSdkUpgradeEnabled
+                ? AdyenComponentType.CustomCard
+                : AdyenComponentType.SecuredFields,
+            {
+                ...adyenv3.options,
+                styles: {
+                    ...adyenv3.options?.styles,
+                    placeholder: {
+                        color: 'transparent',
+                        caretColor: '#000',
+                        ...adyenv3.options?.styles?.placeholder,
+                    },
                 },
+                onChange: (componentState) => this._updateComponentState(componentState),
+                ...(this.isAdyenSdkUpgradeEnabled
+                    ? {
+                          onValidationError: (fieldResults) => {
+                              fieldResults.forEach((fieldResult) => {
+                                  adyenv3.validateCardFields({
+                                      fieldType: fieldResult.fieldType,
+                                      valid: !fieldResult.error,
+                                      error: fieldResult.error,
+                                      errorKey: fieldResult.errorMessage,
+                                  });
+                              });
+                          },
+                      }
+                    : {
+                          onError: (validateState) => adyenv3.validateCardFields(validateState),
+                          onFieldValid: (validateState) =>
+                              adyenv3.validateCardFields(validateState),
+                      }),
+                ...(this.isAdyenSdkUpgradeEnabled && adyenv3.cardVerificationBrand
+                    ? { brands: [adyenv3.cardVerificationBrand] }
+                    : {}),
             },
-            onChange: (componentState) => this._updateComponentState(componentState),
-            onError: (validateState) => adyenv3.validateCardFields(validateState),
-            onFieldValid: (validateState) => adyenv3.validateCardFields(validateState),
-        });
+        );
 
         try {
             await this._mountElement(
@@ -451,9 +520,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         const adyenv3 = this._getPaymentInitializeOptions();
         const adyenClient = this._getAdyenClient();
         const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
-        const { prefillCardHolderName } = paymentMethod.initializationData;
+        const { prefillCardHolderName, installmentOptions } = paymentMethod.initializationData;
 
-        const paymentComponent = adyenClient.create(paymentMethod.method, {
+        const paymentComponent = this._createComponent(adyenClient, paymentMethod.method, {
             ...(this._isOneyPaymentMethod(paymentMethod.method)
                 ? {
                       visibility: {
@@ -464,11 +533,28 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                   }
                 : {}),
             ...adyenv3.options,
-            showBrandsUnderCardNumber: false,
+            ...(this.isAdyenSdkUpgradeEnabled && installmentOptions
+                ? {
+                      installmentOptions: {
+                          showInstallmentAmounts: true,
+                          ...installmentOptions,
+                      },
+                  }
+                : {}),
+            ...(this.isAdyenSdkUpgradeEnabled && this._isKlarnaPaymentMethod(paymentMethod.method)
+                ? { useKlarnaWidget: true }
+                : {}),
+            ...(!this.isAdyenSdkUpgradeEnabled ? { showBrandsUnderCardNumber: false } : {}),
             billingAddressRequired: false,
             showEmailAddress: false,
             onChange: (componentState) => this._updateComponentState(componentState),
-            onSubmit: (componentState) => this._updateComponentState(componentState),
+            onSubmit: (componentState, _component, actions) => {
+                this._updateComponentState(componentState);
+
+                if (this.isAdyenSdkUpgradeEnabled) {
+                    actions?.resolve();
+                }
+            },
             ...(billingAddress
                 ? { data: this._mapAdyenPlaceholderData(billingAddress, prefillCardHolderName) }
                 : {}),
@@ -485,6 +571,14 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
     private _isOneyPaymentMethod(method: string): boolean {
         return method.startsWith('facilypay');
+    }
+
+    private _isKlarnaPaymentMethod(method: string): boolean {
+        return (
+            method === AdyenPaymentMethodType.Klarna ||
+            method === AdyenPaymentMethodType.KlarnaAccount ||
+            method === AdyenPaymentMethodType.KlarnaPayNow
+        );
     }
 
     private async _processAdditionalAction(

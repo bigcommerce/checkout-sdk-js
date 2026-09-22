@@ -2,10 +2,14 @@ import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loa
 
 import { AdyenV3ScriptLoader } from '@bigcommerce/checkout-sdk/adyen-utils';
 import {
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { getAdyenV3 } from '../mocks/google-pay-payment-method.mock';
 
@@ -42,6 +46,75 @@ describe('GooglePayAdyenV3Gateway', () => {
         await gateway.initialize(getAdyenV3);
 
         expect(adyenV3ScriptLoader.load).toHaveBeenCalled();
+    });
+
+    describe('PI-5661.adyen_sdk_upgrade experiment', () => {
+        it('loads the script loader with the experiment flag enabled by default', async () => {
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(expect.anything(), true);
+        });
+
+        it('sets countryCode from the billing address by default', async () => {
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                expect.objectContaining({ countryCode: 'US' }),
+                true,
+            );
+        });
+
+        it('falls back to the store country code when there is no billing address', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+                ...getConfig().storeConfig,
+                storeProfile: {
+                    ...getConfig().storeConfig.storeProfile,
+                    storeCountryCode: 'CA',
+                },
+            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddress',
+            ).mockReturnValueOnce(undefined);
+
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                expect.objectContaining({ countryCode: 'CA' }),
+                true,
+            );
+        });
+
+        it('loads the script loader without the experiment flag when explicitly disabled', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: { 'PI-5661.adyen_sdk_upgrade': false },
+                },
+            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(expect.anything(), false);
+        });
+
+        it('does not set countryCode when the experiment is explicitly disabled', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: { 'PI-5661.adyen_sdk_upgrade': false },
+                },
+            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+
+            await gateway.initialize(getAdyenV3);
+
+            expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                expect.not.objectContaining({ countryCode: expect.anything() }),
+                false,
+            );
+        });
     });
 
     it('#processAdditionalAction', async () => {
