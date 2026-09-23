@@ -17,6 +17,7 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getBillingAddress,
     getConfig,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -242,6 +243,77 @@ describe('BigCommercePaymentsGooglePayPaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(sdk.Googlepay().initiatePayerAction).toHaveBeenCalled();
+        });
+
+        describe('purchaser billing address in the approveGooglePayPayment payload', () => {
+            async function executeAndGetConfirmOrder() {
+                const googlePayPaymentMethod = getBigCommercePayments();
+
+                isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
+
+                const sdk = await scriptLoader.getPayPalGooglePaySdk(
+                    googlePayPaymentMethod as PaymentMethod<BigCommercePaymentsInitializationData>,
+                    'USD',
+                );
+
+                await strategy.execute(payload);
+
+                return sdk.Googlepay().confirmOrder;
+            }
+
+            it('passes the full address to the SDK, which maps it onto info.billingAddress', async () => {
+                const confirmOrder = await executeAndGetConfirmOrder();
+
+                expect(confirmOrder).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        billingAddress: {
+                            name: 'Test Tester',
+                            address1: '12345 Testing Way',
+                            address2: '',
+                            address3: '',
+                            locality: 'Some City',
+                            administrativeArea: 'CA',
+                            countryCode: 'US',
+                            postalCode: '95555',
+                            sortingCode: '',
+                            phoneNumber: '555-555-5555',
+                        },
+                    }),
+                );
+            });
+
+            it('omits billingAddress when the billing address has no name', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getBillingAddress',
+                ).mockReturnValueOnce({
+                    ...getBillingAddress(),
+                    firstName: '',
+                    lastName: '',
+                });
+
+                const confirmOrder = await executeAndGetConfirmOrder();
+
+                expect(confirmOrder).toHaveBeenCalledWith(
+                    expect.not.objectContaining({ billingAddress: expect.anything() }),
+                );
+            });
+
+            it('omits billingAddress when there is no country code, which PayPal rejects', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getBillingAddress',
+                ).mockReturnValueOnce({
+                    ...getBillingAddress(),
+                    countryCode: '',
+                });
+
+                const confirmOrder = await executeAndGetConfirmOrder();
+
+                expect(confirmOrder).toHaveBeenCalledWith(
+                    expect.not.objectContaining({ billingAddress: expect.anything() }),
+                );
+            });
         });
 
         describe('should fail if:', () => {

@@ -172,6 +172,23 @@ interface GooglePay {
 interface ConfirmOrderConfig {
     orderId: string;
     paymentMethodData: ConfirmOrderData;
+    // The PayPal SDK copies this onto paymentMethodData.info.billingAddress before sending the
+    // approveGooglePayPayment mutation; PayPal's merchant reports read the Name column from it.
+    // PayPal requires a country code once the object is present, so it is all-or-nothing.
+    billingAddress?: GooglePayApprovalBillingAddress;
+}
+
+interface GooglePayApprovalBillingAddress {
+    name: string;
+    address1: string;
+    address2: string;
+    address3: string;
+    locality: string;
+    administrativeArea: string;
+    countryCode: string;
+    postalCode: string;
+    sortingCode: string;
+    phoneNumber?: string;
 }
 
 export interface ConfirmOrderData {
