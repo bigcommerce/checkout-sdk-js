@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.983.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.983.1...v1.983.2) (2026-09-23)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-10429 Drop Offline Payment Methods for Invoice Flow ([#3419](https://github.com/bigcommerce/checkout-sdk-js/issues/3419)) ([c82e3b4](https://github.com/bigcommerce/checkout-sdk-js/commit/c82e3b47d1b5614f756f79c6cef9addfe329cf30))
+
 ### [1.983.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.983.0...v1.983.1) (2026-09-23)
 
 
