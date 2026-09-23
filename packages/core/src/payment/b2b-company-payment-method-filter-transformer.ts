@@ -7,26 +7,36 @@ const legacyProviderCodeMap: { [methodId: string]: string } = {
 };
 
 /**
- * Intersects the storefront payment method list against a B2B company's
- * allow-list. A method is kept when `b2bMethod.code` matches its
- * `PaymentMethod.id`, its `PaymentMethod.gateway` (gateway-based providers are
- * registered under the gateway code, e.g. `credit_card`/`bluesnapdirect`), or
- * the translation of a legacy provider ID whose setup code differs from its
- * checkout ID. Disabled methods (`isEnabled !== '1'`) are dropped.
+ * A B2B allow-list entry identifies a provider by a single code. To match allowed methods
+ * correctly, we need to check id, gateway, and the translated legacy provider ID where
+ * the setup code differs from the checkout ID.
+ *
+ * Creating this helper function because the same logic also applies to the invoice flow.
  */
-export default function filterPaymentMethodsByB2BCompanyAllowList(
+function matchesAllowedCode(method: PaymentMethod, allowedCodes: Set<string>): boolean {
+    const legacyCode = legacyProviderCodeMap[method.id];
+
+    return (
+        allowedCodes.has(method.id) ||
+        (method.gateway !== undefined && allowedCodes.has(method.gateway)) ||
+        (legacyCode !== undefined && allowedCodes.has(legacyCode))
+    );
+}
+
+export function filterPaymentMethodsByB2BCompanyAllowList(
     methods: PaymentMethod[],
     body: B2BCompanyPaymentMethodsResponseBody,
 ): PaymentMethod[] {
     const allowedCodes = new Set(body.data.filter((m) => m.isEnabled === '1').map((m) => m.code));
 
-    return methods.filter((method) => {
-        const legacyCode = legacyProviderCodeMap[method.id];
+    return methods.filter((method) => matchesAllowedCode(method, allowedCodes));
+}
 
-        return (
-            allowedCodes.has(method.id) ||
-            (method.gateway !== undefined && allowedCodes.has(method.gateway)) ||
-            (legacyCode !== undefined && allowedCodes.has(legacyCode))
-        );
-    });
+export function filterPaymentMethodsByB2BInvoiceAllowList(
+    methods: PaymentMethod[],
+    body: { data: { allowedMethods: string[] } },
+): PaymentMethod[] {
+    const allowedCodes = new Set(body.data.allowedMethods);
+
+    return methods.filter((method) => matchesAllowedCode(method, allowedCodes));
 }

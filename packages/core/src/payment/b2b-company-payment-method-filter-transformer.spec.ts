@@ -1,4 +1,7 @@
-import filterPaymentMethodsByB2BCompanyAllowList from './b2b-company-payment-method-filter-transformer';
+import {
+    filterPaymentMethodsByB2BCompanyAllowList,
+    filterPaymentMethodsByB2BInvoiceAllowList,
+} from './b2b-company-payment-method-filter-transformer';
 import { B2BCompanyPaymentMethodsResponseBody } from './b2b-company-payment-method-request-sender';
 import PaymentMethod from './payment-method';
 
@@ -183,5 +186,56 @@ describe('filterPaymentMethodsByB2BCompanyAllowList', () => {
 
             expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual(methods);
         });
+    });
+});
+
+describe('filterPaymentMethodsByB2BInvoiceAllowList', () => {
+    it('returns only methods whose id is in the allow-list', () => {
+        const methods = [makeMethod('cheque'), makeMethod('stripev3'), makeMethod('braintree')];
+        const body = {
+            data: { allowedMethods: ['cheque', 'stripev3'] },
+        };
+
+        expect(filterPaymentMethodsByB2BInvoiceAllowList(methods, body)).toEqual([
+            makeMethod('cheque'),
+            makeMethod('stripev3'),
+        ]);
+    });
+
+    it('returns an empty list when the allow-list is empty', () => {
+        const methods = [makeMethod('cheque'), makeMethod('stripev3')];
+        const body = {
+            data: { allowedMethods: [] },
+        };
+
+        expect(filterPaymentMethodsByB2BInvoiceAllowList(methods, body)).toEqual([]);
+    });
+
+    it('keeps a method whose gateway is allow-listed', () => {
+        const body = {
+            data: { allowedMethods: ['bluesnapdirect'] },
+        };
+
+        expect(filterPaymentMethodsByB2BInvoiceAllowList([blueSnapDirect], body)).toEqual([
+            blueSnapDirect,
+        ]);
+    });
+
+    it('distinguishes two providers sharing the credit_card method id', () => {
+        const methods = [worldpayAccess, blueSnapDirect];
+        const body = {
+            data: { allowedMethods: ['bluesnapdirect'] },
+        };
+
+        expect(filterPaymentMethodsByB2BInvoiceAllowList(methods, body)).toEqual([blueSnapDirect]);
+    });
+
+    it('matches a legacy provider on its mapped code', () => {
+        const methods = [makeMethod('quickbooks')];
+        const body = {
+            data: { allowedMethods: ['qbmsv2'] },
+        };
+
+        expect(filterPaymentMethodsByB2BInvoiceAllowList(methods, body)).toEqual(methods);
     });
 });
