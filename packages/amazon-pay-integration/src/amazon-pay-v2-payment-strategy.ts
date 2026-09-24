@@ -128,7 +128,6 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
                 }
 
                 this.amazonPayV2PaymentProcessor.prepareCheckout(
-                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                     JSON.parse(redirect_url) as Required<AmazonPayV2CheckoutSessionConfig>,
                 );
             }
