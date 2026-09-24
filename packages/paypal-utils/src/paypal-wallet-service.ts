@@ -1,4 +1,3 @@
-import { Response } from '@bigcommerce/request-sender';
 import { isNil, omitBy } from 'lodash';
 
 import {
@@ -8,8 +7,6 @@ import {
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    AddressRequestBody,
-    BillingAddressResponse,
     GraphQLRequestOptions,
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
@@ -17,7 +14,6 @@ import {
 import PayPalSdkScriptLoader from './paypal-sdk-script-loader';
 import {
     PayPalButtonStyleOptions,
-    PayPalOrderDetails,
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
@@ -120,33 +116,6 @@ export default class PaypalCommerceWalletService {
 
         return response.body.orderId;
     }
-
-    async addBillingAddress(
-        cartId: string,
-        address: AddressRequestBody,
-        options?: GraphQLRequestOptions,
-    ): Promise<Response<BillingAddressResponse>> {
-        return this.walletButtonIntegrationService.addBillingAddress(cartId, address, options);
-    }
-
-    mapOrderDetailsToBillingAddress({ payer }: PayPalOrderDetails): AddressRequestBody {
-        return {
-            firstName: payer.name.given_name,
-            lastName: payer.name.surname,
-            company: '',
-            address1: payer.address.address_line_1,
-            address2: payer.address.address_line_2,
-            city: payer.address.admin_area_2,
-            email: payer.email_address,
-            stateOrProvince: payer.address.admin_area_1 ?? '',
-            stateOrProvinceCode: payer.address.admin_area_1 ?? '',
-            countryCode: payer.address.country_code,
-            postalCode: payer.address.postal_code,
-            phone: payer.phone?.phone_number.national_number ?? '',
-            shouldSaveAddress: false,
-        };
-    }
-
     /**
      *
      * Buttons style methods

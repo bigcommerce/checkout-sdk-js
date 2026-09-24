@@ -47,12 +47,10 @@ describe('BigCommercePaymentsVenmoWalletStrategy', () => {
         const paypalSdk = getPayPalSDKMock();
 
         bigCommercePaymentsVenmoWalletService = {
-            addBillingAddress: jest.fn(),
             createPaymentOrderIntent: jest.fn().mockResolvedValue(defaultOrderId),
             getPayPalSdkOrThrow: jest.fn().mockReturnValue(paypalSdk),
             getValidButtonStyle: jest.fn().mockReturnValue({ height: 45 }),
             loadPayPalSdk: jest.fn(),
-            mapOrderDetailsToBillingAddress: jest.fn(),
             proxyTokenizationPayment: jest.fn(),
             removeElement: jest.fn(),
         } as unknown as jest.Mocked<PaypalCommerceWalletService>;
