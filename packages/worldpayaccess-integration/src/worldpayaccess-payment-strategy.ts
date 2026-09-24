@@ -173,7 +173,7 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
         button.id = 'btnsubmit';
         form.appendChild(button);
 
-        if (navigator.userAgent.match('Firefox')) {
+        if (/Firefox/.exec(navigator.userAgent)) {
             iframe.srcdoc = form.outerHTML;
         } else {
             iframe.contentWindow.document.body.appendChild(form);
