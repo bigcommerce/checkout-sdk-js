@@ -1,3 +1,5 @@
+import { FormPoster } from '@bigcommerce/form-poster';
+
 import {
     guard,
     InvalidArgumentError,
@@ -31,6 +33,7 @@ export default class GooglePayWalletService {
         private walletButtonIntegrationService: WalletButtonIntegrationService,
         private scriptLoader: GooglePayScriptLoader,
         private gateway: GooglePayWalletGateway,
+        private formPoster: FormPoster,
     ) {}
 
     /**
@@ -129,7 +132,7 @@ export default class GooglePayWalletService {
             throw new Error('Failed to redirection to checkout page');
         }
 
-        window.location.assign(response.body.redirectUrls.externalCheckoutUrl);
+        this.redirectToExternalCheckout(response.body.redirectUrls.externalCheckoutUrl);
     }
 
     /**
@@ -177,6 +180,20 @@ export default class GooglePayWalletService {
         if (element) {
             element.style.display = 'none';
         }
+    }
+
+    /**
+     * Hands the session-sync token to the storefront as a form POST rather than navigating to it.
+     */
+    private redirectToExternalCheckout(externalCheckoutUrl: string): void {
+        const url = new URL(externalCheckoutUrl);
+        const jwt = url.searchParams.get('jwt');
+
+        if (!jwt) {
+            throw new Error('Session sync token is missing from the checkout redirect URL');
+        }
+
+        this.formPoster.postForm(`${url.origin}${url.pathname}`, { jwt });
     }
 
     private buildPaymentDataRequest(transactionInfo: GooglePayTransactionInfo): void {

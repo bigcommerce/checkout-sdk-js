@@ -1,3 +1,4 @@
+import { createFormPoster } from '@bigcommerce/form-poster';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { PayPalSdkHelper } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
@@ -18,6 +19,7 @@ const createGooglePayBigCommercePaymentsWalletStrategy: WalletPaymentButtonStrat
             walletButtonIntegrationService,
             createGooglePayScriptLoader(),
             new GooglePayBigCommercePaymentsWalletGateway(new PayPalSdkHelper(getScriptLoader())),
+            createFormPoster(),
         ),
     );
 
