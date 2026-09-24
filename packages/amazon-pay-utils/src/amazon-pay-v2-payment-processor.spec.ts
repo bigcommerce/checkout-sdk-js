@@ -490,8 +490,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
             test('publicKeyId does not have an environment prefix', async () => {
                 const expectedOptions =
                     getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
-                const createCheckoutSessionConfig =
-                    expectedOptions.createCheckoutSessionConfig as Required<AmazonPayV2NewButtonParams>['createCheckoutSessionConfig'];
+                const createCheckoutSessionConfig = expectedOptions.createCheckoutSessionConfig!;
 
                 delete expectedOptions.publicKeyId;
                 expectedOptions.sandbox = true;
