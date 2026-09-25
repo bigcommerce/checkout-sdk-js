@@ -8,6 +8,7 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
     Omit,
+    OrderPaymentRequestBody,
     PaymentMethod,
     PaymentMethodFailedError,
     SDK_VERSION_HEADERS,
@@ -77,8 +78,8 @@ export default class GooglePayPaymentProcessor {
         return this._gateway.getNonce(methodId);
     }
 
-    async extraPaymentData() {
-        return this._gateway.extraPaymentData();
+    async extraPaymentData(paymentData?: OrderPaymentRequestBody['paymentData']) {
+        return this._gateway.extraPaymentData(paymentData);
     }
 
     addPaymentButton(

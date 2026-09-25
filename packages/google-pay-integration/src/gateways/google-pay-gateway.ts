@@ -12,6 +12,7 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
+    OrderPaymentRequestBody,
     PaymentIntegrationService,
     PaymentMethod,
     ShippingOption,
@@ -187,7 +188,9 @@ export default class GooglePayGateway {
         return Promise.resolve(nonce);
     }
 
-    extraPaymentData(): Promise<undefined | ExtraPaymentData> {
+    extraPaymentData(
+        _paymentData?: OrderPaymentRequestBody['paymentData'],
+    ): Promise<undefined | ExtraPaymentData> {
         return Promise.resolve(undefined);
     }
 
