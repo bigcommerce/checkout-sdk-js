@@ -45,11 +45,11 @@ describe('BoltScriptLoader', () => {
                 await boltScriptLoader.loadBoltClient(publishableKey);
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect.bolt.com/connect-bigcommerce.js',
+                    '//connect.boltapp.com/connect-bigcommerce.js',
                     expectedScriptOptions('bolt-connect', publishableKey),
                 );
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect.bolt.com/track.js',
+                    '//connect.boltapp.com/track.js',
                     expectedScriptOptions('bolt-track', publishableKey),
                 );
             });
@@ -58,11 +58,11 @@ describe('BoltScriptLoader', () => {
                 await boltScriptLoader.loadBoltClient(publishableKey, true);
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-sandbox.bolt.com/connect-bigcommerce.js',
+                    '//connect-sandbox.boltapp.com/connect-bigcommerce.js',
                     expectedScriptOptions('bolt-connect', publishableKey),
                 );
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-sandbox.bolt.com/track.js',
+                    '//connect-sandbox.boltapp.com/track.js',
                     expectedScriptOptions('bolt-track', publishableKey),
                 );
             });
@@ -74,11 +74,11 @@ describe('BoltScriptLoader', () => {
                 });
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-staging.bolt.com/connect-bigcommerce.js',
+                    '//connect-staging.boltapp.com/connect-bigcommerce.js',
                     expectedScriptOptions('bolt-connect', publishableKey),
                 );
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-staging.bolt.com/track.js',
+                    '//connect-staging.boltapp.com/track.js',
                     expectedScriptOptions('bolt-track', publishableKey),
                 );
             });
@@ -90,11 +90,11 @@ describe('BoltScriptLoader', () => {
                 });
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-sandbox.bolt.com/connect-bigcommerce.js',
+                    '//connect-sandbox.boltapp.com/connect-bigcommerce.js',
                     expect.any(Object),
                 );
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-sandbox.bolt.com/track.js',
+                    '//connect-sandbox.boltapp.com/track.js',
                     expectedScriptOptions('bolt-track', publishableKey),
                 );
             });
@@ -156,7 +156,7 @@ describe('BoltScriptLoader', () => {
                 await boltScriptLoader.loadBoltEmbedded(publishableKey);
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect.bolt.com/embed.js',
+                    '//connect.boltapp.com/embed.js',
                     expect.any(Object),
                 );
             });
@@ -165,7 +165,7 @@ describe('BoltScriptLoader', () => {
                 await boltScriptLoader.loadBoltEmbedded(publishableKey, true);
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-sandbox.bolt.com/embed.js',
+                    '//connect-sandbox.boltapp.com/embed.js',
                     expect.any(Object),
                 );
             });
@@ -177,7 +177,7 @@ describe('BoltScriptLoader', () => {
                 });
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-staging.bolt.com/embed.js',
+                    '//connect-staging.boltapp.com/embed.js',
                     expect.any(Object),
                 );
             });
@@ -189,7 +189,7 @@ describe('BoltScriptLoader', () => {
                 });
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                    '//connect-sandbox.bolt.com/embed.js',
+                    '//connect-sandbox.boltapp.com/embed.js',
                     expect.any(Object),
                 );
             });
