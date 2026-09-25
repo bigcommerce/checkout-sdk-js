@@ -71,7 +71,7 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
 
         return new Promise((resolve, reject) => {
             const messageEventListener = async (event: MessageEvent) => {
-                if (event.origin.indexOf('cardinalcommerce.com') === -1) {
+                if (!event.origin.includes('cardinalcommerce.com')) {
                     return;
                 }
 

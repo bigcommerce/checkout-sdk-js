@@ -120,7 +120,7 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
             );
 
             return (cart.lineItems.physicalItems || []).filter(
-                (item) => assignedLineItemIds.indexOf(item.id as string) < 0,
+                (item) => !assignedLineItemIds.includes(item.id as string),
             );
         },
     );

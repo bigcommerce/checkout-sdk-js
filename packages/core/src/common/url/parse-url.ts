@@ -15,7 +15,7 @@ export default function parseUrl(url: string): Url {
     // IE11 returns 80 or 443 for the port number depending on the URL scheme,
     // even if the port number is not specified in the URL.
     const port =
-        anchor.port && url.indexOf(`${anchor.hostname}:${anchor.port}`) !== -1 ? anchor.port : '';
+        anchor.port && url.includes(`${anchor.hostname}:${anchor.port}`) ? anchor.port : '';
 
     return {
         hash: anchor.hash,

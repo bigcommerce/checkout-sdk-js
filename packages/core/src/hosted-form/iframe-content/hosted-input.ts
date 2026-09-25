@@ -289,7 +289,7 @@ export default class HostedInput {
         if (document.activeElement === document.body) {
             const browserName = navigator.userAgent.toLowerCase();
 
-            if (browserName.indexOf('safari') > -1) {
+            if (browserName.includes('safari')) {
                 if (this._input.value === '') {
                     this._input.setAttribute('value', ' ');
                     this._input.setSelectionRange(0, 1);

@@ -162,7 +162,7 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
     private _isCancellationError(stripeError: StripeError | undefined) {
         return (
             stripeError &&
-            stripeError.payment_intent.last_payment_error?.message?.indexOf('canceled') !== -1
+            stripeError.payment_intent.last_payment_error?.message?.includes('canceled')
         );
     }
 
