@@ -25,6 +25,10 @@ export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
     paymentClient: any,
     requestSender: RequestSender,
+    orderActionCreator: OrderActionCreator = new OrderActionCreator(
+        new OrderRequestSender(requestSender),
+        new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+    ),
 ) {
     const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
@@ -32,12 +36,6 @@ export default function createPaymentStrategyRegistry(
 
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
-    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-    const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const orderActionCreator = new OrderActionCreator(
-        new OrderRequestSender(requestSender),
-        checkoutValidator,
-    );
     const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
         createSpamProtection(createScriptLoader()),
     );

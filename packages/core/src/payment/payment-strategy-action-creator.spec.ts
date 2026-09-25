@@ -3,7 +3,7 @@ import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { from, of } from 'rxjs';
+import { from, of, Subject } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
 import {
@@ -59,6 +59,7 @@ import { getPaymentMethod } from './payment-methods.mock';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyActionCreator, {
+    ORDER_CREATION_TIME_METRICS,
     ORDER_PLACEMENT_START_SERVER_EVENT,
 } from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
@@ -793,6 +794,96 @@ describe('PaymentStrategyActionCreator', () => {
 
                 expect(checkoutActionCreator.reportCheckoutEvent).toHaveBeenCalledWith(
                     expect.objectContaining({ payment_method_id: 'klarna' }),
+                );
+            });
+        });
+
+        describe('order creation time metrics', () => {
+            const enableExperiment = (enabled: boolean) => {
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {
+                            [ORDER_CREATION_TIME_METRICS]: enabled,
+                        },
+                    },
+                });
+            };
+
+            afterEach(() => {
+                jest.spyOn(Date, 'now').mockRestore();
+            });
+
+            it('reports the event with order id and elapsed seconds when enabled', async () => {
+                enableExperiment(true);
+                jest.spyOn(Date, 'now').mockReturnValueOnce(1000).mockReturnValueOnce(2234);
+                jest.spyOn(strategy, 'execute').mockImplementation(() => {
+                    (
+                        orderActionCreator as unknown as { _orderCreated$: Subject<number> }
+                    )._orderCreated$.next(295);
+
+                    return Promise.resolve(store.getState());
+                });
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(checkoutActionCreator.reportCheckoutEvent).toHaveBeenCalledWith({
+                    event: 'order_created',
+                    order_id: 295,
+                    seconds: 1.23,
+                });
+            });
+
+            it('dispatches the event on its own queue', async () => {
+                enableExperiment(true);
+                jest.spyOn(store, 'dispatch');
+                jest.spyOn(strategy, 'execute').mockImplementation(() => {
+                    (
+                        orderActionCreator as unknown as { _orderCreated$: Subject<number> }
+                    )._orderCreated$.next(295);
+
+                    return Promise.resolve(store.getState());
+                });
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(store.dispatch).toHaveBeenCalledWith(expect.anything(), {
+                    queueId: 'reportCheckoutEvent',
+                });
+            });
+
+            it('does not report the event when the experiment is disabled', async () => {
+                enableExperiment(false);
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(checkoutActionCreator.reportCheckoutEvent).not.toHaveBeenCalledWith(
+                    expect.objectContaining({ event: 'order_created' }),
+                );
+            });
+
+            it('does not report the event when the feature key is missing entirely', async () => {
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {},
+                    },
+                });
+
+                const payload = getOrderRequestBody();
+
+                await from(actionCreator.execute(payload)(store)).toPromise();
+
+                expect(checkoutActionCreator.reportCheckoutEvent).not.toHaveBeenCalledWith(
+                    expect.objectContaining({ event: 'order_created' }),
                 );
             });
         });
