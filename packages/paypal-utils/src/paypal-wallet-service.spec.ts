@@ -134,7 +134,7 @@ describe('PaypalCommerceWalletService', () => {
                 headers: {},
                 status: 200,
                 statusText: 'OK',
-            } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
+            });
 
             await expect(
                 service.proxyTokenizationPayment(
@@ -214,7 +214,7 @@ describe('PaypalCommerceWalletService', () => {
                     phone: { phone_number: { national_number: '5555555555' } },
                 },
                 purchase_units: [],
-            } as never);
+            });
 
             expect(output).toEqual({
                 firstName: 'John',
@@ -248,7 +248,7 @@ describe('PaypalCommerceWalletService', () => {
                     },
                 },
                 purchase_units: [],
-            } as never);
+            });
 
             expect(output).toEqual(
                 expect.objectContaining({

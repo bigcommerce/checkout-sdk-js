@@ -91,7 +91,7 @@ describe('BillingAddressRequestSender', () => {
             await addressRequestSender.updateAddress('foo', {
                 ...getBillingAddress(),
                 ...CUSTOMER_ADDRESS_METADATA,
-            } as unknown as BillingAddressUpdateRequestBody);
+            });
 
             const { body } = (requestSender.put as jest.Mock).mock.calls[0][1];
 
@@ -167,7 +167,7 @@ describe('BillingAddressRequestSender', () => {
             await addressRequestSender.createAddress('foo', {
                 ...getBillingAddress(),
                 ...CUSTOMER_ADDRESS_METADATA,
-            } as unknown as BillingAddressUpdateRequestBody);
+            });
 
             const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
 

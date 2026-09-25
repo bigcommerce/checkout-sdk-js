@@ -100,7 +100,7 @@ export default class PaypalCommerceWalletService {
             throw new Error('Failed to redirection to checkout page');
         }
 
-        window.location.assign(response.body.redirectUrls!.externalCheckoutUrl);
+        window.location.assign(response.body.redirectUrls.externalCheckoutUrl);
     }
 
     async createPaymentOrderIntent(

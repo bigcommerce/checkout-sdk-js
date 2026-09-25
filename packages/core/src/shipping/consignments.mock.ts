@@ -10,12 +10,12 @@ import ConsignmentState from './consignment-state';
 export function getConsignment(): Consignment {
     return {
         id: '55c96cda6f04c',
-        address: omit(getShippingAddress(), 'id') as Address,
+        address: omit(getShippingAddress(), 'id'),
         selectedShippingOption: getShippingOption(),
         shippingCost: 0,
         handlingCost: 0,
         lineItemIds: ['12e11c8f-7dce-4da3-9413-b649533f8bad'],
-        shippingAddress: omit(getShippingAddress(), 'id') as Address,
+        shippingAddress: omit(getShippingAddress(), 'id'),
         availableShippingOptions: [getShippingOption()],
         discounts: [],
         shippingCostBeforeDiscount: 0,

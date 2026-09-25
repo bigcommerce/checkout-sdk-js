@@ -76,7 +76,7 @@ describe('HostedCardNumberInput', () => {
             manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
             storedCardHandler as HostedInputStoredCardHandler,
             autocompleteFieldset,
-            numberFormatter as CardNumberFormatter,
+            numberFormatter,
         );
     });
 

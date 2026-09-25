@@ -399,7 +399,7 @@ describe('BillingAddressActionCreator', () => {
         describe('when store has checkout data but no billing address data', () => {
             beforeEach(() => {
                 store = createCheckoutStore(omit(state, 'billingAddress'));
-                address = omit(address, 'id') as BillingAddressRequestBody;
+                address = omit(address, 'id');
             });
 
             it('emits actions if able to update billing address when experiment is enabled', async () => {

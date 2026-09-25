@@ -336,9 +336,8 @@ describe('ApplePayButtonStrategy', () => {
 
                 await initializeWithFilter(() => Promise.reject(new Error('Filtering failed')));
 
-                const [[{ newShippingMethods }]] = (
-                    applePaySession.completeShippingContactSelection as jest.Mock
-                ).mock.calls;
+                const [[{ newShippingMethods }]] =
+                    applePaySession.completeShippingContactSelection.mock.calls;
 
                 expect(newShippingMethods).toHaveLength(2);
             });

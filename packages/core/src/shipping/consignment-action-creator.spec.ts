@@ -634,7 +634,7 @@ describe('consignmentActionCreator', () => {
         let payload: ConsignmentUpdateRequestBody;
 
         beforeEach(() => {
-            payload = consignment as ConsignmentUpdateRequestBody;
+            payload = consignment;
             thunkAction = consignmentActionCreator.updateConsignment(payload, options);
         });
 
