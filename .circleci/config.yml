@@ -2,13 +2,13 @@ aliases:
   - &node_executor
       executor:
         name: node/node
-        node-version: "22.13.0"
+        node-version: "24.19.0"
 
-  # npm trusted publishing (OIDC) requires Node >= 22.14.0 and npm >= 11.5.1
+  # npm trusted publishing (OIDC) requires Node >= 24.19.0 and npm >= 11.5.1
   - &node_publish_executor
       executor:
         name: node/node
-        node-version: "22.20.0"
+        node-version: "24.19.0"
 
 version: 2.1
 

@@ -1,5 +1,6 @@
 import { B2BCompanyPaymentMethodsResponseBody } from './b2b-company-payment-method-request-sender';
 import PaymentMethod from './payment-method';
+import { OFFLINE } from './payment-method-types';
 
 const legacyProviderCodeMap: { [methodId: string]: string } = {
     quickbooks: 'qbmsv2',
@@ -38,5 +39,7 @@ export function filterPaymentMethodsByB2BInvoiceAllowList(
 ): PaymentMethod[] {
     const allowedCodes = new Set(body.data.allowedMethods);
 
-    return methods.filter((method) => matchesAllowedCode(method, allowedCodes));
+    return methods.filter(
+        (method) => method.type !== OFFLINE && matchesAllowedCode(method, allowedCodes),
+    );
 }

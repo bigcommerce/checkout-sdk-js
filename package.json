@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "1.983.1",
+  "version": "1.983.4",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "main": "dist/cjs/checkout-sdk.js",
@@ -42,8 +42,8 @@
     "url": "https://github.com/bigcommerce/checkout-sdk-js/issues"
   },
   "engines": {
-    "node": "22",
-    "npm": "10"
+    "node": "24",
+    "npm": "11"
   },
   "prettier": "@bigcommerce/eslint-config/prettier",
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
@@ -170,5 +170,11 @@
     "scripts": {
       "prebump": "./scripts/standard-version/prebump.js"
     }
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "core-js": true,
+    "nx": true,
+    "unrs-resolver": true
   }
 }

@@ -4,6 +4,7 @@ import {
 } from './b2b-company-payment-method-filter-transformer';
 import { B2BCompanyPaymentMethodsResponseBody } from './b2b-company-payment-method-request-sender';
 import PaymentMethod from './payment-method';
+import { OFFLINE } from './payment-method-types';
 
 function makeMethod(id: string): PaymentMethod {
     return {
@@ -18,6 +19,10 @@ function makeMethod(id: string): PaymentMethod {
 
 function makeGatewayMethod(id: string, gateway: string): PaymentMethod {
     return { ...makeMethod(id), gateway };
+}
+
+function makeOfflineMethod(id: string): PaymentMethod {
+    return { ...makeMethod(id), method: 'offline', type: OFFLINE };
 }
 
 const blueSnapDirect = makeGatewayMethod('credit_card', 'bluesnapdirect');
@@ -112,6 +117,15 @@ describe('filterPaymentMethodsByB2BCompanyAllowList', () => {
             makeMethod('stripev3'),
             makeMethod('cheque'),
         ]);
+    });
+
+    it('keeps an allow-listed offline method, unlike the invoice filter', () => {
+        const methods = [makeOfflineMethod('cheque')];
+        const body: B2BCompanyPaymentMethodsResponseBody = {
+            data: [{ code: 'cheque', name: 'Check', isEnabled: '1', paymentId: 55506 }],
+        };
+
+        expect(filterPaymentMethodsByB2BCompanyAllowList(methods, body)).toEqual(methods);
     });
 
     describe('matching on gateway', () => {
@@ -237,5 +251,29 @@ describe('filterPaymentMethodsByB2BInvoiceAllowList', () => {
         };
 
         expect(filterPaymentMethodsByB2BInvoiceAllowList(methods, body)).toEqual(methods);
+    });
+
+    it('drops an offline method even when it is allow-listed', () => {
+        const body = {
+            data: { allowedMethods: ['cheque'] },
+        };
+
+        expect(
+            filterPaymentMethodsByB2BInvoiceAllowList([makeOfflineMethod('cheque')], body),
+        ).toEqual([]);
+    });
+
+    it('drops every offline method while keeping allow-listed online ones', () => {
+        const methods = [
+            makeOfflineMethod('cheque'),
+            makeOfflineMethod('cod'),
+            makeOfflineMethod('instore'),
+            blueSnapDirect,
+        ];
+        const body = {
+            data: { allowedMethods: ['cheque', 'cod', 'instore', 'bluesnapdirect'] },
+        };
+
+        expect(filterPaymentMethodsByB2BInvoiceAllowList(methods, body)).toEqual([blueSnapDirect]);
     });
 });
