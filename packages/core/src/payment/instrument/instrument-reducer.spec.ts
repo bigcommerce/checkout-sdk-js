@@ -43,7 +43,6 @@ describe('instrumentReducer()', () => {
 
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
-            // tslint:disable-next-line:no-non-null-assertion
             data: action.payload!.vaultedInstruments,
             meta: action.meta,
             errors: { loadError: undefined },

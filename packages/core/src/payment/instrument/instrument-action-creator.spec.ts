@@ -67,9 +67,7 @@ describe('InstrumentActionCreator', () => {
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
 
-        // tslint:disable-next-line:no-non-null-assertion
         storeId = state.config.data!.storeConfig.storeProfile.storeId;
-        // tslint:disable-next-line:no-non-null-assertion
         customerId = state.cart.data!.customerId;
         shippingAddress = getShippingAddress();
         // shippingAddresses equivalent to the consignments mock
