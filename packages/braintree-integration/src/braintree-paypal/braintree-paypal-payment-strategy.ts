@@ -237,6 +237,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 shippingAddressEditable: false,
             }),
             this.braintreeIntegrationService.getSessionId(),
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
         ]).then(([{ nonce, details } = {} as any, sessionId]) => ({
             ...payment,
             paymentData: this.formattedPayload(
