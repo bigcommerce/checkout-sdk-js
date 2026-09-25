@@ -47,7 +47,6 @@
                 "@typescript-eslint/no-non-null-assertion": "off",
                 "@typescript-eslint/no-redundant-type-constituents": "off",
                 "@typescript-eslint/no-require-imports": "off",
-                "@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
                 "@typescript-eslint/no-unnecessary-condition": "off",
                 "@typescript-eslint/no-unnecessary-template-expression": "off",
                 "@typescript-eslint/no-unnecessary-type-arguments": "off",

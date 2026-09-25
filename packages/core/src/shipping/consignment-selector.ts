@@ -189,6 +189,7 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
         (state: ConsignmentState) => state.statuses.isUpdating,
         (isUpdating) => (consignmentId?: string) => {
             if (consignmentId) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
                 return isUpdating[consignmentId] === true;
             }
 
@@ -200,6 +201,7 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
         (state: ConsignmentState) => state.statuses.isDeleting,
         (isDeleting) => (consignmentId?: string) => {
             if (consignmentId) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
                 return isDeleting[consignmentId] === true;
             }
 
@@ -222,6 +224,7 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
         (state: ConsignmentState) => state.statuses.isUpdatingShippingOption,
         (isUpdatingShippingOption) => (consignmentId?: string) => {
             if (consignmentId) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
                 return isUpdatingShippingOption[consignmentId] === true;
             }
 
