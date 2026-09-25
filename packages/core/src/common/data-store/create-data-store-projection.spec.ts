@@ -1,4 +1,4 @@
-import { Action, createDataStore, DataStore, Reducer } from '@bigcommerce/data-store';
+import { createDataStore, DataStore, Reducer } from '@bigcommerce/data-store';
 
 import createDataStoreProjection from './create-data-store-projection';
 
@@ -21,7 +21,7 @@ describe('DataStoreProjection', () => {
             message: 'foobar',
         };
 
-        const reducer: Reducer<TestState, Action> = (state = initialState, action) => {
+        const reducer: Reducer<TestState> = (state = initialState, action) => {
             switch (action.type) {
                 case 'MESSAGE':
                     return { ...state, message: action.payload };

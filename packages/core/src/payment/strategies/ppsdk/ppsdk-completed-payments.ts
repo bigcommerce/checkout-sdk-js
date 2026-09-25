@@ -8,7 +8,7 @@ export class PPSDKCompletedPayments {
     constructor(private _browserStorage: BrowserStorage) {}
 
     isCompleted(paymentId: string): boolean {
-        return this.getCompletedPayments().indexOf(paymentId) >= 0;
+        return this.getCompletedPayments().includes(paymentId);
     }
 
     setCompleted(paymentId: string): void {

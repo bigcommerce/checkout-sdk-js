@@ -201,10 +201,7 @@ export default class HostedInputValidator {
                 message: 'The card number entered does not match the card stored in your account',
                 name: 'mismatched_card_number',
                 test: (value = '') =>
-                    this._cardInstrument
-                        ? value.slice(-this._cardInstrument.last4.length) ===
-                          this._cardInstrument.last4
-                        : false,
+                    this._cardInstrument ? value.endsWith(this._cardInstrument.last4) : false,
             });
     }
 

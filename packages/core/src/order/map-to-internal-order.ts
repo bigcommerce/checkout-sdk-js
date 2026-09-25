@@ -147,7 +147,7 @@ function mapToInternalOrderPayment(
     payments?: OrderPayments,
     payment: InternalOrderPayment = {},
 ): InternalOrderPayment {
-    const item = find(payments, isDefaultOrderPayment) as GatewayOrderPayment;
+    const item = find(payments, isDefaultOrderPayment)!;
 
     if (!item) {
         return {};

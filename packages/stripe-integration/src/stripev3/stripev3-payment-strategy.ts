@@ -250,7 +250,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private isCancellationError(stripeError: StripeError | undefined) {
         return (
             stripeError &&
-            stripeError.payment_intent.last_payment_error?.message?.indexOf('canceled') !== -1
+            stripeError.payment_intent.last_payment_error?.message?.includes('canceled')
         );
     }
 

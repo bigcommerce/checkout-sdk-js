@@ -52,7 +52,7 @@ export default class IframeEventListener<
             this._listeners[type] = listeners = [];
         }
 
-        if (listeners.indexOf(listener) === -1) {
+        if (!listeners.includes(listener)) {
             listeners.push(listener);
         }
     }
@@ -87,7 +87,7 @@ export default class IframeEventListener<
     @bind
     private _handleMessage(messageEvent: MessageEvent): void {
         if (
-            this._sourceOrigins.indexOf(messageEvent.origin) === -1 ||
+            !this._sourceOrigins.includes(messageEvent.origin) ||
             !isIframeEvent(messageEvent.data as TEventMap[keyof TEventMap], messageEvent.data.type)
         ) {
             return;

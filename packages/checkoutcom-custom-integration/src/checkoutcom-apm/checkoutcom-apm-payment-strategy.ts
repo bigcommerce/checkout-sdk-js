@@ -48,7 +48,7 @@ export default class CheckoutComAPMPaymentStrategy extends CheckoutComCustomPaym
         const formattedPayload: WithDocumentInstrument = { ccDocument: '' };
         const ccDocument = 'ccDocument' in paymentData ? paymentData.ccDocument : '';
 
-        if (DOCUMENT_SUPPORTED_APMS.indexOf(methodId) !== -1 && ccDocument) {
+        if (DOCUMENT_SUPPORTED_APMS.includes(methodId) && ccDocument) {
             formattedPayload.ccDocument = ccDocument;
         }
 
