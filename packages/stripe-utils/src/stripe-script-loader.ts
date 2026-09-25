@@ -39,7 +39,7 @@ export default class StripeScriptLoader {
             ...(apiVersion ? { apiVersion } : {}),
         };
 
-        const stripeClient = stripe<StripeClient>(stripePublishableKey, options);
+        const stripeClient = stripe(stripePublishableKey, options);
 
         Object.assign(this.stripeWindow, { bcStripeClient: stripeClient });
 
