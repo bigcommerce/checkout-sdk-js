@@ -659,7 +659,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         fields: HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap,
     ): void {
         Object.values(fields || {}).forEach((id: HostedCardFieldOptions) => {
-            const element = document.getElementById(`${id?.containerId || ''}`);
+            const element = document.getElementById(id?.containerId || '');
 
             if (element) {
                 element.style.padding = '0px';

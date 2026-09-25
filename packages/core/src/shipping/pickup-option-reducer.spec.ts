@@ -35,7 +35,7 @@ describe('pickupOptionReducer()', () => {
             payload: [getPickupOptions()],
         };
 
-        const codedKey = btoa(`${JSON.stringify(objectWithSortedKeys(objectFlatten(query)))}`);
+        const codedKey = btoa(JSON.stringify(objectWithSortedKeys(objectFlatten(query))));
 
         expect(pickupOptionReducer(initialState, action)).toEqual({
             data: {

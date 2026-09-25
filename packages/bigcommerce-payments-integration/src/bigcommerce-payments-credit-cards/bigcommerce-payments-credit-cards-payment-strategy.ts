@@ -660,7 +660,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
         fields: HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap,
     ): void {
         Object.values(fields || {}).forEach((id: HostedCardFieldOptions) => {
-            const element = document.getElementById(`${id?.containerId || ''}`);
+            const element = document.getElementById(id?.containerId || '');
 
             if (element) {
                 element.style.padding = '0px';
