@@ -48,6 +48,7 @@ import PaymentStrategyWidgetActionCreator from './payment-strategy-widget-action
 import { PaymentStrategy } from './strategies';
 
 export const ORDER_PLACEMENT_START_SERVER_EVENT = 'PROJECT-8686.order_placement_start_server_event';
+export const ORDER_CREATION_TIME_METRICS = 'PROJECT-8686.order_creation_time_metrics';
 
 export default class PaymentStrategyActionCreator {
     private _paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator;
@@ -111,6 +112,10 @@ export default class PaymentStrategyActionCreator {
 
                     this._reportOrderPlacementStart(strategy, payment);
 
+                    const orderCreationStartTime = this._isOrderCreationTimeMetricsEnabled()
+                        ? Date.now()
+                        : undefined;
+
                     const promise: Promise<InternalCheckoutSelectors | void> = strategy.execute(
                         payload,
                         {
@@ -120,9 +125,15 @@ export default class PaymentStrategyActionCreator {
                         },
                     );
 
-                    return promise.then(() =>
-                        createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta),
-                    );
+                    return promise.then(() => {
+                        this._reportOrderCreationTime(orderCreationStartTime, store);
+
+                        return createAction(
+                            PaymentStrategyActionType.ExecuteSucceeded,
+                            undefined,
+                            meta,
+                        );
+                    });
                 }),
             ).pipe(
                 catchError((error) =>
@@ -345,6 +356,35 @@ export default class PaymentStrategyActionCreator {
                     event: 'order_placement_started',
                     payment_provider_id: payment.gatewayId ?? payment.methodId,
                     payment_method_id: selectedSubMethodId ?? payment.methodId,
+                }),
+                { queueId: 'reportCheckoutEvent' },
+            )
+            .catch(() => {});
+    }
+
+    private _isOrderCreationTimeMetricsEnabled(): boolean {
+        const checkoutSettings = this._store.getState().config.getStoreConfig()?.checkoutSettings;
+
+        return Boolean(checkoutSettings?.features[ORDER_CREATION_TIME_METRICS]);
+    }
+
+    private _reportOrderCreationTime(
+        startTime: number | undefined,
+        store: ReadableCheckoutStore,
+    ): void {
+        if (startTime === undefined) {
+            return;
+        }
+
+        const orderId = store.getState().order.getOrder()?.orderId;
+        const seconds = Math.round(((Date.now() - startTime) / 1000) * 100) / 100;
+
+        this._store
+            .dispatch(
+                this._checkoutActionCreator.reportCheckoutEvent({
+                    event: 'order_created',
+                    order_id: orderId,
+                    seconds,
                 }),
                 { queueId: 'reportCheckoutEvent' },
             )
