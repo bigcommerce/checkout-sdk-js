@@ -516,6 +516,7 @@ export interface GooglePayBuyNowInitializeOptions {
 export interface ExtraPaymentData {
     deviceSessionId?: string;
     browser_info?: BrowserInfo;
+    shouldSaveInstrument?: boolean;
 }
 
 export type GooglePayButtonColor = 'default' | 'black' | 'white';

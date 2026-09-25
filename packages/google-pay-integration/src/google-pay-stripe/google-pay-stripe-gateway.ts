@@ -2,7 +2,9 @@ import { includes, some } from 'lodash';
 
 import {
     InvalidArgumentError,
+    isHostedInstrumentLike,
     isRequestError,
+    OrderPaymentRequestBody,
     PaymentArgumentInvalidError,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
@@ -22,6 +24,7 @@ import assertsIsGooglePayStripeInitializationData from '../guards/is-google-pay-
 import isGooglePayStripeRequestError from '../guards/is-google-pay-stripe-request-error';
 import assertIsGooglePayStripeTokenObject from '../guards/is-google-pay-stripe-token-object';
 import {
+    ExtraPaymentData,
     GooglePayCardDataResponse,
     GooglePaySetExternalCheckoutData,
     GooglePayStripeGatewayParameters,
@@ -58,6 +61,15 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
         data.nonce = token.id;
 
         return data;
+    }
+
+    extraPaymentData(
+        paymentData?: OrderPaymentRequestBody['paymentData'],
+    ): Promise<ExtraPaymentData> {
+        const shouldSaveInstrument =
+            isHostedInstrumentLike(paymentData) && !!paymentData.shouldSaveInstrument;
+
+        return Promise.resolve(shouldSaveInstrument ? { shouldSaveInstrument } : {});
     }
 
     getPaymentGatewayParameters(): GooglePayStripeGatewayParameters {

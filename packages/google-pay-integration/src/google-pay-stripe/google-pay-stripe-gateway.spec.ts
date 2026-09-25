@@ -346,4 +346,28 @@ describe('GooglePayStripeGateway', () => {
             });
         });
     });
+
+    describe('#extraPaymentData', () => {
+        it('vaults the instrument when the shopper opted in', async () => {
+            await gateway.initialize(getStripe);
+
+            await expect(
+                gateway.extraPaymentData({ shouldSaveInstrument: true }),
+            ).resolves.toStrictEqual({ shouldSaveInstrument: true });
+        });
+
+        it('does not vault the instrument when the shopper opted out', async () => {
+            await gateway.initialize(getStripe);
+
+            await expect(
+                gateway.extraPaymentData({ shouldSaveInstrument: false }),
+            ).resolves.toStrictEqual({});
+        });
+
+        it('does not vault the instrument when no instrument data is provided', async () => {
+            await gateway.initialize(getStripe);
+
+            await expect(gateway.extraPaymentData()).resolves.toStrictEqual({});
+        });
+    });
 });

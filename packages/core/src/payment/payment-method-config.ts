@@ -17,4 +17,6 @@ export default interface PaymentMethodConfig {
     shouldVaultAllPayments?: boolean;
     showCardHolderName?: boolean;
     testMode?: boolean;
+    vaultInstrumentForAllWalletPayments?: boolean;
+    vaultingWalletEnabled?: boolean;
 }

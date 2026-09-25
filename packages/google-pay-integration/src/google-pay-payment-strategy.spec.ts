@@ -395,6 +395,18 @@ describe('GooglePayPaymentStrategy', () => {
             });
         });
 
+        it('should pass the payment data to the processor when collecting extra payment data', async () => {
+            jest.spyOn(processor, 'extraPaymentData');
+
+            await strategy.execute({
+                payment: { methodId: 'example', paymentData: { shouldSaveInstrument: true } },
+            });
+
+            expect(processor.extraPaymentData).toHaveBeenCalledWith({
+                shouldSaveInstrument: true,
+            });
+        });
+
         it('should process additional action', async () => {
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue('error');
 
@@ -907,7 +919,10 @@ describe('GooglePayPaymentStrategy', () => {
 
                 expect(executeSpy).toHaveBeenCalledWith({
                     useStoreCredit: false,
-                    payment: { methodId: options.methodId },
+                    payment: {
+                        methodId: options.methodId,
+                        paymentData: {},
+                    },
                 });
             });
 
@@ -1117,6 +1132,83 @@ describe('GooglePayPaymentStrategy', () => {
             });
         });
 
+        describe('when the shopper chooses to save the instrument', () => {
+            let completeCheckoutFlowSpy: jest.SpyInstance;
+
+            beforeEach(() => {
+                jest.spyOn(processor, 'mapToBillingAddressRequestBody').mockReturnValue(undefined);
+                completeCheckoutFlowSpy = jest
+                    .spyOn(Object.getPrototypeOf(strategy), '_completeCheckoutFlow')
+                    .mockImplementation(() => undefined);
+            });
+
+            afterEach(() => {
+                completeCheckoutFlowSpy.mockRestore();
+            });
+
+            it('passes the save-instrument choice into execute', async () => {
+                options.googlepayworldpayaccess = {
+                    ...options.googlepayworldpayaccess,
+                    getFieldsValues: () => ({ shouldSaveInstrument: true }),
+                };
+
+                await strategy.initialize(options);
+
+                const executeSpy = jest.spyOn(strategy, 'execute');
+
+                await containerButtonOnClick(new MouseEvent('click'));
+
+                expect(executeSpy).toHaveBeenCalledWith({
+                    useStoreCredit: false,
+                    payment: {
+                        methodId: options.methodId,
+                        paymentData: { shouldSaveInstrument: true },
+                    },
+                });
+            });
+
+            it('reads the choice at pay time rather than at initialize time', async () => {
+                let saveInstrument = false;
+
+                options.googlepayworldpayaccess = {
+                    ...options.googlepayworldpayaccess,
+                    getFieldsValues: () => ({ shouldSaveInstrument: saveInstrument }),
+                };
+
+                await strategy.initialize(options);
+
+                saveInstrument = true;
+
+                const executeSpy = jest.spyOn(strategy, 'execute');
+
+                await containerButtonOnClick(new MouseEvent('click'));
+
+                expect(executeSpy).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        payment: expect.objectContaining({
+                            paymentData: { shouldSaveInstrument: true },
+                        }),
+                    }),
+                );
+            });
+
+            it('does not save the instrument when no choice is provided', async () => {
+                await strategy.initialize(options);
+
+                const executeSpy = jest.spyOn(strategy, 'execute');
+
+                await containerButtonOnClick(new MouseEvent('click'));
+
+                expect(executeSpy).toHaveBeenCalledWith({
+                    useStoreCredit: false,
+                    payment: {
+                        methodId: options.methodId,
+                        paymentData: {},
+                    },
+                });
+            });
+        });
+
         describe('when clicking the container payment button', () => {
             let completeCheckoutFlowSpy: jest.SpyInstance;
 
@@ -1146,7 +1238,10 @@ describe('GooglePayPaymentStrategy', () => {
                 expect(processor.showPaymentSheet).toHaveBeenCalled();
                 expect(executeSpy).toHaveBeenCalledWith({
                     useStoreCredit: false,
-                    payment: { methodId: options.methodId },
+                    payment: {
+                        methodId: options.methodId,
+                        paymentData: {},
+                    },
                 });
             });
 
