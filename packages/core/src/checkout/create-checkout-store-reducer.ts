@@ -1,4 +1,4 @@
-import { Action, combineReducers, Reducer } from '@bigcommerce/data-store';
+import { combineReducers, Reducer } from '@bigcommerce/data-store';
 
 import { b2bTokenReducer } from '../b2b-token';
 import { billingAddressReducer } from '../billing';

@@ -1,4 +1,4 @@
-import { Action, createDataStore, DataStore, Reducer } from '@bigcommerce/data-store';
+import { createDataStore, DataStore, Reducer } from '@bigcommerce/data-store';
 
 import createDataStoreProjection from './create-data-store-projection';
 
