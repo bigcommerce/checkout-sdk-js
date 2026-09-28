@@ -16,6 +16,4 @@ export default interface PaymentMethodConfig {
     returnUrl?: string;
     shouldVaultAllPayments?: boolean;
     testMode?: boolean;
-    vaultingWalletEnabled?: boolean;
-    vaultInstrumentForAllWalletPayments?: boolean;
 }
