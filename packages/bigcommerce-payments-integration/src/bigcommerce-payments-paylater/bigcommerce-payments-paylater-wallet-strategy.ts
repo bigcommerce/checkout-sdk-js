@@ -7,7 +7,6 @@ import {
 import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
-    ApproveCallbackActions,
     ApproveCallbackPayload,
     BigCommercePaymentsButtonsOptions,
     BigCommercePaymentsInitializationData,
@@ -91,20 +90,7 @@ export default class BigCommercePaymentsPayLaterWalletStrategy implements Checko
                     providerId,
                     cartId,
                 ),
-            onApprove: async (
-                { orderID }: ApproveCallbackPayload,
-                actions: ApproveCallbackActions,
-            ) => {
-                const orderDetails = await actions.order.get();
-                const billingAddress =
-                    this.bigCommercePaymentsPayLaterWalletService.mapOrderDetailsToBillingAddress(
-                        orderDetails,
-                    );
-
-                await this.bigCommercePaymentsPayLaterWalletService.addBillingAddress(
-                    cartId,
-                    billingAddress,
-                );
+            onApprove: async ({ orderID }: ApproveCallbackPayload) => {
                 await this.bigCommercePaymentsPayLaterWalletService.proxyTokenizationPayment(
                     cartId,
                     providerId,

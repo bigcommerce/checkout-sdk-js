@@ -3,7 +3,6 @@ import {
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    AddressRequestBody,
     createWalletButtonIntegrationService,
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
@@ -44,13 +43,6 @@ describe('PaypalCommerceWalletService', () => {
         jest.spyOn(walletButtonIntegrationService, 'createPaymentOrderIntent').mockResolvedValue({
             body: { orderId },
         } as Awaited<ReturnType<WalletButtonIntegrationService['createPaymentOrderIntent']>>);
-        jest.spyOn(walletButtonIntegrationService, 'addBillingAddress').mockResolvedValue({
-            body: {},
-            headers: {},
-            status: 200,
-            statusText: 'OK',
-        } as Awaited<ReturnType<WalletButtonIntegrationService['addBillingAddress']>>);
-
         Object.defineProperty(window, 'location', {
             configurable: true,
             value: { assign: jest.fn() },
@@ -178,85 +170,6 @@ describe('PaypalCommerceWalletService', () => {
             const output = await service.createPaymentOrderIntent('paypalcommerce', cartId);
 
             expect(output).toBe(orderId);
-        });
-    });
-
-    describe('#addBillingAddress', () => {
-        it('passes billing address to wallet button service', async () => {
-            const address = { city: 'Austin' } as AddressRequestBody;
-
-            await service.addBillingAddress(cartId, address, {
-                headers: { 'x-test': 'value' },
-            });
-
-            expect(walletButtonIntegrationService.addBillingAddress).toHaveBeenCalledWith(
-                cartId,
-                address,
-                { headers: { 'x-test': 'value' } },
-            );
-        });
-    });
-
-    describe('#mapOrderDetailsToBillingAddress', () => {
-        it('maps order details to a billing address', () => {
-            const output = service.mapOrderDetailsToBillingAddress({
-                payer: {
-                    name: { given_name: 'John', surname: 'Doe' },
-                    email_address: 'john@doe.com',
-                    address: {
-                        address_line_1: '123 Main St',
-                        address_line_2: 'Suite 100',
-                        admin_area_2: 'Austin',
-                        admin_area_1: 'TX',
-                        postal_code: '73301',
-                        country_code: 'US',
-                    },
-                    phone: { phone_number: { national_number: '5555555555' } },
-                },
-                purchase_units: [],
-            } as never);
-
-            expect(output).toEqual({
-                firstName: 'John',
-                lastName: 'Doe',
-                company: '',
-                address1: '123 Main St',
-                address2: 'Suite 100',
-                city: 'Austin',
-                email: 'john@doe.com',
-                stateOrProvince: 'TX',
-                stateOrProvinceCode: 'TX',
-                countryCode: 'US',
-                postalCode: '73301',
-                phone: '5555555555',
-                shouldSaveAddress: false,
-            });
-        });
-
-        it('falls back to empty strings when phone and state are absent', () => {
-            const output = service.mapOrderDetailsToBillingAddress({
-                payer: {
-                    name: { given_name: 'Jane', surname: 'Smith' },
-                    email_address: 'jane@smith.com',
-                    address: {
-                        address_line_1: '1 High St',
-                        address_line_2: '',
-                        admin_area_2: 'London',
-                        admin_area_1: undefined,
-                        postal_code: 'SW1A 1AA',
-                        country_code: 'GB',
-                    },
-                },
-                purchase_units: [],
-            } as never);
-
-            expect(output).toEqual(
-                expect.objectContaining({
-                    stateOrProvince: '',
-                    stateOrProvinceCode: '',
-                    phone: '',
-                }),
-            );
         });
     });
 
