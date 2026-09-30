@@ -5,7 +5,7 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import { ConsignmentsRequestBody, ConsignmentUpdateRequestBody } from './consignment';
+import { ConsignmentUpdateRequestBody } from './consignment';
 import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
 

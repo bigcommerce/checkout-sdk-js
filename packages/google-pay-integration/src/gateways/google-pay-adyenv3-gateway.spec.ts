@@ -2,7 +2,6 @@ import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loa
 
 import { AdyenV3ScriptLoader } from '@bigcommerce/checkout-sdk/adyen-utils';
 import {
-    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';

@@ -11,7 +11,6 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { BillingAddressUpdateRequestBody } from './billing-address';
 import BillingAddressRequestSender from './billing-address-request-sender';
 import { getBillingAddress } from './billing-addresses.mock';
 

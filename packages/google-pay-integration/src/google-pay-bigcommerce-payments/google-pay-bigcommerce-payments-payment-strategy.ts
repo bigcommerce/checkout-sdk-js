@@ -1,9 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import {
-    BigCommercePaymentsInitializationData,
-    PayPalSdkHelper,
-} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import { PayPalSdkHelper } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     ContentType,
     INTERNAL_USE_ONLY,
@@ -14,7 +11,6 @@ import {
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
-    PaymentMethod,
     SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 

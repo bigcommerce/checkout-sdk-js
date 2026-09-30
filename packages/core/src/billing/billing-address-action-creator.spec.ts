@@ -19,7 +19,6 @@ import {
 } from '../subscription';
 import { UpdateSubscriptionsError } from '../subscription/errors';
 
-import { BillingAddressRequestBody } from './billing-address';
 import BillingAddressActionCreator from './billing-address-action-creator';
 import {
     BillingAddressAction,
