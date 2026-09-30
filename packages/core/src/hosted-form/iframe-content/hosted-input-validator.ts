@@ -131,7 +131,7 @@ export default class HostedInputValidator {
             .test({
                 message: 'CVV must be valid',
                 name: 'invalid_card_code',
-                test: (value = '') => {
+                test: (value) => {
                     const cardType =
                         this._cardInstrument &&
                         this._mapFromInstrumentCardType(this._cardInstrument.brand);
@@ -195,11 +195,12 @@ export default class HostedInputValidator {
             .test({
                 message: 'Credit card number must be valid',
                 name: 'invalid_card_number',
-                test: (value = '') => number(value).isValid,
+                test: (value) => number(value).isValid,
             })
             .test({
                 message: 'The card number entered does not match the card stored in your account',
                 name: 'mismatched_card_number',
+                // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
                 test: (value = '') =>
                     this._cardInstrument ? value.endsWith(this._cardInstrument.last4) : false,
             });

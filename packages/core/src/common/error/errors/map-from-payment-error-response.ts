@@ -9,6 +9,7 @@ export default function mapFromPaymentErrorResponse(
     message?: string,
 ): RequestError {
     const { body } = response;
+    // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
     const { errors = [] } = body;
 
     return new RequestError(response, {
