@@ -36,6 +36,10 @@ const ORDER_DETAILS_INCLUDES = [
     'lineItems.digitalItems.categories',
 ];
 
+const CREATE_ORDER_DETAILS_INCLUDES = ORDER_DETAILS_INCLUDES.filter(
+    (include) => include !== 'payments',
+);
+
 export default class OrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
@@ -65,7 +69,7 @@ export default class OrderRequestSender {
             .post<InternalOrderResponseBody>(url, {
                 body,
                 params: includeOrderDetails
-                    ? { include: joinIncludes(ORDER_DETAILS_INCLUDES) }
+                    ? { include: joinIncludes(CREATE_ORDER_DETAILS_INCLUDES) }
                     : undefined,
                 headers: omitBy(
                     {
