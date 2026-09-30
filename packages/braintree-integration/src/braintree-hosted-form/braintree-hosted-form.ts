@@ -30,7 +30,6 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
     PaymentInvalidFormError,
-    PaymentInvalidFormErrorDetails,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 enum BraintreeHostedFormType {

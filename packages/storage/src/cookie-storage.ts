@@ -7,7 +7,7 @@ interface CookieOptions {
 
 export default class CookieStorage {
     static get(name: string): string | null {
-        const cookieKey = `${encodeURIComponent(`${name}`)}=`;
+        const cookieKey = `${encodeURIComponent(name)}=`;
         const cookie = document.cookie;
 
         let value = null;

@@ -1,6 +1,5 @@
 import { omit } from 'lodash';
 
-import { Address } from '../address';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
