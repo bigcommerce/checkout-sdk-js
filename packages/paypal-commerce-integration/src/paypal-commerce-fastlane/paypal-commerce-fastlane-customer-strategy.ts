@@ -59,11 +59,13 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 state.getLocale(),
             );
 
-            await this.paypalFastlaneUtils.initializePayPalFastlane(
+            const fastlane = await this.paypalFastlaneUtils.initializePayPalFastlane(
                 paypalFastlaneSdk,
                 isTestModeEnabled,
                 this.getFastlaneStyles(methodId, paypalcommercefastlane),
             );
+
+            fastlane.setLocale('zh_US');
         } catch (error) {
             // TODO: add logger to be able to debug issues if there any
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
