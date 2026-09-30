@@ -23,7 +23,18 @@ export interface SubmitOrderRequestOptions extends RequestOptions {
     headers?: {
         checkoutVariant?: string;
     };
+    includeOrderDetails?: boolean;
 }
+
+const ORDER_DETAILS_INCLUDES = [
+    'payments',
+    'lineItems.physicalItems.socialMedia',
+    'lineItems.physicalItems.options',
+    'lineItems.physicalItems.categories',
+    'lineItems.digitalItems.socialMedia',
+    'lineItems.digitalItems.options',
+    'lineItems.digitalItems.categories',
+];
 
 export default class OrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
@@ -34,19 +45,10 @@ export default class OrderRequestSender {
             Accept: ContentType.JsonV1,
             ...SDK_VERSION_HEADERS,
         };
-        const include = [
-            'payments',
-            'lineItems.physicalItems.socialMedia',
-            'lineItems.physicalItems.options',
-            'lineItems.physicalItems.categories',
-            'lineItems.digitalItems.socialMedia',
-            'lineItems.digitalItems.options',
-            'lineItems.digitalItems.categories',
-        ];
 
         return this._requestSender.get(url, {
             params: {
-                include: joinIncludes(include),
+                include: joinIncludes(ORDER_DETAILS_INCLUDES),
             },
             headers,
             timeout,
@@ -55,13 +57,16 @@ export default class OrderRequestSender {
 
     submitOrder(
         body?: InternalOrderRequestBody,
-        { headers, timeout }: SubmitOrderRequestOptions = {},
+        { headers, timeout, includeOrderDetails }: SubmitOrderRequestOptions = {},
     ): Promise<Response<InternalOrderResponseBody>> {
         const url = '/internalapi/v1/checkout/order';
 
         return this._requestSender
             .post<InternalOrderResponseBody>(url, {
                 body,
+                params: includeOrderDetails
+                    ? { include: joinIncludes(ORDER_DETAILS_INCLUDES) }
+                    : undefined,
                 headers: omitBy(
                     {
                         'X-Checkout-Variant': headers && headers.checkoutVariant,

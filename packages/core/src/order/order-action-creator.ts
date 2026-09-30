@@ -19,6 +19,9 @@ import {
 import OrderRequestBody from './order-request-body';
 import OrderRequestSender from './order-request-sender';
 
+export const RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER =
+    'PROJECT-8987.return_full_order_details_on_create_order';
+
 export default class OrderActionCreator {
     private _orderCreated$ = new Subject<number>();
 
@@ -99,6 +102,7 @@ export default class OrderActionCreator {
                     const externalSource = state.config.getExternalSource();
                     const variantIdentificationToken = state.config.getVariantIdentificationToken();
                     const checkout = state.checkout.getCheckout();
+                    const includeOrderDetails = this._isReturnFullOrderDetailsEnabled(state);
 
                     if (!checkout) {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -122,16 +126,26 @@ export default class OrderActionCreator {
                                     headers: {
                                         checkoutVariant: variantIdentificationToken,
                                     },
+                                    includeOrderDetails,
                                 },
                             ),
                         ),
                     ).pipe(
                         switchMap((response) => {
                             const orderId = response.body.data.order.orderId;
+                            const { orderDetails } = response.body.data;
 
                             return concat(
-                                // TODO: Remove once we can submit orders using storefront API
-                                this.loadOrder(orderId, options),
+                                // TODO: Remove the fallback once the order creation endpoint
+                                // always returns orderDetails.
+                                orderDetails
+                                    ? of(
+                                          createAction(
+                                              OrderActionType.LoadOrderSucceeded,
+                                              orderDetails,
+                                          ),
+                                      )
+                                    : this.loadOrder(orderId, options),
                                 defer(() => {
                                     this._orderCreated$.next(orderId);
 
@@ -184,6 +198,12 @@ export default class OrderActionCreator {
         const checkout = state.checkout.getCheckout();
 
         return (order && order.orderId) || (checkout && checkout.orderId);
+    }
+
+    private _isReturnFullOrderDetailsEnabled(state: InternalCheckoutSelectors): boolean {
+        const checkoutSettings = state.config.getStoreConfig()?.checkoutSettings;
+
+        return Boolean(checkoutSettings?.features[RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER]);
     }
 
     private _mapToOrderRequestBody(
