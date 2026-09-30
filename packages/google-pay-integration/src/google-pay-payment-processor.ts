@@ -236,6 +236,7 @@ export default class GooglePayPaymentProcessor {
                 this._getIsReadyToPayRequest(),
             );
 
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
             if (result === false) {
                 throw new PaymentMethodFailedError(
                     'Google Pay is not supported by the current device and browser, please try another payment method.',

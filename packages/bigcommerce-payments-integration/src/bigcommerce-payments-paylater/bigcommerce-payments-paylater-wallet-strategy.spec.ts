@@ -20,23 +20,6 @@ describe('BigCommercePaymentsPayLaterWalletStrategy', () => {
     const defaultOrderId = 'ORDER_ID';
     const defaultButtonStyle = { color: 'gold', label: 'checkout' };
 
-    const orderDetails = {
-        payer: {
-            name: { given_name: 'John', surname: 'Doe' },
-            email_address: 'john@doe.com',
-            address: {
-                address_line_1: '123 Main St',
-                address_line_2: 'Suite 100',
-                admin_area_2: 'Austin',
-                admin_area_1: 'TX',
-                postal_code: '73301',
-                country_code: 'US',
-            },
-        },
-        purchase_units: [],
-    };
-    const mappedBillingAddress = { firstName: 'John', lastName: 'Doe' };
-
     const initializationOptions: CheckoutButtonInitializeOptions &
         WithBigCommercePaymentsPayLaterWalletInitializeOptions = {
         methodId: defaultMethodId,
@@ -64,12 +47,10 @@ describe('BigCommercePaymentsPayLaterWalletStrategy', () => {
         const paypalSdk = getPayPalSDKMock();
 
         bigCommercePaymentsPayLaterWalletService = {
-            addBillingAddress: jest.fn(),
             createPaymentOrderIntent: jest.fn().mockResolvedValue(defaultOrderId),
             getPayPalSdkOrThrow: jest.fn().mockReturnValue(paypalSdk),
             getValidButtonStyle: jest.fn().mockReturnValue({ height: 45 }),
             loadPayPalSdk: jest.fn(),
-            mapOrderDetailsToBillingAddress: jest.fn().mockReturnValue(mappedBillingAddress),
             proxyTokenizationPayment: jest.fn(),
             removeElement: jest.fn(),
         } as unknown as jest.Mocked<PaypalCommerceWalletService>;
@@ -227,7 +208,7 @@ describe('BigCommercePaymentsPayLaterWalletStrategy', () => {
         ).toHaveBeenCalledWith(defaultProviderId, defaultCartId);
     });
 
-    it('adds billing address and proxies tokenization on approve', async () => {
+    it('proxies tokenization on approve', async () => {
         const paypalButtons = {
             close: jest.fn(),
             isEligible: jest.fn().mockReturnValue(true),
@@ -244,18 +225,11 @@ describe('BigCommercePaymentsPayLaterWalletStrategy', () => {
             { orderID: defaultOrderId },
             {
                 order: {
-                    get: jest.fn().mockResolvedValue(orderDetails),
+                    get: jest.fn(),
                 },
             },
         );
 
-        expect(
-            bigCommercePaymentsPayLaterWalletService.mapOrderDetailsToBillingAddress,
-        ).toHaveBeenCalledWith(orderDetails);
-        expect(bigCommercePaymentsPayLaterWalletService.addBillingAddress).toHaveBeenCalledWith(
-            defaultCartId,
-            mappedBillingAddress,
-        );
         expect(
             bigCommercePaymentsPayLaterWalletService.proxyTokenizationPayment,
         ).toHaveBeenCalledWith(

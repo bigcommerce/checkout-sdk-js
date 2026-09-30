@@ -141,7 +141,7 @@ export default class EmbeddedCheckout {
     }
 
     private _attemptLogin(): Promise<string> {
-        if (!/^\/login\/token/.test(parseUrl(this._options.url).pathname)) {
+        if (!parseUrl(this._options.url).pathname.startsWith('/login/token')) {
             return Promise.resolve(this._options.url);
         }
 

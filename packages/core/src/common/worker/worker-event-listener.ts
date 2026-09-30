@@ -42,7 +42,7 @@ export class WorkerEventListener<
             this._listeners[type] = listeners = [];
         }
 
-        if (listeners.indexOf(listener) === -1) {
+        if (!listeners.includes(listener)) {
             listeners.push(listener);
         }
     }

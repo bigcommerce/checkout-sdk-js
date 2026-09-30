@@ -204,10 +204,7 @@ export default class HostedInputValidator {
                 name: 'mismatched_card_number',
                 // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
                 test: (value = '') =>
-                    this._cardInstrument
-                        ? value.slice(-this._cardInstrument.last4.length) ===
-                          this._cardInstrument.last4
-                        : false,
+                    this._cardInstrument ? value.endsWith(this._cardInstrument.last4) : false,
             });
     }
 

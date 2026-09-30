@@ -325,7 +325,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _getLocale(): string | undefined {
         const locale = this.paymentIntegrationService.getState().getLocale();
 
-        if (locale && locale.substring(0, 2) === 'es') {
+        if (locale && locale.startsWith('es')) {
             return 'es';
         }
 

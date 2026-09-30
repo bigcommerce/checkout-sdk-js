@@ -16,7 +16,7 @@ function normalize(address: Partial<InternalAddress>): Partial<InternalAddress> 
 
     return (Object.keys(omitPrivate(address) || {}) as Array<keyof InternalAddress>).reduce(
         (result, key) =>
-            ignoredKeys.indexOf(key) === -1 && address[key]
+            !ignoredKeys.includes(key) && address[key]
                 ? { ...result, [key]: address[key] }
                 : result,
         {},

@@ -34,7 +34,7 @@ function createProxy<T extends object>(
             if (
                 name === 'constructor' ||
                 typeof proxy[name] !== 'function' ||
-                name.charAt(0) === '_'
+                name.startsWith('_')
             ) {
                 return;
             }

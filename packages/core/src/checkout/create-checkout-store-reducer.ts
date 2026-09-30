@@ -1,4 +1,4 @@
-import { Action, combineReducers, Reducer } from '@bigcommerce/data-store';
+import { combineReducers, Reducer } from '@bigcommerce/data-store';
 
 import { b2bTokenReducer } from '../b2b-token';
 import { billingAddressReducer } from '../billing';
@@ -34,7 +34,7 @@ import { subscriptionsReducer } from '../subscription';
 import checkoutReducer from './checkout-reducer';
 import CheckoutStoreState from './checkout-store-state';
 
-export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState, Action> {
+export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState> {
     return combineReducers({
         b2bPostOrder: b2bPostOrderReducer,
         b2bToken: b2bTokenReducer,

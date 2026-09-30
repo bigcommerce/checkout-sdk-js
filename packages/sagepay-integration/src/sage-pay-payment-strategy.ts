@@ -92,9 +92,11 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     }
 
     private _isThreeDSTwoExperimentOn(): boolean {
-        return (
-            this.paymentIntegrationService.getState().getStoreConfigOrThrow().checkoutSettings
-                .features['INT-4994.Opayo_3DS2'] === true
-        );
+        const isThreeDSTwoExperimentOn = this.paymentIntegrationService
+            .getState()
+            .getStoreConfigOrThrow().checkoutSettings.features['INT-4994.Opayo_3DS2'];
+
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+        return isThreeDSTwoExperimentOn === true;
     }
 }
