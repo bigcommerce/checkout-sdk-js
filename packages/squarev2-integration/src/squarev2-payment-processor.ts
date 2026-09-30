@@ -76,7 +76,7 @@ export default class SquareV2PaymentProcessor {
 
         try {
             await this._card.configure({ postalCode, style });
-        } catch (_error) {
+        } catch {
             /* Do nothing: we should not block shoppers from buying. */
         }
 

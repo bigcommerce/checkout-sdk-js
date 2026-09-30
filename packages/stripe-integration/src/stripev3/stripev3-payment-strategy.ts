@@ -572,7 +572,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                             cardNumberElement.mount(`#${cardNumberElementOptions.containerId}`);
                             cardExpiryElement.mount(`#${cardExpiryElementOptions.containerId}`);
                             cardCvcElement.mount(`#${cardCvcElementOptions.containerId}`);
-                        } catch (error) {
+                        } catch {
                             if (!this.isDeinitialize) {
                                 reject(
                                     new InvalidArgumentError(
@@ -588,7 +588,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
                         try {
                             stripeElement.mount(`#${containerId}`);
-                        } catch (error) {
+                        } catch {
                             if (!this.isDeinitialize) {
                                 reject(
                                     new InvalidArgumentError(
@@ -609,7 +609,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
                     try {
                         stripeElement.mount(`#${containerId}`);
-                    } catch (error) {
+                    } catch {
                         if (!this.isDeinitialize) {
                             reject(
                                 new InvalidArgumentError(
@@ -683,7 +683,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
             try {
                 result = await this.getStripeJs().confirmCardPayment(clientSecret);
-            } catch (error) {
+            } catch {
                 catchedConfirmError = true;
             }
 

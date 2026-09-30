@@ -297,7 +297,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
 
         try {
             return await this.paymentIntegrationService.createBuyNowCart(buyNowCardRequestBody);
-        } catch (error) {
+        } catch {
             throw new BuyNowCartCreationError();
         }
     }

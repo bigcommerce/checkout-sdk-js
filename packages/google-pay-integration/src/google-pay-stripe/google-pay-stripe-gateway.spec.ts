@@ -201,7 +201,7 @@ describe('GooglePayStripeGateway', () => {
 
             try {
                 await processor.processAdditionalAction(error3DS, 'stripe');
-            } catch (error) {
+            } catch {
                 expect(retrievePaymentIntent).toHaveBeenCalledWith('token_3ds');
             }
         });

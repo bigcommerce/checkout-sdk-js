@@ -54,7 +54,7 @@ export default class BraintreeVenmoWalletStrategy implements CheckoutButtonStrat
 
         try {
             parsedPaymentMethod = JSON.parse(atob(braintreevenmo.initializationData));
-        } catch (error) {
+        } catch {
             throw new InvalidArgumentError("Failed to parse payment method 'initializationData'.");
         }
 

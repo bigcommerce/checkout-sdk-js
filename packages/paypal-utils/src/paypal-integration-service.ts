@@ -92,7 +92,7 @@ export default class PayPalIntegrationService {
 
         try {
             return await this.paymentIntegrationService.createBuyNowCart(cartRequestBody);
-        } catch (error) {
+        } catch {
             throw new BuyNowCartCreationError();
         }
     }
@@ -156,7 +156,7 @@ export default class PayPalIntegrationService {
                 ...(methodId ? { methodId } : {}),
                 ...(orderId ? { orderId } : {}),
             });
-        } catch (_error) {
+        } catch {
             throw new RequestError();
         }
     }
@@ -166,7 +166,7 @@ export default class PayPalIntegrationService {
             const { status } = await this.paypalRequestSender.getOrderStatus(methodId, options);
 
             return status;
-        } catch (_error) {
+        } catch {
             throw new RequestError();
         }
     }

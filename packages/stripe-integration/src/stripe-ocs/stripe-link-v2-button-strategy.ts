@@ -379,7 +379,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             this._toggleLoadingIndicator(true);
             await this.paymentIntegrationService.submitPayment(paymentPayload);
             await this._completeCheckoutFlow();
-        } catch (error) {
+        } catch {
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         } finally {
             this._toggleLoadingIndicator(false);
@@ -421,7 +421,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             }
 
             return confirmationResult;
-        } catch (error: unknown) {
+        } catch {
             return this.stripeIntegrationService.throwStripeError(stripeError);
         }
     }

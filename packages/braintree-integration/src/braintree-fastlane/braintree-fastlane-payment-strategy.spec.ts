@@ -975,7 +975,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             try {
                 await strategy.execute(executeOptions);
-            } catch (e) {
+            } catch {
                 expect(onErrorMock).toHaveBeenCalled();
             }
         });
