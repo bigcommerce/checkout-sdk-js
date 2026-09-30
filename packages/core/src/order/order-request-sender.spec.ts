@@ -287,6 +287,7 @@ describe('OrderRequestSender', () => {
 
             expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order', {
                 body: payload,
+                params: undefined,
                 headers: {
                     'X-Checkout-Variant': headers.checkoutVariant,
                     'X-Checkout-SDK-Version': expect.any(String),
@@ -301,10 +302,25 @@ describe('OrderRequestSender', () => {
 
             expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order', {
                 body: payload,
+                params: undefined,
                 headers: {
                     'X-Checkout-SDK-Version': expect.any(String),
                 },
             });
+        });
+
+        it('submits order with order details included when the experiment is enabled', async () => {
+            const payload = { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' };
+
+            await orderRequestSender.submitOrder(payload, { includeOrderDetails: true });
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/internalapi/v1/checkout/order',
+                expect.objectContaining({
+                    body: payload,
+                    params: { include },
+                }),
+            );
         });
     });
 
