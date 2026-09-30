@@ -30,7 +30,6 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
     PaymentInvalidFormError,
-    PaymentInvalidFormErrorDetails,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 enum BraintreeHostedFormType {
@@ -107,7 +106,7 @@ export default class BraintreeHostedForm {
 
             const errors = this.mapValidationErrors(state.fields);
 
-            throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+            throw new PaymentInvalidFormError(errors);
         }
     }
 
@@ -138,7 +137,7 @@ export default class BraintreeHostedForm {
 
                 if (errors) {
                     this.formOptions?.onValidate?.({ isValid: false, errors });
-                    throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+                    throw new PaymentInvalidFormError(errors);
                 }
             }
 
@@ -166,7 +165,7 @@ export default class BraintreeHostedForm {
 
                 if (errors) {
                     this.formOptions?.onValidate?.({ isValid: false, errors });
-                    throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+                    throw new PaymentInvalidFormError(errors);
                 }
             }
 

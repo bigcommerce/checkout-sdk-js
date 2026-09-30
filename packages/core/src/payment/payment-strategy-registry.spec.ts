@@ -35,16 +35,12 @@ describe('PaymentStrategyRegistry', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class CreditCardPaymentStrategy extends BasePaymentStrategy {}
 
-    // tslint:disable-next-line:max-classes-per-file
     class OfflinePaymentStrategy extends BasePaymentStrategy {}
 
-    // tslint:disable-next-line:max-classes-per-file
     class AmazonPayV2PaymentStrategy extends BasePaymentStrategy {}
 
-    // tslint:disable-next-line:max-classes-per-file
     class PPSDKPaymentStrategy extends BasePaymentStrategy {}
 
     beforeEach(() => {

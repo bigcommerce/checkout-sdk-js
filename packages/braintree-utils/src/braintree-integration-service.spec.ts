@@ -71,7 +71,7 @@ describe('BraintreeIntegrationService', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
 
-        braintreeHostWindowMock = window as BraintreeHostWindow;
+        braintreeHostWindowMock = window;
         braintreeScriptLoader = new BraintreeScriptLoader(
             loader,
             braintreeHostWindowMock,

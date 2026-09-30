@@ -1044,7 +1044,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                     ...stripeClient,
                     confirmPayment: confirmPaymentMock,
                     retrievePaymentIntent: retrievePaymentIntentMock,
-                } as any;
+                };
 
                 jest.spyOn(scriptLoader, 'getStripeClient').mockImplementation(
                     jest.fn(() => Promise.resolve(stripeClient)),
