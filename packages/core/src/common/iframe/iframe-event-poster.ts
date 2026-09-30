@@ -54,8 +54,7 @@ export default class IframeEventPoster<TEvent, TContext = undefined> {
                         (event) =>
                             event.origin === this._targetOrigin &&
                             isIframeEvent(event.data, event.data.type) &&
-                            [options.successType, options.errorType].indexOf(event.data.type) !==
-                                -1,
+                            [options.successType, options.errorType].includes(event.data.type),
                     ),
                     map((event) => {
                         if (options.errorType === event.data.type) {

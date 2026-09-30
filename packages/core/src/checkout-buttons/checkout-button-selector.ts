@@ -50,10 +50,12 @@ export function createCheckoutButtonSelectorFactory(): CheckoutButtonSelectorFac
                 if (!containerId) {
                     return some(
                         method.initializedContainers,
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
                         (isInitialized) => isInitialized === true,
                     );
                 }
 
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
                 return method.initializedContainers[containerId] === true;
             }),
     );

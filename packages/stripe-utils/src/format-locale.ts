@@ -10,5 +10,5 @@ export default function formatLocale(localeLanguage: string): string {
 
     const formattedLocale = country ? `${language}-${country.toUpperCase()}` : language;
 
-    return countryLocales.indexOf(formattedLocale) > -1 ? formattedLocale : countryLocales[0];
+    return countryLocales.includes(formattedLocale) ? formattedLocale : countryLocales[0];
 }

@@ -340,8 +340,8 @@ describe('AnalyticsStepTracker', () => {
 
         describe('When order reach Google Analytics payload limit', () => {
             beforeEach(() => {
-                (isGoogleAnalyticsAvailable as jest.Mock<any>).mockImplementation(() => true);
-                (isPayloadSizeLimitReached as jest.Mock<any>).mockImplementation(() => true);
+                (isGoogleAnalyticsAvailable as jest.Mock).mockImplementation(() => true);
+                (isPayloadSizeLimitReached as jest.Mock).mockImplementation(() => true);
 
                 jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue({
                     ...getOrder(),
@@ -386,9 +386,9 @@ describe('AnalyticsStepTracker', () => {
 
         describe('When order does not reach Google Analytics payload limit', () => {
             beforeEach(() => {
-                (isGoogleAnalyticsAvailable as jest.Mock<any>).mockImplementation(() => true);
-                (isPayloadSizeLimitReached as jest.Mock<any>).mockImplementation(() => false);
-                (sendGoogleAnalytics as jest.Mock<any>).mockImplementation();
+                (isGoogleAnalyticsAvailable as jest.Mock).mockImplementation(() => true);
+                (isPayloadSizeLimitReached as jest.Mock).mockImplementation(() => false);
+                (sendGoogleAnalytics as jest.Mock).mockImplementation();
 
                 jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue(getOrder());
 

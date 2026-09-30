@@ -44,7 +44,7 @@ export async function load(
     | HostedFormBundle
 > {
     const { version, js } = MANIFEST_JSON;
-    const manifestPath = js.find((path) => path.indexOf(moduleName) !== -1);
+    const manifestPath = js.find((path) => path.includes(moduleName));
 
     if (!manifestPath) {
         throw new Error('Unable to load the script because its URL cannot be determined.');

@@ -87,7 +87,7 @@ export default class StripeIntegrationService {
     isCancellationError(stripeError?: StripeError): boolean {
         const errorMessage = stripeError?.payment_intent.last_payment_error?.message;
 
-        return !!errorMessage && errorMessage.indexOf('canceled') !== -1;
+        return !!errorMessage && errorMessage.includes('canceled');
     }
 
     throwPaymentConfirmationProceedMessage() {
