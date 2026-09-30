@@ -1,5 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, from, Observable, Observer, of } from 'rxjs';
+import { concat, defer, from, Observable, Observer, of, Subject } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
@@ -20,10 +20,17 @@ import OrderRequestBody from './order-request-body';
 import OrderRequestSender from './order-request-sender';
 
 export default class OrderActionCreator {
+    private _orderCreated$ = new Subject<number>();
+
     constructor(
         private _orderRequestSender: OrderRequestSender,
         private _checkoutValidator: CheckoutValidator,
     ) {}
+
+    // Emits once `submitOrder` has created and refetched the order, before payment is submitted.
+    get orderCreated$(): Observable<number> {
+        return this._orderCreated$.asObservable();
+    }
 
     loadOrder(orderId: number, options?: RequestOptions): Observable<LoadOrderAction> {
         return new Observable((observer: Observer<LoadOrderAction>) => {
@@ -119,19 +126,28 @@ export default class OrderActionCreator {
                             ),
                         ),
                     ).pipe(
-                        switchMap((response) =>
-                            concat(
+                        switchMap((response) => {
+                            const orderId = response.body.data.order.orderId;
+
+                            return concat(
                                 // TODO: Remove once we can submit orders using storefront API
-                                this.loadOrder(response.body.data.order.orderId, options),
-                                of(
-                                    createAction(
-                                        OrderActionType.SubmitOrderSucceeded,
-                                        response.body.data,
-                                        { ...response.body.meta, token: response.headers.token },
-                                    ),
-                                ),
-                            ),
-                        ),
+                                this.loadOrder(orderId, options),
+                                defer(() => {
+                                    this._orderCreated$.next(orderId);
+
+                                    return of(
+                                        createAction(
+                                            OrderActionType.SubmitOrderSucceeded,
+                                            response.body.data,
+                                            {
+                                                ...response.body.meta,
+                                                token: response.headers.token,
+                                            },
+                                        ),
+                                    );
+                                }),
+                            );
+                        }),
                     );
                 }).pipe(
                     catchError((error) =>

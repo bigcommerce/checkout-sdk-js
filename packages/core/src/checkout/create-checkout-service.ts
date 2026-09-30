@@ -157,6 +157,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const paymentIntegrationService = createPaymentIntegrationService(
         store,
         experimentRequestSender,
+        orderActionCreator,
     );
 
     // NO_PAYMENT_DATA_REQUIRED must always be available regardless of build mode — it handles
@@ -219,7 +220,12 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             new B2BCompanyPaymentMethodRequestSender(requestSender),
         ),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, paymentClient, experimentRequestSender),
+            createPaymentStrategyRegistry(
+                store,
+                paymentClient,
+                experimentRequestSender,
+                orderActionCreator,
+            ),
             registryV2,
             orderActionCreator,
             spamProtectionActionCreator,
