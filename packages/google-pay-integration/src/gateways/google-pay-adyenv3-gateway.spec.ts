@@ -71,7 +71,7 @@ describe('GooglePayAdyenV3Gateway', () => {
                     ...getConfig().storeConfig.storeProfile,
                     storeCountryCode: 'CA',
                 },
-            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+            });
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getBillingAddress',
@@ -92,7 +92,7 @@ describe('GooglePayAdyenV3Gateway', () => {
                     ...getConfig().storeConfig.checkoutSettings,
                     features: { 'PI-5661.adyen_sdk_upgrade': false },
                 },
-            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+            });
 
             await gateway.initialize(getAdyenV3);
 
@@ -106,7 +106,7 @@ describe('GooglePayAdyenV3Gateway', () => {
                     ...getConfig().storeConfig.checkoutSettings,
                     features: { 'PI-5661.adyen_sdk_upgrade': false },
                 },
-            } as ReturnType<PaymentIntegrationSelectors['getStoreConfig']>);
+            });
 
             await gateway.initialize(getAdyenV3);
 

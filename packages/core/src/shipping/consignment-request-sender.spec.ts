@@ -140,7 +140,7 @@ describe('ConsignmentRequestSender', () => {
                         ...CUSTOMER_ADDRESS_METADATA,
                     },
                 },
-            ] as unknown as ConsignmentsRequestBody);
+            ]);
 
             const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
 

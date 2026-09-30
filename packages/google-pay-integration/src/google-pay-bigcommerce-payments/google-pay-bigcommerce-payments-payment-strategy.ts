@@ -105,7 +105,7 @@ export default class GooglePayBigCommercePaymentsPaymentStrategy extends GoogleP
         const currencyCode = state.getCartOrThrow().currency.code;
 
         const payPalSDK = await this._payPalSdkHelper.getPayPalGooglePaySdk(
-            paymentMethod as PaymentMethod<BigCommercePaymentsInitializationData>,
+            paymentMethod,
             currencyCode,
             true,
         );

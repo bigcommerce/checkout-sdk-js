@@ -76,7 +76,7 @@ describe('HostedCardNumberInput', () => {
             paymentHandler as HostedInputPaymentHandler,
             storedCardHandler as HostedInputStoredCardHandler,
             autocompleteFieldset,
-            numberFormatter as CardNumberFormatter,
+            numberFormatter,
         );
     });
 

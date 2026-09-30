@@ -62,7 +62,7 @@ export default class BraintreePaypalWalletService {
             },
         );
 
-        return this.braintreePaypalCheckout!;
+        return this.braintreePaypalCheckout;
     }
 
     async loadVenmoCheckout(containerId: string): Promise<BraintreeVenmoCheckout> {

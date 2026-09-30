@@ -107,7 +107,7 @@ export default class BraintreeHostedForm {
 
             const errors = this.mapValidationErrors(state.fields);
 
-            throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+            throw new PaymentInvalidFormError(errors);
         }
     }
 
@@ -138,7 +138,7 @@ export default class BraintreeHostedForm {
 
                 if (errors) {
                     this.formOptions?.onValidate?.({ isValid: false, errors });
-                    throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+                    throw new PaymentInvalidFormError(errors);
                 }
             }
 
@@ -166,7 +166,7 @@ export default class BraintreeHostedForm {
 
                 if (errors) {
                     this.formOptions?.onValidate?.({ isValid: false, errors });
-                    throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+                    throw new PaymentInvalidFormError(errors);
                 }
             }
 
