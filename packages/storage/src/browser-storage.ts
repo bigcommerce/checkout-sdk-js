@@ -12,7 +12,7 @@ export default class BrowserStorage {
 
         try {
             return JSON.parse(rawValue);
-        } catch (error) {
+        } catch {
             this.removeItem(this.withNamespace(key));
 
             return null;

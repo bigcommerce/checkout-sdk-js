@@ -237,7 +237,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             });
 
             this.handleError(new TimeoutError());
-        } catch (error) {
+        } catch {
             rejectPromise();
         }
     }

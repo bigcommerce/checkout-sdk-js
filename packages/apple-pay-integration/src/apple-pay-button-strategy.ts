@@ -315,7 +315,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 );
 
                 applePaySession.completeMerchantValidation(merchantSession);
-            } catch (error) {
+            } catch {
                 throw new Error('Merchant validation failed');
             }
         };
@@ -346,7 +346,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 await this._requestSender.get(url);
 
                 return await this._paymentIntegrationService.loadCheckout();
-            } catch (error) {
+            } catch {
                 throw new PaymentMethodCancelledError();
             }
         };
@@ -375,7 +375,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             if (shouldExecuteSpamCheck) {
                 await this._paymentIntegrationService.verifyCheckoutSpamProtection();
             }
-        } catch (error) {
+        } catch {
             throw new BuyNowCartCreationError();
         }
     }
@@ -409,7 +409,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
-        } catch (error) {
+        } catch {
             applePaySession.abort();
 
             throw new Error('Shipping address update failed');
@@ -486,7 +486,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             await this._updateShippingOption(selectedOptionId);
-        } catch (error) {
+        } catch {
             throw new Error('Shipping options update failed');
         }
 
@@ -515,7 +515,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             await this._updateShippingOption(optionId);
-        } catch (error) {
+        } catch {
             applePaySession.abort();
 
             throw new Error('Shipping option selection update failed.');
@@ -647,7 +647,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
             return this._onAuthorizeCallback();
-        } catch (error) {
+        } catch {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
             throw new Error('Payment cannot complete');
         }
@@ -677,7 +677,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             const { deviceData } = await this._braintreeSdk.getDataCollectorOrThrow();
 
             return deviceData;
-        } catch (_) {
+        } catch {
             // Don't throw an error to avoid breaking checkout flow
         }
     }

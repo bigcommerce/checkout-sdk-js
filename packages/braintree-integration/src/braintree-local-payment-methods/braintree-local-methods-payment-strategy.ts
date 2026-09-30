@@ -488,7 +488,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             });
 
             this.handleError(new TimeoutError());
-        } catch (error) {
+        } catch {
             rejectPromise();
         }
     }

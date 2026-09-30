@@ -1371,7 +1371,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                     try {
                         stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                         await new Promise((_resolve, reject) => process.nextTick(reject));
-                    } catch (error: unknown) {
+                    } catch {
                         expect(loadingIndicator.hide).toHaveBeenCalled();
                     }
                 });

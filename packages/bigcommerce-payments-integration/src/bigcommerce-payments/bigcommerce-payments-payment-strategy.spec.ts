@@ -630,7 +630,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(paypalIntegrationService.loadPayPalSdk).toHaveBeenCalled();
             }
         });
@@ -652,7 +652,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(paypalIntegrationService.loadPayPalSdk).not.toHaveBeenCalled();
             }
         });
@@ -698,7 +698,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(paypalSdk.Buttons).toHaveBeenCalled();
             }
         });
@@ -768,7 +768,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(bigCommercePaymentsSdkCloseMock).toHaveBeenCalled();
             }
         });
@@ -816,7 +816,7 @@ describe('BigCommercePaymentsPaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(bigCommercePaymentsOptions.onError).toHaveBeenCalledWith(
                     new Error('INSTRUMENT_DECLINED'),
                 );

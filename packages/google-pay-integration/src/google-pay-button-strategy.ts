@@ -79,7 +79,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             paymentMethod = state.getPaymentMethodOrThrow(this._getMethodOrThrow());
-        } catch (_e) {
+        } catch {
             state = await this._paymentIntegrationService.loadPaymentMethod(
                 this._getMethodOrThrow(),
             );

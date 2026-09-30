@@ -35,6 +35,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         options: CustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions,
     ): Promise<void> {
         const { methodId, paypalcommercefastlane } = options;
+
         this.options = options;
 
         if (!methodId) {

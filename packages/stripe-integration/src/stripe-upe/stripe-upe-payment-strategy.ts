@@ -397,7 +397,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
-        } catch (error) {
+        } catch {
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         }
     }
@@ -450,10 +450,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         try {
             result = await this._stripeUPEClient.confirmCardPayment(clientSecret);
-        } catch (error) {
+        } catch {
             try {
                 result = await this._stripeUPEClient.retrievePaymentIntent(clientSecret);
-            } catch (error) {
+            } catch {
                 catchedConfirmError = true;
             }
         }
