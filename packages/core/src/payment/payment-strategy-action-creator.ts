@@ -6,6 +6,7 @@ import {
     PaymentIntegrationService,
     PaymentStrategy as PaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import {
     CheckoutActionCreator,
@@ -128,14 +129,18 @@ export default class PaymentStrategyActionCreator {
                                   )
                             : undefined;
 
-                    const promise: Promise<InternalCheckoutSelectors | void> = strategy.execute(
-                        payload,
-                        {
+                    let promise: Promise<InternalCheckoutSelectors | void>;
+
+                    try {
+                        promise = strategy.execute(payload, {
                             ...options,
                             methodId: payment.methodId,
                             gatewayId: payment.gatewayId,
-                        },
-                    );
+                        });
+                    } catch (error) {
+                        orderCreatedSubscription?.unsubscribe();
+                        throw error;
+                    }
 
                     return promise.then(
                         () => {
@@ -382,9 +387,9 @@ export default class PaymentStrategyActionCreator {
     }
 
     private _isOrderCreationTimeMetricsEnabled(): boolean {
-        const checkoutSettings = this._store.getState().config.getStoreConfig()?.checkoutSettings;
+        const { checkoutSettings } = this._store.getState().config.getStoreConfigOrThrow();
 
-        return Boolean(checkoutSettings?.features[ORDER_CREATION_TIME_METRICS]);
+        return isExperimentEnabled(checkoutSettings.features, ORDER_CREATION_TIME_METRICS);
     }
 
     private _reportOrderCreationTime(startTime: number, orderId: number): void {
