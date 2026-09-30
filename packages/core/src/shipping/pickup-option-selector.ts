@@ -27,7 +27,7 @@ export function createPickupOptionSelectorFactory(): PickupOptionSelectorFactory
 
             const flattenedParams = objectFlatten({ consignmentId, searchArea });
             const sortedFlattenedParams = objectWithSortedKeys(flattenedParams);
-            const keyString = btoa(`${JSON.stringify(sortedFlattenedParams)}`);
+            const keyString = btoa(JSON.stringify(sortedFlattenedParams));
 
             return pickupOptions[keyString];
         },

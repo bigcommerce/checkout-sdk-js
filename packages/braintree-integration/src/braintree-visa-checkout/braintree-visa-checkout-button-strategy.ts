@@ -102,6 +102,7 @@ export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButt
 
             const {
                 shippingAddress = this.toVisaCheckoutAddress(shipping),
+                // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
                 billingAddress = this.toVisaCheckoutAddress(billing),
             } = payload;
 

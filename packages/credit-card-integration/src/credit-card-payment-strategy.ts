@@ -45,6 +45,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
 
         const formOptions = options && options.creditCard && options.creditCard.form;
         const state = this._paymentIntegrationService.getState();
+        // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
         const { paymentSettings: { bigpayBaseUrl: host = '' } = {} } =
             state.getStoreConfigOrThrow();
 
