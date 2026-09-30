@@ -122,6 +122,21 @@ It should be an HTML element.
 
 ## Methods
 
+### getFieldsValues()?
+
+> `optional` **getFieldsValues**(): `HostedInstrument`
+
+A callback that returns the shopper's stored-instrument choices from the
+checkout form. It is invoked when the shopper pays, not when the strategy
+is initialized, so it always reflects the current state of the
+"save payment method" checkbox.
+
+#### Returns
+
+`HostedInstrument`
+
+***
+
 ### onError()?
 
 > `optional` **onError**(`error`): `void`

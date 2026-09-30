@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.984.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.983.6...v1.984.0) (2026-09-30)
+
+
+### Features
+
+* **payment:** send the shopper's save-instrument choice for Stripe Google Pay ([#3424](https://github.com/bigcommerce/checkout-sdk-js/issues/3424)) ([3478fc9](https://github.com/bigcommerce/checkout-sdk-js/commit/3478fc9df801ae36caa33c18a66a8375dc7b6e3c))
+
 ### [1.983.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.983.5...v1.983.6) (2026-09-30)
 
 ### [1.983.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.983.4...v1.983.5) (2026-09-29)
