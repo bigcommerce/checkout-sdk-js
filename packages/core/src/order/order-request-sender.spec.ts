@@ -27,6 +27,14 @@ describe('OrderRequestSender', () => {
         'lineItems.digitalItems.options',
         'lineItems.digitalItems.categories',
     ].join(',');
+    const createOrderInclude = [
+        'lineItems.physicalItems.socialMedia',
+        'lineItems.physicalItems.options',
+        'lineItems.physicalItems.categories',
+        'lineItems.digitalItems.socialMedia',
+        'lineItems.digitalItems.options',
+        'lineItems.digitalItems.categories',
+    ].join(',');
 
     const requestSender = createRequestSender();
 
@@ -318,7 +326,7 @@ describe('OrderRequestSender', () => {
                 '/internalapi/v1/checkout/order',
                 expect.objectContaining({
                     body: payload,
-                    params: { include },
+                    params: { include: createOrderInclude },
                 }),
             );
         });
