@@ -278,10 +278,8 @@ describe('consignmentActionCreator', () => {
                 ).mockReturnValue(consignment);
 
                 const checkoutStoreState = getCheckoutStoreState();
-                // tslint:disable-next-line:no-non-null-assertion
                 const physicalItems = checkoutStoreState.cart.data!.lineItems.physicalItems;
 
-                // tslint:disable-next-line:no-non-null-assertion
                 checkoutStoreState.cart.data!.lineItems.physicalItems = [
                     physicalItems[0],
                     {
@@ -291,7 +289,6 @@ describe('consignmentActionCreator', () => {
                     },
                 ];
 
-                // tslint:disable-next-line:no-non-null-assertion
                 checkoutStoreState.consignments.data![0].lineItemIds = ['existing'];
                 store = createCheckoutStore(checkoutStoreState);
             });
@@ -537,19 +534,15 @@ describe('consignmentActionCreator', () => {
             it('sends request to update consignment combining existing items', async () => {
                 const checkoutStoreState = getCheckoutStoreState();
 
-                // tslint:disable-next-line:no-non-null-assertion
                 checkoutStoreState.cart.data!.lineItems.physicalItems = [
-                    // tslint:disable-next-line:no-non-null-assertion
                     checkoutStoreState.cart.data!.lineItems.physicalItems[0],
                     {
-                        // tslint:disable-next-line:no-non-null-assertion
                         ...checkoutStoreState.cart.data!.lineItems.physicalItems[0],
                         id: 'existing',
                         quantity: 3,
                     },
                 ];
 
-                // tslint:disable-next-line:no-non-null-assertion
                 checkoutStoreState.consignments.data![0].lineItemIds = [
                     '12e11c8f-7dce-4da3-9413-b649533f8bad',
                     'existing',

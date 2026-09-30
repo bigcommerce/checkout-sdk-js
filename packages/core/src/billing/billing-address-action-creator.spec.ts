@@ -125,7 +125,6 @@ describe('BillingAddressActionCreator', () => {
                     customer: {
                         ...state.customer,
                         data: {
-                            // tslint:disable-next-line:no-non-null-assertion
                             ...state.customer.data!,
                             isGuest: true,
                         },
@@ -302,7 +301,6 @@ describe('BillingAddressActionCreator', () => {
                     customer: {
                         ...state.customer,
                         data: {
-                            // tslint:disable-next-line:no-non-null-assertion
                             ...state.customer.data!,
                             isGuest: true,
                         },

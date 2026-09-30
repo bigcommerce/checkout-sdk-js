@@ -278,7 +278,6 @@ describe('CreditCardRedirectPaymentStrategy', () => {
 
             expect(formFactory.create).toHaveBeenCalledWith(
                 'https://bigpay.integration.zone',
-                // tslint:disable-next-line:no-non-null-assertion
                 initializeOptions.creditCard!.form,
             );
         });

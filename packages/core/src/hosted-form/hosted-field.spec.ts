@@ -57,7 +57,6 @@ describe('HostedField', () => {
     it('sets iframe URL with version param and checkout param', () => {
         field.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
             `${location.origin}/checkout/payment/hosted-field?version=1.0.0&checkoutId=some-checkout-id`,
         );
@@ -65,7 +64,6 @@ describe('HostedField', () => {
 
     it('sets target for event poster', async () => {
         process.nextTick(() => {
-            // tslint:disable-next-line:no-non-null-assertion
             document.querySelector('#field-container-id iframe')!.dispatchEvent(new Event('load'));
         });
 
@@ -76,7 +74,6 @@ describe('HostedField', () => {
 
     it('ensures presence of iframe during attachment', async () => {
         process.nextTick(() => {
-            // tslint:disable-next-line:no-non-null-assertion
             document.querySelector('#field-container-id iframe')!.dispatchEvent(new Event('load'));
         });
 
@@ -96,7 +93,6 @@ describe('HostedField', () => {
         });
 
         process.nextTick(() => {
-            // tslint:disable-next-line:no-non-null-assertion
             document.querySelector('#field-container-id iframe')!.dispatchEvent(new Event('load'));
         });
 
@@ -134,7 +130,6 @@ describe('HostedField', () => {
         });
 
         process.nextTick(() => {
-            // tslint:disable-next-line:no-non-null-assertion
             document.querySelector('#field-container-id iframe')!.dispatchEvent(new Event('load'));
         });
 
@@ -244,7 +239,6 @@ describe('HostedField', () => {
         jest.spyOn(eventPoster, 'post').mockRejectedValue({
             type: HostedInputEventType.SubmitFailed,
             payload: {
-                // tslint:disable-next-line:no-non-null-assertion
                 error: getErrorPaymentResponseBody().errors![0],
                 response: getResponse(getErrorPaymentResponseBody()),
             },
