@@ -397,7 +397,8 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             }
 
             if (this.paypalButtonRender.isEligible()) {
-                this.paypalButtonRender.render(containerId);
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                this.paypalButtonRender.render(`${containerId}`);
             }
         } else {
             this.removeElement(containerId.split('#')[1]);
