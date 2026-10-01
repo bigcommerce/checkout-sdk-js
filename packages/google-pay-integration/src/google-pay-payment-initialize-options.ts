@@ -158,6 +158,7 @@ export enum GooglePayKey {
  * The options that are required to initialize the GooglePay payment method.
  * They can be omitted unless you need to support GooglePay.
  */
-export type WithGooglePayPaymentInitializeOptions = Partial<
-    Record<GooglePayKey, GooglePayPaymentInitializeOptions>
->;
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export type WithGooglePayPaymentInitializeOptions = {
+    [k in GooglePayKey]?: GooglePayPaymentInitializeOptions;
+};
