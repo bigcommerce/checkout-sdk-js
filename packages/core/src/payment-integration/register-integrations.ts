@@ -9,7 +9,7 @@ export type StrategyFactory<TStrategy> = (
     paymentIntegrationService: PaymentIntegrationService,
 ) => TStrategy;
 
-export function registerIntegrations<TStrategy, TResolveId extends { [key: string]: unknown }>(
+export function registerIntegrations<TStrategy, TResolveId extends Record<string, unknown>>(
     registry: ResolveIdRegistry<TStrategy, TResolveId>,
     integrations: Array<StrategyFactory<TStrategy>>,
     paymentIntegrationService: PaymentIntegrationService,

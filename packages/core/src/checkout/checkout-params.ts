@@ -12,6 +12,4 @@ export default interface CheckoutParams {
     include?: CheckoutIncludes[] | CheckoutIncludeParam;
 }
 
-export type CheckoutIncludeParam = {
-    [key in CheckoutIncludes]?: boolean;
-};
+export type CheckoutIncludeParam = Partial<Record<CheckoutIncludes, boolean>>;

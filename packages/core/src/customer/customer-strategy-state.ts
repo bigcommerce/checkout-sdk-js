@@ -4,16 +4,17 @@ export default interface CustomerStrategyState {
     statuses: CustomerStrategyStatusesState;
 }
 
-export interface CustomerStrategyDataState {
-    [key: string]: {
+export type CustomerStrategyDataState = Record<
+    string,
+    {
         isInitialized: boolean;
-    };
-}
+    }
+>;
 
 export interface CustomerStrategyErrorsState {
     deinitializeError?: Error;
     deinitializeMethodId?: string;
-    initializeErrors?: { [key: string]: Error };
+    initializeErrors?: Record<string, Error>;
     initializeMethodId?: string;
     signInError?: Error;
     signInMethodId?: string;

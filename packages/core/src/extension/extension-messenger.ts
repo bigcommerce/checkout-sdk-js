@@ -19,13 +19,9 @@ export class ExtensionMessenger {
     constructor(
         private _store: ReadableCheckoutStore,
         private _workerExtensionMessenger: WorkerExtensionMessenger,
-        private _commandListeners: {
-            [extensionId: string]: IframeEventListener<ExtensionCommandMap>;
-        } = {},
-        private _queryListeners: {
-            [extensionId: string]: IframeEventListener<ExtensionQueryMap>;
-        } = {},
-        private _posters: { [extensionId: string]: IframeEventPoster<ExtensionMessage> } = {},
+        private _commandListeners: Record<string, IframeEventListener<ExtensionCommandMap>> = {},
+        private _queryListeners: Record<string, IframeEventListener<ExtensionQueryMap>> = {},
+        private _posters: Record<string, IframeEventPoster<ExtensionMessage>> = {},
     ) {}
 
     clearCacheByRegion(region: string): void {

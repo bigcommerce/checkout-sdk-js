@@ -27,9 +27,7 @@ export interface ShowLoadingIndicatorCommand {
 export interface SetIframeStyleCommand {
     type: ExtensionCommandType.SetIframeStyle;
     payload: {
-        style: {
-            [key: string]: string | number | null;
-        };
+        style: Record<string, string | number | null>;
     };
 }
 

@@ -1,21 +1,13 @@
 import { CheckoutButtonMethodType } from './strategies';
 
 export default interface CheckoutButtonState {
-    data: {
-        [key in CheckoutButtonMethodType]?: CheckoutButtonDataState | undefined;
-    };
-    errors: {
-        [key in CheckoutButtonMethodType]?: CheckoutButtonErrorsState | undefined;
-    };
-    statuses: {
-        [key in CheckoutButtonMethodType]?: CheckoutButtonStatusesState | undefined;
-    };
+    data: Partial<Record<CheckoutButtonMethodType, CheckoutButtonDataState | undefined>>;
+    errors: Partial<Record<CheckoutButtonMethodType, CheckoutButtonErrorsState | undefined>>;
+    statuses: Partial<Record<CheckoutButtonMethodType, CheckoutButtonStatusesState | undefined>>;
 }
 
 export interface CheckoutButtonDataState {
-    initializedContainers: {
-        [key: string]: boolean;
-    };
+    initializedContainers: Record<string, boolean>;
 }
 
 export interface CheckoutButtonErrorsState {

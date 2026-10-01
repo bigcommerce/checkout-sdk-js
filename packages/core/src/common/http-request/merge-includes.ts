@@ -8,7 +8,7 @@ import joinIncludes from './join-includes';
  */
 export default function mergeIncludes<T extends string>(
     baseIncludes: T[],
-    includesDictionary?: { [key in T]?: boolean },
+    includesDictionary?: Partial<Record<T, boolean>>,
 ): string {
     const deletions = keys(pickBy(includesDictionary, (on) => !on));
     const additions = keys(pickBy(includesDictionary, (on) => on));

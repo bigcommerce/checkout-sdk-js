@@ -1,4 +1,4 @@
-export default function objectWithSortedKeys(object: { [key: string]: any }) {
+export default function objectWithSortedKeys(object: Record<string, any>) {
     const keys = Object.keys(object);
     const sortedKeys = keys.sort();
 

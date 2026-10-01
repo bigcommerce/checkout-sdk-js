@@ -1,6 +1,7 @@
-export interface ExtraItemsData {
-    [productId: string]: {
+export type ExtraItemsData = Record<
+    string,
+    {
         brand: string;
         category: string;
-    };
-}
+    }
+>;

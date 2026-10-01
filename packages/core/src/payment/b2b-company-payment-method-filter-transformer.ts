@@ -2,7 +2,7 @@ import { B2BCompanyPaymentMethodsResponseBody } from './b2b-company-payment-meth
 import PaymentMethod from './payment-method';
 import { OFFLINE } from './payment-method-types';
 
-const legacyProviderCodeMap: { [methodId: string]: string } = {
+const legacyProviderCodeMap: Record<string, string> = {
     quickbooks: 'qbmsv2',
     elavon: 'myvirtualmerchant',
 };
