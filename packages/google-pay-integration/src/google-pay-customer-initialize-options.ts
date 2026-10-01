@@ -59,6 +59,6 @@ export default interface GooglePayCustomerInitializeOptions {
  * The options that are required to initialize the GooglePay payment method.
  * They can be omitted unless you need to support GooglePay.
  */
-export type WithGooglePayCustomerInitializeOptions = {
-    [k in GooglePayKey]?: GooglePayCustomerInitializeOptions;
-};
+export type WithGooglePayCustomerInitializeOptions = Partial<
+    Record<GooglePayKey, GooglePayCustomerInitializeOptions>
+>;

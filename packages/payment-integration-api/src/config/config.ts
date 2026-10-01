@@ -114,7 +114,7 @@ export interface B2BServiceDetails {
 export interface CheckoutSettings {
     capabilities?: Capabilities;
     b2bServiceDetails?: B2BServiceDetails;
-    features: { [featureName: string]: boolean };
+    features: Record<string, boolean>;
     checkoutBillingSameAsShippingEnabled: boolean;
     checkoutUserExperienceSettings: UserExperienceSettings;
     enableOrderComments: boolean;

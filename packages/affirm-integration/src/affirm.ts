@@ -68,12 +68,13 @@ export interface AffirmItem {
     categories?: string[][];
 }
 
-export interface AffirmDiscount {
-    [key: string]: {
+export type AffirmDiscount = Record<
+    string,
+    {
         discount_amount: number;
         discount_display_name: string;
-    };
-}
+    }
+>;
 
 export interface AffirmAddress {
     name: {
