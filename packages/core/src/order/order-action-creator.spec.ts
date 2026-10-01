@@ -7,6 +7,7 @@ import { catchError, toArray } from 'rxjs/operators';
 import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { getCart, getCartState } from '../cart/carts.mock';
+import { CartChangedError, CartConsistencyError } from '../cart/errors';
 import {
     CheckoutRequestSender,
     CheckoutStore,
@@ -32,6 +33,7 @@ import {
 import Order from './order';
 import OrderActionCreator, {
     RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER,
+    VALIDATE_CART_VERSION_ON_ORDER_CREATION,
 } from './order-action-creator';
 import { OrderActionType } from './order-actions';
 import OrderRequestSender from './order-request-sender';
@@ -429,6 +431,105 @@ describe('OrderActionCreator', () => {
             await from(orderActionCreator.submitOrder(getOrderRequestBody())(store)).toPromise();
 
             expect(orderRequestSender.loadOrder).toHaveBeenCalledWith(295, undefined);
+        });
+
+        describe('when validate_cart_version_on_order_creation experiment is enabled', () => {
+            beforeEach(() => {
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {
+                            [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: true,
+                        },
+                    },
+                });
+            });
+
+            it('submits order with cart version and does not call CheckoutValidator beforehand', async () => {
+                await from(
+                    orderActionCreator.submitOrder(getOrderRequestBody())(store),
+                ).toPromise();
+
+                expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(
+                    expect.objectContaining({ version: getCheckout().version }),
+                    expect.anything(),
+                );
+                expect(checkoutValidator.validate).not.toHaveBeenCalled();
+            });
+
+            it('falls back to CheckoutValidator and throws CartChangedError when the comparator detects a diff', async () => {
+                const cartConsistencyError = new CartConsistencyError();
+                const cartChangedError = new CartChangedError(
+                    { cart: {}, coupons: [], giftCertificates: [], outstandingBalance: 0 },
+                    { cart: {}, coupons: [], giftCertificates: [], outstandingBalance: 0 },
+                );
+
+                jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
+                    Promise.reject(cartConsistencyError),
+                );
+                jest.spyOn(checkoutValidator, 'validate').mockReturnValue(
+                    Promise.reject(cartChangedError),
+                );
+
+                const errorHandler = jest.fn((action) => of(action));
+                const actions = await from(
+                    orderActionCreator.submitOrder(getOrderRequestBody())(store),
+                )
+                    .pipe(catchError(errorHandler), toArray())
+                    .toPromise();
+
+                expect(checkoutValidator.validate).toHaveBeenCalled();
+                expect(errorHandler).toHaveBeenCalled();
+                expect(actions).toEqual([
+                    { type: OrderActionType.SubmitOrderRequested },
+                    {
+                        type: OrderActionType.SubmitOrderFailed,
+                        payload: cartChangedError,
+                        error: true,
+                    },
+                ]);
+            });
+
+            it('rethrows the original CartConsistencyError when CheckoutValidator does not detect a diff', async () => {
+                const cartConsistencyError = new CartConsistencyError();
+
+                jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
+                    Promise.reject(cartConsistencyError),
+                );
+                jest.spyOn(checkoutValidator, 'validate').mockReturnValue(Promise.resolve());
+
+                const errorHandler = jest.fn((action) => of(action));
+                const actions = await from(
+                    orderActionCreator.submitOrder(getOrderRequestBody())(store),
+                )
+                    .pipe(catchError(errorHandler), toArray())
+                    .toPromise();
+
+                expect(checkoutValidator.validate).toHaveBeenCalled();
+                expect(actions).toEqual([
+                    { type: OrderActionType.SubmitOrderRequested },
+                    {
+                        type: OrderActionType.SubmitOrderFailed,
+                        payload: cartConsistencyError,
+                        error: true,
+                    },
+                ]);
+            });
+
+            it('does not call CheckoutValidator when submission fails with an unrelated error', async () => {
+                jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
+                    Promise.reject(errorResponse),
+                );
+
+                const errorHandler = jest.fn((action) => of(action));
+
+                await from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                    .pipe(catchError(errorHandler), toArray())
+                    .toPromise();
+
+                expect(checkoutValidator.validate).not.toHaveBeenCalled();
+            });
         });
     });
 
