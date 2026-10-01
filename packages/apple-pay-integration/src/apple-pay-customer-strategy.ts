@@ -206,12 +206,14 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         const total: ApplePayJS.ApplePayLineItem = requiresShipping
             ? {
                   label: storeName,
-                  amount: checkout.grandTotal.toFixed(decimalPlaces),
+                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                  amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                   type: 'pending',
               }
             : {
                   label: storeName,
-                  amount: checkout.grandTotal.toFixed(decimalPlaces),
+                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                  amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                   type: 'final',
               };
 
@@ -232,14 +234,16 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             const lineItems: ApplePayJS.ApplePayLineItem[] = [
                 {
                     label: this._subTotalLabel,
-                    amount: checkout.subtotal.toFixed(decimalPlaces),
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                    amount: `${checkout.subtotal.toFixed(decimalPlaces)}`,
                 },
             ];
 
             checkout.taxes.forEach((tax) =>
                 lineItems.push({
                     label: tax.name,
-                    amount: tax.amount.toFixed(decimalPlaces),
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                    amount: `${tax.amount.toFixed(decimalPlaces)}`,
                 }),
             );
 
@@ -334,7 +338,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             ? [
                   {
                       label: selectedOption.description,
-                      amount: selectedOption.cost.toFixed(decimalPlaces),
+                      // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                      amount: `${selectedOption.cost.toFixed(decimalPlaces)}`,
                       detail: selectedOption.additionalDescription,
                       identifier: selectedOption.id,
                   },
@@ -348,7 +353,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             ].forEach((option) =>
                 shippingOptions.push({
                     label: option.description,
-                    amount: option.cost.toFixed(decimalPlaces),
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                    amount: `${option.cost.toFixed(decimalPlaces)}`,
                     detail: option.additionalDescription,
                     identifier: option.id,
                 }),
@@ -366,7 +372,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 {
                     type: 'pending',
                     label: storeName,
-                    amount: checkout.grandTotal.toFixed(decimalPlaces),
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                    amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                 },
                 [],
             );
@@ -393,7 +400,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             newTotal: {
                 type: 'final',
                 label: storeName,
-                amount: checkout.grandTotal.toFixed(decimalPlaces),
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
             },
             newLineItems: this._getUpdatedLineItems(checkout, decimalPlaces),
         });
@@ -430,7 +438,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             newTotal: {
                 type: 'final',
                 label: storeName,
-                amount: checkout.grandTotal.toFixed(decimalPlaces),
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
             },
             newLineItems: this._getUpdatedLineItems(checkout, decimalPlaces),
         });
@@ -443,19 +452,22 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         const lineItems: ApplePayJS.ApplePayLineItem[] = [
             {
                 label: this._subTotalLabel,
-                amount: checkout.subtotal.toFixed(decimalPlaces),
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                amount: `${checkout.subtotal.toFixed(decimalPlaces)}`,
             },
         ];
 
         checkout.taxes.forEach((tax) =>
             lineItems.push({
                 label: tax.name,
-                amount: tax.amount.toFixed(decimalPlaces),
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                amount: `${tax.amount.toFixed(decimalPlaces)}`,
             }),
         );
         lineItems.push({
             label: this._shippingLabel,
-            amount: checkout.shippingCostTotal.toFixed(decimalPlaces),
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+            amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`,
         });
 
         return lineItems;

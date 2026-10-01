@@ -142,20 +142,23 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         const lineItems: ApplePayJS.ApplePayLineItem[] = [
             {
                 label: this._subTotalLabel,
-                amount: checkout.subtotal.toFixed(decimalPlaces),
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                amount: `${checkout.subtotal.toFixed(decimalPlaces)}`,
             },
         ];
 
         checkout.taxes.forEach((tax) =>
             lineItems.push({
                 label: tax.name,
-                amount: tax.amount.toFixed(decimalPlaces),
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                amount: `${tax.amount.toFixed(decimalPlaces)}`,
             }),
         );
 
         lineItems.push({
             label: this._shippingLabel,
-            amount: checkout.shippingCostTotal.toFixed(decimalPlaces),
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+            amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`,
         });
 
         if (isStoreCreditApplied) {
@@ -175,7 +178,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             lineItems,
             total: {
                 label: storeName,
-                amount: outstandingBalance.toFixed(decimalPlaces),
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
+                amount: `${outstandingBalance.toFixed(decimalPlaces)}`,
                 type: 'final',
             },
         };
