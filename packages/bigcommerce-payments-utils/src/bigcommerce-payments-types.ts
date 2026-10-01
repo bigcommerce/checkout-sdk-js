@@ -390,9 +390,7 @@ export interface BigCommercePaymentsFieldsStyleOptions {
         borderFocusColor?: string;
         spacingUnit?: string;
     };
-    rules?: {
-        [key: string]: any;
-    };
+    rules?: Record<string, any>;
 }
 
 /**

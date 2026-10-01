@@ -13,10 +13,10 @@ export default function createFreezeProxy<T extends object>(target: T): T {
     );
 }
 
-export function createFreezeProxies<T extends object, TMap extends { [key: string]: T }>(
+export function createFreezeProxies<T extends object, TMap extends Record<string, T>>(
     map: TMap,
 ): TMap {
-    return Object.keys(map).reduce<{ [key: string]: T }>((result, key) => {
+    return Object.keys(map).reduce<Record<string, T>>((result, key) => {
         result[key] = createFreezeProxy(map[key]);
 
         return result;

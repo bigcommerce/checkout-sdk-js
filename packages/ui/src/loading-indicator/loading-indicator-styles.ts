@@ -4,6 +4,4 @@ export interface LoadingIndicatorStyles {
     backgroundColor?: string;
 }
 
-export interface LoadingIndicatorContainerStyles {
-    [key: string]: string;
-}
+export type LoadingIndicatorContainerStyles = Record<string, string>;

@@ -68,6 +68,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             await this.paymentIntegrationService.loadDefaultCheckout();
 
             const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
+
             if (checkout.shouldExecuteSpamCheck) {
                 await this.paymentIntegrationService.verifyCheckoutSpamProtection();
             }

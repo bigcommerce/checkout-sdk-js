@@ -1,8 +1,6 @@
 import PaymentInstrument from './instrument';
 
-interface SupportedInstruments {
-    [key: string]: Pick<PaymentInstrument, 'method' | 'provider'>;
-}
+type SupportedInstruments = Record<string, Pick<PaymentInstrument, 'method' | 'provider'>>;
 
 const supportedInstruments: SupportedInstruments = {
     'mollie.credit_card': {

@@ -211,10 +211,10 @@ export interface BraintreeHostedFieldsCreatorConfig extends BraintreeModuleCreat
         cardholderName?: BraintreeHostedFieldOption;
     };
     styles?: {
-        input?: { [key: string]: string };
-        '.invalid'?: { [key: string]: string };
-        '.valid'?: { [key: string]: string };
-        ':focus'?: { [key: string]: string };
+        input?: Record<string, string>;
+        '.invalid'?: Record<string, string>;
+        '.valid'?: Record<string, string>;
+        ':focus'?: Record<string, string>;
     };
     preventCursorJumps?: boolean;
 }
@@ -231,7 +231,7 @@ export interface BraintreeHostedFieldOption {
     minlength?: number;
     prefill?: string;
     rejectUnsupportedCards?: boolean;
-    supportedCardBrands?: { [key: string]: boolean };
+    supportedCardBrands?: Record<string, boolean>;
 }
 
 export interface BraintreeHostedFieldsState {

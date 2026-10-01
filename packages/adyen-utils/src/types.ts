@@ -439,11 +439,7 @@ export interface AdyenConfiguration {
      *   ...
      * }
      */
-    translations?: {
-        [index: string]: {
-            [index: string]: string;
-        };
-    };
+    translations?: Record<string, Record<string, string>>;
 
     /*
      * Specify the function that you created, for example, handleOnChange. If you wish
@@ -801,7 +797,7 @@ export interface Card {
 export interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
-    valid?: { [key: string]: boolean };
+    valid?: Record<string, boolean>;
     errors?: CardStateErrors;
 }
 
@@ -826,7 +822,7 @@ export interface AdyenComponentState {
     data?: CardStateData | IdealStateData | SepaStateData;
     issuer?: string;
     isValid?: boolean;
-    valid?: { [key: string]: boolean };
+    valid?: Record<string, boolean>;
     errors?: CardStateErrors;
 }
 
@@ -835,9 +831,7 @@ interface CardDataPaymentMethodState {
     installments?: { value: number; plan?: 'string' };
 }
 
-export interface CardStateErrors {
-    [key: string]: string;
-}
+export type CardStateErrors = Record<string, string>;
 
 export interface WechatState {
     data: WechatDataPaymentMethodState;

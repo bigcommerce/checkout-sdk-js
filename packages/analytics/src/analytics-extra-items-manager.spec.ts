@@ -17,7 +17,7 @@ describe('AnalyticsExtraItemsManager', () => {
                 category: '',
             },
         };
-        const setItemMock = jest.fn((id: string, result: { [key: string]: unknown }) => ({
+        const setItemMock = jest.fn((id: string, result: Record<string, unknown>) => ({
             id,
             result,
         }));

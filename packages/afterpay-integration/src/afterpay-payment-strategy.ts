@@ -126,7 +126,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
     }
 
     private _mapCurrencyToISO2(currencyCode: string): string {
-        const countryByCurrency: { [key: string]: string } = {
+        const countryByCurrency: Record<string, string> = {
             AUD: 'AU',
             NZD: 'NZ',
             CAD: 'CA',

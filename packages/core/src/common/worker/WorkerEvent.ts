@@ -3,6 +3,7 @@ export default interface WorkerEvent<TType = string, TPayload = any> {
     payload?: TPayload;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export type WorkerEventMap<TType extends string | number | symbol = string> = {
     [key in TType]: WorkerEvent<TType>;
 };

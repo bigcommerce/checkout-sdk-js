@@ -150,7 +150,7 @@ export default class GooglePayGateway {
         return [CallbackIntentsType.OFFER];
     }
 
-    getCallbackTriggers(): { [key: string]: CallbackTriggerType[] } {
+    getCallbackTriggers(): Record<string, CallbackTriggerType[]> {
         const availableTriggers = [
             CallbackTriggerType.INITIALIZE,
             CallbackTriggerType.SHIPPING_ADDRESS,

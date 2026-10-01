@@ -3,9 +3,7 @@ export type BluesnapDirectNocInputAllowedStyle = Pick<
     'color' | 'fontFamily' | 'fontSize' | 'fontWeight'
 >;
 
-export interface BlueSnapDirectStyleDeclaration {
-    [k: string]: string;
-}
+export type BlueSnapDirectStyleDeclaration = Record<string, string>;
 
 export interface BlueSnapDirectStyle {
     '.invalid'?: BlueSnapDirectStyleDeclaration;
