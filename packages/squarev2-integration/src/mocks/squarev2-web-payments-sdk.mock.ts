@@ -11,9 +11,10 @@ export function getSquareV2MockFunctions() {
     const configure = jest.fn().mockResolvedValue(undefined);
     const tokenize = jest.fn().mockResolvedValue({ status: 'OK', token: 'cnon:xxx' });
     const destroy = jest.fn().mockResolvedValue(true);
-    const listeners: Partial<
-        Record<CardInputEventTypes, (event: SqEvent<CardInputEvent>) => void>
-    > = {};
+    // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+    const listeners: Partial<{
+        [key in CardInputEventTypes]: (event: SqEvent<CardInputEvent>) => void;
+    }> = {};
     const addEventListener = jest
         .fn()
         .mockImplementation(

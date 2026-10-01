@@ -8,7 +8,8 @@ import joinIncludes from './join-includes';
  */
 export default function mergeIncludes<T extends string>(
     baseIncludes: T[],
-    includesDictionary?: Partial<Record<T, boolean>>,
+    // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+    includesDictionary?: { [key in T]?: boolean },
 ): string {
     const deletions = keys(pickBy(includesDictionary, (on) => !on));
     const additions = keys(pickBy(includesDictionary, (on) => on));

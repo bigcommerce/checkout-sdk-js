@@ -3,7 +3,7 @@ export default interface IframeEvent<TType = string, TPayload = any> {
     payload?: TPayload;
 }
 
-export type IframeEventMap<TType extends string | number | symbol = string> = Record<
-    TType,
-    IframeEvent<TType>
->;
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export type IframeEventMap<TType extends string | number | symbol = string> = {
+    [key in TType]: IframeEvent<TType>;
+};

@@ -12,4 +12,7 @@ export default interface CheckoutParams {
     include?: CheckoutIncludes[] | CheckoutIncludeParam;
 }
 
-export type CheckoutIncludeParam = Partial<Record<CheckoutIncludes, boolean>>;
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export type CheckoutIncludeParam = {
+    [key in CheckoutIncludes]?: boolean;
+};

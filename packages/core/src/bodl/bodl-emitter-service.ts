@@ -164,7 +164,8 @@ export default class BodlEmitterService implements BodlService {
     private _trackCompletedStep(step: AnalyticStepType) {
         this._completedSteps[step] = true;
 
-        const bodlEventsMap: Partial<Record<AnalyticStepType, () => void>> = {
+        // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+        const bodlEventsMap: { [key in AnalyticStepType]?: () => void } = {
             [AnalyticStepType.SHIPPING]: this._trackShippingStepCompleted.bind(this),
         };
         const emit = bodlEventsMap[step];
