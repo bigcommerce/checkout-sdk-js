@@ -5,6 +5,7 @@ interface CookieOptions {
     secure?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class CookieStorage {
     static get(name: string): string | null {
         const cookieKey = `${encodeURIComponent(`${name}`)}=`;
