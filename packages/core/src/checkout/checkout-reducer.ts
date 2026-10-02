@@ -80,8 +80,18 @@ function dataReducer(
         case CheckoutActionType.DeleteCheckoutSucceeded:
             return undefined;
 
-        case OrderActionType.SubmitOrderSucceeded:
-            return objectSet(data, 'orderId', action.payload && action.payload.order.orderId);
+        case OrderActionType.SubmitOrderSucceeded: {
+            const dataWithOrderId = objectSet(
+                data,
+                'orderId',
+                action.payload && action.payload.order.orderId,
+            );
+            const version = action.meta && action.meta.version;
+
+            return version === undefined
+                ? dataWithOrderId
+                : objectSet(dataWithOrderId, 'version', version);
+        }
 
         case CheckoutHydrateActionType.HydrateInitialState:
             return objectMerge(
