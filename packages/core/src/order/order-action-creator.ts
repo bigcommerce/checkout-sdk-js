@@ -1,5 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, from, Observable, Observer, of } from 'rxjs';
+import { concat, defer, from, Observable, Observer, of, Subject } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
@@ -19,11 +19,21 @@ import {
 import OrderRequestBody from './order-request-body';
 import OrderRequestSender from './order-request-sender';
 
+export const RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER =
+    'PROJECT-8987.return_full_order_details_on_create_order';
+
 export default class OrderActionCreator {
+    private _orderCreated$ = new Subject<number>();
+
     constructor(
         private _orderRequestSender: OrderRequestSender,
         private _checkoutValidator: CheckoutValidator,
     ) {}
+
+    // Emits once `submitOrder` has created and refetched the order, before payment is submitted.
+    get orderCreated$(): Observable<number> {
+        return this._orderCreated$.asObservable();
+    }
 
     loadOrder(orderId: number, options?: RequestOptions): Observable<LoadOrderAction> {
         return new Observable((observer: Observer<LoadOrderAction>) => {
@@ -92,6 +102,7 @@ export default class OrderActionCreator {
                     const externalSource = state.config.getExternalSource();
                     const variantIdentificationToken = state.config.getVariantIdentificationToken();
                     const checkout = state.checkout.getCheckout();
+                    const includeOrderDetails = this._isReturnFullOrderDetailsEnabled(state);
 
                     if (!checkout) {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -115,23 +126,40 @@ export default class OrderActionCreator {
                                     headers: {
                                         checkoutVariant: variantIdentificationToken,
                                     },
+                                    includeOrderDetails,
                                 },
                             ),
                         ),
                     ).pipe(
-                        switchMap((response) =>
-                            concat(
-                                // TODO: Remove once we can submit orders using storefront API
-                                this.loadOrder(response.body.data.order.orderId, options),
-                                of(
-                                    createAction(
-                                        OrderActionType.SubmitOrderSucceeded,
-                                        response.body.data,
-                                        { ...response.body.meta, token: response.headers.token },
-                                    ),
-                                ),
-                            ),
-                        ),
+                        switchMap((response) => {
+                            const orderId = response.body.data.order.orderId;
+                            const { orderDetails } = response.body.data;
+
+                            return concat(
+                                orderDetails
+                                    ? of(
+                                          createAction(
+                                              OrderActionType.LoadOrderSucceeded,
+                                              orderDetails,
+                                          ),
+                                      )
+                                    : this.loadOrder(orderId, options),
+                                defer(() => {
+                                    this._orderCreated$.next(orderId);
+
+                                    return of(
+                                        createAction(
+                                            OrderActionType.SubmitOrderSucceeded,
+                                            response.body.data,
+                                            {
+                                                ...response.body.meta,
+                                                token: response.headers.token,
+                                            },
+                                        ),
+                                    );
+                                }),
+                            );
+                        }),
                     );
                 }).pipe(
                     catchError((error) =>
@@ -168,6 +196,12 @@ export default class OrderActionCreator {
         const checkout = state.checkout.getCheckout();
 
         return (order && order.orderId) || (checkout && checkout.orderId);
+    }
+
+    private _isReturnFullOrderDetailsEnabled(state: InternalCheckoutSelectors): boolean {
+        const checkoutSettings = state.config.getStoreConfig()?.checkoutSettings;
+
+        return Boolean(checkoutSettings?.features[RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER]);
     }
 
     private _mapToOrderRequestBody(

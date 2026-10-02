@@ -18,7 +18,7 @@ import { getCheckout, getCheckoutState, getCheckoutStoreState } from '../checkou
 import { MissingDataError } from '../common/error/errors';
 import { InternalResponseBody } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getConfigState } from '../config/configs.mock';
+import { getConfig, getConfigState } from '../config/configs.mock';
 import { SpamProtectionNotCompletedError } from '../spam-protection/errors';
 
 import { InternalOrderResponseBody } from './internal-order-responses';
@@ -30,7 +30,9 @@ import {
     getSubmitOrderResponseHeaders,
 } from './internal-orders.mock';
 import Order from './order';
-import OrderActionCreator from './order-action-creator';
+import OrderActionCreator, {
+    RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER,
+} from './order-action-creator';
 import { OrderActionType } from './order-actions';
 import OrderRequestSender from './order-request-sender';
 import { getOrder, getOrderState } from './orders.mock';
@@ -278,6 +280,55 @@ describe('OrderActionCreator', () => {
             ]);
         });
 
+        it('requests order details and skips loadOrder when the experiment is enabled and the response includes orderDetails', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        [RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER]: true,
+                    },
+                },
+            });
+
+            const responseWithOrderDetails: Response<InternalOrderResponseBody> = getResponse(
+                {
+                    ...getSubmitOrderResponseBody(),
+                    data: {
+                        ...getSubmitOrderResponseBody().data,
+                        orderDetails: getOrder(),
+                    },
+                },
+                getSubmitOrderResponseHeaders(),
+            );
+
+            jest.spyOn(orderRequestSender, 'submitOrder').mockResolvedValue(
+                responseWithOrderDetails,
+            );
+
+            const actions = await from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({ includeOrderDetails: true }),
+            );
+            expect(orderRequestSender.loadOrder).not.toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: OrderActionType.SubmitOrderRequested },
+                { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
+                {
+                    type: OrderActionType.SubmitOrderSucceeded,
+                    payload: responseWithOrderDetails.body.data,
+                    meta: {
+                        ...responseWithOrderDetails.body.meta,
+                        token: responseWithOrderDetails.headers.token,
+                    },
+                },
+            ]);
+        });
+
         it('emits error actions if unable to submit order', async () => {
             jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
                 Promise.reject(errorResponse),
@@ -340,7 +391,7 @@ describe('OrderActionCreator', () => {
 
             expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(
                 getInternalOrderRequestBody(),
-                { headers: { checkoutVariant: 'default' } },
+                { headers: { checkoutVariant: 'default' }, includeOrderDetails: false },
             );
         });
 
@@ -351,7 +402,7 @@ describe('OrderActionCreator', () => {
 
             expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(
                 omit(getInternalOrderRequestBody(), 'payment'),
-                { headers: { checkoutVariant: 'default' } },
+                { headers: { checkoutVariant: 'default' }, includeOrderDetails: false },
             );
         });
 
