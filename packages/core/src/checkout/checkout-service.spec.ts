@@ -369,7 +369,7 @@ describe('CheckoutService', () => {
 
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
-        jest.spyOn(checkoutValidator, 'validate').mockResolvedValue(undefined);
+        jest.spyOn(checkoutValidator, 'validate').mockResolvedValue(getCheckout());
 
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
