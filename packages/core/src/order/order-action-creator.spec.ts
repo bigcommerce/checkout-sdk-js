@@ -77,7 +77,7 @@ describe('OrderActionCreator', () => {
         // @ts-ignore
         jest.spyOn(orderRequestSender, 'finalizeOrder').mockReturnValue({});
 
-        jest.spyOn(checkoutValidator, 'validate').mockReturnValue(Promise.resolve());
+        jest.spyOn(checkoutValidator, 'validate').mockReturnValue(Promise.resolve(getCheckout()));
 
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
     });
@@ -458,6 +458,22 @@ describe('OrderActionCreator', () => {
                 expect(checkoutValidator.validate).not.toHaveBeenCalled();
             });
 
+            it('optimistically bumps the cart version by one when the order is created', async () => {
+                const actions = await from(
+                    orderActionCreator.submitOrder(getOrderRequestBody())(store),
+                )
+                    .pipe(toArray())
+                    .toPromise();
+
+                const succeededAction = actions.find(
+                    (action) => action.type === OrderActionType.SubmitOrderSucceeded,
+                );
+
+                expect(succeededAction?.meta).toEqual(
+                    expect.objectContaining({ version: getCheckout().version + 1 }),
+                );
+            });
+
             it('falls back to CheckoutValidator and throws CartChangedError when the comparator detects a diff', async () => {
                 const cartConsistencyError = new CartConsistencyError();
                 const cartChangedError = new CartChangedError(
@@ -491,13 +507,53 @@ describe('OrderActionCreator', () => {
                 ]);
             });
 
-            it('rethrows the original CartConsistencyError when CheckoutValidator does not detect a diff', async () => {
+            it('retries with the corrected cart version and succeeds when the validator finds no diff', async () => {
+                const cartConsistencyError = new CartConsistencyError();
+                const freshCheckout = {
+                    ...getCheckout(),
+                    cart: { ...getCheckout().cart, version: 42 },
+                };
+
+                jest.spyOn(orderRequestSender, 'submitOrder')
+                    .mockReturnValueOnce(Promise.reject(cartConsistencyError))
+                    .mockReturnValueOnce(
+                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        Promise.resolve(submitResponse),
+                    );
+                jest.spyOn(checkoutValidator, 'validate').mockReturnValue(
+                    Promise.resolve(freshCheckout),
+                );
+
+                const actions = await from(
+                    orderActionCreator.submitOrder(getOrderRequestBody())(store),
+                )
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(orderRequestSender.submitOrder).toHaveBeenCalledTimes(2);
+                expect(orderRequestSender.submitOrder).toHaveBeenLastCalledWith(
+                    expect.objectContaining({ version: 42 }),
+                    expect.anything(),
+                );
+
+                const succeededAction = actions.find(
+                    (action) => action.type === OrderActionType.SubmitOrderSucceeded,
+                );
+
+                expect(succeededAction?.meta).toEqual(expect.objectContaining({ version: 43 }));
+            });
+
+            it('propagates the error when the retried submission also fails', async () => {
                 const cartConsistencyError = new CartConsistencyError();
 
                 jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
                     Promise.reject(cartConsistencyError),
                 );
-                jest.spyOn(checkoutValidator, 'validate').mockReturnValue(Promise.resolve());
+                jest.spyOn(checkoutValidator, 'validate').mockReturnValue(
+                    Promise.resolve(getCheckout()),
+                );
 
                 const errorHandler = jest.fn((action) => of(action));
                 const actions = await from(
@@ -507,6 +563,7 @@ describe('OrderActionCreator', () => {
                     .toPromise();
 
                 expect(checkoutValidator.validate).toHaveBeenCalled();
+                expect(orderRequestSender.submitOrder).toHaveBeenCalledTimes(2);
                 expect(actions).toEqual([
                     { type: OrderActionType.SubmitOrderRequested },
                     {
