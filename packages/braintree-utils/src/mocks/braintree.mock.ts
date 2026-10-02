@@ -284,7 +284,7 @@ export function getBraintreeFastlaneAuthenticationResultMock() {
 export function getBraintreeLocalPaymentMock(
     orderId = '111',
     startCallback: () => Promise<void> = () => Promise.resolve(),
-    startPaymentError: BraintreeLPMStartPaymentError | undefined = undefined,
+    startPaymentError?: BraintreeLPMStartPaymentError,
 ): BraintreeLocalPayment {
     return {
         startPayment: jest.fn(

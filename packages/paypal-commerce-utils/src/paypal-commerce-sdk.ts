@@ -246,7 +246,9 @@ export default class PayPalCommerceSdk {
             buyerCountry,
             attributionId,
             isDeveloperModeApplicable,
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
             availableAlternativePaymentMethods = [],
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
             enabledAlternativePaymentMethods = [],
         } = initializationData;
 

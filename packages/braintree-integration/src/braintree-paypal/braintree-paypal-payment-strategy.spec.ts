@@ -843,6 +843,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
                     getCart(),
                 );
+
                 const expected = {
                     ...orderRequestBody.payment,
                     paymentData: {

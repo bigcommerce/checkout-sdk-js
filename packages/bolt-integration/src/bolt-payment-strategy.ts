@@ -338,7 +338,9 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         const { token, last4, bin, expiration } = tokenizeResult;
         const lastFourDigits = +last4;
         const iin = +bin;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
         const expirationMonth = +`${expiration}`.split('-')[1];
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
         const expirationYear = +`${expiration}`.split('-')[0];
 
         if (

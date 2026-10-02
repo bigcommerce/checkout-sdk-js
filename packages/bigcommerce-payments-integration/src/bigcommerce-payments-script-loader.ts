@@ -85,7 +85,9 @@ export default class BigCommercePaymentsScriptLoader {
             isHostedCheckoutEnabled,
             isPayPalCreditAvailable,
             isDeveloperModeApplicable,
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
             availableAlternativePaymentMethods = [],
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
             enabledAlternativePaymentMethods = [],
             isGooglePayEnabled,
         } = initializationData;

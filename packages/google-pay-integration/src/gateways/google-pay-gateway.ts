@@ -406,6 +406,7 @@ export default class GooglePayGateway {
     async handleCoupons(
         offerData: IntermediatePaymentData['offerData'],
     ): Promise<HandleCouponsOut> {
+        // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
         const { redemptionCodes: newCouponsState = [] } = offerData;
         const { offers: appliedCoupons } = this.getAppliedCoupons() || {};
         let error;

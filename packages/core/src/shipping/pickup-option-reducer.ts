@@ -37,7 +37,7 @@ function dataReducer(
                 };
                 const flattenedMeta = objectFlatten(optionQuery);
                 const sortedflattenedMeta = objectWithSortedKeys(flattenedMeta);
-                const keyString = btoa(`${JSON.stringify(sortedflattenedMeta)}`);
+                const keyString = btoa(JSON.stringify(sortedflattenedMeta));
 
                 return objectSet(data, keyString, action.payload);
             }
