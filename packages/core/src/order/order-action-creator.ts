@@ -115,14 +115,14 @@ export default class OrderActionCreator {
                         throw new SpamProtectionNotCompletedError();
                     }
 
-                    const submitOrderRequest = () =>
+                    const submitOrderRequest = (version?: number) =>
                         this._orderRequestSender.submitOrder(
                             this._mapToOrderRequestBody(
                                 payload ?? {},
                                 checkout.id,
                                 checkout.customerMessage,
                                 externalSource,
-                                shouldValidateCartVersion ? checkout.version : undefined,
+                                version,
                             ),
                             {
                                 ...options,
@@ -133,21 +133,25 @@ export default class OrderActionCreator {
                             },
                         );
 
+                    let submittedVersion = checkout.version;
+
                     const orderSubmission = shouldValidateCartVersion
-                        ? submitOrderRequest().catch((error) => {
+                        ? submitOrderRequest(submittedVersion).catch((error) => {
                               if (!(error instanceof CartConsistencyError)) {
                                   throw error;
                               }
 
                               return this._checkoutValidator
                                   .validate(checkout, options)
-                                  .then(() => {
-                                      throw error;
+                                  .then((freshCheckout) => {
+                                      submittedVersion = freshCheckout.cart.version;
+
+                                      return submitOrderRequest(submittedVersion);
                                   });
                           })
                         : this._checkoutValidator
                               .validate(checkout, options)
-                              .then(submitOrderRequest);
+                              .then(() => submitOrderRequest());
 
                     return from(orderSubmission).pipe(
                         switchMap((response) => {
@@ -174,6 +178,9 @@ export default class OrderActionCreator {
                                             {
                                                 ...response.body.meta,
                                                 token: response.headers.token,
+                                                ...(shouldValidateCartVersion && {
+                                                    version: submittedVersion + 1,
+                                                }),
                                             },
                                         ),
                                     );
