@@ -5,6 +5,8 @@ import { CheckoutActionType } from '../checkout';
 import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+import { getSubmitOrderResponseBody } from '../order/internal-orders.mock';
+import { OrderActionType } from '../order/order-actions';
 import { ConsignmentActionType } from '../shipping';
 import { SpamProtectionActionType } from '../spam-protection';
 
@@ -218,6 +220,28 @@ describe('checkoutReducer', () => {
             errors: { updateError: action.payload },
             statuses: { isUpdating: false },
         });
+    });
+
+    it('updates cart version from action meta when order creation reports a new version', () => {
+        const stateWithData = getCheckoutState();
+        const payload = getSubmitOrderResponseBody().data;
+        const newVersion = (stateWithData.data?.version ?? 0) + 1;
+        const action = createAction(OrderActionType.SubmitOrderSucceeded, payload, {
+            version: newVersion,
+        });
+        const output = checkoutReducer(stateWithData, action);
+
+        expect(output.data?.version).toBe(newVersion);
+        expect(output.data?.orderId).toBe(payload.order.orderId);
+    });
+
+    it('keeps existing cart version when order creation action meta omits version', () => {
+        const stateWithData = getCheckoutState();
+        const payload = getSubmitOrderResponseBody().data;
+        const action = createAction(OrderActionType.SubmitOrderSucceeded, payload);
+        const output = checkoutReducer(stateWithData, action);
+
+        expect(output.data?.version).toBe(stateWithData.data?.version);
     });
 
     it('returns new status when spam check is executing', () => {
