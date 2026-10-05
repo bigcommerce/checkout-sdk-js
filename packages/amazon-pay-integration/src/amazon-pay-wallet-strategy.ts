@@ -1,7 +1,7 @@
 import {
     AmazonPayV2ButtonColor,
     AmazonPayV2CheckoutSessionConfig,
-    AmazonPayV2InitializeOptions,
+    AmazonPayV2InitializeOptions, AmazonPayV2LedgerCurrency,
     AmazonPayV2NewButtonParams,
     AmazonPayV2PaymentProcessor,
     AmazonPayV2PayOptions,
@@ -67,8 +67,11 @@ export default class AmazonPayWalletStrategy implements CheckoutButtonStrategy {
         paymentMethod: PaymentMethod<AmazonPayV2InitializeOptions>,
     ): void {
         const { config, initializationData } = paymentMethod;
-        const merchantId = config?.merchantId;
-        const ledgerCurrency = initializationData?.ledgerCurrency;
+        // TODO: Remove mocked value
+        const merchantId = config?.merchantId || '';
+        const ledgerCurrency =
+            initializationData?.ledgerCurrency ||
+            (amazonpay.currency.code as AmazonPayV2LedgerCurrency);
 
         if (!merchantId || !ledgerCurrency) {
             this.removeElement(containerId);
@@ -87,18 +90,18 @@ export default class AmazonPayWalletStrategy implements CheckoutButtonStrategy {
             placement: AmazonPayV2Placement.Cart,
             buttonColor: amazonpay.buttonColor ?? AmazonPayV2ButtonColor.Gold,
             // Amazon Pay ignores `sandbox` when `publicKeyId` carries an env prefix.
-            ...(isEnvironmentSpecific ? { publicKeyId } : { sandbox: Boolean(config?.testMode) }),
+            // TODO: Remove mocked value
+            ...(isEnvironmentSpecific ? { publicKeyId } : { sandbox: Boolean(config?.testMode ?? true) }),
             ...(amazonpay.estimatedAmount && {
                 estimatedOrderAmount: {
                     amount: amazonpay.estimatedAmount,
-                    currencyCode: amazonpay.currency.code || ledgerCurrency,
+                    currencyCode: ledgerCurrency,
                 },
             }),
         };
 
         this.amazonPayV2PaymentProcessor.createButton(containerId, buttonParams);
 
-        // TODO(PAYPAL-7057): `initializationData.createCheckoutSessionConfig` is undefined
         const signedConfig = this.getRequiredCheckoutSessionConfig(initializationData);
 
         if (signedConfig) {
@@ -111,14 +114,14 @@ export default class AmazonPayWalletStrategy implements CheckoutButtonStrategy {
     ): Required<AmazonPayV2CheckoutSessionConfig> | undefined {
         const config = initializationData?.createCheckoutSessionConfig;
 
-        if (!config?.payloadJSON || !config.signature || !config.publicKeyId) {
+        if (!config?.payloadJSON || !config.signature || !initializationData?.publicKeyId) {
             return undefined;
         }
 
         return {
             payloadJSON: config.payloadJSON,
             signature: config.signature,
-            publicKeyId: config.publicKeyId,
+            publicKeyId: initializationData.publicKeyId,
         };
     }
 
