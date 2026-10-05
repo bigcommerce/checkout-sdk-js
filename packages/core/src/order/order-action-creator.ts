@@ -2,6 +2,8 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { concat, defer, from, Observable, Observer, of, Subject } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
+
 import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
@@ -200,9 +202,13 @@ export default class OrderActionCreator {
     }
 
     private _isReturnFullOrderDetailsEnabled(state: InternalCheckoutSelectors): boolean {
-        const checkoutSettings = state.config.getStoreConfig()?.checkoutSettings;
+        const { checkoutSettings } = state.config.getStoreConfigOrThrow();
 
-        return Boolean(checkoutSettings?.features[RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER]);
+        return isExperimentEnabled(
+            checkoutSettings.features,
+            RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER,
+            false,
+        );
     }
 
     private _mapToOrderRequestBody(

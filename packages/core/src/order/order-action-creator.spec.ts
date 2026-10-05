@@ -281,7 +281,7 @@ describe('OrderActionCreator', () => {
         });
 
         it('requests order details and skips loadOrder when the experiment is enabled and the response includes orderDetails', async () => {
-            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
                 ...getConfig().storeConfig,
                 checkoutSettings: {
                     ...getConfig().storeConfig.checkoutSettings,
