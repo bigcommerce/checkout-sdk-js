@@ -636,18 +636,25 @@ describe('StripeUPEPaymentStrategy', () => {
             );
         });
 
-        it('should use store credits', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getCheckoutOrThrow',
-            ).mockReturnValueOnce({
-                ...getCheckout(),
-                isStoreCreditApplied: true,
+        it('applies store credit via stripe integration service', async () => {
+            await strategy.execute({
+                ...getStripeUPEOrderRequestBodyMock(),
+                useStoreCredit: true,
             });
 
+            expect(stripeUPEIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(true);
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                expect.objectContaining({ useStoreCredit: true }),
+                undefined,
+            );
+        });
+
+        it('calls applyStoreCreditIfNeeded with undefined when useStoreCredit is not provided', async () => {
             await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
-            expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(true);
+            expect(stripeUPEIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(
+                undefined,
+            );
         });
 
         it('skip PI update if no gatewayId', async () => {
