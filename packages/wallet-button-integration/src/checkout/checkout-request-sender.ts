@@ -24,9 +24,6 @@ export class CheckoutRequestSender {
                         errors {
                          __typename
                         ... on NotFoundError {
-                                message  
-                            }
-                        ... on CreateRedirectUrlsCurrencyNotAllowed {
                                 message
                             }
                         }
