@@ -13,6 +13,7 @@ import {
 import {
     InvalidArgumentError,
     OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
@@ -217,6 +218,89 @@ describe('ApplePayPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
             expect(applePaySession.completePayment).toHaveBeenCalled();
+        });
+
+        describe('when the shopper chooses whether to save the instrument', () => {
+            const authEvent = {
+                payment: {
+                    token: {
+                        paymentData: {},
+                        paymentMethod: {},
+                        transactionIdentifier: {},
+                    },
+                },
+            } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
+
+            const authorize = async (
+                gateway: string,
+                paymentData?: OrderPaymentRequestBody['paymentData'],
+            ) => {
+                const applePayPaymentMethod = getApplePay();
+
+                applePayPaymentMethod.initializationData.gateway = gateway;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(applePayPaymentMethod);
+
+                void strategy.execute({
+                    useStoreCredit: false,
+                    payment: { methodId: paymentMethod.id, paymentData },
+                });
+                await new Promise((resolve) => process.nextTick(resolve));
+                await applePaySession.onpaymentauthorized(authEvent);
+
+                return jest.mocked(paymentIntegrationService.submitPayment).mock.lastCall?.[0];
+            };
+
+            it('vaults the instrument when the shopper opted in', async () => {
+                const payment = await authorize('stripeocs', { shouldSaveInstrument: true });
+
+                expect(payment.paymentData).toEqual(
+                    expect.objectContaining({
+                        formattedPayload: expect.objectContaining({
+                            vault_payment_instrument: true,
+                        }),
+                    }),
+                );
+            });
+
+            it('does not vault the instrument when the shopper opted out', async () => {
+                const payment = await authorize('stripeocs', { shouldSaveInstrument: false });
+
+                expect(payment.paymentData).toEqual(
+                    expect.objectContaining({
+                        formattedPayload: expect.not.objectContaining({
+                            vault_payment_instrument: expect.anything(),
+                        }),
+                    }),
+                );
+            });
+
+            it('does not vault the instrument when no instrument data is provided', async () => {
+                const payment = await authorize('stripeocs');
+
+                expect(payment.paymentData).toEqual(
+                    expect.objectContaining({
+                        formattedPayload: expect.not.objectContaining({
+                            vault_payment_instrument: expect.anything(),
+                        }),
+                    }),
+                );
+            });
+
+            it('vaults the instrument regardless of the gateway', async () => {
+                const payment = await authorize('adyenv2', { shouldSaveInstrument: true });
+
+                expect(payment.paymentData).toEqual(
+                    expect.objectContaining({
+                        formattedPayload: expect.objectContaining({
+                            vault_payment_instrument: true,
+                        }),
+                    }),
+                );
+            });
         });
 
         it('submits payment with provided braintree device data session', async () => {
