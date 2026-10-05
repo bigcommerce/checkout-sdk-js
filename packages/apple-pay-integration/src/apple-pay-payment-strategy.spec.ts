@@ -251,7 +251,14 @@ describe('ApplePayPaymentStrategy', () => {
                 await new Promise((resolve) => process.nextTick(resolve));
                 await applePaySession.onpaymentauthorized(authEvent);
 
-                return jest.mocked(paymentIntegrationService.submitPayment).mock.lastCall?.[0];
+                const [payment] =
+                    jest.mocked(paymentIntegrationService.submitPayment).mock.lastCall ?? [];
+
+                if (!payment) {
+                    throw new Error('submitPayment was not called');
+                }
+
+                return payment;
             };
 
             it('vaults the instrument when the shopper opted in', async () => {
