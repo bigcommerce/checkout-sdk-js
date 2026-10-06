@@ -389,7 +389,7 @@ export default class PaymentStrategyActionCreator {
     private _isOrderCreationTimeMetricsEnabled(): boolean {
         const { checkoutSettings } = this._store.getState().config.getStoreConfigOrThrow();
 
-        return isExperimentEnabled(checkoutSettings.features, ORDER_CREATION_TIME_METRICS);
+        return isExperimentEnabled(checkoutSettings.features, ORDER_CREATION_TIME_METRICS, false);
     }
 
     private _reportOrderCreationTime(startTime: number, orderId: number): void {

@@ -800,7 +800,7 @@ describe('PaymentStrategyActionCreator', () => {
 
         describe('order creation time metrics', () => {
             const enableExperiment = (enabled: boolean) => {
-                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
                     ...getConfig().storeConfig,
                     checkoutSettings: {
                         ...getConfig().storeConfig.checkoutSettings,
