@@ -545,7 +545,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
             try {
                 await strategy.execute(executeOptions);
-            } catch (error: unknown) {
+            } catch {
                 expect(initOptions.paypalcommercefastlane.onError).toHaveBeenCalledWith({
                     translationKey: 'payment.errors.invalid_request_error',
                 });

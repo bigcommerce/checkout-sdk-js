@@ -141,7 +141,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             // when shouldRunAcceleratedCheckout is true, the lookup PayPal Connect method should be called,
             // otherwise AcceleratedCheckout should not be available for the customer
             return paymentMethod.initializationData?.shouldRunAcceleratedCheckout || false;
-        } catch (_) {
+        } catch {
             return false;
         }
     }

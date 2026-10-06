@@ -419,7 +419,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
                 try {
                     await strategy.execute(payload);
-                } catch (error: unknown) {
+                } catch {
                     expect(loadingIndicator.hide).toHaveBeenCalled();
                 }
             });
@@ -489,7 +489,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
                 try {
                     await strategy.execute(payload);
-                } catch (_) {
+                } catch {
                     expect(window.location.replace).toHaveBeenCalledWith('redirect_url');
                 }
             });
@@ -503,7 +503,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
                 try {
                     await strategy.execute(payload);
-                } catch (_) {
+                } catch {
                     expect(window.location.replace).not.toHaveBeenCalled();
                 }
             });
@@ -517,7 +517,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
                 try {
                     await strategy.execute(payload);
-                } catch (_) {
+                } catch {
                     expect(window.location.replace).not.toHaveBeenCalled();
                 }
             });
@@ -535,7 +535,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
                 try {
                     await strategy.execute(payload);
-                } catch (_) {
+                } catch {
                     expect(window.location.replace).not.toHaveBeenCalled();
                 }
             });

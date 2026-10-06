@@ -237,7 +237,7 @@ describe('ApplePayCustomerStrategy', () => {
 
                     try {
                         await applePaySession.oncancel();
-                    } catch (err) {
+                    } catch {
                         expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
                     }
                 }

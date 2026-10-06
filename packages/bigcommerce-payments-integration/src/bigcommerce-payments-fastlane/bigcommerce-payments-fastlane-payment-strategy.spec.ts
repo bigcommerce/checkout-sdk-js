@@ -860,7 +860,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
 
             try {
                 await strategy.execute(executeOptions);
-            } catch (error: unknown) {
+            } catch {
                 expect(initOptions.bigcommerce_payments_fastlane.onError).toHaveBeenCalledWith({
                     translationKey: 'payment.errors.invalid_request_error',
                 });

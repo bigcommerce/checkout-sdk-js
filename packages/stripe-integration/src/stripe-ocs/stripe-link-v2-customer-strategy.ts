@@ -383,7 +383,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             this._toggleLoadingIndicator(true);
             await this.paymentIntegrationService.submitPayment(paymentPayload);
             await this._completeCheckoutFlow();
-        } catch (error) {
+        } catch {
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         } finally {
             this._toggleLoadingIndicator(false);
@@ -425,7 +425,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             }
 
             return confirmationResult;
-        } catch (error: unknown) {
+        } catch {
             return this.stripeIntegrationService.throwStripeError(stripeError);
         }
     }
