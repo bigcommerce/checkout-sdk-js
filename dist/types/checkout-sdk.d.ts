@@ -2919,6 +2919,8 @@ declare interface CheckoutEventRequestBody {
     event: string;
     payment_provider_id?: string;
     payment_method_id?: string;
+    order_id?: number;
+    seconds?: number;
 }
 
 declare type CheckoutIncludeParam = {

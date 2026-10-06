@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.987.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.986.0...v1.987.0) (2026-10-06)
+
+
+### Features
+
+* **checkout:** STRIPE-1711 collect and send order creation timing metrics ([#3423](https://github.com/bigcommerce/checkout-sdk-js/issues/3423)) ([c76136c](https://github.com/bigcommerce/checkout-sdk-js/commit/c76136c43c37f73397c119e45cfb37de17854d8e))
+
 ## [1.986.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.985.2...v1.986.0) (2026-10-06)
 
 
