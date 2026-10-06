@@ -53,6 +53,7 @@ import PaymentIntegrationStoreProjectionFactory from './payment-integration-stor
 export default function createPaymentIntegrationService(
     store: CheckoutStore,
     requestSender?: RequestSender,
+    orderActionCreator?: OrderActionCreator,
 ): PaymentIntegrationService {
     const {
         config: { getHost, getLocale },
@@ -76,10 +77,12 @@ export default function createPaymentIntegrationService(
 
     const hostedFormFactory = new HostedFormFactory(store);
 
-    const orderActionCreator = new OrderActionCreator(
-        new OrderRequestSender(requestSender),
-        new CheckoutValidator(new CheckoutRequestSender(requestSender)),
-    );
+    orderActionCreator =
+        orderActionCreator ??
+        new OrderActionCreator(
+            new OrderRequestSender(requestSender),
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+        );
 
     const billingAddressActionCreator = new BillingAddressActionCreator(
         new BillingAddressRequestSender(requestSender),
