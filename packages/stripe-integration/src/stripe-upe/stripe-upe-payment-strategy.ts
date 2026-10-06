@@ -89,6 +89,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = orderRequest;
+        const { useStoreCredit } = orderRequest;
 
         if (!payment || !payment.paymentData) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
@@ -102,7 +103,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
         const state = this.paymentIntegrationService.getState();
-        const { isStoreCreditApplied: useStoreCredit } = state.getCheckoutOrThrow();
         const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
         const stripePaymentProviderCustomer = isStripeAcceleratedCheckoutCustomer(
             paymentProviderCustomer,
@@ -112,9 +112,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const stripeLinkAuthenticationState =
             stripePaymentProviderCustomer.stripeLinkAuthenticationState;
 
-        if (useStoreCredit) {
-            await this.paymentIntegrationService.applyStoreCredit(useStoreCredit);
-        }
+        await this.stripeIntegrationService.applyStoreCreditIfNeeded(useStoreCredit);
 
         if (!isVaultedInstrument(paymentData)) {
             await this._validateStripeElementsOrThrow();
