@@ -927,14 +927,10 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.submitOrder(payload);
 
-            expect(paymentStrategy.execute).toHaveBeenCalledWith(
-                getOrderRequestBody(),
-                // tslint:disable-next-line:no-non-null-assertion
-                {
-                    methodId: payload.payment!.methodId,
-                    gatewayId: payload.payment!.gatewayId,
-                },
-            );
+            expect(paymentStrategy.execute).toHaveBeenCalledWith(getOrderRequestBody(), {
+                methodId: payload.payment!.methodId,
+                gatewayId: payload.payment!.gatewayId,
+            });
         });
 
         it('executes payment strategy with timeout', async () => {
@@ -944,15 +940,11 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.submitOrder(payload, options);
 
-            expect(paymentStrategy.execute).toHaveBeenCalledWith(
-                payload,
-                // tslint:disable-next-line:no-non-null-assertion
-                {
-                    ...options,
-                    methodId: payload.payment!.methodId,
-                    gatewayId: payload.payment!.gatewayId,
-                },
-            );
+            expect(paymentStrategy.execute).toHaveBeenCalledWith(payload, {
+                ...options,
+                methodId: payload.payment!.methodId,
+                gatewayId: payload.payment!.gatewayId,
+            });
         });
     });
 

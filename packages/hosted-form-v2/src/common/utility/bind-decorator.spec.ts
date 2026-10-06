@@ -10,7 +10,6 @@ describe('bindDecorator()', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     class Bar {
         constructor(private name: string) {}
 
