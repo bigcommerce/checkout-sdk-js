@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.986.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.985.2...v1.986.0) (2026-10-06)
+
+
+### Features
+
+* **payment:** send the shopper's save-instrument choice for Apple Pay ([#3441](https://github.com/bigcommerce/checkout-sdk-js/issues/3441)) ([180f1cb](https://github.com/bigcommerce/checkout-sdk-js/commit/180f1cba01566dd03644c8215ed02dd4a567f1d0))
+
 ### [1.985.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.985.1...v1.985.2) (2026-10-06)
 
 ### [1.985.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.985.0...v1.985.1) (2026-10-06)
