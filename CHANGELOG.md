@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.988.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.987.0...v1.988.0) (2026-10-06)
+
+
+### Features
+
+* **checkout:** STRIPE-1683 skip call to retrieve order details after creating the order ([#3437](https://github.com/bigcommerce/checkout-sdk-js/issues/3437)) ([8891fb5](https://github.com/bigcommerce/checkout-sdk-js/commit/8891fb551c7bd880ae68ac8549c28409e5e01153))
+* **payment:** Stripe UPE store credit request optimization ([#3442](https://github.com/bigcommerce/checkout-sdk-js/issues/3442)) ([2aa8c17](https://github.com/bigcommerce/checkout-sdk-js/commit/2aa8c17685434d794723d4faeb4b2fd33021a3f0))
+
 ## [1.987.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.986.0...v1.987.0) (2026-10-06)
 
 
