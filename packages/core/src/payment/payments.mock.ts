@@ -49,7 +49,7 @@ export function getPaymentRequestBody(): PaymentRequestBody {
         customer: mapToInternalCustomer(getCustomer(), getBillingAddress()),
         order: mapToInternalOrder(getOrder(), getOrderMeta()),
         orderMeta: getOrderMeta(),
-        payment: getPayment().paymentData as CreditCardInstrument,
+        payment: getPayment().paymentData,
         paymentMethod: getAuthorizenet(),
         quoteMeta: { request: getPaymentMethodsMeta() },
         shippingAddress: mapToInternalAddress(getShippingAddress(), getConsignments()),

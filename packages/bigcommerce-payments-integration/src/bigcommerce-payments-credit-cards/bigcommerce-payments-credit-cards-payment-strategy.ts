@@ -479,7 +479,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
             } else {
                 await cardFields.submit(submitConfig);
             }
-        } catch (_) {
+        } catch {
             throw new PaymentMethodFailedError(
                 'Failed authentication. Please try to authorize again.',
             );
@@ -763,7 +763,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
                 payPalFastlaneSdk,
                 !!initializationData?.isDeveloperModeApplicable,
             );
-        } catch (_: unknown) {
+        } catch {
             // We should avoid throwing any error from this flow to do no brake default flow
             // This flow is optional
         }

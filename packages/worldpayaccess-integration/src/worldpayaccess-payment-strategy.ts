@@ -110,7 +110,7 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
 
                     try {
                         onLoad(frame, () => reject(new Error('Payment was cancelled')));
-                    } catch (onLoadError) {
+                    } catch {
                         reject(new Error(PAYMENT_CANNOT_CONTINUE));
                     }
                 }
@@ -122,7 +122,7 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
 
             try {
                 iframeHidden = this._createHiddenIframe(error.body);
-            } catch (e) {
+            } catch {
                 window.removeEventListener('message', messageEventListener);
                 throw new Error(PAYMENT_CANNOT_CONTINUE);
             }
@@ -253,7 +253,7 @@ export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStra
             }
 
             return false;
-        } catch (e) {
+        } catch {
             return false;
         }
     }

@@ -194,7 +194,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 );
 
                 applePaySession.completeMerchantValidation(merchantSession);
-            } catch (err) {
+            } catch {
                 throw new Error('Merchant validation failed');
             }
         };
@@ -264,7 +264,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
             return promise.resolve();
-        } catch (error) {
+        } catch {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
             return promise.reject(
@@ -278,7 +278,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             const { deviceData } = await this._braintreeSdk.getDataCollectorOrThrow();
 
             return deviceData;
-        } catch (_) {
+        } catch {
             // Don't throw an error to avoid breaking checkout flow
         }
     }

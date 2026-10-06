@@ -91,7 +91,7 @@ export default class BigCommercePaymentsIntegrationService {
 
         try {
             return await this.paymentIntegrationService.createBuyNowCart(cartRequestBody);
-        } catch (error) {
+        } catch {
             throw new BuyNowCartCreationError();
         }
     }
@@ -151,7 +151,7 @@ export default class BigCommercePaymentsIntegrationService {
                     ? null
                     : consignment?.selectedShippingOption,
             });
-        } catch (_error) {
+        } catch {
             throw new RequestError();
         }
     }
@@ -164,7 +164,7 @@ export default class BigCommercePaymentsIntegrationService {
             );
 
             return status;
-        } catch (_error) {
+        } catch {
             throw new RequestError();
         }
     }

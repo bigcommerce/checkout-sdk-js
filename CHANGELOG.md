@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.985.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.985.1...v1.985.2) (2026-10-06)
+
+### [1.985.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.985.0...v1.985.1) (2026-10-06)
+
+## [1.985.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.984.0...v1.985.0) (2026-10-05)
+
+
+### Features
+
+* **payment:** PAYPAL-0 Removed CreateRedirectUrlsCurrencyNotAllowed since it is unknown type in production env ([564a98a](https://github.com/bigcommerce/checkout-sdk-js/commit/564a98a62c77098610b5d59da55a56ea0f0d4775))
+
 ## [1.984.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.983.6...v1.984.0) (2026-09-30)
 
 

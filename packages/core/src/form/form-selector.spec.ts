@@ -15,8 +15,6 @@ import {
     getOrderExtraFields,
 } from './form.mock';
 
-// tslint:disable:no-non-null-assertion
-
 describe('FormSelector', () => {
     let createFormSelector: FormSelectorFactory;
     let state: CheckoutStoreState;

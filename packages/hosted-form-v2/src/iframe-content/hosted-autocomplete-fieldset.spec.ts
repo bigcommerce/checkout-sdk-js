@@ -36,7 +36,6 @@ describe('HostedAutocompleteFieldset', () => {
     it('hides autocomplete input from user', () => {
         fieldset.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const input = container.querySelector<HTMLInputElement>('#autocomplete-card-expiry')!;
 
         expect(input.style.opacity).toBe('0');
@@ -47,9 +46,7 @@ describe('HostedAutocompleteFieldset', () => {
     it('configures autocomplete property based on field type', () => {
         fieldset.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const expiryInput = container.querySelector<HTMLInputElement>('#autocomplete-card-expiry')!;
-        // tslint:disable-next-line:no-non-null-assertion
         const nameInput = container.querySelector<HTMLInputElement>('#autocomplete-card-name')!;
 
         expect(expiryInput.autocomplete).toBe('cc-exp');
@@ -79,7 +76,6 @@ describe('HostedAutocompleteFieldset', () => {
 
         fieldset.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const input = container.querySelector<HTMLInputElement>('#autocomplete-card-expiry')!;
 
         input.value = '10 / 20';

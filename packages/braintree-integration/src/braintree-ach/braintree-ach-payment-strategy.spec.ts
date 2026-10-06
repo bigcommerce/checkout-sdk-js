@@ -212,7 +212,7 @@ describe('BraintreeAchPaymentStrategy', () => {
                         },
                     },
                 });
-            } catch (error: any) {
+            } catch {
                 expect(ExternalError.name).toBe('ExternalError');
             }
         });

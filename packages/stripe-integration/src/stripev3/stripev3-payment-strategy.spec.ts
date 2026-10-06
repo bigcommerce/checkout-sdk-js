@@ -680,7 +680,7 @@ describe('StripeV3PaymentStrategy', () => {
 
                     try {
                         await strategy.execute(getStripeV3OrderRequestBodyMock());
-                    } catch (error) {
+                    } catch {
                         expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
                         expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
                         expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalled();
@@ -1506,7 +1506,7 @@ describe('StripeV3PaymentStrategy', () => {
             try {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBodyVaultedCC());
-            } catch (error) {
+            } catch {
                 expect(form.submit).not.toHaveBeenCalled();
             }
         });

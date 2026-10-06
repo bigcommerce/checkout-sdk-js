@@ -126,7 +126,7 @@ describe('PaypalCommerceWalletService', () => {
                 headers: {},
                 status: 200,
                 statusText: 'OK',
-            } as Awaited<ReturnType<WalletButtonIntegrationService['getRedirectToCheckoutUrl']>>);
+            });
 
             await expect(
                 service.proxyTokenizationPayment(

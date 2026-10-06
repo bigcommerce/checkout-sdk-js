@@ -52,7 +52,7 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
 
         try {
             token = JSON.parse(data.nonce);
-        } catch (error) {
+        } catch {
             throw new InvalidArgumentError('Unable to parse response from Google Pay.');
         }
 
@@ -113,10 +113,10 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
 
             try {
                 result = await this.stripeUPEClient.confirmCardPayment(clientSecret);
-            } catch (_) {
+            } catch {
                 try {
                     result = await this.stripeUPEClient.retrievePaymentIntent(clientSecret);
-                } catch (__) {
+                } catch {
                     catchedConfirmError = true;
                 }
             }

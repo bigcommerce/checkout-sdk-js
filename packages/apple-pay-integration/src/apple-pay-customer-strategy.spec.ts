@@ -237,7 +237,7 @@ describe('ApplePayCustomerStrategy', () => {
 
                     try {
                         await applePaySession.oncancel();
-                    } catch (err) {
+                    } catch {
                         expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
                     }
                 }
@@ -499,9 +499,8 @@ describe('ApplePayCustomerStrategy', () => {
 
                 await initializeWithFilter(() => Promise.reject(new Error('Filtering failed')));
 
-                const [[{ newShippingMethods }]] = (
-                    applePaySession.completeShippingContactSelection as jest.Mock
-                ).mock.calls;
+                const [[{ newShippingMethods }]] =
+                    applePaySession.completeShippingContactSelection.mock.calls;
 
                 expect(newShippingMethods).toHaveLength(2);
             });

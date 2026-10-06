@@ -78,7 +78,6 @@ describe('HostedField', () => {
     it('sets iframe URL with version param prefixed with the given storefront host when called from shopper account page', () => {
         field.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
             'https://channel.storefront.canonical.com/account/stored-instruments/hosted-fields?version=1.0.0',
         );
@@ -87,7 +86,6 @@ describe('HostedField', () => {
     it('ignores the storefront host for the Control Panel iframe URL keeping it same-origin', () => {
         controlPannelField.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
             `${location.origin}/admin/payments/${orderId}/hosted-form-field?version=1.0.0`,
         );
@@ -107,7 +105,6 @@ describe('HostedField', () => {
 
         fieldWithoutHost.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
             `${location.origin}/account/stored-instruments/hosted-fields?version=1.0.0`,
         );
@@ -129,7 +126,6 @@ describe('HostedField', () => {
 
         fieldWithEmptyHost.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
             `${location.origin}/account/stored-instruments/hosted-fields?version=1.0.0`,
         );
@@ -137,7 +133,6 @@ describe('HostedField', () => {
 
     it('sets target for event poster', async () => {
         process.nextTick(() => {
-            // tslint:disable-next-line:no-non-null-assertion
             document.querySelector('#field-container-id iframe')!.dispatchEvent(new Event('load'));
         });
 
@@ -148,7 +143,6 @@ describe('HostedField', () => {
 
     it('ensures presence of iframe during attachment', async () => {
         process.nextTick(() => {
-            // tslint:disable-next-line:no-non-null-assertion
             document.querySelector('#field-container-id iframe')!.dispatchEvent(new Event('load'));
         });
 
@@ -168,7 +162,6 @@ describe('HostedField', () => {
         });
 
         process.nextTick(() => {
-            // tslint:disable-next-line:no-non-null-assertion
             document.querySelector('#field-container-id iframe')!.dispatchEvent(new Event('load'));
         });
 
@@ -206,7 +199,6 @@ describe('HostedField', () => {
         });
 
         process.nextTick(() => {
-            // tslint:disable-next-line:no-non-null-assertion
             document.querySelector('#field-container-id iframe')!.dispatchEvent(new Event('load'));
         });
 
@@ -340,7 +332,6 @@ describe('HostedField', () => {
         jest.spyOn(eventPoster, 'post').mockRejectedValue({
             type: HostedInputEventType.SubmitFailed,
             payload: {
-                // tslint:disable-next-line:no-non-null-assertion
                 error: getErrorPaymentResponseBody().errors![0],
                 response: getResponse(getErrorPaymentResponseBody()),
             },

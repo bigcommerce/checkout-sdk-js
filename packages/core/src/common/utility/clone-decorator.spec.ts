@@ -64,7 +64,6 @@ describe('cloneDecorator', () => {
     });
 
     describe('decorates methods', () => {
-        // tslint:disable-next-line:max-classes-per-file
         class Foo {
             constructor(public obj: any) {}
 

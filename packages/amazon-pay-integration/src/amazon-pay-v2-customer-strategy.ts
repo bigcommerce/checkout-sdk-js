@@ -39,7 +39,7 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
             paymentMethod = this.paymentIntegrationService
                 .getState()
                 .getPaymentMethodOrThrow(methodId);
-        } catch (_e) {
+        } catch {
             await this.paymentIntegrationService.loadPaymentMethod(methodId);
             paymentMethod = this.paymentIntegrationService
                 .getState()

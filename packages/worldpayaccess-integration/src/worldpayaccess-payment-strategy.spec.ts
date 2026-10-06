@@ -191,7 +191,7 @@ describe('WorldpayAccessPaymetStrategy', () => {
             try {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBody());
-            } catch (error) {
+            } catch {
                 expect(form.submit).not.toHaveBeenCalled();
             }
         });

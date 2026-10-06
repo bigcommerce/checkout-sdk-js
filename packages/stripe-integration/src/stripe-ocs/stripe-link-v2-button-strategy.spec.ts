@@ -931,7 +931,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     ...stripeClient,
                     confirmPayment: confirmPaymentMock,
                     retrievePaymentIntent: retrievePaymentIntentMock,
-                } as any;
+                };
 
                 jest.spyOn(scriptLoader, 'getStripeClient').mockImplementation(
                     jest.fn(() => Promise.resolve(stripeClient)),
@@ -1258,7 +1258,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     try {
                         stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                         await new Promise((_resolve, reject) => process.nextTick(reject));
-                    } catch (error: unknown) {
+                    } catch {
                         expect(loadingIndicator.hide).toHaveBeenCalled();
                     }
                 });

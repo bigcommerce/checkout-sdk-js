@@ -189,6 +189,7 @@ export default class GooglePayGateway {
     }
 
     extraPaymentData(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _paymentData?: OrderPaymentRequestBody['paymentData'],
     ): Promise<undefined | ExtraPaymentData> {
         return Promise.resolve(undefined);

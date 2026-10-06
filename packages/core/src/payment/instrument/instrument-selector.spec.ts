@@ -60,7 +60,6 @@ describe('InstrumentSelector', () => {
         it('only returns card instrument', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(
                 instrumentSelector.getCardInstrument(
                     find(getInstruments(), { method: 'paypal' })!.bigpayToken,
