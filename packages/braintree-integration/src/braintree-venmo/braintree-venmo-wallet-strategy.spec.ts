@@ -134,7 +134,7 @@ describe('BraintreeVenmoWalletStrategy', () => {
                     methodId: 'braintreevenmo',
                     containerId: '',
                     braintreevenmo: braintreeVenmoWalletOptions,
-                } as CheckoutButtonInitializeOptions),
+                }),
             ).rejects.toBeInstanceOf(InvalidArgumentError);
         });
 
@@ -143,7 +143,7 @@ describe('BraintreeVenmoWalletStrategy', () => {
                 strategy.initialize({
                     methodId: 'braintreevenmo',
                     containerId: defaultButtonContainerId,
-                } as CheckoutButtonInitializeOptions),
+                }),
             ).rejects.toBeInstanceOf(InvalidArgumentError);
         });
 

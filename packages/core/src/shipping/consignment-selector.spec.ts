@@ -44,9 +44,9 @@ describe('ConsignmentSelector', () => {
         it('returns first matched consignment when address matches', () => {
             selector = createConsignmentSelector(state.consignments, cartSelector);
 
-            expect(selector.getConsignmentByAddress(existingAddress))
-                // tslint:disable-next-line:no-non-null-assertion
-                .toEqual(getConsignmentsState().data![0]);
+            expect(selector.getConsignmentByAddress(existingAddress)).toEqual(
+                getConsignmentsState().data![0],
+            );
         });
 
         it('returns undefined if no address matches a consignment', () => {
@@ -60,9 +60,9 @@ describe('ConsignmentSelector', () => {
         it('returns consignment that matches id', () => {
             selector = createConsignmentSelector(state.consignments, cartSelector);
 
-            expect(selector.getConsignmentById('55c96cda6f04c'))
-                // tslint:disable-next-line:no-non-null-assertion
-                .toEqual(getConsignmentsState().data![0]);
+            expect(selector.getConsignmentById('55c96cda6f04c')).toEqual(
+                getConsignmentsState().data![0],
+            );
         });
 
         it('returns undefined if no id matches a consignment', () => {
@@ -306,7 +306,6 @@ describe('ConsignmentSelector', () => {
             selector = createConsignmentSelector(state.consignments, cartSelector);
 
             expect(selector.getUnassignedItems()).toEqual([
-                // tslint:disable-next-line:no-non-null-assertion
                 state.cart.data!.lineItems.physicalItems[0],
             ]);
         });
@@ -320,7 +319,6 @@ describe('ConsignmentSelector', () => {
                 lineItems: {
                     physicalItems: [
                         {
-                            // tslint:disable-next-line:no-non-null-assertion
                             ...state.cart.data!.lineItems.physicalItems[0],
                             id: '12e11c8f-7dce-4da3-9413-b649533f8bad',
                         },

@@ -16,7 +16,6 @@ class Foobar {
     }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class ExtendedFoobar extends Foobar {
     getExtendedData() {
         return {

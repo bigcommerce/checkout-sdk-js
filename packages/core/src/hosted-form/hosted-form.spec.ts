@@ -124,7 +124,6 @@ describe('HostedForm', () => {
     });
 
     it('submits payment by passing order data to number field', async () => {
-        // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
         const data = getHostedFormOrderData();
         const payload = {
@@ -152,7 +151,6 @@ describe('HostedForm', () => {
     });
 
     it('submits stored card form data', async () => {
-        // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
 
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
@@ -172,7 +170,6 @@ describe('HostedForm', () => {
     });
 
     it('submits payment again after human verification performed', async () => {
-        // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
         const data = getHostedFormOrderData();
         const response = {
@@ -201,7 +198,6 @@ describe('HostedForm', () => {
     });
 
     it('executes human verification when verification requested error returned', async () => {
-        // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
         const data = getHostedFormOrderData();
         const payload = {

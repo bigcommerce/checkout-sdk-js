@@ -11,7 +11,6 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { BillingAddressUpdateRequestBody } from './billing-address';
 import BillingAddressRequestSender from './billing-address-request-sender';
 import { getBillingAddress } from './billing-addresses.mock';
 
@@ -91,7 +90,7 @@ describe('BillingAddressRequestSender', () => {
             await addressRequestSender.updateAddress('foo', {
                 ...getBillingAddress(),
                 ...CUSTOMER_ADDRESS_METADATA,
-            } as unknown as BillingAddressUpdateRequestBody);
+            });
 
             const { body } = (requestSender.put as jest.Mock).mock.calls[0][1];
 
@@ -167,7 +166,7 @@ describe('BillingAddressRequestSender', () => {
             await addressRequestSender.createAddress('foo', {
                 ...getBillingAddress(),
                 ...CUSTOMER_ADDRESS_METADATA,
-            } as unknown as BillingAddressUpdateRequestBody);
+            });
 
             const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
 

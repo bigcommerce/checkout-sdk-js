@@ -138,7 +138,6 @@ describe('HostedForm', () => {
     });
 
     it('submits payment again after human verification performed', async () => {
-        // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
         const data = getHostedFormOrderData();
         const response = {
@@ -229,7 +228,6 @@ describe('HostedForm', () => {
     });
 
     it('submits stored card form data', async () => {
-        // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
 
         jest.spyOn(field, 'submitStoredCardForm').mockResolvedValue({

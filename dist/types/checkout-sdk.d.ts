@@ -6401,6 +6401,13 @@ declare interface GooglePayPaymentInitializeOptions {
      * A callback that gets called when the customer selects a payment option.
      */
     onPaymentSelect?(): void;
+    /**
+     * A callback that returns the shopper's stored-instrument choices from the
+     * checkout form. It is invoked when the shopper pays, not when the strategy
+     * is initialized, so it always reflects the current state of the
+     * "save payment method" checkbox.
+     */
+    getFieldsValues?(): HostedInstrument_2;
 }
 
 declare class GoogleRecaptcha {

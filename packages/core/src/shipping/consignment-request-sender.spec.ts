@@ -5,7 +5,7 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import { ConsignmentsRequestBody, ConsignmentUpdateRequestBody } from './consignment';
+import { ConsignmentUpdateRequestBody } from './consignment';
 import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
 
@@ -24,11 +24,8 @@ describe('ConsignmentRequestSender', () => {
     const consignment = getConsignmentRequestBody();
     const consignments = [
         {
-            // tslint:disable-next-line:no-non-null-assertion
             address: consignment.address!,
-            // tslint:disable-next-line:no-non-null-assertion
             shippingAddress: consignment.shippingAddress!,
-            // tslint:disable-next-line:no-non-null-assertion
             lineItems: consignment.lineItems!,
         },
     ];
@@ -140,7 +137,7 @@ describe('ConsignmentRequestSender', () => {
                         ...CUSTOMER_ADDRESS_METADATA,
                     },
                 },
-            ] as unknown as ConsignmentsRequestBody);
+            ]);
 
             const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
 
