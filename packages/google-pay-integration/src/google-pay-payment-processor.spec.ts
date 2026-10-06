@@ -677,4 +677,16 @@ describe('GooglePayPaymentProcessor', () => {
             expect(loadCall).not.toHaveProperty('offerInfo');
         });
     });
+
+    describe('#extraPaymentData', () => {
+        it('forwards the payment data to the gateway', async () => {
+            jest.spyOn(gateway, 'extraPaymentData');
+
+            await processor.extraPaymentData({ shouldSaveInstrument: true });
+
+            expect(gateway.extraPaymentData).toHaveBeenCalledWith({
+                shouldSaveInstrument: true,
+            });
+        });
+    });
 });

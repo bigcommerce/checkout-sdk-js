@@ -57,7 +57,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
 
         try {
             paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
-        } catch (_e) {
+        } catch {
             state = await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
             paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
         }

@@ -1,5 +1,6 @@
 import {
     guard,
+    HostedInstrument,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
@@ -45,6 +46,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _methodId?: keyof WithGooglePayPaymentInitializeOptions;
     private _isDeinitializationBlocked = false;
     private _isContainerMode = false;
+    private _getFieldsValues?: () => HostedInstrument;
 
     constructor(
         protected _paymentIntegrationService: PaymentIntegrationService,
@@ -80,10 +82,12 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             buttonSizeMode,
             buttonType,
             onInit,
+            getFieldsValues,
             ...callbacks
         } = googlePayOptions;
 
         this._loadingIndicatorContainer = loadingContainerId;
+        this._getFieldsValues = getFieldsValues;
 
         await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
 
@@ -122,7 +126,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.submitOrder();
 
         const nonce = await this._googlePayPaymentProcessor.getNonce(payment.methodId);
-        const extraData = await this._googlePayPaymentProcessor.extraPaymentData();
+        const extraData = await this._googlePayPaymentProcessor.extraPaymentData(
+            payment.paymentData,
+        );
 
         try {
             await this._paymentIntegrationService.submitPayment({
@@ -312,7 +318,13 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         await this._googlePayPaymentProcessor.initialize(() => freshPaymentMethod);
 
         try {
-            await this.execute({ useStoreCredit: false, payment: { methodId } });
+            await this.execute({
+                useStoreCredit: false,
+                payment: {
+                    methodId,
+                    paymentData: this._getFieldsValues?.() ?? {},
+                },
+            });
 
             this._completeCheckoutFlow();
         } catch (error) {

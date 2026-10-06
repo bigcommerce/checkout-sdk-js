@@ -92,7 +92,7 @@ export default class PayPalCommerceIntegrationService {
 
         try {
             return await this.paymentIntegrationService.createBuyNowCart(cartRequestBody);
-        } catch (error) {
+        } catch {
             throw new BuyNowCartCreationError();
         }
     }
@@ -148,7 +148,7 @@ export default class PayPalCommerceIntegrationService {
                     ? null
                     : consignment.selectedShippingOption,
             });
-        } catch (_error) {
+        } catch {
             throw new RequestError();
         }
     }
@@ -161,7 +161,7 @@ export default class PayPalCommerceIntegrationService {
             );
 
             return status;
-        } catch (_error) {
+        } catch {
             throw new RequestError();
         }
     }

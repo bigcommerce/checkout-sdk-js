@@ -534,7 +534,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                                     orderID: hostedFormOrderId,
                                     liabilityShift: LiabilityShiftEnum.No,
                                 });
-                            } catch (_) {
+                            } catch {
                                 // swallowed by the PayPal SDK
                             }
 

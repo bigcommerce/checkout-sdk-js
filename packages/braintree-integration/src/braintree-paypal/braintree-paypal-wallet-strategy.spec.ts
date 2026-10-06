@@ -175,7 +175,7 @@ describe('BraintreePaypalWalletStrategy', () => {
                     methodId: 'braintreepaypal',
                     containerId: '',
                     braintreepaypal: braintreePaypalWalletOptions,
-                } as CheckoutButtonInitializeOptions),
+                }),
             ).rejects.toBeInstanceOf(InvalidArgumentError);
         });
 
@@ -184,7 +184,7 @@ describe('BraintreePaypalWalletStrategy', () => {
                 strategy.initialize({
                     methodId: 'braintreepaypal',
                     containerId: defaultButtonContainerId,
-                } as CheckoutButtonInitializeOptions),
+                }),
             ).rejects.toBeInstanceOf(InvalidArgumentError);
         });
 

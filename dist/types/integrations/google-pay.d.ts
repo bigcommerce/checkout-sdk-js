@@ -11,7 +11,9 @@ import { CustomerStrategy } from '@bigcommerce/checkout-sdk/payment-integration-
 import { CustomerStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ExecutePaymentMethodCheckoutOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { FormPoster } from '@bigcommerce/form-poster';
+import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { OrderPaymentRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -203,6 +205,7 @@ declare enum ErrorReasonType {
 declare interface ExtraPaymentData {
     deviceSessionId?: string;
     browser_info?: BrowserInfo;
+    shouldSaveInstrument?: boolean;
 }
 
 declare type FundingType = string[];
@@ -497,7 +500,7 @@ declare class GooglePayGateway {
         [key: string]: CallbackTriggerType[];
     };
     getNonce(methodId: string): Promise<string>;
-    extraPaymentData(): Promise<undefined | ExtraPaymentData>;
+    extraPaymentData(_paymentData?: OrderPaymentRequestBody['paymentData']): Promise<undefined | ExtraPaymentData>;
     getMerchantInfo(): GooglePayMerchantInfo;
     getTransactionInfo(): GooglePayTransactionInfo;
     isWebViewWithRestrictions(): boolean;
@@ -722,6 +725,13 @@ declare interface GooglePayPaymentInitializeOptions {
      * A callback that gets called when the customer selects a payment option.
      */
     onPaymentSelect?(): void;
+    /**
+     * A callback that returns the shopper's stored-instrument choices from the
+     * checkout form. It is invoked when the shopper pays, not when the strategy
+     * is initialized, so it always reflects the current state of the
+     * "save payment method" checkbox.
+     */
+    getFieldsValues?(): HostedInstrument;
 }
 
 declare interface GooglePayPaymentMethod<T> {
@@ -760,7 +770,7 @@ declare class GooglePayPaymentProcessor {
     initialize(getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>, googlePayPaymentOptions?: GooglePayPaymentOptions, isBuyNowFlow?: boolean, currencyCode?: string): Promise<void>;
     initializeWidget(): Promise<void>;
     getNonce(methodId: string): Promise<string>;
-    extraPaymentData(): Promise<ExtraPaymentData | undefined>;
+    extraPaymentData(paymentData?: OrderPaymentRequestBody['paymentData']): Promise<ExtraPaymentData | undefined>;
     addPaymentButton(containerId: string, options: Omit_2<GooglePayButtonOptions, 'allowedPaymentMethods'>): HTMLElement | undefined;
     showPaymentSheet(): Promise<GooglePayCardDataResponse>;
     setExternalCheckoutXhr(provider: string, response: GooglePayCardDataResponse): Promise<void>;
@@ -802,6 +812,7 @@ declare class GooglePayPaymentStrategy implements PaymentStrategy {
     private _methodId?;
     private _isDeinitializationBlocked;
     private _isContainerMode;
+    private _getFieldsValues?;
     constructor(_paymentIntegrationService: PaymentIntegrationService, _googlePayPaymentProcessor: GooglePayPaymentProcessor);
     initialize(options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions): Promise<void>;
     execute({ payment }: OrderRequestBody): Promise<void>;

@@ -52,7 +52,7 @@ export default class GooglePayCheckoutComGateway
 
         try {
             token = JSON.parse(data.nonce);
-        } catch (error) {
+        } catch {
             throw new InvalidArgumentError('Unable to parse response from Google Pay.');
         }
 

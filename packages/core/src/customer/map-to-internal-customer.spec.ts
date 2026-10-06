@@ -18,7 +18,6 @@ describe('mapToInternalCustomer', () => {
     it('maps to internal customer', () => {
         const checkout = getCheckout();
 
-        // tslint:disable-next-line:no-non-null-assertion
         expect(mapToInternalCustomer(checkout.customer, checkout.billingAddress!)).toEqual(
             getInternalCustomer(),
         );

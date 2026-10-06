@@ -154,7 +154,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
                 );
 
                 return buyNowCart;
-            } catch (error) {
+            } catch {
                 throw new BuyNowCartCreationError();
             }
         }

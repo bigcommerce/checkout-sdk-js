@@ -74,7 +74,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             if (!paymentMethod.clientToken) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
             }
-        } catch (_e) {
+        } catch {
             state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
             paymentMethod = state.getPaymentMethodOrThrow(methodId);
         }

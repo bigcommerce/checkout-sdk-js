@@ -91,7 +91,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
         try {
             this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        } catch (_e) {
+        } catch {
             state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
             this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
         }
@@ -286,7 +286,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 await this._requestSender.get(url);
 
                 return await this._paymentIntegrationService.loadCheckout();
-            } catch (error) {
+            } catch {
                 return this._onError(new PaymentMethodCancelledError());
             }
         };
@@ -589,7 +589,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             const { deviceData } = await this._braintreeSdk.getDataCollectorOrThrow();
 
             return deviceData;
-        } catch (_) {
+        } catch {
             // Don't throw an error to avoid breaking checkout flow
         }
     }
