@@ -286,9 +286,7 @@ describe('BraintreeSdk', () => {
 
     describe('#getBraintreeLocalPayment()', () => {
         const merchantId = 'merchantAccountId';
-        const getBraintreeLocalPaymentCreatorCreateMock = (
-            callbackError: BraintreeError | undefined = undefined,
-        ) => {
+        const getBraintreeLocalPaymentCreatorCreateMock = (callbackError?: BraintreeError) => {
             return async (
                 _: BraintreeLocalPaymentCreateConfig,
                 callback?: (

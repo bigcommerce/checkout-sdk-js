@@ -203,7 +203,9 @@ export default class PayPalSdkScriptLoader {
             isHostedCheckoutEnabled,
             isPayPalCreditAvailable,
             isDeveloperModeApplicable,
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
             availableAlternativePaymentMethods = [],
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
             enabledAlternativePaymentMethods = [],
             isGooglePayEnabled,
         } = initializationData;
@@ -376,7 +378,9 @@ export default class PayPalSdkScriptLoader {
             buyerCountry,
             attributionId,
             isDeveloperModeApplicable,
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
             availableAlternativePaymentMethods = [],
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
             enabledAlternativePaymentMethods = [],
         } = initializationData;
 

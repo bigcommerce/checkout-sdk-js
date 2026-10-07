@@ -150,6 +150,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         const lineItems: ApplePayJS.ApplePayLineItem[] = [
             {
                 label: this._subTotalLabel,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${checkout.subtotal.toFixed(decimalPlaces)}`,
             },
         ];
@@ -157,12 +158,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         checkout.taxes.forEach((tax) =>
             lineItems.push({
                 label: tax.name,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${tax.amount.toFixed(decimalPlaces)}`,
             }),
         );
 
         lineItems.push({
             label: this._shippingLabel,
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
             amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`,
         });
 
@@ -183,6 +186,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             lineItems,
             total: {
                 label: storeName,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${outstandingBalance.toFixed(decimalPlaces)}`,
                 type: 'final',
             },

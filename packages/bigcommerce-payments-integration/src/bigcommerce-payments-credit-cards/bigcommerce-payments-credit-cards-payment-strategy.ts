@@ -660,6 +660,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
         fields: HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap,
     ): void {
         Object.values(fields || {}).forEach((id: HostedCardFieldOptions) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
             const element = document.getElementById(`${id?.containerId || ''}`);
 
             if (element) {

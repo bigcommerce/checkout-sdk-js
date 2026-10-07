@@ -415,10 +415,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                     const { offerChangeTriggers } =
                         this._googlePayPaymentProcessor.getCallbackTriggers();
 
-                    const { newOfferInfo = undefined, error: couponsError = undefined } =
-                        offerChangeTriggers.includes(callbackTrigger)
-                            ? await this._handleOfferTrigger(offerData)
-                            : {};
+                    const { newOfferInfo, error: couponsError } = offerChangeTriggers.includes(
+                        callbackTrigger,
+                    )
+                        ? await this._handleOfferTrigger(offerData)
+                        : {};
 
                     // We can add another errors if needed 'couponsError || shippingError || anotherError'
                     const error: GooglePayError | undefined = couponsError;

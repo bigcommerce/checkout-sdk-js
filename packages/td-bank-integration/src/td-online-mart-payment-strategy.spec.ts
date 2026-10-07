@@ -505,7 +505,9 @@ describe('TDOnlineMartPaymentStrategy', () => {
             });
 
             it('execute 3DS challenge', async () => {
-                const postFormMock = jest.fn((_url, _options, resolveFn) => resolveFn());
+                const postFormMock = jest.fn((_url, _options, resolveFn) => {
+                    resolveFn();
+                });
 
                 jest.spyOn(formPoster, 'postForm').mockImplementation(postFormMock);
                 jest.spyOn(

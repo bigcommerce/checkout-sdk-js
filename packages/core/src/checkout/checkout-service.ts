@@ -765,6 +765,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     persistB2BMetadata({
+        // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
         isInvoice = false,
         invoiceComment = '',
         poNumber = '',
