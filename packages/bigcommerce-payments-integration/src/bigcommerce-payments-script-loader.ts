@@ -128,6 +128,8 @@ export default class BigCommercePaymentsScriptLoader {
                 'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
                 'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
                 commit,
+                //@ts-ignore
+                locale: 'es_ES',
                 components: [
                     'buttons',
                     'hosted-fields',
