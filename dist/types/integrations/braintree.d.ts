@@ -887,7 +887,7 @@ declare class BraintreeVenmoButtonStrategy implements CheckoutButtonStrategy {
     private braintreeSdk;
     private onError;
     constructor(paymentIntegrationService: PaymentIntegrationService, formPoster: FormPoster, braintreeSdk: BraintreeSdk);
-    initialize(options: CheckoutButtonInitializeOptions & WithBraintreeVenmoInitializeOptions): Promise<void>;
+    initialize(options: CheckoutButtonInitializeOptions & WithBraintreeVenmoInitializeOptions_2): Promise<void>;
     deinitialize(): Promise<void>;
     private handleError;
     private createBuyNowCart;
@@ -903,7 +903,7 @@ declare class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
     private braintreeVenmoCheckout?;
     private venmoOptions?;
     constructor(paymentIntegrationService: PaymentIntegrationService, braintreeIntegrationService: BraintreeIntegrationService);
-    initialize(options: PaymentInitializeOptions & WithBraintreeVenmoInitializeOptions_2): Promise<void>;
+    initialize(options: PaymentInitializeOptions & WithBraintreeVenmoInitializeOptions): Promise<void>;
     execute(orderRequest: OrderRequestBody): Promise<void>;
     finalize(): Promise<void>;
     deinitialize(): Promise<void>;
@@ -1173,7 +1173,7 @@ declare interface WithBraintreeVenmoInitializeOptions {
      * The options that are required to facilitate Braintree Venmo. They can be
      * omitted unless you need to support Braintree Venmo.
      */
-    braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
+    braintreevenmo?: BraintreeVenmoPaymentStrategyInitializeOptions;
 }
 
 declare interface WithBraintreeVenmoInitializeOptions_2 {
@@ -1181,7 +1181,7 @@ declare interface WithBraintreeVenmoInitializeOptions_2 {
      * The options that are required to facilitate Braintree Venmo. They can be
      * omitted unless you need to support Braintree Venmo.
      */
-    braintreevenmo?: BraintreeVenmoPaymentStrategyInitializeOptions;
+    braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
 }
 
 declare interface WithBraintreeVenmoWalletInitializeOptions {
