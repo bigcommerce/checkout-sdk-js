@@ -122,11 +122,13 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             paypalcommercefastlane?.styles,
         );
 
-        await this.paypalFastlaneUtils.initializePayPalFastlane(
+        const fastlane = await this.paypalFastlaneUtils.initializePayPalFastlane(
             this.paypalFastlaneSdk,
             !!isDeveloperModeApplicable,
             fastlaneStyles,
         );
+
+        fastlane.setLocale('zh_US');
 
         if (this.shouldRunAuthenticationFlow()) {
             await this.runPayPalAuthenticationFlowOrThrow(methodId);

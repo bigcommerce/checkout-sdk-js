@@ -263,6 +263,7 @@ export default class PayPalSdkScriptLoader {
                 intent,
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
                 ...(locale && { locale }),
+                locale: 'ja_JP' // This locale affects PPCP SPB and payment strategy. P.S. Hardcoded for POC purposes only!
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
