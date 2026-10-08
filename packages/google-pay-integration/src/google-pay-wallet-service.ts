@@ -1,3 +1,5 @@
+import { FormPoster } from '@bigcommerce/form-poster';
+
 import {
     guard,
     InvalidArgumentError,
@@ -7,6 +9,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     AddressRequestBody,
+    CheckoutHandoff,
+    CheckoutHandoffMethod,
     WalletButtonIntegrationService,
 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 
@@ -31,6 +35,7 @@ export default class GooglePayWalletService {
         private walletButtonIntegrationService: WalletButtonIntegrationService,
         private scriptLoader: GooglePayScriptLoader,
         private gateway: GooglePayWalletGateway,
+        private formPoster: FormPoster,
     ) {}
 
     /**
@@ -55,10 +60,12 @@ export default class GooglePayWalletService {
         containerId: string,
         options: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>,
     ): void {
-        const container = document.querySelector<HTMLElement>(`#${containerId}`);
+        const container = document.getElementById(containerId);
 
         if (!container) {
-            return;
+            throw new InvalidArgumentError(
+                `Unable to render the Google Pay button because no element with id "${containerId}" was found.`,
+            );
         }
 
         const button = this.getPaymentsClientOrThrow().createButton({
@@ -125,11 +132,13 @@ export default class GooglePayWalletService {
             inputData,
         );
 
-        if (!response.body.redirectUrls?.externalCheckoutUrl) {
+        const handoff = response.body.redirectUrls?.externalCheckoutHandoff;
+
+        if (!handoff) {
             throw new Error('Failed to redirection to checkout page');
         }
 
-        window.location.assign(response.body.redirectUrls.externalCheckoutUrl);
+        this.handOffToCheckout(handoff);
     }
 
     /**
@@ -177,6 +186,26 @@ export default class GooglePayWalletService {
         if (element) {
             element.style.display = 'none';
         }
+    }
+
+    /**
+     * Follows whatever transport the mutation asked for. A navigation cannot carry the session-sync token
+     * for every payment method: Google Pay's base64 nonce pushes the URI past the length limit the
+     * storefront enforces, so that token has to be posted instead.
+     */
+    private handOffToCheckout(handoff: CheckoutHandoff): void {
+        if (handoff.method !== CheckoutHandoffMethod.Post) {
+            window.location.assign(handoff.url);
+
+            return;
+        }
+
+        const fields = handoff.fields.reduce<Record<string, string>>(
+            (acc, { name, value }) => ({ ...acc, [name]: value }),
+            {},
+        );
+
+        this.formPoster.postForm(handoff.url, fields);
     }
 
     private buildPaymentDataRequest(transactionInfo: GooglePayTransactionInfo): void {
