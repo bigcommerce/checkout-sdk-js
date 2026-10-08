@@ -285,6 +285,17 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
         });
 
+        it('sets paypal fastlane locale based on store locale', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('fr');
+            jest.spyOn(paypalFastlaneUtils, 'initializePayPalFastlane').mockResolvedValue(
+                paypalFastlane,
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalFastlane.setLocale).toHaveBeenCalledWith('fr_us');
+        });
+
         it('loads paypal fastlane sdk', async () => {
             await strategy.initialize(initializationOptions);
 

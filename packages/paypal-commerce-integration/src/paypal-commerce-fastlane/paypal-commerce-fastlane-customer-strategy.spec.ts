@@ -17,6 +17,7 @@ import {
     createPayPalFastlaneUtils,
     createPayPalSdkScriptLoader,
     getPayPalAcceleratedCheckoutPaymentMethod,
+    getPayPalFastlane,
     getPayPalFastlaneSdk,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneSdk,
@@ -228,6 +229,19 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+        });
+
+        it('sets paypal fastlane locale based on store locale', async () => {
+            const paypalFastlane = getPayPalFastlane();
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('es-MX');
+            jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane').mockResolvedValue(
+                paypalFastlane,
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalFastlane.setLocale).toHaveBeenCalledWith('es_us');
         });
 
         it('loads paypal commerce credit cards payment method on trigger strategy for not know control/test group', async () => {
