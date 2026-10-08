@@ -291,9 +291,7 @@ declare interface GatewayOrderPayment extends OrderPayment {
     mandate?: {
         id: string;
         url?: string;
-        mandateText?: {
-            [key: string]: string;
-        };
+        mandateText?: Record<string, string>;
     };
 }
 
@@ -369,9 +367,7 @@ declare interface InternalCart {
     discountNotifications: DiscountNotification[];
     giftCertificate: {
         totalDiscountedAmount: number;
-        appliedGiftCertificates: {
-            [code: string]: InternalGiftCertificate;
-        };
+        appliedGiftCertificates: Record<string, InternalGiftCertificate>;
     };
     shipping: {
         amount: number;
@@ -448,9 +444,7 @@ declare interface InternalGiftCertificate {
 
 declare interface InternalGiftCertificateList {
     totalDiscountedAmount: number;
-    appliedGiftCertificates: {
-        [code: string]: InternalGiftCertificate;
-    };
+    appliedGiftCertificates: Record<string, InternalGiftCertificate>;
 }
 
 declare interface InternalLineItem {
@@ -536,9 +530,7 @@ declare interface InternalOrder {
     };
     token?: string;
     payment: InternalOrderPayment;
-    socialData?: {
-        [itemId: string]: InternalSocialDataList;
-    };
+    socialData?: Record<string, InternalSocialDataList>;
     hasDigitalItems: boolean;
     isDownloadable: boolean;
     isComplete: boolean;
@@ -582,9 +574,7 @@ declare interface InternalShippingOption {
     transitTime: string;
 }
 
-declare interface InternalShippingOptionList {
-    [key: string]: InternalShippingOption[];
-}
+declare type InternalShippingOptionList = Record<string, InternalShippingOption[]>;
 
 declare interface InternalSocialDataItem {
     name: string;
@@ -597,9 +587,7 @@ declare interface InternalSocialDataItem {
     channelCode: string;
 }
 
-declare interface InternalSocialDataList {
-    [key: string]: InternalSocialDataItem;
-}
+declare type InternalSocialDataList = Record<string, InternalSocialDataItem>;
 
 declare interface LineItem {
     id: string | number;

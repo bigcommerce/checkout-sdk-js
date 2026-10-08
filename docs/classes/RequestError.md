@@ -73,11 +73,7 @@ any server response into a JS error object.
 
 ### headers
 
-> **headers**: `object`
-
-#### Index Signature
-
-\[`key`: `string`\]: `any`
+> **headers**: `Record`\<`string`, `any`\>
 
 ***
 

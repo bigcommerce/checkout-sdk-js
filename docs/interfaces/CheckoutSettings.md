@@ -40,11 +40,7 @@
 
 ### features
 
-> **features**: `object`
-
-#### Index Signature
-
-\[`featureName`: `string`\]: `boolean`
+> **features**: `Record`\<`string`, `boolean`\>
 
 ***
 

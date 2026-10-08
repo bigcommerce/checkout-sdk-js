@@ -4,8 +4,6 @@
 
 [@bigcommerce/checkout-sdk](../README.md) / UnknownObject
 
-# Interface: UnknownObject
+# Type Alias: UnknownObject
 
-## Indexable
-
-> \[`key`: `string`\]: `unknown`
+> **UnknownObject** = `Record`\<`string`, `unknown`\>

@@ -4,8 +4,6 @@
 
 [@bigcommerce/checkout-sdk](../README.md) / CardStateErrors
 
-# Interface: CardStateErrors
+# Type Alias: CardStateErrors
 
-## Indexable
-
-> \[`key`: `string`\]: `string`
+> **CardStateErrors** = `Record`\<`string`, `string`\>

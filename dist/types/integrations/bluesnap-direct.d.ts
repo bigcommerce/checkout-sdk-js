@@ -238,9 +238,7 @@ declare interface BlueSnapDirectStyle {
     input?: BlueSnapDirectStyleDeclaration;
 }
 
-declare interface BlueSnapDirectStyleDeclaration {
-    [k: string]: string;
-}
+declare type BlueSnapDirectStyleDeclaration = Record<string, string>;
 
 declare interface BlueSnapDirectSubmitError {
     errorCode: string;

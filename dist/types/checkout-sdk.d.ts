@@ -234,9 +234,7 @@ declare interface AdyenComponentState {
     data?: CardStateData | IdealStateData | SepaStateData;
     issuer?: string;
     isValid?: boolean;
-    valid?: {
-        [key: string]: boolean;
-    };
+    valid?: Record<string, boolean>;
     errors?: CardStateErrors;
 }
 
@@ -1328,9 +1326,7 @@ declare interface BigCommercePaymentsFieldsStyleOptions {
         borderFocusColor?: string;
         spacingUnit?: string;
     };
-    rules?: {
-        [key: string]: any;
-    };
+    rules?: Record<string, any>;
 }
 
 /**
@@ -1894,9 +1890,7 @@ declare interface BlueSnapV2StyleProps {
     width?: string;
 }
 
-declare interface BodlEventsPayload {
-    [key: string]: unknown;
-}
+declare type BodlEventsPayload = Record<string, unknown>;
 
 declare interface BodlService {
     checkoutBegin(): void;
@@ -2590,9 +2584,7 @@ declare interface CardPaymentMethodState extends AdyenPaymentMethodState {
 declare interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
-    valid?: {
-        [key: string]: boolean;
-    };
+    valid?: Record<string, boolean>;
     errors?: CardStateErrors;
 }
 
@@ -2604,9 +2596,7 @@ declare interface CardStateData {
     holderName: string;
 }
 
-declare interface CardStateErrors {
-    [key: string]: string;
-}
+declare type CardStateErrors = Record<string, string>;
 
 declare interface Cart {
     id: string;
@@ -2740,9 +2730,7 @@ declare interface Checkout {
 }
 
 declare interface CheckoutButtonDataState {
-    initializedContainers: {
-        [key: string]: boolean;
-    };
+    initializedContainers: Record<string, boolean>;
 }
 
 declare class CheckoutButtonErrorSelector {
@@ -4166,9 +4154,7 @@ declare interface CheckoutServiceOptions {
 
 declare interface CheckoutSettings {
     capabilities?: Capabilities;
-    features: {
-        [featureName: string]: boolean;
-    };
+    features: Record<string, boolean>;
     checkoutBillingSameAsShippingEnabled: boolean;
     checkoutUserExperienceSettings: UserExperienceSettings;
     enableOrderComments: boolean;
@@ -6129,9 +6115,7 @@ declare interface GatewayOrderPayment extends OrderPayment {
     mandate?: {
         id: string;
         url?: string;
-        mandateText?: {
-            [key: string]: string;
-        };
+        mandateText?: Record<string, string>;
     };
 }
 
@@ -7078,9 +7062,7 @@ declare class LanguageService {
      *
      * @param maps - The set of language strings.
      */
-    mapKeys(maps: {
-        [key: string]: string;
-    }): void;
+    mapKeys(maps: Record<string, string>): void;
     /**
      * Gets the preferred locale of the current customer.
      *
@@ -7192,9 +7174,7 @@ declare interface LinkStyles extends InlineElementStyles {
     hover?: InlineElementStyles;
 }
 
-declare interface Locales {
-    [key: string]: string;
-}
+declare type Locales = Record<string, string>;
 
 /**
  * A set of options that are required to initialize the Mollie payment method.
@@ -8273,9 +8253,7 @@ declare interface PayPalCommerceFieldsStyleOptions {
         borderFocusColor?: string;
         spacingUnit?: string;
     };
-    rules?: {
-        [key: string]: any;
-    };
+    rules?: Record<string, any>;
 }
 
 /**
@@ -8619,9 +8597,7 @@ declare interface RemoteCheckoutStateData {
  */
 export declare class RequestError<TBody = any> extends StandardError {
     body: TBody | object;
-    headers: {
-        [key: string]: any;
-    };
+    headers: Record<string, any>;
     errors: Array<{
         code: string;
         message?: string;
@@ -8716,9 +8692,7 @@ declare interface SepaStateData {
 declare interface SetIframeStyleCommand {
     type: ExtensionCommandType.SetIframeStyle;
     payload: {
-        style: {
-            [key: string]: string | number | null;
-        };
+        style: Record<string, string | number | null>;
     };
 }
 
@@ -9287,9 +9261,7 @@ declare interface StripeUPECustomerInitializeOptions {
     /**
      * get styles from store theme
      */
-    getStyles?(): {
-        [key: string]: string;
-    } | undefined;
+    getStyles?(): Record<string, string> | undefined;
 }
 
 /**
@@ -9360,9 +9332,7 @@ declare interface StripeUPEShippingInitializeOptions {
     /**
      * get styles from store theme
      */
-    getStyles?(): {
-        [key: string]: string;
-    };
+    getStyles?(): Record<string, string>;
     /**
      * get the state code needed for shipping stripe element
      *
@@ -9568,17 +9538,13 @@ declare interface ThreeDSecureToken {
     token: string;
 }
 
-declare interface TranslationData {
-    [key: string]: string | number;
-}
+declare type TranslationData = Record<string, string | number>;
 
 declare interface Translations {
     [key: string]: string | Translations;
 }
 
-declare interface UnknownObject {
-    [key: string]: unknown;
-}
+declare type UnknownObject = Record<string, unknown>;
 
 declare enum UntrustedShippingCardVerificationType {
     CVV = "cvv",

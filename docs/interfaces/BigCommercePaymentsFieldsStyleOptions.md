@@ -10,11 +10,7 @@
 
 ### rules?
 
-> `optional` **rules?**: `object`
-
-#### Index Signature
-
-\[`key`: `string`\]: `any`
+> `optional` **rules?**: `Record`\<`string`, `any`\>
 
 ***
 

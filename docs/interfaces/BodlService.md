@@ -26,7 +26,7 @@
 
 ##### payload?
 
-[`BodlEventsPayload`](BodlEventsPayload.md)
+[`BodlEventsPayload`](../type-aliases/BodlEventsPayload.md)
 
 #### Returns
 
@@ -58,7 +58,7 @@
 
 ##### payload?
 
-[`BodlEventsPayload`](BodlEventsPayload.md)
+[`BodlEventsPayload`](../type-aliases/BodlEventsPayload.md)
 
 #### Returns
 
@@ -84,7 +84,7 @@
 
 ##### payload?
 
-[`BodlEventsPayload`](BodlEventsPayload.md)
+[`BodlEventsPayload`](../type-aliases/BodlEventsPayload.md)
 
 #### Returns
 

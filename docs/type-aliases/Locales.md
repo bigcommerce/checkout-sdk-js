@@ -4,8 +4,6 @@
 
 [@bigcommerce/checkout-sdk](../README.md) / Locales
 
-# Interface: Locales
+# Type Alias: Locales
 
-## Indexable
-
-> \[`key`: `string`\]: `string`
+> **Locales** = `Record`\<`string`, `string`\>

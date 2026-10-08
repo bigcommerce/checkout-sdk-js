@@ -496,9 +496,7 @@ declare class GooglePayGateway {
     mapToExternalCheckoutData(response: GooglePayCardDataResponse): Promise<GooglePaySetExternalCheckoutData>;
     getRequiredData(): Promise<GooglePayRequiredPaymentData>;
     getCallbackIntents(): CallbackIntentsType[];
-    getCallbackTriggers(): {
-        [key: string]: CallbackTriggerType[];
-    };
+    getCallbackTriggers(): Record<string, CallbackTriggerType[]>;
     getNonce(methodId: string): Promise<string>;
     extraPaymentData(_paymentData?: OrderPaymentRequestBody['paymentData']): Promise<undefined | ExtraPaymentData>;
     getMerchantInfo(): GooglePayMerchantInfo;
@@ -779,9 +777,7 @@ declare class GooglePayPaymentProcessor {
     mapToShippingAddressRequestBody(response: GooglePayCardDataResponse): AddressRequestBody | undefined;
     processAdditionalAction(error: unknown, methodId?: string): Promise<void>;
     signOut(providerId: string): Promise<void>;
-    getCallbackTriggers(): {
-        [key: string]: CallbackTriggerType[];
-    };
+    getCallbackTriggers(): Record<string, CallbackTriggerType[]>;
     setShouldRequestShipping(isRequired: boolean): void;
     handleShippingAddressChange(shippingAddress: GooglePayFullBillingAddress): Promise<ShippingOptionParameters | undefined>;
     handleShippingOptionChange(optionId: string): Promise<void>;

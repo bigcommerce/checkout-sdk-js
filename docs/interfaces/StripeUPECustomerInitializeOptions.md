@@ -36,13 +36,13 @@ The identifier of the payment method.
 
 ### getStyles()?
 
-> `optional` **getStyles**(): \{\[`key`: `string`\]: `string`; \} \| `undefined`
+> `optional` **getStyles**(): `Record`\<`string`, `string`\> \| `undefined`
 
 get styles from store theme
 
 #### Returns
 
-\{\[`key`: `string`\]: `string`; \} \| `undefined`
+`Record`\<`string`, `string`\> \| `undefined`
 
 ***
 

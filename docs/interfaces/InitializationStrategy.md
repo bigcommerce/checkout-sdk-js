@@ -8,7 +8,7 @@
 
 ## Extends
 
-- `Partial`\<[`UnknownObject`](UnknownObject.md)\>
+- `Partial`\<[`UnknownObject`](../type-aliases/UnknownObject.md)\>
 
 ## Indexable
 

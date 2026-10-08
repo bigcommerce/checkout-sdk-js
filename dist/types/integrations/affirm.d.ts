@@ -45,12 +45,10 @@ declare interface AffirmCheckout {
     init(): void;
 }
 
-declare interface AffirmDiscount {
-    [key: string]: {
-        discount_amount: number;
-        discount_display_name: string;
-    };
-}
+declare type AffirmDiscount = Record<string, {
+    discount_amount: number;
+    discount_display_name: string;
+}>;
 
 declare interface AffirmFailResponse {
     reason: string;

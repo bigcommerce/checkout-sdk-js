@@ -4,8 +4,6 @@
 
 [@bigcommerce/checkout-sdk](../README.md) / TranslationData
 
-# Interface: TranslationData
+# Type Alias: TranslationData
 
-## Indexable
-
-> \[`key`: `string`\]: `string` \| `number`
+> **TranslationData** = `Record`\<`string`, `string` \| `number`\>

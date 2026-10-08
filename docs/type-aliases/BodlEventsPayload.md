@@ -4,8 +4,6 @@
 
 [@bigcommerce/checkout-sdk](../README.md) / BodlEventsPayload
 
-# Interface: BodlEventsPayload
+# Type Alias: BodlEventsPayload
 
-## Indexable
-
-> \[`key`: `string`\]: `unknown`
+> **BodlEventsPayload** = `Record`\<`string`, `unknown`\>

@@ -40,7 +40,7 @@
 
 ### locales
 
-> **locales**: [`Locales`](Locales.md)
+> **locales**: [`Locales`](../type-aliases/Locales.md)
 
 ***
 

@@ -327,9 +327,7 @@ declare interface StripeUPECustomerInitializeOptions {
     /**
      * get styles from store theme
      */
-    getStyles?(): {
-        [key: string]: string;
-    } | undefined;
+    getStyles?(): Record<string, string> | undefined;
 }
 
 declare class StripeUPECustomerStrategy implements CustomerStrategy {
