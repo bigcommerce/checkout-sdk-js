@@ -6,6 +6,7 @@ import mergeIncludes from './merge-includes';
  */
 export default function joinOrMergeIncludes<T extends string>(
     baseIncludes: T[],
+    // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
     includeDictionaryOrList: { [key in T]?: boolean } | T[] = [],
 ): string {
     return Array.isArray(includeDictionaryOrList)

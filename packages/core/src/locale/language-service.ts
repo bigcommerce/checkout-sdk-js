@@ -29,7 +29,7 @@ export default class LanguageService {
     private _locale: string;
     private _locales: Locales;
     private _translations: TransformedTranslations;
-    private _formatters: { [key: string]: any };
+    private _formatters: Record<string, any>;
 
     /**
      * @internal
@@ -56,7 +56,7 @@ export default class LanguageService {
      *
      * @param maps - The set of language strings.
      */
-    mapKeys(maps: { [key: string]: string }): void {
+    mapKeys(maps: Record<string, string>): void {
         Object.keys(maps).forEach((key) => {
             const translationKey = `${KEY_PREFIX}.${maps[key]}`;
 
@@ -205,6 +205,4 @@ export default class LanguageService {
     }
 }
 
-export interface TranslationData {
-    [key: string]: string | number;
-}
+export type TranslationData = Record<string, string | number>;

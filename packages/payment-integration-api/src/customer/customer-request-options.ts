@@ -5,6 +5,7 @@ export interface CustomerRequestOptions extends RequestOptions {
     onErrorLog?: (error: unknown) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface CustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
 }

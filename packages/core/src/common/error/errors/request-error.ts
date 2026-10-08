@@ -14,7 +14,7 @@ const DEFAULT_RESPONSE = {
  */
 export default class RequestError<TBody = any> extends StandardError {
     body: TBody | object;
-    headers: { [key: string]: any };
+    headers: Record<string, any>;
     errors: Array<{ code: string; message?: string }>;
     status: number;
 

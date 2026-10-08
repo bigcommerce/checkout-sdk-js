@@ -2,5 +2,5 @@ import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-ap
 
 export interface GraphQLRequestOptions extends RequestOptions {
     body?: { query: string; variables: Record<string, unknown> };
-    headers?: { [key: string]: string };
+    headers?: Record<string, string>;
 }

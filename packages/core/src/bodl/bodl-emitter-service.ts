@@ -17,7 +17,7 @@ export default class BodlEmitterService implements BodlService {
     private _checkoutStarted = false;
     private _emailEntryBegan = false;
     private _shippingOptionsShown = false;
-    private _completedSteps: { [key: string]: boolean } = {};
+    private _completedSteps: Record<string, boolean> = {};
     private state?: CheckoutStoreSelector;
 
     constructor(
@@ -164,6 +164,7 @@ export default class BodlEmitterService implements BodlService {
     private _trackCompletedStep(step: AnalyticStepType) {
         this._completedSteps[step] = true;
 
+        // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
         const bodlEventsMap: { [key in AnalyticStepType]?: () => void } = {
             [AnalyticStepType.SHIPPING]: this._trackShippingStepCompleted.bind(this),
         };

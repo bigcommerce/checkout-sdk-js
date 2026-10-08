@@ -74,9 +74,7 @@ export interface GatewayOrderPayment extends OrderPayment {
     mandate?: {
         id: string;
         url?: string;
-        mandateText?: {
-            [key: string]: string;
-        };
+        mandateText?: Record<string, string>;
     };
 }
 

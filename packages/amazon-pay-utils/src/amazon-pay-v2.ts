@@ -190,7 +190,7 @@ export interface AmazonPayV2ChangeActionOptions {
     changeAction: AmazonPayV2ChangeActionType;
 }
 
-export const amazonPayV2Regions: { [key: string]: string } = {
+export const amazonPayV2Regions: Record<string, string> = {
     de: 'eu',
     jp: 'fe',
     uk: 'eu',

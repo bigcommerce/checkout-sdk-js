@@ -323,10 +323,10 @@ export interface PayPalHostedFieldsRenderOptions {
     };
     paymentsSDK?: boolean;
     styles?: {
-        input?: { [key: string]: string };
-        '.invalid'?: { [key: string]: string };
-        '.valid'?: { [key: string]: string };
-        ':focus'?: { [key: string]: string };
+        input?: Record<string, string>;
+        '.invalid'?: Record<string, string>;
+        '.valid'?: Record<string, string>;
+        ':focus'?: Record<string, string>;
     };
     createOrder(): Promise<string>;
 }
@@ -680,9 +680,7 @@ export interface PayPalFieldsStyleOptions {
         borderFocusColor?: string;
         spacingUnit?: string;
     };
-    rules?: {
-        [key: string]: any;
-    };
+    rules?: Record<string, any>;
 }
 
 /**

@@ -6,7 +6,7 @@ export default function cachableActionDecorator<TMethod extends (...args: any[])
     key: string,
     descriptor: TypedPropertyDescriptor<TMethod>,
 ): TypedPropertyDescriptor<TMethod> {
-    const memoizedMethods = new WeakMap<object, { [key: string]: TMethod }>();
+    const memoizedMethods = new WeakMap<object, Record<string, TMethod>>();
 
     function decorateMethod(this: object, method: TMethod): TMethod {
         return ((...args: any[]) => {

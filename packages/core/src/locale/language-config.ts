@@ -22,10 +22,6 @@ export interface Translations {
     [key: string]: string | Translations;
 }
 
-export interface TransformedTranslations {
-    [key: string]: string;
-}
+export type TransformedTranslations = Record<string, string>;
 
-export interface Locales {
-    [key: string]: string;
-}
+export type Locales = Record<string, string>;

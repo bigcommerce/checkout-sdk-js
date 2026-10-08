@@ -4,11 +4,12 @@ export default interface ShippingStrategyState {
     statuses: ShippingStrategyStatusesState;
 }
 
-export interface ShippingStrategyDataState {
-    [key: string]: {
+export type ShippingStrategyDataState = Record<
+    string,
+    {
         isInitialized: boolean;
-    };
-}
+    }
+>;
 
 export interface ShippingStrategyErrorsState {
     deinitializeError?: Error;
