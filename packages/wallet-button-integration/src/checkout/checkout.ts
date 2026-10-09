@@ -4,8 +4,29 @@
  *
  */
 
+export enum CheckoutHandoffMethod {
+    Post = 'POST',
+    Redirect = 'REDIRECT',
+}
+
+export interface CheckoutHandoffField {
+    name: string;
+    value: string;
+}
+
+/**
+ * How to hand the shopper to checkout. `externalCheckoutUrl` only describes a navigation, which is not
+ * enough for a payment method whose payload cannot travel in a URL.
+ */
+export interface CheckoutHandoff {
+    url: string;
+    method: CheckoutHandoffMethod;
+    fields: CheckoutHandoffField[];
+}
+
 export interface RedirectUrls {
     externalCheckoutUrl: string;
+    externalCheckoutHandoff: CheckoutHandoff;
 }
 
 export interface CreateRedirectToCheckoutResponse {

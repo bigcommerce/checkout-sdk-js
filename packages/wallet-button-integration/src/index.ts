@@ -7,3 +7,5 @@ export type {
     BillingAddressUpdateRequestBody,
 } from './billing/billing-address';
 export type { GraphQLRequestOptions } from './graphql-request-options';
+export { CheckoutHandoffMethod } from './checkout/checkout';
+export type { CheckoutHandoff, CheckoutHandoffField } from './checkout/checkout';
