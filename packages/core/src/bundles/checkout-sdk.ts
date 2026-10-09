@@ -7,11 +7,7 @@ export { embedCheckout } from '../embedded-checkout';
 export { createEmbeddedCheckoutMessenger } from '../embedded-checkout/iframe-content';
 export { createLanguageService } from '../locale';
 export { createCurrencyService } from '../currency';
-export {
-    createStepTracker,
-    createBraintreeAnalyticTracker,
-    createPayPalCommerceAnalyticTracker,
-} from '../analytics';
+export { createStepTracker, createPayPalCommerceAnalyticTracker } from '../analytics';
 export { createStoredCardHostedFormService } from '../hosted-form';
 export { createBodlService } from '../bodl';
 export type {
