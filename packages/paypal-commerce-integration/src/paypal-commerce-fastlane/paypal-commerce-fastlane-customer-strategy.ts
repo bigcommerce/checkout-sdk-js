@@ -9,6 +9,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getFastlaneStyles,
+    getPayPalFastlaneLocale,
     PayPalFastlaneAuthenticationResult,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneStylesOption,
@@ -60,11 +61,13 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 state.getLocale(),
             );
 
-            await this.paypalFastlaneUtils.initializePayPalFastlane(
+            const fastlane = await this.paypalFastlaneUtils.initializePayPalFastlane(
                 paypalFastlaneSdk,
                 isTestModeEnabled,
                 this.getFastlaneStyles(methodId, paypalcommercefastlane),
             );
+
+            fastlane.setLocale(getPayPalFastlaneLocale(state.getLocale()));
         } catch (error) {
             // TODO: add logger to be able to debug issues if there any
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
