@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.989.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.988.2...v1.989.0) (2026-10-09)
+
+
+### Features
+
+* **payment:** PAYPAL-7170 added setLocale method for fastlane ([#3443](https://github.com/bigcommerce/checkout-sdk-js/issues/3443)) ([a57aeb9](https://github.com/bigcommerce/checkout-sdk-js/commit/a57aeb90e8b11637e72551aa226f56ca8d3615eb))
+
 ### [1.988.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.988.1...v1.988.2) (2026-10-08)
 
 ### [1.988.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.988.0...v1.988.1) (2026-10-07)
