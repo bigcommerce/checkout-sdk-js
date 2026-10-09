@@ -77,7 +77,7 @@ export interface LineItemOption {
     name: string;
     nameId: number;
     value: string;
-    valueId: number | null;
+    valueId: number | string | null;
 }
 
 export interface LineItemSocialData {
