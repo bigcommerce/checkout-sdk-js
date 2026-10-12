@@ -1,18 +1,13 @@
 import {
     CheckoutSettings,
     getShippableItemsCount,
-    guard,
     MissingDataError,
     MissingDataErrorType,
-    NotInitializedError,
-    NotInitializedErrorType,
     PaymentIntegrationSelectors,
-    PaymentMethod,
     StoreProfile,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
-    AmazonPayV2Button,
     AmazonPayV2ButtonColor,
     AmazonPayV2ButtonConfig,
     AmazonPayV2ButtonParameters,
@@ -24,36 +19,12 @@ import {
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
     AmazonPayV2Price,
-    AmazonPayV2SDK,
     InternalCheckoutSelectors,
-    RequestConfig,
 } from './amazon-pay-v2';
-import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
+import BaseAmazonPayV2PaymentProcessor from './base-amazon-pay-v2-payment-processor';
 import { isInternalCheckoutSelectors } from './isInternalCheckoutSelectors';
 
-export default class AmazonPayV2PaymentProcessor {
-    private amazonPayV2SDK?: AmazonPayV2SDK;
-    private buttonParentContainer?: HTMLDivElement;
-    private amazonPayV2Button?: AmazonPayV2Button;
-    private isBuyNowFlow?: boolean;
-
-    constructor(private amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader) {}
-
-    async initialize(paymentMethod: PaymentMethod<AmazonPayV2InitializeOptions>): Promise<void> {
-        this.amazonPayV2SDK = await this.amazonPayV2ScriptLoader.load(paymentMethod);
-        this.buttonParentContainer =
-            this.buttonParentContainer || this.createAmazonPayButtonParentContainer();
-    }
-
-    deinitialize(): Promise<void> {
-        this.amazonPayV2Button = undefined;
-        this.buttonParentContainer?.remove();
-        this.buttonParentContainer = undefined;
-        this.amazonPayV2SDK = undefined;
-
-        return Promise.resolve();
-    }
-
+export default class AmazonPayV2PaymentProcessor extends BaseAmazonPayV2PaymentProcessor {
     bindButton(
         buttonId: string,
         sessionId: string,
@@ -62,21 +33,6 @@ export default class AmazonPayV2PaymentProcessor {
         this.getAmazonPayV2SDK().Pay.bindChangeAction(`#${buttonId}`, {
             amazonCheckoutSessionId: sessionId,
             changeAction,
-        });
-    }
-
-    createButton(containerId: string, options: AmazonPayV2ButtonParameters): void {
-        this.amazonPayV2Button = this.getAmazonPayV2SDK().Pay.renderButton(
-            `#${containerId}`,
-            options,
-        );
-    }
-
-    prepareCheckout(createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>) {
-        const requestConfig = this.prepareRequestConfig(createCheckoutSessionConfig);
-
-        this.getAmazonPayV2Button().onClick(() => {
-            this.getAmazonPayV2Button().initCheckout(requestConfig);
         });
     }
 
@@ -164,31 +120,6 @@ export default class AmazonPayV2PaymentProcessor {
         }
 
         return isPh4Enabled;
-    }
-
-    private prepareRequestConfig(
-        createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>,
-        estimatedOrderAmount?: AmazonPayV2Price,
-        productType?: AmazonPayV2PayOptions,
-    ): RequestConfig {
-        const { publicKeyId, ...signedPayload } = createCheckoutSessionConfig;
-
-        return {
-            createCheckoutSessionConfig: this.isEnvironmentSpecific(publicKeyId)
-                ? signedPayload
-                : createCheckoutSessionConfig,
-            ...(estimatedOrderAmount && { estimatedOrderAmount }),
-            ...(productType && { productType }),
-        };
-    }
-
-    private createAmazonPayButtonParentContainer(): HTMLDivElement {
-        const uid = Math.random().toString(16).substr(-4);
-        const parentContainer = document.createElement('div');
-
-        parentContainer.id = `amazonpay_button_parent_container_${uid}`;
-
-        return parentContainer;
     }
 
     private getAmazonPayV2ButtonOptions(
@@ -289,29 +220,6 @@ export default class AmazonPayV2PaymentProcessor {
             createCheckoutSession,
             sandbox: !!testMode,
         };
-    }
-
-    private isEnvironmentSpecific(publicKeyId: string): boolean {
-        return /^(SANDBOX|LIVE)/.test(publicKeyId);
-    }
-
-    private getAmazonPayV2SDK(): AmazonPayV2SDK {
-        return this.getOrThrow(this.amazonPayV2SDK);
-    }
-
-    private getButtonParentContainer(): HTMLDivElement {
-        return this.getOrThrow(this.buttonParentContainer);
-    }
-
-    private getAmazonPayV2Button(): AmazonPayV2Button {
-        return this.getOrThrow(this.amazonPayV2Button);
-    }
-
-    private getOrThrow<T>(value?: T): T {
-        return guard(
-            value,
-            () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
-        );
     }
 
     // INFO: need this mapping while we have strategies in core and in integration package at the same time
