@@ -678,6 +678,85 @@ describe('StripeUPEPaymentStrategy', () => {
             expect(stripeUPEIntegrationService.updateStripePaymentIntent).toHaveBeenCalled();
         });
 
+        describe('skipUnchangedCheckoutSessionUpdate', () => {
+            it('updates stripe payment intent if the checkout state changed', async () => {
+                jest.spyOn(
+                    stripeUPEIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(false);
+
+                await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                expect(
+                    stripeUPEIntegrationService.shouldSkipCheckoutStateUpdate,
+                ).toHaveBeenCalledWith('card', 'stripeupe');
+                expect(stripeUPEIntegrationService.updateStripePaymentIntent).toHaveBeenCalledWith(
+                    'stripeupe',
+                    'card',
+                );
+            });
+
+            it('skips stripe payment intent update if the checkout state is unchanged', async () => {
+                jest.spyOn(
+                    stripeUPEIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(true);
+
+                await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                expect(
+                    stripeUPEIntegrationService.updateStripePaymentIntent,
+                ).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            });
+
+            it('still updates billing address for Stripe Link flow when payment intent update is skipped', async () => {
+                jest.spyOn(
+                    stripeUPEIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(true);
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomerOrThrow',
+                ).mockReturnValue({ stripeLinkAuthenticationState: true });
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCustomerOrThrow',
+                ).mockReturnValue({
+                    ...getCustomer(),
+                    email: '',
+                });
+
+                await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                expect(
+                    stripeUPEIntegrationService.updateStripePaymentIntent,
+                ).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
+                    getBillingAddress(),
+                );
+            });
+
+            it('caches checkout state versions after loading payment method and clears them on deinitialize', async () => {
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(stripeUPEIntegrationService.cacheCheckoutStateVersions).toHaveBeenCalled();
+
+                const loadPaymentMethodOrder = jest.mocked(
+                    paymentIntegrationService.loadPaymentMethod,
+                ).mock.invocationCallOrder[0];
+                const cacheVersionsOrder = jest.mocked(
+                    stripeUPEIntegrationService.cacheCheckoutStateVersions,
+                ).mock.invocationCallOrder[0];
+
+                expect(cacheVersionsOrder).toBeGreaterThan(loadPaymentMethodOrder);
+
+                await strategy.deinitialize();
+
+                expect(stripeUPEIntegrationService.clearCheckoutStateVersions).toHaveBeenCalled();
+            });
+        });
+
         it('should not update billing address if not Stripe Link', async () => {
             await strategy.execute(getStripeUPEOrderRequestBodyMock());
 

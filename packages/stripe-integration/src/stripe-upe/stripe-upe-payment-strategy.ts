@@ -119,7 +119,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         if (gatewayId) {
-            await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+            if (!this.stripeIntegrationService.shouldSkipCheckoutStateUpdate(methodId, gatewayId)) {
+                await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+            }
 
             const { email } = state.getCustomerOrThrow();
 
@@ -160,6 +162,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         this._stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
         this._stripeElements = undefined;
         this._stripeUPEClient = undefined;
+        this.stripeIntegrationService.clearCheckoutStateVersions();
 
         return Promise.resolve();
     }
@@ -246,6 +249,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
+
+        this.stripeIntegrationService.cacheCheckoutStateVersions();
+
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         if (!isStripePaymentMethodLike(paymentMethod)) {
