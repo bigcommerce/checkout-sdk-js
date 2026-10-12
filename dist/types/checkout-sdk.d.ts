@@ -2025,13 +2025,6 @@ declare interface BraintreeAchInitializeOptions {
     getMandateText: () => string;
 }
 
-declare interface BraintreeAnalyticTrackerService {
-    customerPaymentMethodExecuted(): void;
-    paymentComplete(): void;
-    selectedPaymentMethod(methodId: string): void;
-    walletButtonClick(methodId: string): void;
-}
-
 declare interface BraintreeCreditCardPaymentInitializeOptions {
     /**
      * A list of card brands that are not supported by the merchant.
@@ -5289,25 +5282,6 @@ declare interface CouponSelector {
  * @returns an instance of `BodlService`.
  */
 export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
-
-/**
- * Creates an instance of `BraintreeAnalyticTrackerService`.
- *
- * @remarks
- * ```js
- * const checkoutService = createCheckoutService();
- * await checkoutService.loadCheckout();
- * const braintreeAnalyticTracker = createBraintreeAnalyticTracker(checkoutService);
- *
- * braintreeAnalyticTracker.customerPaymentMethodExecuted();
- * braintreeAnalyticTracker.paymentComplete();
- * braintreeAnalyticTracker.selectedPaymentMethod('applepay');
- * braintreeAnalyticTracker.walletButtonClick('paypal');
- * ```
- *
- * @returns an instance of `BraintreeAnalyticTrackerService`.
- */
-export declare function createBraintreeAnalyticTracker(checkoutService: CheckoutService): BraintreeAnalyticTrackerService;
 
 /**
  * Creates an instance of `CheckoutButtonInitializer`.

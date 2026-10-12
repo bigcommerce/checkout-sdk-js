@@ -147,7 +147,6 @@
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
 - [BraintreeAchInitializeOptions](interfaces/BraintreeAchInitializeOptions.md)
-- [BraintreeAnalyticTrackerService](interfaces/BraintreeAnalyticTrackerService.md)
 - [BraintreeCreditCardPaymentInitializeOptions](interfaces/BraintreeCreditCardPaymentInitializeOptions.md)
 - [BraintreeFastlaneCustomerInitializeOptions](interfaces/BraintreeFastlaneCustomerInitializeOptions.md)
 - [BraintreeFastlanePaymentInitializeOptions](interfaces/BraintreeFastlanePaymentInitializeOptions.md)
@@ -605,7 +604,6 @@
 ## Functions
 
 - [createBodlService](functions/createBodlService.md)
-- [createBraintreeAnalyticTracker](functions/createBraintreeAnalyticTracker.md)
 - [createCheckoutButtonInitializer](functions/createCheckoutButtonInitializer.md)
 - [createCheckoutService](functions/createCheckoutService.md)
 - [createCurrencyService](functions/createCurrencyService.md)
