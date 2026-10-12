@@ -214,11 +214,6 @@ export function getFastlaneMock(): BraintreeFastlane {
                 }),
         },
         FastlaneCardComponent: jest.fn(),
-        events: {
-            apmSelected: jest.fn(),
-            emailSubmitted: jest.fn(),
-            orderPlaced: jest.fn(),
-        },
     };
 }
 

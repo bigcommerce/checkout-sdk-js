@@ -417,7 +417,6 @@ export interface BraintreeFastlane {
     FastlaneCardComponent: (
         options: BraintreeFastlaneCardComponentOptions,
     ) => Promise<BraintreeFastlaneCardComponent>;
-    events: BraintreeFastlaneEvents;
 }
 
 export interface BraintreeFastlaneProfile {
@@ -617,45 +616,6 @@ export interface BraintreeFastlaneTokenizeOptions {
     };
     billingAddress?: BraintreeFastlaneAddress;
     shippingAddress?: BraintreeFastlaneAddress;
-}
-
-export interface BraintreeFastlaneEvents {
-    apmSelected: (options: BraintreeFastlaneApmSelectedEventOptions) => void;
-    emailSubmitted: (options: BraintreeFastlaneEmailEnteredEventOptions) => void;
-    orderPlaced: (options: BraintreeFastlaneOrderPlacedEventOptions) => void;
-}
-
-export interface BraintreeFastlaneEventCommonOptions {
-    context_type: 'cs_id';
-    context_id: string; // checkout session id
-    page_type: 'checkout_page';
-    page_name: string; // title of the checkout initiation page
-    partner_name: 'bigc';
-    user_type: 'store_member' | 'store_guest'; // type of the user on the merchant site
-    store_id: string;
-    merchant_name: string;
-    experiment: string; // stringify JSON object "[{ treatment_group: 'test' | 'control' }]"
-}
-
-export interface BraintreeFastlaneApmSelectedEventOptions
-    extends BraintreeFastlaneEventCommonOptions {
-    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
-    apm_list: string; // list of alternate payment shown on checkout page
-    apm_selected: string; // alternate payment method selected / methodId
-    apm_location: 'pre-email section' | 'payment section'; // placement of APM, whether it be above the email entry or in the radio buttons
-}
-
-export interface BraintreeFastlaneEmailEnteredEventOptions
-    extends BraintreeFastlaneEventCommonOptions {
-    user_email_saved: boolean; // shows whether checkout was loaded with or without a saved email
-    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
-    apm_list: string; // list of alternate payment shown on checkout page 'applepay,googlepay,paypal'
-}
-
-export interface BraintreeFastlaneOrderPlacedEventOptions
-    extends BraintreeFastlaneEventCommonOptions {
-    selected_payment_method: string;
-    currency_code: string;
 }
 
 export interface BraintreeFastlaneCardComponent {
