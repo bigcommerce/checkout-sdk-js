@@ -47,6 +47,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         options: CheckoutButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions,
     ): Promise<void> {
         const { braintreepaypalcredit, containerId, methodId } = options;
+        console.log('BT PAYLATER BUTTON STRATEGY');
 
         if (!methodId) {
             throw new InvalidArgumentError(
