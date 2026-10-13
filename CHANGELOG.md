@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.990.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.989.1...v1.990.0) (2026-10-13)
+
+
+### Features
+
+* **payment:** Stripe UPE, skip unchanged payment intent update ([#3452](https://github.com/bigcommerce/checkout-sdk-js/issues/3452)) ([d80950e](https://github.com/bigcommerce/checkout-sdk-js/commit/d80950e254f98508a1f8eaa97f197713bafbb15a))
+
 ### [1.989.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.989.0...v1.989.1) (2026-10-12)
 
 ## [1.989.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.988.2...v1.989.0) (2026-10-09)
