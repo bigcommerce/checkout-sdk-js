@@ -71,7 +71,10 @@ describe('BigCommercePaymentsRequestSender', () => {
             selectedShippingOption: shippingOptionMock,
         };
 
-        await bigCommercePaymentsRequestSender.updateOrder(updateOrderRequestBody);
+        await bigCommercePaymentsRequestSender.updateOrder(
+            'bigcommerce_payments',
+            updateOrderRequestBody,
+        );
 
         expect(requestSender.put).toHaveBeenCalledWith(
             '/api/storefront/initialization/bigcommerce_payments',
