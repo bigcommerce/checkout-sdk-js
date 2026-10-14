@@ -243,6 +243,7 @@ export default class PayPalSdkScriptLoader {
         ]);
 
         const locale = transformLocaleToPayPalFormat(storeLanguage);
+        console.log('LOCALE');
 
         return {
             options: {
@@ -263,6 +264,7 @@ export default class PayPalSdkScriptLoader {
                 intent,
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
                 ...(locale && { locale }),
+                locale: 'ja_JP',
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
