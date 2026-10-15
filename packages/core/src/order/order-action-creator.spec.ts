@@ -246,6 +246,16 @@ describe('OrderActionCreator', () => {
             );
             errorResponse = getErrorResponse();
 
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
+                    },
+                },
+            });
+
             jest.spyOn(checkoutRequestSender, 'loadCheckout').mockReturnValue(
                 Promise.resolve(getResponse(getCheckout())),
             );
@@ -289,6 +299,7 @@ describe('OrderActionCreator', () => {
                     ...getConfig().storeConfig.checkoutSettings,
                     features: {
                         [RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER]: true,
+                        [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
                     },
                 },
             });
@@ -417,6 +428,16 @@ describe('OrderActionCreator', () => {
                 config: getConfigState(),
             });
 
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
+                    },
+                },
+            });
+
             try {
                 await from(
                     orderActionCreator.submitOrder(getOrderRequestBody())(store),
@@ -431,6 +452,24 @@ describe('OrderActionCreator', () => {
             await from(orderActionCreator.submitOrder(getOrderRequestBody())(store)).toPromise();
 
             expect(orderRequestSender.loadOrder).toHaveBeenCalledWith(295, undefined);
+        });
+
+        it('validates cart version by default when the experiment is not present in features', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {},
+                },
+            });
+
+            await from(orderActionCreator.submitOrder(getOrderRequestBody())(store)).toPromise();
+
+            expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(
+                expect.objectContaining({ version: getCheckout().version }),
+                expect.anything(),
+            );
+            expect(checkoutValidator.validate).not.toHaveBeenCalled();
         });
 
         describe('when validate_cart_version_on_order_creation experiment is enabled', () => {

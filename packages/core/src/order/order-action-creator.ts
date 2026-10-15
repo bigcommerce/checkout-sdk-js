@@ -5,7 +5,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { CartConsistencyError } from '../cart/errors';
-import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
+import { Checkout, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -120,28 +120,18 @@ export default class OrderActionCreator {
                         throw new SpamProtectionNotCompletedError();
                     }
 
-                    const submitOrderRequest = (version?: number) =>
-                        this._orderRequestSender.submitOrder(
-                            this._mapToOrderRequestBody(
-                                payload ?? {},
-                                checkout.id,
-                                checkout.customerMessage,
-                                externalSource,
-                                version,
-                            ),
-                            {
-                                ...options,
-                                headers: {
-                                    checkoutVariant: variantIdentificationToken,
-                                },
-                                includeOrderDetails,
-                            },
-                        );
-
                     let submittedVersion = checkout.version;
 
                     const orderSubmission = shouldValidateCartVersion
-                        ? submitOrderRequest(submittedVersion).catch((error) => {
+                        ? this._submitOrderRequest(
+                              payload,
+                              checkout,
+                              externalSource,
+                              variantIdentificationToken,
+                              includeOrderDetails,
+                              options,
+                              submittedVersion,
+                          ).catch((error) => {
                               if (!(error instanceof CartConsistencyError)) {
                                   throw error;
                               }
@@ -151,12 +141,29 @@ export default class OrderActionCreator {
                                   .then((freshCheckout) => {
                                       submittedVersion = freshCheckout.cart.version;
 
-                                      return submitOrderRequest(submittedVersion);
+                                      return this._submitOrderRequest(
+                                          payload,
+                                          checkout,
+                                          externalSource,
+                                          variantIdentificationToken,
+                                          includeOrderDetails,
+                                          options,
+                                          submittedVersion,
+                                      );
                                   });
                           })
                         : this._checkoutValidator
                               .validate(checkout, options)
-                              .then(() => submitOrderRequest());
+                              .then(() =>
+                                  this._submitOrderRequest(
+                                      payload,
+                                      checkout,
+                                      externalSource,
+                                      variantIdentificationToken,
+                                      includeOrderDetails,
+                                      options,
+                                  ),
+                              );
 
                     return from(orderSubmission).pipe(
                         switchMap((response) => {
@@ -248,7 +255,34 @@ export default class OrderActionCreator {
         return isExperimentEnabled(
             checkoutSettings.features,
             VALIDATE_CART_VERSION_ON_ORDER_CREATION,
-            false,
+            true,
+        );
+    }
+
+    private _submitOrderRequest(
+        payload: OrderRequestBody | undefined,
+        checkout: Checkout,
+        externalSource: string | undefined,
+        variantIdentificationToken: string | undefined,
+        includeOrderDetails: boolean,
+        options?: RequestOptions,
+        version?: number,
+    ) {
+        return this._orderRequestSender.submitOrder(
+            this._mapToOrderRequestBody(
+                payload ?? {},
+                checkout.id,
+                checkout.customerMessage,
+                externalSource,
+                version,
+            ),
+            {
+                ...options,
+                headers: {
+                    checkoutVariant: variantIdentificationToken,
+                },
+                includeOrderDetails,
+            },
         );
     }
 
