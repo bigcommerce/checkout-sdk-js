@@ -28,11 +28,13 @@ export default class BigCommercePaymentsScriptLoader {
         currencyCode: string,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
+        clientMetadataId?: string,
     ): Promise<PayPalSDK> {
         const paypalSdkScriptConfig = this.getPayPalSdkScriptConfigOrThrow(
             paymentMethod,
             currencyCode,
             initializesOnCheckoutPage,
+            clientMetadataId,
         );
 
         return this.loadPayPalSDK(paypalSdkScriptConfig, forceLoad);
@@ -68,6 +70,7 @@ export default class BigCommercePaymentsScriptLoader {
         paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
         currencyCode: string,
         initializesOnCheckoutPage = true,
+        clientMetadataId?: string,
     ): BigCommercePaymentsScriptParams {
         const { id, clientToken, initializationData } = paymentMethod;
 
@@ -145,6 +148,7 @@ export default class BigCommercePaymentsScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
+                'data-client-metadata-id': clientMetadataId,
                 'data-namespace': 'bigCommercePaymentsPayPalSDK',
             },
         };

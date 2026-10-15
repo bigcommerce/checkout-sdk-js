@@ -14,6 +14,7 @@ import {
     RequestOptions,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import BigCommercePaymentsRequestSender from './bigcommerce-payments-request-sender';
 import BigCommercePaymentsScriptLoader from './bigcommerce-payments-script-loader';
@@ -33,6 +34,7 @@ import {
 
 export default class BigCommercePaymentsIntegrationService {
     private paypalSdk?: PayPalSDK;
+    private clientMetadataId?: string;
 
     constructor(
         private formPoster: FormPoster,
@@ -56,12 +58,23 @@ export default class BigCommercePaymentsIntegrationService {
         const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
+        const features = state.getStoreConfig()?.checkoutSettings.features || {};
+
+        // The device ID PayPal joins to our server-side calls; Fastlane derives it from the cart id the same way.
+        this.clientMetadataId = isExperimentEnabled(
+            features,
+            'PAYPAL-7233.bcp_card_client_metadata_id',
+            false,
+        )
+            ? state.getCart()?.id.replace(/-/g, '')
+            : undefined;
 
         this.paypalSdk = await this.bigCommercePaymentsScriptLoader.getPayPalSDK(
             paymentMethod,
             currencyCode,
             initializesOnCheckoutPage,
             forceLoad,
+            this.clientMetadataId,
         );
 
         return this.paypalSdk;
@@ -125,6 +138,7 @@ export default class BigCommercePaymentsIntegrationService {
             providerId,
             {
                 cartId,
+                ...(this.clientMetadataId && { metadataId: this.clientMetadataId }),
                 ...requestBody,
             },
         );

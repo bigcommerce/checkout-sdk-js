@@ -16,6 +16,7 @@ import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
     getCart,
+    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -86,6 +87,18 @@ describe('BigCommercePaymentsIntegrationService', () => {
         jest.spyOn(bigCommercePaymentsScriptLoader, 'getPayPalSDK').mockResolvedValue(paypalSdk);
     });
 
+    function enableClientMetadataIdExperiment() {
+        const storeConfig = getConfig().storeConfig;
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce({
+            ...storeConfig,
+            checkoutSettings: {
+                ...storeConfig.checkoutSettings,
+                features: { 'PAYPAL-7233.bcp_card_client_metadata_id': true },
+            },
+        });
+    }
+
     it('creates an instance of the BigCommercePaymentsIntegrationService class', () => {
         expect(subject).toBeInstanceOf(BigCommercePaymentsIntegrationService);
     });
@@ -99,6 +112,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
                 cart.currency.code,
                 false,
                 false,
+                undefined,
             );
             expect(output).toBe(paypalSdk);
         });
@@ -117,8 +131,57 @@ describe('BigCommercePaymentsIntegrationService', () => {
                 providedCurrencyCode,
                 false,
                 false,
+                undefined,
             );
             expect(output).toBe(paypalSdk);
+        });
+
+        it('loads paypal sdk with the cart id as the client metadata id', async () => {
+            enableClientMetadataIdExperiment();
+
+            await subject.loadPayPalSdk(defaultMethodId, undefined, false, false);
+
+            expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+                paymentMethod,
+                cart.currency.code,
+                false,
+                false,
+                cart.id.replace(/-/g, ''),
+            );
+        });
+    });
+
+    describe('#createOrderCardFields', () => {
+        const providerId = 'bigcommerce_payments_creditcardscheckout';
+
+        beforeEach(() => {
+            jest.spyOn(bigCommercePaymentsRequestSender, 'createOrder').mockResolvedValue({
+                orderId: mockedOrderId,
+                approveUrl: 'url.com',
+            });
+        });
+
+        it('creates paypal order without client metadata id by default', async () => {
+            await subject.loadPayPalSdk(defaultMethodId);
+
+            const output = await subject.createOrderCardFields(providerId);
+
+            expect(bigCommercePaymentsRequestSender.createOrder).toHaveBeenCalledWith(providerId, {
+                cartId: cart.id,
+            });
+            expect(output).toEqual({ orderId: mockedOrderId });
+        });
+
+        it('creates paypal order with the client metadata id the sdk was loaded with', async () => {
+            enableClientMetadataIdExperiment();
+
+            await subject.loadPayPalSdk(defaultMethodId);
+            await subject.createOrderCardFields(providerId);
+
+            expect(bigCommercePaymentsRequestSender.createOrder).toHaveBeenCalledWith(providerId, {
+                cartId: cart.id,
+                metadataId: cart.id.replace(/-/g, ''),
+            });
         });
     });
 

@@ -65,6 +65,17 @@ describe('BigCommercePaymentsScriptLoader', () => {
         expect(output).toEqual(paypalSdk);
     });
 
+    it('loads PayPalSDK with the client metadata id', async () => {
+        await paypalLoader.getPayPalSDK(paymentMethod, 'USD', true, false, 'cmid123');
+
+        expect(loader.loadScript).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+                attributes: expect.objectContaining({ 'data-client-metadata-id': 'cmid123' }),
+            }),
+        );
+    });
+
     it('loads PayPalSDK script every time if force load flag is provided', async () => {
         const bigCommercePaymentsCreditPaymentMethod = {
             ...paymentMethod,
