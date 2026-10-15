@@ -128,7 +128,11 @@ describe('CheckoutValidator', () => {
                         ...checkout,
                         updatedTime: '2018-06-01T14:31:40+00:00',
                     }),
-                ).resolves.toBeUndefined();
+                ).resolves.toEqual(getCheckout());
+            });
+
+            it('resolves with the freshly fetched checkout when cart content matches', async () => {
+                await expect(checkoutValidator.validate(checkout)).resolves.toEqual(getCheckout());
             });
         });
     });

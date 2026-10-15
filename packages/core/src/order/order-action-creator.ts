@@ -4,7 +4,8 @@ import { catchError, switchMap } from 'rxjs/operators';
 
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
-import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
+import { CartConsistencyError } from '../cart/errors';
+import { Checkout, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -23,6 +24,9 @@ import OrderRequestSender from './order-request-sender';
 
 export const RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER =
     'PROJECT-8987.return_full_order_details_on_create_order';
+
+export const VALIDATE_CART_VERSION_ON_ORDER_CREATION =
+    'PROJECT-8987.validate_cart_version_on_order_creation';
 
 export default class OrderActionCreator {
     private _orderCreated$ = new Subject<number>();
@@ -105,6 +109,8 @@ export default class OrderActionCreator {
                     const variantIdentificationToken = state.config.getVariantIdentificationToken();
                     const checkout = state.checkout.getCheckout();
                     const includeOrderDetails = this._isReturnFullOrderDetailsEnabled(state);
+                    const shouldValidateCartVersion =
+                        this._isValidateCartVersionOnOrderCreationEnabled(state);
 
                     if (!checkout) {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -114,25 +120,52 @@ export default class OrderActionCreator {
                         throw new SpamProtectionNotCompletedError();
                     }
 
-                    return from(
-                        this._checkoutValidator.validate(checkout, options).then(() =>
-                            this._orderRequestSender.submitOrder(
-                                this._mapToOrderRequestBody(
-                                    payload ?? {},
-                                    checkout.id,
-                                    checkout.customerMessage,
-                                    externalSource,
-                                ),
-                                {
-                                    ...options,
-                                    headers: {
-                                        checkoutVariant: variantIdentificationToken,
-                                    },
-                                    includeOrderDetails,
-                                },
-                            ),
-                        ),
-                    ).pipe(
+                    let submittedVersion = checkout.version;
+
+                    const orderSubmission = shouldValidateCartVersion
+                        ? this._submitOrderRequest(
+                              payload,
+                              checkout,
+                              externalSource,
+                              variantIdentificationToken,
+                              includeOrderDetails,
+                              options,
+                              submittedVersion,
+                          ).catch((error) => {
+                              if (!(error instanceof CartConsistencyError)) {
+                                  throw error;
+                              }
+
+                              return this._checkoutValidator
+                                  .validate(checkout, options)
+                                  .then((freshCheckout) => {
+                                      submittedVersion = freshCheckout.cart.version;
+
+                                      return this._submitOrderRequest(
+                                          payload,
+                                          checkout,
+                                          externalSource,
+                                          variantIdentificationToken,
+                                          includeOrderDetails,
+                                          options,
+                                          submittedVersion,
+                                      );
+                                  });
+                          })
+                        : this._checkoutValidator
+                              .validate(checkout, options)
+                              .then(() =>
+                                  this._submitOrderRequest(
+                                      payload,
+                                      checkout,
+                                      externalSource,
+                                      variantIdentificationToken,
+                                      includeOrderDetails,
+                                      options,
+                                  ),
+                              );
+
+                    return from(orderSubmission).pipe(
                         switchMap((response) => {
                             const orderId = response.body.data.order.orderId;
                             const { orderDetails } = response.body.data;
@@ -157,6 +190,9 @@ export default class OrderActionCreator {
                                             {
                                                 ...response.body.meta,
                                                 token: response.headers.token,
+                                                ...(shouldValidateCartVersion && {
+                                                    version: submittedVersion + 1,
+                                                }),
                                             },
                                         ),
                                     );
@@ -211,11 +247,51 @@ export default class OrderActionCreator {
         );
     }
 
+    private _isValidateCartVersionOnOrderCreationEnabled(
+        state: InternalCheckoutSelectors,
+    ): boolean {
+        const { checkoutSettings } = state.config.getStoreConfigOrThrow();
+
+        return isExperimentEnabled(
+            checkoutSettings.features,
+            VALIDATE_CART_VERSION_ON_ORDER_CREATION,
+            true,
+        );
+    }
+
+    private _submitOrderRequest(
+        payload: OrderRequestBody | undefined,
+        checkout: Checkout,
+        externalSource: string | undefined,
+        variantIdentificationToken: string | undefined,
+        includeOrderDetails: boolean,
+        options?: RequestOptions,
+        version?: number,
+    ) {
+        return this._orderRequestSender.submitOrder(
+            this._mapToOrderRequestBody(
+                payload ?? {},
+                checkout.id,
+                checkout.customerMessage,
+                externalSource,
+                version,
+            ),
+            {
+                ...options,
+                headers: {
+                    checkoutVariant: variantIdentificationToken,
+                },
+                includeOrderDetails,
+            },
+        );
+    }
+
     private _mapToOrderRequestBody(
         payload: OrderRequestBody,
         cartId: string,
         customerMessage: string,
         externalSource?: string,
+        version?: number,
     ): InternalOrderRequestBody {
         const { payment, ...order } = payload;
 
@@ -225,6 +301,7 @@ export default class OrderActionCreator {
                 cartId,
                 customerMessage,
                 externalSource,
+                version,
             };
         }
 
@@ -233,6 +310,7 @@ export default class OrderActionCreator {
             cartId,
             customerMessage,
             externalSource,
+            version,
             payment: {
                 paymentData: payment.paymentData,
                 name: payment.methodId,
