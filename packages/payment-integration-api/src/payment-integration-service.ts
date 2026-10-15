@@ -43,6 +43,8 @@ export default interface PaymentIntegrationService {
 
     loadCurrentOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
+    loadFullOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
+
     submitOrder(
         payload?: OrderRequestBody,
         options?: RequestOptions,

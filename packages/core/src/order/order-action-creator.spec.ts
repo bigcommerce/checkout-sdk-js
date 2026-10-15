@@ -277,6 +277,7 @@ describe('OrderActionCreator', () => {
                     ...getConfig().storeConfig.checkoutSettings,
                     features: {
                         [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
+                        [INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE]: false,
                     },
                 },
             });
@@ -338,6 +339,7 @@ describe('OrderActionCreator', () => {
                     features: {
                         [RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER]: true,
                         [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
+                        [INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE]: false,
                     },
                 },
             });

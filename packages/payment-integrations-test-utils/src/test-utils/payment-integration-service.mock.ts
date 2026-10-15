@@ -79,6 +79,7 @@ const loadPaymentMethod = jest.fn();
 const loadPaymentMethods = jest.fn();
 const loadShippingCountries = jest.fn(() => Promise.resolve(state));
 const loadCurrentOrder = jest.fn();
+const loadFullOrder = jest.fn();
 const submitOrder = jest.fn();
 const submitPayment = jest.fn();
 const finalizeOrder = jest.fn();
@@ -118,6 +119,7 @@ const PaymentIntegrationServiceMock = jest
             loadPaymentMethods,
             loadShippingCountries,
             loadCurrentOrder,
+            loadFullOrder,
             submitOrder,
             submitPayment,
             finalizeOrder,

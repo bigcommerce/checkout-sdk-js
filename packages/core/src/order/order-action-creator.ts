@@ -267,7 +267,6 @@ export default class OrderActionCreator {
         return isExperimentEnabled(
             checkoutSettings.features,
             INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE,
-            false,
         );
     }
 
