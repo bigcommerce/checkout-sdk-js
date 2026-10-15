@@ -145,6 +145,56 @@ describe('orderReducer()', () => {
         expect(state.meta && state.meta.b2bContext).toBeUndefined();
     });
 
+    it('stores internal order in meta if the order is inferred', () => {
+        const internalOrder = getSubmitOrderResponseBody().data.order;
+        const action: LoadOrderAction = {
+            type: OrderActionType.LoadOrderSucceeded,
+            payload: getOrder(),
+            meta: { internalOrder },
+        };
+
+        expect(orderReducer(initialState, action).meta).toEqual({ internalOrder });
+    });
+
+    it('clears inferred internal order if the order is fetched', () => {
+        const action: LoadOrderAction = {
+            type: OrderActionType.LoadOrderSucceeded,
+            payload: getOrder(),
+        };
+        const inferredState: OrderState = {
+            ...initialState,
+            meta: { internalOrder: getSubmitOrderResponseBody().data.order },
+        };
+
+        expect(orderReducer(inferredState, action).meta?.internalOrder).toBeUndefined();
+    });
+
+    it('keeps inferred internal order in meta if the order is submitted successfully', () => {
+        const response = getSubmitOrderResponseBody();
+        const action: SubmitOrderAction = {
+            type: OrderActionType.SubmitOrderSucceeded,
+            meta: { ...response.meta, token: getSubmitOrderResponseHeaders().token },
+            payload: response.data,
+        };
+        const inferredState: OrderState = {
+            ...initialState,
+            meta: { internalOrder: response.data.order },
+        };
+
+        expect(orderReducer(inferredState, action).meta?.internalOrder).toEqual(
+            response.data.order,
+        );
+    });
+
+    it('does not create meta if the order is fetched', () => {
+        const action: LoadOrderAction = {
+            type: OrderActionType.LoadOrderSucceeded,
+            payload: getOrder(),
+        };
+
+        expect(orderReducer(initialState, action).meta).toBeUndefined();
+    });
+
     it('returns new data if it is finalized successfully', () => {
         const response = getCompleteOrderResponseBody();
         const action: FinalizeOrderAction = {

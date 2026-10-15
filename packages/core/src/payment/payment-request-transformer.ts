@@ -12,7 +12,7 @@ import {
     CardNumberFormatter,
     HostedInputValues,
 } from '../hosted-form/iframe-content';
-import { mapToInternalOrder } from '../order';
+import { InternalOrder, mapToInternalOrder, Order, OrderMeta } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
 
 import isVaultedInstrument, { isFormattedVaultedInstrument } from './is-vaulted-instrument';
@@ -68,7 +68,7 @@ export default class PaymentRequestTransformer {
             shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress, consignments),
             shippingOption: shippingOption && mapToInternalShippingOption(shippingOption, true),
             cart: checkout && mapToInternalCart(checkout),
-            order: order && mapToInternalOrder(order, orderMeta),
+            order: this._getInternalOrder(order, orderMeta),
             orderMeta,
             payment: payment.paymentData,
             paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
@@ -125,7 +125,7 @@ export default class PaymentRequestTransformer {
                 mapToInternalAddress(shippingAddress, checkout.consignments),
             shippingOption: shippingOption && mapToInternalShippingOption(shippingOption, true),
             cart: checkout && mapToInternalCart(checkout),
-            order: order && mapToInternalOrder(order, orderMeta),
+            order: this._getInternalOrder(order, orderMeta),
             orderMeta,
             payment: this._transformHostedInputValues(values, payment, nonce),
             quoteMeta: {
@@ -173,6 +173,10 @@ export default class PaymentRequestTransformer {
         }
 
         return paymentMethod;
+    }
+
+    private _getInternalOrder(order?: Order, orderMeta?: OrderMeta): InternalOrder | undefined {
+        return orderMeta?.internalOrder ?? (order && mapToInternalOrder(order, orderMeta));
     }
 
     private _transformHostedInputValues(
