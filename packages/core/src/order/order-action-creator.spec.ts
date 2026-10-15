@@ -30,8 +30,10 @@ import {
     getSubmitOrderResponseBody,
     getSubmitOrderResponseHeaders,
 } from './internal-orders.mock';
+import mapFromInternalOrder from './map-from-internal-order';
 import Order from './order';
 import OrderActionCreator, {
+    INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE,
     RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER,
     VALIDATE_CART_VERSION_ON_ORDER_CREATION,
 } from './order-action-creator';
@@ -376,6 +378,109 @@ describe('OrderActionCreator', () => {
                     },
                 },
             ]);
+        });
+
+        describe('when order details are inferred from the submit order response', () => {
+            const mockFeatures = (features: Record<string, boolean>) => {
+                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {
+                            [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
+                            ...features,
+                        },
+                    },
+                });
+            };
+
+            it('skips loadOrder and builds order from the submit order response and the checkout', async () => {
+                mockFeatures({ [INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE]: true });
+
+                const checkout = store.getState().checkout.getCheckoutOrThrow();
+                const internalOrder = getSubmitOrderResponseBody().data.order;
+                const actions = await from(
+                    orderActionCreator.submitOrder(getOrderRequestBody())(store),
+                )
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(orderRequestSender.loadOrder).not.toHaveBeenCalled();
+                expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(
+                    expect.anything(),
+                    expect.objectContaining({ includeOrderDetails: false }),
+                );
+                expect(actions).toEqual([
+                    { type: OrderActionType.SubmitOrderRequested },
+                    {
+                        type: OrderActionType.LoadOrderSucceeded,
+                        payload: mapFromInternalOrder(
+                            internalOrder,
+                            checkout,
+                            checkout.billingAddress!,
+                        ),
+                        meta: { internalOrder },
+                    },
+                    {
+                        type: OrderActionType.SubmitOrderSucceeded,
+                        payload: submitResponse.body.data,
+                        meta: {
+                            ...submitResponse.body.meta,
+                            token: submitResponse.headers.token,
+                        },
+                    },
+                ]);
+            });
+
+            it('does not request order details when the full order details experiment is also enabled', async () => {
+                mockFeatures({
+                    [INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE]: true,
+                    [RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER]: true,
+                });
+
+                await from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(
+                    expect.anything(),
+                    expect.objectContaining({ includeOrderDetails: false }),
+                );
+            });
+
+            it('loads order if the checkout has no billing address', async () => {
+                mockFeatures({ [INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE]: true });
+
+                jest.spyOn(store.getState().checkout, 'getCheckout').mockReturnValue({
+                    ...getCheckout(),
+                    billingAddress: undefined,
+                });
+
+                const actions = await from(
+                    orderActionCreator.submitOrder(getOrderRequestBody())(store),
+                )
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(orderRequestSender.loadOrder).toHaveBeenCalledWith(
+                    getSubmitOrderResponseBody().data.order.orderId,
+                    undefined,
+                );
+                expect(actions).toContainEqual({
+                    type: OrderActionType.LoadOrderSucceeded,
+                    payload: getOrder(),
+                });
+            });
+
+            it('loads order when the experiment is disabled', async () => {
+                mockFeatures({ [INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE]: false });
+
+                await from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(orderRequestSender.loadOrder).toHaveBeenCalled();
+            });
         });
 
         it('emits error actions if unable to submit order', async () => {
