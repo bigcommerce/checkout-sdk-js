@@ -225,7 +225,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
         const cart = state.getCartOrThrow();
         const isOnlyDigitalItems = getIsOnlyDigitalProduct(cart);
-        console.log('LLLLL');
         return Promise.all([
             this.braintreeIntegrationService.paypal({
                 amount: grandTotal,
