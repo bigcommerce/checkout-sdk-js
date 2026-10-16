@@ -180,6 +180,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             config: { isVaultingEnabled },
         } = this.paymentMethod;
         const { methodId, paymentData = {} } = payment;
+        console.log(storeLanguage);
 
         const token = this.braintreeTokenizePayload?.nonce || nonce;
 
@@ -224,11 +225,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
         const cart = state.getCartOrThrow();
         const isOnlyDigitalItems = getIsOnlyDigitalProduct(cart);
-
         return Promise.all([
             this.braintreeIntegrationService.paypal({
                 amount: grandTotal,
-                locale: storeLanguage,
+                locale: 'de_DE',
                 currency: currency.code,
                 offerCredit: this.paymentMethod.id === 'braintreepaypalcredit',
                 shippingAddressOverride: isOnlyDigitalItems ? undefined : shippingAddressOverride,
