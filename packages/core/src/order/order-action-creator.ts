@@ -1,5 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, from, Observable, Observer, of, Subject } from 'rxjs';
+import { concat, defer, from, Observable, Observer, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
@@ -18,6 +18,7 @@ import {
     OrderActionType,
     SubmitOrderAction,
 } from './order-actions';
+import OrderCreatedNotifier from './order-created-notifier';
 import OrderRequestBody from './order-request-body';
 import OrderRequestSender from './order-request-sender';
 
@@ -25,17 +26,11 @@ export const RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER =
     'PROJECT-8987.return_full_order_details_on_create_order';
 
 export default class OrderActionCreator {
-    private _orderCreated$ = new Subject<number>();
-
     constructor(
         private _orderRequestSender: OrderRequestSender,
         private _checkoutValidator: CheckoutValidator,
+        private _orderCreatedNotifier: OrderCreatedNotifier = new OrderCreatedNotifier(),
     ) {}
-
-    // Emits once `submitOrder` has created and refetched the order, before payment is submitted.
-    get orderCreated$(): Observable<number> {
-        return this._orderCreated$.asObservable();
-    }
 
     loadOrder(orderId: number, options?: RequestOptions): Observable<LoadOrderAction> {
         return new Observable((observer: Observer<LoadOrderAction>) => {
@@ -148,7 +143,7 @@ export default class OrderActionCreator {
                                     : // TODO: Remove once we can submit orders using storefront API
                                       this.loadOrder(orderId, options),
                                 defer(() => {
-                                    this._orderCreated$.next(orderId);
+                                    this._orderCreatedNotifier.notify(orderId);
 
                                     return of(
                                         createAction(

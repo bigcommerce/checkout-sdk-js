@@ -39,7 +39,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import * as customerStrategyFactories from '../generated/customer-strategies';
 import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
-import { OrderActionCreator, OrderRequestSender } from '../order';
+import { OrderActionCreator, OrderCreatedNotifier, OrderRequestSender } from '../order';
 import {
     B2BCompanyPaymentMethodRequestSender,
     B2BPaymentsRefreshActionCreator,
@@ -139,9 +139,11 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         spamProtection,
         spamProtectionRequestSender,
     );
+    const orderCreatedNotifier = new OrderCreatedNotifier();
     const orderActionCreator = new OrderActionCreator(
         orderRequestSender,
         new CheckoutValidator(checkoutRequestSender),
+        orderCreatedNotifier,
     );
     const subscriptionsActionCreator = new SubscriptionsActionCreator(
         new SubscriptionsRequestSender(experimentRequestSender),
@@ -232,6 +234,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             paymentIntegrationService,
             store,
             checkoutActionCreator,
+            orderCreatedNotifier,
         ),
         new PickupOptionActionCreator(new PickupOptionRequestSender(experimentRequestSender)),
         new ShippingCountryActionCreator(
