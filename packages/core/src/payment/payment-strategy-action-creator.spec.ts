@@ -3,7 +3,7 @@ import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { from, of, Subject } from 'rxjs';
+import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
 import {
@@ -39,7 +39,12 @@ import { getConfig } from '../config/configs.mock';
 import { getCustomerState } from '../customer/customers.mock';
 import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { HostedFormFactory } from '../hosted-form';
-import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderCreatedNotifier,
+    OrderRequestSender,
+} from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrderState } from '../order/orders.mock';
@@ -69,6 +74,7 @@ import { CreditCardPaymentStrategy } from './strategies/credit-card';
 
 describe('PaymentStrategyActionCreator', () => {
     let orderActionCreator: OrderActionCreator;
+    let orderCreatedNotifier: OrderCreatedNotifier;
     let paymentClient: any;
     let requestSender: RequestSender;
     let spamProtection: GoogleRecaptcha;
@@ -95,9 +101,11 @@ describe('PaymentStrategyActionCreator', () => {
             createSpamProtection(createScriptLoader()),
         );
         registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
+        orderCreatedNotifier = new OrderCreatedNotifier();
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            orderCreatedNotifier,
         );
 
         paymentIntegrationService = createPaymentIntegrationService(store);
@@ -139,6 +147,7 @@ describe('PaymentStrategyActionCreator', () => {
             paymentIntegrationService,
             store,
             checkoutActionCreator,
+            orderCreatedNotifier,
         );
 
         jest.spyOn(registry, 'getByMethod').mockReturnValue(strategy);
@@ -284,6 +293,7 @@ describe('PaymentStrategyActionCreator', () => {
                     paymentIntegrationService,
                     store,
                     checkoutActionCreator,
+                    orderCreatedNotifier,
                 );
             });
 
@@ -819,9 +829,7 @@ describe('PaymentStrategyActionCreator', () => {
                 enableExperiment(true);
                 jest.spyOn(Date, 'now').mockReturnValueOnce(1000).mockReturnValueOnce(2234);
                 jest.spyOn(strategy, 'execute').mockImplementation(() => {
-                    (
-                        orderActionCreator as unknown as { _orderCreated$: Subject<number> }
-                    )._orderCreated$.next(295);
+                    orderCreatedNotifier.notify(295);
 
                     return Promise.resolve(store.getState());
                 });
@@ -841,9 +849,7 @@ describe('PaymentStrategyActionCreator', () => {
                 enableExperiment(true);
                 jest.spyOn(store, 'dispatch');
                 jest.spyOn(strategy, 'execute').mockImplementation(() => {
-                    (
-                        orderActionCreator as unknown as { _orderCreated$: Subject<number> }
-                    )._orderCreated$.next(295);
+                    orderCreatedNotifier.notify(295);
 
                     return Promise.resolve(store.getState());
                 });
@@ -903,6 +909,7 @@ describe('PaymentStrategyActionCreator', () => {
                 paymentIntegrationService,
                 store,
                 checkoutActionCreator,
+                orderCreatedNotifier,
             );
 
             try {
@@ -934,6 +941,7 @@ describe('PaymentStrategyActionCreator', () => {
                 paymentIntegrationService,
                 store,
                 checkoutActionCreator,
+                orderCreatedNotifier,
             );
             const payload = { ...getOrderRequestBody(), useStoreCredit: true };
 
@@ -978,6 +986,7 @@ describe('PaymentStrategyActionCreator', () => {
                 paymentIntegrationService,
                 store,
                 checkoutActionCreator,
+                orderCreatedNotifier,
             );
             const payload = { ...getOrderRequestBody(), useStoreCredit: true };
 
@@ -1090,6 +1099,7 @@ describe('PaymentStrategyActionCreator', () => {
                 paymentIntegrationService,
                 store,
                 checkoutActionCreator,
+                orderCreatedNotifier,
             );
             const strategyV2 = new CreditCardPaymentStrategyV2(
                 createPaymentIntegrationService(store),
@@ -1125,6 +1135,7 @@ describe('PaymentStrategyActionCreator', () => {
                 paymentIntegrationService,
                 store,
                 checkoutActionCreator,
+                orderCreatedNotifier,
             );
 
             try {

@@ -65,7 +65,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
-import { OrderActionCreator, OrderRequestSender } from '../order';
+import { OrderActionCreator, OrderCreatedNotifier, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import {
@@ -455,6 +455,7 @@ describe('CheckoutService', () => {
             paymentIntegrationService,
             store,
             checkoutActionCreator,
+            new OrderCreatedNotifier(),
         );
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(

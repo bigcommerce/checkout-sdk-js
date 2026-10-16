@@ -12,6 +12,7 @@ export type {
 export type { default as InternalOrderRequestBody } from './internal-order-request-body';
 
 export { default as OrderActionCreator } from './order-action-creator';
+export { default as OrderCreatedNotifier } from './order-created-notifier';
 export { default as orderReducer } from './order-reducer';
 export type {
     default as OrderRequestBody,
