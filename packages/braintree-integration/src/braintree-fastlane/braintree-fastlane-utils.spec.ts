@@ -147,6 +147,14 @@ describe('BraintreeFastlaneUtils', () => {
                 undefined,
             );
         });
+
+        it('sets braintree fastlane locale based on shopper locale', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('es');
+
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+
+            expect(braintreeFastlaneMock.setLocale).toHaveBeenCalledWith('es_us');
+        });
     });
 
     describe('#runPayPalAuthenticationFlowOrThrow()', () => {

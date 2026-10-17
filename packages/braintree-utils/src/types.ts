@@ -417,6 +417,7 @@ export interface BraintreeFastlane {
     FastlaneCardComponent: (
         options: BraintreeFastlaneCardComponentOptions,
     ) => Promise<BraintreeFastlaneCardComponent>;
+    setLocale(locale: string): void;
 }
 
 export interface BraintreeFastlaneProfile {
