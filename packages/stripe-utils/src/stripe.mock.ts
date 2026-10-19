@@ -5,6 +5,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    StripeCheckoutExpressCheckoutElement,
     StripeCheckoutInstance,
     StripeCheckoutSession,
     StripeCheckoutSessionActions,
@@ -204,5 +205,9 @@ export function getStripeCheckoutInstanceMock(): StripeCheckoutInstance {
         getPaymentElement: jest.fn().mockReturnValue(null),
         getCurrencySelectorElement: jest.fn().mockReturnValue(null),
         createCurrencySelectorElement: jest.fn(() => getStripeElementMock()),
+        createExpressCheckoutElement: jest.fn(
+            () => getStripeElementMock() as StripeCheckoutExpressCheckoutElement,
+        ),
+        getExpressCheckoutElement: jest.fn().mockReturnValue(null),
     };
 }
