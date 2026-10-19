@@ -26,6 +26,10 @@
 
 > **customer**: `object`
 
+#### createAccountViaBuyerPortal
+
+> **createAccountViaBuyerPortal**: `boolean`
+
 #### reloadPageAfterSignIn
 
 > **reloadPageAfterSignIn**: `boolean`

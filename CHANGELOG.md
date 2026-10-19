@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.991.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.990.0...v1.991.0) (2026-10-19)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10472 Add createAccountViaBuyerPortal capability ([#3455](https://github.com/bigcommerce/checkout-sdk-js/issues/3455)) ([a3a340e](https://github.com/bigcommerce/checkout-sdk-js/commit/a3a340eb8c9b118d46d015bf33f2ac18f6184fdb))
+
 ## [1.990.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.989.1...v1.990.0) (2026-10-13)
 
 
