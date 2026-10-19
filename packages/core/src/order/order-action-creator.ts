@@ -29,7 +29,7 @@ export default class OrderActionCreator {
     constructor(
         private _orderRequestSender: OrderRequestSender,
         private _checkoutValidator: CheckoutValidator,
-        private _orderCreatedNotifier: OrderCreatedNotifier = new OrderCreatedNotifier(),
+        private _orderCreatedNotifier: OrderCreatedNotifier,
     ) {}
 
     loadOrder(orderId: number, options?: RequestOptions): Observable<LoadOrderAction> {

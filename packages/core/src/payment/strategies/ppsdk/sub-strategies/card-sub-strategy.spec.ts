@@ -17,6 +17,7 @@ import {
     LoadOrderSucceededAction,
     OrderActionCreator,
     OrderActionType,
+    OrderCreatedNotifier,
     OrderPaymentRequestBody,
     OrderRequestSender,
 } from '../../../../order';
@@ -49,6 +50,7 @@ describe('CardSubStrategy', () => {
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+            new OrderCreatedNotifier(),
         );
         formFactory = new HostedFormFactory(store);
 

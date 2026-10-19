@@ -18,6 +18,7 @@ import {
     LoadOrderSucceededAction,
     OrderActionCreator,
     OrderActionType,
+    OrderCreatedNotifier,
     OrderRequestSender,
 } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -58,6 +59,7 @@ describe('CreditCardPaymentStrategy', () => {
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            new OrderCreatedNotifier(),
         );
 
         formFactory = new HostedFormFactory(store);

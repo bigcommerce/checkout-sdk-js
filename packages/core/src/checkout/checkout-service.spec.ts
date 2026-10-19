@@ -412,7 +412,11 @@ describe('CheckoutService', () => {
             new SpamProtectionRequestSender(requestSender),
         );
 
-        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
+        orderActionCreator = new OrderActionCreator(
+            orderRequestSender,
+            checkoutValidator,
+            new OrderCreatedNotifier(),
+        );
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             paymentMethodRequestSender,

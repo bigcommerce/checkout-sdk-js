@@ -34,6 +34,7 @@ import OrderActionCreator, {
     RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER,
 } from './order-action-creator';
 import { OrderActionType } from './order-actions';
+import OrderCreatedNotifier from './order-created-notifier';
 import OrderRequestSender from './order-request-sender';
 import { getOrder, getOrderState } from './orders.mock';
 
@@ -42,6 +43,7 @@ describe('OrderActionCreator', () => {
     let checkoutValidator: CheckoutValidator;
     let checkoutRequestSender: CheckoutRequestSender;
     let orderActionCreator: OrderActionCreator;
+    let orderCreatedNotifier: OrderCreatedNotifier;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
 
@@ -77,7 +79,13 @@ describe('OrderActionCreator', () => {
 
         jest.spyOn(checkoutValidator, 'validate').mockReturnValue(Promise.resolve());
 
-        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
+        orderCreatedNotifier = new OrderCreatedNotifier();
+
+        orderActionCreator = new OrderActionCreator(
+            orderRequestSender,
+            checkoutValidator,
+            orderCreatedNotifier,
+        );
     });
 
     describe('#loadOrder()', () => {
@@ -278,6 +286,34 @@ describe('OrderActionCreator', () => {
                     },
                 },
             ]);
+        });
+
+        it('notifies that order was created with the order id after successful submit', async () => {
+            const notifySpy = jest.spyOn(orderCreatedNotifier, 'notify');
+
+            await from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(notifySpy).toHaveBeenCalledTimes(1);
+            expect(notifySpy).toHaveBeenCalledWith(getSubmitOrderResponseBody().data.order.orderId);
+        });
+
+        it('does not notify that order was created if submit fails', async () => {
+            const notifySpy = jest.spyOn(orderCreatedNotifier, 'notify');
+
+            jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
+                Promise.reject(getErrorResponse()),
+            );
+
+            await from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                .pipe(
+                    catchError((action) => of(action)),
+                    toArray(),
+                )
+                .toPromise();
+
+            expect(notifySpy).not.toHaveBeenCalled();
         });
 
         it('requests order details and skips loadOrder when the experiment is enabled and the response includes orderDetails', async () => {

@@ -10,7 +10,12 @@ import { CheckoutStore, CheckoutValidator, createCheckoutStore } from '../checko
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderCreatedNotifier,
+    OrderRequestSender,
+} from '../order';
 import { getOrder } from '../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
@@ -62,7 +67,11 @@ describe('PaymentActionCreator', () => {
 
         jest.spyOn(paymentRequestTransformer, 'transform');
 
-        orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator);
+        orderActionCreator = new OrderActionCreator(
+            orderRequestSender,
+            {} as CheckoutValidator,
+            new OrderCreatedNotifier(),
+        );
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
             orderActionCreator,
