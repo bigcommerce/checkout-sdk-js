@@ -2,6 +2,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { isNil, omitBy } from 'lodash';
 
 import {
+    CartConflictError,
     CartConsistencyError,
     CartStockPositionsChangedError,
     EmptyCartError,
@@ -86,6 +87,10 @@ export default class OrderRequestSender {
                 }
 
                 if (error.body.type === 'cart_has_changed') {
+                    if (body?.version !== undefined) {
+                        throw new CartConflictError();
+                    }
+
                     throw new CartConsistencyError();
                 }
 

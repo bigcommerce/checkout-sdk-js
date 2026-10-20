@@ -7,7 +7,7 @@ import { catchError, toArray } from 'rxjs/operators';
 import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { getCart, getCartState } from '../cart/carts.mock';
-import { CartChangedError, CartConsistencyError } from '../cart/errors';
+import { CartChangedError, CartConflictError } from '../cart/errors';
 import {
     CheckoutRequestSender,
     CheckoutStore,
@@ -511,7 +511,7 @@ describe('OrderActionCreator', () => {
             });
 
             it('falls back to CheckoutValidator and throws CartChangedError when the comparator detects a diff', async () => {
-                const cartConsistencyError = new CartConsistencyError();
+                const cartConsistencyError = new CartConflictError();
                 const cartChangedError = new CartChangedError(
                     { cart: {}, coupons: [], giftCertificates: [], outstandingBalance: 0 },
                     { cart: {}, coupons: [], giftCertificates: [], outstandingBalance: 0 },
@@ -544,7 +544,7 @@ describe('OrderActionCreator', () => {
             });
 
             it('retries with the corrected cart version and succeeds when the validator finds no diff', async () => {
-                const cartConsistencyError = new CartConsistencyError();
+                const cartConsistencyError = new CartConflictError();
                 const freshCheckout = {
                     ...getCheckout(),
                     cart: { ...getCheckout().cart, version: 42 },
@@ -582,7 +582,7 @@ describe('OrderActionCreator', () => {
             });
 
             it('propagates the error when the retried submission also fails', async () => {
-                const cartConsistencyError = new CartConsistencyError();
+                const cartConsistencyError = new CartConflictError();
 
                 jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
                     Promise.reject(cartConsistencyError),

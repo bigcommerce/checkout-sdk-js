@@ -4,7 +4,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
-import { CartConsistencyError } from '../cart/errors';
+import { CartConflictError } from '../cart/errors';
 import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
@@ -137,7 +137,7 @@ export default class OrderActionCreator {
 
                     const orderSubmission = shouldValidateCartVersion
                         ? submitOrderRequest(submittedVersion).catch((error) => {
-                              if (!(error instanceof CartConsistencyError)) {
+                              if (!(error instanceof CartConflictError)) {
                                   throw error;
                               }
 
