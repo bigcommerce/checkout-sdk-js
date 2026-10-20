@@ -340,6 +340,7 @@ export interface AdyenComponent {
     mount(containerId: string): HTMLElement;
     unmount(): void;
     submit(): void;
+    handleAction?(action: AdyenAction): void;
 }
 
 export interface AdyenConfiguration {
@@ -448,7 +449,11 @@ export interface AdyenConfiguration {
      */
     onChange?(state: AdyenComponentEventState, component?: AdyenComponent): void;
 
-    onAdditionalDetails?(state: AdyenComponentEventState, component?: AdyenComponent): void;
+    onAdditionalDetails?(
+        state: AdyenComponentEventState,
+        component?: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
 }
 
 export interface AdyenPlaceholderData {
@@ -1143,14 +1148,22 @@ export interface SubInputDetail {
 
 export interface AdyenV3ThreeDS2ChallengeComponentOptions {
     challengeWindowSize?: string;
-    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onAdditionalDetails?(
+        state: AdyenAdditionalActionState,
+        component?: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
     onActionHandled?(rtnObj: ActionHandledReturnObject): void;
     onError(error: AdyenError): void;
 }
 
 export interface AdyenV2ThreeDS2ChallengeComponentOptions {
     size?: string;
-    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onAdditionalDetails?(
+        state: AdyenAdditionalActionState,
+        component?: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
     onActionHandled?(rtnObj: ActionHandledReturnObject): void;
     onError(error: AdyenError): void;
 }
@@ -1162,7 +1175,11 @@ export interface ActionHandledReturnObject {
 
 export interface ThreeDS2DeviceFingerprintComponentOptions {
     onActionHandled?(rtnObj: ActionHandledReturnObject): void;
-    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onAdditionalDetails?(
+        state: AdyenAdditionalActionState,
+        component?: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
     onError(error: AdyenError): void;
 }
 
