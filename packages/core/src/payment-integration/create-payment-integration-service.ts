@@ -18,7 +18,7 @@ import { CustomerActionCreator, CustomerRequestSender } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { CountryRequestSender } from '../geography';
 import { HostedFormFactory } from '../hosted-form';
-import { OrderActionCreator, OrderRequestSender } from '../order';
+import { OrderActionCreator, OrderCreatedNotifier, OrderRequestSender } from '../order';
 import {
     B2BCompanyPaymentMethodRequestSender,
     createPaymentClient,
@@ -82,6 +82,7 @@ export default function createPaymentIntegrationService(
         new OrderActionCreator(
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+            new OrderCreatedNotifier(),
         );
 
     const billingAddressActionCreator = new BillingAddressActionCreator(

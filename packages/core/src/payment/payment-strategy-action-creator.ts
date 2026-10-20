@@ -21,6 +21,7 @@ import { getDefaultLogger } from '../common/log';
 import {
     LoadOrderPaymentsAction,
     OrderActionCreator,
+    OrderCreatedNotifier,
     OrderPaymentRequestBody,
     OrderRequestBody,
 } from '../order';
@@ -69,6 +70,7 @@ export default class PaymentStrategyActionCreator {
         private _paymentIntegrationService: PaymentIntegrationService,
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
+        private _orderCreatedNotifier: OrderCreatedNotifier,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -119,7 +121,7 @@ export default class PaymentStrategyActionCreator {
 
                     const orderCreatedSubscription =
                         orderCreationStartTime !== undefined
-                            ? this._orderActionCreator.orderCreated$
+                            ? this._orderCreatedNotifier.orderCreated$
                                   .pipe(take(1))
                                   .subscribe((orderId) =>
                                       this._reportOrderCreationTime(

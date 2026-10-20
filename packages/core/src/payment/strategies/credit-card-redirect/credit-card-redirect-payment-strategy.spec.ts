@@ -22,6 +22,7 @@ import {
     LoadOrderSucceededAction,
     OrderActionCreator,
     OrderActionType,
+    OrderCreatedNotifier,
     OrderRequestSender,
     SubmitOrderAction,
 } from '../../../order';
@@ -59,6 +60,7 @@ describe('CreditCardRedirectPaymentStrategy', () => {
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
             new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+            new OrderCreatedNotifier(),
         );
 
         paymentActionCreator = new PaymentActionCreator(
