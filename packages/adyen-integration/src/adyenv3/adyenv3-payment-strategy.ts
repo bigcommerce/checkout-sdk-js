@@ -2,8 +2,8 @@ import { some } from 'lodash';
 
 import {
     AdyenAction,
+    AdyenActions,
     AdyenAdditionalAction,
-    AdyenAdditionalActionState,
     AdyenClient,
     AdyenComponent,
     AdyenComponentEventState,
@@ -357,33 +357,59 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 additionalActionOptions;
             const adyenAction: AdyenAction = JSON.parse(additionalAction.action);
 
-            const additionalActionComponent = this._getAdyenClient().createFromAction(adyenAction, {
-                onActionHandled: (additionalActionState) => {
-                    if (
-                        onActionHandled &&
-                        typeof onActionHandled === 'function' &&
-                        additionalActionState.componentType !== '3DS2Fingerprint'
-                    ) {
-                        onActionHandled();
-                    }
-                },
-                onAdditionalDetails: (additionalActionState: AdyenAdditionalActionState) => {
-                    const paymentPayload = {
-                        methodId: adyenAction.paymentMethodType,
-                        paymentData: {
-                            nonce: JSON.stringify(additionalActionState.data),
-                        },
-                    };
+            const handleAdditionalDetails = (
+                additionalActionState: { data?: unknown },
+                _component?: AdyenComponent,
+                actions?: AdyenActions,
+            ) => {
+                const paymentPayload = {
+                    methodId: adyenAction.paymentMethodType,
+                    paymentData: {
+                        nonce: JSON.stringify(additionalActionState.data),
+                    },
+                };
 
-                    if (onComplete && typeof onComplete === 'function') {
-                        onComplete();
-                    }
+                if (onComplete && typeof onComplete === 'function') {
+                    onComplete();
+                }
 
-                    resolve(paymentPayload);
-                },
-                challengeWindowSize: widgetSize || '05',
-                onError: (error: AdyenError) => reject(error),
-            });
+                if (this.isAdyenSdkUpgradeEnabled) {
+                    actions?.resolve();
+                }
+
+                resolve(paymentPayload);
+            };
+
+            const shouldRenderKlarnaWidget =
+                this.isAdyenSdkUpgradeEnabled &&
+                adyenAction.type === AdyenV3ActionType.Sdk &&
+                this._isKlarnaPaymentMethod(adyenAction.paymentMethodType);
+
+            const additionalActionComponent = shouldRenderKlarnaWidget
+                ? this._createComponent(this._getAdyenClient(), adyenAction.paymentMethodType, {
+                      useKlarnaWidget: true,
+                      onActionHandled: () => {
+                          if (onActionHandled && typeof onActionHandled === 'function') {
+                              onActionHandled();
+                          }
+                      },
+                      onAdditionalDetails: handleAdditionalDetails,
+                      onError: (error: AdyenError) => reject(error),
+                  } as unknown as AdyenComponentOptions)
+                : this._getAdyenClient().createFromAction(adyenAction, {
+                      onActionHandled: (additionalActionState) => {
+                          if (
+                              onActionHandled &&
+                              typeof onActionHandled === 'function' &&
+                              additionalActionState.componentType !== '3DS2Fingerprint'
+                          ) {
+                              onActionHandled();
+                          }
+                      },
+                      onAdditionalDetails: handleAdditionalDetails,
+                      challengeWindowSize: widgetSize || '05',
+                      onError: (error: AdyenError) => reject(error),
+                  });
 
             if (onBeforeLoad && typeof onBeforeLoad === 'function') {
                 onBeforeLoad(
@@ -394,7 +420,12 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             }
 
             void this._mountElement(additionalActionComponent, containerId)
-                .then(() => {
+                .then(async () => {
+                    if (shouldRenderKlarnaWidget) {
+                        await this._waitUntil(() => !!additionalActionComponent.componentRef);
+                        additionalActionComponent.handleAction?.(adyenAction);
+                    }
+
                     if (onLoad && typeof onLoad === 'function') {
                         onLoad(() => {
                             reject(new PaymentMethodCancelledError());
@@ -681,6 +712,10 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     }
 
     private async _waitForMountContainer(containerId: string): Promise<void> {
+        await this._waitUntil(() => !!document.getElementById(containerId));
+    }
+
+    private async _waitUntil(condition: () => boolean): Promise<void> {
         const maxAttempts = Math.ceil(
             Adyenv3PaymentStrategy.mountContainerMaxWaitMs /
                 Adyenv3PaymentStrategy.mountContainerPollIntervalMs,
@@ -694,7 +729,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            if (document.getElementById(containerId)) {
+            if (condition()) {
                 return;
             }
 
