@@ -107,6 +107,8 @@ declare interface AddressRequestBody {
     label?: string;
 }
 
+declare type AdyenAction = AdyenV2Action | AdyenV3Action;
+
 declare interface AdyenActions {
     /**
      * Continues the payment flow. Call this, passing the resultCode, even when the
@@ -193,6 +195,7 @@ declare interface AdyenComponent {
     mount(containerId: string): HTMLElement;
     unmount(): void;
     submit(): void;
+    handleAction?(action: AdyenAction): void;
 }
 
 declare interface AdyenComponentEvents {
@@ -321,6 +324,23 @@ declare interface AdyenPaymentMethodState {
     checkoutAttemptId?: string;
 }
 
+declare enum AdyenPaymentMethodType {
+    ACH = "ach",
+    AliPay = "alipay",
+    Bancontact = "bcmc",
+    CreditCard = "scheme",
+    Klarna = "klarna",
+    KlarnaPayNow = "klarna_paynow",
+    KlarnaAccount = "klarna_account",
+    IDEAL = "ideal",
+    GiroPay = "giropay",
+    GooglePay = "paywithgoogle",
+    SEPA = "sepadirectdebit",
+    Sofort = "directEbanking",
+    Vipps = "vipps",
+    WeChatPayQR = "wechatpayQR"
+}
+
 declare interface AdyenPlaceholderData {
     firstName?: string;
     lastName?: string;
@@ -348,6 +368,30 @@ declare interface AdyenThreeDS2Options extends AdyenAdditionalActionCallbacks {
      * '05' = 100% x 100%
      */
     widgetSize?: string;
+}
+
+declare interface AdyenV2Action {
+    method: HTTPMethod;
+    /**
+     * Value that you need to submit in your /payments/details request when handling
+     * the redirect.
+     */
+    paymentData: string;
+    paymentMethodType: AdyenPaymentMethodType;
+    type: AdyenV2ActionType;
+    /**
+     * The HTTP request method that you should use. After the shopper completes the payment,
+     * they will be redirected back to your returnURL using the same method.
+     */
+    url: string;
+}
+
+declare enum AdyenV2ActionType {
+    ThreeDS2Fingerprint = "threeDS2Fingerprint",
+    ThreeDS2Challenge = "threeDS2Challenge",
+    Redirect = "redirect",
+    QRCode = "qrCode",
+    Voucher = "voucher"
 }
 
 /**
@@ -445,6 +489,31 @@ declare interface AdyenV2PaymentInitializeOptions {
     options?: Omit_3<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
     shouldShowNumberField?: boolean;
     validateCardFields(validateState: AdyenValidationState): void;
+}
+
+declare interface AdyenV3Action {
+    method: HTTPMethod;
+    /**
+     * Value that you need to submit in your /payments/details request when handling
+     * the redirect.
+     */
+    paymentData: string;
+    paymentMethodType: AdyenPaymentMethodType;
+    type: AdyenV3ActionType;
+    /**
+     * The HTTP request method that you should use. After the shopper completes the payment,
+     * they will be redirected back to your returnURL using the same method.
+     */
+    url: string;
+}
+
+declare enum AdyenV3ActionType {
+    ThreeDS2Fingerprint = "threeDS2Fingerprint",
+    ThreeDS2 = "threeDS2",
+    Redirect = "redirect",
+    QRCode = "qrCode",
+    Voucher = "voucher",
+    Sdk = "sdk"
 }
 
 /**
@@ -6734,6 +6803,10 @@ declare interface HostedStoredCardFieldOptionsMap {
 }
 
 declare type HostedVaultedInstrument = Omit_2<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
+
+declare enum HTTPMethod {
+    POST = "POST"
+}
 
 declare interface IbanElementOptions extends BaseElementOptions {
     /**

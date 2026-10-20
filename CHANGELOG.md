@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.991.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.991.0...v1.991.1) (2026-10-20)
+
+
+### Bug Fixes
+
+* **payment:** PI-5661 [Adyen v3] fix Klarna modal rendering ([#3460](https://github.com/bigcommerce/checkout-sdk-js/issues/3460)) ([aed9a7f](https://github.com/bigcommerce/checkout-sdk-js/commit/aed9a7f0af0f0f0627289adf45e78d12436a1508))
+
 ## [1.991.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.990.0...v1.991.0) (2026-10-19)
 
 

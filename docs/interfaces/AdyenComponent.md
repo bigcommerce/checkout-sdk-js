@@ -38,6 +38,22 @@
 
 ## Methods
 
+### handleAction()?
+
+> `optional` **handleAction**(`action`): `void`
+
+#### Parameters
+
+##### action
+
+[`AdyenAction`](../type-aliases/AdyenAction.md)
+
+#### Returns
+
+`void`
+
+***
+
 ### mount()
 
 > **mount**(`containerId`): `HTMLElement`

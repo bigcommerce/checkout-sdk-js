@@ -69,6 +69,7 @@ declare class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _mapCardErrors;
     private _mountElement;
     private _waitForMountContainer;
+    private _waitUntil;
 }
 
 export declare const createAdyenV2PaymentStrategy: ResolvableModule<PaymentStrategyFactory<AdyenV2PaymentStrategy>, {

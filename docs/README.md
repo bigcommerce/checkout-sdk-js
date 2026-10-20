@@ -7,6 +7,9 @@
 ## Enumerations
 
 - [AdyenCardFields](enumerations/AdyenCardFields.md)
+- [AdyenPaymentMethodType](enumerations/AdyenPaymentMethodType.md)
+- [AdyenV2ActionType](enumerations/AdyenV2ActionType.md)
+- [AdyenV3ActionType](enumerations/AdyenV3ActionType.md)
 - [B2BPaymentMethodFilterType](enumerations/B2BPaymentMethodFilterType.md)
 - [CheckoutButtonMethodType](enumerations/CheckoutButtonMethodType.md)
 - [CheckoutIncludes](enumerations/CheckoutIncludes.md)
@@ -21,6 +24,7 @@
 - [HostedFieldEventType](enumerations/HostedFieldEventType.md)
 - [HostedFieldType](enumerations/HostedFieldType.md)
 - [HostedInputEventType](enumerations/HostedInputEventType.md)
+- [HTTPMethod](enumerations/HTTPMethod.md)
 - [IconStyle](enumerations/IconStyle.md)
 - [PaypalButtonStyleColorOption](enumerations/PaypalButtonStyleColorOption.md)
 - [PaypalButtonStyleLabelOption](enumerations/PaypalButtonStyleLabelOption.md)
@@ -85,7 +89,9 @@
 - [AdyenPaymentMethodState](interfaces/AdyenPaymentMethodState.md)
 - [AdyenPlaceholderData](interfaces/AdyenPlaceholderData.md)
 - [AdyenThreeDS2Options](interfaces/AdyenThreeDS2Options.md)
+- [AdyenV2Action](interfaces/AdyenV2Action.md)
 - [AdyenV2PaymentInitializeOptions](interfaces/AdyenV2PaymentInitializeOptions.md)
+- [AdyenV3Action](interfaces/AdyenV3Action.md)
 - [AdyenV3PaymentInitializeOptions](interfaces/AdyenV3PaymentInitializeOptions.md)
 - [AdyenValidationState](interfaces/AdyenValidationState.md)
 - [AmazonPayRemoteCheckout](interfaces/AmazonPayRemoteCheckout.md)
@@ -535,6 +541,7 @@
 
 - [AccountInstrument](type-aliases/AccountInstrument.md)
 - [AddressKey](type-aliases/AddressKey.md)
+- [AdyenAction](type-aliases/AdyenAction.md)
 - [AdyenComponentEventState](type-aliases/AdyenComponentEventState.md)
 - [AmazonPayV2ButtonInitializeOptions](type-aliases/AmazonPayV2ButtonInitializeOptions.md)
 - [AnalyticStepType](type-aliases/AnalyticStepType.md)
