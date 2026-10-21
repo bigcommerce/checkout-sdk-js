@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.992.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.991.1...v1.992.0) (2026-10-21)
+
+
+### Features
+
+* **payment:** PAYPAL-7257 added locale for BT FL ([#3457](https://github.com/bigcommerce/checkout-sdk-js/issues/3457)) ([f06d246](https://github.com/bigcommerce/checkout-sdk-js/commit/f06d24670031eacf8a69cfac907112f4c2c83237))
+
 ### [1.991.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.991.0...v1.991.1) (2026-10-20)
 
 
