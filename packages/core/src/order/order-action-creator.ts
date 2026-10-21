@@ -4,7 +4,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
-import { CartConflictError } from '../cart/errors';
+import { CartConflictError, CartConsistencyError } from '../cart/errors';
 import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
@@ -146,7 +146,15 @@ export default class OrderActionCreator {
                                   .then((freshCheckout) => {
                                       submittedVersion = freshCheckout.cart.version;
 
-                                      return submitOrderRequest(submittedVersion);
+                                      return submitOrderRequest(submittedVersion).catch(
+                                          (retryError) => {
+                                              if (retryError instanceof CartConflictError) {
+                                                  throw new CartConsistencyError();
+                                              }
+
+                                              throw retryError;
+                                          },
+                                      );
                                   });
                           })
                         : this._checkoutValidator

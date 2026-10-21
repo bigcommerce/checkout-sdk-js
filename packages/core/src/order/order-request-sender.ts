@@ -87,11 +87,11 @@ export default class OrderRequestSender {
                 }
 
                 if (error.body.type === 'cart_has_changed') {
-                    if (body?.version !== undefined) {
-                        throw new CartConflictError();
-                    }
-
                     throw new CartConsistencyError();
+                }
+
+                if (error.body.type === 'cart_conflict_error') {
+                    throw new CartConflictError();
                 }
 
                 if (error.body.type === 'cart_stock_positions_changed') {

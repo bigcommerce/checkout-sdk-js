@@ -7,7 +7,7 @@ import { catchError, toArray } from 'rxjs/operators';
 import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { getCart, getCartState } from '../cart/carts.mock';
-import { CartChangedError, CartConflictError } from '../cart/errors';
+import { CartChangedError, CartConflictError, CartConsistencyError } from '../cart/errors';
 import {
     CheckoutRequestSender,
     CheckoutStore,
@@ -581,11 +581,11 @@ describe('OrderActionCreator', () => {
                 expect(succeededAction?.meta).toEqual(expect.objectContaining({ version: 43 }));
             });
 
-            it('propagates the error when the retried submission also fails', async () => {
-                const cartConsistencyError = new CartConflictError();
+            it('throws CartConsistencyError when the retried submission also fails with CartConflictError', async () => {
+                const cartConflictError = new CartConflictError();
 
                 jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
-                    Promise.reject(cartConsistencyError),
+                    Promise.reject(cartConflictError),
                 );
                 jest.spyOn(checkoutValidator, 'validate').mockReturnValue(
                     Promise.resolve(getCheckout()),
@@ -604,7 +604,7 @@ describe('OrderActionCreator', () => {
                     { type: OrderActionType.SubmitOrderRequested },
                     {
                         type: OrderActionType.SubmitOrderFailed,
-                        payload: cartConsistencyError,
+                        payload: expect.any(CartConsistencyError),
                         error: true,
                     },
                 ]);

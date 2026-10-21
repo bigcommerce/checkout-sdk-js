@@ -169,12 +169,12 @@ describe('OrderRequestSender', () => {
             }
         });
 
-        it('throws `CartConflictError` if error type is `cart_has_changed` and version was submitted', async () => {
+        it('throws `CartConflictError` if error type is `cart_conflict_error`', async () => {
             const error = getErrorResponse(
                 {
                     status: 409,
                     title: 'Checkout could not be processed',
-                    type: 'cart_has_changed',
+                    type: 'cart_conflict_error',
                 },
                 undefined,
                 409,
@@ -186,7 +186,6 @@ describe('OrderRequestSender', () => {
                 orderRequestSender.submitOrder({
                     cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                     useStoreCredit: false,
-                    version: 3,
                 }),
             ).rejects.toBeInstanceOf(CartConflictError);
         });
