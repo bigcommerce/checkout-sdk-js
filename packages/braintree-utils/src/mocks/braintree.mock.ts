@@ -213,6 +213,7 @@ export function getFastlaneMock(): BraintreeFastlane {
                     profileData: getBraintreeFastlaneProfileDataMock(),
                 }),
         },
+        setLocale: jest.fn(),
         FastlaneCardComponent: jest.fn(),
     };
 }
