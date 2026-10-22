@@ -92,6 +92,12 @@
 
 ***
 
+### isCustomCheckout?
+
+> `optional` **isCustomCheckout?**: `boolean`
+
+***
+
 ### isExpressPrivacyPolicy
 
 > **isExpressPrivacyPolicy**: `boolean`

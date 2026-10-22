@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.993.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.992.0...v1.993.0) (2026-10-22)
+
+
+### Features
+
+* **checkout:** CHECKOUT-10461 update interface to include isCustomCheckout ([#3463](https://github.com/bigcommerce/checkout-sdk-js/issues/3463)) ([7639248](https://github.com/bigcommerce/checkout-sdk-js/commit/76392486fc14e0552081a2c519f9cff1a0a0c9ee))
+
 ## [1.992.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.991.1...v1.992.0) (2026-10-21)
 
 
