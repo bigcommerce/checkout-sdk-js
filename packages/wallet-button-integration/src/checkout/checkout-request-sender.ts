@@ -29,6 +29,14 @@ export class CheckoutRequestSender {
                         }
                         redirectUrls {
                             externalCheckoutUrl
+                            externalCheckoutHandoff {
+                                url
+                                method
+                                fields {
+                                    name
+                                    value
+                                }
+                            }
                         }
                     }
                 }
