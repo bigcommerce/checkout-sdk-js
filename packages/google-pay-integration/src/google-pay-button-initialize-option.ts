@@ -49,6 +49,17 @@ export interface GooglePayButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: Error): void;
+
+    /**
+     * A callback that gets called when the order has been placed right in the
+     * Google Pay modal. If provided, the shopper is not redirected to the checkout
+     * to click "Place Order": the order and the payment are submitted as soon as the
+     * shopper approves the payment in the modal. Use it to navigate to the order
+     * confirmation page.
+     *
+     * @param orderId - The ID of the placed order, if available.
+     */
+    onPaymentAuthorize?(orderId?: number): void;
 }
 
 /**

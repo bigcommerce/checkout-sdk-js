@@ -237,6 +237,18 @@ export interface GooglePayPaymentOptions {
         onPaymentDataChanged(
             intermediatePaymentData: IntermediatePaymentData,
         ): onPaymentDataChangedOut;
+        onPaymentAuthorized?(
+            paymentData: GooglePayCardDataResponse,
+        ): Promise<GooglePayPaymentAuthorizationResult>;
+    };
+}
+
+export interface GooglePayPaymentAuthorizationResult {
+    transactionState: 'SUCCESS' | 'ERROR';
+    error?: {
+        intent: 'PAYMENT_AUTHORIZATION';
+        message: string;
+        reason: ErrorReasonType;
     };
 }
 

@@ -20,8 +20,11 @@ import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
+    ErrorReasonType,
+    GooglePayCardDataResponse,
     GooglePayError,
     GooglePayInitializationData,
+    GooglePayPaymentAuthorizationResult,
     GooglePayPaymentOptions,
     TotalPriceStatusType,
 } from './types';
@@ -29,6 +32,7 @@ import {
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _paymentButton?: HTMLElement;
     private _methodId?: keyof WithGooglePayCustomerInitializeOptions;
+    private _onPaymentAuthorize?: GooglePayCustomerInitializeOptions['onPaymentAuthorize'];
 
     constructor(
         private _paymentIntegrationService: PaymentIntegrationService,
@@ -69,6 +73,12 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             this._googlePayPaymentProcessor.setFilterAvailableShippingOptions(
                 googlePayOptions.filterAvailableShippingOptions,
             );
+
+            if (!this._googlePayPaymentProcessor.isWebViewWithRestrictions()) {
+                this._onPaymentAuthorize = googlePayOptions.onPaymentAuthorize;
+            }
+
+            this._googlePayPaymentProcessor.setShouldPlaceOrderInModal(!!this._onPaymentAuthorize);
             await this._googlePayPaymentProcessor.initialize(
                 () => paymentMethod,
                 this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
@@ -106,6 +116,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         this._paymentButton?.remove();
         this._paymentButton = undefined;
         this._methodId = undefined;
+        this._onPaymentAuthorize = undefined;
 
         return Promise.resolve();
     }
@@ -180,8 +191,61 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                         }),
                     };
                 },
+                ...(this._onPaymentAuthorize && {
+                    onPaymentAuthorized: async (response: GooglePayCardDataResponse) =>
+                        this._handlePaymentAuthorized(response),
+                }),
             },
         };
+    }
+
+    private async _handlePaymentAuthorized(
+        response: GooglePayCardDataResponse,
+    ): Promise<GooglePayPaymentAuthorizationResult> {
+        const methodId = this._getMethodId();
+
+        try {
+            await this._updateAddresses(response);
+            await this._googlePayPaymentProcessor.setExternalCheckoutXhr(methodId, response);
+            await this._paymentIntegrationService.loadPaymentMethod(methodId);
+            await this._paymentIntegrationService.submitOrder({ useStoreCredit: false });
+
+            const nonce = await this._googlePayPaymentProcessor.getNonce(methodId);
+            const extraData = await this._googlePayPaymentProcessor.extraPaymentData();
+            const payment = { methodId, paymentData: { nonce, ...extraData } };
+
+            try {
+                await this._paymentIntegrationService.submitPayment(payment);
+            } catch (error) {
+                await this._googlePayPaymentProcessor.processAdditionalAction(error, methodId);
+            }
+
+            return { transactionState: 'SUCCESS' };
+        } catch {
+            return {
+                transactionState: 'ERROR',
+                error: {
+                    intent: 'PAYMENT_AUTHORIZATION',
+                    message: 'Unable to place the order. Please try again.',
+                    reason: ErrorReasonType.PAYMENT_DATA_INVALID,
+                },
+            };
+        }
+    }
+
+    private async _updateAddresses(response: GooglePayCardDataResponse): Promise<void> {
+        const billingAddress =
+            this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);
+        const shippingAddress =
+            this._googlePayPaymentProcessor.mapToShippingAddressRequestBody(response);
+
+        if (billingAddress) {
+            await this._paymentIntegrationService.updateBillingAddress(billingAddress);
+        }
+
+        if (shippingAddress) {
+            await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
+        }
     }
 
     private _addPaymentButton({
@@ -239,23 +303,21 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
 
     private async _interactWithPaymentSheet(): Promise<void> {
         const response = await this._googlePayPaymentProcessor.showPaymentSheet();
-        const billingAddress =
-            this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);
-        const shippingAddress =
-            this._googlePayPaymentProcessor.mapToShippingAddressRequestBody(response);
+
+        if (this._onPaymentAuthorize) {
+            this._onPaymentAuthorize(
+                this._paymentIntegrationService.getState().getOrder()?.orderId,
+            );
+
+            return;
+        }
 
         const siteLink =
             window.location.pathname === '/embedded-checkout'
                 ? this._paymentIntegrationService.getState().getStoreConfigOrThrow().links.siteLink
                 : undefined;
 
-        if (billingAddress) {
-            await this._paymentIntegrationService.updateBillingAddress(billingAddress);
-        }
-
-        if (shippingAddress) {
-            await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
-        }
+        await this._updateAddresses(response);
 
         await this._googlePayPaymentProcessor.setExternalCheckoutForm(
             this._getMethodId(),

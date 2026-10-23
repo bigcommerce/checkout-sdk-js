@@ -19,6 +19,7 @@ import GooglePayGateway from './gateways/google-pay-gateway';
 import GooglePayScriptLoader from './google-pay-script-loader';
 import isGooglePayAdditionalActionProcessable from './guards/is-google-pay-additional-action-processable';
 import {
+    CallbackIntentsType,
     GooglePayBaseCardPaymentMethod,
     GooglePayButtonOptions,
     GooglePayCardDataResponse,
@@ -42,6 +43,7 @@ export default class GooglePayPaymentProcessor {
     private _cardPaymentMethod?: GooglePayCardPaymentMethod;
     private _paymentDataRequest?: GooglePayPaymentDataRequest;
     private _isReadyToPayRequest?: GooglePayIsReadyToPayRequest;
+    private _shouldPlaceOrderInModal = false;
 
     constructor(
         private _scriptLoader: GooglePayScriptLoader,
@@ -211,6 +213,10 @@ export default class GooglePayPaymentProcessor {
         return this._gateway.isWebViewWithRestrictions();
     }
 
+    setShouldPlaceOrderInModal(shouldPlaceOrderInModal: boolean): void {
+        this._shouldPlaceOrderInModal = shouldPlaceOrderInModal;
+    }
+
     setIsWebViewExperimentOn(isWebViewExperimentOn: boolean): void {
         return this._gateway.setIsWebViewExperimentOn(isWebViewExperimentOn);
     }
@@ -275,7 +281,12 @@ export default class GooglePayPaymentProcessor {
                   shippingOptionRequired: false,
               }
             : {
-                  callbackIntents: this._gateway.getCallbackIntents(),
+                  callbackIntents: [
+                      ...this._gateway.getCallbackIntents(),
+                      ...(this._shouldPlaceOrderInModal
+                          ? [CallbackIntentsType.PAYMENT_AUTHORIZATION]
+                          : []),
+                  ],
                   offerInfo: this._gateway.getAppliedCoupons(),
               };
 
