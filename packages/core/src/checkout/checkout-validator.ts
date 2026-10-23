@@ -19,7 +19,7 @@ export type ComparableCheckout = Pick<
 export default class CheckoutValidator {
     constructor(private _checkoutRequestSender: CheckoutRequestSender) {}
 
-    validate(checkout?: Checkout, options?: RequestOptions): Promise<void> {
+    validate(checkout?: Checkout, options?: RequestOptions): Promise<Checkout> {
         if (!checkout) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
@@ -36,7 +36,7 @@ export default class CheckoutValidator {
                 ) &&
                 comparator.isEqual(checkout.cart, response.body.cart)
             ) {
-                return;
+                return response.body;
             }
 
             throw new CartChangedError(

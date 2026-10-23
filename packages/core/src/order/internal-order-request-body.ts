@@ -12,6 +12,7 @@ export default interface InternalOrderRequestBody {
     poNumber?: string;
     additionalText?: string;
     orderExtraFields?: OrderExtraFieldValue[];
+    version?: number;
 }
 
 export interface InternalOrderPaymentRequestBody {

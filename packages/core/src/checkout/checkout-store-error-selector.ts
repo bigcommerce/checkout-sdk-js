@@ -2,6 +2,7 @@ import { memoizeOne } from '@bigcommerce/memoize';
 
 import {
     CartChangedError,
+    CartConflictError,
     CartConsistencyError,
     CartStockPositionsChangedError,
 } from '../cart/errors';
@@ -51,6 +52,7 @@ export default interface CheckoutStoreErrorSelector {
     getSubmitOrderError():
         | Error
         | CartChangedError
+        | CartConflictError
         | CartConsistencyError
         | CartStockPositionsChangedError
         | undefined;
