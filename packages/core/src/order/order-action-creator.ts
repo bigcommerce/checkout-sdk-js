@@ -4,13 +4,16 @@ import { catchError, switchMap } from 'rxjs/operators';
 
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
-import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
+import { Checkout, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { SpamProtectionNotCompletedError } from '../spam-protection/errors';
 
+import InternalOrder from './internal-order';
 import InternalOrderRequestBody from './internal-order-request-body';
+import mapFromInternalOrder from './map-from-internal-order';
+import Order from './order';
 import {
     FinalizeOrderAction,
     LoadOrderAction,
@@ -24,6 +27,9 @@ import OrderRequestSender from './order-request-sender';
 
 export const RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER =
     'PROJECT-8987.return_full_order_details_on_create_order';
+
+export const INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE =
+    'PROJECT-8987.infer_order_details_from_submit_order_response';
 
 export default class OrderActionCreator {
     constructor(
@@ -99,7 +105,9 @@ export default class OrderActionCreator {
                     const externalSource = state.config.getExternalSource();
                     const variantIdentificationToken = state.config.getVariantIdentificationToken();
                     const checkout = state.checkout.getCheckout();
-                    const includeOrderDetails = this._isReturnFullOrderDetailsEnabled(state);
+                    const shouldInferOrderDetails = this._isInferOrderDetailsEnabled(state);
+                    const includeOrderDetails =
+                        !shouldInferOrderDetails && this._isReturnFullOrderDetailsEnabled(state);
 
                     if (!checkout) {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -129,19 +137,16 @@ export default class OrderActionCreator {
                         ),
                     ).pipe(
                         switchMap((response) => {
-                            const orderId = response.body.data.order.orderId;
-                            const { orderDetails } = response.body.data;
+                            const { order, orderDetails } = response.body.data;
+                            const orderId = order.orderId;
 
                             return concat(
-                                orderDetails
-                                    ? of(
-                                          createAction(
-                                              OrderActionType.LoadOrderSucceeded,
-                                              orderDetails,
-                                          ),
-                                      )
-                                    : // TODO: Remove once we can submit orders using storefront API
-                                      this.loadOrder(orderId, options),
+                                this._getOrderLoadAction$(
+                                    order,
+                                    orderDetails,
+                                    shouldInferOrderDetails ? checkout : undefined,
+                                    options,
+                                ),
                                 defer(() => {
                                     this._orderCreatedNotifier.notify(orderId);
 
@@ -189,11 +194,49 @@ export default class OrderActionCreator {
         ).pipe(catchError((error) => throwErrorAction(OrderActionType.FinalizeOrderFailed, error)));
     }
 
+    private _getOrderLoadAction$(
+        order: InternalOrder,
+        orderDetails: Order | undefined,
+        checkoutToInferFrom: Checkout | undefined,
+        options?: RequestOptions,
+    ): Observable<LoadOrderAction> {
+        if (orderDetails) {
+            return of(createAction(OrderActionType.LoadOrderSucceeded, orderDetails));
+        }
+
+        if (checkoutToInferFrom?.billingAddress) {
+            return of(
+                createAction(
+                    OrderActionType.LoadOrderSucceeded,
+                    mapFromInternalOrder(
+                        order,
+                        checkoutToInferFrom,
+                        checkoutToInferFrom.billingAddress,
+                    ),
+                    { internalOrder: order },
+                ),
+            );
+        }
+
+        // TODO: Remove once we can submit orders using storefront API
+        return this.loadOrder(order.orderId, options);
+    }
+
     private _getCurrentOrderId(state: InternalCheckoutSelectors): number | undefined {
         const order = state.order.getOrder();
         const checkout = state.checkout.getCheckout();
 
         return (order && order.orderId) || (checkout && checkout.orderId);
+    }
+
+    private _isInferOrderDetailsEnabled(state: InternalCheckoutSelectors): boolean {
+        const { checkoutSettings } = state.config.getStoreConfigOrThrow();
+
+        return isExperimentEnabled(
+            checkoutSettings.features,
+            INFER_ORDER_DETAILS_FROM_SUBMIT_ORDER_RESPONSE,
+            false,
+        );
     }
 
     private _isReturnFullOrderDetailsEnabled(state: InternalCheckoutSelectors): boolean {

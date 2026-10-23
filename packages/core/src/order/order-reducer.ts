@@ -51,6 +51,17 @@ function metaReducer(
     action: OrderAction,
 ): OrderMetaState | undefined {
     switch (action.type) {
+        case OrderActionType.LoadOrderSucceeded:
+        case OrderActionType.LoadOrderPaymentsSucceeded: {
+            const internalOrder: InternalOrder | undefined = action.meta?.internalOrder;
+
+            if (!internalOrder && !meta?.internalOrder) {
+                return meta;
+            }
+
+            return objectSet(meta, 'internalOrder', internalOrder);
+        }
+
         case OrderActionType.FinalizeOrderSucceeded:
         case OrderActionType.SubmitOrderSucceeded:
             return objectSet(
