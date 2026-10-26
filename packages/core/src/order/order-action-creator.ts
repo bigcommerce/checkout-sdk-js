@@ -1,17 +1,19 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { Response } from '@bigcommerce/request-sender';
 import { concat, defer, from, Observable, Observer, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { CartConflictError, CartConsistencyError } from '../cart/errors';
-import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
+import { Checkout, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { SpamProtectionNotCompletedError } from '../spam-protection/errors';
 
 import InternalOrderRequestBody from './internal-order-request-body';
+import { InternalOrderResponseBody } from './internal-order-responses';
 import {
     FinalizeOrderAction,
     LoadOrderAction,
@@ -116,21 +118,14 @@ export default class OrderActionCreator {
                     }
 
                     const submitOrderRequest = (version?: number) =>
-                        this._orderRequestSender.submitOrder(
-                            this._mapToOrderRequestBody(
-                                payload ?? {},
-                                checkout.id,
-                                checkout.customerMessage,
-                                externalSource,
-                                version,
-                            ),
-                            {
-                                ...options,
-                                headers: {
-                                    checkoutVariant: variantIdentificationToken,
-                                },
-                                includeOrderDetails,
-                            },
+                        this._submitOrderRequest(
+                            checkout,
+                            payload,
+                            externalSource,
+                            variantIdentificationToken,
+                            includeOrderDetails,
+                            options,
+                            version,
                         );
 
                     let submittedVersion = checkout.version;
@@ -251,6 +246,33 @@ export default class OrderActionCreator {
         return isExperimentEnabled(
             checkoutSettings.features,
             VALIDATE_CART_VERSION_ON_ORDER_CREATION,
+        );
+    }
+
+    private _submitOrderRequest(
+        checkout: Checkout,
+        payload: OrderRequestBody | undefined,
+        externalSource: string | undefined,
+        variantIdentificationToken: string | undefined,
+        includeOrderDetails: boolean,
+        options?: RequestOptions,
+        version?: number,
+    ): Promise<Response<InternalOrderResponseBody>> {
+        return this._orderRequestSender.submitOrder(
+            this._mapToOrderRequestBody(
+                payload ?? {},
+                checkout.id,
+                checkout.customerMessage,
+                externalSource,
+                version,
+            ),
+            {
+                ...options,
+                headers: {
+                    checkoutVariant: variantIdentificationToken,
+                },
+                includeOrderDetails,
+            },
         );
     }
 
