@@ -53,29 +53,35 @@ export default class BigCommercePaymentsIntegrationService {
         providedCurrencyCode?: string,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
+        { withClientMetadataId = false }: { withClientMetadataId?: boolean } = {},
     ): Promise<PayPalSDK | undefined> {
         const state = this.paymentIntegrationService.getState();
         const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-        const features = state.getStoreConfig()?.checkoutSettings.features || {};
 
         // The device ID PayPal joins to our server-side calls; Fastlane derives it from the cart id the same way.
-        this.clientMetadataId = isExperimentEnabled(
-            features,
-            'PAYPAL-7233.bcp_card_client_metadata_id',
-            false,
-        )
-            ? state.getCart()?.id.replace(/-/g, '')
-            : undefined;
+        const requestedClientMetadataId =
+            withClientMetadataId &&
+            isExperimentEnabled(
+                state.getStoreConfig()?.checkoutSettings.features || {},
+                'PAYPAL-7233.bcp_card_client_metadata_id',
+                false,
+            )
+                ? state.getCart()?.id.replace(/-/g, '')
+                : undefined;
 
         this.paypalSdk = await this.bigCommercePaymentsScriptLoader.getPayPalSDK(
             paymentMethod,
             currencyCode,
             initializesOnCheckoutPage,
             forceLoad,
-            this.clientMetadataId,
+            requestedClientMetadataId,
         );
+
+        // An SDK already loaded for an earlier cart keeps that cart's id; send the one it carries.
+        this.clientMetadataId =
+            requestedClientMetadataId && this.bigCommercePaymentsScriptLoader.getClientMetadataId();
 
         return this.paypalSdk;
     }

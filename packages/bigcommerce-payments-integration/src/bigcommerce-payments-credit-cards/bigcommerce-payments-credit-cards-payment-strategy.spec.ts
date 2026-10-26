@@ -284,6 +284,7 @@ describe('BigCommercePaymentsCreditCardsPaymentStrategy', () => {
                 undefined,
                 true,
                 true,
+                { withClientMetadataId: true },
             );
         });
 

@@ -113,6 +113,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
             undefined,
             true,
             true,
+            { withClientMetadataId: true },
         );
 
         if (this.isCreditCardForm || this.isCreditCardVaultedForm) {

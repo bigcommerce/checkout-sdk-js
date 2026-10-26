@@ -76,6 +76,58 @@ describe('BigCommercePaymentsScriptLoader', () => {
         );
     });
 
+    describe('#getClientMetadataId', () => {
+        afterEach(() => {
+            document
+                .querySelectorAll('script[data-namespace="bigCommercePaymentsPayPalSDK"]')
+                .forEach((script) => script.remove());
+        });
+
+        function loadWithRealScriptLoader(
+            realPaypalLoader: BigCommercePaymentsScriptLoader,
+            clientMetadataId: string,
+        ) {
+            const output = realPaypalLoader.getPayPalSDK(
+                paymentMethod,
+                'USD',
+                true,
+                true,
+                clientMetadataId,
+            );
+
+            (window as BigCommercePaymentsHostWindow).bigCommercePaymentsPayPalSDK = paypalSdk;
+            document
+                .querySelectorAll('script[data-namespace="bigCommercePaymentsPayPalSDK"]')
+                .forEach((script) => script.dispatchEvent(new Event('load')));
+
+            return output;
+        }
+
+        it('returns undefined when no sdk script is loaded', () => {
+            expect(paypalLoader.getClientMetadataId()).toBeUndefined();
+        });
+
+        it('returns the client metadata id of the loaded sdk script', async () => {
+            const realPaypalLoader = new BigCommercePaymentsScriptLoader(createScriptLoader());
+
+            await loadWithRealScriptLoader(realPaypalLoader, 'cartA');
+
+            expect(realPaypalLoader.getClientMetadataId()).toBe('cartA');
+        });
+
+        it('keeps the first client metadata id when the sdk is reloaded for another cart', async () => {
+            const realPaypalLoader = new BigCommercePaymentsScriptLoader(createScriptLoader());
+
+            await loadWithRealScriptLoader(realPaypalLoader, 'cartA');
+            await loadWithRealScriptLoader(realPaypalLoader, 'cartB');
+
+            expect(
+                document.querySelectorAll('script[data-namespace="bigCommercePaymentsPayPalSDK"]'),
+            ).toHaveLength(1);
+            expect(realPaypalLoader.getClientMetadataId()).toBe('cartA');
+        });
+    });
+
     it('loads PayPalSDK script every time if force load flag is provided', async () => {
         const bigCommercePaymentsCreditPaymentMethod = {
             ...paymentMethod,

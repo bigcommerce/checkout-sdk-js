@@ -139,7 +139,9 @@ describe('BigCommercePaymentsIntegrationService', () => {
         it('loads paypal sdk with the cart id as the client metadata id', async () => {
             enableClientMetadataIdExperiment();
 
-            await subject.loadPayPalSdk(defaultMethodId, undefined, false, false);
+            await subject.loadPayPalSdk(defaultMethodId, undefined, false, false, {
+                withClientMetadataId: true,
+            });
 
             expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
@@ -147,6 +149,20 @@ describe('BigCommercePaymentsIntegrationService', () => {
                 false,
                 false,
                 cart.id.replace(/-/g, ''),
+            );
+        });
+
+        it('loads paypal sdk without the client metadata id when the caller does not opt in', async () => {
+            enableClientMetadataIdExperiment();
+
+            await subject.loadPayPalSdk(defaultMethodId, undefined, false, false);
+
+            expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+                paymentMethod,
+                cart.currency.code,
+                false,
+                false,
+                undefined,
             );
         });
     });
@@ -174,13 +190,35 @@ describe('BigCommercePaymentsIntegrationService', () => {
 
         it('creates paypal order with the client metadata id the sdk was loaded with', async () => {
             enableClientMetadataIdExperiment();
+            jest.spyOn(bigCommercePaymentsScriptLoader, 'getClientMetadataId').mockReturnValue(
+                cart.id.replace(/-/g, ''),
+            );
 
-            await subject.loadPayPalSdk(defaultMethodId);
+            await subject.loadPayPalSdk(defaultMethodId, undefined, true, true, {
+                withClientMetadataId: true,
+            });
             await subject.createOrderCardFields(providerId);
 
             expect(bigCommercePaymentsRequestSender.createOrder).toHaveBeenCalledWith(providerId, {
                 cartId: cart.id,
                 metadataId: cart.id.replace(/-/g, ''),
+            });
+        });
+
+        it('creates paypal order with the id the loaded sdk carries after a cart change', async () => {
+            enableClientMetadataIdExperiment();
+            jest.spyOn(bigCommercePaymentsScriptLoader, 'getClientMetadataId').mockReturnValue(
+                'previousCartId',
+            );
+
+            await subject.loadPayPalSdk(defaultMethodId, undefined, true, true, {
+                withClientMetadataId: true,
+            });
+            await subject.createOrderCardFields(providerId);
+
+            expect(bigCommercePaymentsRequestSender.createOrder).toHaveBeenCalledWith(providerId, {
+                cartId: cart.id,
+                metadataId: 'previousCartId',
             });
         });
     });

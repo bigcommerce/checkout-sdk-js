@@ -40,6 +40,16 @@ export default class BigCommercePaymentsScriptLoader {
         return this.loadPayPalSDK(paypalSdkScriptConfig, forceLoad);
     }
 
+    // @bigcommerce/script-loader caches by URL and drops new attributes on a repeat load, so the id
+    // comes from the last appended SDK script, which is the one whose SDK sits in the namespace.
+    getClientMetadataId(): string | undefined {
+        const scripts = this.window.document.querySelectorAll(
+            'script[data-namespace="bigCommercePaymentsPayPalSDK"]',
+        );
+
+        return scripts[scripts.length - 1]?.getAttribute('data-client-metadata-id') || undefined;
+    }
+
     private async loadPayPalSDK(
         paypalSdkScriptConfig: BigCommercePaymentsScriptParams,
         forceLoad = false,
