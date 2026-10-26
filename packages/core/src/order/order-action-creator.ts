@@ -251,7 +251,6 @@ export default class OrderActionCreator {
         return isExperimentEnabled(
             checkoutSettings.features,
             VALIDATE_CART_VERSION_ON_ORDER_CREATION,
-            false,
         );
     }
 

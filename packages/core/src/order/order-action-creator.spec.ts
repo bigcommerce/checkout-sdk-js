@@ -268,6 +268,16 @@ describe('OrderActionCreator', () => {
                 // @ts-ignore
                 Promise.resolve(submitResponse),
             );
+
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
+                    },
+                },
+            });
         });
 
         it('emits actions if able to submit order', async () => {
@@ -325,6 +335,7 @@ describe('OrderActionCreator', () => {
                     ...getConfig().storeConfig.checkoutSettings,
                     features: {
                         [RETURN_FULL_ORDER_DETAILS_ON_CREATE_ORDER]: true,
+                        [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
                     },
                 },
             });
@@ -451,6 +462,16 @@ describe('OrderActionCreator', () => {
                 ...state,
                 cart: merge({}, getCartState(), { data: { ...getCart(), currency: 'JPY' } }),
                 config: getConfigState(),
+            });
+
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        [VALIDATE_CART_VERSION_ON_ORDER_CREATION]: false,
+                    },
+                },
             });
 
             try {
