@@ -17,6 +17,9 @@ import {
 } from './bigcommerce-payments-types';
 
 export default class BigCommercePaymentsScriptLoader {
+    // Set by the load whose script created the SDK; a repeat load of a cached URL doesn't re-run the script.
+    private static clientMetadataIds = new WeakMap<PayPalSDK, string | undefined>();
+
     private window: BigCommercePaymentsHostWindow;
 
     constructor(private scriptLoader: ScriptLoader) {
@@ -28,14 +31,20 @@ export default class BigCommercePaymentsScriptLoader {
         currencyCode: string,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
+        clientMetadataId?: string,
     ): Promise<PayPalSDK> {
         const paypalSdkScriptConfig = this.getPayPalSdkScriptConfigOrThrow(
             paymentMethod,
             currencyCode,
             initializesOnCheckoutPage,
+            clientMetadataId,
         );
 
         return this.loadPayPalSDK(paypalSdkScriptConfig, forceLoad);
+    }
+
+    getClientMetadataId(paypalSdk: PayPalSDK): string | undefined {
+        return BigCommercePaymentsScriptLoader.clientMetadataIds.get(paypalSdk);
     }
 
     private async loadPayPalSDK(
@@ -55,6 +64,15 @@ export default class BigCommercePaymentsScriptLoader {
             const scriptSrc = `${paypalSdkUrl}?${scriptQuery}`;
 
             await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
+
+            const loadedSdk = this.window.bigCommercePaymentsPayPalSDK;
+
+            if (loadedSdk && !BigCommercePaymentsScriptLoader.clientMetadataIds.has(loadedSdk)) {
+                BigCommercePaymentsScriptLoader.clientMetadataIds.set(
+                    loadedSdk,
+                    attributes['data-client-metadata-id'],
+                );
+            }
         }
 
         if (!this.window.bigCommercePaymentsPayPalSDK) {
@@ -68,6 +86,7 @@ export default class BigCommercePaymentsScriptLoader {
         paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
         currencyCode: string,
         initializesOnCheckoutPage = true,
+        clientMetadataId?: string,
     ): BigCommercePaymentsScriptParams {
         const { id, clientToken, initializationData } = paymentMethod;
 
@@ -145,6 +164,7 @@ export default class BigCommercePaymentsScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
+                'data-client-metadata-id': clientMetadataId,
                 'data-namespace': 'bigCommercePaymentsPayPalSDK',
             },
         };

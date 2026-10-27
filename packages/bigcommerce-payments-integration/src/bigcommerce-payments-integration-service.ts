@@ -14,6 +14,7 @@ import {
     RequestOptions,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import BigCommercePaymentsRequestSender from './bigcommerce-payments-request-sender';
 import BigCommercePaymentsScriptLoader from './bigcommerce-payments-script-loader';
@@ -33,6 +34,7 @@ import {
 
 export default class BigCommercePaymentsIntegrationService {
     private paypalSdk?: PayPalSDK;
+    private clientMetadataId?: string;
 
     constructor(
         private formPoster: FormPoster,
@@ -51,18 +53,36 @@ export default class BigCommercePaymentsIntegrationService {
         providedCurrencyCode?: string,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
+        { withClientMetadataId = false }: { withClientMetadataId?: boolean } = {},
     ): Promise<PayPalSDK | undefined> {
         const state = this.paymentIntegrationService.getState();
         const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
 
+        // The device ID PayPal joins to our server-side calls; Fastlane derives it from the cart id the same way.
+        const requestedClientMetadataId =
+            withClientMetadataId &&
+            isExperimentEnabled(
+                state.getStoreConfig()?.checkoutSettings.features || {},
+                'PAYPAL-7233.bcp_card_client_metadata_id',
+                false,
+            )
+                ? state.getCart()?.id.replace(/-/g, '')
+                : undefined;
+
         this.paypalSdk = await this.bigCommercePaymentsScriptLoader.getPayPalSDK(
             paymentMethod,
             currencyCode,
             initializesOnCheckoutPage,
             forceLoad,
+            requestedClientMetadataId,
         );
+
+        // An SDK already loaded for an earlier cart keeps that cart's id; send the one it carries.
+        this.clientMetadataId =
+            requestedClientMetadataId &&
+            this.bigCommercePaymentsScriptLoader.getClientMetadataId(this.paypalSdk);
 
         return this.paypalSdk;
     }
@@ -125,6 +145,7 @@ export default class BigCommercePaymentsIntegrationService {
             providerId,
             {
                 cartId,
+                ...(this.clientMetadataId && { metadataId: this.clientMetadataId }),
                 ...requestBody,
             },
         );
