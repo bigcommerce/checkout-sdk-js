@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.994.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.993.0...v1.994.0) (2026-10-27)
+
+
+### Features
+
+* **payment:** Serve Bolt checkout assets from boltapp.com ([1dc64a4](https://github.com/bigcommerce/checkout-sdk-js/commit/1dc64a41351d9dd427f7ac7ca24fedb56067ab74))
+
 ## [1.993.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.992.0...v1.993.0) (2026-10-22)
 
 
