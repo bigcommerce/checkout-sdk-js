@@ -1,6 +1,7 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
 import {
+    CartConflictError,
     CartConsistencyError,
     CartStockPositionsChangedError,
     EmptyCartError,
@@ -166,6 +167,27 @@ describe('OrderRequestSender', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(CartConsistencyError);
             }
+        });
+
+        it('throws `CartConflictError` if error type is `cart_conflict_error`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 409,
+                    title: 'Checkout could not be processed',
+                    type: 'cart_conflict_error',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            await expect(
+                orderRequestSender.submitOrder({
+                    cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    useStoreCredit: false,
+                }),
+            ).rejects.toBeInstanceOf(CartConflictError);
         });
 
         it('throws `CartStockPositionsChangedError` with changedItemIds if error type is `cart_stock_positions_changed`', async () => {
