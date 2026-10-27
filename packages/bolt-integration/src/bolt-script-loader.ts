@@ -78,20 +78,20 @@ export default class BoltScriptLoader {
 
     getDomainURL(testMode: boolean, developerModeParams?: BoltDeveloperModeParams): string {
         if (!testMode) {
-            return 'connect.bolt.com';
+            return 'connect.boltapp.com';
         }
 
         if (developerModeParams) {
             switch (developerModeParams.developerMode) {
                 case BoltDeveloperMode.StagingMode:
-                    return 'connect-staging.bolt.com';
+                    return 'connect-staging.boltapp.com';
 
                 case BoltDeveloperMode.DevelopmentMode:
                     return `connect.${developerModeParams.developerDomain}`;
             }
         }
 
-        return 'connect-sandbox.bolt.com';
+        return 'connect-sandbox.boltapp.com';
     }
 
     private getScriptOptions(
