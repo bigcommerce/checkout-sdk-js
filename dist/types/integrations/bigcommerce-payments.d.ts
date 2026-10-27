@@ -993,13 +993,16 @@ declare class BigCommercePaymentsIntegrationService {
     private bigCommercePaymentsRequestSender;
     private bigCommercePaymentsScriptLoader;
     private paypalSdk?;
+    private clientMetadataId?;
     constructor(formPoster: FormPoster, paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsRequestSender: BigCommercePaymentsRequestSender, bigCommercePaymentsScriptLoader: BigCommercePaymentsScriptLoader);
     /**
      *
      * PayPalSDK methods
      *
      */
-    loadPayPalSdk(methodId: string, providedCurrencyCode?: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean): Promise<PayPalSDK | undefined>;
+    loadPayPalSdk(methodId: string, providedCurrencyCode?: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean, { withClientMetadataId }?: {
+        withClientMetadataId?: boolean;
+    }): Promise<PayPalSDK | undefined>;
     getPayPalSdkOrThrow(): PayPalSDK;
     /**
      *
@@ -1590,9 +1593,11 @@ declare class BigCommercePaymentsRequestSender {
 
 declare class BigCommercePaymentsScriptLoader {
     private scriptLoader;
+    private static clientMetadataIds;
     private window;
     constructor(scriptLoader: ScriptLoader);
-    getPayPalSDK(paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>, currencyCode: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean): Promise<PayPalSDK>;
+    getPayPalSDK(paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>, currencyCode: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean, clientMetadataId?: string): Promise<PayPalSDK>;
+    getClientMetadataId(paypalSdk: PayPalSDK): string | undefined;
     private loadPayPalSDK;
     private getPayPalSdkScriptConfigOrThrow;
     private filterFundingOptions;

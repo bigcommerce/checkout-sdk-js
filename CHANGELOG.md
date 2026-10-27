@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.995.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.994.0...v1.995.0) (2026-10-27)
+
+
+### Features
+
+* **checkout:** STRIPE-1681 version-based cart validation on order placement ([#3433](https://github.com/bigcommerce/checkout-sdk-js/issues/3433)) ([f2b32da](https://github.com/bigcommerce/checkout-sdk-js/commit/f2b32da6b2b707a61ffed826e738a34e86dbd7ce))
+* **payment:** PAYPAL-7233 Implement client metadata ID for PayPal SDK integration ([667eb5b](https://github.com/bigcommerce/checkout-sdk-js/commit/667eb5b64e0dc828553120e79dfc42a62337a101))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-7233 Key the client metadata id by the SDK instance that loaded it ([aae9ddf](https://github.com/bigcommerce/checkout-sdk-js/commit/aae9ddfc399ee45c5f8e31fd0b2453a5e48df47e))
+* **payment:** PAYPAL-7233 Set the client metadata id only for Card Fields and keep it in sync with the loaded SDK ([76fe581](https://github.com/bigcommerce/checkout-sdk-js/commit/76fe5810c7b8bab039f27a12d2f0df9cbbc5c20d))
+
 ## [1.994.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.993.0...v1.994.0) (2026-10-27)
 
 

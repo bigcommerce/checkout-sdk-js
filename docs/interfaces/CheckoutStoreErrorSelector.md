@@ -580,13 +580,13 @@ The error object if unable to sign out, otherwise undefined.
 
 ### getSubmitOrderError()
 
-> **getSubmitOrderError**(): `Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md) \| [`CartStockPositionsChangedError`](../classes/CartStockPositionsChangedError.md) \| `undefined`
+> **getSubmitOrderError**(): `Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConflictError`](../classes/CartConflictError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md) \| [`CartStockPositionsChangedError`](../classes/CartStockPositionsChangedError.md) \| `undefined`
 
 Returns an error if unable to submit the current order.
 
 #### Returns
 
-`Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md) \| [`CartStockPositionsChangedError`](../classes/CartStockPositionsChangedError.md) \| `undefined`
+`Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConflictError`](../classes/CartConflictError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md) \| [`CartStockPositionsChangedError`](../classes/CartStockPositionsChangedError.md) \| `undefined`
 
 The error object if unable to submit, otherwise undefined.
 

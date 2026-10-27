@@ -2705,6 +2705,10 @@ declare class CartChangedError extends StandardError {
     constructor(previous: ComparableCheckout, updated: ComparableCheckout);
 }
 
+declare class CartConflictError extends StandardError {
+    constructor(message?: string);
+}
+
 /**
  * This error is thrown when the server detects inconsistency in cart data since it is last requested,
  * for example, product prices or eligible discounts have changed.
@@ -4285,7 +4289,7 @@ declare interface CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to submit, otherwise undefined.
      */
-    getSubmitOrderError(): Error | CartChangedError | CartConsistencyError | CartStockPositionsChangedError | undefined;
+    getSubmitOrderError(): Error | CartChangedError | CartConflictError | CartConsistencyError | CartStockPositionsChangedError | undefined;
     /**
      * Returns an error if unable to finalize the current order.
      *
