@@ -81,7 +81,8 @@ export default class BigCommercePaymentsIntegrationService {
 
         // An SDK already loaded for an earlier cart keeps that cart's id; send the one it carries.
         this.clientMetadataId =
-            requestedClientMetadataId && this.bigCommercePaymentsScriptLoader.getClientMetadataId();
+            requestedClientMetadataId &&
+            this.bigCommercePaymentsScriptLoader.getClientMetadataId(this.paypalSdk);
 
         return this.paypalSdk;
     }

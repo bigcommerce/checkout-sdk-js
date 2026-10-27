@@ -199,6 +199,9 @@ describe('BigCommercePaymentsIntegrationService', () => {
             });
             await subject.createOrderCardFields(providerId);
 
+            expect(bigCommercePaymentsScriptLoader.getClientMetadataId).toHaveBeenCalledWith(
+                paypalSdk,
+            );
             expect(bigCommercePaymentsRequestSender.createOrder).toHaveBeenCalledWith(providerId, {
                 cartId: cart.id,
                 metadataId: cart.id.replace(/-/g, ''),

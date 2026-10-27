@@ -77,54 +77,95 @@ describe('BigCommercePaymentsScriptLoader', () => {
     });
 
     describe('#getClientMetadataId', () => {
-        afterEach(() => {
-            document
-                .querySelectorAll('script[data-namespace="bigCommercePaymentsPayPalSDK"]')
-                .forEach((script) => script.remove());
+        let realPaypalLoader: BigCommercePaymentsScriptLoader;
+
+        const cardPaymentMethod = () => ({
+            ...paymentMethod,
+            id: 'bigcommerce_payments_creditcards',
         });
 
-        function loadWithRealScriptLoader(
-            realPaypalLoader: BigCommercePaymentsScriptLoader,
-            clientMetadataId: string,
-        ) {
-            const output = realPaypalLoader.getPayPalSDK(
-                paymentMethod,
+        const sdkScripts = () =>
+            Array.from(
+                document.querySelectorAll<HTMLScriptElement>(
+                    'script[data-namespace="bigCommercePaymentsPayPalSDK"]',
+                ),
+            );
+
+        const completeScript = (script: HTMLScriptElement) => {
+            const loadedSdk = getPayPalSDKMock();
+
+            (window as BigCommercePaymentsHostWindow).bigCommercePaymentsPayPalSDK = loadedSdk;
+            script.dispatchEvent(new Event('load'));
+
+            return loadedSdk;
+        };
+
+        beforeEach(() => {
+            realPaypalLoader = new BigCommercePaymentsScriptLoader(createScriptLoader());
+        });
+
+        afterEach(() => {
+            sdkScripts().forEach((script) => script.remove());
+        });
+
+        it('returns undefined for an sdk it did not load', () => {
+            expect(paypalLoader.getClientMetadataId(getPayPalSDKMock())).toBeUndefined();
+        });
+
+        it('returns the client metadata id of the script that created the sdk', async () => {
+            const loading = realPaypalLoader.getPayPalSDK(
+                cardPaymentMethod(),
                 'USD',
                 true,
                 true,
-                clientMetadataId,
+                'cartA',
             );
+            const cardSdk = completeScript(sdkScripts()[0]);
 
-            (window as BigCommercePaymentsHostWindow).bigCommercePaymentsPayPalSDK = paypalSdk;
-            document
-                .querySelectorAll('script[data-namespace="bigCommercePaymentsPayPalSDK"]')
-                .forEach((script) => script.dispatchEvent(new Event('load')));
+            await loading;
 
-            return output;
-        }
-
-        it('returns undefined when no sdk script is loaded', () => {
-            expect(paypalLoader.getClientMetadataId()).toBeUndefined();
-        });
-
-        it('returns the client metadata id of the loaded sdk script', async () => {
-            const realPaypalLoader = new BigCommercePaymentsScriptLoader(createScriptLoader());
-
-            await loadWithRealScriptLoader(realPaypalLoader, 'cartA');
-
-            expect(realPaypalLoader.getClientMetadataId()).toBe('cartA');
+            expect(realPaypalLoader.getClientMetadataId(cardSdk)).toBe('cartA');
         });
 
         it('keeps the first client metadata id when the sdk is reloaded for another cart', async () => {
-            const realPaypalLoader = new BigCommercePaymentsScriptLoader(createScriptLoader());
+            const firstLoading = realPaypalLoader.getPayPalSDK(
+                cardPaymentMethod(),
+                'USD',
+                true,
+                true,
+                'cartA',
+            );
+            const cardSdk = completeScript(sdkScripts()[0]);
 
-            await loadWithRealScriptLoader(realPaypalLoader, 'cartA');
-            await loadWithRealScriptLoader(realPaypalLoader, 'cartB');
+            await firstLoading;
+            await realPaypalLoader.getPayPalSDK(cardPaymentMethod(), 'USD', true, true, 'cartB');
 
-            expect(
-                document.querySelectorAll('script[data-namespace="bigCommercePaymentsPayPalSDK"]'),
-            ).toHaveLength(1);
-            expect(realPaypalLoader.getClientMetadataId()).toBe('cartA');
+            expect(sdkScripts()).toHaveLength(1);
+            expect(realPaypalLoader.getClientMetadataId(cardSdk)).toBe('cartA');
+        });
+
+        it('keeps each sdk with its own client metadata id when a later script loads first', async () => {
+            const cardLoading = realPaypalLoader.getPayPalSDK(
+                cardPaymentMethod(),
+                'USD',
+                true,
+                true,
+                'cartA',
+            );
+            const buttonLoading = new BigCommercePaymentsScriptLoader(
+                createScriptLoader(),
+            ).getPayPalSDK(paymentMethod, 'USD', true, true);
+            const [cardScript, buttonScript] = sdkScripts();
+
+            const buttonSdk = completeScript(buttonScript);
+
+            await buttonLoading;
+
+            const cardSdk = completeScript(cardScript);
+
+            await expect(cardLoading).resolves.toBe(cardSdk);
+            expect(realPaypalLoader.getClientMetadataId(cardSdk)).toBe('cartA');
+            expect(realPaypalLoader.getClientMetadataId(buttonSdk)).toBeUndefined();
         });
     });
 

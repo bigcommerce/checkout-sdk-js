@@ -17,6 +17,9 @@ import {
 } from './bigcommerce-payments-types';
 
 export default class BigCommercePaymentsScriptLoader {
+    // Set by the load whose script created the SDK; a repeat load of a cached URL doesn't re-run the script.
+    private static clientMetadataIds = new WeakMap<PayPalSDK, string | undefined>();
+
     private window: BigCommercePaymentsHostWindow;
 
     constructor(private scriptLoader: ScriptLoader) {
@@ -40,14 +43,8 @@ export default class BigCommercePaymentsScriptLoader {
         return this.loadPayPalSDK(paypalSdkScriptConfig, forceLoad);
     }
 
-    // @bigcommerce/script-loader caches by URL and drops new attributes on a repeat load, so the id
-    // comes from the last appended SDK script, which is the one whose SDK sits in the namespace.
-    getClientMetadataId(): string | undefined {
-        const scripts = this.window.document.querySelectorAll(
-            'script[data-namespace="bigCommercePaymentsPayPalSDK"]',
-        );
-
-        return scripts[scripts.length - 1]?.getAttribute('data-client-metadata-id') || undefined;
+    getClientMetadataId(paypalSdk: PayPalSDK): string | undefined {
+        return BigCommercePaymentsScriptLoader.clientMetadataIds.get(paypalSdk);
     }
 
     private async loadPayPalSDK(
@@ -67,6 +64,15 @@ export default class BigCommercePaymentsScriptLoader {
             const scriptSrc = `${paypalSdkUrl}?${scriptQuery}`;
 
             await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
+
+            const loadedSdk = this.window.bigCommercePaymentsPayPalSDK;
+
+            if (loadedSdk && !BigCommercePaymentsScriptLoader.clientMetadataIds.has(loadedSdk)) {
+                BigCommercePaymentsScriptLoader.clientMetadataIds.set(
+                    loadedSdk,
+                    attributes['data-client-metadata-id'],
+                );
+            }
         }
 
         if (!this.window.bigCommercePaymentsPayPalSDK) {
