@@ -7,6 +7,7 @@ import {
 } from './billing/billing-address';
 import BillingAddressRequestSender from './billing/billing-address-request-sender';
 import {
+    CreateRedirectToCheckoutHandoffResponseBody,
     CreateRedirectToCheckoutResponseBody,
     RedirectToCheckoutUrlInputData,
 } from './checkout/checkout';
@@ -70,6 +71,21 @@ export default class WalletButtonIntegrationService {
         options?: GraphQLRequestOptions,
     ): Promise<Response<CreateRedirectToCheckoutResponseBody>> {
         return this.checkoutRequestSender.getRedirectToCheckoutUrl(
+            this.graphQLEndpoint,
+            inputData,
+            options,
+        );
+    }
+
+    /**
+     * Same mutation as getRedirectToCheckoutUrl, but also requests externalCheckoutHandoff.
+     * Only for strategies whose payment data cannot be passed in a plain redirect.
+     */
+    async getRedirectToCheckoutHandoff(
+        inputData: RedirectToCheckoutUrlInputData,
+        options?: GraphQLRequestOptions,
+    ): Promise<Response<CreateRedirectToCheckoutHandoffResponseBody>> {
+        return this.checkoutRequestSender.getRedirectToCheckoutHandoff(
             this.graphQLEndpoint,
             inputData,
             options,

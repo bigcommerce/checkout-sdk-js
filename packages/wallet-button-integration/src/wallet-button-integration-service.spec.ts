@@ -1,6 +1,7 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import BillingAddressRequestSender from './billing/billing-address-request-sender';
+import { CheckoutHandoffMethod } from './checkout/checkout';
 import { CheckoutRequestSender } from './checkout/checkout-request-sender';
 import { PaymentRequestSender } from './payment/payment-request-sender';
 import WalletButtonIntegrationService from './wallet-button-integration-service';
@@ -220,6 +221,40 @@ describe('WalletButtonIntegrationService', () => {
                 customOptions,
             );
             expect(result).toEqual(expectedResponse);
+        });
+
+        it('requests checkout handoff from CheckoutRequestSender', async () => {
+            const customOptions = { headers: { Authorization: 'Bearer token-xyz' } };
+
+            const expectedHandoffResponse = {
+                ...expectedResponse,
+                body: {
+                    redirectUrls: {
+                        externalCheckoutUrl: 'https://store.example.com/checkout',
+                        externalCheckoutHandoff: {
+                            url: 'https://store.example.com/checkout',
+                            method: CheckoutHandoffMethod.Redirect,
+                            fields: [],
+                        },
+                    },
+                },
+            };
+
+            jest.spyOn(checkoutRequestSender, 'getRedirectToCheckoutHandoff').mockResolvedValue(
+                expectedHandoffResponse,
+            );
+
+            const result = await walletButtonIntegrationService.getRedirectToCheckoutHandoff(
+                inputData,
+                customOptions,
+            );
+
+            expect(checkoutRequestSender.getRedirectToCheckoutHandoff).toHaveBeenCalledWith(
+                graphQLEndpoint,
+                inputData,
+                customOptions,
+            );
+            expect(result).toEqual(expectedHandoffResponse);
         });
     });
 });
