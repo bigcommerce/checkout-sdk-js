@@ -195,11 +195,7 @@ describe('CardinalClientV2', () => {
                 Promise.resolve(getCardinalBinProcessResponse(false)),
             );
 
-            try {
-                await client.runBinProcess('');
-            } catch (error) {
-                expect(error).toBeInstanceOf(NotInitializedError);
-            }
+            await expect(client.runBinProcess('')).rejects.toThrow(NotInitializedError);
         });
 
         it('throws an error if cardinal throws an exception', async () => {
@@ -207,11 +203,23 @@ describe('CardinalClientV2', () => {
                 return Promise.reject(new Error('Error'));
             });
 
-            try {
-                await client.runBinProcess('');
-            } catch (error) {
-                expect(error).toBeInstanceOf(NotInitializedError);
-            }
+            await expect(client.runBinProcess('')).rejects.toThrow(NotInitializedError);
+        });
+
+        it('does not throw if data was not collected correctly and failure is non-fatal', async () => {
+            jest.spyOn(sdk, 'trigger').mockReturnValue(
+                Promise.resolve(getCardinalBinProcessResponse(false)),
+            );
+
+            await expect(client.runBinProcess('', true)).resolves.toBeUndefined();
+        });
+
+        it('does not throw if cardinal throws an exception and failure is non-fatal', async () => {
+            jest.spyOn(sdk, 'trigger').mockImplementation(() => {
+                return Promise.reject(new Error('Error'));
+            });
+
+            await expect(client.runBinProcess('', true)).resolves.toBeUndefined();
         });
     });
 
