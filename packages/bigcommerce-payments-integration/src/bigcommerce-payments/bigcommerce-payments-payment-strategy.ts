@@ -325,7 +325,9 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
             return resolve();
         };
 
-        await onValidate?.(onValidationPassed, reject);
+        return typeof onValidate !== 'undefined'
+            ? onValidate(onValidationPassed, reject)
+            : onValidationPassed();
     }
 
     private handleApprove(
