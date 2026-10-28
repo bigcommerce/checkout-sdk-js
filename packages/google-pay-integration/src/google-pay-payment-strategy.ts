@@ -12,6 +12,7 @@ import {
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
+    PaymentMethodBankDeclinedAuthenticationError,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
     PaymentRequestOptions,
@@ -141,6 +142,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     }
 
     async finalize(options?: PaymentRequestOptions): Promise<void> {
+        const { methodId } = options ?? {};
+
         if (!this._isHandleUnsuccessful3dsCheckExperimentOn()) {
             return Promise.reject(new OrderFinalizationNotRequiredError());
         }
@@ -153,17 +156,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             order &&
             (status === PaymentStatusTypes.FINALIZE || status === PaymentStatusTypes.INITIALIZE)
         ) {
-            try {
-                await this._paymentIntegrationService.finalizeOrder(options);
-            } catch (error) {
-                if (options?.methodId) {
-                    await this._invalidateStalePaymentToken(options.methodId);
-                }
-
-                throw error;
+            if (methodId) {
+                await this._invalidateStalePaymentToken(methodId);
             }
 
-            return;
+            throw new PaymentMethodBankDeclinedAuthenticationError();
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
