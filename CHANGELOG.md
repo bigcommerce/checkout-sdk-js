@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.995.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.995.2...v1.995.3) (2026-10-28)
+
+
+### Bug Fixes
+
+* **payment:** PI-5734 [Google Pay] fix error on redirect after a 3DS challenge failure ([#3466](https://github.com/bigcommerce/checkout-sdk-js/issues/3466)) ([d194512](https://github.com/bigcommerce/checkout-sdk-js/commit/d194512c3ae51ab7374972da4f71e73c1e7f7f5d))
+
 ### [1.995.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.995.1...v1.995.2) (2026-10-28)
 
 
