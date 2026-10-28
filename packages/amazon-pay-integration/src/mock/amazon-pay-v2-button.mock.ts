@@ -58,7 +58,6 @@ export function getAmazonPayV2CheckoutButtonOptions(
             return { ...methodId, ...amazonPayV2Options };
 
         case Mode.UndefinedMethodId:
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             return { ...amazonPayV2Options } as unknown as CheckoutButtonInitializeOptions;
 
         case Mode.UndefinedAmazonPay:
