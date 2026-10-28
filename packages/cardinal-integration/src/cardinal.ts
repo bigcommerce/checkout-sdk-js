@@ -4,6 +4,7 @@ export const CardinalSignatureValidationErrors = [100004, 1010, 1011, 1020];
 
 export interface CardinalThreeDSecureInitializationData {
     isCyberSourceUpdatedTestUrlEnabled?: boolean;
+    isCardinalBinProcessNonFatal?: boolean;
 }
 
 export interface CardinalSDK {
