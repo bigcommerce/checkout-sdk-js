@@ -68,6 +68,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         }
 
         await this.paymentIntegrationService.submitOrder({ useStoreCredit }, options);
+        await this.paymentIntegrationService.loadFullOrder(options);
 
         const affirmCheckout = await this.initializeAffirmCheckout();
 

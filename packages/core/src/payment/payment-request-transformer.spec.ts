@@ -15,6 +15,7 @@ import { getConfig } from '../config/configs.mock';
 import { getCustomer } from '../customer/customers.mock';
 import { HostedFieldType } from '../hosted-form';
 import { getHostedFormOrderData } from '../hosted-form/hosted-form-order-data.mock';
+import { getSubmittedOrder } from '../order/internal-orders.mock';
 import { getOrder, getOrderMeta } from '../order/orders.mock';
 import { getConsignment, getConsignments } from '../shipping/consignments.mock';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
@@ -138,6 +139,39 @@ describe('PaymentRequestTransformer', () => {
         expect(paymentRequestBodyResponse.paymentMethod).toEqual(
             expectedPaymentRequestBody.paymentMethod,
         );
+    });
+
+    it('uses internal order from order meta instead of mapping the order if it is inferred', () => {
+        const internalOrder = getSubmittedOrder();
+
+        jest.spyOn(selectors.order, 'getOrderMeta').mockReturnValue({
+            ...getOrderMeta(),
+            internalOrder,
+        });
+
+        const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
+
+        expect(paymentRequestBodyResponse.order).toBe(internalOrder);
+    });
+
+    it('uses internal order from order meta for hosted form data if it is inferred', () => {
+        const internalOrder = getSubmittedOrder();
+
+        const result = paymentRequestTransformer.transformWithHostedFormData(
+            {
+                [HostedFieldType.CardNumber]: '4111 1111 1111 1111',
+                [HostedFieldType.CardCode]: '123',
+                [HostedFieldType.CardName]: 'BigCommerce',
+                [HostedFieldType.CardExpiry]: '10 / 20',
+            },
+            {
+                ...getHostedFormOrderData(),
+                orderMeta: { ...getOrderMeta(), internalOrder },
+            },
+            'nonce',
+        );
+
+        expect(result.order).toBe(internalOrder);
     });
 
     it('transforms from hosted form data', () => {

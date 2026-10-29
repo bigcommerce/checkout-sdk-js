@@ -1,5 +1,5 @@
 import { createAction } from '@bigcommerce/data-store';
-import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 import { noop } from 'lodash';
 
 import {
@@ -28,7 +28,8 @@ import { CouponActionCreator } from '../coupon';
 import { CustomerActionCreator } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
-import { getOrder } from '../order/orders.mock';
+import { getSubmittedOrder } from '../order/internal-orders.mock';
+import { getOrder, getOrderMeta } from '../order/orders.mock';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import PaymentStrategyWidgetActionCreator from '../payment/payment-strategy-widget-action-creator';
@@ -635,6 +636,48 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(orderActionCreator.loadCurrentOrder());
             expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#loadFullOrder', () => {
+        const mockOrderMeta = (orderMeta: ReturnType<typeof getOrderMeta>) => {
+            internalCheckoutSelectors = {
+                ...internalCheckoutSelectors,
+                order: {
+                    ...internalCheckoutSelectors.order,
+                    getOrderMeta: () => orderMeta,
+                },
+            };
+        };
+
+        it('loads current order if the order was inferred', async () => {
+            const options = { timeout: createTimeout() };
+
+            mockOrderMeta({ ...getOrderMeta(), internalOrder: getSubmittedOrder() });
+
+            const output = await subject.loadFullOrder(options);
+
+            expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(orderActionCreator.loadCurrentOrder());
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+
+        it('does not load the order if it was not inferred', async () => {
+            mockOrderMeta(getOrderMeta());
+
+            const output = await subject.loadFullOrder();
+
+            expect(orderActionCreator.loadCurrentOrder).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalled();
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+
+        it('does not load the order if there is no order meta', async () => {
+            mockOrderMeta(undefined as unknown as ReturnType<typeof getOrderMeta>);
+
+            await subject.loadFullOrder();
+
+            expect(orderActionCreator.loadCurrentOrder).not.toHaveBeenCalled();
         });
     });
 

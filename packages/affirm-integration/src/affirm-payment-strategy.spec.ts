@@ -146,6 +146,27 @@ describe('AffirmPaymentStrategy', () => {
             });
         });
 
+        it('loads the full order after the order is submitted and before the Affirm checkout is built', async () => {
+            const options = { methodId: 'affirm' };
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
+            await strategy.execute(payload, options);
+
+            const [submitOrderOrder] = jest.spyOn(paymentIntegrationService, 'submitOrder').mock
+                .invocationCallOrder;
+            const [loadFullOrderOrder] = jest.spyOn(paymentIntegrationService, 'loadFullOrder').mock
+                .invocationCallOrder;
+            const [openOrder] = jest.spyOn(affirm.checkout, 'open').mock.invocationCallOrder;
+
+            expect(paymentIntegrationService.loadFullOrder).toHaveBeenCalledWith(options);
+            expect(submitOrderOrder).toBeLessThan(loadFullOrderOrder);
+            expect(loadFullOrderOrder).toBeLessThan(openOrder);
+        });
+
         it('initializes the Affirm checkout call with the correct payload', async () => {
             const checkoutPayload = {
                 billing: {
