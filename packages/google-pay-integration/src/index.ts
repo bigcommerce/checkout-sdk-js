@@ -46,3 +46,4 @@ export { default as createGooglePayWorldpayAccessButtonStrategy } from './factor
 export { default as createGooglePayTdOnlineMartButtonStrategy } from './factories/button/create-google-pay-tdonlinemart-button-strategy';
 
 export { default as createGooglePayBigCommercePaymentsWalletStrategy } from './google-pay-bigcommerce-payments/create-google-pay-bigcommerce-payments-wallet-strategy';
+export { default as createGooglePayPayPalCommerceWalletStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-wallet-strategy';
