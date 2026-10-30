@@ -210,8 +210,29 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         this._stripeCheckout.getExpressCheckoutElement()?.destroy();
 
+        const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
+        const expressCheckoutOptions: StripeElementsCreateOptions = {
+            shippingAddressRequired: shouldRequireShippingAddress,
+            ...(shouldRequireShippingAddress
+                ? { allowedShippingCountries: await this._getAvailableCountries() }
+                : {}),
+            ...(shouldRequireShippingAddress
+                ? { shippingRates: [{ id: '_', amount: 0, displayName: 'Pending rates' }] }
+                : {}),
+            billingAddressRequired: true,
+            emailRequired: true,
+            phoneNumberRequired: true,
+            paymentMethods: this._getExpressCheckoutPaymentMethods(),
+            // Minimal buttonHeight value is 40
+            buttonHeight,
+        };
+
+        console.log('*** express checkout options:', expressCheckoutOptions);
+
         try {
             const linkV2Element = this._stripeCheckout.createExpressCheckoutElement({
+                // ...expressCheckoutOptions,
+
                 paymentMethods: this._getExpressCheckoutPaymentMethods(),
                 // Minimal buttonHeight value is 40
                 buttonHeight,
@@ -326,29 +347,60 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         address,
         runServerUpdate,
     }: StripeCheckoutShippingAddressChangeEvent): Promise<StripeCheckoutShippingChangeResult> {
-        await this.paymentIntegrationService.updateShippingAddress(
-            this._mapPartialShippingAddress(address),
-        );
+        console.log('*** onCheckoutSessionShippingAddressChange event:', address);
+        try {
+            await this.paymentIntegrationService.updateShippingAddress(
+                this._mapPartialShippingAddress(address),
+            );
 
-        const shippingRates = await this._getAvailableShippingOptions();
+            const shippingRates = await this._getAvailableShippingOptions();
 
-        if (!shippingRates?.length) {
+            console.log('*** Available shipping rates:', shippingRates);
+
+            if (!shippingRates?.length) {
+                return { type: StripeCheckoutShippingChangeResultType.REJECT };
+            }
+
+            await runServerUpdate(() => this._loadCheckoutSessionPaymentMethod());
+
+            return { type: StripeCheckoutShippingChangeResultType.ACCEPT };
+        } catch {
             return { type: StripeCheckoutShippingChangeResultType.REJECT };
         }
-
-        await runServerUpdate(() => this._loadCheckoutSessionPaymentMethod());
-
-        return { type: StripeCheckoutShippingChangeResultType.ACCEPT };
     }
 
     private async _onCheckoutSessionShippingRateChange({
         rate,
         runServerUpdate,
     }: StripeCheckoutShippingRateChangeEvent): Promise<StripeCheckoutShippingChangeResult> {
-        await this._handleShippingOptionChange(rate.id);
-        await runServerUpdate(() => this._loadCheckoutSessionPaymentMethod());
+        try {
+            console.log('*** Handling shipping rate change for rate:', rate);
 
-        return { type: StripeCheckoutShippingChangeResultType.ACCEPT };
+            const shippingOptionId = this._getShippingOptionIdByRate(rate);
+
+            if (!shippingOptionId) {
+                return { type: StripeCheckoutShippingChangeResultType.REJECT };
+            }
+
+            await this._handleShippingOptionChange(shippingOptionId);
+            await runServerUpdate(() => this._loadCheckoutSessionPaymentMethod());
+
+            return { type: StripeCheckoutShippingChangeResultType.ACCEPT };
+        } catch (e) {
+            console.log('*** Error handling shipping rate change', e);
+            return { type: StripeCheckoutShippingChangeResultType.REJECT };
+        }
+    }
+
+    private _getShippingOptionIdByRate({
+        displayName,
+    }: StripeLinkV2ShippingRate): string | undefined {
+        const { availableShippingOptions = [] } =
+            this.paymentIntegrationService.getState().getConsignments()?.[0] || {};
+
+        return availableShippingOptions.find(
+            ({ description }) => description.trim() === displayName,
+        )?.id;
     }
 
     private _onCancel() {
@@ -399,9 +451,12 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         await this.stripeIntegrationService.verifyCheckoutSpamProtection();
         await this._updateShippingAndBillingAddress(event);
         await this._syncCheckoutSession();
-        await this.paymentIntegrationService.submitOrder();
 
         const stripeActions = await this._getStripeCheckoutActionsOrThrow();
+
+        await this._selectCheckoutSessionShippingOption(stripeActions);
+        await this.paymentIntegrationService.submitOrder();
+
         const { id: checkoutSessionId } = await stripeActions.getSession();
 
         try {
@@ -447,6 +502,32 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         } finally {
             this._toggleLoadingIndicator(false);
+        }
+    }
+
+    private async _selectCheckoutSessionShippingOption(
+        stripeActions: StripeCheckoutSessionActions,
+    ): Promise<void> {
+        const { selectedShippingOption } =
+            this.paymentIntegrationService.getState().getConsignments()?.[0] || {};
+
+        if (!selectedShippingOption) {
+            return;
+        }
+
+        const { shippingOptions } = await stripeActions.getSession();
+        const shippingRate = shippingOptions.find(
+            ({ displayName }) => displayName === selectedShippingOption.description.trim(),
+        );
+
+        if (!shippingRate) {
+            return;
+        }
+
+        const { error } = await stripeActions.updateShippingOption(shippingRate.id);
+
+        if (error) {
+            throw new PaymentMethodFailedError(error.message);
         }
     }
 

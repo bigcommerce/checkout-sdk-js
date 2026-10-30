@@ -180,6 +180,9 @@ export function getStripeCheckoutSessionActionsMock(): StripeCheckoutSessionActi
         confirm: jest.fn(),
         updateShippingAddress: jest.fn(),
         updateBillingAddress: jest.fn(),
+        updateShippingOption: jest.fn(() =>
+            Promise.resolve({ type: StripeLoadActionsResultType.SUCCESS }),
+        ),
         runServerUpdate: jest.fn(async (update: () => Promise<unknown>) => {
             await update();
 

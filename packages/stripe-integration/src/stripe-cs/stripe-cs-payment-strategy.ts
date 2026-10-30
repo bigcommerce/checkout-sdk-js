@@ -456,7 +456,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         stripeActions: StripeCheckoutSessionActions,
     ): Promise<void> {
         await this._updateStripeEmail(stripeActions);
-        await this._updateStripeShippingAddress(stripeActions);
         await this._updateStripeBillingAddress(stripeActions);
     }
 
@@ -482,21 +481,6 @@ export default class StripeCSPaymentStrategy implements PaymentStrategy {
         const billingAddress = getBillingAddress();
 
         await stripeActions.updateEmail(billingAddress?.email || '');
-    }
-
-    private async _updateStripeShippingAddress(
-        stripeActions: StripeCheckoutSessionActions,
-    ): Promise<void> {
-        const shippingAddress = this.paymentIntegrationService.getState().getShippingAddress();
-
-        if (!shippingAddress) {
-            return;
-        }
-
-        await stripeActions.updateShippingAddress({
-            name: this.stripeIntegrationService.getShopperFullName(shippingAddress),
-            address: this.stripeIntegrationService.mapStripeAddress(shippingAddress),
-        });
     }
 
     private async _updateStripeBillingAddress(
