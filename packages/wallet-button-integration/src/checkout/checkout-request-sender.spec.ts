@@ -1,6 +1,10 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
-import { CreateRedirectToCheckoutResponse, RedirectToCheckoutUrlInputData } from './checkout';
+import {
+    CheckoutHandoffMethod,
+    CreateRedirectToCheckoutResponse,
+    RedirectToCheckoutUrlInputData,
+} from './checkout';
 import CheckoutRedirectError from './checkout-redirect-error';
 import { CheckoutRequestSender } from './checkout-request-sender';
 
@@ -26,6 +30,11 @@ describe('CheckoutRequestSender', () => {
                     errors: [],
                     redirectUrls: {
                         externalCheckoutUrl: 'https://store.example.com/checkout',
+                        externalCheckoutHandoff: {
+                            url: 'https://store.example.com/checkout',
+                            method: CheckoutHandoffMethod.Redirect,
+                            fields: [],
+                        },
                     },
                 },
             },
@@ -88,7 +97,14 @@ describe('CheckoutRequestSender', () => {
             );
 
             expect(response.body).toEqual({
-                redirectUrls: { externalCheckoutUrl: 'https://store.example.com/checkout' },
+                redirectUrls: {
+                    externalCheckoutUrl: 'https://store.example.com/checkout',
+                    externalCheckoutHandoff: {
+                        url: 'https://store.example.com/checkout',
+                        method: CheckoutHandoffMethod.Redirect,
+                        fields: [],
+                    },
+                },
             });
         });
 

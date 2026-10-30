@@ -13,6 +13,7 @@ export enum PayPalSdkNamespace {
     PayPalFastlaneSdk = 'paypalFastlaneSdk',
     PayPalFastlane = 'paypalFastlane',
     PayPalGooglePay = 'paypalGooglePay',
+    BigCommercePaymentsGooglePay = 'bigCommercePaymentsGooglePay',
     PayPalApms = 'paypalApms',
     PayPalMessages = 'paypalMessages',
 }

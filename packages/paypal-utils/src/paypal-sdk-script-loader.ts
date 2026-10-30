@@ -11,6 +11,7 @@ import { PayPalSdkNamespace } from './paypal-constants';
 import {
     FundingType,
     PayPalFastlaneSdk,
+    PayPalGooglePayInitializationData,
     PayPalGooglePaySdk,
     PayPalHostWindow,
     PayPalInitializationData,
@@ -84,28 +85,35 @@ export default class PayPalSdkScriptLoader {
     }
 
     async getPayPalGooglePaySdk(
-        paymentMethod: PaymentMethod<PayPalInitializationData>,
+        paymentMethod: PaymentMethod<PayPalGooglePayInitializationData>,
         currencyCode: string,
         storeLanguage: string | undefined,
         initializesOnCheckoutPage?: boolean,
         forceLoad?: boolean,
     ): Promise<PayPalGooglePaySdk> {
-        if (!this.window.paypalGooglePay || forceLoad) {
+        const namespace = this.isBigCommercePaymentsMethod(paymentMethod.id)
+            ? PayPalSdkNamespace.BigCommercePaymentsGooglePay
+            : PayPalSdkNamespace.PayPalGooglePay;
+
+        if (!getPayPalSdkModule(namespace) || forceLoad) {
             const paypalSdkScriptConfig = this.getPayPalGooglePaySdkScriptConfigOrThrow(
                 paymentMethod,
                 currencyCode,
                 storeLanguage,
+                namespace,
                 initializesOnCheckoutPage,
             );
 
             await this.loadPayPalSdk(paypalSdkScriptConfig);
         }
 
-        if (!this.window.paypalGooglePay) {
+        const paypalGooglePaySdk = getPayPalSdkModule(namespace);
+
+        if (!paypalGooglePaySdk) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.window.paypalGooglePay;
+        return paypalGooglePaySdk;
     }
 
     async getPayPalApmsSdk(
@@ -316,9 +324,12 @@ export default class PayPalSdkScriptLoader {
     }
 
     private getPayPalGooglePaySdkScriptConfigOrThrow(
-        paymentMethod: PaymentMethod<PayPalInitializationData>,
+        paymentMethod: PaymentMethod<PayPalGooglePayInitializationData>,
         currencyCode: string,
         storeLanguage: string | undefined,
+        namespace:
+            | PayPalSdkNamespace.PayPalGooglePay
+            | PayPalSdkNamespace.BigCommercePaymentsGooglePay,
         initializesOnCheckoutPage = true,
     ): PayPalSdkConfig {
         const { clientToken, initializationData } = paymentMethod;
@@ -355,7 +366,7 @@ export default class PayPalSdkScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
-                'data-namespace': PayPalSdkNamespace.PayPalGooglePay,
+                'data-namespace': namespace,
             },
         };
     }
