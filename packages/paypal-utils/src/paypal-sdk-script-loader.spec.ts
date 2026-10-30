@@ -41,6 +41,9 @@ describe('PayPalSdkLoader', () => {
     const payPalGooglePaySdk: PayPalGooglePaySdk = {
         Googlepay: jest.fn(),
     };
+    const bigCommercePaymentsGooglePaySdk: PayPalGooglePaySdk = {
+        Googlepay: jest.fn(),
+    };
 
     const sessionId = '8a232bf4-d9ba-4621-a1a9-ed8f685f92d1';
     const expectedSessionId = sessionId.replace(/-/g, '');
@@ -68,6 +71,8 @@ describe('PayPalSdkLoader', () => {
             (window as PayPalHostWindow).paypalMessages = paypalMessagesSdk;
             (window as PayPalHostWindow).paypalApms = paypalApmsSdk;
             (window as PayPalHostWindow).paypalGooglePay = payPalGooglePaySdk;
+            (window as PayPalHostWindow).bigCommercePaymentsGooglePay =
+                bigCommercePaymentsGooglePaySdk;
 
             return Promise.resolve();
         });
@@ -80,6 +85,7 @@ describe('PayPalSdkLoader', () => {
         (window as PayPalHostWindow).paypalMessages = undefined;
         (window as PayPalHostWindow).paypalApms = undefined;
         (window as PayPalHostWindow).paypalGooglePay = undefined;
+        (window as PayPalHostWindow).bigCommercePaymentsGooglePay = undefined;
 
         jest.clearAllMocks();
     });
@@ -623,6 +629,32 @@ describe('PayPalSdkLoader', () => {
                     async: true,
                     attributes: {
                         'data-namespace': 'paypalGooglePay',
+                        'data-client-token': 'asdcvY7XFSQasd',
+                        'data-partner-attribution-id': '1123JLKJASD12',
+                    },
+                },
+            );
+        });
+
+        it('loads BigCommerce Payments Google Pay in its own namespace', async () => {
+            const bigCommercePaymentsMethod = {
+                ...paymentMethod,
+                id: 'bigcommerce_paymentsgooglepay',
+            };
+
+            const result = await subject.getPayPalGooglePaySdk(
+                bigCommercePaymentsMethod,
+                'USD',
+                undefined,
+            );
+
+            expect(result).toBe(bigCommercePaymentsGooglePaySdk);
+            expect(loader.loadScript).toHaveBeenCalledWith(
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=googlepay&currency=USD&intent=capture',
+                {
+                    async: true,
+                    attributes: {
+                        'data-namespace': 'bigCommercePaymentsGooglePay',
                         'data-client-token': 'asdcvY7XFSQasd',
                         'data-partner-attribution-id': '1123JLKJASD12',
                     },
