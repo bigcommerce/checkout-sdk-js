@@ -3,11 +3,24 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { GraphQLRequestOptions } from '../graphql-request-options';
 
 import {
+    CreateRedirectToCheckoutHandoffResponseBody,
     CreateRedirectToCheckoutResponse,
     CreateRedirectToCheckoutResponseBody,
     RedirectToCheckoutUrlInputData,
+    RedirectUrls,
+    RedirectUrlsWithCheckoutHandoff,
 } from './checkout';
 import CheckoutRedirectError from './checkout-redirect-error';
+
+const CHECKOUT_HANDOFF_FIELDS = `
+                            externalCheckoutHandoff {
+                                url
+                                method
+                                fields {
+                                    name
+                                    value
+                                }
+                            }`;
 
 export class CheckoutRequestSender {
     constructor(private readonly requestSender: RequestSender) {}
@@ -17,6 +30,32 @@ export class CheckoutRequestSender {
         inputData: RedirectToCheckoutUrlInputData,
         options?: GraphQLRequestOptions,
     ): Promise<Response<CreateRedirectToCheckoutResponseBody>> {
+        return this.requestRedirectUrls<RedirectUrls>(graphQLEndpoint, inputData, options);
+    }
+
+    /**
+     * The mutation is shared by every wallet button, so the handoff field is requested only
+     * by strategies that need it. A store schema without it must not break the others.
+     */
+    async getRedirectToCheckoutHandoff(
+        graphQLEndpoint: string,
+        inputData: RedirectToCheckoutUrlInputData,
+        options?: GraphQLRequestOptions,
+    ): Promise<Response<CreateRedirectToCheckoutHandoffResponseBody>> {
+        return this.requestRedirectUrls<RedirectUrlsWithCheckoutHandoff>(
+            graphQLEndpoint,
+            inputData,
+            options,
+            CHECKOUT_HANDOFF_FIELDS,
+        );
+    }
+
+    private async requestRedirectUrls<TRedirectUrls extends RedirectUrls>(
+        graphQLEndpoint: string,
+        inputData: RedirectToCheckoutUrlInputData,
+        options?: GraphQLRequestOptions,
+        extraRedirectUrlsFields = '',
+    ): Promise<Response<CreateRedirectToCheckoutResponseBody<TRedirectUrls>>> {
         const document = `
             mutation CheckoutRedirectMutation($input: CreateCartRedirectUrlsInput!) {
                 cart {
@@ -28,7 +67,7 @@ export class CheckoutRequestSender {
                             }
                         }
                         redirectUrls {
-                            externalCheckoutUrl
+                            externalCheckoutUrl${extraRedirectUrlsFields}
                         }
                     }
                 }
@@ -50,10 +89,9 @@ export class CheckoutRequestSender {
         };
 
         try {
-            const response = await this.requestSender.post<CreateRedirectToCheckoutResponse>(
-                `${window.location.origin}/${graphQLEndpoint}`,
-                requestOptions,
-            );
+            const response = await this.requestSender.post<
+                CreateRedirectToCheckoutResponse<TRedirectUrls>
+            >(`${window.location.origin}/${graphQLEndpoint}`, requestOptions);
 
             const {
                 data: {
