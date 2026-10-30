@@ -4,13 +4,9 @@ import {
     BuyNowCartRequestBody,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalCommerceIntent } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import { FundingType } from './google-pay-paypal-commerce/types';
-
-export enum PayPalCommerceIntent {
-    AUTHORIZE = 'authorize',
-    CAPTURE = 'capture',
-}
 
 export enum StyleButtonLabel {
     paypal = 'paypal',
