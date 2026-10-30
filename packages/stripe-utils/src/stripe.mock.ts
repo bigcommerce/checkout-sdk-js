@@ -5,6 +5,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    StripeCheckoutExpressCheckoutElement,
     StripeCheckoutInstance,
     StripeCheckoutSession,
     StripeCheckoutSessionActions,
@@ -179,6 +180,9 @@ export function getStripeCheckoutSessionActionsMock(): StripeCheckoutSessionActi
         confirm: jest.fn(),
         updateShippingAddress: jest.fn(),
         updateBillingAddress: jest.fn(),
+        updateShippingOption: jest.fn(() =>
+            Promise.resolve({ type: StripeLoadActionsResultType.SUCCESS }),
+        ),
         runServerUpdate: jest.fn(async (update: () => Promise<unknown>) => {
             await update();
 
@@ -204,5 +208,9 @@ export function getStripeCheckoutInstanceMock(): StripeCheckoutInstance {
         getPaymentElement: jest.fn().mockReturnValue(null),
         getCurrencySelectorElement: jest.fn().mockReturnValue(null),
         createCurrencySelectorElement: jest.fn(() => getStripeElementMock()),
+        createExpressCheckoutElement: jest.fn(
+            () => getStripeElementMock() as StripeCheckoutExpressCheckoutElement,
+        ),
+        getExpressCheckoutElement: jest.fn().mockReturnValue(null),
     };
 }
