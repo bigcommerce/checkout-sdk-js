@@ -74,7 +74,7 @@ export interface QueryParams {
 export interface RedirectToCheckoutUrlInputData {
     paymentWalletData: {
         providerId: string;
-        providerOrderId: string;
+        providerOrderId?: string;
     };
     cartEntityId: string;
     queryParams: QueryParams[];

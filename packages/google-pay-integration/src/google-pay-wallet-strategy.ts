@@ -50,12 +50,18 @@ export default class GooglePayWalletStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        const paymentMethod = this.parsePaymentMethod(googlePayOptions);
+        const paymentMethod = this.parsePaymentMethod(googlePayOptions, methodId);
 
         try {
             await this.googlePayWalletService.initialize(
                 paymentMethod,
                 this.getTransactionInfo(googlePayOptions, paymentMethod),
+                googlePayOptions.supportedShippingCountriesCodes,
+                {
+                    cartId: googlePayOptions.cartId,
+                    lineItems: googlePayOptions.lineItems,
+                    currencyDecimalPlaces: googlePayOptions.currency.decimalPlaces,
+                },
             );
         } catch (error) {
             if (error instanceof Error) {
@@ -100,6 +106,28 @@ export default class GooglePayWalletStrategy implements CheckoutButtonStrategy {
                 const response = await this.googlePayWalletService.showPaymentSheet();
 
                 await this.googlePayWalletService.addBillingAddress(cartId, response);
+
+                const requiresShipping = googlePayOptions.lineItems?.some(
+                    (lineItem) => lineItem.isShippingRequired,
+                );
+
+                if (requiresShipping) {
+                    const shippingAddress =
+                        this.googlePayWalletService.mapToShippingAddress(response);
+
+                    if (!shippingAddress) {
+                        throw new InvalidArgumentError(
+                            'Shipping address is missing from Google Pay.',
+                        );
+                    }
+
+                    await this.googlePayWalletService.updateShippingAddress(
+                        cartId,
+                        shippingAddress,
+                        googlePayOptions.lineItems,
+                    );
+                }
+
                 await this.googlePayWalletService.redirectToCheckout(cartId, response);
             } catch (error) {
                 if (isGooglePayErrorObject(error)) {
@@ -123,6 +151,7 @@ export default class GooglePayWalletStrategy implements CheckoutButtonStrategy {
 
     private parsePaymentMethod(
         googlePayOptions: GooglePayWalletInitializeOptions,
+        methodId: string,
     ): PaymentMethod<GooglePayInitializationData> {
         let paymentMethod: PaymentMethod<GooglePayInitializationData>;
 
@@ -138,6 +167,7 @@ export default class GooglePayWalletStrategy implements CheckoutButtonStrategy {
 
         return {
             ...paymentMethod,
+            id: paymentMethod.id || methodId,
             clientToken: googlePayOptions.clientToken || paymentMethod.clientToken,
         };
     }

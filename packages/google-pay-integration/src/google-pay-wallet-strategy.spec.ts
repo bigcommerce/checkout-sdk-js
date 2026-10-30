@@ -52,6 +52,13 @@ describe('GooglePayWalletStrategy', () => {
         jest.spyOn(service, 'renderButton').mockImplementation(jest.fn());
         jest.spyOn(service, 'showPaymentSheet').mockResolvedValue(getCardDataResponse());
         jest.spyOn(service, 'addBillingAddress').mockResolvedValue();
+        jest.spyOn(service, 'updateShippingAddress').mockResolvedValue({
+            consignmentEntityId: 'consignment-1',
+            availableShippingOptions: [],
+            selectedShippingOptionEntityId: 'rate-1',
+            currencyCode: 'USD',
+            totalPrice: '12.50',
+        });
         jest.spyOn(service, 'redirectToCheckout').mockResolvedValue();
         jest.spyOn(service, 'deinitialize').mockResolvedValue();
 
@@ -61,6 +68,7 @@ describe('GooglePayWalletStrategy', () => {
             amount: 10,
             initializationData: btoa(JSON.stringify(paymentMethod)),
             clientToken: 'clientToken',
+            lineItems: [{ entityId: 'line-item-1', quantity: 1, isShippingRequired: true }],
             onAuthorizeError: jest.fn(),
             onError: jest.fn(),
             onEligibilityFailure: jest.fn(),
@@ -130,6 +138,60 @@ describe('GooglePayWalletStrategy', () => {
                     totalPrice: '10.00',
                     totalPriceStatus: TotalPriceStatusType.ESTIMATED,
                 },
+                undefined,
+                {
+                    cartId: 'cart-123',
+                    lineItems: googlePayOptions.lineItems,
+                    currencyDecimalPlaces: 2,
+                },
+            );
+        });
+
+        it('passes supported shipping country codes to the service', async () => {
+            const supportedShippingCountriesCodes = ['US', 'CA'];
+
+            await strategy.initialize({
+                ...initializationOptions,
+                braintreegooglepay: {
+                    ...googlePayOptions,
+                    supportedShippingCountriesCodes,
+                },
+            });
+
+            expect(service.initialize).toHaveBeenCalledWith(
+                expect.any(Object),
+                expect.any(Object),
+                supportedShippingCountriesCodes,
+                {
+                    cartId: 'cart-123',
+                    lineItems: googlePayOptions.lineItems,
+                    currencyDecimalPlaces: 2,
+                },
+            );
+        });
+
+        it('uses the strategy method id when the payment method id is missing', async () => {
+            const paymentMethodWithoutId = { ...paymentMethod, id: undefined };
+            const bcpOptions = {
+                methodId: 'bigcommerce_paymentsgooglepay',
+                containerId,
+                bigcommerce_paymentsgooglepay: {
+                    ...googlePayOptions,
+                    initializationData: btoa(JSON.stringify(paymentMethodWithoutId)),
+                },
+            };
+
+            await strategy.initialize(bcpOptions);
+
+            expect(service.initialize).toHaveBeenCalledWith(
+                expect.objectContaining({ id: 'bigcommerce_paymentsgooglepay' }),
+                expect.any(Object),
+                undefined,
+                {
+                    cartId: 'cart-123',
+                    lineItems: googlePayOptions.lineItems,
+                    currencyDecimalPlaces: 2,
+                },
             );
         });
 
@@ -146,6 +208,12 @@ describe('GooglePayWalletStrategy', () => {
             expect(service.initialize).toHaveBeenCalledWith(
                 expect.any(Object),
                 expect.objectContaining({ currencyCode: 'KWD', totalPrice: '12.346' }),
+                undefined,
+                {
+                    cartId: 'cart-123',
+                    lineItems: googlePayOptions.lineItems,
+                    currencyDecimalPlaces: 3,
+                },
             );
         });
 
@@ -162,6 +230,12 @@ describe('GooglePayWalletStrategy', () => {
             expect(service.initialize).toHaveBeenCalledWith(
                 expect.any(Object),
                 expect.objectContaining({ currencyCode: 'JPY', totalPrice: '1500' }),
+                undefined,
+                {
+                    cartId: 'cart-123',
+                    lineItems: googlePayOptions.lineItems,
+                    currencyDecimalPlaces: 0,
+                },
             );
         });
 
@@ -186,6 +260,12 @@ describe('GooglePayWalletStrategy', () => {
             expect(service.initialize).toHaveBeenCalledWith(
                 expect.any(Object),
                 expect.objectContaining({ countryCode: 'CA' }),
+                undefined,
+                {
+                    cartId: 'cart-123',
+                    lineItems: googlePayOptions.lineItems,
+                    currencyDecimalPlaces: 2,
+                },
             );
         });
 
@@ -221,19 +301,28 @@ describe('GooglePayWalletStrategy', () => {
     });
 
     describe('#handleClick()', () => {
-        it('adds billing address and redirects to checkout', async () => {
+        it('updates billing and shipping addresses before redirecting to checkout', async () => {
+            const response = getCardDataResponse();
+
+            jest.spyOn(service, 'showPaymentSheet').mockResolvedValue(response);
+
             await strategy.initialize(initializationOptions);
             await getOnClick();
 
             expect(service.showPaymentSheet).toHaveBeenCalled();
-            expect(service.addBillingAddress).toHaveBeenCalledWith(
+            expect(service.addBillingAddress).toHaveBeenCalledWith('cart-123', response);
+            expect(service.updateShippingAddress).toHaveBeenCalledWith(
                 'cart-123',
-                getCardDataResponse(),
+                service.mapToShippingAddress(response),
+                googlePayOptions.lineItems,
             );
-            expect(service.redirectToCheckout).toHaveBeenCalledWith(
-                'cart-123',
-                getCardDataResponse(),
+            expect(service.redirectToCheckout).toHaveBeenCalledWith('cart-123', response);
+            expect(jest.mocked(service.addBillingAddress).mock.invocationCallOrder[0]).toBeLessThan(
+                jest.mocked(service.updateShippingAddress).mock.invocationCallOrder[0],
             );
+            expect(
+                jest.mocked(service.updateShippingAddress).mock.invocationCallOrder[0],
+            ).toBeLessThan(jest.mocked(service.redirectToCheckout).mock.invocationCallOrder[0]);
         });
 
         it('ignores a second click while the first one is in progress', async () => {

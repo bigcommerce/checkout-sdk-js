@@ -72,6 +72,17 @@ export interface PayPalInitializationData {
     isServerSideShippingCallbacksEnabled?: boolean;
 }
 
+export interface PayPalGooglePayInitializationData {
+    attributionId?: string;
+    buyerCountry?: string;
+    clientId: string;
+    clientToken?: string;
+    intent?: string;
+    isDeveloperModeApplicable?: boolean;
+    isHostedCheckoutEnabled?: boolean;
+    merchantId?: string;
+}
+
 /**
  *
  * PayPalHostWindow contains different
@@ -86,6 +97,7 @@ export interface PayPalHostWindow extends Window {
     [PayPalSdkNamespace.PayPalMessages]?: PayPalMessagesSdk;
     [PayPalSdkNamespace.PayPalApms]?: PayPalApmSdk;
     [PayPalSdkNamespace.PayPalGooglePay]?: PayPalGooglePaySdk;
+    [PayPalSdkNamespace.BigCommercePaymentsGooglePay]?: PayPalGooglePaySdk;
 }
 
 /**
@@ -102,7 +114,7 @@ export interface PayPalSdkConfig {
         'disable-funding'?: FundingType;
         currency?: string;
         commit?: boolean;
-        intent?: PayPalIntent;
+        intent?: string;
         components?: PayPalSdkComponents;
         locale?: string;
     };
