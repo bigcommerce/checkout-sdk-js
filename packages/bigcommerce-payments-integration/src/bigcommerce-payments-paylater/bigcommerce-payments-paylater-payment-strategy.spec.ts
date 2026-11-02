@@ -1,11 +1,6 @@
 import { EventEmitter } from 'events';
 
 import {
-    createBigCommercePaymentsSdk,
-    PayPalMessagesSdk,
-    PayPalSdkHelper,
-} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
-import {
     InvalidArgumentError,
     NotImplementedError,
     OrderFinalizationNotRequiredError,
@@ -17,12 +12,15 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
+    createPayPalSdkScriptLoader,
     getPayPalIntegrationServiceMock,
     getPayPalSDKMock,
     PayPalButtonsOptions,
     PayPalHostWindow,
     PayPalIntegrationService,
+    PayPalMessagesSdk,
     PayPalSDK,
+    PayPalSdkScriptLoader,
 } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
@@ -39,7 +37,7 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
     let paypalIntegrationService: PayPalIntegrationService;
     let paypalSdk: PayPalSDK;
     let strategy: BigCommercePaymentsPayLaterPaymentStrategy;
-    let paypalSdkHelper: PayPalSdkHelper;
+    let paypalSdkScriptLoader: PayPalSdkScriptLoader;
     let payPalMessagesSdk: PayPalMessagesSdk;
 
     const paypalOrderId = 'paypal123';
@@ -75,13 +73,13 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
         loadingIndicator = new LoadingIndicator();
         paypalIntegrationService = getPayPalIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalSdkHelper = createBigCommercePaymentsSdk();
+        paypalSdkScriptLoader = createPayPalSdkScriptLoader();
 
         strategy = new BigCommercePaymentsPayLaterPaymentStrategy(
             paymentIntegrationService,
             paypalIntegrationService,
             loadingIndicator,
-            paypalSdkHelper,
+            paypalSdkScriptLoader,
         );
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
@@ -311,7 +309,7 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalIntegrationService.createOrder).toHaveBeenCalledWith(
-                'bigcommerce_payments_paylatercheckout',
+                'bigcommerce_payments_paylater',
             );
         });
     });
@@ -525,7 +523,7 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
             div.setAttribute('id', defaultMessageContainerId);
             document.body.appendChild(div);
 
-            jest.spyOn(paypalSdkHelper, 'getPayPalMessages').mockImplementation(() =>
+            jest.spyOn(paypalSdkScriptLoader, 'getPayPalMessages').mockImplementation(() =>
                 Promise.resolve(payPalMessagesSdk),
             );
             jest.spyOn(payPalMessagesSdk, 'Messages').mockImplementation(() => ({
@@ -579,6 +577,11 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
         it('initializes PayPal Messages component', async () => {
             await strategy.initialize(options);
 
+            expect(paypalSdkScriptLoader.getPayPalMessages).toHaveBeenCalledWith(
+                paymentMethod,
+                paymentIntegrationService.getState().getCartOrThrow().currency.code,
+                paymentIntegrationService.getState().getLocale(),
+            );
             expect(payPalMessagesSdk.Messages).toHaveBeenCalledWith({
                 amount: 190,
                 placement: 'payment',
