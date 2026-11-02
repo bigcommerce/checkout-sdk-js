@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.996.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.995.4...v1.996.0) (2026-11-02)
+
+
+### Features
+
+* **payments:** PAYPAL-5228 Add an ability to render Google Pay button with Wallet buttons tool ([#3471](https://github.com/bigcommerce/checkout-sdk-js/issues/3471)) ([36873a7](https://github.com/bigcommerce/checkout-sdk-js/commit/36873a7b3bc8dd0dadc0fee5cca9c88037625f3b))
+
 ### [1.995.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.995.3...v1.995.4) (2026-11-02)
 
 ### [1.995.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.995.2...v1.995.3) (2026-10-28)
