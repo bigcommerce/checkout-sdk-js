@@ -1,6 +1,11 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
-import { CreateRedirectToCheckoutResponse, RedirectToCheckoutUrlInputData } from './checkout';
+import {
+    CheckoutHandoffMethod,
+    CreateRedirectToCheckoutResponse,
+    RedirectToCheckoutUrlInputData,
+    RedirectUrlsWithCheckoutHandoff,
+} from './checkout';
 import CheckoutRedirectError from './checkout-redirect-error';
 import { CheckoutRequestSender } from './checkout-request-sender';
 
@@ -55,6 +60,23 @@ describe('CheckoutRequestSender', () => {
                         'Content-Type': 'application/json',
                         'x-catalyst-graphql-proxy-requester': 'checkout-sdk-js',
                     },
+                }),
+            );
+        });
+
+        it('does not request checkout handoff', async () => {
+            const postSpy = jest.spyOn(requestSender, 'post').mockResolvedValue({
+                body: successResponseBody,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'content-type': 'application/json' },
+            });
+
+            await checkoutRequestSender.getRedirectToCheckoutUrl(graphQLEndpoint, inputData);
+
+            expect(postSpy.mock.calls[0][1]?.body).toEqual(
+                expect.objectContaining({
+                    query: expect.not.stringContaining('externalCheckoutHandoff'),
                 }),
             );
         });
@@ -216,6 +238,88 @@ describe('CheckoutRequestSender', () => {
             await expect(
                 checkoutRequestSender.getRedirectToCheckoutUrl(graphQLEndpoint, inputData),
             ).rejects.toEqual(expect.any(CheckoutRedirectError));
+        });
+    });
+
+    describe('#getRedirectToCheckoutHandoff()', () => {
+        const handoffResponseBody: CreateRedirectToCheckoutResponse<RedirectUrlsWithCheckoutHandoff> =
+            {
+                data: {
+                    cart: {
+                        createCartRedirectUrls: {
+                            errors: [],
+                            redirectUrls: {
+                                externalCheckoutUrl: 'https://store.example.com/checkout',
+                                externalCheckoutHandoff: {
+                                    url: 'https://store.example.com/checkout.php',
+                                    method: CheckoutHandoffMethod.Post,
+                                    fields: [{ name: 'nonce', value: 'nonce' }],
+                                },
+                            },
+                        },
+                    },
+                },
+            };
+
+        it('requests checkout handoff in the mutation', async () => {
+            const postSpy = jest.spyOn(requestSender, 'post').mockResolvedValue({
+                body: handoffResponseBody,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'content-type': 'application/json' },
+            });
+
+            await checkoutRequestSender.getRedirectToCheckoutHandoff(graphQLEndpoint, inputData);
+
+            expect(postSpy.mock.calls[0][1]?.body).toEqual(
+                expect.objectContaining({
+                    query: expect.stringMatching(
+                        /externalCheckoutUrl\s*externalCheckoutHandoff\s*{\s*url\s*method\s*fields\s*{\s*name\s*value\s*}\s*}/,
+                    ),
+                }),
+            );
+        });
+
+        it('returns redirect urls with checkout handoff', async () => {
+            jest.spyOn(requestSender, 'post').mockResolvedValue({
+                body: handoffResponseBody,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'content-type': 'application/json' },
+            });
+
+            const response = await checkoutRequestSender.getRedirectToCheckoutHandoff(
+                graphQLEndpoint,
+                inputData,
+            );
+
+            expect(response.body).toEqual({
+                redirectUrls: handoffResponseBody.data.cart.createCartRedirectUrls.redirectUrls,
+            });
+        });
+
+        it('throws CheckoutRedirectError when GraphQL mutation returns an error', async () => {
+            jest.spyOn(requestSender, 'post').mockResolvedValue({
+                body: {
+                    data: {
+                        cart: {
+                            createCartRedirectUrls: {
+                                errors: [
+                                    { __typename: 'NotFoundError', message: 'Cart not found' },
+                                ],
+                                redirectUrls: null,
+                            },
+                        },
+                    },
+                },
+                status: 200,
+                statusText: 'OK',
+                headers: { 'content-type': 'application/json' },
+            });
+
+            await expect(
+                checkoutRequestSender.getRedirectToCheckoutHandoff(graphQLEndpoint, inputData),
+            ).rejects.toEqual(new CheckoutRedirectError('Cart not found'));
         });
     });
 });

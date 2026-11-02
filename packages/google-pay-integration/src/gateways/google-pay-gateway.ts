@@ -1,5 +1,3 @@
-import { round } from 'lodash';
-
 import {
     AddressRequestBody,
     BillingAddressRequestBody,
@@ -19,6 +17,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { isExperimentEnabled, isWebView } from '@bigcommerce/checkout-sdk/utility';
 
+import formatGooglePayTotalPrice from '../format-google-pay-total-price';
+import getFirstAndLastName from '../get-first-and-last-name';
 import isGooglePayCardNetworkKey from '../guards/is-google-pay-card-network-key';
 import {
     CallbackIntentsType,
@@ -397,11 +397,8 @@ export default class GooglePayGateway {
         const maxDecimalPlaces = isRoundingExperimentOn
             ? Math.min(decimalPlaces, 2)
             : decimalPlaces;
-        const totalPrice = round(getCheckoutOrThrow().outstandingBalance, maxDecimalPlaces).toFixed(
-            maxDecimalPlaces,
-        );
 
-        return totalPrice;
+        return formatGooglePayTotalPrice(getCheckoutOrThrow().outstandingBalance, maxDecimalPlaces);
     }
 
     async handleCoupons(
@@ -546,7 +543,7 @@ export default class GooglePayGateway {
             postalCode,
             phoneNumber,
         } = address;
-        const [firstName, lastName] = this._getFirstAndLastName(name);
+        const [firstName, lastName] = getFirstAndLastName(name);
 
         return {
             firstName,
@@ -562,19 +559,6 @@ export default class GooglePayGateway {
             phone: phoneNumber || phone,
             customFields: customFields || [],
         };
-    }
-
-    private _getFirstAndLastName(fullName: string): [string, string] {
-        const nameParts = fullName.split(' ');
-
-        if (nameParts.length === 1) {
-            return [fullName, ''];
-        }
-
-        const firstName = nameParts.slice(0, -1).join(' ');
-        const lastName = nameParts[nameParts.length - 1];
-
-        return [firstName, lastName];
     }
 
     private _getCurrencyCodeOrThrow(): string {

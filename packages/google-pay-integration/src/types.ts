@@ -344,6 +344,7 @@ interface GooglePayBaseInitializationData {
     nonce?: string;
     platformToken: string;
     storeCountry?: string;
+    buyerCountry?: string;
     isWebViewExperimentOn?: boolean;
 }
 
