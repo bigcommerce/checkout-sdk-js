@@ -5465,25 +5465,6 @@ export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
 export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
 
 /**
- * Creates an instance of `PayPalCommerceAnalyticTrackerService`.
- *
- * @remarks
- * ```js
- * const checkoutService = createCheckoutService();
- * await checkoutService.loadCheckout();
- * const paypalCommerceAnalyticTracker = createPayPalCommerceAnalyticTracker(checkoutService);
- *
- * paypalCommerceAnalyticTracker.customerPaymentMethodExecuted();
- * paypalCommerceAnalyticTracker.paymentComplete();
- * paypalCommerceAnalyticTracker.selectedPaymentMethod('applepay');
- * paypalCommerceAnalyticTracker.walletButtonClick('paypal');
- * ```
- *
- * @returns an instance of `PayPalCommerceAnalyticTrackerService`.
- */
-export declare function createPayPalCommerceAnalyticTracker(checkoutService: CheckoutService): PayPalCommerceAnalyticTrackerService;
-
-/**
  * Creates an instance of `StepTracker`.
  *
  * @remarks
@@ -7859,13 +7840,6 @@ declare interface PayPalCommerceAlternativeMethodsPaymentOptions {
      * when Smart Payment Button is initialized.
      */
     onInitButton(actions: InitCallbackActions_2): Promise<void>;
-}
-
-declare interface PayPalCommerceAnalyticTrackerService {
-    customerPaymentMethodExecuted(): void;
-    paymentComplete(): void;
-    selectedPaymentMethod(methodId: string): void;
-    walletButtonClick(methodId: string): void;
 }
 
 /**
