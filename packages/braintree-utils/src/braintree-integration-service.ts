@@ -191,6 +191,8 @@ export default class BraintreeIntegrationService {
                 components: PAYPAL_COMPONENTS.toString(),
                 intent: config.intent,
                 commit: config.commit ?? true,
+                locale: 'ja_JP',
+                'buyer-country': 'JP', // sandbox only, testing // Modal language set by IP
             };
 
             if (!this.braintreeHostWindow.paypal) {

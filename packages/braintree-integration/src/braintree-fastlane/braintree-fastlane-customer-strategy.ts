@@ -61,6 +61,9 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
                     paymentMethod.id,
                     fastlaneStyles,
                 );
+
+                // @ts-ignore
+                this.braintreeFastlaneUtils.getBraintreeFastlaneOrThrow().setLocale('zh_us');
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow

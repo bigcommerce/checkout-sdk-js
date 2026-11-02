@@ -107,6 +107,9 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
             fastlaneStyles,
         );
 
+        // @ts-ignore
+        this.braintreeFastlaneUtils.getBraintreeFastlaneOrThrow().setLocale('zh_us');
+
         if (this.shouldRunAuthenticationFlow()) {
             await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow(
                 undefined,

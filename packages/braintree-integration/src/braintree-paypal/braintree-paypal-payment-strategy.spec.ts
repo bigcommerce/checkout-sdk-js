@@ -403,7 +403,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             expect(braintreeIntegrationService.paypal).toHaveBeenCalledWith({
                 amount: 190,
-                locale: 'en_US',
+                locale: 'de_DE',
                 currency: 'USD',
                 shouldSaveInstrument: false,
                 offerCredit: false,
@@ -429,7 +429,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             expect(state.getOutstandingBalance).toHaveBeenCalledWith(true);
             expect(braintreeIntegrationService.paypal).toHaveBeenCalledWith({
                 amount: 150,
-                locale: 'en_US',
+                locale: 'de_DE',
                 currency: 'USD',
                 shouldSaveInstrument: false,
                 offerCredit: false,
@@ -443,7 +443,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             expect(state.getOutstandingBalance).toHaveBeenCalledWith(false);
             expect(braintreeIntegrationService.paypal).toHaveBeenCalledWith({
                 amount: 190,
-                locale: 'en_US',
+                locale: 'de_DE',
                 currency: 'USD',
                 enableShippingAddress: true,
                 shouldSaveInstrument: false,
@@ -864,7 +864,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
                 expect(braintreeIntegrationService.paypal).toHaveBeenCalledWith({
                     amount: 190,
-                    locale: 'en_US',
+                    locale: 'de_DE',
                     currency: 'USD',
                     enableShippingAddress: true,
                     shouldSaveInstrument: false,
