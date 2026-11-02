@@ -18,9 +18,9 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
 import {
     ApproveCallbackPayload,
     BigCommercePaymentsButtons,
@@ -39,7 +39,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
         private loadingIndicator: LoadingIndicator,
         private paypalSdkHelper: PayPalSdkHelper,
     ) {}
@@ -104,7 +104,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
             return;
         }
 
-        await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(methodId);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId);
 
         this.loadingIndicatorContainer = container?.split('#')[1];
 
@@ -123,10 +123,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
         }
 
         await this.paymentIntegrationService.submitOrder(order, options);
-        await this.bigCommercePaymentsIntegrationService.submitPayment(
-            payment.methodId,
-            this.orderId,
-        );
+        await this.paypalIntegrationService.submitPayment(payment.methodId, this.orderId);
     }
 
     finalize(): Promise<void> {
@@ -156,7 +153,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
             );
         }
 
-        const bigCommerceSdk = this.bigCommercePaymentsIntegrationService.getPayPalSdkOrThrow();
+        const bigCommerceSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
@@ -177,12 +174,12 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
 
             const buttonOptions: BigCommercePaymentsButtonsOptions = {
                 fundingSource,
-                style: this.bigCommercePaymentsIntegrationService.getValidButtonStyle(
+                style: this.paypalIntegrationService.getValidButtonStyle(
                     checkoutPaymentButtonStyles,
                 ),
                 createOrder: () =>
-                    this.bigCommercePaymentsIntegrationService.createOrder(
-                        'bigcommerce_payments_paylater',
+                    this.paypalIntegrationService.createOrder(
+                        'bigcommerce_payments_paylatercheckout',
                     ),
                 onClick: (_, actions) => this.handleClick(actions, onValidate),
                 onApprove: (data) => this.handleApprove(data, submitForm),
