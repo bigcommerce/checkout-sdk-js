@@ -7,6 +7,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getBraintreePaypalSdkLocale,
     getIsOnlyDigitalProduct,
     MessagingPlacements,
     PaypalAuthorizeData,
@@ -280,13 +281,14 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         try {
             this.braintreeIntegrationService.initialize(clientToken);
 
-            const currencyCode = this.paymentIntegrationService.getState().getCartOrThrow()
-                .currency.code;
+            const state = this.paymentIntegrationService.getState();
+            const currencyCode = state.getCartOrThrow().currency.code;
 
             const paypalCheckoutConfig: Partial<BraintreePaypalSdkCreatorConfig> = {
                 currency: currencyCode,
                 intent: initializationData?.intent,
                 isCreditEnabled: initializationData?.isCreditEnabled,
+                locale: getBraintreePaypalSdkLocale(state),
             };
 
             const isBraintreePaypalCredit = paymentMethodId === 'braintreepaypalcredit';

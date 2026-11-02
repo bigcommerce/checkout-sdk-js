@@ -1,4 +1,5 @@
 export { default as getFastlaneStyles } from './get-fastlane-styles';
+export { default as getBraintreePaypalSdkLocale } from './get-braintree-paypal-sdk-locale';
 export { default as getBraintreeFastlaneLocale } from './get-braintree-fastlane-locale';
 export { default as isBraintreeAcceleratedCheckoutCustomer } from './is-braintree-accelerated-checkout-customer';
 export { default as isBraintreeError } from './is-braintree-error';

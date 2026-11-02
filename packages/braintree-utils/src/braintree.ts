@@ -419,6 +419,7 @@ export interface BraintreePaypalSdkCreatorConfig {
     intent?: string;
     isCreditEnabled?: boolean;
     commit?: boolean;
+    locale?: string;
 }
 
 /**

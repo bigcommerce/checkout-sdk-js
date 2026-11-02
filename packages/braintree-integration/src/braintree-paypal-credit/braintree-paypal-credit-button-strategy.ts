@@ -8,6 +8,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getBraintreePaypalSdkLocale,
     getIsOnlyDigitalProduct,
     isBraintreeError,
     PaypalAuthorizeData,
@@ -95,6 +96,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             currency: currencyCode,
             intent: initializationData.intent,
             isCreditEnabled: initializationData.isCreditEnabled,
+            locale: getBraintreePaypalSdkLocale(state),
             commit: false,
         };
 

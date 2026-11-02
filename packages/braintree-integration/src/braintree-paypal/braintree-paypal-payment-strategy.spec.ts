@@ -262,6 +262,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     currency: 'USD',
                     isCreditEnabled: undefined,
                     intent: undefined,
+                    locale: 'en_US',
                 },
                 expect.any(Function),
                 expect.any(Function),

@@ -34,6 +34,7 @@ import {
 import {
     getBuyNowCart,
     getCart,
+    getConfig,
     getCustomer,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -351,8 +352,25 @@ describe('BraintreePaypalButtonStrategy', () => {
                     currency: 'USD',
                     isCreditEnabled: false,
                     intent: undefined,
+                    locale: 'en_US',
                     commit: false,
                 },
+                expect.any(Function),
+                expect.any(Function),
+            );
+        });
+
+        it('initializes braintree paypal checkout with locale based on store language', async () => {
+            braintreeIntegrationService.getPaypalCheckout = jest.fn();
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+                ...getConfig().storeConfig,
+                storeProfile: { ...getConfig().storeConfig.storeProfile, storeLanguage: 'de' },
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeIntegrationService.getPaypalCheckout).toHaveBeenCalledWith(
+                expect.objectContaining({ locale: 'de_DE' }),
                 expect.any(Function),
                 expect.any(Function),
             );
