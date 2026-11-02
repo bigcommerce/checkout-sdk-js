@@ -1,6 +1,7 @@
 export type { WithGooglePayPaymentInitializeOptions } from './google-pay-payment-initialize-options';
 export type { WithGooglePayCustomerInitializeOptions } from './google-pay-customer-initialize-options';
 export type { WithGooglePayButtonInitializeOptions } from './google-pay-button-initialize-options';
+export type { WithGooglePayWalletInitializeOptions } from './google-pay-wallet-initialize-options';
 
 export { default as createGooglePayAdyenV2PaymentStrategy } from './factories/payment/create-google-pay-adyenv2-payment-strategy';
 export { default as createGooglePayAdyenV3PaymentStrategy } from './factories/payment/create-google-pay-adyenv3-payment-strategy';
@@ -43,3 +44,5 @@ export { default as createGooglePayOrbitalButtonStrategy } from './factories/but
 export { default as createGooglePayStripeButtonStrategy } from './google-pay-stripe/create-google-pay-stripe-button-strategy';
 export { default as createGooglePayWorldpayAccessButtonStrategy } from './factories/button/create-google-pay-worldpayaccess-button-strategy';
 export { default as createGooglePayTdOnlineMartButtonStrategy } from './factories/button/create-google-pay-tdonlinemart-button-strategy';
+
+export { default as createGooglePayBigCommercePaymentsWalletStrategy } from './google-pay-bigcommerce-payments/create-google-pay-bigcommerce-payments-wallet-strategy';
