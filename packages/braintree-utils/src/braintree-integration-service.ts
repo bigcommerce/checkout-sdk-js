@@ -191,6 +191,7 @@ export default class BraintreeIntegrationService {
                 components: PAYPAL_COMPONENTS.toString(),
                 intent: config.intent,
                 commit: config.commit ?? true,
+                ...(config.locale && { locale: config.locale }),
             };
 
             if (!this.braintreeHostWindow.paypal) {

@@ -290,6 +290,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                     currency: 'USD',
                     isCreditEnabled: true,
                     intent: undefined,
+                    locale: 'en_US',
                     commit: false,
                 },
                 expect.any(Function),

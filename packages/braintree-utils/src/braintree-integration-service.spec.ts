@@ -12,6 +12,7 @@ import {
 import BraintreeIntegrationService from './braintree-integration-service';
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKVersionManager from './braintree-sdk-version-manager';
+import { resetLoadPayPalSDKOncePromise } from './load-paypal-sdk-once';
 import {
     getBillingAddress,
     getBraintreeAddress,
@@ -215,6 +216,10 @@ describe('BraintreeIntegrationService', () => {
     });
 
     describe('#getPaypalCheckout()', () => {
+        beforeEach(() => {
+            resetLoadPayPalSDKOncePromise();
+        });
+
         it('get paypal checkout', async () => {
             const onSuccess = jest.fn();
             const onError = jest.fn();
@@ -226,6 +231,32 @@ describe('BraintreeIntegrationService', () => {
             expect(onSuccess).toHaveBeenCalledWith(paypalCheckoutMock);
             expect(onError).not.toHaveBeenCalled();
             expect(paypalCheckoutMock.loadPayPalSDK).toHaveBeenCalled();
+        });
+
+        it('passes locale to paypal sdk config when provided', async () => {
+            braintreeIntegrationService.initialize(clientToken);
+
+            await braintreeIntegrationService.getPaypalCheckout(
+                { locale: 'de_DE' },
+                jest.fn(),
+                jest.fn(),
+            );
+
+            expect(paypalCheckoutMock.loadPayPalSDK).toHaveBeenCalledWith(
+                expect.objectContaining({ locale: 'de_DE' }),
+                expect.any(Function),
+            );
+        });
+
+        it('does not pass locale to paypal sdk config when not provided', async () => {
+            braintreeIntegrationService.initialize(clientToken);
+
+            await braintreeIntegrationService.getPaypalCheckout({}, jest.fn(), jest.fn());
+
+            expect(paypalCheckoutMock.loadPayPalSDK).toHaveBeenCalledWith(
+                expect.not.objectContaining({ locale: expect.anything() }),
+                expect.any(Function),
+            );
         });
 
         it('get paypal checkout when paypal exists in window', async () => {
