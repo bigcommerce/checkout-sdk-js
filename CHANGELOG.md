@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.997.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.996.1...v1.997.0) (2026-11-03)
+
+
+### Features
+
+* **payments:** PAYPAL-7256 Add locale for Braintree elements ([#3475](https://github.com/bigcommerce/checkout-sdk-js/issues/3475)) ([72a63a7](https://github.com/bigcommerce/checkout-sdk-js/commit/72a63a7de2e7f2b492ef9bad95ebbfef1fff4fd4))
+
 ### [1.996.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.996.0...v1.996.1) (2026-11-02)
 
 
