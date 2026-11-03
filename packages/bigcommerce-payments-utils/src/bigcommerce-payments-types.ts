@@ -438,6 +438,7 @@ export interface PayPalBNPLConfigurationItem {
 export interface PayPalFastlane {
     identity: PayPalFastlaneIdentity;
     profile: PayPalFastlaneProfile;
+    setLocale(locale: string): void;
     FastlaneCardComponent(
         options: PayPalFastlaneCardComponentOptions,
     ): Promise<PayPalFastlaneCardComponentMethods>;
