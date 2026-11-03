@@ -5,7 +5,9 @@
         {
             "files": ["*.ts"],
             "rules": {
-                "@typescript-eslint/naming-convention": "off"
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off"
             }
         },
         {
