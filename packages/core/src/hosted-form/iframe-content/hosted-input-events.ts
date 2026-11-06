@@ -111,6 +111,11 @@ export interface HostedInputCardTypeChangeEvent {
     type: HostedInputEventType.CardTypeChanged;
     payload: {
         cardType?: string;
+        /**
+         * The first digits of the card number (the BIN), for providers whose hosted fields report it
+         * (for example BlueSnap). It is `undefined` until the provider has recognised the card.
+         */
+        bin?: string;
     };
 }
 

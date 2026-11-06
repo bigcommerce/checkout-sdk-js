@@ -273,6 +273,33 @@ describe('BlueSnapDirectHostedForm', () => {
                 });
             });
 
+            test('onCardTypeChange forwards the BIN BlueSnap reports', async () => {
+                const triggerCardTypeChange = () => {
+                    const { onFieldEventHandler: { onType } = {} } = (
+                        blueSnapDirectSdkMock.hostedPaymentFieldsCreate as jest.Mock
+                    ).mock.calls[0][0] as HostedPaymentFieldsOptions;
+
+                    onType?.(HostedFieldTagId.CardNumber, 'VISA', {
+                        binCategory: 'CONSUMER',
+                        cardSubType: 'CREDIT',
+                        ccBin: '411111',
+                        ccType: 'VISA',
+                        isRegulatedCard: 'Y',
+                        issuingCountry: 'us',
+                        last4Digits: '1111',
+                    });
+                };
+
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
+                await hostedForm.attach('pfToken', ccOptionsMock);
+                triggerCardTypeChange();
+
+                expect(ccOptionsMock.form.onCardTypeChange).toHaveBeenCalledWith({
+                    cardType: CardType.VISA,
+                    bin: '411111',
+                });
+            });
+
             describe('onValidate', () => {
                 test('when onError is called', async () => {
                     const triggerError = () => {

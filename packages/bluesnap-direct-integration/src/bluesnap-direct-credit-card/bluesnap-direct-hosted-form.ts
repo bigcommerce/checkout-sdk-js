@@ -192,8 +192,11 @@ export default class BlueSnapDirectHostedForm {
                 onFocus: this._usetUiEventCallback(onFocus),
                 onBlur: this._usetUiEventCallback(onBlur),
                 onError: this._handleError(onValidate),
-                onType: (_tagId: HostedFieldTagId, cardType: CardTypeValues) =>
-                    onCardTypeChange?.({ cardType: CardType[cardType] }),
+                onType: (
+                    _tagId: HostedFieldTagId,
+                    cardType: CardTypeValues,
+                    cardData?: { ccBin?: string },
+                ) => onCardTypeChange?.({ cardType: CardType[cardType], bin: cardData?.ccBin }),
                 onEnter: this._usetUiEventCallback(onEnter),
                 onValid: (tagId: HostedFieldTagId) =>
                     onValidate?.(this._hostedInputValidator.validate({ tagId })),

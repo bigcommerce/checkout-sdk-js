@@ -96,6 +96,7 @@ export interface HostedInputCardTypeChangeEvent {
     type: HostedInputEventType.CardTypeChanged;
     payload: {
         cardType?: string;
+        bin?: string;
     };
 }
 
