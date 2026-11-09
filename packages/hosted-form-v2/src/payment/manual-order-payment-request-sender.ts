@@ -20,7 +20,11 @@ export class ManualOrderPaymentRequestSender {
         instrumentFormData: HostedInputValues,
         nonce?: string,
     ): Promise<Response<unknown>> {
-        const { paymentMethodId, paymentSessionToken } = requestInitializationData;
+        const {
+            paymentMethodId,
+            paymentSessionToken,
+            options: paymentOptions,
+        } = requestInitializationData;
 
         let instrument: Instrument;
 
@@ -67,6 +71,7 @@ export class ManualOrderPaymentRequestSender {
                 instrument,
                 payment_method_id: paymentMethodId,
                 form_nonce: nonce ?? undefined,
+                ...(paymentOptions ? { options: paymentOptions } : {}),
             },
         };
 
