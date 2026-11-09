@@ -192,6 +192,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 currencyCode,
                 supportedNetworks,
                 merchantCapabilities,
+                storeName,
             );
 
             if (this._requiresShipping) {
@@ -226,13 +227,14 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         currencyCode: string,
         supportedNetworks: string[],
         merchantCapabilities: ApplePayJS.ApplePayMerchantCapability[],
+        storeName: string,
     ): ApplePayJS.ApplePayPaymentRequest {
         return {
             countryCode,
             currencyCode,
             supportedNetworks,
             merchantCapabilities,
-            total: { label: '', amount: '0', type: 'pending' },
+            total: { label: storeName, amount: '0', type: 'pending' },
             requiredBillingContactFields: ['postalAddress'],
             requiredShippingContactFields: ['email', 'phone'],
         };
