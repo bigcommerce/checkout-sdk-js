@@ -454,6 +454,20 @@ describe('BlueSnapDirectHostedForm', () => {
                     'An unexpected error has occurred',
                 );
             });
+
+            test('ignores a late error from a previous attach even after the form is attached again', async () => {
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
+                await hostedForm.attach('pfToken', ccOptionsMock);
+                hostedForm.detach();
+
+                await hostedForm.attach('pfToken', ccOptionsMock);
+
+                const { onFieldEventHandler: { onError: staleOnError } = {} } = (
+                    blueSnapDirectSdkMock.hostedPaymentFieldsCreate as jest.Mock
+                ).mock.calls[0][0] as HostedPaymentFieldsOptions;
+
+                expect(() => triggerUnexpectedError(staleOnError)).not.toThrow();
+            });
         });
     });
 
