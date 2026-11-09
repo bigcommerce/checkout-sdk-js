@@ -7,3 +7,4 @@ export type {
     HostedInputValidateErrorDataMap,
     HostedInputValidateResults,
 } from '../iframe-content';
+export { HumanVerificationRequiredError } from '../errors';

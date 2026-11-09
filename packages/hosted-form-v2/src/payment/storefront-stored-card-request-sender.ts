@@ -11,6 +11,7 @@ export default class StorefrontStoredCardRequestSender {
     async submitPaymentInstrument(
         requestInitializationData: StoredCardHostedFormData,
         storeInstrumentFormData: StoredCardHostedFormInstrumentForm,
+        humanVerificationToken?: string,
     ): Promise<void> {
         const { providerId, currencyCode, paymentsUrl, shopperId, storeHash, vaultToken } =
             requestInitializationData;
@@ -50,6 +51,12 @@ export default class StorefrontStoredCardRequestSender {
                 provider_id: providerId,
                 default_instrument: defaultInstrument,
                 currency_code: currencyCode,
+                ...(humanVerificationToken && {
+                    human_verification: {
+                        id: 'recaptcha_v2_verification',
+                        parameters: { token: humanVerificationToken },
+                    },
+                }),
             }),
         };
 
