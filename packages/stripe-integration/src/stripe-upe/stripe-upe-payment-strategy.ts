@@ -495,7 +495,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             .getState()
             .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
 
-        if (initializationData?.asyncPaymentValidation) {
+        if (initializationData?.asyncPaymentValidation && !catchedConfirmError) {
             // INFO: await is skipped and errors are ignored here intentionally, because the payment
             // is already confirmed on the Stripe side, so the order status will be updated
             // by webhooks even if this request fails.

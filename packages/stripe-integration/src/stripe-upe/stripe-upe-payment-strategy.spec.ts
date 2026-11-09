@@ -1108,6 +1108,22 @@ describe('StripeUPEPaymentStrategy', () => {
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
                 });
 
+                it('waits for the second submitPayment when stripe confirmation threw and flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+                    stripeUPEJsMock.confirmCardPayment = jest.fn().mockRejectedValue(new Error());
+                    stripeUPEJsMock.retrievePaymentIntent = jest
+                        .fn()
+                        .mockRejectedValue(new Error());
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).rejects.toThrow('second payment failed');
+                });
+
                 it('waits for the second submitPayment when flag is false', async () => {
                     mockAsyncPaymentValidation(false);
 
