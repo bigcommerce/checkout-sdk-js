@@ -107,6 +107,7 @@ declare class StripeLinkV2ButtonStrategy implements CheckoutButtonStrategy {
     private _linkV2Element?;
     private _amountTransformer?;
     private _onComplete?;
+    private _onReady?;
     private _filterAvailableShippingOptions?;
     private _loadingIndicatorContainer?;
     private _currencyCode?;
@@ -157,6 +158,7 @@ declare class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _linkV2Element?;
     private _amountTransformer?;
     private _onComplete?;
+    private _onReady?;
     private _filterAvailableShippingOptions?;
     private _loadingIndicatorContainer?;
     private _captureMethod?;
@@ -211,6 +213,7 @@ declare interface StripeOCSCustomerInitializeOptions {
     gatewayId: string;
     onComplete?: (orderId?: number) => Promise<never>;
     loadingContainerId?: string;
+    onReady?: () => void;
     /**
      * @param shippingOptions - The available shipping options.
      * @returns The filtered shipping options.
