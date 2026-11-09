@@ -8,6 +8,7 @@ import { isOfflinePaymentMethodId } from '../utils';
 import {
     Instrument,
     InstrumentType,
+    invoicePaymentMethod,
     manualPaymentMethod,
     offlinePaymentMethodTypeMap,
 } from './Instrument';
@@ -20,7 +21,11 @@ export class ManualOrderPaymentRequestSender {
         instrumentFormData: HostedInputValues,
         nonce?: string,
     ): Promise<Response<unknown>> {
-        const { paymentMethodId, paymentSessionToken } = requestInitializationData;
+        const {
+            paymentMethodId,
+            paymentSessionToken,
+            options: paymentOptions,
+        } = requestInitializationData;
 
         let instrument: Instrument;
 
@@ -33,6 +38,11 @@ export class ManualOrderPaymentRequestSender {
             instrument = {
                 type: InstrumentType.ManualPayment,
                 note: instrumentFormData.note ?? '',
+            };
+        } else if (paymentMethodId === invoicePaymentMethod) {
+            instrument = {
+                type: InstrumentType.ManualInvoice,
+                ...paymentOptions,
             };
         } else if (isOfflinePaymentMethodId(paymentMethodId)) {
             instrument = {
@@ -67,6 +77,9 @@ export class ManualOrderPaymentRequestSender {
                 instrument,
                 payment_method_id: paymentMethodId,
                 form_nonce: nonce ?? undefined,
+                ...(paymentOptions && paymentMethodId !== invoicePaymentMethod
+                    ? { options: paymentOptions }
+                    : {}),
             },
         };
 

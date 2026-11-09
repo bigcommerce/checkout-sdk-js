@@ -1,10 +1,15 @@
+import { HostedFormManualOrderOptions } from '../hosted-form-manual-order-data';
+
 export enum InstrumentType {
     Card = 'card',
     ManualPayment = 'manual_payment',
+    ManualInvoice = 'manual_invoice',
     TokenizedCard = 'tokenized_card',
 }
 
 export const manualPaymentMethod = 'bigcommerce.manual_payment';
+
+export const invoicePaymentMethod = 'bigcommerce_payments.invoice';
 
 export enum OfflinePaymentMethods {
     BankDeposit = 'bigcommerce_offline.bank_deposit',
@@ -47,6 +52,10 @@ interface ManualPaymentInstrument {
     note: string;
 }
 
+interface ManualInvoiceInstrument extends HostedFormManualOrderOptions {
+    type: InstrumentType.ManualInvoice;
+}
+
 interface OfflinePaymentInstrument {
     type: OfflinePaymentMethodTypes;
 }
@@ -59,5 +68,6 @@ interface TokenizedCardInstrument {
 export type Instrument =
     | CardInstrument
     | ManualPaymentInstrument
+    | ManualInvoiceInstrument
     | OfflinePaymentInstrument
     | TokenizedCardInstrument;

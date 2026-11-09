@@ -6,6 +6,7 @@ import { HostedInputValues } from '../iframe-content';
 
 import {
     InstrumentType,
+    invoicePaymentMethod,
     manualPaymentMethod,
     OfflinePaymentMethods,
     OfflinePaymentMethodTypes,
@@ -68,6 +69,51 @@ describe('ManualOrderPaymentRequestSender', () => {
                 },
             }),
         );
+    });
+
+    it('submits invoice payment with a manual invoice instrument', async () => {
+        (requestSender.post as jest.Mock).mockResolvedValue(response);
+
+        requestInitializationData.paymentMethodId = invoicePaymentMethod;
+        instrumentFormData = {};
+
+        const result = await manualOrderPaymentRequestSender.submitPayment(
+            requestInitializationData,
+            instrumentFormData,
+        );
+
+        expect(result).toBe(response);
+        expect(requestSender.post).toHaveBeenCalledWith(
+            `${paymentOrigin}/payments`,
+            expect.objectContaining({
+                body: expect.objectContaining({
+                    instrument: { type: InstrumentType.ManualInvoice },
+                    payment_method_id: invoicePaymentMethod,
+                }),
+            }),
+        );
+    });
+
+    it('submits invoice options inside the manual invoice instrument', async () => {
+        (requestSender.post as jest.Mock).mockResolvedValue(response);
+
+        requestInitializationData.paymentMethodId = invoicePaymentMethod;
+        requestInitializationData.options = { net_terms: 'NET_30', reference: 'PO-1' };
+        instrumentFormData = {};
+
+        await manualOrderPaymentRequestSender.submitPayment(
+            requestInitializationData,
+            instrumentFormData,
+        );
+
+        const { body } = (requestSender.post as jest.Mock).mock.calls[0][1];
+
+        expect(body.instrument).toEqual({
+            type: InstrumentType.ManualInvoice,
+            net_terms: 'NET_30',
+            reference: 'PO-1',
+        });
+        expect(body).not.toHaveProperty('options');
     });
 
     it('submits card payment', async () => {
