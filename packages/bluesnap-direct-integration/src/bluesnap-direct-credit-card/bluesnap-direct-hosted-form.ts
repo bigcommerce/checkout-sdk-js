@@ -47,6 +47,8 @@ import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input'
 export default class BlueSnapDirectHostedForm {
     private _blueSnapSdk?: BlueSnapDirectSdk;
     private _onValidate: HostedFormOptions['onValidate'];
+    private _attachedContainers: HTMLElement[] = [];
+    private _isDetached = false;
 
     constructor(
         private _nameOnCardInput: BluesnapDirectNameOnCardInput,
@@ -85,6 +87,8 @@ export default class BlueSnapDirectHostedForm {
         }
 
         this._onValidate = callbacksAndStyles.onValidate;
+        this._isDetached = false;
+        this._attachedContainers = [];
 
         if (isHostedCardFieldOptionsMap(fields)) {
             this._setCustomBlueSnapAttributes(fields);
@@ -164,6 +168,7 @@ export default class BlueSnapDirectHostedForm {
     }
 
     detach(): void {
+        this._isDetached = true;
         this._nameOnCardInput.detach();
     }
 
@@ -191,7 +196,7 @@ export default class BlueSnapDirectHostedForm {
                 setupComplete: () => resolve(),
                 onFocus: this._usetUiEventCallback(onFocus),
                 onBlur: this._usetUiEventCallback(onBlur),
-                onError: this._handleError(onValidate),
+                onError: this._handleError(onValidate, resolve),
                 onType: (_tagId: HostedFieldTagId, cardType: CardTypeValues) =>
                     onCardTypeChange?.({ cardType: CardType[cardType] }),
                 onEnter: this._usetUiEventCallback(onEnter),
@@ -233,6 +238,7 @@ export default class BlueSnapDirectHostedForm {
 
     private _handleError(
         onValidate: HostedFormOptions['onValidate'],
+        resolve: () => void,
     ): (
         tagId: HostedFieldTagId | undefined,
         errorCode: ErrorCode,
@@ -240,6 +246,10 @@ export default class BlueSnapDirectHostedForm {
         eventOrigin: EventOrigin | undefined,
     ) => void {
         return (tagId, errorCode, errorDescription, eventOrigin) => {
+            if (this._isFormTornDown()) {
+                return resolve();
+            }
+
             if (errorCode === ErrorCode.INVALID_OR_EMPTY) {
                 if (tagId && isValidationErrorDescription(errorDescription)) {
                     return onValidate?.(
@@ -269,6 +279,10 @@ export default class BlueSnapDirectHostedForm {
                 callback({ fieldType: BlueSnapHostedFieldType[tagId] });
             }
         };
+    }
+
+    private _isFormTornDown(): boolean {
+        return this._isDetached || this._attachedContainers.some(({ isConnected }) => !isConnected);
     }
 
     private _getBlueSnapSdk(): BlueSnapDirectSdk {
@@ -301,6 +315,13 @@ export default class BlueSnapDirectHostedForm {
         cardExpiryContainer.dataset.bluesnap = HostedFieldTagId.CardExpiry;
         cardCodeContainer.dataset.bluesnap = HostedFieldTagId.CardCode;
         cardNameContainer.dataset.bluesnap = HostedFieldTagId.CardName;
+
+        this._attachedContainers = [
+            cardNumberContainer,
+            cardExpiryContainer,
+            cardCodeContainer,
+            cardNameContainer,
+        ];
     }
 
     private _setCustomStoredCardsBlueSnapAttributes(fields: HostedStoredCardFieldOptionsMap): void {
@@ -317,10 +338,12 @@ export default class BlueSnapDirectHostedForm {
 
         if (cardNumberContainer) {
             cardNumberContainer.dataset.bluesnap = HostedFieldTagId.CardNumber;
+            this._attachedContainers.push(cardNumberContainer);
         }
 
         if (cardCodeContainer) {
             cardCodeContainer.dataset.bluesnap = HostedFieldTagId.CardCode;
+            this._attachedContainers.push(cardCodeContainer);
         }
     }
 }

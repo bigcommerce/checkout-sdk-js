@@ -378,6 +378,83 @@ describe('BlueSnapDirectHostedForm', () => {
                 expect(ccOptionsMock.form.onValidate).not.toHaveBeenCalled();
             });
         });
+
+        describe('when onError is called after the form has been torn down', () => {
+            const getOnError = () => {
+                const { onFieldEventHandler: { onError } = {} } = (
+                    blueSnapDirectSdkMock.hostedPaymentFieldsCreate as jest.Mock
+                ).mock.calls[0][0] as HostedPaymentFieldsOptions;
+
+                return onError;
+            };
+
+            const triggerUnexpectedError = (onError?: ReturnType<typeof getOnError>) =>
+                onError?.(
+                    undefined,
+                    ErrorCode.THREE_DS_NOT_ENABLED,
+                    ErrorDescription.THREE_DS_NOT_ENABLED,
+                    undefined,
+                );
+
+            test('ignores the error if the form has been detached', async () => {
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
+                await hostedForm.attach('pfToken', ccOptionsMock);
+
+                hostedForm.detach();
+
+                expect(() => triggerUnexpectedError(getOnError())).not.toThrow();
+                expect(ccOptionsMock.form.onValidate).not.toHaveBeenCalled();
+            });
+
+            test('ignores the error if a hosted field container is no longer in the DOM', async () => {
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
+                await hostedForm.attach('pfToken', ccOptionsMock);
+
+                fieldset.removeChild(ccNumberContainer);
+
+                expect(() => triggerUnexpectedError(getOnError())).not.toThrow();
+            });
+
+            test('ignores the error if a stored card container is no longer in the DOM', async () => {
+                hostedForm.initialize(blueSnapDirectSdkMock, storedCCOptionsMock.form.fields);
+                await hostedForm.attach('pfToken', storedCCOptionsMock);
+
+                fieldset.removeChild(ccCvvContainer);
+
+                expect(() => triggerUnexpectedError(getOnError())).not.toThrow();
+            });
+
+            test('resolves a pending attach instead of leaving it hanging', async () => {
+                (blueSnapDirectSdkMock.hostedPaymentFieldsCreate as jest.Mock).mockImplementation(
+                    () => undefined,
+                );
+
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
+
+                const attach = hostedForm.attach('pfToken', ccOptionsMock);
+
+                hostedForm.detach();
+                triggerUnexpectedError(getOnError());
+
+                await expect(attach).resolves.toBeUndefined();
+            });
+
+            test('still throws unexpected errors after the form is attached again', async () => {
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
+                await hostedForm.attach('pfToken', ccOptionsMock);
+                hostedForm.detach();
+
+                await hostedForm.attach('pfToken', ccOptionsMock);
+
+                const { onFieldEventHandler: { onError } = {} } = (
+                    blueSnapDirectSdkMock.hostedPaymentFieldsCreate as jest.Mock
+                ).mock.calls[1][0] as HostedPaymentFieldsOptions;
+
+                expect(() => triggerUnexpectedError(onError)).toThrow(
+                    'An unexpected error has occurred',
+                );
+            });
+        });
     });
 
     describe('#validate', () => {
