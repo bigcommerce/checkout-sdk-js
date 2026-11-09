@@ -181,8 +181,6 @@ describe('BigCommercePaymentsCreditCardsPaymentStrategy', () => {
         strategy = new BigCommercePaymentsCreditCardsPaymentStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
-            bigCommercePaymentsSdk,
-            bigCommercePaymentsFastlaneUtils,
         );
 
         paypalCardNameFieldElement = document.createElement('div');
@@ -294,38 +292,6 @@ describe('BigCommercePaymentsCreditCardsPaymentStrategy', () => {
             expect(
                 initializationOptions.bigcommerce_payments_creditcards?.onLoadComplete,
             ).toHaveBeenCalled();
-        });
-
-        it('loads paypal fastlane sdk if bigcommerce payments fastlane analytic is enabled', async () => {
-            const mockedPaymentMethod = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod,
-                    connectClientToken: 'connectClientToken123',
-                    isAcceleratedCheckoutEnabled: true,
-                    isBigCommercePaymentsAnalyticsV2Enabled: true,
-                    isDeveloperModeApplicable: false,
-                    isFastlaneEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(mockedPaymentMethod);
-
-            await strategy.initialize(initializationOptions);
-
-            expect(bigCommercePaymentsSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
-                mockedPaymentMethod,
-                cart.currency.code,
-                cart.id,
-            );
-
-            expect(bigCommercePaymentsFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
-                paypalFastlaneSdk,
-                false,
-            );
         });
     });
 

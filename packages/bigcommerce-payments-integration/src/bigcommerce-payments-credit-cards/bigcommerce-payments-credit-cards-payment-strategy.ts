@@ -1,12 +1,6 @@
 import { isNil, omitBy } from 'lodash';
 
 import {
-    BigCommercePaymentsFastlaneUtils,
-    BigCommercePaymentsInitializationData,
-    isBigCommercePaymentsFastlaneCustomer,
-    PayPalSdkHelper,
-} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
-import {
     HostedCardFieldOptions,
     HostedCardFieldOptionsMap,
     HostedFieldBlurEventData,
@@ -75,8 +69,6 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
-        private bigCommercePaymentsSdk: PayPalSdkHelper,
-        private bigCommercePaymentsFastlaneUtils: BigCommercePaymentsFastlaneUtils,
     ) {}
 
     async initialize(
@@ -121,10 +113,6 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
         }
 
         onLoadComplete?.();
-
-        if (this.shouldInitializePayPalFastlane(methodId)) {
-            await this.initializePayPalFastlaneOrThrow(methodId);
-        }
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -716,58 +704,5 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
         event: BigCommercePaymentsCardFieldsState,
     ): void {
         formOptions?.onEnter?.(this.getFieldTypeByEmittedField(event));
-    }
-
-    /**
-     *
-     * BigCommercePayments Accelerated checkout related methods
-     *
-     */
-    // TODO: remove this part when BCP Fastlane A/B testing will be finished
-    private shouldInitializePayPalFastlane(methodId: string) {
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-        const paymentProviderCustomer = state.getPaymentProviderCustomer();
-        const bigCommercePaymentsPaymentProviderCustomer = isBigCommercePaymentsFastlaneCustomer(
-            paymentProviderCustomer,
-        )
-            ? paymentProviderCustomer
-            : {};
-
-        return (
-            paymentMethod?.initializationData?.isAcceleratedCheckoutEnabled &&
-            paymentMethod?.initializationData?.isBigCommercePaymentsAnalyticsV2Enabled &&
-            !bigCommercePaymentsPaymentProviderCustomer?.authenticationState
-        );
-    }
-
-    // TODO: remove this part when BCP Fastlane A/B testing will be finished
-    private async initializePayPalFastlaneOrThrow(methodId: string): Promise<void> {
-        try {
-            const state = this.paymentIntegrationService.getState();
-            const cart = state.getCartOrThrow();
-            const paymentMethod =
-                state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
-            const { initializationData } = paymentMethod;
-
-            if (!initializationData?.connectClientToken) {
-                return;
-            }
-
-            const payPalFastlaneSdk = await this.bigCommercePaymentsSdk.getPayPalFastlaneSdk(
-                paymentMethod,
-                cart.currency.code,
-                cart.id,
-            );
-
-            await this.bigCommercePaymentsFastlaneUtils.initializePayPalFastlane(
-                payPalFastlaneSdk,
-                !!initializationData?.isDeveloperModeApplicable,
-            );
-        } catch {
-            // We should avoid throwing any error from this flow to do no brake default flow
-            // This flow is optional
-        }
     }
 }
