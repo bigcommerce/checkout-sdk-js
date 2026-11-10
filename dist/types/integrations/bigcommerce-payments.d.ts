@@ -476,8 +476,6 @@ declare interface BigCommercePaymentsCreditCardsPaymentInitializeOptions {
 declare class BigCommercePaymentsCreditCardsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private bigCommercePaymentsIntegrationService;
-    private bigCommercePaymentsSdk;
-    private bigCommercePaymentsFastlaneUtils;
     private executionPaymentData?;
     private isCreditCardForm?;
     private isCreditCardVaultedForm?;
@@ -489,7 +487,7 @@ declare class BigCommercePaymentsCreditCardsPaymentStrategy implements PaymentSt
     private hostedFormOptions?;
     private returnedOrderId?;
     private returnedVaultedToken?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService, bigCommercePaymentsSdk: PayPalSdkHelper, bigCommercePaymentsFastlaneUtils: BigCommercePaymentsFastlaneUtils);
+    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService);
     initialize(options: PaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
@@ -584,13 +582,6 @@ declare class BigCommercePaymentsCreditCardsPaymentStrategy implements PaymentSt
     private onFocusHandler;
     private onBlurHandler;
     private onInputSubmitRequest;
-    /**
-     *
-     * BigCommercePayments Accelerated checkout related methods
-     *
-     */
-    private shouldInitializePayPalFastlane;
-    private initializePayPalFastlaneOrThrow;
 }
 
 /**

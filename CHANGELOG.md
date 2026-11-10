@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.999.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.998.0...v1.999.0) (2026-11-10)
+
+
+### Features
+
+* **payment:** PAYPAL-7323 removed A/B fastlane realted code from BCP credit card strategy ([#3479](https://github.com/bigcommerce/checkout-sdk-js/issues/3479)) ([c3fc42c](https://github.com/bigcommerce/checkout-sdk-js/commit/c3fc42c580950cc8d0980f0fbfe69b9faf1eda07))
+
 ## [1.998.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.997.1...v1.998.0) (2026-11-09)
 
 
