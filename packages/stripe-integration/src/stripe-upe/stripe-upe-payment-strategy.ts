@@ -1,4 +1,4 @@
-import { merge, some } from 'lodash';
+import { merge, noop, some } from 'lodash';
 
 import {
     FormattedHostedInstrument,
@@ -141,6 +141,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 payment.methodId,
                 instrumentId,
                 shouldSetAsDefaultInstrument,
+                gatewayId,
             );
 
             return;
@@ -211,6 +212,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         methodId: string,
         token: string,
         shouldSetAsDefaultInstrument: boolean,
+        gatewayId?: string,
     ): Promise<PaymentIntegrationSelectors | void> {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
@@ -236,6 +238,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 error,
                 methodId,
                 shouldSetAsDefaultInstrument,
+                gatewayId,
             );
         }
     }
@@ -371,12 +374,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             shouldSetAsDefaultInstrument,
         );
 
-        if (stripeError || !paymentIntent) {
-            const { initializationData } = this.paymentIntegrationService
-                .getState()
-                .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
-            const { sendSecondPaymentRequestOnStripeError } = initializationData || {};
+        const { initializationData } = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
+        const { sendSecondPaymentRequestOnStripeError, asyncPaymentValidation } =
+            initializationData || {};
 
+        if (stripeError || !paymentIntent) {
             if (sendSecondPaymentRequestOnStripeError) {
                 // INFO: even in case when stripe payment confirmation was declined
                 // we need to send submitPayment request to update status of checkout session on BE side.
@@ -397,6 +401,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             }
 
             this.stripeIntegrationService.throwStripeError(stripeError);
+        }
+
+        if (asyncPaymentValidation) {
+            // INFO: await is skipped and errors are ignored here intentionally, because the payment
+            // is already confirmed on the Stripe side, so the order status will be updated
+            // by webhooks even if this request fails.
+            this.paymentIntegrationService.submitPayment(paymentPayload).catch(noop);
+
+            return;
         }
 
         try {
@@ -435,7 +448,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         error: unknown,
         methodId?: string,
         shouldSetAsDefaultInstrument = false,
-    ): Promise<PaymentIntegrationSelectors | never> {
+        gatewayId?: string,
+    ): Promise<PaymentIntegrationSelectors | void> {
         if (
             !methodId ||
             !isRequestError(error) ||
@@ -476,6 +490,19 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             false,
             shouldSetAsDefaultInstrument,
         );
+
+        const { initializationData } = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<StripeInitializationData>(methodId, gatewayId);
+
+        if (initializationData?.asyncPaymentValidation && !catchedConfirmError) {
+            // INFO: await is skipped and errors are ignored here intentionally, because the payment
+            // is already confirmed on the Stripe side, so the order status will be updated
+            // by webhooks even if this request fails.
+            this.paymentIntegrationService.submitPayment(paymentPayload).catch(noop);
+
+            return;
+        }
 
         return this.paymentIntegrationService.submitPayment(paymentPayload);
     }

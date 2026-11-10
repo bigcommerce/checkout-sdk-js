@@ -1,4 +1,5 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { noop } from 'lodash';
 
 import {
     Checkout,
@@ -1059,6 +1060,83 @@ describe('StripeUPEPaymentStrategy', () => {
                 ).rejects.toThrow(NotInitializedError);
             });
 
+            describe('asyncPaymentValidation', () => {
+                const mockAsyncPaymentValidation = (asyncPaymentValidation: boolean) => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getPaymentMethodOrThrow',
+                    ).mockReturnValue({
+                        ...getStripeUPEMock(),
+                        initializationData: {
+                            ...getStripeUPEMock().initializationData,
+                            asyncPaymentValidation,
+                        },
+                    });
+                };
+
+                beforeEach(() => {
+                    stripeUPEJsMock.confirmCardPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
+                });
+
+                it('resolves without waiting for the second submitPayment when flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockReturnValueOnce(new Promise(noop));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).resolves.toBeUndefined();
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                });
+
+                it('ignores second submitPayment failure when flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).resolves.toBeUndefined();
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                });
+
+                it('waits for the second submitPayment when stripe confirmation threw and flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+                    stripeUPEJsMock.confirmCardPayment = jest.fn().mockRejectedValue(new Error());
+                    stripeUPEJsMock.retrievePaymentIntent = jest
+                        .fn()
+                        .mockRejectedValue(new Error());
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).rejects.toThrow('second payment failed');
+                });
+
+                it('waits for the second submitPayment when flag is false', async () => {
+                    mockAsyncPaymentValidation(false);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).rejects.toThrow('second payment failed');
+                });
+            });
+
             it('successfully confirmed by stripe', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce(
                     getThreeDSecureRequiredErrorResponse(),
@@ -1695,6 +1773,74 @@ describe('StripeUPEPaymentStrategy', () => {
                             }),
                         }),
                     );
+                });
+            });
+
+            describe('asyncPaymentValidation', () => {
+                const mockAsyncPaymentValidation = (asyncPaymentValidation: boolean) => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getPaymentMethodOrThrow',
+                    ).mockReturnValue({
+                        ...getStripeUPEMock(),
+                        initializationData: {
+                            ...getStripeUPEMock().initializationData,
+                            asyncPaymentValidation,
+                        },
+                    });
+                };
+
+                beforeEach(() => {
+                    stripeUPEJsMock.confirmPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
+                });
+
+                it('resolves without waiting for the second submitPayment when flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getAdditionalActionErrorResponse())
+                        .mockReturnValueOnce(new Promise(noop));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).resolves.toBeUndefined();
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                });
+
+                it('ignores second submitPayment failure when flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getAdditionalActionErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).resolves.toBeUndefined();
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                    expect(
+                        stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage,
+                    ).not.toHaveBeenCalled();
+                });
+
+                it('waits for the second submitPayment when flag is false', async () => {
+                    mockAsyncPaymentValidation(false);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getAdditionalActionErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).rejects.toBeInstanceOf(PaymentMethodFailedError);
+
+                    expect(
+                        stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage,
+                    ).toHaveBeenCalled();
                 });
             });
         });
