@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1000.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.1000.0...v1.1000.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **payment:** PI-5845 [BlueSnap Direct] fix `no data-bluesnap tags found` error on return to shipping step ([#3480](https://github.com/bigcommerce/checkout-sdk-js/issues/3480)) ([6b35c27](https://github.com/bigcommerce/checkout-sdk-js/commit/6b35c2706557901261fc52cff9a6b4049aee0ce6))
+
 ## [1.1000.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.999.0...v1.1000.0) (2026-11-10)
 
 
