@@ -503,6 +503,20 @@ describe('ApplePayButtonStrategy', () => {
             }
         });
 
+        it('uses storeName as the total label in the initial Buy Now payment request', async () => {
+            await strategy.initialize(getApplePayButtonInitializationOptionsWithBuyNow());
+
+            const button = container.firstChild as HTMLElement;
+
+            button.click();
+
+            expect(applePayFactory.create).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    total: { label: 'test store', amount: '0', type: 'pending' },
+                }),
+            );
+        });
+
         it('creates buyNowCart on PDP page on button click for physical product', async () => {
             jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
                 Promise.resolve(getBuyNowCart()),
