@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1001.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.1000.1...v1.1001.0) (2026-11-13)
+
+
+### Features
+
+* **payment:** PAYPAL-7135 BCP google pay button ([#3472](https://github.com/bigcommerce/checkout-sdk-js/issues/3472)) ([7867852](https://github.com/bigcommerce/checkout-sdk-js/commit/786785242e3dcd5878bb539094875a715fad5dfb))
+* **payment:** PAYPAL-7313 Use storeName as the total label in the initial Buy Now flow ([ec9cecb](https://github.com/bigcommerce/checkout-sdk-js/commit/ec9cecb64972b689a32c4abed65ae993dac24872))
+
 ### [1.1000.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.1000.0...v1.1000.1) (2026-11-10)
 
 

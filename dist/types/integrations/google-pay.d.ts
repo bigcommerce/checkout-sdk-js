@@ -1,4 +1,5 @@
 import { AddressRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { AddressRequestBody as AddressRequestBody_2 } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 import { BigCommercePaymentsIntent } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { BillingAddressRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserInfo } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -26,6 +27,8 @@ import { RedirectToCheckoutUrlInputData } from '@bigcommerce/checkout-sdk/wallet
 import { RequestSender } from '@bigcommerce/request-sender';
 import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { ScriptLoader } from '@bigcommerce/script-loader';
+import { ShippingAddressUpdateResult } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+import { ShippingLineItem } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WalletButtonIntegrationService } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 import { WalletPaymentButtonStrategyFactory } from '@bigcommerce/checkout-sdk/wallet-button-integration';
@@ -89,6 +92,10 @@ id: string;
 }>;
 
 export declare const createGooglePayBigCommercePaymentsPaymentStrategy: ResolvableModule<PaymentStrategyFactory<GooglePayPaymentStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayBigCommercePaymentsWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<GooglePayWalletStrategy>, {
 id: string;
 }>;
 
@@ -596,6 +603,10 @@ declare interface GooglePayMinBillingAddress {
     phoneNumber?: string;
 }
 
+declare type GooglePayPaymentDataChangedResponse = NewTransactionInfo & NewShippingOptionParameters & NewOfferInfo & {
+    error?: GooglePayError;
+};
+
 declare interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest {
     allowedPaymentMethods: [GooglePayCardPaymentMethod];
     transactionInfo: GooglePayTransactionInfo;
@@ -929,6 +940,8 @@ declare interface GooglePayWalletInitializeOptions {
      * Required by gateways that tokenize through their own client SDK (e.g. Braintree).
      */
     clientToken?: string;
+    lineItems?: ShippingLineItem[];
+    supportedShippingCountriesCodes?: string[];
     buttonColor?: GooglePayButtonColor;
     buttonType?: GooglePayButtonType;
     onAuthorizeError?(error: Error): void;
@@ -948,13 +961,16 @@ declare class GooglePayWalletService {
     private baseCardPaymentMethod?;
     private paymentDataRequest?;
     private paymentButton?;
+    private shippingContext?;
+    private transactionInfo?;
+    private shippingUpdateResult?;
     constructor(walletButtonIntegrationService: WalletButtonIntegrationService, scriptLoader: GooglePayScriptLoader, gateway: GooglePayWalletGateway, formPoster: FormPoster);
     /**
      *
      * Google Pay SDK methods
      *
      */
-    initialize(paymentMethod: PaymentMethod<GooglePayInitializationData>, transactionInfo: GooglePayTransactionInfo): Promise<void>;
+    initialize(paymentMethod: PaymentMethod<GooglePayInitializationData>, transactionInfo: GooglePayTransactionInfo, supportedShippingCountriesCodes?: string[], shippingContext?: GooglePayWalletShippingContext): Promise<void>;
     isReadyToPay(): Promise<boolean>;
     renderButton(containerId: string, options: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>): void;
     showPaymentSheet(): Promise<GooglePayCardDataResponse>;
@@ -965,6 +981,9 @@ declare class GooglePayWalletService {
      *
      */
     addBillingAddress(cartId: string, response: GooglePayCardDataResponse): Promise<void>;
+    updateShippingAddress(cartId: string, address: AddressRequestBody_2, lineItems?: ShippingLineItem[], consignmentEntityId?: string): Promise<ShippingAddressUpdateResult | undefined>;
+    selectShippingOption(cartId: string, consignmentEntityId: string, shippingOptionEntityId: string): Promise<ShippingAddressUpdateResult>;
+    mapToShippingAddress(response: GooglePayCardDataResponse): AddressRequestBody_2 | undefined;
     redirectToCheckout(cartId: string, response: GooglePayCardDataResponse): Promise<void>;
     /**
      *
@@ -977,12 +996,31 @@ declare class GooglePayWalletService {
      */
     private handOffToCheckout;
     private mapToBillingAddress;
+    private mapToAddressRequestBody;
+    private getPaymentDataCallbacks;
+    private handlePaymentDataChanged;
+    private handleShippingAddressCallback;
+    private handleShippingOptionCallback;
+    private getShippingAddressCallbackResponse;
+    private getNewTransactionInfo;
+    private formatShippingTotalPrice;
+    private getPreferredShippingOption;
+    private mapToGooglePayShippingOption;
+    private getShippingCallbackError;
+    private getShippingErrorReason;
     private buildPaymentRequests;
+    private isShippingRequired;
     private getMerchantInfo;
     private getPaymentsClientOrThrow;
     private getBaseCardPaymentMethodOrThrow;
     private getPaymentDataRequestOrThrow;
     private getOrThrow;
+}
+
+declare interface GooglePayWalletShippingContext {
+    cartId: string;
+    lineItems?: ShippingLineItem[];
+    currencyDecimalPlaces: number;
 }
 
 declare class GooglePayWalletStrategy implements CheckoutButtonStrategy {
@@ -999,6 +1037,7 @@ declare class GooglePayWalletStrategy implements CheckoutButtonStrategy {
 declare interface GoogleShippingOption {
     id: string;
     label?: string;
+    description?: string;
 }
 
 declare interface HandleCouponsOut {
@@ -1040,9 +1079,7 @@ declare interface Offers {
     offers: OfferInfoItem[];
 }
 
-declare type onPaymentDataChangedOut = Promise<(NewTransactionInfo & NewShippingOptionParameters & NewOfferInfo & {
-    error?: GooglePayError;
-}) | void>;
+declare type onPaymentDataChangedOut = Promise<GooglePayPaymentDataChangedResponse | void>;
 
 declare interface PayPalButtonStyleOptions {
     color?: StyleButtonColor;
@@ -1114,5 +1151,6 @@ declare type WithGooglePayPaymentInitializeOptions = {
 
 declare interface WithGooglePayWalletInitializeOptions {
     braintreegooglepay?: GooglePayWalletInitializeOptions;
+    bigcommerce_paymentsgooglepay?: GooglePayWalletInitializeOptions;
 }
 
