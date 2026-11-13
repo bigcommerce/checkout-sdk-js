@@ -23,6 +23,7 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import { PaymentRequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategy } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentStrategyFactory } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalCommerceIntent } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { RedirectToCheckoutUrlInputData } from '@bigcommerce/checkout-sdk/wallet-button-integration';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -160,6 +161,10 @@ id: string;
 }>;
 
 export declare const createGooglePayPayPalCommerceCustomerStrategy: ResolvableModule<CustomerStrategyFactory<GooglePayCustomerStrategy>, {
+id: string;
+}>;
+
+export declare const createGooglePayPayPalCommerceWalletStrategy: ResolvableModule<WalletPaymentButtonStrategyFactory<GooglePayWalletStrategy>, {
 id: string;
 }>;
 
@@ -1088,11 +1093,6 @@ declare interface PayPalButtonStyleOptions {
     label?: StyleButtonLabel;
 }
 
-declare enum PayPalCommerceIntent {
-    AUTHORIZE = "authorize",
-    CAPTURE = "capture"
-}
-
 declare interface ShippingOptionParameters {
     defaultSelectedOptionId?: string;
     shippingOptions?: GoogleShippingOption[];
@@ -1152,5 +1152,6 @@ declare type WithGooglePayPaymentInitializeOptions = {
 declare interface WithGooglePayWalletInitializeOptions {
     braintreegooglepay?: GooglePayWalletInitializeOptions;
     bigcommerce_paymentsgooglepay?: GooglePayWalletInitializeOptions;
+    paypalcommercegooglepay?: GooglePayWalletInitializeOptions;
 }
 
