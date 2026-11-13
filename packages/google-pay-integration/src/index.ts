@@ -47,3 +47,4 @@ export { default as createGooglePayTdOnlineMartButtonStrategy } from './factorie
 
 export { default as createGooglePayBraintreeWalletStrategy } from './factories/wallet/create-google-pay-braintree-wallet-strategy';
 export { default as createGooglePayBigCommercePaymentsWalletStrategy } from './google-pay-bigcommerce-payments/create-google-pay-bigcommerce-payments-wallet-strategy';
+export { default as createGooglePayPayPalCommerceWalletStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-wallet-strategy';

@@ -32,4 +32,5 @@ export default interface GooglePayWalletInitializeOptions {
 export interface WithGooglePayWalletInitializeOptions {
     braintreegooglepay?: GooglePayWalletInitializeOptions;
     bigcommerce_paymentsgooglepay?: GooglePayWalletInitializeOptions;
+    paypalcommercegooglepay?: GooglePayWalletInitializeOptions;
 }
