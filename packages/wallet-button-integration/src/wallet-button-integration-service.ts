@@ -18,11 +18,17 @@ import {
     CreatePaymentOrderIntentResponseBody,
 } from './payment/payment';
 import { PaymentRequestSender } from './payment/payment-request-sender';
+import {
+    ShippingAddressUpdateOptions,
+    ShippingAddressUpdateResult,
+} from './shipping/shipping-address';
+import ShippingAddressRequestSender from './shipping/shipping-address-request-sender';
 
 export default class WalletButtonIntegrationService {
     constructor(
         private graphQLEndpoint: string,
         private billingAddressRequestSender: BillingAddressRequestSender,
+        private shippingAddressRequestSender: ShippingAddressRequestSender,
         private paymentRequestSender: PaymentRequestSender,
         private checkoutRequestSender: CheckoutRequestSender,
     ) {}
@@ -49,6 +55,34 @@ export default class WalletButtonIntegrationService {
             this.graphQLEndpoint,
             checkoutId,
             address,
+            options,
+        );
+    }
+
+    async updateShippingAddress(
+        checkoutId: string,
+        address: AddressRequestBody,
+        options?: ShippingAddressUpdateOptions,
+    ): Promise<ShippingAddressUpdateResult | undefined> {
+        return this.shippingAddressRequestSender.updateShippingAddress(
+            this.graphQLEndpoint,
+            checkoutId,
+            address,
+            options,
+        );
+    }
+
+    async selectShippingOption(
+        checkoutId: string,
+        consignmentEntityId: string,
+        shippingOptionEntityId: string,
+        options?: GraphQLRequestOptions,
+    ): Promise<ShippingAddressUpdateResult> {
+        return this.shippingAddressRequestSender.selectShippingOption(
+            this.graphQLEndpoint,
+            checkoutId,
+            consignmentEntityId,
+            shippingOptionEntityId,
             options,
         );
     }

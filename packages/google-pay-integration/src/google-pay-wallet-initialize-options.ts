@@ -1,3 +1,5 @@
+import type { ShippingLineItem } from '@bigcommerce/checkout-sdk/wallet-button-integration';
+
 import { GooglePayButtonColor, GooglePayButtonType } from './types';
 
 export default interface GooglePayWalletInitializeOptions {
@@ -18,6 +20,8 @@ export default interface GooglePayWalletInitializeOptions {
      * Required by gateways that tokenize through their own client SDK (e.g. Braintree).
      */
     clientToken?: string;
+    lineItems?: ShippingLineItem[];
+    supportedShippingCountriesCodes?: string[];
     buttonColor?: GooglePayButtonColor;
     buttonType?: GooglePayButtonType;
     onAuthorizeError?(error: Error): void;
@@ -27,4 +31,5 @@ export default interface GooglePayWalletInitializeOptions {
 
 export interface WithGooglePayWalletInitializeOptions {
     braintreegooglepay?: GooglePayWalletInitializeOptions;
+    bigcommerce_paymentsgooglepay?: GooglePayWalletInitializeOptions;
 }

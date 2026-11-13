@@ -19,7 +19,12 @@ import GooglePayWalletService from './google-pay-wallet-service';
 import getCardDataResponse from './mocks/google-pay-card-data-response.mock';
 import { getBraintree } from './mocks/google-pay-payment-method.mock';
 import getGooglePaymentsClientMocks from './mocks/google-pay-payments-client.mock';
-import { GooglePayCardNetwork, TotalPriceStatusType } from './types';
+import {
+    CallbackTriggerType,
+    GooglePayCardNetwork,
+    IntermediatePaymentData,
+    TotalPriceStatusType,
+} from './types';
 
 describe('GooglePayWalletService', () => {
     let gateway: GooglePayWalletGateway;
@@ -41,6 +46,24 @@ describe('GooglePayWalletService', () => {
         paymentWalletData: { providerId: 'googlepaybraintree', providerOrderId: 'nonce' },
         queryParams: [{ key: 'nonce', value: 'nonce' }],
     };
+    const shippingUpdateResult = {
+        consignmentEntityId: 'consignment-1',
+        availableShippingOptions: [
+            {
+                entityId: 'rate-1',
+                description: 'Flat rate',
+                isRecommended: true,
+                transitTime: '2 days',
+                cost: { value: '2.50', formattedV2: '$2.50' },
+            },
+        ],
+        currencyCode: 'USD',
+        totalPrice: '12.50',
+    };
+    const selectedShippingUpdateResult = {
+        ...shippingUpdateResult,
+        selectedShippingOptionEntityId: 'rate-1',
+    };
 
     beforeEach(() => {
         clientMocks = getGooglePaymentsClientMocks();
@@ -58,6 +81,12 @@ describe('GooglePayWalletService', () => {
         );
 
         walletButtonIntegrationService = createWalletButtonIntegrationService('/graphql');
+        jest.spyOn(walletButtonIntegrationService, 'updateShippingAddress').mockResolvedValue(
+            shippingUpdateResult,
+        );
+        jest.spyOn(walletButtonIntegrationService, 'selectShippingOption').mockResolvedValue(
+            selectedShippingUpdateResult,
+        );
         jest.spyOn(walletButtonIntegrationService, 'addBillingAddress').mockResolvedValue({
             body: {} as never,
             status: 200,
@@ -115,9 +144,22 @@ describe('GooglePayWalletService', () => {
             await service.initialize(
                 { ...paymentMethod, config: { ...paymentMethod.config, testMode: true } },
                 transactionInfo,
+                undefined,
+                {
+                    cartId: 'cart-123',
+                    lineItems: [{ entityId: 'line-item-1', quantity: 1, isShippingRequired: true }],
+                    currencyDecimalPlaces: 2,
+                },
             );
 
-            expect(scriptLoader.getGooglePaymentsClient).toHaveBeenCalledWith(true);
+            expect(scriptLoader.getGooglePaymentsClient).toHaveBeenCalledWith(
+                true,
+                expect.objectContaining({
+                    paymentDataCallbacks: {
+                        onPaymentDataChanged: expect.any(Function),
+                    },
+                }),
+            );
             expect(gateway.initialize).toHaveBeenCalledWith(
                 expect.objectContaining({ id: 'googlepaybraintree' }),
                 'USD',
@@ -207,7 +249,11 @@ describe('GooglePayWalletService', () => {
 
     describe('#showPaymentSheet()', () => {
         it('loads payment data with gateway tokenization parameters', async () => {
-            await service.initialize(getBraintree(), transactionInfo);
+            await service.initialize(getBraintree(), transactionInfo, ['US', 'CA'], {
+                cartId: 'cart-123',
+                lineItems: [{ entityId: 'line-item-1', quantity: 1, isShippingRequired: true }],
+                currencyDecimalPlaces: 2,
+            });
 
             const response = await service.showPaymentSheet();
 
@@ -224,8 +270,260 @@ describe('GooglePayWalletService', () => {
                     ],
                     transactionInfo,
                     emailRequired: true,
+                    shippingAddressRequired: true,
+                    shippingOptionRequired: true,
+                    callbackIntents: ['SHIPPING_ADDRESS', 'SHIPPING_OPTION'],
+                    shippingAddressParameters: {
+                        allowedCountryCodes: ['US', 'CA'],
+                        phoneNumberRequired: true,
+                    },
                 }),
             );
+        });
+
+        it('updates shipping data and returns shipping options through payment data callbacks', async () => {
+            const lineItems = [{ entityId: 'line-item-1', quantity: 1, isShippingRequired: true }];
+
+            jest.mocked(walletButtonIntegrationService.updateShippingAddress).mockResolvedValue({
+                ...shippingUpdateResult,
+                totalPrice: '12.5',
+            });
+            jest.mocked(walletButtonIntegrationService.selectShippingOption).mockResolvedValue({
+                ...selectedShippingUpdateResult,
+                selectedShippingOptionEntityId: undefined,
+                totalPrice: '12.5',
+            });
+
+            await service.initialize(getBraintree(), transactionInfo, ['US'], {
+                cartId: 'cart-123',
+                lineItems,
+                currencyDecimalPlaces: 2,
+            });
+
+            const clientOptions = jest.mocked(scriptLoader.getGooglePaymentsClient).mock
+                .calls[0]?.[1];
+            const onPaymentDataChanged = clientOptions?.paymentDataCallbacks?.onPaymentDataChanged;
+
+            if (!onPaymentDataChanged) {
+                throw new Error('Expected the payment data callback to be registered.');
+            }
+
+            const response = getCardDataResponse();
+            const addressResult = await onPaymentDataChanged({
+                callbackTrigger: CallbackTriggerType.SHIPPING_ADDRESS,
+                shippingAddress: response.shippingAddress!,
+                shippingOptionData: { id: 'rate-1' },
+                offerData: { redemptionCodes: [] },
+            });
+
+            expect(walletButtonIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
+                'cart-123',
+                expect.objectContaining({ address1: '11305 4 Points Dr' }),
+                { lineItems, consignmentEntityId: undefined },
+            );
+            expect(walletButtonIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                'cart-123',
+                'consignment-1',
+                'rate-1',
+            );
+            expect(walletButtonIntegrationService.selectShippingOption).toHaveBeenCalledTimes(1);
+            expect(addressResult).toEqual({
+                newTransactionInfo: {
+                    currencyCode: 'USD',
+                    totalPrice: '12.50',
+                    totalPriceStatus: TotalPriceStatusType.FINAL,
+                },
+                newShippingOptionParameters: {
+                    defaultSelectedOptionId: 'rate-1',
+                    shippingOptions: [
+                        {
+                            id: 'rate-1',
+                            label: '$2.50 Flat rate',
+                            description: '2 days',
+                        },
+                    ],
+                },
+            });
+
+            const optionResult = await onPaymentDataChanged({
+                callbackTrigger: CallbackTriggerType.SHIPPING_OPTION,
+                shippingAddress: response.shippingAddress!,
+                shippingOptionData: { id: 'rate-1' },
+                offerData: { redemptionCodes: [] },
+            });
+
+            expect(optionResult).toEqual({
+                newTransactionInfo: {
+                    currencyCode: 'USD',
+                    totalPrice: '12.50',
+                    totalPriceStatus: TotalPriceStatusType.FINAL,
+                },
+            });
+        });
+
+        it('reuses the created consignment after initialization returns no rates', async () => {
+            const lineItems = [{ entityId: 'line-item-1', quantity: 1, isShippingRequired: true }];
+            const initialConsignmentId = 'consignment-initial';
+
+            jest.mocked(walletButtonIntegrationService.updateShippingAddress)
+                .mockResolvedValueOnce({
+                    ...shippingUpdateResult,
+                    totalPrice: '12.5',
+                    consignmentEntityId: initialConsignmentId,
+                    availableShippingOptions: [],
+                })
+                .mockResolvedValueOnce({
+                    ...shippingUpdateResult,
+                    consignmentEntityId: initialConsignmentId,
+                });
+
+            await service.initialize(getBraintree(), transactionInfo, ['US'], {
+                cartId: 'cart-123',
+                lineItems,
+                currencyDecimalPlaces: 2,
+            });
+
+            const clientOptions = jest.mocked(scriptLoader.getGooglePaymentsClient).mock
+                .calls[0]?.[1];
+            const onPaymentDataChanged = clientOptions?.paymentDataCallbacks?.onPaymentDataChanged;
+
+            if (!onPaymentDataChanged) {
+                throw new Error('Expected the payment data callback to be registered.');
+            }
+
+            const response = getCardDataResponse();
+            const initializeResult = await onPaymentDataChanged({
+                callbackTrigger: CallbackTriggerType.INITIALIZE,
+                shippingAddress: response.shippingAddress!,
+                shippingOptionData: { id: '' },
+                offerData: { redemptionCodes: [] },
+            });
+
+            expect(initializeResult).toEqual({
+                newTransactionInfo: {
+                    currencyCode: 'USD',
+                    totalPrice: '12.50',
+                    totalPriceStatus: TotalPriceStatusType.ESTIMATED,
+                },
+            });
+
+            const addressResult = await onPaymentDataChanged({
+                callbackTrigger: CallbackTriggerType.SHIPPING_ADDRESS,
+                shippingAddress: response.shippingAddress!,
+                shippingOptionData: { id: 'rate-1' },
+                offerData: { redemptionCodes: [] },
+            });
+
+            expect(walletButtonIntegrationService.updateShippingAddress).toHaveBeenNthCalledWith(
+                2,
+                'cart-123',
+                expect.objectContaining({ address1: '11305 4 Points Dr' }),
+                { lineItems, consignmentEntityId: initialConsignmentId },
+            );
+            expect(addressResult).toEqual(
+                expect.objectContaining({
+                    newShippingOptionParameters: expect.objectContaining({
+                        defaultSelectedOptionId: 'rate-1',
+                    }),
+                }),
+            );
+        });
+
+        it('does not reuse a shipping consignment after reinitializing for another cart', async () => {
+            const firstLineItems = [
+                { entityId: 'line-item-1', quantity: 1, isShippingRequired: true },
+            ];
+            const nextLineItems = [
+                { entityId: 'line-item-2', quantity: 1, isShippingRequired: true },
+            ];
+            const response = getCardDataResponse();
+            const getShippingCallback = (callIndex: number) => {
+                const clientOptions = jest.mocked(scriptLoader.getGooglePaymentsClient).mock.calls[
+                    callIndex
+                ]?.[1];
+                const callback = clientOptions?.paymentDataCallbacks?.onPaymentDataChanged;
+
+                if (!callback) {
+                    throw new Error('Expected the payment data callback to be registered.');
+                }
+
+                return callback;
+            };
+
+            await service.initialize(getBraintree(), transactionInfo, undefined, {
+                cartId: 'first-cart',
+                lineItems: firstLineItems,
+                currencyDecimalPlaces: 2,
+            });
+            await getShippingCallback(0)({
+                callbackTrigger: CallbackTriggerType.INITIALIZE,
+                shippingAddress: response.shippingAddress!,
+                shippingOptionData: { id: '' },
+                offerData: { redemptionCodes: [] },
+            });
+
+            await service.initialize(getBraintree(), transactionInfo, undefined, {
+                cartId: 'next-cart',
+                lineItems: nextLineItems,
+                currencyDecimalPlaces: 2,
+            });
+            await getShippingCallback(1)({
+                callbackTrigger: CallbackTriggerType.SHIPPING_ADDRESS,
+                shippingAddress: response.shippingAddress!,
+                shippingOptionData: { id: 'rate-1' },
+                offerData: { redemptionCodes: [] },
+            });
+
+            expect(walletButtonIntegrationService.updateShippingAddress).toHaveBeenNthCalledWith(
+                2,
+                'next-cart',
+                expect.objectContaining({ address1: '11305 4 Points Dr' }),
+                { lineItems: nextLineItems, consignmentEntityId: undefined },
+            );
+        });
+
+        it('omits shipping configuration when no line item requires shipping', async () => {
+            await service.initialize(getBraintree(), transactionInfo, ['US', 'CA'], {
+                cartId: 'cart-123',
+                lineItems: [{ entityId: 'digital-item-1', quantity: 1, isShippingRequired: false }],
+                currencyDecimalPlaces: 2,
+            });
+
+            await service.showPaymentSheet();
+
+            const request = clientMocks.paymentsClient.loadPaymentData.mock.calls[0]?.[0];
+
+            expect(request).toBeDefined();
+            expect(request).not.toHaveProperty('shippingAddressRequired');
+            expect(request).not.toHaveProperty('shippingOptionRequired');
+            expect(request).not.toHaveProperty('callbackIntents');
+            expect(request).not.toHaveProperty('shippingAddressParameters');
+        });
+
+        it('waits for a shipping address before updating on initialize', async () => {
+            await service.initialize(getBraintree(), transactionInfo, undefined, {
+                cartId: 'cart-123',
+                lineItems: [{ entityId: 'line-item-1', quantity: 1, isShippingRequired: true }],
+                currencyDecimalPlaces: 2,
+            });
+
+            const clientOptions = jest.mocked(scriptLoader.getGooglePaymentsClient).mock
+                .calls[0]?.[1];
+            const onPaymentDataChanged = clientOptions?.paymentDataCallbacks?.onPaymentDataChanged;
+
+            if (!onPaymentDataChanged) {
+                throw new Error('Expected the payment data callback to be registered.');
+            }
+
+            await expect(
+                onPaymentDataChanged({
+                    callbackTrigger: CallbackTriggerType.INITIALIZE,
+                    shippingAddress: undefined,
+                    shippingOptionData: { id: '' },
+                    offerData: { redemptionCodes: [] },
+                } as unknown as IntermediatePaymentData),
+            ).resolves.toBeUndefined();
+            expect(walletButtonIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
         });
     });
 
@@ -261,6 +559,48 @@ describe('GooglePayWalletService', () => {
             await expect(service.addBillingAddress('cart-123', response)).rejects.toBeInstanceOf(
                 InvalidArgumentError,
             );
+        });
+    });
+
+    describe('#updateShippingAddress()', () => {
+        it('updates shipping address with the supplied line items', async () => {
+            const address = service.mapToShippingAddress(getCardDataResponse());
+            const lineItems = [{ entityId: 'line-item-1', quantity: 2 }];
+            const updateShippingAddress = jest
+                .spyOn(walletButtonIntegrationService, 'updateShippingAddress')
+                .mockResolvedValue(undefined);
+
+            await service.updateShippingAddress('cart-123', address!, lineItems);
+
+            expect(updateShippingAddress).toHaveBeenCalledWith('cart-123', address, { lineItems });
+        });
+    });
+
+    describe('#mapToShippingAddress()', () => {
+        it('maps the Google Pay shipping address', () => {
+            expect(service.mapToShippingAddress(getCardDataResponse())).toEqual({
+                firstName: 'John',
+                lastName: 'Doe',
+                company: '',
+                address1: '11305 4 Points Dr',
+                address2: 'Building 2, Suite 100',
+                city: 'Austin',
+                email: 'john.doe@example.com',
+                stateOrProvince: 'TX',
+                stateOrProvinceCode: 'TX',
+                countryCode: 'US',
+                postalCode: '78726',
+                phone: '+1 555-555-5555',
+                shouldSaveAddress: false,
+            });
+        });
+
+        it('returns undefined if the Google Pay response has no shipping address', () => {
+            const response = getCardDataResponse();
+
+            delete response.shippingAddress;
+
+            expect(service.mapToShippingAddress(response)).toBeUndefined();
         });
     });
 

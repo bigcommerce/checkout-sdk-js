@@ -214,6 +214,7 @@ export interface HandleCouponsOut {
 export interface GoogleShippingOption {
     id: string;
     label?: string;
+    description?: string;
 }
 
 export enum CallbackTriggerType {
@@ -240,10 +241,11 @@ export interface GooglePayPaymentOptions {
     };
 }
 
-export type onPaymentDataChangedOut = Promise<
-    | (NewTransactionInfo & NewShippingOptionParameters & NewOfferInfo & { error?: GooglePayError })
-    | void
->;
+export type GooglePayPaymentDataChangedResponse = NewTransactionInfo &
+    NewShippingOptionParameters &
+    NewOfferInfo & { error?: GooglePayError };
+
+export type onPaymentDataChangedOut = Promise<GooglePayPaymentDataChangedResponse | void>;
 
 export type GooglePayRequiredPaymentData = Pick<
     GooglePayPaymentDataRequest,
