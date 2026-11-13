@@ -20,6 +20,12 @@ export default class BigCommercePaymentsScriptLoader {
     // Set by the load whose script created the SDK; a repeat load of a cached URL doesn't re-run the script.
     private static clientMetadataIds = new WeakMap<PayPalSDK, string | undefined>();
 
+    // PAYPAL-7373: the SDK charges in the currency it was loaded with, and a shopper can switch
+    // currency at checkout. The script loader caches scripts by URL, so a currency loaded before
+    // is not run again: keep each currency's SDK to switch back to it.
+    private static sdkCurrencies = new WeakMap<PayPalSDK, string>();
+    private static sdkByCurrency = new Map<string, PayPalSDK>();
+
     private window: BigCommercePaymentsHostWindow;
 
     constructor(private scriptLoader: ScriptLoader) {
@@ -51,7 +57,29 @@ export default class BigCommercePaymentsScriptLoader {
         paypalSdkScriptConfig: BigCommercePaymentsScriptParams,
         forceLoad = false,
     ): Promise<PayPalSDK> {
-        if (!this.window.bigCommercePaymentsPayPalSDK || forceLoad) {
+        const currencyCode = paypalSdkScriptConfig.options.currency;
+        const currentSdk = this.window.bigCommercePaymentsPayPalSDK;
+        const currentSdkCurrency = currentSdk
+            ? BigCommercePaymentsScriptLoader.sdkCurrencies.get(currentSdk)
+            : undefined;
+        const isOtherCurrency =
+            currentSdkCurrency !== undefined && currentSdkCurrency !== currencyCode;
+        const sdkLoadedForCurrency = currencyCode
+            ? BigCommercePaymentsScriptLoader.sdkByCurrency.get(currencyCode)
+            : undefined;
+
+        if (forceLoad) {
+            // A forced load means a new client configuration: the SDKs loaded before are stale.
+            BigCommercePaymentsScriptLoader.sdkByCurrency.clear();
+        }
+
+        if (isOtherCurrency && sdkLoadedForCurrency && !forceLoad) {
+            this.window.bigCommercePaymentsPayPalSDK = sdkLoadedForCurrency;
+
+            return sdkLoadedForCurrency;
+        }
+
+        if (!this.window.bigCommercePaymentsPayPalSDK || forceLoad || isOtherCurrency) {
             const options = this.transformConfig<BigCommercePaymentsScriptParams['options']>(
                 paypalSdkScriptConfig.options,
             );
@@ -64,6 +92,17 @@ export default class BigCommercePaymentsScriptLoader {
             const scriptSrc = `${paypalSdkUrl}?${scriptQuery}`;
 
             await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
+
+            if (currencyCode && this.window.bigCommercePaymentsPayPalSDK) {
+                BigCommercePaymentsScriptLoader.sdkCurrencies.set(
+                    this.window.bigCommercePaymentsPayPalSDK,
+                    currencyCode,
+                );
+                BigCommercePaymentsScriptLoader.sdkByCurrency.set(
+                    currencyCode,
+                    this.window.bigCommercePaymentsPayPalSDK,
+                );
+            }
 
             const loadedSdk = this.window.bigCommercePaymentsPayPalSDK;
 
