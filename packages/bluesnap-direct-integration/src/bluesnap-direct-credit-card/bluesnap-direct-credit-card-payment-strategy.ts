@@ -154,10 +154,14 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
             return;
         }
 
+        // PoC surcharge: checkout-js passes the surcharge endpoint's providerData through paymentData.
+        const { providerData } = paymentData as { providerData?: Record<string, unknown> };
+
         await this._paymentIntegrationService.submitPayment({
             ...payload.payment,
             paymentData: {
                 formattedPayload: {
+                    ...(providerData ? { provider_data: providerData } : {}),
                     credit_card_token: {
                         token: JSON.stringify({
                             pfToken,
