@@ -1,4 +1,7 @@
+import { Response } from '@bigcommerce/request-sender';
+
 import { IframeEventPoster } from '../common/iframe';
+import { PaymentErrorResponseBody } from '../errors';
 import { HostedFieldStoredCardRequestEvent } from '../hosted-field-events';
 import { StorefrontStoredCardRequestSender } from '../payment';
 
@@ -32,23 +35,27 @@ export default class HostedInputStoredCardHandler {
             });
         }
 
-        const { defaultInstrument, ...billingAddress } = fields;
+        const { defaultInstrument, humanVerificationToken, ...billingAddress } = fields;
 
         const [expiryMonth, expiryYear] = values.cardExpiry ? values.cardExpiry.split('/') : [];
 
         try {
-            await this._storedCardRequestSender.submitPaymentInstrument(data, {
-                billingAddress,
-                instrument: {
-                    type: 'card',
-                    cardholderName: values.cardName || '',
-                    number: values.cardNumber ? values.cardNumber.replace(/ /g, '') : '',
-                    expiryMonth: Number(expiryMonth.trim()),
-                    expiryYear: Number(`20${expiryYear.trim()}`),
-                    verificationValue: values.cardCode ?? '',
+            await this._storedCardRequestSender.submitPaymentInstrument(
+                data,
+                {
+                    billingAddress,
+                    instrument: {
+                        type: 'card',
+                        cardholderName: values.cardName || '',
+                        number: values.cardNumber ? values.cardNumber.replace(/ /g, '') : '',
+                        expiryMonth: Number(expiryMonth.trim()),
+                        expiryYear: Number(`20${expiryYear.trim()}`),
+                        verificationValue: values.cardCode ?? '',
+                    },
+                    defaultInstrument,
                 },
-                defaultInstrument,
-            });
+                humanVerificationToken,
+            );
 
             this._eventPoster.post({
                 type: HostedInputEventType.StoredCardSucceeded,
@@ -56,6 +63,7 @@ export default class HostedInputStoredCardHandler {
         } catch (error) {
             this._eventPoster.post({
                 type: HostedInputEventType.StoredCardFailed,
+                payload: { response: error as Response<PaymentErrorResponseBody> },
             });
         }
     };

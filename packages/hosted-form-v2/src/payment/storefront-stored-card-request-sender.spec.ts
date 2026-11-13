@@ -52,5 +52,34 @@ describe('StorefrontStoredCardRequestSender', () => {
                 },
             );
         });
+
+        it('includes human_verification in the body when a verification token is provided', async () => {
+            await storefrontStoredCardRequestSender.submitPaymentInstrument(
+                StoredCardHostedFormDataMock,
+                StoredCardHostedFormInstrumentFormMock,
+                'grecaptcha-token-123',
+            );
+
+            const { instrument, billingAddress } = StoredCardHostedFormInstrumentFormAPIMock;
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                `${StoredCardHostedFormDataMock.paymentsUrl}/stores/${StoredCardHostedFormDataMock.storeHash}/customers/${StoredCardHostedFormDataMock.shopperId}/stored_instruments`,
+                {
+                    body: JSON.stringify({
+                        instrument,
+                        billing_address: billingAddress,
+                        provider_id: StoredCardHostedFormDataMock.providerId,
+                        default_instrument:
+                            StoredCardHostedFormInstrumentFormAPIMock.default_Instrument,
+                        currency_code: StoredCardHostedFormDataMock.currencyCode,
+                        human_verification: {
+                            id: 'recaptcha_v2_verification',
+                            parameters: { token: 'grecaptcha-token-123' },
+                        },
+                    }),
+                    headers,
+                },
+            );
+        });
     });
 });

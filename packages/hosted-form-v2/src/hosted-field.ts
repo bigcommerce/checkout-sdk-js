@@ -7,6 +7,7 @@ import { mapFromPaymentErrorResponse } from './common/errors';
 import { IframeEventListener, IframeEventPoster } from './common/iframe';
 import { parseUrl } from './common/url';
 import {
+    HumanVerificationRequiredError,
     InvalidHostedFormConfigError,
     InvalidHostedFormError,
     InvalidHostedFormValueError,
@@ -19,6 +20,7 @@ import HostedFormOrderData from './hosted-form-order-data';
 import {
     HostedInputEventMap,
     HostedInputEventType,
+    HostedInputStoredCardErrorEvent,
     HostedInputStoredCardSucceededEvent,
     HostedInputSubmitErrorEvent,
     HostedInputSubmitManualOrderErrorEvent,
@@ -196,18 +198,30 @@ export default class HostedField {
         fields: StoredCardHostedFormInstrumentFields,
         data: StoredCardHostedFormData,
     ): Promise<HostedInputStoredCardSucceededEvent> {
-        const promise = this._eventPoster.post<HostedInputStoredCardSucceededEvent>(
-            {
-                type: HostedFieldEventType.StoredCardRequested,
-                payload: { fields, data },
-            },
-            {
-                successType: HostedInputEventType.StoredCardSucceeded,
-                errorType: HostedInputEventType.StoredCardFailed,
-            },
-        );
+        try {
+            const promise = this._eventPoster.post<HostedInputStoredCardSucceededEvent>(
+                {
+                    type: HostedFieldEventType.StoredCardRequested,
+                    payload: { fields, data },
+                },
+                {
+                    successType: HostedInputEventType.StoredCardSucceeded,
+                    errorType: HostedInputEventType.StoredCardFailed,
+                },
+            );
 
-        return this._detachmentObserver.ensurePresence([this._iframe], promise);
+            return await this._detachmentObserver.ensurePresence([this._iframe], promise);
+        } catch (error) {
+            if (this._isStoredCardErrorEvent(error)) {
+                const action = error.payload?.response?.body?.additional_action_required;
+
+                if (action?.type === 'recaptcha_v2_verification' && action.data?.key) {
+                    throw new HumanVerificationRequiredError(action.data.key);
+                }
+            }
+
+            throw error;
+        }
     }
 
     async validateForm(): Promise<void> {
@@ -255,6 +269,14 @@ export default class HostedField {
         }
 
         return event.type === HostedInputEventType.SubmitManualOrderFailed;
+    }
+
+    private _isStoredCardErrorEvent(event: any): event is HostedInputStoredCardErrorEvent {
+        if (!(event instanceof Object) || event === null || !('type' in event)) {
+            return false;
+        }
+
+        return event.type === HostedInputEventType.StoredCardFailed;
     }
 
     private _isSubmitErrorEvent(event: any): event is HostedInputSubmitErrorEvent {

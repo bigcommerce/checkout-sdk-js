@@ -1,5 +1,4 @@
 import {
-    getErrorPaymentResponseBody,
     getPaymentResponseBody,
     getResponse,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -136,6 +135,23 @@ describe('HostedInputStoredCardHandler', () => {
         expect(requestSender.submitPaymentInstrument).toHaveBeenCalledWith(
             StoredCardHostedFormDataMock,
             StoredCardHostedFormInstrumentFormMock,
+            undefined,
+        );
+    });
+
+    it('forwards the human verification token when resubmitting', async () => {
+        await handler.handle({
+            type: HostedFieldEventType.StoredCardRequested,
+            payload: {
+                data,
+                fields: { ...fields, humanVerificationToken: 'grecaptcha-token-123' },
+            },
+        });
+
+        expect(requestSender.submitPaymentInstrument).toHaveBeenCalledWith(
+            StoredCardHostedFormDataMock,
+            StoredCardHostedFormInstrumentFormMock,
+            'grecaptcha-token-123',
         );
     });
 
@@ -152,8 +168,25 @@ describe('HostedInputStoredCardHandler', () => {
         });
     });
 
-    it('posts event if vaulting submission fails', async () => {
-        const response = getResponse(getErrorPaymentResponseBody());
+    it('posts event with the response payload if vaulting submission fails', async () => {
+        const response = getResponse(
+            {
+                status: 'error',
+                errors: [
+                    {
+                        code: 'bad_request',
+                        message:
+                            'Additional action is required before creating the stored instrument.',
+                    },
+                ],
+                additional_action_required: {
+                    type: 'recaptcha_v2_verification',
+                    data: { key: '6LeXXXXX' },
+                },
+            },
+            {},
+            400,
+        );
 
         jest.spyOn(eventPoster, 'post');
 
@@ -166,6 +199,7 @@ describe('HostedInputStoredCardHandler', () => {
 
         expect(eventPoster.post).toHaveBeenCalledWith({
             type: HostedInputEventType.StoredCardFailed,
+            payload: { response },
         });
     });
 });
