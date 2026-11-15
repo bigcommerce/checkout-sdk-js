@@ -13,18 +13,22 @@
 /**
  * Used this approach as Affirm uses snipped for initializing. Please refer to Affirm documentation in: https://docs.affirm.com/Integrate_Affirm/Direct_API#1._Add_Affirm.js
  */
-import { Affirm, AffirmHostWindow } from './affirm';
+import { Affirm, AffirmConfig, AffirmHostWindow } from './affirm';
 
-interface AffirmConfig {
-    public_api_key: string;
-    script: string;
-}
-
-export default function loadAffirmJS(apiKey: string, scriptURL: string) {
+export default function loadAffirmJS(
+    apiKey: string,
+    scriptURL: string,
+    locale: string,
+    countryCode: string,
+) {
     const _AFFIRM_CONFIG: AffirmConfig = {
         public_api_key: apiKey,
         script: scriptURL,
+        locale,
+        country_code: countryCode,
     };
+
+    (window as AffirmHostWindow)._affirm_config = _AFFIRM_CONFIG;
 
     (function foo(
         m: AffirmHostWindow | any,

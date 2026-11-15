@@ -6,10 +6,10 @@ import loadAffirmJS from './affirmJs';
 export default class AffirmScriptLoader {
     constructor(public affirmWindow: AffirmHostWindow = window) {}
 
-    load(apikey = '', testMode?: boolean): Promise<Affirm> {
+    load(apikey = '', testMode?: boolean, locale = 'en_US', countryCode = 'USA'): Promise<Affirm> {
         const scriptURI = testMode ? AFFIRM_SCRIPTS.SANDBOX : AFFIRM_SCRIPTS.PROD;
 
-        loadAffirmJS(apikey, scriptURI);
+        loadAffirmJS(apikey, scriptURI, locale, countryCode);
 
         if (!this.affirmWindow.affirm) {
             throw new PaymentMethodClientUnavailableError();
