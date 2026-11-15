@@ -40,6 +40,8 @@ describe('AffirmScriptLoader', () => {
             expect(loadAffirmJS).toHaveBeenCalledWith(
                 'apiKeyTest',
                 '//cdn1.affirm.com/js/v2/affirm.js',
+                'en_US',
+                'USA',
             );
         });
 
@@ -49,6 +51,19 @@ describe('AffirmScriptLoader', () => {
             expect(loadAffirmJS).toHaveBeenCalledWith(
                 'apiKeyTest',
                 '//cdn1-sandbox.affirm.com/js/v2/affirm.js',
+                'en_US',
+                'USA',
+            );
+        });
+
+        it('passes the market locale and country code to the Affirm config', async () => {
+            await affirmScriptLoader.load('apiKeyTest', true, 'fr_CA', 'CAN');
+
+            expect(loadAffirmJS).toHaveBeenCalledWith(
+                'apiKeyTest',
+                '//cdn1-sandbox.affirm.com/js/v2/affirm.js',
+                'fr_CA',
+                'CAN',
             );
         });
 

@@ -13,7 +13,11 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCart,
+    getCurrency,
+    getOrder,
     getOrderRequestBody,
+    getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -89,13 +93,61 @@ describe('AffirmPaymentStrategy', () => {
             paymentMethod.config.testMode = true;
             await strategy.initialize({ methodId: paymentMethod.id });
 
-            expect(affirmScriptLoader.load).toHaveBeenCalledWith(paymentMethod.clientToken, true);
+            expect(affirmScriptLoader.load).toHaveBeenCalledWith(
+                paymentMethod.clientToken,
+                true,
+                'en_US',
+                'USA',
+            );
         });
 
         it('loads affirm script from snippet with testMode equals to false', async () => {
             await strategy.initialize({ methodId: paymentMethod.id });
 
-            expect(affirmScriptLoader.load).toHaveBeenCalledWith(paymentMethod.clientToken, false);
+            expect(affirmScriptLoader.load).toHaveBeenCalledWith(
+                paymentMethod.clientToken,
+                false,
+                'en_US',
+                'USA',
+            );
+        });
+
+        it('loads affirm script with the market from the initialization data', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValueOnce({
+                ...paymentMethod,
+                initializationData: { countryCode: 'CAN', locale: 'fr_CA', currency: 'CAD' },
+            });
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+
+            expect(affirmScriptLoader.load).toHaveBeenCalledWith(
+                paymentMethod.clientToken,
+                false,
+                'fr_CA',
+                'CAN',
+            );
+        });
+
+        it('derives the market from the cart currency and store locale without initialization data', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValueOnce({
+                ...getCart(),
+                currency: { ...getCurrency(), code: 'GBP', name: 'British Pound', symbol: '£' },
+            });
+            jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValueOnce(
+                'en-GB',
+            );
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+
+            expect(affirmScriptLoader.load).toHaveBeenCalledWith(
+                paymentMethod.clientToken,
+                false,
+                'en_GB',
+                'GBR',
+            );
         });
     });
 
@@ -151,11 +203,11 @@ describe('AffirmPaymentStrategy', () => {
                 billing: {
                     address: {
                         city: 'Some City',
-                        country: 'US',
-                        line1: '12345 Testing Way',
-                        line2: '',
-                        state: 'CA',
-                        zipcode: '95555',
+                        country_code: 'USA',
+                        postal_code: '95555',
+                        region1_code: 'CA',
+                        street1: '12345 Testing Way',
+                        street2: '',
                     },
                     email: 'test@bigcommerce.com',
                     name: {
@@ -214,11 +266,11 @@ describe('AffirmPaymentStrategy', () => {
                 shipping: {
                     address: {
                         city: 'Some City',
-                        country: 'US',
-                        line1: '12345 Testing Way',
-                        line2: '',
-                        state: 'CA',
-                        zipcode: '95555',
+                        country_code: 'USA',
+                        postal_code: '95555',
+                        region1_code: 'CA',
+                        street1: '12345 Testing Way',
+                        street2: '',
                     },
                     name: {
                         first: 'Test',
@@ -230,6 +282,7 @@ describe('AffirmPaymentStrategy', () => {
                 shipping_amount: 1500,
                 tax_amount: 300,
                 total: 19000,
+                currency: 'USD',
             };
 
             const options = { methodId: 'affirm', gatewayId: undefined };
@@ -242,6 +295,104 @@ describe('AffirmPaymentStrategy', () => {
             await strategy.execute(payload, options);
 
             expect(affirmCheckoutMock).toHaveBeenCalledWith(checkoutPayload);
+        });
+
+        it('sends the Canadian market checkout object for a CAD order', async () => {
+            const state = paymentIntegrationService.getState();
+            const canadianAddress = {
+                ...getShippingAddress(),
+                city: 'Toronto',
+                stateOrProvince: 'Ontario',
+                stateOrProvinceCode: 'ON',
+                country: 'Canada',
+                countryCode: 'CA',
+                postalCode: 'M5H 2N2',
+            };
+
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValueOnce({
+                ...paymentMethod,
+                initializationData: { countryCode: 'CAN', locale: 'en_CA', currency: 'CAD' },
+            });
+            jest.spyOn(state, 'getOrder').mockReturnValueOnce({
+                ...getOrder(),
+                currency: { ...getCurrency(), code: 'CAD', name: 'Canadian Dollar' },
+            });
+            jest.spyOn(state, 'getShippingAddress').mockReturnValueOnce(canadianAddress);
+            jest.spyOn(state, 'getBillingAddress').mockReturnValueOnce({
+                ...getBillingAddress(),
+                ...canadianAddress,
+            });
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+            await strategy.execute(payload);
+
+            expect(affirmCheckoutMock).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    currency: 'CAD',
+                    shipping: expect.objectContaining({
+                        address: {
+                            street1: '12345 Testing Way',
+                            street2: '',
+                            city: 'Toronto',
+                            region1_code: 'ON',
+                            postal_code: 'M5H 2N2',
+                            country_code: 'CAN',
+                        },
+                    }),
+                    billing: expect.objectContaining({
+                        address: expect.objectContaining({
+                            country_code: 'CAN',
+                            region1_code: 'ON',
+                        }),
+                    }),
+                }),
+            );
+        });
+
+        it('sends the UK market checkout object without a region for a GBP order', async () => {
+            const state = paymentIntegrationService.getState();
+            const ukAddress = {
+                ...getShippingAddress(),
+                address1: '221B Baker Street',
+                city: 'London',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+                country: 'United Kingdom',
+                countryCode: 'GB',
+                postalCode: 'NW1 6XE',
+            };
+
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValueOnce({
+                ...paymentMethod,
+                initializationData: { countryCode: 'GBR', locale: 'en_GB', currency: 'GBP' },
+            });
+            jest.spyOn(state, 'getOrder').mockReturnValueOnce({
+                ...getOrder(),
+                currency: { ...getCurrency(), code: 'GBP', name: 'British Pound', symbol: '£' },
+            });
+            jest.spyOn(state, 'getShippingAddress').mockReturnValueOnce(ukAddress);
+            jest.spyOn(state, 'getBillingAddress').mockReturnValueOnce({
+                ...getBillingAddress(),
+                ...ukAddress,
+            });
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+            await strategy.execute(payload);
+
+            expect(affirmCheckoutMock).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    currency: 'GBP',
+                    shipping: expect.objectContaining({
+                        address: {
+                            street1: '221B Baker Street',
+                            street2: '',
+                            city: 'London',
+                            postal_code: 'NW1 6XE',
+                            country_code: 'GBR',
+                        },
+                    }),
+                }),
+            );
         });
 
         it('does not create affirm object if shippingAddress does not exist', async () => {
@@ -327,11 +478,11 @@ describe('AffirmPaymentStrategy', () => {
                 billing: {
                     address: {
                         city: 'Some City',
-                        country: 'US',
-                        line1: '12345 Testing Way',
-                        line2: '',
-                        state: 'CA',
-                        zipcode: '95555',
+                        country_code: 'USA',
+                        postal_code: '95555',
+                        region1_code: 'CA',
+                        street1: '12345 Testing Way',
+                        street2: '',
                     },
                     email: 'test@bigcommerce.com',
                     name: {
@@ -390,11 +541,11 @@ describe('AffirmPaymentStrategy', () => {
                 shipping: {
                     address: {
                         city: 'Some City',
-                        country: 'US',
-                        line1: '12345 Testing Way',
-                        line2: '',
-                        state: 'CA',
-                        zipcode: '95555',
+                        country_code: 'USA',
+                        postal_code: '95555',
+                        region1_code: 'CA',
+                        street1: '12345 Testing Way',
+                        street2: '',
                     },
                     email: 'test@bigcommerce.com',
                     name: {
@@ -407,6 +558,7 @@ describe('AffirmPaymentStrategy', () => {
                 shipping_amount: 1500,
                 tax_amount: 300,
                 total: 19000,
+                currency: 'USD',
             };
 
             jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
