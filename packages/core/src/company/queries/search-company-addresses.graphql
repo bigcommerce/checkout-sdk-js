@@ -6,6 +6,7 @@ query SearchCompanyAddresses(
 ) {
     customer {
         activeCompany {
+            companyName
             addresses(
                 first: $first
                 filters: {
@@ -14,6 +15,7 @@ query SearchCompanyAddresses(
                     isBilling: $isBilling
                 }
                 sort: [{ field: CREATED_AT, direction: DESC }]
+                includesExtraFields: true
             ) {
                 edges {
                     node {
@@ -30,10 +32,28 @@ query SearchCompanyAddresses(
                         countryCode
                         phone
                         label
+                        company: companyName
                         isDefaultShipping
                         isDefaultBilling
                         isShipping
                         isBilling
+                        extraFields {
+                            __typename
+                            name
+                            fieldEntityId
+                            ... on TextExtraFieldValue {
+                                text
+                            }
+                            ... on MultilineTextExtraFieldValue {
+                                multilineText
+                            }
+                            ... on NumberExtraFieldValue {
+                                number
+                            }
+                            ... on MultipleChoiceExtraFieldValue {
+                                value
+                            }
+                        }
                     }
                 }
                 pageInfo {
