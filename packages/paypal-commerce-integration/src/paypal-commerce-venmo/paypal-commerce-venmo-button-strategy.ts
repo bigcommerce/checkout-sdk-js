@@ -4,15 +4,13 @@ import {
     InvalidArgumentError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
-    ApproveCallbackPayload,
+    PaypalButtonCreationService,
     PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
-    PayPalCommerceButtonsOptions,
+    PayPalIntegrationService,
     StyleButtonColor,
-} from '../paypal-commerce-types';
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceVenmoButtonInitializeOptions, {
     WithPayPalCommerceVenmoButtonInitializeOptions,
@@ -21,7 +19,8 @@ import PayPalCommerceVenmoButtonInitializeOptions, {
 export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButtonStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
+        private paypalButtonCreationService: PaypalButtonCreationService,
     ) {}
 
     async initialize(
@@ -79,7 +78,7 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
             ? providedCurrencyCode
             : this.paymentIntegrationService.getState().getCartOrThrow().currency.code;
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
         this.renderButton(containerId, methodId, paypalcommercevenmo);
     }
@@ -95,41 +94,37 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
     ): void {
         const { buyNowInitializeOptions, style, onEligibilityFailure } = paypalcommercevenmo;
 
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const fundingSource = paypalSdk.FUNDING.VENMO;
-
-        const defaultCallbacks = {
-            createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder('paypalcommercevenmo'),
-            onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
-        };
 
         const buyNowFlowCallbacks = {
             onClick: () => this.handleClick(buyNowInitializeOptions),
             onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
-        const buttonRenderOptions: PayPalCommerceButtonsOptions = {
+        const buttonRenderOptions = {
             fundingSource,
             style: this.getValidVenmoButtonStyles(style),
-            ...defaultCallbacks,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
         };
 
-        const paypalButtonRender = paypalSdk.Buttons(buttonRenderOptions);
+        const paypalButton = this.paypalButtonCreationService.createPayPalButton(
+            'paypalcommerce',
+            methodId,
+            buttonRenderOptions,
+        );
 
-        if (paypalButtonRender.isEligible()) {
-            paypalButtonRender.render(`#${containerId}`);
+        if (paypalButton.isEligible()) {
+            paypalButton.render(`#${containerId}`);
         } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
             onEligibilityFailure();
         } else {
-            this.paypalCommerceIntegrationService.removeElement(containerId);
+            this.paypalIntegrationService.removeElement(containerId);
         }
     }
 
     private getValidVenmoButtonStyles(style: PayPalButtonStyleOptions | undefined) {
-        const validButtonStyle = this.paypalCommerceIntegrationService.getValidButtonStyle(style);
+        const validButtonStyle = this.paypalIntegrationService.getValidButtonStyle(style);
 
         if (validButtonStyle.color === StyleButtonColor.gold) {
             return {
@@ -145,7 +140,7 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
         buyNowInitializeOptions?: PayPalBuyNowInitializeOptions,
     ): Promise<void> {
         if (buyNowInitializeOptions) {
-            const buyNowCart = await this.paypalCommerceIntegrationService.createBuyNowCartOrThrow(
+            const buyNowCart = await this.paypalIntegrationService.createBuyNowCartOrThrow(
                 buyNowInitializeOptions,
             );
 
