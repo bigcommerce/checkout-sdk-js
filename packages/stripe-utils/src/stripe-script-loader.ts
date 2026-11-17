@@ -105,16 +105,6 @@ export default class StripeScriptLoader {
         return this.stripeWindow.Stripe;
     }
 
-    /**
-     * A `window.Stripe` can already exist because another script on the page
-     * loaded Stripe.js first, and it is not necessarily the release train this
-     * strategy asked for. Reusing it regardless means an explicit version
-     * request is silently ignored, and the strategy then calls APIs that the
-     * other train may have changed or removed.
-     *
-     * Stripe.js reports its own train on `Stripe.version`. When that does not
-     * match, load the requested bundle so the strategy gets the API it expects.
-     */
     private isRequestedStripeJsLoaded(stripeJsVersion?: string): boolean {
         const stripe = this.stripeWindow.Stripe;
 
@@ -125,15 +115,10 @@ export default class StripeScriptLoader {
         const requestedVersion = stripeJsVersion || StripeJsVersion.V3;
         const loadedVersion = stripe.version;
 
-        // A bundle that reports no version at all predates this property, so
-        // there is nothing to compare against. Keep the previous behaviour of
-        // reusing it rather than loading a second copy of Stripe.js.
         if (loadedVersion === undefined) {
             return true;
         }
 
-        // A named train reports its codename; the legacy '/v3/' bundle
-        // reports the number 3.
         const loadedTrain = typeof loadedVersion === 'number' ? StripeJsVersion.V3 : loadedVersion;
 
         return loadedTrain === requestedVersion;

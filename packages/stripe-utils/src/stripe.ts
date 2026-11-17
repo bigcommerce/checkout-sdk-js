@@ -765,11 +765,6 @@ export interface StripeHostWindow extends Window {
 export interface StripeFactory {
     <T = StripeClient>(stripePublishableKey: string, options?: StripeConfigurationOptions): T;
 
-    /**
-     * Release train of the loaded Stripe.js bundle, set by Stripe.js itself.
-     * A named train reports a string such as 'clover'; the legacy unpinned
-     * '/v3/' bundle reports the number 3.
-     */
     version?: string | number;
 }
 
