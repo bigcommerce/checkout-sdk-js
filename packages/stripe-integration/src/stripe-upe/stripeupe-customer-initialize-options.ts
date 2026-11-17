@@ -32,11 +32,7 @@ export default interface StripeUPECustomerInitializeOptions {
     /**
      * get styles from store theme
      */
-    getStyles?():
-        | {
-              [key: string]: string;
-          }
-        | undefined;
+    getStyles?(): Record<string, string> | undefined;
 }
 
 export interface WithStripeUPECustomerInitializeOptions {

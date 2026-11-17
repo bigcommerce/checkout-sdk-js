@@ -262,6 +262,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     currency: 'USD',
                     isCreditEnabled: undefined,
                     intent: undefined,
+                    locale: 'en_US',
                 },
                 expect.any(Function),
                 expect.any(Function),
@@ -550,7 +551,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             try {
                 await strategy.execute(orderRequestBody, options);
-            } catch (error) {
+            } catch {
                 expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
                     new Error('INSTRUMENT_DECLINED'),
                 );
@@ -574,7 +575,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             try {
                 await strategy.execute(orderRequestBody, options);
-            } catch (error) {
+            } catch {
                 expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
                     new Error('INSTRUMENT_DECLINED'),
                 );
@@ -614,7 +615,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             try {
                 await strategy.execute(orderRequestBody, options);
-            } catch (error) {
+            } catch {
                 expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
                     new Error('INSTRUMENT_DECLINED'),
                 );
@@ -692,7 +693,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
                 try {
                     await strategy.execute(orderRequestBody, options);
-                } catch (error) {
+                } catch {
                     expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
                         new Error('INSTRUMENT_DECLINED'),
                     );
@@ -749,7 +750,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
                 try {
                     await strategy.execute(orderRequestBody, options);
-                } catch (error) {
+                } catch {
                     expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
                         new Error('INSTRUMENT_DECLINED'),
                     );
@@ -843,6 +844,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
                     getCart(),
                 );
+
                 const expected = {
                     ...orderRequestBody.payment,
                     paymentData: {

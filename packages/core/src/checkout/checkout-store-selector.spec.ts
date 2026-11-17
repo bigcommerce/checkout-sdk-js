@@ -321,10 +321,8 @@ describe('CheckoutStoreSelector', () => {
         const publicCheckout = selector.getCheckout();
         const privateCheckout = internalSelectors.checkout.getCheckout();
 
-        // tslint:disable-next-line:no-non-null-assertion
         publicCheckout!.customer.email = 'should@notchange.com';
 
-        // tslint:disable-next-line:no-non-null-assertion
         expect(privateCheckout!.customer.email).not.toBe('should@notchange.com');
     });
 

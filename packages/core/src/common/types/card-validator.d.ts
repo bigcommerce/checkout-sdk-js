@@ -29,7 +29,7 @@ declare module 'card-validator' {
     }
 
     interface CreditCardType {
-        types: { [type: string]: string };
+        types: Record<string, string>;
         (cardNumber: string): CreditCardTypeInfo[];
         getTypeInfo(type: string): CreditCardTypeInfo;
         updateCard(type: string, updates: Partial<CreditCardTypeInfo>): void;

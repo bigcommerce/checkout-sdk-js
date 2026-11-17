@@ -61,8 +61,8 @@ function isArrayEqual(objectA: any[], objectB: any[], options?: CompareOptions):
 }
 
 function isObjectEqual(
-    objectA: { [key: string]: any },
-    objectB: { [key: string]: any },
+    objectA: Record<string, any>,
+    objectB: Record<string, any>,
     options?: CompareOptions,
 ): boolean {
     const filter = options && options.keyFilter;

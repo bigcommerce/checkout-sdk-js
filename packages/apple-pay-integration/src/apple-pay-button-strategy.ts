@@ -192,6 +192,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 currencyCode,
                 supportedNetworks,
                 merchantCapabilities,
+                storeName,
             );
 
             if (this._requiresShipping) {
@@ -226,13 +227,14 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         currencyCode: string,
         supportedNetworks: string[],
         merchantCapabilities: ApplePayJS.ApplePayMerchantCapability[],
+        storeName: string,
     ): ApplePayJS.ApplePayPaymentRequest {
         return {
             countryCode,
             currencyCode,
             supportedNetworks,
             merchantCapabilities,
-            total: { label: '', amount: '0', type: 'pending' },
+            total: { label: storeName, amount: '0', type: 'pending' },
             requiredBillingContactFields: ['postalAddress'],
             requiredShippingContactFields: ['email', 'phone'],
         };
@@ -259,11 +261,13 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const total: ApplePayJS.ApplePayLineItem = requiresShipping
             ? {
                   label: storeName,
+                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                   amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                   type: 'pending',
               }
             : {
                   label: storeName,
+                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                   amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                   type: 'final',
               };
@@ -285,6 +289,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             const lineItems: ApplePayJS.ApplePayLineItem[] = [
                 {
                     label: this._subTotalLabel,
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                     amount: `${checkout.subtotal.toFixed(decimalPlaces)}`,
                 },
             ];
@@ -292,6 +297,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             checkout.taxes.forEach((tax) =>
                 lineItems.push({
                     label: tax.name,
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                     amount: `${tax.amount.toFixed(decimalPlaces)}`,
                 }),
             );
@@ -315,7 +321,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 );
 
                 applePaySession.completeMerchantValidation(merchantSession);
-            } catch (error) {
+            } catch {
                 throw new Error('Merchant validation failed');
             }
         };
@@ -346,7 +352,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 await this._requestSender.get(url);
 
                 return await this._paymentIntegrationService.loadCheckout();
-            } catch (error) {
+            } catch {
                 throw new PaymentMethodCancelledError();
             }
         };
@@ -375,7 +381,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             if (shouldExecuteSpamCheck) {
                 await this._paymentIntegrationService.verifyCheckoutSpamProtection();
             }
-        } catch (error) {
+        } catch {
             throw new BuyNowCartCreationError();
         }
     }
@@ -409,7 +415,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
-        } catch (error) {
+        } catch {
             applePaySession.abort();
 
             throw new Error('Shipping address update failed');
@@ -439,6 +445,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             ? [
                   {
                       label: selectedOption.description,
+                      // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                       amount: `${selectedOption.cost.toFixed(decimalPlaces)}`,
                       detail: selectedOption.additionalDescription,
                       identifier: selectedOption.id,
@@ -453,6 +460,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             ].forEach((option) =>
                 shippingOptions.push({
                     label: option.description,
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                     amount: `${option.cost.toFixed(decimalPlaces)}`,
                     detail: option.additionalDescription,
                     identifier: option.id,
@@ -471,6 +479,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 {
                     type: 'pending',
                     label: storeName,
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                     amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                 },
                 [],
@@ -486,7 +495,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             await this._updateShippingOption(selectedOptionId);
-        } catch (error) {
+        } catch {
             throw new Error('Shipping options update failed');
         }
 
@@ -498,6 +507,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             newTotal: {
                 type: 'final',
                 label: storeName,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
             },
             newLineItems: this._getUpdatedLineItems(checkout, decimalPlaces),
@@ -515,7 +525,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             await this._updateShippingOption(optionId);
-        } catch (error) {
+        } catch {
             applePaySession.abort();
 
             throw new Error('Shipping option selection update failed.');
@@ -531,6 +541,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             newTotal: {
                 type: 'final',
                 label: storeName,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
             },
             newLineItems: this._getUpdatedLineItems(checkout, decimalPlaces),
@@ -544,6 +555,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const lineItems: ApplePayJS.ApplePayLineItem[] = [
             {
                 label: this._subTotalLabel,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${checkout.subtotal.toFixed(decimalPlaces)}`,
             },
         ];
@@ -551,11 +563,13 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         checkout.taxes.forEach((tax) =>
             lineItems.push({
                 label: tax.name,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${tax.amount.toFixed(decimalPlaces)}`,
             }),
         );
         lineItems.push({
             label: this._shippingLabel,
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
             amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`,
         });
 
@@ -647,7 +661,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
             return this._onAuthorizeCallback();
-        } catch (error) {
+        } catch {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
             throw new Error('Payment cannot complete');
         }
@@ -677,7 +691,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             const { deviceData } = await this._braintreeSdk.getDataCollectorOrThrow();
 
             return deviceData;
-        } catch (_) {
+        } catch {
             // Don't throw an error to avoid breaking checkout flow
         }
     }

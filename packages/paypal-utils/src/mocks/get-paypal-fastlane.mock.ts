@@ -35,15 +35,11 @@ export default function getPayPalFastlane(): PayPalFastlane {
             lookupCustomerByEmail: jest.fn(),
             triggerAuthenticationFlow: jest.fn(),
         },
-        events: {
-            apmSelected: jest.fn(),
-            emailSubmitted: jest.fn(),
-            orderPlaced: jest.fn(),
-        },
         profile: {
             showCardSelector: jest.fn(),
             showShippingAddressSelector: jest.fn(),
         },
+        setLocale: jest.fn(),
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

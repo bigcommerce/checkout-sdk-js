@@ -3,8 +3,8 @@ import { InvalidArgumentError } from '../error/errors';
 import Factory from './factory';
 
 export default class Registry<T, K extends string = string> {
-    private _factories: { [key: string]: Factory<T> };
-    private _instances: { [key: string]: T };
+    private _factories: Record<string, Factory<T>>;
+    private _instances: Record<string, T>;
     private _defaultToken: string;
     private _useFallback: string | boolean;
     private _tokenResolver: (

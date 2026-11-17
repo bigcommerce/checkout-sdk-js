@@ -58,6 +58,8 @@ console.log(service.translate('new_key'));
 
 ##### maps
 
+`Record`\<`string`, `string`\>
+
 The set of language strings.
 
 #### Returns
@@ -93,7 +95,7 @@ The language key.
 
 ##### data?
 
-[`TranslationData`](../interfaces/TranslationData.md)
+[`TranslationData`](../type-aliases/TranslationData.md)
 
 Data for replacing placeholders in the language string.
 

@@ -72,6 +72,17 @@ export interface PayPalInitializationData {
     isServerSideShippingCallbacksEnabled?: boolean;
 }
 
+export interface PayPalGooglePayInitializationData {
+    attributionId?: string;
+    buyerCountry?: string;
+    clientId: string;
+    clientToken?: string;
+    intent?: string;
+    isDeveloperModeApplicable?: boolean;
+    isHostedCheckoutEnabled?: boolean;
+    merchantId?: string;
+}
+
 /**
  *
  * PayPalHostWindow contains different
@@ -86,6 +97,7 @@ export interface PayPalHostWindow extends Window {
     [PayPalSdkNamespace.PayPalMessages]?: PayPalMessagesSdk;
     [PayPalSdkNamespace.PayPalApms]?: PayPalApmSdk;
     [PayPalSdkNamespace.PayPalGooglePay]?: PayPalGooglePaySdk;
+    [PayPalSdkNamespace.BigCommercePaymentsGooglePay]?: PayPalGooglePaySdk;
 }
 
 /**
@@ -102,7 +114,7 @@ export interface PayPalSdkConfig {
         'disable-funding'?: FundingType;
         currency?: string;
         commit?: boolean;
-        intent?: PayPalIntent;
+        intent?: string;
         components?: PayPalSdkComponents;
         locale?: string;
     };
@@ -323,10 +335,10 @@ export interface PayPalHostedFieldsRenderOptions {
     };
     paymentsSDK?: boolean;
     styles?: {
-        input?: { [key: string]: string };
-        '.invalid'?: { [key: string]: string };
-        '.valid'?: { [key: string]: string };
-        ':focus'?: { [key: string]: string };
+        input?: Record<string, string>;
+        '.invalid'?: Record<string, string>;
+        '.valid'?: Record<string, string>;
+        ':focus'?: Record<string, string>;
     };
     createOrder(): Promise<string>;
 }
@@ -680,9 +692,7 @@ export interface PayPalFieldsStyleOptions {
         borderFocusColor?: string;
         spacingUnit?: string;
     };
-    rules?: {
-        [key: string]: any;
-    };
+    rules?: Record<string, any>;
 }
 
 /**
@@ -729,8 +739,8 @@ export interface PayPalBNPLConfigurationItem {
  */
 export interface PayPalFastlane {
     identity: PayPalFastlaneIdentity;
-    events: PayPalFastlaneEvents;
     profile: PayPalFastlaneProfile;
+    setLocale(locale: string): void;
     FastlaneCardComponent(
         options: PayPalFastlaneCardComponentOptions,
     ): Promise<PayPalFastlaneCardComponentMethods>;
@@ -895,42 +905,6 @@ export interface PayPalFastlaneCardComponentFields {
         placeholder?: string;
         prefill?: string;
     };
-}
-
-export interface PayPalFastlaneEvents {
-    apmSelected: (options: PayPalFastlaneApmSelectedEventOptions) => void;
-    emailSubmitted: (options: PayPalFastlaneEmailEnteredEventOptions) => void;
-    orderPlaced: (options: PayPalFastlaneOrderPlacedEventOptions) => void;
-}
-
-export interface PayPalFastlaneEventCommonOptions {
-    context_type: 'cs_id';
-    context_id: string; // checkout session id
-    page_type: 'checkout_page';
-    page_name: string; // title of the checkout initiation page
-    partner_name: 'bigc';
-    user_type: 'store_member' | 'store_guest'; // type of the user on the merchant site
-    store_id: string;
-    merchant_name: string;
-    experiment: string; // stringify JSON object "[{ treatment_group: 'test' | 'control' }]"
-}
-
-export interface PayPalFastlaneApmSelectedEventOptions extends PayPalFastlaneEventCommonOptions {
-    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
-    apm_list: string; // list of alternate payment shown on checkout page
-    apm_selected: string; // alternate payment method selected / methodId
-    apm_location: 'pre-email section' | 'payment section'; // placement of APM, whether it be above the email entry or in the radio buttons
-}
-
-export interface PayPalFastlaneEmailEnteredEventOptions extends PayPalFastlaneEventCommonOptions {
-    user_email_saved: boolean; // shows whether checkout was loaded with or without a saved email
-    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
-    apm_list: string; // list of alternate payment shown on checkout page 'applepay,googlepay,paypal'
-}
-
-export interface PayPalFastlaneOrderPlacedEventOptions extends PayPalFastlaneEventCommonOptions {
-    selected_payment_method: string;
-    currency_code: string;
 }
 
 export interface PayPalFastlanePaymentFormattedPayload {

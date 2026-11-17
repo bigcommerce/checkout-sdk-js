@@ -1,14 +1,17 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import BillingAddressRequestSender from './billing/billing-address-request-sender';
+import { CheckoutHandoffMethod } from './checkout/checkout';
 import { CheckoutRequestSender } from './checkout/checkout-request-sender';
 import { PaymentRequestSender } from './payment/payment-request-sender';
+import ShippingAddressRequestSender from './shipping/shipping-address-request-sender';
 import WalletButtonIntegrationService from './wallet-button-integration-service';
 
 describe('WalletButtonIntegrationService', () => {
     let requestSender: RequestSender;
     let paymentRequestSender: PaymentRequestSender;
     let billingAddressRequestSender: BillingAddressRequestSender;
+    let shippingAddressRequestSender: ShippingAddressRequestSender;
     let checkoutRequestSender: CheckoutRequestSender;
     let walletButtonIntegrationService: WalletButtonIntegrationService;
 
@@ -18,11 +21,13 @@ describe('WalletButtonIntegrationService', () => {
         requestSender = createRequestSender();
         paymentRequestSender = new PaymentRequestSender(requestSender);
         billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
+        shippingAddressRequestSender = new ShippingAddressRequestSender(requestSender);
         checkoutRequestSender = new CheckoutRequestSender(requestSender);
 
         walletButtonIntegrationService = new WalletButtonIntegrationService(
             graphQLEndpoint,
             billingAddressRequestSender,
+            shippingAddressRequestSender,
             paymentRequestSender,
             checkoutRequestSender,
         );
@@ -168,6 +173,76 @@ describe('WalletButtonIntegrationService', () => {
         });
     });
 
+    describe('#updateShippingAddress()', () => {
+        it('passes supplied line items to ShippingAddressRequestSender', async () => {
+            const checkoutId = 'checkout-id-123';
+            const address = {
+                firstName: 'John',
+                lastName: 'Doe',
+                company: '',
+                address1: '123 Main St',
+                address2: '',
+                city: 'Austin',
+                email: 'john@example.com',
+                stateOrProvince: 'Texas',
+                stateOrProvinceCode: 'TX',
+                countryCode: 'US',
+                postalCode: '78701',
+                phone: '555-555-5555',
+                shouldSaveAddress: false,
+            };
+            const options = {
+                lineItems: [{ entityId: 'line-item-1', quantity: 2 }],
+            };
+
+            jest.spyOn(shippingAddressRequestSender, 'updateShippingAddress').mockResolvedValue();
+
+            await walletButtonIntegrationService.updateShippingAddress(
+                checkoutId,
+                address,
+                options,
+            );
+
+            expect(shippingAddressRequestSender.updateShippingAddress).toHaveBeenCalledWith(
+                graphQLEndpoint,
+                checkoutId,
+                address,
+                options,
+            );
+        });
+    });
+
+    describe('#selectShippingOption()', () => {
+        it('passes checkout and shipping option identifiers to ShippingAddressRequestSender', async () => {
+            const result = {
+                consignmentEntityId: 'consignment-1',
+                availableShippingOptions: [],
+                selectedShippingOptionEntityId: 'option-1',
+                currencyCode: 'USD',
+                totalPrice: '12.50',
+            };
+            const selectShippingOption = jest
+                .spyOn(shippingAddressRequestSender, 'selectShippingOption')
+                .mockResolvedValue(result);
+
+            await expect(
+                walletButtonIntegrationService.selectShippingOption(
+                    'checkout-id-123',
+                    'consignment-1',
+                    'option-1',
+                ),
+            ).resolves.toBe(result);
+
+            expect(selectShippingOption).toHaveBeenCalledWith(
+                graphQLEndpoint,
+                'checkout-id-123',
+                'consignment-1',
+                'option-1',
+                undefined,
+            );
+        });
+    });
+
     describe('#getRedirectToCheckoutUrl()', () => {
         const inputData = {
             paymentWalletData: {
@@ -220,6 +295,40 @@ describe('WalletButtonIntegrationService', () => {
                 customOptions,
             );
             expect(result).toEqual(expectedResponse);
+        });
+
+        it('requests checkout handoff from CheckoutRequestSender', async () => {
+            const customOptions = { headers: { Authorization: 'Bearer token-xyz' } };
+
+            const expectedHandoffResponse = {
+                ...expectedResponse,
+                body: {
+                    redirectUrls: {
+                        externalCheckoutUrl: 'https://store.example.com/checkout',
+                        externalCheckoutHandoff: {
+                            url: 'https://store.example.com/checkout',
+                            method: CheckoutHandoffMethod.Redirect,
+                            fields: [],
+                        },
+                    },
+                },
+            };
+
+            jest.spyOn(checkoutRequestSender, 'getRedirectToCheckoutHandoff').mockResolvedValue(
+                expectedHandoffResponse,
+            );
+
+            const result = await walletButtonIntegrationService.getRedirectToCheckoutHandoff(
+                inputData,
+                customOptions,
+            );
+
+            expect(checkoutRequestSender.getRedirectToCheckoutHandoff).toHaveBeenCalledWith(
+                graphQLEndpoint,
+                inputData,
+                customOptions,
+            );
+            expect(result).toEqual(expectedHandoffResponse);
         });
     });
 });

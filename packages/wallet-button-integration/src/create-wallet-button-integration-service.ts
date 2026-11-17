@@ -3,6 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import BillingAddressRequestSender from './billing/billing-address-request-sender';
 import { CheckoutRequestSender } from './checkout/checkout-request-sender';
 import { PaymentRequestSender } from './payment/payment-request-sender';
+import ShippingAddressRequestSender from './shipping/shipping-address-request-sender';
 import WalletButtonIntegrationService from './wallet-button-integration-service';
 
 const createWalletButtonIntegrationService = (
@@ -13,6 +14,7 @@ const createWalletButtonIntegrationService = (
     return new WalletButtonIntegrationService(
         graphQLEndpoint,
         new BillingAddressRequestSender(requestSender),
+        new ShippingAddressRequestSender(requestSender),
         new PaymentRequestSender(requestSender),
         new CheckoutRequestSender(requestSender),
     );

@@ -4,13 +4,9 @@ import {
     BuyNowCartRequestBody,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalCommerceIntent } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import { FundingType } from './google-pay-paypal-commerce/types';
-
-export enum PayPalCommerceIntent {
-    AUTHORIZE = 'authorize',
-    CAPTURE = 'capture',
-}
 
 export enum StyleButtonLabel {
     paypal = 'paypal',
@@ -214,6 +210,7 @@ export interface HandleCouponsOut {
 export interface GoogleShippingOption {
     id: string;
     label?: string;
+    description?: string;
 }
 
 export enum CallbackTriggerType {
@@ -240,10 +237,11 @@ export interface GooglePayPaymentOptions {
     };
 }
 
-export type onPaymentDataChangedOut = Promise<
-    | (NewTransactionInfo & NewShippingOptionParameters & NewOfferInfo & { error?: GooglePayError })
-    | void
->;
+export type GooglePayPaymentDataChangedResponse = NewTransactionInfo &
+    NewShippingOptionParameters &
+    NewOfferInfo & { error?: GooglePayError };
+
+export type onPaymentDataChangedOut = Promise<GooglePayPaymentDataChangedResponse | void>;
 
 export type GooglePayRequiredPaymentData = Pick<
     GooglePayPaymentDataRequest,
@@ -344,6 +342,7 @@ interface GooglePayBaseInitializationData {
     nonce?: string;
     platformToken: string;
     storeCountry?: string;
+    buyerCountry?: string;
     isWebViewExperimentOn?: boolean;
 }
 

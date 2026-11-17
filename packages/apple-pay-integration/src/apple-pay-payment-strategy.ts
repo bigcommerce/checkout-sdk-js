@@ -3,6 +3,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { BraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
+    isHostedInstrumentLike,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -87,9 +88,11 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const { methodId } = payment;
+        const { methodId, paymentData } = payment;
 
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        const shouldSaveInstrument =
+            isHostedInstrumentLike(paymentData) && !!paymentData.shouldSaveInstrument;
 
         const request = this._getBaseRequest(state, paymentMethod);
         const applePaySession = this._sessionFactory.create(request);
@@ -104,10 +107,15 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         applePaySession.begin();
 
         return new Promise((resolve, reject) => {
-            this._handleApplePayEvents(applePaySession, paymentMethod, {
-                resolve,
-                reject,
-            });
+            this._handleApplePayEvents(
+                applePaySession,
+                paymentMethod,
+                {
+                    resolve,
+                    reject,
+                },
+                shouldSaveInstrument,
+            );
         });
     }
 
@@ -142,6 +150,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         const lineItems: ApplePayJS.ApplePayLineItem[] = [
             {
                 label: this._subTotalLabel,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${checkout.subtotal.toFixed(decimalPlaces)}`,
             },
         ];
@@ -149,12 +158,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         checkout.taxes.forEach((tax) =>
             lineItems.push({
                 label: tax.name,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${tax.amount.toFixed(decimalPlaces)}`,
             }),
         );
 
         lineItems.push({
             label: this._shippingLabel,
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
             amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`,
         });
 
@@ -175,6 +186,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             lineItems,
             total: {
                 label: storeName,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 amount: `${outstandingBalance.toFixed(decimalPlaces)}`,
                 type: 'final',
             },
@@ -185,6 +197,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         applePaySession: ApplePaySession,
         paymentMethod: PaymentMethod,
         promise: ApplePayPromise,
+        shouldSaveInstrument: boolean,
     ) {
         applePaySession.onvalidatemerchant = async (event) => {
             try {
@@ -194,7 +207,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 );
 
                 applePaySession.completeMerchantValidation(merchantSession);
-            } catch (err) {
+            } catch {
                 throw new Error('Merchant validation failed');
             }
         };
@@ -203,7 +216,13 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             promise.reject(new PaymentMethodCancelledError('Continue with applepay'));
 
         applePaySession.onpaymentauthorized = (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) =>
-            this._onPaymentAuthorized(event, applePaySession, paymentMethod, promise);
+            this._onPaymentAuthorized(
+                event,
+                applePaySession,
+                paymentMethod,
+                promise,
+                shouldSaveInstrument,
+            );
     }
 
     private async _onValidateMerchant(
@@ -236,6 +255,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         applePaySession: ApplePaySession,
         paymentMethod: PaymentMethod,
         promise: ApplePayPromise,
+        shouldSaveInstrument: boolean,
     ) {
         const { token } = event.payment;
 
@@ -255,6 +275,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                         payment_method: token.paymentMethod,
                         transaction_id: token.transactionIdentifier,
                     },
+                    ...(shouldSaveInstrument ? { vault_payment_instrument: true } : {}),
                 },
             },
         };
@@ -264,7 +285,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
             return promise.resolve();
-        } catch (error) {
+        } catch {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
             return promise.reject(
@@ -278,7 +299,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             const { deviceData } = await this._braintreeSdk.getDataCollectorOrThrow();
 
             return deviceData;
-        } catch (_) {
+        } catch {
             // Don't throw an error to avoid breaking checkout flow
         }
     }

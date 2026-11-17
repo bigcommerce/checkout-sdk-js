@@ -191,6 +191,7 @@ export default class BraintreeIntegrationService {
                 components: PAYPAL_COMPONENTS.toString(),
                 intent: config.intent,
                 commit: config.commit ?? true,
+                ...(config.locale && { locale: config.locale }),
             };
 
             if (!this.braintreeHostWindow.paypal) {
@@ -504,8 +505,7 @@ export default class BraintreeIntegrationService {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { challengeRequested = true, additionalInformation = undefined } =
-            this.threeDSecureOptions || {};
+        const { challengeRequested = true, additionalInformation } = this.threeDSecureOptions || {};
 
         const roundedAmount = amount.toFixed(2);
 

@@ -57,7 +57,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
 
         try {
             paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
-        } catch (_e) {
+        } catch {
             state = await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
             paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
         }
@@ -146,10 +146,11 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                         );
                     }
 
-                    const { newOfferInfo = undefined, error: couponsError = undefined } =
-                        offerChangeTriggers.includes(callbackTrigger)
-                            ? await this._googlePayPaymentProcessor.handleCoupons(offerData)
-                            : {};
+                    const { newOfferInfo, error: couponsError } = offerChangeTriggers.includes(
+                        callbackTrigger,
+                    )
+                        ? await this._googlePayPaymentProcessor.handleCoupons(offerData)
+                        : {};
 
                     // We can add another errors if needed 'couponsError || shippingError || anotherError'
                     const error: GooglePayError | undefined = couponsError;

@@ -167,8 +167,8 @@ function isDefaultOrderPayment(payment: OrderPayment): payment is GatewayOrderPa
 
 function mapToInternalSocialDataList(
     order: Order,
-): { [itemId: string]: InternalSocialDataList } | undefined {
-    const socialDataObject: { [itemId: string]: InternalSocialDataList } = {};
+): Record<string, InternalSocialDataList> | undefined {
+    const socialDataObject: Record<string, InternalSocialDataList> = {};
     const items = [...order.lineItems.physicalItems, ...order.lineItems.digitalItems];
 
     items.forEach((item) => {

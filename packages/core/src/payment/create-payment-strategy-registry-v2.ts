@@ -8,9 +8,7 @@ import {
 
 import { ResolveIdRegistry } from '../common/registry';
 
-export interface PaymentStrategyFactories {
-    [key: string]: PaymentStrategyFactory<PaymentStrategy>;
-}
+export type PaymentStrategyFactories = Record<string, PaymentStrategyFactory<PaymentStrategy>>;
 
 export default function createPaymentStrategyRegistry(
     paymentIntegrationService: PaymentIntegrationService,

@@ -100,7 +100,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             );
 
             return buyNowCart;
-        } catch (error) {
+        } catch {
             throw new BuyNowCartCreationError();
         }
     }
@@ -118,7 +118,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
                 publicKeyId: public_key,
                 ...rest,
             };
-        } catch (error) {
+        } catch {
             throw new AmazonPayV2ConfigCreationError();
         }
     }

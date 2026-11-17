@@ -16,7 +16,7 @@
 
 ### errors?
 
-> `optional` **errors?**: [`CardStateErrors`](CardStateErrors.md)
+> `optional` **errors?**: [`CardStateErrors`](../type-aliases/CardStateErrors.md)
 
 ***
 
@@ -28,8 +28,4 @@
 
 ### valid?
 
-> `optional` **valid?**: `object`
-
-#### Index Signature
-
-\[`key`: `string`\]: `boolean`
+> `optional` **valid?**: `Record`\<`string`, `boolean`\>

@@ -1,6 +1,6 @@
 export default interface PaymentResponse<T = any> {
     data: T;
-    headers: { [key: string]: any };
+    headers: Record<string, any>;
     status: number;
     statusText: string;
 }

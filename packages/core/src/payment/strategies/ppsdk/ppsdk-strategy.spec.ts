@@ -7,7 +7,7 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { BrowserStorage } from '../../../common/storage';
 import { HostedFormFactory } from '../../../hosted-form';
-import { OrderActionCreator, OrderRequestSender } from '../../../order';
+import { OrderActionCreator, OrderCreatedNotifier, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrder } from '../../../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
@@ -38,6 +38,7 @@ describe('PPSDKStrategy', () => {
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+            new OrderCreatedNotifier(),
         );
         hostedFormFactory = new HostedFormFactory(store);
         subStrategyRegistry = createSubStrategyRegistry(

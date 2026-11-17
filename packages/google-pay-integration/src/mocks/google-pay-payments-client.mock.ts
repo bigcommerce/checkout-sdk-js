@@ -1,3 +1,5 @@
+import { GooglePayPaymentDataRequest } from '../types';
+
 import getCardDataResponse from './google-pay-card-data-response.mock';
 
 export default function getGooglePaymentsClientMocks() {
@@ -6,7 +8,11 @@ export default function getGooglePaymentsClientMocks() {
     const paymentsClient = {
         isReadyToPay: jest.fn(() => Promise.resolve({ result: true })),
         createButton: jest.fn(() => button),
-        loadPaymentData: jest.fn(() => Promise.resolve(cardDataResponse)),
+        loadPaymentData: jest.fn((request: GooglePayPaymentDataRequest) => {
+            void request;
+
+            return Promise.resolve(cardDataResponse);
+        }),
         prefetchPaymentData: jest.fn(),
     };
 

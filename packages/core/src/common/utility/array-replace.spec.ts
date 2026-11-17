@@ -42,7 +42,6 @@ describe('arrayReplace()', () => {
         const result = arrayReplace(currentArray, newArray);
 
         expect(result).toEqual([{ id: 3 }, { id: 2, items: [{ id: 'a' }, { id: 'c' }] }]);
-        // tslint:disable-next-line:no-non-null-assertion
         expect(result[1].items![0]).toBe(currentArray[1].items![0]);
     });
 

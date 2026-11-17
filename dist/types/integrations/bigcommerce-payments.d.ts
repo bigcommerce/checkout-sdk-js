@@ -27,6 +27,7 @@ import { PaypalCommerceWalletService } from '@bigcommerce/checkout-sdk/paypal-ut
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { PayPalSdkHelper } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import { PayPalSdkScriptLoader } from '@bigcommerce/checkout-sdk/paypal-utils';
 import { RequestOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { ResolvableModule } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -475,8 +476,6 @@ declare interface BigCommercePaymentsCreditCardsPaymentInitializeOptions {
 declare class BigCommercePaymentsCreditCardsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private bigCommercePaymentsIntegrationService;
-    private bigCommercePaymentsSdk;
-    private bigCommercePaymentsFastlaneUtils;
     private executionPaymentData?;
     private isCreditCardForm?;
     private isCreditCardVaultedForm?;
@@ -488,7 +487,7 @@ declare class BigCommercePaymentsCreditCardsPaymentStrategy implements PaymentSt
     private hostedFormOptions?;
     private returnedOrderId?;
     private returnedVaultedToken?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService, bigCommercePaymentsSdk: PayPalSdkHelper, bigCommercePaymentsFastlaneUtils: BigCommercePaymentsFastlaneUtils);
+    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService);
     initialize(options: PaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
@@ -583,13 +582,6 @@ declare class BigCommercePaymentsCreditCardsPaymentStrategy implements PaymentSt
     private onFocusHandler;
     private onBlurHandler;
     private onInputSubmitRequest;
-    /**
-     *
-     * BigCommercePayments Accelerated checkout related methods
-     *
-     */
-    private shouldInitializePayPalFastlane;
-    private initializePayPalFastlaneOrThrow;
 }
 
 /**
@@ -883,9 +875,7 @@ declare interface BigCommercePaymentsFieldsStyleOptions {
         borderFocusColor?: string;
         spacingUnit?: string;
     };
-    rules?: {
-        [key: string]: any;
-    };
+    rules?: Record<string, any>;
 }
 
 declare interface BigCommercePaymentsHostedFieldOption {
@@ -934,18 +924,10 @@ declare interface BigCommercePaymentsHostedFieldsRenderOptions {
     };
     paymentsSDK?: boolean;
     styles?: {
-        input?: {
-            [key: string]: string;
-        };
-        '.invalid'?: {
-            [key: string]: string;
-        };
-        '.valid'?: {
-            [key: string]: string;
-        };
-        ':focus'?: {
-            [key: string]: string;
-        };
+        input?: Record<string, string>;
+        '.invalid'?: Record<string, string>;
+        '.valid'?: Record<string, string>;
+        ':focus'?: Record<string, string>;
     };
     createOrder(): Promise<string>;
 }
@@ -1003,13 +985,16 @@ declare class BigCommercePaymentsIntegrationService {
     private bigCommercePaymentsRequestSender;
     private bigCommercePaymentsScriptLoader;
     private paypalSdk?;
+    private clientMetadataId?;
     constructor(formPoster: FormPoster, paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsRequestSender: BigCommercePaymentsRequestSender, bigCommercePaymentsScriptLoader: BigCommercePaymentsScriptLoader);
     /**
      *
      * PayPalSDK methods
      *
      */
-    loadPayPalSdk(methodId: string, providedCurrencyCode?: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean): Promise<PayPalSDK | undefined>;
+    loadPayPalSdk(methodId: string, providedCurrencyCode?: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean, { withClientMetadataId }?: {
+        withClientMetadataId?: boolean;
+    }): Promise<PayPalSDK | undefined>;
     getPayPalSdkOrThrow(): PayPalSDK;
     /**
      *
@@ -1252,13 +1237,13 @@ declare interface BigCommercePaymentsPayLaterPaymentInitializeOptions {
 
 declare class BigCommercePaymentsPayLaterPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
-    private bigCommercePaymentsIntegrationService;
+    private paypalIntegrationService;
     private loadingIndicator;
-    private paypalSdkHelper;
+    private paypalSdkScriptLoader;
     private loadingIndicatorContainer?;
     private orderId?;
     private bigCommercePaymentsButtons?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService, loadingIndicator: LoadingIndicator, paypalSdkHelper: PayPalSdkHelper);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, loadingIndicator: LoadingIndicator, paypalSdkScriptLoader: PayPalSdkScriptLoader);
     initialize(options?: PaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
@@ -1422,13 +1407,13 @@ declare interface BigCommercePaymentsPaymentInitializeOptions {
 declare class BigCommercePaymentsPaymentStrategy implements PaymentStrategy {
     private paymentIntegrationService;
     private paypalIntegrationService;
-    private paypalSdkHelper;
+    private paypalSdkScriptLoader;
     private loadingIndicator;
     private loadingIndicatorContainer?;
     private orderId?;
     private paypalButton?;
     private bigcommerce_payments?;
-    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalSdkHelper: PayPalSdkHelper, loadingIndicator: LoadingIndicator);
+    constructor(paymentIntegrationService: PaymentIntegrationService, paypalIntegrationService: PayPalIntegrationService, paypalSdkScriptLoader: PayPalSdkScriptLoader, loadingIndicator: LoadingIndicator);
     initialize(options?: PaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions): Promise<void>;
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void>;
     finalize(): Promise<void>;
@@ -1600,9 +1585,11 @@ declare class BigCommercePaymentsRequestSender {
 
 declare class BigCommercePaymentsScriptLoader {
     private scriptLoader;
+    private static clientMetadataIds;
     private window;
     constructor(scriptLoader: ScriptLoader);
-    getPayPalSDK(paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>, currencyCode: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean): Promise<PayPalSDK>;
+    getPayPalSDK(paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>, currencyCode: string, initializesOnCheckoutPage?: boolean, forceLoad?: boolean, clientMetadataId?: string): Promise<PayPalSDK>;
+    getClientMetadataId(paypalSdk: PayPalSDK): string | undefined;
     private loadPayPalSDK;
     private getPayPalSdkScriptConfigOrThrow;
     private filterFundingOptions;

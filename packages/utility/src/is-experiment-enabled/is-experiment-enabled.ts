@@ -1,6 +1,4 @@
-export interface Features {
-    [featureName: string]: boolean | undefined;
-}
+export type Features = Record<string, boolean | undefined>;
 
 export default function isExperimentEnabled(
     features: Features,

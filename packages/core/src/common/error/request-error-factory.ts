@@ -16,7 +16,7 @@ import {
 } from './errors';
 
 export default class RequestErrorFactory {
-    private _factoryMethods: { [key: string]: ErrorFactoryMethod } = {};
+    private _factoryMethods: Record<string, ErrorFactoryMethod> = {};
 
     constructor() {
         this.register('default', (response, message) => new RequestError(response, { message }));

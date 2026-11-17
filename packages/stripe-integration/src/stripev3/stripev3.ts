@@ -908,9 +908,7 @@ export interface StripeAdditionalAction {
     data: StripeAdditionalActionData;
 }
 
-export interface StripeCardElements {
-    [index: number]: StripeElement;
-}
+export type StripeCardElements = Record<number, StripeElement>;
 
 export interface IndividualCardElementOptions {
     cardCvcElementOptions: CardCvcElementOptions;

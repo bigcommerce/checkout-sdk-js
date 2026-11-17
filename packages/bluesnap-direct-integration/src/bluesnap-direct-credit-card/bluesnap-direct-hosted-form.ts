@@ -44,9 +44,15 @@ import isHostedStoredCardFieldOptionsMap from '../utils/is-hosted-stored-card-fi
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
 import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
 
+interface AttachSession {
+    isDetached: boolean;
+    containers: HTMLElement[];
+}
+
 export default class BlueSnapDirectHostedForm {
     private _blueSnapSdk?: BlueSnapDirectSdk;
     private _onValidate: HostedFormOptions['onValidate'];
+    private _session?: AttachSession;
 
     constructor(
         private _nameOnCardInput: BluesnapDirectNameOnCardInput,
@@ -86,12 +92,16 @@ export default class BlueSnapDirectHostedForm {
 
         this._onValidate = callbacksAndStyles.onValidate;
 
+        const session: AttachSession = { isDetached: false, containers: [] };
+
+        this._session = session;
+
         if (isHostedCardFieldOptionsMap(fields)) {
-            this._setCustomBlueSnapAttributes(fields);
+            this._setCustomBlueSnapAttributes(fields, session);
         }
 
         if (isHostedStoredCardFieldOptionsMap(fields)) {
-            this._setCustomStoredCardsBlueSnapAttributes(fields);
+            this._setCustomStoredCardsBlueSnapAttributes(fields, session);
         }
 
         return new Promise<void>((resolve) => {
@@ -101,6 +111,7 @@ export default class BlueSnapDirectHostedForm {
                 callbacksAndStyles,
                 resolve,
                 enable3DS,
+                session,
             );
 
             blueSnapSdk.hostedPaymentFieldsCreate(options);
@@ -164,6 +175,10 @@ export default class BlueSnapDirectHostedForm {
     }
 
     detach(): void {
+        if (this._session) {
+            this._session.isDetached = true;
+        }
+
         this._nameOnCardInput.detach();
     }
 
@@ -184,6 +199,7 @@ export default class BlueSnapDirectHostedForm {
         }: Omit<HostedFormOptions, 'fields'>,
         resolve: () => void,
         enable3DS: boolean,
+        session: AttachSession,
     ): HostedPaymentFieldsOptions {
         return {
             token,
@@ -191,7 +207,7 @@ export default class BlueSnapDirectHostedForm {
                 setupComplete: () => resolve(),
                 onFocus: this._usetUiEventCallback(onFocus),
                 onBlur: this._usetUiEventCallback(onBlur),
-                onError: this._handleError(onValidate),
+                onError: this._handleError(onValidate, resolve, session),
                 onType: (_tagId: HostedFieldTagId, cardType: CardTypeValues) =>
                     onCardTypeChange?.({ cardType: CardType[cardType] }),
                 onEnter: this._usetUiEventCallback(onEnter),
@@ -233,6 +249,8 @@ export default class BlueSnapDirectHostedForm {
 
     private _handleError(
         onValidate: HostedFormOptions['onValidate'],
+        resolve: () => void,
+        session: AttachSession,
     ): (
         tagId: HostedFieldTagId | undefined,
         errorCode: ErrorCode,
@@ -240,6 +258,10 @@ export default class BlueSnapDirectHostedForm {
         eventOrigin: EventOrigin | undefined,
     ) => void {
         return (tagId, errorCode, errorDescription, eventOrigin) => {
+            if (this._isFormTornDown(session)) {
+                return resolve();
+            }
+
             if (errorCode === ErrorCode.INVALID_OR_EMPTY) {
                 if (tagId && isValidationErrorDescription(errorDescription)) {
                     return onValidate?.(
@@ -271,6 +293,10 @@ export default class BlueSnapDirectHostedForm {
         };
     }
 
+    private _isFormTornDown({ isDetached, containers }: AttachSession): boolean {
+        return isDetached || containers.some(({ isConnected }) => !isConnected);
+    }
+
     private _getBlueSnapSdk(): BlueSnapDirectSdk {
         return guard(
             this._blueSnapSdk,
@@ -278,7 +304,10 @@ export default class BlueSnapDirectHostedForm {
         );
     }
 
-    private _setCustomBlueSnapAttributes(fields: HostedCardFieldOptionsMap): void {
+    private _setCustomBlueSnapAttributes(
+        fields: HostedCardFieldOptionsMap,
+        session: AttachSession,
+    ): void {
         const { cardNumber, cardExpiry, cardCode, cardName } = fields;
 
         const cardNumberContainer = document.getElementById(cardNumber.containerId);
@@ -301,9 +330,19 @@ export default class BlueSnapDirectHostedForm {
         cardExpiryContainer.dataset.bluesnap = HostedFieldTagId.CardExpiry;
         cardCodeContainer.dataset.bluesnap = HostedFieldTagId.CardCode;
         cardNameContainer.dataset.bluesnap = HostedFieldTagId.CardName;
+
+        session.containers = [
+            cardNumberContainer,
+            cardExpiryContainer,
+            cardCodeContainer,
+            cardNameContainer,
+        ];
     }
 
-    private _setCustomStoredCardsBlueSnapAttributes(fields: HostedStoredCardFieldOptionsMap): void {
+    private _setCustomStoredCardsBlueSnapAttributes(
+        fields: HostedStoredCardFieldOptionsMap,
+        session: AttachSession,
+    ): void {
         const { cardNumberVerification, cardCodeVerification } = fields;
 
         const cardNumberContainer =
@@ -317,10 +356,12 @@ export default class BlueSnapDirectHostedForm {
 
         if (cardNumberContainer) {
             cardNumberContainer.dataset.bluesnap = HostedFieldTagId.CardNumber;
+            session.containers.push(cardNumberContainer);
         }
 
         if (cardCodeContainer) {
             cardCodeContainer.dataset.bluesnap = HostedFieldTagId.CardCode;
+            session.containers.push(cardCodeContainer);
         }
     }
 }

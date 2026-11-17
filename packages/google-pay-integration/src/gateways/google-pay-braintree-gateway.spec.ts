@@ -49,7 +49,7 @@ describe('GooglePayBraintreeGateway', () => {
         jest.spyOn(GooglePayGateway.prototype, 'getNonce').mockResolvedValueOnce('token');
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        braintreeHostWindowMock = window as BraintreeHostWindow;
+        braintreeHostWindowMock = window;
         braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
         braintreeScriptLoader = new BraintreeScriptLoader(
             getScriptLoader(),

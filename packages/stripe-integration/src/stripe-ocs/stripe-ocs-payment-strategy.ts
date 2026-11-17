@@ -371,7 +371,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
-        } catch (error) {
+        } catch {
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         }
     }

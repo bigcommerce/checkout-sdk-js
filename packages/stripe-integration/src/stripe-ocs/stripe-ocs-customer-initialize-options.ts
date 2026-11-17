@@ -19,6 +19,8 @@ export default interface StripeOCSCustomerInitializeOptions {
 
     loadingContainerId?: string;
 
+    onReady?: () => void;
+
     /**
      * @param shippingOptions - The available shipping options.
      * @returns The filtered shipping options.

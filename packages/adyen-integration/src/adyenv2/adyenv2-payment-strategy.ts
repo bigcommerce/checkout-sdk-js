@@ -362,7 +362,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
                 try {
                     cardVerificationComponent.mount(`#${adyenv2.cardVerificationContainerId}`);
-                } catch (error) {
+                } catch {
                     reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
                 }
             }
@@ -394,7 +394,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
                     try {
                         paymentComponent.mount(`#${adyenv2.containerId}`);
-                    } catch (error) {
+                    } catch {
                         reject(
                             new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
                         );
@@ -414,7 +414,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
                         try {
                             paymentComponent.mount(`#${adyenv2.containerId}`);
-                        } catch (error) {
+                        } catch {
                             reject(
                                 new NotInitializedError(
                                     NotInitializedErrorType.PaymentNotInitialized,

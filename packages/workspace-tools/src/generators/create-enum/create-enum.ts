@@ -123,7 +123,7 @@ async function toRootPath(filePath: string, referencePath: string): Promise<stri
         return (await lstat(resolvedPath)).isDirectory()
             ? path.join(resolvedPath, 'index.ts')
             : `${resolvedPath}.ts`;
-    } catch (error) {
+    } catch {
         return `${resolvedPath}.ts`;
     }
 }

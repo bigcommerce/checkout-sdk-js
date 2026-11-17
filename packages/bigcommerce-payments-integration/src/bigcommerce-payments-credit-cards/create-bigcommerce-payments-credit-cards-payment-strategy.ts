@@ -1,8 +1,4 @@
 import {
-    createBigCommercePaymentsFastlaneUtils,
-    createBigCommercePaymentsSdk,
-} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
-import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -17,8 +13,6 @@ const createBigCommercePaymentsCreditCardsPaymentStrategy: PaymentStrategyFactor
     new BigCommercePaymentsCreditCardsPaymentStrategy(
         paymentIntegrationService,
         createBigCommercePaymentsIntegrationService(paymentIntegrationService),
-        createBigCommercePaymentsSdk(),
-        createBigCommercePaymentsFastlaneUtils(),
     );
 
 export default toResolvableModule(createBigCommercePaymentsCreditCardsPaymentStrategy, [

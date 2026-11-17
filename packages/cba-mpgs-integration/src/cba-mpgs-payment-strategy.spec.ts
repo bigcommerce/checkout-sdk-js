@@ -173,7 +173,7 @@ describe('CBAMPGSPaymentStrategy', () => {
         });
 
         it('should fail if payment data missing', async () => {
-            payload.payment = undefined as any;
+            payload.payment = undefined;
 
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentArgumentInvalidError);
         });

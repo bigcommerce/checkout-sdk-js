@@ -4,7 +4,7 @@ import { getEnvironment } from '../utility';
 import Factory from './factory';
 import Registry from './registry';
 
-export default class ResolveIdRegistry<TType, TToken extends { [key: string]: unknown }> {
+export default class ResolveIdRegistry<TType, TToken extends Record<string, unknown>> {
     private _registry: Registry<TType>;
 
     constructor(private _useFallback = false) {

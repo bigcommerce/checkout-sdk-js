@@ -1,11 +1,12 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, empty, Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
 
 import {
     PaymentIntegrationService,
     PaymentStrategy as PaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import {
     CheckoutActionCreator,
@@ -20,6 +21,7 @@ import { getDefaultLogger } from '../common/log';
 import {
     LoadOrderPaymentsAction,
     OrderActionCreator,
+    OrderCreatedNotifier,
     OrderPaymentRequestBody,
     OrderRequestBody,
 } from '../order';
@@ -48,6 +50,7 @@ import PaymentStrategyWidgetActionCreator from './payment-strategy-widget-action
 import { PaymentStrategy } from './strategies';
 
 export const ORDER_PLACEMENT_START_SERVER_EVENT = 'PROJECT-8686.order_placement_start_server_event';
+export const ORDER_CREATION_TIME_METRICS = 'PROJECT-8686.order_creation_time_metrics';
 
 export default class PaymentStrategyActionCreator {
     private _paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator;
@@ -67,6 +70,7 @@ export default class PaymentStrategyActionCreator {
         private _paymentIntegrationService: PaymentIntegrationService,
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
+        private _orderCreatedNotifier: OrderCreatedNotifier,
     ) {
         this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
     }
@@ -111,17 +115,50 @@ export default class PaymentStrategyActionCreator {
 
                     this._reportOrderPlacementStart(strategy, payment);
 
-                    const promise: Promise<InternalCheckoutSelectors | void> = strategy.execute(
-                        payload,
-                        {
+                    const orderCreationStartTime = this._isOrderCreationTimeMetricsEnabled()
+                        ? Date.now()
+                        : undefined;
+
+                    const orderCreatedSubscription =
+                        orderCreationStartTime !== undefined
+                            ? this._orderCreatedNotifier.orderCreated$
+                                  .pipe(take(1))
+                                  .subscribe((orderId) =>
+                                      this._reportOrderCreationTime(
+                                          orderCreationStartTime,
+                                          orderId,
+                                      ),
+                                  )
+                            : undefined;
+
+                    let promise: Promise<InternalCheckoutSelectors | void>;
+
+                    try {
+                        promise = strategy.execute(payload, {
                             ...options,
                             methodId: payment.methodId,
                             gatewayId: payment.gatewayId,
-                        },
-                    );
+                        });
+                    } catch (error) {
+                        orderCreatedSubscription?.unsubscribe();
+                        throw error;
+                    }
 
-                    return promise.then(() =>
-                        createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta),
+                    return promise.then(
+                        () => {
+                            orderCreatedSubscription?.unsubscribe();
+
+                            return createAction(
+                                PaymentStrategyActionType.ExecuteSucceeded,
+                                undefined,
+                                meta,
+                            );
+                        },
+                        (error) => {
+                            orderCreatedSubscription?.unsubscribe();
+
+                            throw error;
+                        },
                     );
                 }),
             ).pipe(
@@ -345,6 +382,27 @@ export default class PaymentStrategyActionCreator {
                     event: 'order_placement_started',
                     payment_provider_id: payment.gatewayId ?? payment.methodId,
                     payment_method_id: selectedSubMethodId ?? payment.methodId,
+                }),
+                { queueId: 'reportCheckoutEvent' },
+            )
+            .catch(() => {});
+    }
+
+    private _isOrderCreationTimeMetricsEnabled(): boolean {
+        const { checkoutSettings } = this._store.getState().config.getStoreConfigOrThrow();
+
+        return isExperimentEnabled(checkoutSettings.features, ORDER_CREATION_TIME_METRICS, false);
+    }
+
+    private _reportOrderCreationTime(startTime: number, orderId: number): void {
+        const seconds = Math.round(((Date.now() - startTime) / 1000) * 100) / 100;
+
+        this._store
+            .dispatch(
+                this._checkoutActionCreator.reportCheckoutEvent({
+                    event: 'order_created',
+                    order_id: orderId,
+                    seconds,
                 }),
                 { queueId: 'reportCheckoutEvent' },
             )

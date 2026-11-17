@@ -103,10 +103,8 @@ export interface VisaCheckoutInitOptions {
         orderId?: string;
         description?: string;
         promoCode?: string;
-        customData?: {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            [key: string]: any;
-        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        customData?: Record<string, any>;
     };
 }
 

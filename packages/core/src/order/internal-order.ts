@@ -47,7 +47,7 @@ export default interface InternalOrder {
     };
     token?: string;
     payment: InternalOrderPayment;
-    socialData?: { [itemId: string]: InternalSocialDataList };
+    socialData?: Record<string, InternalSocialDataList>;
     hasDigitalItems: boolean;
     isDownloadable: boolean;
     isComplete: boolean;
@@ -71,7 +71,7 @@ export interface InternalIncompleteOrder {
 
 export interface InternalGiftCertificateList {
     totalDiscountedAmount: number;
-    appliedGiftCertificates: { [code: string]: InternalGiftCertificate };
+    appliedGiftCertificates: Record<string, InternalGiftCertificate>;
 }
 
 export interface InternalOrderPayment {
@@ -98,6 +98,4 @@ export interface InternalSocialDataItem {
     channelCode: string;
 }
 
-export interface InternalSocialDataList {
-    [key: string]: InternalSocialDataItem;
-}
+export type InternalSocialDataList = Record<string, InternalSocialDataItem>;

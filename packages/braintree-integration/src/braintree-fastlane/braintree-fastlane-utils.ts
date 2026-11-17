@@ -9,6 +9,7 @@ import {
     BraintreeFastlaneVaultedInstrument,
     BraintreeInitializationData,
     BraintreeIntegrationService,
+    getBraintreeFastlaneLocale,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CardInstrument,
@@ -66,6 +67,8 @@ export default class BraintreeFastlaneUtils {
             config.testMode,
             styles,
         );
+
+        this.braintreeFastlane.setLocale(getBraintreeFastlaneLocale(state));
     }
 
     getBraintreeFastlaneOrThrow(): BraintreeFastlane {

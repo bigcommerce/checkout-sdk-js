@@ -11,13 +11,9 @@ import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
 
 export class WorkerExtensionMessenger {
     constructor(
-        private _workers: { [extensionId: string]: Worker } = {},
-        private _commandListeners: {
-            [extensionId: string]: WorkerEventListener<ExtensionCommandMap>;
-        } = {},
-        private _queryListeners: {
-            [extensionId: string]: WorkerEventListener<ExtensionQueryMap>;
-        } = {},
+        private _workers: Record<string, Worker> = {},
+        private _commandListeners: Record<string, WorkerEventListener<ExtensionCommandMap>> = {},
+        private _queryListeners: Record<string, WorkerEventListener<ExtensionQueryMap>> = {},
     ) {}
 
     add(extensionId: string, worker: Worker): void {

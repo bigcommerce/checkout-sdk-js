@@ -10,8 +10,4 @@
 
 ### initializedContainers
 
-> **initializedContainers**: `object`
-
-#### Index Signature
-
-\[`key`: `string`\]: `boolean`
+> **initializedContainers**: `Record`\<`string`, `boolean`\>

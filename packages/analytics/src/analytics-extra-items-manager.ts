@@ -40,7 +40,7 @@ export default class AnalyticsExtraItemsManager {
             this.storage.setItem(this.getStorageKey(id), JSON.stringify(data));
 
             return data;
-        } catch (err) {
+        } catch {
             return {};
         }
     }
@@ -56,7 +56,7 @@ export default class AnalyticsExtraItemsManager {
             const data: unknown = JSON.parse(item);
 
             return isExtraItemsData(data) ? data : null;
-        } catch (err) {
+        } catch {
             return null;
         }
     }
@@ -64,7 +64,7 @@ export default class AnalyticsExtraItemsManager {
     clearExtraItemData(id: string): void {
         try {
             this.storage.removeItem(this.getStorageKey(id));
-        } catch (err) {
+        } catch {
             // silently ignore the failure
         }
     }

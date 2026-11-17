@@ -1,4 +1,5 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { noop } from 'lodash';
 
 import {
     Checkout,
@@ -636,18 +637,25 @@ describe('StripeUPEPaymentStrategy', () => {
             );
         });
 
-        it('should use store credits', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getCheckoutOrThrow',
-            ).mockReturnValueOnce({
-                ...getCheckout(),
-                isStoreCreditApplied: true,
+        it('applies store credit via stripe integration service', async () => {
+            await strategy.execute({
+                ...getStripeUPEOrderRequestBodyMock(),
+                useStoreCredit: true,
             });
 
+            expect(stripeUPEIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(true);
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                expect.objectContaining({ useStoreCredit: true }),
+                undefined,
+            );
+        });
+
+        it('calls applyStoreCreditIfNeeded with undefined when useStoreCredit is not provided', async () => {
             await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
-            expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(true);
+            expect(stripeUPEIntegrationService.applyStoreCreditIfNeeded).toHaveBeenCalledWith(
+                undefined,
+            );
         });
 
         it('skip PI update if no gatewayId', async () => {
@@ -669,6 +677,85 @@ describe('StripeUPEPaymentStrategy', () => {
             await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
             expect(stripeUPEIntegrationService.updateStripePaymentIntent).toHaveBeenCalled();
+        });
+
+        describe('skipUnchangedCheckoutSessionUpdate', () => {
+            it('updates stripe payment intent if the checkout state changed', async () => {
+                jest.spyOn(
+                    stripeUPEIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(false);
+
+                await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                expect(
+                    stripeUPEIntegrationService.shouldSkipCheckoutStateUpdate,
+                ).toHaveBeenCalledWith('card', 'stripeupe');
+                expect(stripeUPEIntegrationService.updateStripePaymentIntent).toHaveBeenCalledWith(
+                    'stripeupe',
+                    'card',
+                );
+            });
+
+            it('skips stripe payment intent update if the checkout state is unchanged', async () => {
+                jest.spyOn(
+                    stripeUPEIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(true);
+
+                await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                expect(
+                    stripeUPEIntegrationService.updateStripePaymentIntent,
+                ).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            });
+
+            it('still updates billing address for Stripe Link flow when payment intent update is skipped', async () => {
+                jest.spyOn(
+                    stripeUPEIntegrationService,
+                    'shouldSkipCheckoutStateUpdate',
+                ).mockReturnValue(true);
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomerOrThrow',
+                ).mockReturnValue({ stripeLinkAuthenticationState: true });
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCustomerOrThrow',
+                ).mockReturnValue({
+                    ...getCustomer(),
+                    email: '',
+                });
+
+                await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                expect(
+                    stripeUPEIntegrationService.updateStripePaymentIntent,
+                ).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
+                    getBillingAddress(),
+                );
+            });
+
+            it('caches checkout state versions after loading payment method and clears them on deinitialize', async () => {
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(stripeUPEIntegrationService.cacheCheckoutStateVersions).toHaveBeenCalled();
+
+                const loadPaymentMethodOrder = jest.mocked(
+                    paymentIntegrationService.loadPaymentMethod,
+                ).mock.invocationCallOrder[0];
+                const cacheVersionsOrder = jest.mocked(
+                    stripeUPEIntegrationService.cacheCheckoutStateVersions,
+                ).mock.invocationCallOrder[0];
+
+                expect(cacheVersionsOrder).toBeGreaterThan(loadPaymentMethodOrder);
+
+                await strategy.deinitialize();
+
+                expect(stripeUPEIntegrationService.clearCheckoutStateVersions).toHaveBeenCalled();
+            });
         });
 
         it('should not update billing address if not Stripe Link', async () => {
@@ -971,6 +1058,83 @@ describe('StripeUPEPaymentStrategy', () => {
                 await expect(
                     strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
                 ).rejects.toThrow(NotInitializedError);
+            });
+
+            describe('asyncPaymentValidation', () => {
+                const mockAsyncPaymentValidation = (asyncPaymentValidation: boolean) => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getPaymentMethodOrThrow',
+                    ).mockReturnValue({
+                        ...getStripeUPEMock(),
+                        initializationData: {
+                            ...getStripeUPEMock().initializationData,
+                            asyncPaymentValidation,
+                        },
+                    });
+                };
+
+                beforeEach(() => {
+                    stripeUPEJsMock.confirmCardPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
+                });
+
+                it('resolves without waiting for the second submitPayment when flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockReturnValueOnce(new Promise(noop));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).resolves.toBeUndefined();
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                });
+
+                it('ignores second submitPayment failure when flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).resolves.toBeUndefined();
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                });
+
+                it('waits for the second submitPayment when stripe confirmation threw and flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+                    stripeUPEJsMock.confirmCardPayment = jest.fn().mockRejectedValue(new Error());
+                    stripeUPEJsMock.retrievePaymentIntent = jest
+                        .fn()
+                        .mockRejectedValue(new Error());
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).rejects.toThrow('second payment failed');
+                });
+
+                it('waits for the second submitPayment when flag is false', async () => {
+                    mockAsyncPaymentValidation(false);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getThreeDSecureRequiredErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
+                    ).rejects.toThrow('second payment failed');
+                });
             });
 
             it('successfully confirmed by stripe', async () => {
@@ -1609,6 +1773,74 @@ describe('StripeUPEPaymentStrategy', () => {
                             }),
                         }),
                     );
+                });
+            });
+
+            describe('asyncPaymentValidation', () => {
+                const mockAsyncPaymentValidation = (asyncPaymentValidation: boolean) => {
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getPaymentMethodOrThrow',
+                    ).mockReturnValue({
+                        ...getStripeUPEMock(),
+                        initializationData: {
+                            ...getStripeUPEMock().initializationData,
+                            asyncPaymentValidation,
+                        },
+                    });
+                };
+
+                beforeEach(() => {
+                    stripeUPEJsMock.confirmPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
+                });
+
+                it('resolves without waiting for the second submitPayment when flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getAdditionalActionErrorResponse())
+                        .mockReturnValueOnce(new Promise(noop));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).resolves.toBeUndefined();
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                });
+
+                it('ignores second submitPayment failure when flag is true', async () => {
+                    mockAsyncPaymentValidation(true);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getAdditionalActionErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).resolves.toBeUndefined();
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                    expect(
+                        stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage,
+                    ).not.toHaveBeenCalled();
+                });
+
+                it('waits for the second submitPayment when flag is false', async () => {
+                    mockAsyncPaymentValidation(false);
+
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockRejectedValueOnce(getAdditionalActionErrorResponse())
+                        .mockRejectedValueOnce(new Error('second payment failed'));
+
+                    await expect(
+                        strategy.execute(getStripeUPEOrderRequestBodyMock()),
+                    ).rejects.toBeInstanceOf(PaymentMethodFailedError);
+
+                    expect(
+                        stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage,
+                    ).toHaveBeenCalled();
                 });
             });
         });

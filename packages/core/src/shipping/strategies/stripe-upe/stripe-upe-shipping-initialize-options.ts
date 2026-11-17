@@ -38,9 +38,7 @@ export default interface StripeUPEShippingInitializeOptions {
     /**
      * get styles from store theme
      */
-    getStyles?(): {
-        [key: string]: string;
-    };
+    getStyles?(): Record<string, string>;
 
     /**
      * get the state code needed for shipping stripe element

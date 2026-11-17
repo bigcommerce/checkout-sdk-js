@@ -28,6 +28,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCreditCardInstrument,
+    getErrorPaymentResponseBody,
+    getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -1213,6 +1215,89 @@ describe('AdyenV3PaymentStrategy', () => {
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
                     expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
                     expect(adyenCheckout.createFromAction).toHaveBeenCalledTimes(1);
+                });
+            });
+
+            describe('when the klarna widget action is returned with the experiment enabled', () => {
+                it('renders the widget through the klarna component instead of createFromAction', async () => {
+                    const klarnaSdkActionError = new RequestError(
+                        getResponse({
+                            ...getErrorPaymentResponseBody(),
+                            provider_data: {
+                                resultCode: ResultCode.ChallengeShopper,
+                                action: '{"paymentMethodType":"klarna","sdkData":{"token":"TOKEN"},"type":"sdk"}',
+                            },
+                            errors: [{ code: 'additional_action_required' }],
+                        }),
+                    );
+                    let handleOnAdditionalDetails: (
+                        state: AdyenAdditionalActionState,
+                        component?: AdyenComponent,
+                        actions?: { resolve: () => void; reject: () => void },
+                    ) => unknown = jest.fn();
+                    const actions = { resolve: jest.fn(), reject: jest.fn() };
+                    const klarnaActionComponent: AdyenComponent = {
+                        mount: jest.fn(() => document.createElement('div')),
+                        unmount: jest.fn(),
+                        submit: jest.fn(),
+                        componentRef: { showValidation: jest.fn() },
+                        handleAction: jest.fn(() => {
+                            handleOnAdditionalDetails(
+                                { data: { details: { authorization_token: 'TOKEN' } } } as any,
+                                undefined,
+                                actions,
+                            );
+                        }),
+                    };
+
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getStoreConfigOrThrow',
+                    ).mockReturnValue({
+                        checkoutSettings: {
+                            features: { 'PI-5661.adyen_sdk_upgrade': true },
+                        },
+                    } as unknown as ReturnType<PaymentIntegrationSelectors['getStoreConfigOrThrow']>);
+                    jest.spyOn(
+                        paymentIntegrationService.getState(),
+                        'getPaymentMethodOrThrow',
+                    ).mockReturnValue(getAdyenV3('klarna'));
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockReset()
+                        .mockImplementationOnce(() => Promise.reject(klarnaSdkActionError))
+                        .mockImplementationOnce(jest.fn());
+                    adyenCheckout.createComponent = jest
+                        .fn()
+                        .mockReturnValueOnce({
+                            mount: jest.fn(() => document.createElement('div')),
+                            unmount: jest.fn(),
+                            submit: jest.fn(),
+                        })
+                        .mockImplementationOnce((_type, componentOptions) => {
+                            handleOnAdditionalDetails = componentOptions.onAdditionalDetails;
+
+                            return klarnaActionComponent;
+                        });
+                    jest.spyOn(adyenCheckout, 'createFromAction');
+
+                    await strategy.initialize(options);
+                    await strategy.execute(getOrderRequestBody(AdyenPaymentMethodType.Klarna));
+
+                    expect(adyenCheckout.createFromAction).not.toHaveBeenCalled();
+                    expect(adyenCheckout.createComponent).toHaveBeenNthCalledWith(
+                        2,
+                        'klarna',
+                        expect.objectContaining({
+                            useKlarnaWidget: true,
+                            onActionHandled: expect.any(Function),
+                        }),
+                    );
+                    expect(klarnaActionComponent.mount).toHaveBeenCalled();
+                    expect(klarnaActionComponent.handleAction).toHaveBeenCalledWith(
+                        expect.objectContaining({ type: 'sdk', paymentMethodType: 'klarna' }),
+                    );
+                    expect(actions.resolve).toHaveBeenCalled();
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
                 });
             });
         });

@@ -13,9 +13,9 @@ import { ExtensionMessenger } from './extension-messenger';
 import { ExtensionChangeSubscriber, ExtensionChangeUnsubscriber } from './subscribers';
 
 export class ExtensionEventBroadcaster {
-    private _subscribed: { [id: string]: boolean } = {};
-    private _unsubscribers: { [type: string]: ExtensionChangeUnsubscriber } = {};
-    private _listeners: { [id: string]: IframeEventListener<ExtensionInternalCommandMap> } = {};
+    private _subscribed: Record<string, boolean> = {};
+    private _unsubscribers: Record<string, ExtensionChangeUnsubscriber> = {};
+    private _listeners: Record<string, IframeEventListener<ExtensionInternalCommandMap>> = {};
 
     constructor(
         private _store: DataStoreProjection<CheckoutSelectors>,

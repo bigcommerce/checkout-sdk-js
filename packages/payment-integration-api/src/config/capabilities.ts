@@ -30,6 +30,7 @@ export interface Capabilities {
     customer: {
         superAdminCompanySelector: boolean;
         reloadPageAfterSignIn: boolean;
+        createAccountViaBuyerPortal: boolean;
     };
     shipping: {
         restrictManualAddressEntry: boolean;

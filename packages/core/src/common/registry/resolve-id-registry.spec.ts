@@ -171,14 +171,9 @@ describe('ResolveIdRegistry', () => {
 
     it('returns none if query is a subset of a registered token', () => {
         subject = new ResolveIdRegistry(true);
-        subject.register(
-            { id: 'credit_card', gateway: 'bluesnapdirect' } as TestResolveId,
-            () => new FooStrategy(),
-        );
+        subject.register({ id: 'credit_card', gateway: 'bluesnapdirect' }, () => new FooStrategy());
 
-        expect(
-            subject.getFactory({ gateway: 'bluesnapdirect' } as TestResolveId, true),
-        ).toBeUndefined();
+        expect(subject.getFactory({ gateway: 'bluesnapdirect' }, true)).toBeUndefined();
     });
 
     it('returns exact match even when a more specific token with a shared key is registered first', () => {
@@ -187,9 +182,9 @@ describe('ResolveIdRegistry', () => {
         const fooFactory = () => new FooStrategy();
         const barFactory = () => new BarStrategy();
 
-        subject.register({ gateway: 'apms', id: 'foo' } as TestResolveId, fooFactory);
-        subject.register({ id: 'foo' } as TestResolveId, barFactory);
+        subject.register({ gateway: 'apms', id: 'foo' }, fooFactory);
+        subject.register({ id: 'foo' }, barFactory);
 
-        expect(subject.getFactory({ id: 'foo' } as TestResolveId, true)).toBe(barFactory);
+        expect(subject.getFactory({ id: 'foo' }, true)).toBe(barFactory);
     });
 });

@@ -60,6 +60,4 @@ export interface PickupOptionResponse {
 
 export type PickupOptionMeta = PickupOptionRequestBody;
 
-export interface PickupOptionQueryMap {
-    [index: string]: PickupOptionResult[] | undefined;
-}
+export type PickupOptionQueryMap = Record<string, PickupOptionResult[] | undefined>;

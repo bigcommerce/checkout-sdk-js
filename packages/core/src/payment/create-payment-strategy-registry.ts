@@ -5,7 +5,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { BrowserStorage } from '../common/storage';
 import { HostedFormFactory } from '../hosted-form';
-import { OrderActionCreator, OrderRequestSender } from '../order';
+import { OrderActionCreator, OrderCreatedNotifier, OrderRequestSender } from '../order';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import PaymentActionCreator from './payment-action-creator';
@@ -25,6 +25,11 @@ export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
     paymentClient: any,
     requestSender: RequestSender,
+    orderActionCreator: OrderActionCreator = new OrderActionCreator(
+        new OrderRequestSender(requestSender),
+        new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+        new OrderCreatedNotifier(),
+    ),
 ) {
     const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
@@ -32,12 +37,6 @@ export default function createPaymentStrategyRegistry(
 
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
-    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-    const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const orderActionCreator = new OrderActionCreator(
-        new OrderRequestSender(requestSender),
-        checkoutValidator,
-    );
     const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
         createSpamProtection(createScriptLoader()),
     );

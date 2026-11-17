@@ -35,11 +35,6 @@ export default function getPayPalFastlane(): PayPalFastlane {
             lookupCustomerByEmail: jest.fn(),
             triggerAuthenticationFlow: jest.fn(),
         },
-        events: {
-            apmSelected: jest.fn(),
-            emailSubmitted: jest.fn(),
-            orderPlaced: jest.fn(),
-        },
         profile: {
             showCardSelector: jest.fn(),
             showShippingAddressSelector: jest.fn(),

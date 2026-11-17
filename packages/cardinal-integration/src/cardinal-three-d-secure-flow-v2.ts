@@ -57,7 +57,10 @@ export default class CardinalThreeDSecureFlowV2 {
                 const bin = this._getBin(paymentData, getCardInstrument, hostedForm);
 
                 if (bin) {
-                    await this._cardinalClient.runBinProcess(bin);
+                    await this._cardinalClient.runBinProcess(
+                        bin,
+                        this._isBinProcessNonFatal(payment),
+                    );
                 }
 
                 try {
@@ -84,6 +87,17 @@ export default class CardinalThreeDSecureFlowV2 {
 
             throw error;
         }
+    }
+
+    private _isBinProcessNonFatal(payment: OrderPaymentRequestBody): boolean {
+        const { initializationData } = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<CardinalThreeDSecureInitializationData>(
+                payment.methodId,
+                payment.gatewayId,
+            );
+
+        return initializationData?.isCardinalBinProcessNonFatal ?? true;
     }
 
     private _getOrderData(): CardinalOrderData {

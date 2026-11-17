@@ -213,12 +213,8 @@ export function getFastlaneMock(): BraintreeFastlane {
                     profileData: getBraintreeFastlaneProfileDataMock(),
                 }),
         },
+        setLocale: jest.fn(),
         FastlaneCardComponent: jest.fn(),
-        events: {
-            apmSelected: jest.fn(),
-            emailSubmitted: jest.fn(),
-            orderPlaced: jest.fn(),
-        },
     };
 }
 
@@ -284,7 +280,7 @@ export function getBraintreeFastlaneAuthenticationResultMock() {
 export function getBraintreeLocalPaymentMock(
     orderId = '111',
     startCallback: () => Promise<void> = () => Promise.resolve(),
-    startPaymentError: BraintreeLPMStartPaymentError | undefined = undefined,
+    startPaymentError?: BraintreeLPMStartPaymentError,
 ): BraintreeLocalPayment {
     return {
         startPayment: jest.fn(

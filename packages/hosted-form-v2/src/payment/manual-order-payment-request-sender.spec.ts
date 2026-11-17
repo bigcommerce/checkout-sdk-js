@@ -33,7 +33,7 @@ describe('ManualOrderPaymentRequestSender', () => {
         requestInitializationData = {
             paymentMethodId: manualPaymentMethod,
             paymentSessionToken: pstToken,
-        } as HostedFormManualOrderData;
+        };
         response = { body: {} } as Response<unknown>;
     });
 
@@ -42,7 +42,7 @@ describe('ManualOrderPaymentRequestSender', () => {
 
         instrumentFormData = {
             note: testingManualPaymentNote,
-        } as HostedInputValues;
+        };
 
         const result = await manualOrderPaymentRequestSender.submitPayment(
             requestInitializationData,
@@ -79,7 +79,7 @@ describe('ManualOrderPaymentRequestSender', () => {
             cardNumber: '4111 1111 1111 1111',
             cardExpiry: '12/23',
             cardCode: '123',
-        } as HostedInputValues;
+        };
 
         const result = await manualOrderPaymentRequestSender.submitPayment(
             requestInitializationData,
@@ -153,7 +153,7 @@ describe('ManualOrderPaymentRequestSender', () => {
 
         requestInitializationData.paymentMethodId = 'squarev2.credit_card';
         requestInitializationData.token = 'cnon:test-token';
-        instrumentFormData = {} as HostedInputValues;
+        instrumentFormData = {};
 
         const result = await manualOrderPaymentRequestSender.submitPayment(
             requestInitializationData,

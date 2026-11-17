@@ -8,9 +8,7 @@ import {
 
 import { ResolveIdRegistry } from '../common/registry';
 
-export interface CustomerStrategyFactories {
-    [key: string]: CustomerStrategyFactory<CustomerStrategy>;
-}
+export type CustomerStrategyFactories = Record<string, CustomerStrategyFactory<CustomerStrategy>>;
 
 export default function createCustomerStrategyRegistry(
     paymentIntegrationService: PaymentIntegrationService,

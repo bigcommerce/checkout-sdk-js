@@ -1,12 +1,4 @@
 import {
-    BigCommercePaymentsInitializationData,
-    getPaypalMessagesStylesFromBNPLConfig,
-    MessagingOptions,
-    PayPalBNPLConfigurationItem,
-    PayPalMessagesSdk,
-    PayPalSdkHelper,
-} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
-import {
     InvalidArgumentError,
     NotImplementedError,
     OrderFinalizationNotRequiredError,
@@ -18,15 +10,20 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import BigCommercePaymentsIntegrationService from '../bigcommerce-payments-integration-service';
 import {
     ApproveCallbackPayload,
-    BigCommercePaymentsButtons,
-    BigCommercePaymentsButtonsOptions,
     ClickCallbackActions,
-} from '../bigcommerce-payments-types';
+    getPaypalMessagesStylesFromBNPLConfig,
+    MessagingOptions,
+    PayPalBNPLConfigurationItem,
+    PayPalButtons,
+    PayPalButtonsOptions,
+    PayPalInitializationData,
+    PayPalIntegrationService,
+    PayPalMessagesSdk,
+    PayPalSdkScriptLoader,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import BigCommercePaymentsPayLaterPaymentInitializeOptions, {
     WithBigCommercePaymentsPayLaterPaymentInitializeOptions,
@@ -35,13 +32,13 @@ import BigCommercePaymentsPayLaterPaymentInitializeOptions, {
 export default class BigCommercePaymentsPayLaterPaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
-    private bigCommercePaymentsButtons?: BigCommercePaymentsButtons;
+    private bigCommercePaymentsButtons?: PayPalButtons;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
         private loadingIndicator: LoadingIndicator,
-        private paypalSdkHelper: PayPalSdkHelper,
+        private paypalSdkScriptLoader: PayPalSdkScriptLoader,
     ) {}
 
     async initialize(
@@ -65,8 +62,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const { paypalBNPLConfiguration = [], orderId } = paymentMethod.initializationData || {};
         const { bannerContainerId, container } = bigcommerce_payments_paylater;
 
@@ -86,9 +82,10 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
                 return;
             }
 
-            const paypalMessages = await this.paypalSdkHelper.getPayPalMessages(
+            const paypalMessages = await this.paypalSdkScriptLoader.getPayPalMessages(
                 paymentMethod,
                 state.getCartOrThrow().currency.code,
+                state.getLocale(),
             );
 
             return this.renderMessages(paypalMessages, bannerContainerId, bannerConfiguration);
@@ -104,7 +101,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
             return;
         }
 
-        await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(methodId);
+        await this.paypalIntegrationService.loadPayPalSdk(methodId);
 
         this.loadingIndicatorContainer = container?.split('#')[1];
 
@@ -123,10 +120,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
         }
 
         await this.paymentIntegrationService.submitOrder(order, options);
-        await this.bigCommercePaymentsIntegrationService.submitPayment(
-            payment.methodId,
-            this.orderId,
-        );
+        await this.paypalIntegrationService.submitPayment(payment.methodId, this.orderId);
     }
 
     finalize(): Promise<void> {
@@ -156,11 +150,10 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
             );
         }
 
-        const bigCommerceSdk = this.bigCommercePaymentsIntegrationService.getPayPalSdkOrThrow();
+        const bigCommerceSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const { paymentButtonStyles } = paymentMethod.initializationData || {};
         const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
 
@@ -175,15 +168,13 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
                 return;
             }
 
-            const buttonOptions: BigCommercePaymentsButtonsOptions = {
+            const buttonOptions: PayPalButtonsOptions = {
                 fundingSource,
-                style: this.bigCommercePaymentsIntegrationService.getValidButtonStyle(
+                style: this.paypalIntegrationService.getValidButtonStyle(
                     checkoutPaymentButtonStyles,
                 ),
                 createOrder: () =>
-                    this.bigCommercePaymentsIntegrationService.createOrder(
-                        'bigcommerce_payments_paylater',
-                    ),
+                    this.paypalIntegrationService.createOrder('bigcommerce_payments_paylater'),
                 onClick: (_, actions) => this.handleClick(actions, onValidate),
                 onApprove: (data) => this.handleApprove(data, submitForm),
                 onCancel: () => this.toggleLoadingIndicator(false),

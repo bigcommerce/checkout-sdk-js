@@ -14,6 +14,12 @@
 
 ***
 
+### order\_id?
+
+> `optional` **order\_id?**: `number`
+
+***
+
 ### payment\_method\_id?
 
 > `optional` **payment\_method\_id?**: `string`
@@ -23,3 +29,9 @@
 ### payment\_provider\_id?
 
 > `optional` **payment\_provider\_id?**: `string`
+
+***
+
+### seconds?
+
+> `optional` **seconds?**: `number`

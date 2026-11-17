@@ -119,7 +119,7 @@ describe('CreditCardPaymentStrategy', () => {
                 try {
                     await strategy.initialize(options);
                     await strategy.execute(getOrderRequestBody());
-                } catch (error) {
+                } catch {
                     expect(form.submit).not.toHaveBeenCalled();
                 }
             });

@@ -4,11 +4,12 @@ export default interface PaymentStrategyState {
     statuses: PaymentStrategyStatusesState;
 }
 
-export interface PaymentStrategyDataState {
-    [key: string]: {
+export type PaymentStrategyDataState = Record<
+    string,
+    {
         isInitialized: boolean;
-    };
-}
+    }
+>;
 
 export interface PaymentStrategyErrorsState {
     deinitializeError?: Error;

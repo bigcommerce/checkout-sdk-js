@@ -151,6 +151,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
 
             const {
                 shippingAddress = this.mapToVisaCheckoutAddress(shipping),
+                // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
                 billingAddress = this.mapToVisaCheckoutAddress(billing),
             } = payload;
 

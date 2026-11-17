@@ -17,6 +17,7 @@ import {
     LoadOrderSucceededAction,
     OrderActionCreator,
     OrderActionType,
+    OrderCreatedNotifier,
     OrderPaymentRequestBody,
     OrderRequestSender,
 } from '../../../../order';
@@ -49,6 +50,7 @@ describe('CardSubStrategy', () => {
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+            new OrderCreatedNotifier(),
         );
         formFactory = new HostedFormFactory(store);
 
@@ -97,7 +99,6 @@ describe('CardSubStrategy', () => {
 
             expect(formFactory.create).toHaveBeenCalledWith(
                 'https://bigpay.integration.zone',
-                // tslint:disable-next-line:no-non-null-assertion
                 initializeOptions.creditCard!.form,
                 store.getState().checkout.getCheckoutOrThrow().id,
             );

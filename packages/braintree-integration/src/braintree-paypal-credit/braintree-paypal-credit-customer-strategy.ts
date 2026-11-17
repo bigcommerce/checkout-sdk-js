@@ -9,6 +9,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getBraintreePaypalSdkLocale,
     getIsOnlyDigitalProduct,
     isBraintreeError,
     PaypalAuthorizeData,
@@ -74,7 +75,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
             if (!paymentMethod.clientToken) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
             }
-        } catch (_e) {
+        } catch {
             state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
             paymentMethod = state.getPaymentMethodOrThrow(methodId);
         }
@@ -92,6 +93,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
             currency: currencyCode,
             intent: initializationData.intent,
             isCreditEnabled: initializationData.isCreditEnabled,
+            locale: getBraintreePaypalSdkLocale(state),
             commit: false,
         };
 

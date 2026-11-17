@@ -543,7 +543,7 @@ describe('MolliePaymentStrategy', () => {
             try {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBodyVaultedCC());
-            } catch (error) {
+            } catch {
                 // eslint-disable-next-line jest/no-conditional-expect
                 expect(form.submit).not.toHaveBeenCalled();
             }

@@ -14,11 +14,7 @@
 
 #### style
 
-> **style**: `object`
-
-##### Index Signature
-
-\[`key`: `string`\]: `string` \| `number` \| `null`
+> **style**: `Record`\<`string`, `string` \| `number` \| `null`\>
 
 ***
 

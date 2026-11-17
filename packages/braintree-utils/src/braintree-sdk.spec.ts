@@ -70,7 +70,7 @@ describe('BraintreeSdk', () => {
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeSDKVersionManager = new BraintreeSDKVersionManager(paymentIntegrationService);
-        braintreeWindowMock = window as BraintreeWindow;
+        braintreeWindowMock = window;
         braintreeScriptLoader = new BraintreeScriptLoader(
             createScriptLoader(),
             braintreeWindowMock,
@@ -286,9 +286,7 @@ describe('BraintreeSdk', () => {
 
     describe('#getBraintreeLocalPayment()', () => {
         const merchantId = 'merchantAccountId';
-        const getBraintreeLocalPaymentCreatorCreateMock = (
-            callbackError: BraintreeError | undefined = undefined,
-        ) => {
+        const getBraintreeLocalPaymentCreatorCreateMock = (callbackError?: BraintreeError) => {
             return async (
                 _: BraintreeLocalPaymentCreateConfig,
                 callback?: (

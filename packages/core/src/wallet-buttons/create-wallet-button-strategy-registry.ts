@@ -10,9 +10,10 @@ import {
 
 import { ResolveIdRegistry } from '../common/registry';
 
-export interface WalletButtonStrategyFactories {
-    [key: string]: WalletPaymentButtonStrategyFactory<CheckoutButtonStrategy>;
-}
+export type WalletButtonStrategyFactories = Record<
+    string,
+    WalletPaymentButtonStrategyFactory<CheckoutButtonStrategy>
+>;
 
 export default function createWalletButtonStrategyRegistry(
     walletButtonIntegrationService: WalletButtonIntegrationService,

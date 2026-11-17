@@ -12,6 +12,7 @@ export default interface CheckoutParams {
     include?: CheckoutIncludes[] | CheckoutIncludeParam;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export type CheckoutIncludeParam = {
     [key in CheckoutIncludes]?: boolean;
 };

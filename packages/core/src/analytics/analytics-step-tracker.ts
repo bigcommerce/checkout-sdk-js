@@ -34,7 +34,7 @@ export enum AnalyticStepId {
     PAYMENT,
 }
 
-const ANALYTIC_STEPS: { [key: string]: AnalyticStepId } = {
+const ANALYTIC_STEPS: Record<string, AnalyticStepId> = {
     customer: AnalyticStepId.CUSTOMER,
     shipping: AnalyticStepId.SHIPPING,
     billing: AnalyticStepId.BILLING,
@@ -43,7 +43,8 @@ const ANALYTIC_STEPS: { [key: string]: AnalyticStepId } = {
 
 export default class AnalyticsStepTracker implements StepTracker {
     private _checkoutStarted = false;
-    private _completedSteps: { [key: string]: boolean } = {};
+    private _completedSteps: Record<string, boolean> = {};
+    // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
     private _viewedSteps: { [key in AnalyticStepId]?: boolean } = {};
     private _analyticStepOrder: AnalyticStepType[] = ['customer', 'shipping', 'billing', 'payment'];
 

@@ -76,7 +76,7 @@ describe('HostedCardNumberInput', () => {
             manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
             storedCardHandler as HostedInputStoredCardHandler,
             autocompleteFieldset,
-            numberFormatter as CardNumberFormatter,
+            numberFormatter,
         );
     });
 
@@ -95,7 +95,6 @@ describe('HostedCardNumberInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.value = '4111';
@@ -116,7 +115,6 @@ describe('HostedCardNumberInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.value = '4111111111111111';
@@ -149,7 +147,6 @@ describe('HostedCardNumberInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.value = '4111111111111111';
@@ -173,7 +170,6 @@ describe('HostedCardNumberInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.value = '0000000000000000';
@@ -191,7 +187,6 @@ describe('HostedCardNumberInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.value = '4111111111111111';

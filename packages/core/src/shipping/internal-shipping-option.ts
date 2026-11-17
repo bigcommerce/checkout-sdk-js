@@ -9,6 +9,4 @@ export default interface InternalShippingOption {
     transitTime: string;
 }
 
-export interface InternalShippingOptionList {
-    [key: string]: InternalShippingOption[];
-}
+export type InternalShippingOptionList = Record<string, InternalShippingOption[]>;

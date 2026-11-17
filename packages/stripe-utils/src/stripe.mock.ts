@@ -101,7 +101,7 @@ export function getFailingStripeJsMock(): StripeClient {
 
 export function getStripeInitializeOptionsMock(
     stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard,
-    style: { [key: string]: string } = { fieldText: '#ccc' },
+    style: Record<string, string> = { fieldText: '#ccc' },
 ): PaymentInitializeOptions & WithStripePaymentInitializeOptions {
     return {
         methodId: stripePaymentMethodType,

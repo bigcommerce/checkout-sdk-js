@@ -36,7 +36,7 @@ export function getStripeUPEMock(method = 'card'): PaymentMethod {
 
 export function getStripeUPEInitializeOptionsMock(
     stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard,
-    style: { [key: string]: string } = { fieldText: '#ccc' },
+    style: Record<string, string> = { fieldText: '#ccc' },
 ): PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions {
     return {
         methodId: stripePaymentMethodType,

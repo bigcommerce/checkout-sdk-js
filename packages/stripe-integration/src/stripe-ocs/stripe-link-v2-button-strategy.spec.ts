@@ -371,6 +371,29 @@ describe('StripeLinkV2ButtonStrategy', () => {
         });
     });
 
+    describe('onReady', () => {
+        it('calls onReady callback when the element is ready', async () => {
+            const onReady = jest.fn();
+
+            await strategy.initialize({
+                ...initialiseOptions,
+                stripeocs: { ...initialiseOptions.stripeocs, onReady },
+            });
+
+            expect(onReady).not.toHaveBeenCalled();
+
+            stripeEventEmitter.emit(StripeElementEvent.READY);
+
+            expect(onReady).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not fail when onReady is not provided', async () => {
+            await strategy.initialize(initialiseOptions);
+
+            expect(() => stripeEventEmitter.emit(StripeElementEvent.READY)).not.toThrow();
+        });
+    });
+
     describe('Stripe Events', () => {
         const stripeEvent = jest.fn();
 
@@ -931,7 +954,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     ...stripeClient,
                     confirmPayment: confirmPaymentMock,
                     retrievePaymentIntent: retrievePaymentIntentMock,
-                } as any;
+                };
 
                 jest.spyOn(scriptLoader, 'getStripeClient').mockImplementation(
                     jest.fn(() => Promise.resolve(stripeClient)),
@@ -1258,7 +1281,7 @@ describe('StripeLinkV2ButtonStrategy', () => {
                     try {
                         stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
                         await new Promise((_resolve, reject) => process.nextTick(reject));
-                    } catch (error: unknown) {
+                    } catch {
                         expect(loadingIndicator.hide).toHaveBeenCalled();
                     }
                 });

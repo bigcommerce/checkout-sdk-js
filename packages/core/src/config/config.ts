@@ -109,7 +109,7 @@ export interface UserExperienceSettings {
 
 export interface CheckoutSettings {
     capabilities?: Capabilities;
-    features: { [featureName: string]: boolean };
+    features: Record<string, boolean>;
     checkoutBillingSameAsShippingEnabled: boolean;
     checkoutUserExperienceSettings: UserExperienceSettings;
     enableOrderComments: boolean;
@@ -127,6 +127,7 @@ export interface CheckoutSettings {
     isSignInEmailEnabled: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
+    isCustomCheckout?: boolean;
     isPhoneNumberValidationEnabled?: boolean;
     isSpamProtectionEnabled: boolean;
     isTrustedShippingAddressEnabled: boolean;

@@ -139,6 +139,7 @@ declare class BlueSnapDirectHostedForm {
     private _hostedInputValidator;
     private _blueSnapSdk?;
     private _onValidate;
+    private _session?;
     constructor(_nameOnCardInput: BluesnapDirectNameOnCardInput, _hostedInputValidator: BlueSnapHostedInputValidator);
     initialize(blueSnapSdk: BlueSnapDirectSdk, fields?: HostedFieldOptionsMap): void;
     attach(paymentFieldsToken: string, { form: { fields, ...callbacksAndStyles } }: CreditCardPaymentInitializeOptions, enable3DS?: boolean): Promise<void>;
@@ -150,6 +151,7 @@ declare class BlueSnapDirectHostedForm {
     private _mapStyles;
     private _handleError;
     private _usetUiEventCallback;
+    private _isFormTornDown;
     private _getBlueSnapSdk;
     private _setCustomBlueSnapAttributes;
     private _setCustomStoredCardsBlueSnapAttributes;
@@ -238,9 +240,7 @@ declare interface BlueSnapDirectStyle {
     input?: BlueSnapDirectStyleDeclaration;
 }
 
-declare interface BlueSnapDirectStyleDeclaration {
-    [k: string]: string;
-}
+declare type BlueSnapDirectStyleDeclaration = Record<string, string>;
 
 declare interface BlueSnapDirectSubmitError {
     errorCode: string;

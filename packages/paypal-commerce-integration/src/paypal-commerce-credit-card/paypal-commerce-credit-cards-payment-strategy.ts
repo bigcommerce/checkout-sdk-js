@@ -474,7 +474,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             } else {
                 await cardFields.submit(submitConfig);
             }
-        } catch (_) {
+        } catch {
             if (this.isBankDeclinedAuthentication) {
                 throw new PaymentMethodBankDeclinedAuthenticationError();
             }
@@ -659,6 +659,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         fields: HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap,
     ): void {
         Object.values(fields || {}).forEach((id: HostedCardFieldOptions) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
             const element = document.getElementById(`${id?.containerId || ''}`);
 
             if (element) {
@@ -761,7 +762,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                 payPalFastlaneSdk,
                 !!initializationData?.isDeveloperModeApplicable,
             );
-        } catch (_: unknown) {
+        } catch {
             // We should avoid throwing any error from this flow to do no brake default flow
             // This flow is optional
         }

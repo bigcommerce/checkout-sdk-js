@@ -258,7 +258,7 @@ describe('BigCommercePaymentsRatePayPaymentStrategy', () => {
             try {
                 await strategy.execute(payload);
                 await new Promise((_resolve, reject) => process.nextTick(reject));
-            } catch (error: unknown) {
+            } catch {
                 expect(loadingIndicator.hide).toHaveBeenCalled();
             }
         });
@@ -439,7 +439,7 @@ describe('BigCommercePaymentsRatePayPaymentStrategy', () => {
             try {
                 await strategy.initialize(initializationOptions);
                 await strategy.execute(payload);
-            } catch (e) {
+            } catch {
                 expect(clearTimeout).toHaveBeenCalled();
             }
         });

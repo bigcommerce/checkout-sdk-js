@@ -66,11 +66,7 @@
 
 #### mandateText?
 
-> `optional` **mandateText?**: `object`
-
-##### Index Signature
-
-\[`key`: `string`\]: `string`
+> `optional` **mandateText?**: `Record`\<`string`, `string`\>
 
 #### url?
 

@@ -117,10 +117,8 @@ export default class HostedInputManualOrderPaymentHandler {
         return (
             typeof error === 'object' &&
             error !== null &&
-            (('name' in error && typeof (error as { name: unknown }).name === 'string') ||
-                !('name' in error)) &&
-            (('message' in error && typeof (error as { message: unknown }).message === 'string') ||
-                !('message' in error))
+            (('name' in error && typeof error.name === 'string') || !('name' in error)) &&
+            (('message' in error && typeof error.message === 'string') || !('message' in error))
         );
     }
 }

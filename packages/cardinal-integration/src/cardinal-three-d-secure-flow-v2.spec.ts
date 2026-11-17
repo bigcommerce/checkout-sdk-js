@@ -45,6 +45,10 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
+
         threeDSecureFlow = new CardinalThreeDSecureFlowV2(
             paymentIntegrationService,
             cardinalClient as CardinalClientV2,
@@ -137,7 +141,41 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
             it('runs BIN detection process if defined', async () => {
                 await threeDSecureFlow.start(execute, payload, options, form);
 
-                expect(cardinalClient.runBinProcess).toHaveBeenCalledWith(form.getBin());
+                expect(cardinalClient.runBinProcess).toHaveBeenCalledWith(form.getBin(), true);
+            });
+
+            it('treats BIN detection failure as non-fatal if initialization data does not define it', async () => {
+                await threeDSecureFlow.start(execute, payload, options, form);
+
+                expect(cardinalClient.runBinProcess).toHaveBeenCalledWith(form.getBin(), true);
+            });
+
+            it('treats BIN detection failure as non-fatal if experiment is enabled', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...paymentMethod,
+                    initializationData: { isCardinalBinProcessNonFatal: true },
+                });
+
+                await threeDSecureFlow.start(execute, payload, options, form);
+
+                expect(cardinalClient.runBinProcess).toHaveBeenCalledWith(form.getBin(), true);
+            });
+
+            it('treats BIN detection failure as fatal if experiment is disabled', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...paymentMethod,
+                    initializationData: { isCardinalBinProcessNonFatal: false },
+                });
+
+                await threeDSecureFlow.start(execute, payload, options, form);
+
+                expect(cardinalClient.runBinProcess).toHaveBeenCalledWith(form.getBin(), false);
             });
 
             it('submits XID token using hosted form if provided', async () => {

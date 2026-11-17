@@ -49,9 +49,7 @@ export interface BodlEventsCheckout {
     emit(name: string, data?: BodlEventsPayload): void;
 }
 
-export interface BodlEventsPayload {
-    [key: string]: unknown;
-}
+export type BodlEventsPayload = Record<string, unknown>;
 
 export interface BodlEvents {
     checkout: BodlEventsCheckout;

@@ -107,6 +107,8 @@ declare interface AddressRequestBody {
     label?: string;
 }
 
+declare type AdyenAction = AdyenV2Action | AdyenV3Action;
+
 declare interface AdyenActions {
     /**
      * Continues the payment flow. Call this, passing the resultCode, even when the
@@ -193,6 +195,7 @@ declare interface AdyenComponent {
     mount(containerId: string): HTMLElement;
     unmount(): void;
     submit(): void;
+    handleAction?(action: AdyenAction): void;
 }
 
 declare interface AdyenComponentEvents {
@@ -234,9 +237,7 @@ declare interface AdyenComponentState {
     data?: CardStateData | IdealStateData | SepaStateData;
     issuer?: string;
     isValid?: boolean;
-    valid?: {
-        [key: string]: boolean;
-    };
+    valid?: Record<string, boolean>;
     errors?: CardStateErrors;
 }
 
@@ -323,6 +324,23 @@ declare interface AdyenPaymentMethodState {
     checkoutAttemptId?: string;
 }
 
+declare enum AdyenPaymentMethodType {
+    ACH = "ach",
+    AliPay = "alipay",
+    Bancontact = "bcmc",
+    CreditCard = "scheme",
+    Klarna = "klarna",
+    KlarnaPayNow = "klarna_paynow",
+    KlarnaAccount = "klarna_account",
+    IDEAL = "ideal",
+    GiroPay = "giropay",
+    GooglePay = "paywithgoogle",
+    SEPA = "sepadirectdebit",
+    Sofort = "directEbanking",
+    Vipps = "vipps",
+    WeChatPayQR = "wechatpayQR"
+}
+
 declare interface AdyenPlaceholderData {
     firstName?: string;
     lastName?: string;
@@ -350,6 +368,30 @@ declare interface AdyenThreeDS2Options extends AdyenAdditionalActionCallbacks {
      * '05' = 100% x 100%
      */
     widgetSize?: string;
+}
+
+declare interface AdyenV2Action {
+    method: HTTPMethod;
+    /**
+     * Value that you need to submit in your /payments/details request when handling
+     * the redirect.
+     */
+    paymentData: string;
+    paymentMethodType: AdyenPaymentMethodType;
+    type: AdyenV2ActionType;
+    /**
+     * The HTTP request method that you should use. After the shopper completes the payment,
+     * they will be redirected back to your returnURL using the same method.
+     */
+    url: string;
+}
+
+declare enum AdyenV2ActionType {
+    ThreeDS2Fingerprint = "threeDS2Fingerprint",
+    ThreeDS2Challenge = "threeDS2Challenge",
+    Redirect = "redirect",
+    QRCode = "qrCode",
+    Voucher = "voucher"
 }
 
 /**
@@ -447,6 +489,31 @@ declare interface AdyenV2PaymentInitializeOptions {
     options?: Omit_3<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
     shouldShowNumberField?: boolean;
     validateCardFields(validateState: AdyenValidationState): void;
+}
+
+declare interface AdyenV3Action {
+    method: HTTPMethod;
+    /**
+     * Value that you need to submit in your /payments/details request when handling
+     * the redirect.
+     */
+    paymentData: string;
+    paymentMethodType: AdyenPaymentMethodType;
+    type: AdyenV3ActionType;
+    /**
+     * The HTTP request method that you should use. After the shopper completes the payment,
+     * they will be redirected back to your returnURL using the same method.
+     */
+    url: string;
+}
+
+declare enum AdyenV3ActionType {
+    ThreeDS2Fingerprint = "threeDS2Fingerprint",
+    ThreeDS2 = "threeDS2",
+    Redirect = "redirect",
+    QRCode = "qrCode",
+    Voucher = "voucher",
+    Sdk = "sdk"
 }
 
 /**
@@ -1328,9 +1395,7 @@ declare interface BigCommercePaymentsFieldsStyleOptions {
         borderFocusColor?: string;
         spacingUnit?: string;
     };
-    rules?: {
-        [key: string]: any;
-    };
+    rules?: Record<string, any>;
 }
 
 /**
@@ -1894,9 +1959,7 @@ declare interface BlueSnapV2StyleProps {
     width?: string;
 }
 
-declare interface BodlEventsPayload {
-    [key: string]: unknown;
-}
+declare type BodlEventsPayload = Record<string, unknown>;
 
 declare interface BodlService {
     checkoutBegin(): void;
@@ -2029,13 +2092,6 @@ declare interface BraintreeAchInitializeOptions {
      * A callback that returns text that should be displayed to the customer in UI for proof of authorization
      */
     getMandateText: () => string;
-}
-
-declare interface BraintreeAnalyticTrackerService {
-    customerPaymentMethodExecuted(): void;
-    paymentComplete(): void;
-    selectedPaymentMethod(methodId: string): void;
-    walletButtonClick(methodId: string): void;
 }
 
 declare interface BraintreeCreditCardPaymentInitializeOptions {
@@ -2485,6 +2541,7 @@ declare interface Capabilities {
     customer: {
         superAdminCompanySelector: boolean;
         reloadPageAfterSignIn: boolean;
+        createAccountViaBuyerPortal: boolean;
     };
     shipping: {
         restrictManualAddressEntry: boolean;
@@ -2590,9 +2647,7 @@ declare interface CardPaymentMethodState extends AdyenPaymentMethodState {
 declare interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
-    valid?: {
-        [key: string]: boolean;
-    };
+    valid?: Record<string, boolean>;
     errors?: CardStateErrors;
 }
 
@@ -2604,9 +2659,7 @@ declare interface CardStateData {
     holderName: string;
 }
 
-declare interface CardStateErrors {
-    [key: string]: string;
-}
+declare type CardStateErrors = Record<string, string>;
 
 declare interface Cart {
     id: string;
@@ -2650,6 +2703,10 @@ declare class CartChangedError extends StandardError {
         updated: ComparableCheckout;
     };
     constructor(previous: ComparableCheckout, updated: ComparableCheckout);
+}
+
+declare class CartConflictError extends StandardError {
+    constructor(message?: string);
 }
 
 /**
@@ -2740,9 +2797,7 @@ declare interface Checkout {
 }
 
 declare interface CheckoutButtonDataState {
-    initializedContainers: {
-        [key: string]: boolean;
-    };
+    initializedContainers: Record<string, boolean>;
 }
 
 declare class CheckoutButtonErrorSelector {
@@ -2919,6 +2974,8 @@ declare interface CheckoutEventRequestBody {
     event: string;
     payment_provider_id?: string;
     payment_method_id?: string;
+    order_id?: number;
+    seconds?: number;
 }
 
 declare type CheckoutIncludeParam = {
@@ -4164,9 +4221,7 @@ declare interface CheckoutServiceOptions {
 
 declare interface CheckoutSettings {
     capabilities?: Capabilities;
-    features: {
-        [featureName: string]: boolean;
-    };
+    features: Record<string, boolean>;
     checkoutBillingSameAsShippingEnabled: boolean;
     checkoutUserExperienceSettings: UserExperienceSettings;
     enableOrderComments: boolean;
@@ -4184,6 +4239,7 @@ declare interface CheckoutSettings {
     isSignInEmailEnabled: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
+    isCustomCheckout?: boolean;
     isPhoneNumberValidationEnabled?: boolean;
     isSpamProtectionEnabled: boolean;
     isTrustedShippingAddressEnabled: boolean;
@@ -4233,7 +4289,7 @@ declare interface CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to submit, otherwise undefined.
      */
-    getSubmitOrderError(): Error | CartChangedError | CartConsistencyError | CartStockPositionsChangedError | undefined;
+    getSubmitOrderError(): Error | CartChangedError | CartConflictError | CartConsistencyError | CartStockPositionsChangedError | undefined;
     /**
      * Returns an error if unable to finalize the current order.
      *
@@ -5303,25 +5359,6 @@ declare interface CouponSelector {
 export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
 
 /**
- * Creates an instance of `BraintreeAnalyticTrackerService`.
- *
- * @remarks
- * ```js
- * const checkoutService = createCheckoutService();
- * await checkoutService.loadCheckout();
- * const braintreeAnalyticTracker = createBraintreeAnalyticTracker(checkoutService);
- *
- * braintreeAnalyticTracker.customerPaymentMethodExecuted();
- * braintreeAnalyticTracker.paymentComplete();
- * braintreeAnalyticTracker.selectedPaymentMethod('applepay');
- * braintreeAnalyticTracker.walletButtonClick('paypal');
- * ```
- *
- * @returns an instance of `BraintreeAnalyticTrackerService`.
- */
-export declare function createBraintreeAnalyticTracker(checkoutService: CheckoutService): BraintreeAnalyticTrackerService;
-
-/**
  * Creates an instance of `CheckoutButtonInitializer`.
  *
  * @remarks
@@ -5426,25 +5463,6 @@ export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
  * @returns An instance of `LanguageService`.
  */
 export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
-
-/**
- * Creates an instance of `PayPalCommerceAnalyticTrackerService`.
- *
- * @remarks
- * ```js
- * const checkoutService = createCheckoutService();
- * await checkoutService.loadCheckout();
- * const paypalCommerceAnalyticTracker = createPayPalCommerceAnalyticTracker(checkoutService);
- *
- * paypalCommerceAnalyticTracker.customerPaymentMethodExecuted();
- * paypalCommerceAnalyticTracker.paymentComplete();
- * paypalCommerceAnalyticTracker.selectedPaymentMethod('applepay');
- * paypalCommerceAnalyticTracker.walletButtonClick('paypal');
- * ```
- *
- * @returns an instance of `PayPalCommerceAnalyticTrackerService`.
- */
-export declare function createPayPalCommerceAnalyticTracker(checkoutService: CheckoutService): PayPalCommerceAnalyticTrackerService;
 
 /**
  * Creates an instance of `StepTracker`.
@@ -6127,9 +6145,7 @@ declare interface GatewayOrderPayment extends OrderPayment {
     mandate?: {
         id: string;
         url?: string;
-        mandateText?: {
-            [key: string]: string;
-        };
+        mandateText?: Record<string, string>;
     };
 }
 
@@ -6774,6 +6790,10 @@ declare interface HostedStoredCardFieldOptionsMap {
 
 declare type HostedVaultedInstrument = Omit_2<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
+declare enum HTTPMethod {
+    POST = "POST"
+}
+
 declare interface IbanElementOptions extends BaseElementOptions {
     /**
      * Specify the list of countries or country-groups whose IBANs you want to allow.
@@ -7076,9 +7096,7 @@ declare class LanguageService {
      *
      * @param maps - The set of language strings.
      */
-    mapKeys(maps: {
-        [key: string]: string;
-    }): void;
+    mapKeys(maps: Record<string, string>): void;
     /**
      * Gets the preferred locale of the current customer.
      *
@@ -7190,9 +7208,7 @@ declare interface LinkStyles extends InlineElementStyles {
     hover?: InlineElementStyles;
 }
 
-declare interface Locales {
-    [key: string]: string;
-}
+declare type Locales = Record<string, string>;
 
 /**
  * A set of options that are required to initialize the Mollie payment method.
@@ -7826,13 +7842,6 @@ declare interface PayPalCommerceAlternativeMethodsPaymentOptions {
     onInitButton(actions: InitCallbackActions_2): Promise<void>;
 }
 
-declare interface PayPalCommerceAnalyticTrackerService {
-    customerPaymentMethodExecuted(): void;
-    paymentComplete(): void;
-    selectedPaymentMethod(methodId: string): void;
-    walletButtonClick(methodId: string): void;
-}
-
 /**
  * A set of options that are required to initialize PayPalCommerce in cart or product details page.
  *
@@ -8271,9 +8280,7 @@ declare interface PayPalCommerceFieldsStyleOptions {
         borderFocusColor?: string;
         spacingUnit?: string;
     };
-    rules?: {
-        [key: string]: any;
-    };
+    rules?: Record<string, any>;
 }
 
 /**
@@ -8617,9 +8624,7 @@ declare interface RemoteCheckoutStateData {
  */
 export declare class RequestError<TBody = any> extends StandardError {
     body: TBody | object;
-    headers: {
-        [key: string]: any;
-    };
+    headers: Record<string, any>;
     errors: Array<{
         code: string;
         message?: string;
@@ -8714,9 +8719,7 @@ declare interface SepaStateData {
 declare interface SetIframeStyleCommand {
     type: ExtensionCommandType.SetIframeStyle;
     payload: {
-        style: {
-            [key: string]: string | number | null;
-        };
+        style: Record<string, string | number | null>;
     };
 }
 
@@ -9285,9 +9288,7 @@ declare interface StripeUPECustomerInitializeOptions {
     /**
      * get styles from store theme
      */
-    getStyles?(): {
-        [key: string]: string;
-    } | undefined;
+    getStyles?(): Record<string, string> | undefined;
 }
 
 /**
@@ -9358,9 +9359,7 @@ declare interface StripeUPEShippingInitializeOptions {
     /**
      * get styles from store theme
      */
-    getStyles?(): {
-        [key: string]: string;
-    };
+    getStyles?(): Record<string, string>;
     /**
      * get the state code needed for shipping stripe element
      *
@@ -9566,17 +9565,13 @@ declare interface ThreeDSecureToken {
     token: string;
 }
 
-declare interface TranslationData {
-    [key: string]: string | number;
-}
+declare type TranslationData = Record<string, string | number>;
 
 declare interface Translations {
     [key: string]: string | Translations;
 }
 
-declare interface UnknownObject {
-    [key: string]: unknown;
-}
+declare type UnknownObject = Record<string, unknown>;
 
 declare enum UntrustedShippingCardVerificationType {
     CVV = "cvv",

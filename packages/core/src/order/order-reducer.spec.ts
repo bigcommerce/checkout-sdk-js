@@ -89,7 +89,6 @@ describe('orderReducer()', () => {
                     callbackUrl: response.data.order.callbackUrl,
                     deviceFingerprint: response.meta.deviceFingerprint,
                     orderToken: response.data.order.token,
-                    // tslint:disable-next-line:no-non-null-assertion
                     payment: action.payload!.order.payment,
                     token: headers.token,
                 },
@@ -157,7 +156,6 @@ describe('orderReducer()', () => {
         expect(orderReducer(initialState, action)).toEqual(
             expect.objectContaining({
                 meta: {
-                    // tslint:disable-next-line:no-non-null-assertion
                     payment: action.payload!.order.payment,
                 },
             }),

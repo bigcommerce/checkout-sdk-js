@@ -8,6 +8,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getBraintreePaypalSdkLocale,
     getIsOnlyDigitalProduct,
     isBraintreeError,
     PaypalAuthorizeData,
@@ -94,6 +95,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             currency: currencyCode,
             intent: initializationData.intent,
             isCreditEnabled: initializationData.isCreditEnabled,
+            locale: getBraintreePaypalSdkLocale(state),
             commit: false,
         };
 
@@ -266,7 +268,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
         try {
             return await this.paymentIntegrationService.createBuyNowCart(buyNowCardRequestBody);
-        } catch (error) {
+        } catch {
             throw new BuyNowCartCreationError();
         }
     }

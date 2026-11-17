@@ -633,7 +633,7 @@ describe('PayPalCommercePaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(paypalIntegrationService.loadPayPalSdk).toHaveBeenCalled();
             }
         });
@@ -655,7 +655,7 @@ describe('PayPalCommercePaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(paypalIntegrationService.loadPayPalSdk).not.toHaveBeenCalled();
             }
         });
@@ -701,7 +701,7 @@ describe('PayPalCommercePaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(paypalSdk.Buttons).toHaveBeenCalled();
             }
         });
@@ -771,7 +771,7 @@ describe('PayPalCommercePaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(paypalCommerceSdkCloseMock).toHaveBeenCalled();
             }
         });
@@ -819,7 +819,7 @@ describe('PayPalCommercePaymentStrategy', () => {
 
             try {
                 await strategy.execute(payload);
-            } catch (_error: unknown) {
+            } catch {
                 expect(paypalCommerceOptions.onError).toHaveBeenCalledWith(
                     new Error('INSTRUMENT_DECLINED'),
                 );

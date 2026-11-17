@@ -52,6 +52,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
     private _linkV2Element?: StripeElement;
     private _amountTransformer?: AmountTransformer;
     private _onComplete?: (orderId?: number) => Promise<never>;
+    private _onReady?: () => void;
     private _filterAvailableShippingOptions?: (
         availableShippingOptions: ShippingOption[],
     ) => Promise<ShippingOption[]>;
@@ -82,12 +83,18 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         }
 
         const paymentMethod = await this._getPaymentMethod(gatewayId);
-        const { loadingContainerId, buttonHeight, onComplete, filterAvailableShippingOptions } =
-            stripeocs;
+        const {
+            loadingContainerId,
+            buttonHeight,
+            onComplete,
+            onReady,
+            filterAvailableShippingOptions,
+        } = stripeocs;
 
         this._loadingIndicatorContainer = loadingContainerId;
 
         this._onComplete = onComplete;
+        this._onReady = onReady;
         this._filterAvailableShippingOptions = filterAvailableShippingOptions;
 
         if (!isStripePaymentMethodLike(paymentMethod)) {
@@ -180,6 +187,10 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
         if (!this._linkV2Element) {
             return;
         }
+
+        this._linkV2Element.on(StripeElementEvent.READY, () => {
+            this._onReady?.();
+        });
 
         const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
 
@@ -379,7 +390,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             this._toggleLoadingIndicator(true);
             await this.paymentIntegrationService.submitPayment(paymentPayload);
             await this._completeCheckoutFlow();
-        } catch (error) {
+        } catch {
             this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         } finally {
             this._toggleLoadingIndicator(false);
@@ -421,7 +432,7 @@ export default class StripeLinkV2ButtonStrategy implements CheckoutButtonStrateg
             }
 
             return confirmationResult;
-        } catch (error: unknown) {
+        } catch {
             return this.stripeIntegrationService.throwStripeError(stripeError);
         }
     }

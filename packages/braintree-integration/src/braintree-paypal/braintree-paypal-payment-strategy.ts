@@ -7,6 +7,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
+    getBraintreePaypalSdkLocale,
     getIsOnlyDigitalProduct,
     MessagingPlacements,
     PaypalAuthorizeData,
@@ -237,6 +238,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 shippingAddressEditable: false,
             }),
             this.braintreeIntegrationService.getSessionId(),
+            // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
         ]).then(([{ nonce, details } = {} as any, sessionId]) => ({
             ...payment,
             paymentData: this.formattedPayload(
@@ -279,13 +281,14 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         try {
             this.braintreeIntegrationService.initialize(clientToken);
 
-            const currencyCode = this.paymentIntegrationService.getState().getCartOrThrow()
-                .currency.code;
+            const state = this.paymentIntegrationService.getState();
+            const currencyCode = state.getCartOrThrow().currency.code;
 
             const paypalCheckoutConfig: Partial<BraintreePaypalSdkCreatorConfig> = {
                 currency: currencyCode,
                 intent: initializationData?.intent,
                 isCreditEnabled: initializationData?.isCreditEnabled,
+                locale: getBraintreePaypalSdkLocale(state),
             };
 
             const isBraintreePaypalCredit = paymentMethodId === 'braintreepaypalcredit';
@@ -396,6 +399,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             }
 
             if (this.paypalButtonRender.isEligible()) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-template-expression
                 this.paypalButtonRender.render(`${containerId}`);
             }
         } else {

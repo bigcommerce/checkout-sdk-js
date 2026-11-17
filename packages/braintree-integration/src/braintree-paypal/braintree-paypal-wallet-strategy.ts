@@ -56,7 +56,7 @@ export default class BraintreePaypalWalletStrategy implements CheckoutButtonStra
 
         try {
             parsedPaymentMethod = JSON.parse(atob(braintreepaypal.initializationData));
-        } catch (error) {
+        } catch {
             throw new InvalidArgumentError("Failed to parse payment method 'initializationData'.");
         }
 

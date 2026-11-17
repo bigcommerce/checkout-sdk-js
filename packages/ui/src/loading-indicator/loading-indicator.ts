@@ -109,7 +109,7 @@ export default class LoadingIndicator {
         return indicator;
     }
 
-    private setStyleAttribute(element: HTMLElement, attrs: { [key: string]: string }): void {
+    private setStyleAttribute(element: HTMLElement, attrs: Record<string, string>): void {
         Object.keys(attrs).forEach((k) => {
             element.style.setProperty(k, attrs[k]);
         });

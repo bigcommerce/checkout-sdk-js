@@ -110,7 +110,6 @@ export interface BraintreeInitializationData {
     isFastlaneEnabled?: boolean;
     isFastlaneShippingOptionAutoSelectEnabled?: boolean;
     fastlaneStyles?: FastlaneStylesSettings;
-    isBraintreeAnalyticsV2Enabled?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: only for BT AXO A/B testing purposes, hence should be removed after testing
     paymentButtonStyles?: Record<string, PaypalStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[] | null;
@@ -211,10 +210,10 @@ export interface BraintreeHostedFieldsCreatorConfig extends BraintreeModuleCreat
         cardholderName?: BraintreeHostedFieldOption;
     };
     styles?: {
-        input?: { [key: string]: string };
-        '.invalid'?: { [key: string]: string };
-        '.valid'?: { [key: string]: string };
-        ':focus'?: { [key: string]: string };
+        input?: Record<string, string>;
+        '.invalid'?: Record<string, string>;
+        '.valid'?: Record<string, string>;
+        ':focus'?: Record<string, string>;
     };
     preventCursorJumps?: boolean;
 }
@@ -231,7 +230,7 @@ export interface BraintreeHostedFieldOption {
     minlength?: number;
     prefill?: string;
     rejectUnsupportedCards?: boolean;
-    supportedCardBrands?: { [key: string]: boolean };
+    supportedCardBrands?: Record<string, boolean>;
 }
 
 export interface BraintreeHostedFieldsState {
@@ -420,6 +419,7 @@ export interface BraintreePaypalSdkCreatorConfig {
     intent?: string;
     isCreditEnabled?: boolean;
     commit?: boolean;
+    locale?: string;
 }
 
 /**

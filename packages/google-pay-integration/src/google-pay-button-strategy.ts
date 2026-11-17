@@ -79,7 +79,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             paymentMethod = state.getPaymentMethodOrThrow(this._getMethodOrThrow());
-        } catch (_e) {
+        } catch {
             state = await this._paymentIntegrationService.loadPaymentMethod(
                 this._getMethodOrThrow(),
             );
@@ -234,10 +234,11 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                         );
                     }
 
-                    const { newOfferInfo = undefined, error: couponsError = undefined } =
-                        offerChangeTriggers.includes(callbackTrigger)
-                            ? await this._googlePayPaymentProcessor.handleCoupons(offerData)
-                            : {};
+                    const { newOfferInfo, error: couponsError } = offerChangeTriggers.includes(
+                        callbackTrigger,
+                    )
+                        ? await this._googlePayPaymentProcessor.handleCoupons(offerData)
+                        : {};
 
                     // We can add another errors if needed 'couponsError || shippingError || anotherError'
                     const error: GooglePayError | undefined = couponsError;

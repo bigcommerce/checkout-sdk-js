@@ -156,7 +156,7 @@ describe('StripeIntegrationService', () => {
                 stripeIntegrationService.throwStripeError({
                     type: 'invalid_request_error',
                     message: 'error message',
-                } as StripeError);
+                });
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);
                 expect((error as Error).message).toBe('error message');
@@ -173,7 +173,7 @@ describe('StripeIntegrationService', () => {
                             message: 'PaymentIntent was canceled.',
                         },
                     },
-                } as StripeError);
+                });
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodCancelledError);
             }

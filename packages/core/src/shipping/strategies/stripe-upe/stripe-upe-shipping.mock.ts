@@ -90,7 +90,7 @@ export function getStripeUPEShippingInitializeOptionsMock(): ShippingInitializeO
 }
 
 export function getStripeUPEInitializeOptionsMockWithStyles(
-    style: { [key: string]: string } = { fieldText: '#ccc' },
+    style: Record<string, string> = { fieldText: '#ccc' },
 ): ShippingInitializeOptions {
     return {
         methodId: 'stripeupe',

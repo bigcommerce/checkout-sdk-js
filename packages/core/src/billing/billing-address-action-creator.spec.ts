@@ -19,7 +19,6 @@ import {
 } from '../subscription';
 import { UpdateSubscriptionsError } from '../subscription/errors';
 
-import { BillingAddressRequestBody } from './billing-address';
 import BillingAddressActionCreator from './billing-address-action-creator';
 import {
     BillingAddressAction,
@@ -125,7 +124,6 @@ describe('BillingAddressActionCreator', () => {
                     customer: {
                         ...state.customer,
                         data: {
-                            // tslint:disable-next-line:no-non-null-assertion
                             ...state.customer.data!,
                             isGuest: true,
                         },
@@ -302,7 +300,6 @@ describe('BillingAddressActionCreator', () => {
                     customer: {
                         ...state.customer,
                         data: {
-                            // tslint:disable-next-line:no-non-null-assertion
                             ...state.customer.data!,
                             isGuest: true,
                         },
@@ -399,7 +396,7 @@ describe('BillingAddressActionCreator', () => {
         describe('when store has checkout data but no billing address data', () => {
             beforeEach(() => {
                 store = createCheckoutStore(omit(state, 'billingAddress'));
-                address = omit(address, 'id') as BillingAddressRequestBody;
+                address = omit(address, 'id');
             });
 
             it('emits actions if able to update billing address when experiment is enabled', async () => {

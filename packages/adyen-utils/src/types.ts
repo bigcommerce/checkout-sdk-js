@@ -340,6 +340,7 @@ export interface AdyenComponent {
     mount(containerId: string): HTMLElement;
     unmount(): void;
     submit(): void;
+    handleAction?(action: AdyenAction): void;
 }
 
 export interface AdyenConfiguration {
@@ -439,11 +440,7 @@ export interface AdyenConfiguration {
      *   ...
      * }
      */
-    translations?: {
-        [index: string]: {
-            [index: string]: string;
-        };
-    };
+    translations?: Record<string, Record<string, string>>;
 
     /*
      * Specify the function that you created, for example, handleOnChange. If you wish
@@ -452,7 +449,11 @@ export interface AdyenConfiguration {
      */
     onChange?(state: AdyenComponentEventState, component?: AdyenComponent): void;
 
-    onAdditionalDetails?(state: AdyenComponentEventState, component?: AdyenComponent): void;
+    onAdditionalDetails?(
+        state: AdyenComponentEventState,
+        component?: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
 }
 
 export interface AdyenPlaceholderData {
@@ -801,7 +802,7 @@ export interface Card {
 export interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
-    valid?: { [key: string]: boolean };
+    valid?: Record<string, boolean>;
     errors?: CardStateErrors;
 }
 
@@ -826,7 +827,7 @@ export interface AdyenComponentState {
     data?: CardStateData | IdealStateData | SepaStateData;
     issuer?: string;
     isValid?: boolean;
-    valid?: { [key: string]: boolean };
+    valid?: Record<string, boolean>;
     errors?: CardStateErrors;
 }
 
@@ -835,9 +836,7 @@ interface CardDataPaymentMethodState {
     installments?: { value: number; plan?: 'string' };
 }
 
-export interface CardStateErrors {
-    [key: string]: string;
-}
+export type CardStateErrors = Record<string, string>;
 
 export interface WechatState {
     data: WechatDataPaymentMethodState;
@@ -1149,14 +1148,22 @@ export interface SubInputDetail {
 
 export interface AdyenV3ThreeDS2ChallengeComponentOptions {
     challengeWindowSize?: string;
-    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onAdditionalDetails?(
+        state: AdyenAdditionalActionState,
+        component?: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
     onActionHandled?(rtnObj: ActionHandledReturnObject): void;
     onError(error: AdyenError): void;
 }
 
 export interface AdyenV2ThreeDS2ChallengeComponentOptions {
     size?: string;
-    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onAdditionalDetails?(
+        state: AdyenAdditionalActionState,
+        component?: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
     onActionHandled?(rtnObj: ActionHandledReturnObject): void;
     onError(error: AdyenError): void;
 }
@@ -1168,7 +1175,11 @@ export interface ActionHandledReturnObject {
 
 export interface ThreeDS2DeviceFingerprintComponentOptions {
     onActionHandled?(rtnObj: ActionHandledReturnObject): void;
-    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onAdditionalDetails?(
+        state: AdyenAdditionalActionState,
+        component?: AdyenComponent,
+        actions?: AdyenActions,
+    ): void;
     onError(error: AdyenError): void;
 }
 

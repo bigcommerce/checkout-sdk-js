@@ -2,10 +2,10 @@
  * Takes a nested object and flattens it.
  */
 export default function objectFlatten(
-    object: { [key: string]: any },
+    object: Record<string, any>,
     parent?: string,
-): { [key: string]: any } {
-    const flattened: { [key: string]: any } = {};
+): Record<string, any> {
+    const flattened: Record<string, any> = {};
 
     Object.keys(object).forEach((key: string) => {
         const value = object[key];

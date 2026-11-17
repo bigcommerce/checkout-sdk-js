@@ -83,7 +83,6 @@ describe('HostedCardExpiryInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.value = '1020';

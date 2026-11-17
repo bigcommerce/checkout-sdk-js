@@ -20,6 +20,7 @@ import {
     FinalizeOrderAction,
     OrderActionCreator,
     OrderActionType,
+    OrderCreatedNotifier,
     OrderRequestSender,
     SubmitOrderAction,
 } from '../../../order';
@@ -54,6 +55,7 @@ describe('ConvergeaymentStrategy', () => {
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            new OrderCreatedNotifier(),
         );
 
         paymentActionCreator = new PaymentActionCreator(

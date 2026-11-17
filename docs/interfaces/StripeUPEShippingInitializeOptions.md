@@ -76,13 +76,13 @@ get the state code needed for shipping stripe element
 
 ### getStyles()?
 
-> `optional` **getStyles**(): `object`
+> `optional` **getStyles**(): `Record`\<`string`, `string`\>
 
 get styles from store theme
 
 #### Returns
 
-`object`
+`Record`\<`string`, `string`\>
 
 ***
 

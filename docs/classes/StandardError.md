@@ -16,6 +16,7 @@ all custom errors thrown in this library.
 ## Extended by
 
 - [`CartChangedError`](CartChangedError.md)
+- [`CartConflictError`](CartConflictError.md)
 - [`CartConsistencyError`](CartConsistencyError.md)
 - [`CartStockPositionsChangedError`](CartStockPositionsChangedError.md)
 - [`RequestError`](RequestError.md)

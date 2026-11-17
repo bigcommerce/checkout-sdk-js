@@ -2,6 +2,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { isNil, omitBy } from 'lodash';
 
 import {
+    CartConflictError,
     CartConsistencyError,
     CartStockPositionsChangedError,
     EmptyCartError,
@@ -23,7 +24,22 @@ export interface SubmitOrderRequestOptions extends RequestOptions {
     headers?: {
         checkoutVariant?: string;
     };
+    includeOrderDetails?: boolean;
 }
+
+const ORDER_DETAILS_INCLUDES = [
+    'payments',
+    'lineItems.physicalItems.socialMedia',
+    'lineItems.physicalItems.options',
+    'lineItems.physicalItems.categories',
+    'lineItems.digitalItems.socialMedia',
+    'lineItems.digitalItems.options',
+    'lineItems.digitalItems.categories',
+];
+
+const CREATE_ORDER_DETAILS_INCLUDES = ORDER_DETAILS_INCLUDES.filter(
+    (include) => include !== 'payments',
+);
 
 export default class OrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
@@ -34,19 +50,10 @@ export default class OrderRequestSender {
             Accept: ContentType.JsonV1,
             ...SDK_VERSION_HEADERS,
         };
-        const include = [
-            'payments',
-            'lineItems.physicalItems.socialMedia',
-            'lineItems.physicalItems.options',
-            'lineItems.physicalItems.categories',
-            'lineItems.digitalItems.socialMedia',
-            'lineItems.digitalItems.options',
-            'lineItems.digitalItems.categories',
-        ];
 
         return this._requestSender.get(url, {
             params: {
-                include: joinIncludes(include),
+                include: joinIncludes(ORDER_DETAILS_INCLUDES),
             },
             headers,
             timeout,
@@ -55,13 +62,16 @@ export default class OrderRequestSender {
 
     submitOrder(
         body?: InternalOrderRequestBody,
-        { headers, timeout }: SubmitOrderRequestOptions = {},
+        { headers, timeout, includeOrderDetails }: SubmitOrderRequestOptions = {},
     ): Promise<Response<InternalOrderResponseBody>> {
         const url = '/internalapi/v1/checkout/order';
 
         return this._requestSender
             .post<InternalOrderResponseBody>(url, {
                 body,
+                params: includeOrderDetails
+                    ? { include: joinIncludes(CREATE_ORDER_DETAILS_INCLUDES) }
+                    : undefined,
                 headers: omitBy(
                     {
                         'X-Checkout-Variant': headers && headers.checkoutVariant,
@@ -78,6 +88,10 @@ export default class OrderRequestSender {
 
                 if (error.body.type === 'cart_has_changed') {
                     throw new CartConsistencyError();
+                }
+
+                if (error.body.type === 'cart_conflict_error') {
+                    throw new CartConflictError();
                 }
 
                 if (error.body.type === 'cart_stock_positions_changed') {

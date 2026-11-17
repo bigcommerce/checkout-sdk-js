@@ -18,6 +18,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getFastlaneStyles,
+    getPayPalFastlaneLocale,
     isPayPalFastlaneCustomer,
     isPaypalFastlaneRequestError,
     PayPalFastlaneAuthenticationState,
@@ -122,11 +123,13 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             paypalcommercefastlane?.styles,
         );
 
-        await this.paypalFastlaneUtils.initializePayPalFastlane(
+        const fastlane = await this.paypalFastlaneUtils.initializePayPalFastlane(
             this.paypalFastlaneSdk,
             !!isDeveloperModeApplicable,
             fastlaneStyles,
         );
+
+        fastlane.setLocale(getPayPalFastlaneLocale(state.getLocale()));
 
         if (this.shouldRunAuthenticationFlow()) {
             await this.runPayPalAuthenticationFlowOrThrow(methodId);

@@ -5,6 +5,7 @@ describe('getIsOnlyDigitalProducts', () => {
     it('Should return true for digital products', () => {
         const cart = getCartMockWithDigitalItemsOnly();
         const isOnlyDigitalProducts = getIsOnlyDigitalProducts(cart);
+
         expect(isOnlyDigitalProducts).toBe(true);
     });
 });

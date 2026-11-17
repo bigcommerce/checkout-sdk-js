@@ -14,7 +14,7 @@ export default function omitDeep(
             (result, value, key) => {
                 result[key] = omitDeep(value, predicate);
             },
-            {} as { [key: string]: any },
+            {} as Record<string, any>,
         );
     }
 

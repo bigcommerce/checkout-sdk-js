@@ -224,7 +224,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             });
 
             this.handleError(new TimeoutError());
-        } catch (error) {
+        } catch {
             rejectPromise();
         }
     }

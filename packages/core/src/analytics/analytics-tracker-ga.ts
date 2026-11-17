@@ -55,6 +55,4 @@ function serializeAnalyticsEventPayload(obj: AnalyticPayload): string {
         .join('&');
 }
 
-interface AnalyticPayload {
-    [key: string]: unknown;
-}
+type AnalyticPayload = Record<string, unknown>;

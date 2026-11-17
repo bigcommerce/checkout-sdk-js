@@ -10,7 +10,6 @@ describe('SelectorDecorator', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
     @selector
     class Bar {
         constructor(private name: string) {}

@@ -110,16 +110,20 @@ export default class CardinalClientV2 {
         );
     }
 
-    runBinProcess(binNumber: string): Promise<void> {
-        return this._getClientSDK()
-            .then((client) =>
-                client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(noop),
-            )
-            .then((result) => {
-                if (!result || !result.Status) {
-                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-                }
-            });
+    runBinProcess(binNumber: string, isNonFatal?: boolean): Promise<void> {
+        const binProcess = this._getClientSDK().then((client) =>
+            client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(noop),
+        );
+
+        if (isNonFatal) {
+            return binProcess.then(noop);
+        }
+
+        return binProcess.then((result) => {
+            if (!result || !result.Status) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+        });
     }
 
     getThreeDSecureData(

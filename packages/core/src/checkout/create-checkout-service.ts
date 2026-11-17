@@ -39,7 +39,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import * as customerStrategyFactories from '../generated/customer-strategies';
 import * as paymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
-import { OrderActionCreator, OrderRequestSender } from '../order';
+import { OrderActionCreator, OrderCreatedNotifier, OrderRequestSender } from '../order';
 import {
     B2BCompanyPaymentMethodRequestSender,
     B2BPaymentsRefreshActionCreator,
@@ -139,9 +139,11 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         spamProtection,
         spamProtectionRequestSender,
     );
+    const orderCreatedNotifier = new OrderCreatedNotifier();
     const orderActionCreator = new OrderActionCreator(
         orderRequestSender,
         new CheckoutValidator(checkoutRequestSender),
+        orderCreatedNotifier,
     );
     const subscriptionsActionCreator = new SubscriptionsActionCreator(
         new SubscriptionsRequestSender(experimentRequestSender),
@@ -157,6 +159,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const paymentIntegrationService = createPaymentIntegrationService(
         store,
         experimentRequestSender,
+        orderActionCreator,
     );
 
     // NO_PAYMENT_DATA_REQUIRED must always be available regardless of build mode — it handles
@@ -219,13 +222,19 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             new B2BCompanyPaymentMethodRequestSender(requestSender),
         ),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, paymentClient, experimentRequestSender),
+            createPaymentStrategyRegistry(
+                store,
+                paymentClient,
+                experimentRequestSender,
+                orderActionCreator,
+            ),
             registryV2,
             orderActionCreator,
             spamProtectionActionCreator,
             paymentIntegrationService,
             store,
             checkoutActionCreator,
+            orderCreatedNotifier,
         ),
         new PickupOptionActionCreator(new PickupOptionRequestSender(experimentRequestSender)),
         new ShippingCountryActionCreator(

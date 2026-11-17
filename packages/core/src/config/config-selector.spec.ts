@@ -30,7 +30,6 @@ describe('ConfigSelector', () => {
             configSelector = createConfigSelector(state.config, state.formFields);
 
             expect(configSelector.getStoreConfig()).toEqual({
-                // tslint:disable-next-line:no-non-null-assertion
                 ...state.config.data!.storeConfig,
                 formFields: {
                     customerAccount: state.formFields.data?.customerAccount,
@@ -43,7 +42,6 @@ describe('ConfigSelector', () => {
         it('returns the context config', () => {
             configSelector = createConfigSelector(state.config, state.formFields);
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(configSelector.getContextConfig()).toEqual(state.config.data!.context);
         });
     });
@@ -60,10 +58,8 @@ describe('ConfigSelector', () => {
             configStateWithMessages = {
                 ...state.config,
                 data: {
-                    // tslint:disable-next-line: no-non-null-assertion
                     ...state.config.data!,
                     context: {
-                        // tslint:disable-next-line: no-non-null-assertion
                         ...state.config.data!.context,
                         flashMessages,
                     },

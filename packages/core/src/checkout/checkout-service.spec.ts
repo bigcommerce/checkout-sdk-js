@@ -65,7 +65,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
-import { OrderActionCreator, OrderRequestSender } from '../order';
+import { OrderActionCreator, OrderCreatedNotifier, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import {
@@ -369,7 +369,7 @@ describe('CheckoutService', () => {
 
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
-        jest.spyOn(checkoutValidator, 'validate').mockResolvedValue(undefined);
+        jest.spyOn(checkoutValidator, 'validate').mockResolvedValue(getCheckout());
 
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
@@ -412,7 +412,11 @@ describe('CheckoutService', () => {
             new SpamProtectionRequestSender(requestSender),
         );
 
-        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
+        orderActionCreator = new OrderActionCreator(
+            orderRequestSender,
+            checkoutValidator,
+            new OrderCreatedNotifier(),
+        );
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             paymentMethodRequestSender,
@@ -455,6 +459,7 @@ describe('CheckoutService', () => {
             paymentIntegrationService,
             store,
             checkoutActionCreator,
+            new OrderCreatedNotifier(),
         );
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
@@ -927,14 +932,10 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.submitOrder(payload);
 
-            expect(paymentStrategy.execute).toHaveBeenCalledWith(
-                getOrderRequestBody(),
-                // tslint:disable-next-line:no-non-null-assertion
-                {
-                    methodId: payload.payment!.methodId,
-                    gatewayId: payload.payment!.gatewayId,
-                },
-            );
+            expect(paymentStrategy.execute).toHaveBeenCalledWith(getOrderRequestBody(), {
+                methodId: payload.payment!.methodId,
+                gatewayId: payload.payment!.gatewayId,
+            });
         });
 
         it('executes payment strategy with timeout', async () => {
@@ -944,15 +945,11 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.submitOrder(payload, options);
 
-            expect(paymentStrategy.execute).toHaveBeenCalledWith(
-                payload,
-                // tslint:disable-next-line:no-non-null-assertion
-                {
-                    ...options,
-                    methodId: payload.payment!.methodId,
-                    gatewayId: payload.payment!.gatewayId,
-                },
-            );
+            expect(paymentStrategy.execute).toHaveBeenCalledWith(payload, {
+                ...options,
+                methodId: payload.payment!.methodId,
+                gatewayId: payload.payment!.gatewayId,
+            });
         });
     });
 
