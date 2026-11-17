@@ -213,7 +213,7 @@ export default class HostedField {
             return await this._detachmentObserver.ensurePresence([this._iframe], promise);
         } catch (error) {
             if (this._isStoredCardErrorEvent(error)) {
-                const action = error.payload?.response?.body?.additional_action_required;
+                const action = error.payload?.additionalActionRequired;
 
                 if (action?.type === 'recaptcha_v2_verification' && action.data?.key) {
                     throw new HumanVerificationRequiredError(action.data.key);

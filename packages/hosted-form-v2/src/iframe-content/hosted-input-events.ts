@@ -1,6 +1,6 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { PaymentErrorData, PaymentErrorResponseBody } from '../errors';
+import { AdditionalActionRequired, PaymentErrorData, PaymentErrorResponseBody } from '../errors';
 import HostedFieldType from '../hosted-field-type';
 import { HostedFormErrorsData } from '../hosted-form-options';
 
@@ -157,5 +157,6 @@ export interface HostedInputStoredCardErrorEvent {
         errors?: string[];
         error?: PaymentErrorData;
         response?: Response<PaymentErrorResponseBody>;
+        additionalActionRequired?: AdditionalActionRequired;
     };
 }

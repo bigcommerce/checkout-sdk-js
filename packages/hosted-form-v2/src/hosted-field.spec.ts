@@ -281,18 +281,10 @@ describe('HostedField', () => {
         jest.spyOn(eventPoster, 'post').mockRejectedValue({
             type: HostedInputEventType.StoredCardFailed,
             payload: {
-                response: getResponse(
-                    {
-                        status: 'error',
-                        errors: [{ code: 'bad_request', message: 'Additional action required.' }],
-                        additional_action_required: {
-                            type: 'recaptcha_v2_verification',
-                            data: { key: '6LeXXXXX' },
-                        },
-                    },
-                    {},
-                    400,
-                ),
+                additionalActionRequired: {
+                    type: 'recaptcha_v2_verification',
+                    data: { key: '6LeXXXXX' },
+                },
             },
         });
 
@@ -313,19 +305,7 @@ describe('HostedField', () => {
         const rejection = {
             type: HostedInputEventType.StoredCardFailed,
             payload: {
-                response: getResponse(
-                    {
-                        status: 'error',
-                        errors: [
-                            {
-                                code: 'invalid_create_instrument_request',
-                                message: 'Invalid card number.',
-                            },
-                        ],
-                    },
-                    {},
-                    422,
-                ),
+                additionalActionRequired: { type: 'some_other_action' },
             },
         };
 

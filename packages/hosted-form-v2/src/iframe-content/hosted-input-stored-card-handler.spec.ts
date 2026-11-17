@@ -168,7 +168,7 @@ describe('HostedInputStoredCardHandler', () => {
         });
     });
 
-    it('posts event with the response payload if vaulting submission fails', async () => {
+    it('posts event with the additional action required if vaulting submission fails', async () => {
         const response = getResponse(
             {
                 status: 'error',
@@ -199,7 +199,30 @@ describe('HostedInputStoredCardHandler', () => {
 
         expect(eventPoster.post).toHaveBeenCalledWith({
             type: HostedInputEventType.StoredCardFailed,
-            payload: { response },
+            payload: {
+                additionalActionRequired: {
+                    type: 'recaptcha_v2_verification',
+                    data: { key: '6LeXXXXX' },
+                },
+            },
+        });
+    });
+
+    it('posts event with an empty additional action if the failure is not an api response', async () => {
+        jest.spyOn(eventPoster, 'post');
+
+        jest.spyOn(requestSender, 'submitPaymentInstrument').mockRejectedValue(
+            new Error('Network failure'),
+        );
+
+        await handler.handle({
+            type: HostedFieldEventType.StoredCardRequested,
+            payload: { data, fields },
+        });
+
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.StoredCardFailed,
+            payload: { additionalActionRequired: undefined },
         });
     });
 });

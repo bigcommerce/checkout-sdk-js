@@ -63,7 +63,10 @@ export default class HostedInputStoredCardHandler {
         } catch (error) {
             this._eventPoster.post({
                 type: HostedInputEventType.StoredCardFailed,
-                payload: { response: error as Response<PaymentErrorResponseBody> },
+                payload: {
+                    additionalActionRequired: (error as Response<PaymentErrorResponseBody>)?.body
+                        ?.additional_action_required,
+                },
             });
         }
     };
