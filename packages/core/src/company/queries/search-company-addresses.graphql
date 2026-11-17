@@ -19,41 +19,7 @@ query SearchCompanyAddresses(
             ) {
                 edges {
                     node {
-                        entityId
-                        firstName
-                        lastName
-                        address1
-                        address2
-                        city
-                        stateOrProvince
-                        stateOrProvinceCode
-                        postalCode
-                        country
-                        countryCode
-                        phone
-                        label
-                        company: companyName
-                        isDefaultShipping
-                        isDefaultBilling
-                        isShipping
-                        isBilling
-                        extraFields {
-                            __typename
-                            name
-                            fieldEntityId
-                            ... on TextExtraFieldValue {
-                                text
-                            }
-                            ... on MultilineTextExtraFieldValue {
-                                multilineText
-                            }
-                            ... on NumberExtraFieldValue {
-                                number
-                            }
-                            ... on MultipleChoiceExtraFieldValue {
-                                value
-                            }
-                        }
+                        ...CompanyAddressFields
                     }
                 }
                 pageInfo {
@@ -62,5 +28,47 @@ query SearchCompanyAddresses(
                 }
             }
         }
+    }
+}
+
+fragment CompanyAddressFields on CompanyAddress {
+    entityId
+    firstName
+    lastName
+    address1
+    address2
+    city
+    stateOrProvince
+    stateOrProvinceCode
+    postalCode
+    country
+    countryCode
+    phone
+    label
+    company: companyName
+    isDefaultShipping
+    isDefaultBilling
+    isShipping
+    isBilling
+    extraFields {
+        ...CompanyAddressExtraField
+    }
+}
+
+fragment CompanyAddressExtraField on ExtraFieldValue {
+    __typename
+    name
+    fieldEntityId
+    ... on TextExtraFieldValue {
+        text
+    }
+    ... on MultilineTextExtraFieldValue {
+        multilineText
+    }
+    ... on NumberExtraFieldValue {
+        number
+    }
+    ... on MultipleChoiceExtraFieldValue {
+        value
     }
 }
