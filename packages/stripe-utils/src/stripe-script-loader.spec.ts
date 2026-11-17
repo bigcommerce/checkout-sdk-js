@@ -68,8 +68,6 @@ describe('StripePayScriptLoader', () => {
         });
 
         it('loads the requested version when another script already loaded a different one', async () => {
-            // Another script on the page (a storefront app, an injected
-            // widget) got there first with a newer release train.
             const foreignStripe = Object.assign(
                 jest.fn(() => stripeUPEJsMock),
                 {
