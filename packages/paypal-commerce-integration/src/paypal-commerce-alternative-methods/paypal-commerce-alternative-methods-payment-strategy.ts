@@ -300,11 +300,19 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             onInit: (_, actions) => paypalOptions.onInitButton(actions),
             createOrder: () => this.onCreateOrder(methodId, gatewayId, paypalOptions),
             onApprove: (data) => this.handleApprove(data, submitForm),
-            onCancel: () => {
+            onCancel: async () => {
+                if (await this.continueIfOrderAlreadyPaid(methodId, submitForm)) {
+                    return;
+                }
+
                 this.toggleLoadingIndicator(false);
                 this.deinitializePollingMechanism();
             },
-            onError: (error) => {
+            onError: async (error) => {
+                if (await this.continueIfOrderAlreadyPaid(methodId, submitForm)) {
+                    return;
+                }
+
                 this.deinitializePollingMechanism();
                 this.handleFailure(error, onError);
             },
@@ -372,9 +380,40 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             }
 
             await this.paypalCommerceIntegrationService.submitPayment(methodId, orderId, gatewayId);
+
+            this.orderId = orderId;
         }
 
         return orderId;
+    }
+
+    // Info:
+    // The iDEAL window may be closed without returning to the checkout (e.g. on mobile devices) after the payment
+    // was approved. The order is captured by the webhook in this case, so the checkout should proceed as approved.
+    private async continueIfOrderAlreadyPaid(
+        methodId: string,
+        submitForm: PayPalCommerceAlternativeMethodsPaymentOptions['submitForm'],
+    ): Promise<boolean> {
+        if (
+            methodId !== NonInstantAlternativePaymentMethods.IDEAL ||
+            !this.isOrderApprovedProcessing
+        ) {
+            return false;
+        }
+
+        try {
+            const state = await this.paymentIntegrationService.loadCurrentOrder();
+
+            if (!state.getOrder()?.isComplete) {
+                return false;
+            }
+        } catch {
+            return false;
+        }
+
+        submitForm();
+
+        return true;
     }
 
     private handleApprove(
