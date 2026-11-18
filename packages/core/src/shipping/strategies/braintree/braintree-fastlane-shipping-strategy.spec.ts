@@ -362,25 +362,6 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             expect(loadPaymentMethodMock).toHaveBeenCalledWith(BRAINTREE_AXO_METHOD_ID);
         });
 
-        it('skip authentication flow for store members', async () => {
-            const getBraintreeFastlaneMock = jest.fn();
-
-            const storeMember = getCustomer();
-
-            jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
-                getBraintreeFastlaneMock,
-            );
-            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
-                storeMember,
-            );
-
-            const strategy = createStrategy();
-
-            await strategy.initialize(defaultOptions);
-
-            expect(braintreeIntegrationServiceMock.getBraintreeFastlane).not.toHaveBeenCalled();
-        });
-
         it('skip authentication if clientToken does not exist', async () => {
             // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -258,6 +258,51 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
 
             await expect(strategy.initialize(initializationOptions)).resolves.toBeUndefined();
         });
+
+        describe('Fastlane OTP for known shoppers', () => {
+            beforeEach(() => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(
+                    getCustomer(),
+                );
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomer',
+                ).mockReturnValue(undefined);
+            });
+
+            it('runs authentication flow on initialization for known shoppers', async () => {
+                await strategy.initialize(initializationOptions);
+
+                expect(
+                    braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow,
+                ).toHaveBeenCalledWith(undefined, true, { onErrorLog: undefined });
+            });
+
+            it('does not run authentication flow on initialization for guests', async () => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(
+                    getGuestCustomer(),
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                expect(
+                    braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow,
+                ).not.toHaveBeenCalled();
+            });
+
+            it('does not run authentication flow on initialization if the shopper was already authenticated', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomer',
+                ).mockReturnValue({ authenticationState: 'succeeded' });
+
+                await strategy.initialize(initializationOptions);
+
+                expect(
+                    braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow,
+                ).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('#executePaymentMethodCheckout()', () => {
@@ -283,35 +328,6 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
 
             expect(executionOptions.checkoutPaymentMethodExecuted).toHaveBeenCalled();
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
-        });
-
-        it('does not run authentication flow for store member', async () => {
-            const mockPaymentMethod = {
-                ...paymentMethod,
-                initializationData: {
-                    isFastlaneEnabled: true,
-                    isAcceleratedCheckoutEnabled: true,
-                    shouldRunAcceleratedCheckout: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(mockPaymentMethod);
-
-            const storeMember = getCustomer();
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
-                storeMember,
-            );
-
-            await strategy.initialize(initializationOptions);
-            await strategy.executePaymentMethodCheckout(executionOptions);
-
-            expect(
-                braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow,
-            ).not.toHaveBeenCalled();
         });
     });
 
@@ -433,6 +449,76 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
                 credentials,
                 undefined,
             );
+        });
+
+        describe('Fastlane OTP after sign in', () => {
+            const credentials = { email: 'test@test.com', password: '123' };
+
+            beforeEach(() => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(
+                    getCustomer(),
+                );
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomer',
+                ).mockReturnValue(undefined);
+            });
+
+            it('runs authentication flow right after sign in for known shoppers', async () => {
+                await strategy.initialize({ methodId });
+                await strategy.signIn(credentials);
+
+                expect(
+                    braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow,
+                ).toHaveBeenCalledWith(undefined, true, { onErrorLog: undefined });
+            });
+
+            it('does not run authentication flow if the shopper is already authenticated with Fastlane', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomer',
+                ).mockReturnValue({ authenticationState: 'succeeded' });
+
+                await strategy.initialize({ methodId });
+                await strategy.signIn(credentials);
+
+                expect(
+                    braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow,
+                ).not.toHaveBeenCalled();
+            });
+
+            it('does not run authentication flow if accelerated checkout is disabled', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...paymentMethod,
+                    initializationData: { isAcceleratedCheckoutEnabled: false },
+                });
+
+                await strategy.initialize({ methodId });
+                await strategy.signIn(credentials);
+
+                expect(
+                    braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow,
+                ).not.toHaveBeenCalled();
+            });
+
+            it('does not block sign in if the authentication flow fails', async () => {
+                const onErrorLog = jest.fn();
+                const error = new Error('Fastlane error');
+
+                jest.spyOn(
+                    braintreeFastlaneUtils,
+                    'runPayPalAuthenticationFlowOrThrow',
+                ).mockRejectedValue(error);
+
+                await strategy.initialize({ methodId, onErrorLog });
+
+                await expect(strategy.signIn(credentials)).resolves.toBeUndefined();
+
+                expect(onErrorLog).toHaveBeenCalledWith(error);
+            });
         });
     });
 

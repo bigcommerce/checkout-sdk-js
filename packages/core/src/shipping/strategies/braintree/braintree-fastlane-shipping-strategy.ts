@@ -73,11 +73,6 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
         }
 
         const state = this._store.getState();
-        const customer = state.customer.getCustomerOrThrow();
-
-        if (!customer.isGuest) {
-            return Promise.resolve(this._store.getState());
-        }
 
         try {
             if (this._shouldRunAuthenticationFlow()) {
