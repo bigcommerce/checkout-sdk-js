@@ -126,11 +126,13 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
             bigcommerce_payments_fastlane?.styles,
         );
 
-        await this.bigCommercePaymentsFastlaneUtils.initializePayPalFastlane(
+        const bcpFastlane = await this.bigCommercePaymentsFastlaneUtils.initializePayPalFastlane(
             this.paypalFastlaneSdk,
             !!isDeveloperModeApplicable,
             fastlaneStyles,
         );
+
+        bcpFastlane.setLocale('es_ES');
 
         if (this.shouldRunAuthenticationFlow()) {
             await this.runPayPalAuthenticationFlowOrThrow(methodId);
