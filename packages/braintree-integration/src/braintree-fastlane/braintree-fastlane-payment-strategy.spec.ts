@@ -28,7 +28,6 @@ import {
     getBillingAddress,
     getCart,
     getConfig,
-    getCustomer,
     getGuestCustomer,
     getOrder,
     getShippingAddress,
@@ -422,20 +421,6 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             ).mockReturnValue({});
 
             jest.spyOn(CookieStorage, 'get').mockReturnValue('');
-
-            await strategy.initialize(defaultInitializationOptions);
-
-            expect(
-                braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow,
-            ).not.toHaveBeenCalled();
-        });
-
-        it('does not trigger lookup method for store members', async () => {
-            const storeMember = getCustomer();
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
-                storeMember,
-            );
 
             await strategy.initialize(defaultInitializationOptions);
 

@@ -114,6 +114,12 @@ export default class BraintreeFastlaneUtils {
 
             const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
+            // eslint-disable-next-line no-console
+            console.log('[PAYPAL-7303 TEMP] fastlane lookup', {
+                hasEmail: !!customerEmail,
+                customerContextId,
+            });
+
             if (!customerContextId) {
                 // Info: we should clean up previous experience with default data and related authenticationState
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
@@ -127,9 +133,18 @@ export default class BraintreeFastlaneUtils {
                 return;
             }
 
+            // eslint-disable-next-line no-console
+            console.log('[PAYPAL-7303 TEMP] triggering fastlane authentication flow');
+
             const { authenticationState, profileData } = await triggerAuthenticationFlow(
                 customerContextId,
             );
+
+            // eslint-disable-next-line no-console
+            console.log('[PAYPAL-7303 TEMP] fastlane authentication flow result', {
+                authenticationState,
+                hasProfileData: !!profileData,
+            });
 
             const phoneNumber = profileData?.shippingAddress?.phoneNumber || '';
 
@@ -201,6 +216,9 @@ export default class BraintreeFastlaneUtils {
         } catch (error) {
             // TODO: we should figure out what to do here
             // TODO: because we should not to stop the flow if the error occurs on paypal side
+            // eslint-disable-next-line no-console
+            console.log('[PAYPAL-7303 TEMP] fastlane authentication flow failed', error);
+
             this.handleErrorLog(error, braintreeFastlaneOptions);
         }
     }
