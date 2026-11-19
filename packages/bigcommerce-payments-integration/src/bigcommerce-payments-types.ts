@@ -267,6 +267,23 @@ export interface BigCommercePaymentsInitializationData {
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     isServerSideShippingCallbacksEnabled?: boolean;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
+    shopperCurrencyOffer?: BigCommercePaymentsShopperCurrencyOffer;
+}
+
+/**
+ * The currency the shopper can pay in at checkout, at PayPal's FX rate (PAYPAL-7373).
+ * The cart stays in the store currency; only the PayPal order is charged in this currency.
+ */
+export interface BigCommercePaymentsShopperCurrencyOffer {
+    currency: string;
+    exchangeRate: string;
+    fxId: string;
+    expiryTime: string;
+    countryCode: string;
+    // The shopper pays in this currency
+    isSelected: boolean;
+    // The shopper chose a currency for the cart (this one or the cart's)
+    hasShopperChoice: boolean;
 }
 
 /**

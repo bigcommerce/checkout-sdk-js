@@ -76,6 +76,71 @@ describe('BigCommercePaymentsScriptLoader', () => {
         );
     });
 
+    describe('when the shopper switches currency', () => {
+        it('loads the SDK again in the new currency', async () => {
+            const usdSdk = getPayPalSDKMock();
+            const plnSdk = getPayPalSDKMock();
+
+            jest.spyOn(loader, 'loadScript').mockImplementation((src: string) => {
+                (window as BigCommercePaymentsHostWindow).bigCommercePaymentsPayPalSDK =
+                    src.includes('currency=PLN') ? plnSdk : usdSdk;
+
+                return Promise.resolve();
+            });
+
+            expect(await paypalLoader.getPayPalSDK(paymentMethod, 'USD')).toBe(usdSdk);
+            expect(await paypalLoader.getPayPalSDK(paymentMethod, 'PLN')).toBe(plnSdk);
+            expect(loader.loadScript).toHaveBeenCalledTimes(2);
+        });
+
+        it('switches back to the SDK loaded for a currency before', async () => {
+            const eurSdk = getPayPalSDKMock();
+            const gbpSdk = getPayPalSDKMock();
+
+            jest.spyOn(loader, 'loadScript').mockImplementation((src: string) => {
+                (window as BigCommercePaymentsHostWindow).bigCommercePaymentsPayPalSDK =
+                    src.includes('currency=GBP') ? gbpSdk : eurSdk;
+
+                return Promise.resolve();
+            });
+
+            await paypalLoader.getPayPalSDK(paymentMethod, 'EUR');
+            await paypalLoader.getPayPalSDK(paymentMethod, 'GBP');
+
+            expect(await paypalLoader.getPayPalSDK(paymentMethod, 'EUR')).toBe(eurSdk);
+        });
+
+        it('switches back to the SDK of a currency loaded before on a forced load', async () => {
+            const eurSdk = getPayPalSDKMock();
+            const gbpSdk = getPayPalSDKMock();
+            const loadedSrcs = new Set<string>();
+
+            // Like the script loader: a URL loaded before is not run again
+            jest.spyOn(loader, 'loadScript').mockImplementation((src: string) => {
+                if (!loadedSrcs.has(src)) {
+                    loadedSrcs.add(src);
+                    (window as BigCommercePaymentsHostWindow).bigCommercePaymentsPayPalSDK =
+                        src.includes('currency=GBP') ? gbpSdk : eurSdk;
+                }
+
+                return Promise.resolve();
+            });
+
+            await paypalLoader.getPayPalSDK(paymentMethod, 'EUR', true, true);
+            await paypalLoader.getPayPalSDK(paymentMethod, 'GBP', true, true);
+
+            expect(await paypalLoader.getPayPalSDK(paymentMethod, 'EUR', true, true)).toBe(eurSdk);
+            expect(await paypalLoader.getPayPalSDK(paymentMethod, 'GBP', true, true)).toBe(gbpSdk);
+        });
+
+        it('keeps the loaded SDK for the same currency', async () => {
+            await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
+            await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
+
+            expect(loader.loadScript).toHaveBeenCalledTimes(1);
+        });
+    });
+
     describe('#getClientMetadataId', () => {
         let realPaypalLoader: BigCommercePaymentsScriptLoader;
 

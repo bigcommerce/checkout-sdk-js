@@ -56,9 +56,15 @@ export default class BigCommercePaymentsIntegrationService {
         { withClientMetadataId = false }: { withClientMetadataId?: boolean } = {},
     ): Promise<PayPalSDK | undefined> {
         const state = this.paymentIntegrationService.getState();
-        const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
+        // PAYPAL-7373: the shopper chose to pay in their own currency at checkout
+        const shopperCurrencyOffer = paymentMethod.initializationData?.shopperCurrencyOffer;
+        const selectedShopperCurrency = shopperCurrencyOffer?.isSelected
+            ? shopperCurrencyOffer.currency
+            : undefined;
+        const currencyCode =
+            providedCurrencyCode || selectedShopperCurrency || state.getCartOrThrow().currency.code;
 
         // The device ID PayPal joins to our server-side calls; Fastlane derives it from the cart id the same way.
         const requestedClientMetadataId =

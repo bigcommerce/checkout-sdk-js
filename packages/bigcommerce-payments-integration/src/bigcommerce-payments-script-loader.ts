@@ -20,6 +20,12 @@ export default class BigCommercePaymentsScriptLoader {
     // Set by the load whose script created the SDK; a repeat load of a cached URL doesn't re-run the script.
     private static clientMetadataIds = new WeakMap<PayPalSDK, string | undefined>();
 
+    // PAYPAL-7373: the SDK charges in the currency it was loaded with, and a shopper can switch
+    // currency at checkout. The script loader caches scripts by URL, so a URL loaded before is not
+    // run again, even on a forced load: keep the SDK each URL created to switch back to it.
+    private static sdkCurrencies = new WeakMap<PayPalSDK, string>();
+    private static sdkByScriptSrc = new Map<string, PayPalSDK>();
+
     private window: BigCommercePaymentsHostWindow;
 
     constructor(private scriptLoader: ScriptLoader) {
@@ -51,7 +57,15 @@ export default class BigCommercePaymentsScriptLoader {
         paypalSdkScriptConfig: BigCommercePaymentsScriptParams,
         forceLoad = false,
     ): Promise<PayPalSDK> {
-        if (!this.window.bigCommercePaymentsPayPalSDK || forceLoad) {
+        const currencyCode = paypalSdkScriptConfig.options.currency;
+        const currentSdk = this.window.bigCommercePaymentsPayPalSDK;
+        const currentSdkCurrency = currentSdk
+            ? BigCommercePaymentsScriptLoader.sdkCurrencies.get(currentSdk)
+            : undefined;
+        const isOtherCurrency =
+            currentSdkCurrency !== undefined && currentSdkCurrency !== currencyCode;
+
+        if (!this.window.bigCommercePaymentsPayPalSDK || forceLoad || isOtherCurrency) {
             const options = this.transformConfig<BigCommercePaymentsScriptParams['options']>(
                 paypalSdkScriptConfig.options,
             );
@@ -64,6 +78,28 @@ export default class BigCommercePaymentsScriptLoader {
             const scriptSrc = `${paypalSdkUrl}?${scriptQuery}`;
 
             await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
+
+            const sdkCreatedBySrc = BigCommercePaymentsScriptLoader.sdkByScriptSrc.get(scriptSrc);
+
+            if (this.window.bigCommercePaymentsPayPalSDK !== currentSdk) {
+                // The script ran and created a new SDK
+                if (this.window.bigCommercePaymentsPayPalSDK) {
+                    BigCommercePaymentsScriptLoader.sdkByScriptSrc.set(
+                        scriptSrc,
+                        this.window.bigCommercePaymentsPayPalSDK,
+                    );
+                }
+            } else if (sdkCreatedBySrc) {
+                // A URL loaded before is not run again: switch back to the SDK it created
+                this.window.bigCommercePaymentsPayPalSDK = sdkCreatedBySrc;
+            }
+
+            if (currencyCode && this.window.bigCommercePaymentsPayPalSDK) {
+                BigCommercePaymentsScriptLoader.sdkCurrencies.set(
+                    this.window.bigCommercePaymentsPayPalSDK,
+                    currencyCode,
+                );
+            }
 
             const loadedSdk = this.window.bigCommercePaymentsPayPalSDK;
 

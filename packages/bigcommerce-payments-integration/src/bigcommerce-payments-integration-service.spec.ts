@@ -136,6 +136,72 @@ describe('BigCommercePaymentsIntegrationService', () => {
             expect(output).toBe(paypalSdk);
         });
 
+        it('loads paypal sdk in the currency the shopper chose to pay in', async () => {
+            const shopperCurrencyPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    shopperCurrencyOffer: {
+                        currency: 'PLN',
+                        exchangeRate: '3.59',
+                        fxId: 'fx-pln',
+                        expiryTime: '2026-11-10T02:00Z',
+                        countryCode: 'PL',
+                        isSelected: true,
+                        hasShopperChoice: true,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(shopperCurrencyPaymentMethod);
+
+            await subject.loadPayPalSdk(defaultMethodId, undefined, false, false);
+
+            expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+                shopperCurrencyPaymentMethod,
+                'PLN',
+                false,
+                false,
+                undefined,
+            );
+        });
+
+        it('loads paypal sdk in the cart currency when the shopper did not choose their currency', async () => {
+            const shopperCurrencyPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    shopperCurrencyOffer: {
+                        currency: 'PLN',
+                        exchangeRate: '3.59',
+                        fxId: 'fx-pln',
+                        expiryTime: '2026-11-10T02:00Z',
+                        countryCode: 'PL',
+                        isSelected: false,
+                        hasShopperChoice: false,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(shopperCurrencyPaymentMethod);
+
+            await subject.loadPayPalSdk(defaultMethodId, undefined, false, false);
+
+            expect(bigCommercePaymentsScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+                shopperCurrencyPaymentMethod,
+                cart.currency.code,
+                false,
+                false,
+                undefined,
+            );
+        });
+
         it('loads paypal sdk with the cart id as the client metadata id', async () => {
             enableClientMetadataIdExperiment();
 
