@@ -211,7 +211,9 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
                     );
 
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.bigCommercePaymentsIntegrationService.updateOrder();
+                await this.bigCommercePaymentsIntegrationService.updateOrder({
+                    providerId: 'bigcommerce_payments',
+                });
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
@@ -251,7 +253,9 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
                 this.bigCommercePaymentsIntegrationService.getShippingOptionOrThrow();
 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder({
+                providerId: 'bigcommerce_payments',
+            });
         } catch (error) {
             if (typeof error === 'string') {
                 throw new Error(error);
@@ -270,7 +274,9 @@ export default class BigCommercePaymentsPayLaterButtonStrategy implements Checko
 
         try {
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.bigCommercePaymentsIntegrationService.updateOrder();
+            await this.bigCommercePaymentsIntegrationService.updateOrder({
+                providerId: 'bigcommerce_payments',
+            });
         } catch (error) {
             if (typeof error === 'string') {
                 throw new Error(error);
