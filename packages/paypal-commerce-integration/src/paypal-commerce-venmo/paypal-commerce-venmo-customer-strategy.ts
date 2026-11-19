@@ -8,13 +8,11 @@ import {
     PaymentIntegrationService,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
-    ApproveCallbackPayload,
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceInitializationData,
-} from '../paypal-commerce-types';
+    PaypalButtonCreationService,
+    PayPalInitializationData,
+    PayPalIntegrationService,
+} from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import PayPalCommerceVenmoCustomerInitializeOptions, {
     WithPayPalCommerceVenmoCustomerInitializeOptions,
@@ -23,7 +21,8 @@ import PayPalCommerceVenmoCustomerInitializeOptions, {
 export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalIntegrationService: PayPalIntegrationService,
+        private paypalButtonCreationService: PaypalButtonCreationService,
     ) {}
 
     async initialize(
@@ -62,7 +61,7 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
             await this.paymentIntegrationService.loadPaymentMethod(methodId);
         }
 
-        const paypalSdk = await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        const paypalSdk = await this.paypalIntegrationService.loadPayPalSdk(methodId);
 
         if (!paypalSdk || !paypalSdk.Buttons || typeof paypalSdk.Buttons !== 'function') {
             // eslint-disable-next-line no-console
@@ -100,32 +99,31 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
     ): void {
         const { container, onClick } = paypalcommercevenmo;
 
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
         const { paymentButtonStyles } = paymentMethod.initializationData || {};
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
-        const buttonRenderOptions: PayPalCommerceButtonsOptions = {
+        const buttonRenderOptions = {
             fundingSource: paypalSdk.FUNDING.VENMO,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle({
+            style: this.paypalIntegrationService.getValidButtonStyle({
                 ...checkoutTopButtonStyles,
                 height: DefaultCheckoutButtonHeight,
             }),
-            createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder('paypalcommercevenmo'),
-            onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
             ...(onClick && { onClick: () => onClick() }),
         };
 
-        const paypalButtonRender = paypalSdk.Buttons(buttonRenderOptions);
+        const paypalButton = this.paypalButtonCreationService.createPayPalButton(
+            'paypalcommerce',
+            methodId,
+            buttonRenderOptions,
+        );
 
-        if (paypalButtonRender.isEligible()) {
-            paypalButtonRender.render(`#${container}`);
+        if (paypalButton.isEligible()) {
+            paypalButton.render(`#${container}`);
         } else {
-            this.paypalCommerceIntegrationService.removeElement(container);
+            this.paypalIntegrationService.removeElement(container);
         }
     }
 }
