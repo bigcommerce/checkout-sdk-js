@@ -6,6 +6,7 @@ query SearchCompanyAddresses(
 ) {
     customer {
         activeCompany {
+            companyName
             addresses(
                 first: $first
                 filters: {
@@ -14,26 +15,11 @@ query SearchCompanyAddresses(
                     isBilling: $isBilling
                 }
                 sort: [{ field: CREATED_AT, direction: DESC }]
+                includesExtraFields: true
             ) {
                 edges {
                     node {
-                        entityId
-                        firstName
-                        lastName
-                        address1
-                        address2
-                        city
-                        stateOrProvince
-                        stateOrProvinceCode
-                        postalCode
-                        country
-                        countryCode
-                        phone
-                        label
-                        isDefaultShipping
-                        isDefaultBilling
-                        isShipping
-                        isBilling
+                        ...CompanyAddressFields
                     }
                 }
                 pageInfo {
@@ -42,5 +28,47 @@ query SearchCompanyAddresses(
                 }
             }
         }
+    }
+}
+
+fragment CompanyAddressFields on CompanyAddress {
+    entityId
+    firstName
+    lastName
+    address1
+    address2
+    city
+    stateOrProvince
+    stateOrProvinceCode
+    postalCode
+    country
+    countryCode
+    phone
+    label
+    company: companyName
+    isDefaultShipping
+    isDefaultBilling
+    isShipping
+    isBilling
+    extraFields {
+        ...CompanyAddressExtraField
+    }
+}
+
+fragment CompanyAddressExtraField on ExtraFieldValue {
+    __typename
+    name
+    fieldEntityId
+    ... on TextExtraFieldValue {
+        text
+    }
+    ... on MultilineTextExtraFieldValue {
+        multilineText
+    }
+    ... on NumberExtraFieldValue {
+        number
+    }
+    ... on MultipleChoiceExtraFieldValue {
+        value
     }
 }
