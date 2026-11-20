@@ -37,6 +37,7 @@ import PayPalCommerceAlternativeMethodsPaymentOptions, {
 
 const POLLING_INTERVAL = 3000;
 const MAX_POLLING_TIME = 300000;
+const ORDER_PAID_CHECK_ATTEMPTS = 3;
 
 export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
@@ -300,11 +301,19 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             onInit: (_, actions) => paypalOptions.onInitButton(actions),
             createOrder: () => this.onCreateOrder(methodId, gatewayId, paypalOptions),
             onApprove: (data) => this.handleApprove(data, submitForm),
-            onCancel: () => {
+            onCancel: async () => {
+                if (await this.continueIfOrderAlreadyPaid(methodId, submitForm)) {
+                    return;
+                }
+
                 this.toggleLoadingIndicator(false);
                 this.deinitializePollingMechanism();
             },
-            onError: (error) => {
+            onError: async (error) => {
+                if (await this.continueIfOrderAlreadyPaid(methodId, submitForm)) {
+                    return;
+                }
+
                 this.deinitializePollingMechanism();
                 this.handleFailure(error, onError);
             },
@@ -372,9 +381,56 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             }
 
             await this.paypalCommerceIntegrationService.submitPayment(methodId, orderId, gatewayId);
+
+            this.orderId = orderId;
         }
 
         return orderId;
+    }
+
+    // Info:
+    // The iDEAL window may be closed without returning to the checkout (e.g. on mobile devices) after the payment
+    // was approved. The order is captured by the webhook in this case, so the checkout should proceed as approved.
+    private async continueIfOrderAlreadyPaid(
+        methodId: string,
+        submitForm: PayPalCommerceAlternativeMethodsPaymentOptions['submitForm'],
+    ): Promise<boolean> {
+        if (
+            methodId !== NonInstantAlternativePaymentMethods.IDEAL ||
+            !this.isOrderApprovedProcessing
+        ) {
+            return false;
+        }
+
+        if (!(await this.isOrderPaid(ORDER_PAID_CHECK_ATTEMPTS))) {
+            return false;
+        }
+
+        submitForm();
+
+        return true;
+    }
+
+    // Info:
+    // The window can be closed before the webhook has captured the order, so the order is checked several times.
+    private async isOrderPaid(attemptsLeft: number): Promise<boolean> {
+        try {
+            const state = await this.paymentIntegrationService.loadCurrentOrder();
+
+            if (state.getOrder()?.isComplete) {
+                return true;
+            }
+        } catch {
+            return false;
+        }
+
+        if (attemptsLeft <= 1) {
+            return false;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, this.pollingInterval));
+
+        return this.isOrderPaid(attemptsLeft - 1);
     }
 
     private handleApprove(

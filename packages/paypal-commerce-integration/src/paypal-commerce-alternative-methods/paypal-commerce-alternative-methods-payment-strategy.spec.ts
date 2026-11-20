@@ -481,6 +481,140 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
             expect(loadingIndicator.hide).toHaveBeenCalled();
         });
+
+        it('does not reload the order when the payment method is not IDEAL with order approved processing', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onCancel');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.loadCurrentOrder).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#button is closed for IDEAL with order approved processing', () => {
+        const idealMethodId = 'ideal';
+        const submitFormMock = jest.fn();
+        const onErrorMock = jest.fn();
+
+        const mockReloadedOrder = (isComplete: boolean) => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue({
+                ...getOrder(),
+                isComplete,
+            });
+        };
+
+        const waitForOrderPaidChecks = () => new Promise((resolve) => setTimeout(resolve, 20));
+
+        beforeEach(async () => {
+            strategy = new PayPalCommerceAlternativeMethodsPaymentStrategy(
+                paymentIntegrationService,
+                paypalIntegrationService,
+                paypalSdkScriptLoader,
+                loadingIndicator,
+                0,
+            );
+
+            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockResolvedValue(
+                paymentIntegrationService.getState(),
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5431.order_approved_processing': true,
+                    },
+                },
+            });
+
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: idealMethodId,
+                paypalcommercealternativemethods: {
+                    ...paypalCommerceAlternativeMethodsOptions,
+                    submitForm: submitFormMock,
+                    onError: onErrorMock,
+                },
+            });
+        });
+
+        it('submits form on cancel when the order is already paid', async () => {
+            mockReloadedOrder(true);
+
+            eventEmitter.emit('onCancel');
+
+            await waitForOrderPaidChecks();
+
+            expect(submitFormMock).toHaveBeenCalled();
+            expect(loadingIndicator.hide).not.toHaveBeenCalled();
+        });
+
+        it('submits form on error when the order is already paid', async () => {
+            mockReloadedOrder(true);
+
+            eventEmitter.emit('onError');
+
+            await waitForOrderPaidChecks();
+
+            expect(submitFormMock).toHaveBeenCalled();
+            expect(onErrorMock).not.toHaveBeenCalled();
+        });
+
+        it('submits form on cancel when the order becomes paid while it is being rechecked', async () => {
+            mockReloadedOrder(true);
+            jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValueOnce({
+                ...getOrder(),
+                isComplete: false,
+            });
+
+            eventEmitter.emit('onCancel');
+
+            await waitForOrderPaidChecks();
+
+            expect(paymentIntegrationService.loadCurrentOrder).toHaveBeenCalledTimes(2);
+            expect(submitFormMock).toHaveBeenCalled();
+        });
+
+        it('hides loading indicator on cancel when the order is not paid after all checks', async () => {
+            mockReloadedOrder(false);
+
+            eventEmitter.emit('onCancel');
+
+            await waitForOrderPaidChecks();
+
+            expect(paymentIntegrationService.loadCurrentOrder).toHaveBeenCalledTimes(3);
+            expect(submitFormMock).not.toHaveBeenCalled();
+            expect(loadingIndicator.hide).toHaveBeenCalled();
+        });
+
+        it('calls onError callback on error when the order is not paid', async () => {
+            mockReloadedOrder(false);
+
+            eventEmitter.emit('onError');
+
+            await waitForOrderPaidChecks();
+
+            expect(submitFormMock).not.toHaveBeenCalled();
+            expect(onErrorMock).toHaveBeenCalled();
+        });
+
+        it('calls onError callback on error when the order can not be reloaded', async () => {
+            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockRejectedValue(
+                new Error(),
+            );
+
+            eventEmitter.emit('onError');
+
+            await waitForOrderPaidChecks();
+
+            expect(submitFormMock).not.toHaveBeenCalled();
+            expect(onErrorMock).toHaveBeenCalled();
+        });
     });
 
     describe('#onError button callback', () => {
