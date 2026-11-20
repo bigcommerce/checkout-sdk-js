@@ -505,7 +505,17 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             });
         };
 
+        const waitForOrderPaidChecks = () => new Promise((resolve) => setTimeout(resolve, 20));
+
         beforeEach(async () => {
+            strategy = new PayPalCommerceAlternativeMethodsPaymentStrategy(
+                paymentIntegrationService,
+                paypalIntegrationService,
+                paypalSdkScriptLoader,
+                loadingIndicator,
+                0,
+            );
+
             jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockResolvedValue(
                 paymentIntegrationService.getState(),
             );
@@ -538,7 +548,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
             eventEmitter.emit('onCancel');
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await waitForOrderPaidChecks();
 
             expect(submitFormMock).toHaveBeenCalled();
             expect(loadingIndicator.hide).not.toHaveBeenCalled();
@@ -549,19 +559,35 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
             eventEmitter.emit('onError');
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await waitForOrderPaidChecks();
 
             expect(submitFormMock).toHaveBeenCalled();
             expect(onErrorMock).not.toHaveBeenCalled();
         });
 
-        it('hides loading indicator on cancel when the order is not paid', async () => {
+        it('submits form on cancel when the order becomes paid while it is being rechecked', async () => {
+            mockReloadedOrder(true);
+            jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValueOnce({
+                ...getOrder(),
+                isComplete: false,
+            });
+
+            eventEmitter.emit('onCancel');
+
+            await waitForOrderPaidChecks();
+
+            expect(paymentIntegrationService.loadCurrentOrder).toHaveBeenCalledTimes(2);
+            expect(submitFormMock).toHaveBeenCalled();
+        });
+
+        it('hides loading indicator on cancel when the order is not paid after all checks', async () => {
             mockReloadedOrder(false);
 
             eventEmitter.emit('onCancel');
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await waitForOrderPaidChecks();
 
+            expect(paymentIntegrationService.loadCurrentOrder).toHaveBeenCalledTimes(3);
             expect(submitFormMock).not.toHaveBeenCalled();
             expect(loadingIndicator.hide).toHaveBeenCalled();
         });
@@ -571,7 +597,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
             eventEmitter.emit('onError');
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await waitForOrderPaidChecks();
 
             expect(submitFormMock).not.toHaveBeenCalled();
             expect(onErrorMock).toHaveBeenCalled();
@@ -584,7 +610,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
             eventEmitter.emit('onError');
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await waitForOrderPaidChecks();
 
             expect(submitFormMock).not.toHaveBeenCalled();
             expect(onErrorMock).toHaveBeenCalled();

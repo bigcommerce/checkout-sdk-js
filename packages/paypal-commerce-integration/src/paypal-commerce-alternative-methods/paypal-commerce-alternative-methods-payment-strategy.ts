@@ -37,6 +37,7 @@ import PayPalCommerceAlternativeMethodsPaymentOptions, {
 
 const POLLING_INTERVAL = 3000;
 const MAX_POLLING_TIME = 300000;
+const ORDER_PAID_CHECK_ATTEMPTS = 3;
 
 export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
@@ -401,19 +402,35 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             return false;
         }
 
-        try {
-            const state = await this.paymentIntegrationService.loadCurrentOrder();
-
-            if (!state.getOrder()?.isComplete) {
-                return false;
-            }
-        } catch {
+        if (!(await this.isOrderPaid(ORDER_PAID_CHECK_ATTEMPTS))) {
             return false;
         }
 
         submitForm();
 
         return true;
+    }
+
+    // Info:
+    // The window can be closed before the webhook has captured the order, so the order is checked several times.
+    private async isOrderPaid(attemptsLeft: number): Promise<boolean> {
+        try {
+            const state = await this.paymentIntegrationService.loadCurrentOrder();
+
+            if (state.getOrder()?.isComplete) {
+                return true;
+            }
+        } catch {
+            return false;
+        }
+
+        if (attemptsLeft <= 1) {
+            return false;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, this.pollingInterval));
+
+        return this.isOrderPaid(attemptsLeft - 1);
     }
 
     private handleApprove(
