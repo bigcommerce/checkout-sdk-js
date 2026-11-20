@@ -19,8 +19,25 @@ interface AffirmCallback {
     onSuccess(success: AffirmSuccessResponse): void;
 }
 
+export interface AffirmConfig {
+    public_api_key: string;
+    script: string;
+    locale: string;
+    country_code: string;
+}
+
 export interface AffirmHostWindow extends Window {
     affirm?: Affirm;
+    _affirm_config?: AffirmConfig;
+}
+
+export type AffirmCountryCode = 'USA' | 'CAN' | 'GBR';
+
+export interface AffirmInitializationData {
+    countryCode?: AffirmCountryCode;
+    locale?: string;
+    currency?: string;
+    postponeOrderCreation?: boolean;
 }
 
 export interface AffirmSuccessResponse {
@@ -56,6 +73,7 @@ export interface AffirmRequestData {
     shipping_amount: number;
     tax_amount: number;
     total: number;
+    currency: string;
 }
 
 export interface AffirmItem {
@@ -83,12 +101,12 @@ export interface AffirmAddress {
         full?: string;
     };
     address: {
-        line1: string;
-        line2?: string;
+        street1: string;
+        street2?: string;
         city: string;
-        state: string;
-        zipcode: string;
-        country?: string;
+        region1_code?: string;
+        postal_code: string;
+        country_code: string;
     };
     phone_number?: string;
     email?: string;

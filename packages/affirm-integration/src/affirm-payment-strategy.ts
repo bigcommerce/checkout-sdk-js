@@ -1,4 +1,5 @@
 import {
+    Address,
     AmountTransformer,
     Consignment,
     itemsRequireShipping,
@@ -24,10 +25,16 @@ import {
     AffirmAddress,
     AffirmDiscount,
     AffirmFailResponse,
+    AffirmInitializationData,
     AffirmItem,
     AffirmRequestData,
     AffirmSuccessResponse,
 } from './affirm';
+import {
+    resolveAffirmCountryCode,
+    resolveAffirmLocale,
+    toAlpha3CountryCode,
+} from './affirm-market';
 import AffirmScriptLoader from './affirm-script-loader';
 
 export default class AffirmPaymentStrategy implements PaymentStrategy {
@@ -46,13 +53,25 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const {
             clientToken,
             config: { testMode },
-        } = state.getPaymentMethodOrThrow(options.methodId);
+            initializationData,
+        } = state.getPaymentMethodOrThrow<AffirmInitializationData>(options.methodId);
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this.affirm = await this.affirmScriptLoader.load(clientToken, testMode);
+        const countryCode = resolveAffirmCountryCode(
+            initializationData,
+            state.getCart()?.currency.code,
+        );
+        const locale = resolveAffirmLocale(initializationData, countryCode, state.getLocale());
+
+        this.affirm = await this.affirmScriptLoader.load(
+            clientToken,
+            testMode,
+            locale,
+            countryCode,
+        );
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -158,6 +177,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             shipping_amount: amountTransformer.toInteger(order.shippingCostTotal),
             tax_amount: amountTransformer.toInteger(order.taxTotal),
             total: amountTransformer.toInteger(order.orderAmount),
+            currency: order.currency.code,
         };
     }
 
@@ -179,25 +199,16 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
-        const billingInformation = {
+        return {
             name: {
                 first: billingAddress.firstName,
                 last: billingAddress.lastName,
                 full: `${billingAddress.firstName} ${billingAddress.lastName}`,
             },
-            address: {
-                line1: billingAddress.address1,
-                line2: billingAddress.address2,
-                city: billingAddress.city,
-                state: billingAddress.stateOrProvinceCode,
-                zipcode: billingAddress.postalCode,
-                country: billingAddress.countryCode,
-            },
+            address: this.getAddress(billingAddress),
             phone_number: billingAddress.phone,
             email: billingAddress.email,
         };
-
-        return billingInformation;
     }
 
     private getShippingAddress(): AffirmAddress | undefined {
@@ -208,24 +219,26 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             return;
         }
 
-        const shippingInformation = {
+        return {
             name: {
                 first: shippingAddress.firstName,
                 last: shippingAddress.lastName,
                 full: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
             },
-            address: {
-                line1: shippingAddress.address1,
-                line2: shippingAddress.address2,
-                city: shippingAddress.city,
-                state: shippingAddress.stateOrProvinceCode,
-                zipcode: shippingAddress.postalCode,
-                country: shippingAddress.countryCode,
-            },
+            address: this.getAddress(shippingAddress),
             phone_number: shippingAddress.phone,
         };
+    }
 
-        return shippingInformation;
+    private getAddress(address: Address): AffirmAddress['address'] {
+        return {
+            street1: address.address1,
+            street2: address.address2,
+            city: address.city,
+            ...(address.stateOrProvinceCode ? { region1_code: address.stateOrProvinceCode } : {}),
+            postal_code: address.postalCode,
+            country_code: toAlpha3CountryCode(address.countryCode),
+        };
     }
 
     private getItems(amountTransformer: AmountTransformer, order: Order): AffirmItem[] {
