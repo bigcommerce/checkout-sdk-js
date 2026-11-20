@@ -18,6 +18,7 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
+    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getOrderRequestBody,
@@ -160,26 +161,60 @@ describe('ApplePayPaymentStrategy', () => {
             expect(requestSender.post).toHaveBeenCalled();
         });
 
-        it('throws error if merchant validation fails', async () => {
-            jest.spyOn(requestSender, 'post').mockRejectedValue(false);
-
-            const payload = merge({}, getOrderRequestBody(), {
-                payment: { methodId: paymentMethod.id },
-            });
-
-            strategy.execute(payload);
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
+        describe('when merchant validation fails', () => {
             const validateEvent = {
                 validationURL: 'test',
             } as ApplePayJS.ApplePayValidateMerchantEvent;
 
-            try {
+            const executeAndValidateMerchant = async () => {
+                const payload = merge({}, getOrderRequestBody(), {
+                    payment: { methodId: paymentMethod.id },
+                });
+                const rejection = expect(strategy.execute(payload)).rejects.toBeUndefined();
+
+                await new Promise((resolve) => process.nextTick(resolve));
                 await applePaySession.onvalidatemerchant(validateEvent);
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-            }
+                await rejection;
+            };
+
+            beforeEach(() => {
+                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+                    paymentIntegrationService.getState(),
+                );
+                jest.spyOn(requestSender, 'post').mockRejectedValue(
+                    getResponse({}, {}, 417, 'Expectation Failed'),
+                );
+            });
+
+            it('aborts Apple Pay session and rejects payment', async () => {
+                await executeAndValidateMerchant();
+
+                expect(applePaySession.abort).toHaveBeenCalled();
+            });
+
+            it('calls onError with RequestError that keeps response status', async () => {
+                const onError = jest.fn();
+
+                await strategy.initialize({ methodId: 'applepay', applepay: { onError } });
+
+                await executeAndValidateMerchant();
+
+                expect(onError).toHaveBeenCalledWith(expect.any(RequestError));
+                expect(onError).toHaveBeenCalledWith(expect.objectContaining({ status: 417 }));
+            });
+
+            it('calls onError with original error if it is not a request error', async () => {
+                const onError = jest.fn();
+                const error = new Error('Network error');
+
+                jest.spyOn(requestSender, 'post').mockRejectedValue(error);
+
+                await strategy.initialize({ methodId: 'applepay', applepay: { onError } });
+
+                await executeAndValidateMerchant();
+
+                expect(onError).toHaveBeenCalledWith(error);
+            });
         });
 
         it('throws error when Apple Pay payment sheet is cancelled', async () => {
@@ -218,6 +253,60 @@ describe('ApplePayPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
             expect(applePaySession.completePayment).toHaveBeenCalled();
+        });
+
+        describe('when payment submission fails after shopper authorises', () => {
+            const authEvent = {
+                payment: {
+                    token: {
+                        paymentData: {},
+                        paymentMethod: {},
+                        transactionIdentifier: {},
+                    },
+                },
+            } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
+
+            const submitError = new Error('Payment failed');
+
+            const executeAndAuthorize = async () => {
+                const payload = merge({}, getOrderRequestBody(), {
+                    payment: { methodId: paymentMethod.id },
+                });
+                const rejection = expect(strategy.execute(payload)).rejects.toBeUndefined();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+                await applePaySession.onpaymentauthorized(authEvent);
+                await rejection;
+            };
+
+            beforeEach(() => {
+                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+                    paymentIntegrationService.getState(),
+                );
+                // `submitPayment` is a shared jest.fn in PaymentIntegrationServiceMock,
+                // so reject only once to avoid leaking into other tests.
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce(
+                    submitError,
+                );
+            });
+
+            it('completes Apple Pay session with failure status and rejects payment', async () => {
+                await executeAndAuthorize();
+
+                expect(applePaySession.completePayment).toHaveBeenCalledWith(
+                    ApplePaySession.STATUS_FAILURE,
+                );
+            });
+
+            it('calls onError with submission error', async () => {
+                const onError = jest.fn();
+
+                await strategy.initialize({ methodId: 'applepay', applepay: { onError } });
+
+                await executeAndAuthorize();
+
+                expect(onError).toHaveBeenCalledWith(submitError);
+            });
         });
 
         describe('when the shopper chooses whether to save the instrument', () => {

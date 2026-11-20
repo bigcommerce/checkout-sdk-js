@@ -16,6 +16,7 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
+    RequestError,
     ShippingOption,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -26,9 +27,16 @@ import ApplePayButtonInitializeOptions, {
 } from './apple-pay-button-initialize-options';
 import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
+import isRequestResponse from './is-request-response';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
+
+// Merchant validation responds with 417 when the merchant ID is not authorized
+// for the root merchant ID (Mass Enablement / WWDR registration issue).
+const MERCHANT_NOT_AUTHORIZED_STATUS = 417;
+const MERCHANT_NOT_AUTHORIZED_ERROR_MESSAGE =
+    'Apple Pay is unavailable: the merchant ID is not authorized to process transactions on behalf of the root merchant ID. Please check the Mass Enablement or WWDR registration.';
 
 enum DefaultLabels {
     Subtotal = 'Subtotal',
@@ -321,7 +329,15 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 );
 
                 applePaySession.completeMerchantValidation(merchantSession);
-            } catch {
+            } catch (error) {
+                applePaySession.abort();
+
+                if (isRequestResponse(error) && error.status === MERCHANT_NOT_AUTHORIZED_STATUS) {
+                    throw new RequestError(error, {
+                        message: MERCHANT_NOT_AUTHORIZED_ERROR_MESSAGE,
+                    });
+                }
+
                 throw new Error('Merchant validation failed');
             }
         };

@@ -14,6 +14,7 @@ import {
     InvalidArgumentError,
     MissingDataError,
     PaymentIntegrationService,
+    RequestError,
     ShippingOption,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -323,6 +324,33 @@ describe('ApplePayCustomerStrategy', () => {
                     expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
                 }
             }
+        });
+
+        it('aborts session and calls onError with RequestError that keeps response status if merchant validation fails', async () => {
+            jest.spyOn(requestSender, 'post').mockRejectedValue(
+                getResponse({}, {}, 417, 'Expectation Failed'),
+            );
+
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+
+            await strategy.initialize(customerInitializeOptions);
+
+            const button = document.getElementById(customerInitializeOptions.applepay!.container)
+                ?.firstChild as HTMLElement;
+
+            button.click();
+
+            await applePaySession.onvalidatemerchant({
+                validationURL: 'test',
+            } as ApplePayJS.ApplePayValidateMerchantEvent);
+
+            expect(applePaySession.abort).toHaveBeenCalled();
+            expect(customerInitializeOptions.applepay?.onError).toHaveBeenCalledWith(
+                expect.any(RequestError),
+            );
+            expect(customerInitializeOptions.applepay?.onError).toHaveBeenCalledWith(
+                expect.objectContaining({ status: 417 }),
+            );
         });
 
         it('gets shipping contact selected successfully', async () => {

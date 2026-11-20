@@ -13,6 +13,7 @@ import {
     InvalidArgumentError,
     MissingDataError,
     PaymentIntegrationService,
+    RequestError,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -232,6 +233,44 @@ describe('ApplePayButtonStrategy', () => {
                     }
                 }
             }
+        });
+
+        describe('when merchant validation fails', () => {
+            const validateMerchant = async () => {
+                await strategy.initialize(getApplePayButtonInitializationOptions());
+
+                (container.firstChild as HTMLElement).click();
+
+                return applePaySession.onvalidatemerchant({
+                    validationURL: 'test',
+                } as ApplePayJS.ApplePayValidateMerchantEvent);
+            };
+
+            it('aborts session and throws merchant not authorized error if response status is 417', async () => {
+                jest.spyOn(requestSender, 'post').mockRejectedValue(
+                    getResponse({}, {}, 417, 'Expectation Failed'),
+                );
+
+                const error: unknown = await validateMerchant().catch((e: unknown) => e);
+
+                expect(error).toBeInstanceOf(RequestError);
+                expect(error).toMatchObject({
+                    status: 417,
+                    message: expect.stringContaining(
+                        'merchant ID is not authorized to process transactions',
+                    ) as unknown,
+                });
+                expect(applePaySession.abort).toHaveBeenCalled();
+            });
+
+            it('aborts session and throws generic error for other failures', async () => {
+                jest.spyOn(requestSender, 'post').mockRejectedValue(
+                    getResponse({}, {}, 500, 'Internal Server Error'),
+                );
+
+                await expect(validateMerchant()).rejects.toThrow('Merchant validation failed');
+                expect(applePaySession.abort).toHaveBeenCalled();
+            });
         });
 
         it('gets shipping contact selected successfully', async () => {
