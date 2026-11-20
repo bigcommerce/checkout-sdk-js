@@ -28,6 +28,11 @@ export default interface ApplePayPaymentInitializeOptions {
      * Sub total label to be passed to apple sheet.
      */
     subtotalLabel?: string;
+
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
 }
 
 export interface WithApplePayPaymentInitializeOptions {

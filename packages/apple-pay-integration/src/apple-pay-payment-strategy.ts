@@ -4,8 +4,6 @@ import { BraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
     isHostedInstrumentLike,
-    NotInitializedError,
-    NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     Payment,
@@ -17,12 +15,16 @@ import {
     PaymentMethodCancelledError,
     PaymentRequestOptions,
     PaymentStrategy,
+    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { ApplePayGatewayType } from './apple-pay';
-import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
+import ApplePayPaymentInitializeOptions, {
+    WithApplePayPaymentInitializeOptions,
+} from './apple-pay-payment-initialize-options';
 import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
+import isRequestResponse from './is-request-response';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -42,6 +44,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _storeCreditLabel: string = DefaultLabels.StoreCredit;
+    private _applePayOptions?: ApplePayPaymentInitializeOptions;
 
     constructor(
         private _requestSender: RequestSender,
@@ -67,6 +70,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         this._shippingLabel = options.applepay?.shippingLabel || DefaultLabels.Shipping;
         this._subTotalLabel = options.applepay?.subtotalLabel || DefaultLabels.Subtotal;
         this._storeCreditLabel = options.applepay?.storeCreditLabel || DefaultLabels.StoreCredit;
+        this._applePayOptions = options.applepay;
 
         const state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
 
@@ -207,8 +211,16 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 );
 
                 applePaySession.completeMerchantValidation(merchantSession);
-            } catch {
-                throw new Error('Merchant validation failed');
+            } catch (error) {
+                applePaySession.abort();
+
+                this._handleError(
+                    isRequestResponse(error)
+                        ? new RequestError(error, { message: 'Merchant validation failed' })
+                        : error,
+                );
+
+                promise.reject();
             }
         };
 
@@ -223,6 +235,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 promise,
                 shouldSaveInstrument,
             );
+    }
+
+    private _handleError(error: unknown): void {
+        const { onError } = this._applePayOptions || {};
+
+        if (onError && typeof onError === 'function') {
+            onError(error);
+        }
     }
 
     private async _onValidateMerchant(
@@ -285,12 +305,12 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
             return promise.resolve();
-        } catch {
+        } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
-            return promise.reject(
-                new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
-            );
+            this._handleError(error);
+
+            return promise.reject();
         }
     }
 
