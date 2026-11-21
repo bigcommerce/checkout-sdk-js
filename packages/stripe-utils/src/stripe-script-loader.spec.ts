@@ -67,6 +67,44 @@ describe('StripePayScriptLoader', () => {
             );
         });
 
+        it('loads the requested version when another script already loaded a different one', async () => {
+            const foreignStripe = Object.assign(
+                jest.fn(() => stripeUPEJsMock),
+                {
+                    version: StripeJsVersion.CLOVER,
+                },
+            );
+
+            mockWindow.Stripe = foreignStripe;
+
+            await stripeScriptLoader.getStripeClient(
+                defaultInitializationData,
+                'en',
+                StripeJsVersion.BASIL,
+            );
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `https://js.stripe.com/${StripeJsVersion.BASIL}/stripe.js`,
+            );
+        });
+
+        it('reuses an existing client when it already is the requested version', async () => {
+            mockWindow.Stripe = Object.assign(
+                jest.fn(() => stripeUPEJsMock),
+                {
+                    version: StripeJsVersion.CLOVER,
+                },
+            );
+
+            await stripeScriptLoader.getStripeClient(
+                defaultInitializationData,
+                'en',
+                StripeJsVersion.CLOVER,
+            );
+
+            expect(scriptLoader.loadScript).not.toHaveBeenCalled();
+        });
+
         it('loads a single instance of StripeElements', async () => {
             const getStripeClient = await stripeScriptLoader.getStripeClient(
                 defaultInitializationData,

@@ -94,7 +94,7 @@ export default class StripeScriptLoader {
     }
 
     private async load(stripeJsVersion?: string) {
-        if (!this.stripeWindow.Stripe) {
+        if (!this.isRequestedStripeJsLoaded(stripeJsVersion)) {
             await this.scriptLoader.loadScript(this.getScriptUrl(stripeJsVersion));
 
             if (!this.stripeWindow.Stripe) {
@@ -103,6 +103,25 @@ export default class StripeScriptLoader {
         }
 
         return this.stripeWindow.Stripe;
+    }
+
+    private isRequestedStripeJsLoaded(stripeJsVersion?: string): boolean {
+        const stripe = this.stripeWindow.Stripe;
+
+        if (!stripe) {
+            return false;
+        }
+
+        const requestedVersion = stripeJsVersion || StripeJsVersion.V3;
+        const loadedVersion = stripe.version;
+
+        if (loadedVersion === undefined) {
+            return true;
+        }
+
+        const loadedTrain = typeof loadedVersion === 'number' ? StripeJsVersion.V3 : loadedVersion;
+
+        return loadedTrain === requestedVersion;
     }
 
     private getScriptUrl(stripeJsVersion?: string) {

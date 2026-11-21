@@ -759,10 +759,13 @@ export interface StripeHostWindow extends Window {
     bcStripeClient?: StripeClient;
     bcStripeElements?: StripeElements;
     bcStripeCheckout?: StripeCheckoutInstance;
-    Stripe?<T = StripeClient>(
-        stripePublishableKey: string,
-        options?: StripeConfigurationOptions,
-    ): T;
+    Stripe?: StripeFactory;
+}
+
+export interface StripeFactory {
+    <T = StripeClient>(stripePublishableKey: string, options?: StripeConfigurationOptions): T;
+
+    version?: string | number;
 }
 
 export enum StripePaymentMethodType {
