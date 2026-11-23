@@ -17,7 +17,12 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
+    getStripeCheckoutInstanceMock,
+    getStripeCheckoutSessionActionsMock,
     getStripeIntegrationServiceMock,
+    StripeCheckoutInstance,
+    StripeCheckoutSessionActions,
+    StripeCheckoutShippingChangeResultType,
     StripeClient,
     StripeElement,
     StripeElementEvent,
@@ -1398,6 +1403,196 @@ describe('StripeLinkV2CustomerStrategy', () => {
                         expect(loadingIndicator.hide).toHaveBeenCalled();
                     }
                 });
+            });
+        });
+    });
+
+    describe('Checkout Session experiment', () => {
+        const checkoutSessionMethod = {
+            ...checkoutSessionGatewayMock,
+            clientToken: 'cs_test_123',
+        };
+        const shippingOptions = [
+            { id: 'opt-1', description: 'Standard ', cost: 5 },
+            { id: 'opt-2', description: 'Express', cost: 15 },
+        ];
+        let stripeCheckout: StripeCheckoutInstance;
+        let stripeActions: StripeCheckoutSessionActions;
+
+        const mockConsignments = () =>
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue([
+                {
+                    availableShippingOptions: shippingOptions,
+                    selectedShippingOption: shippingOptions[1],
+                },
+            ] as any);
+
+        beforeEach(() => {
+            stripeCheckout = getStripeCheckoutInstanceMock();
+            stripeActions = getStripeCheckoutSessionActionsMock();
+
+            jest.spyOn(stripeCheckout, 'createExpressCheckoutElement').mockReturnValue(
+                element as any,
+            );
+            jest.spyOn(stripeCheckout, 'loadActions').mockResolvedValue({
+                actions: stripeActions,
+            } as any);
+            (scriptLoader as any).getStripeCheckout = jest.fn().mockResolvedValue(stripeCheckout);
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockImplementation(
+                (methodId: string) =>
+                    methodId === 'checkout_session' ? checkoutSessionMethod : undefined,
+            );
+            mockConsignments();
+        });
+
+        it('mounts the Checkout Session express checkout element when the experiment is on', async () => {
+            await strategy.initialize(initialiseOptions);
+
+            expect(scriptLoader.getStripeCheckout).toHaveBeenCalledWith(
+                stripeClient,
+                expect.objectContaining({ clientSecret: 'cs_test_123' }),
+            );
+            expect(stripeCheckout.createExpressCheckoutElement).toHaveBeenCalled();
+            expect(element.mount).toHaveBeenCalledWith('#checkout-button');
+            expect(stripeClient.elements).not.toHaveBeenCalled();
+        });
+
+        it('falls back to the PaymentIntent path when the experiment is off', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockImplementation(
+                (methodId: string) =>
+                    methodId === 'checkout_session'
+                        ? {
+                              ...checkoutSessionMethod,
+                              initializationData: {
+                                  ...checkoutSessionMethod.initializationData,
+                                  checkoutSessionEnabled: false,
+                              },
+                          }
+                        : undefined,
+            );
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(scriptLoader.getStripeCheckout).not.toHaveBeenCalled();
+            expect(stripeClient.elements).toHaveBeenCalled();
+        });
+
+        it('falls back to the PaymentIntent path when the client token is not a checkout session', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockImplementation(
+                (methodId: string) =>
+                    methodId === 'checkout_session'
+                        ? { ...checkoutSessionMethod, clientToken: 'pi_secret' }
+                        : undefined,
+            );
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(scriptLoader.getStripeCheckout).not.toHaveBeenCalled();
+            expect(stripeClient.elements).toHaveBeenCalled();
+        });
+
+        describe('shipping events', () => {
+            const address = { city: 'Miami', state: 'FL', postal_code: '091-22', country: 'US' };
+
+            beforeEach(async () => {
+                await strategy.initialize(initialiseOptions);
+            });
+
+            const emit = (eventName: StripeElementEvent, event: unknown) => {
+                const [, handler] = (element.on as jest.Mock).mock.calls.find(
+                    ([name]) => name === eventName,
+                );
+
+                return handler(event);
+            };
+
+            it('accepts the shipping address and syncs the session when rates are available', async () => {
+                const runServerUpdate = jest.fn((update: () => Promise<unknown>) => update());
+
+                const result = await emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                    address,
+                    runServerUpdate,
+                });
+
+                expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalled();
+                expect(runServerUpdate).toHaveBeenCalled();
+                expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                    'stripeocs',
+                    { params: { method: 'checkout_session' } },
+                );
+                expect(result).toEqual({ type: StripeCheckoutShippingChangeResultType.ACCEPT });
+            });
+
+            it('rejects the shipping address when there are no shipping options', async () => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue(
+                    [{ availableShippingOptions: [] }] as any,
+                );
+
+                const runServerUpdate = jest.fn();
+
+                const result = await emit(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, {
+                    address,
+                    runServerUpdate,
+                });
+
+                expect(runServerUpdate).not.toHaveBeenCalled();
+                expect(result).toEqual({ type: StripeCheckoutShippingChangeResultType.REJECT });
+            });
+
+            it('matches the selected rate to a BC option by display name and accepts', async () => {
+                const runServerUpdate = jest.fn((update: () => Promise<unknown>) => update());
+
+                const result = await emit(StripeElementEvent.SHIPPING_RATE_CHANGE, {
+                    rate: { id: 'stripe-rate', amount: 500, displayName: 'Standard' },
+                    runServerUpdate,
+                });
+
+                expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                    'opt-1',
+                );
+                expect(runServerUpdate).toHaveBeenCalled();
+                expect(result).toEqual({ type: StripeCheckoutShippingChangeResultType.ACCEPT });
+            });
+
+            it('rejects the rate change when no BC option matches the display name', async () => {
+                const result = await emit(StripeElementEvent.SHIPPING_RATE_CHANGE, {
+                    rate: { id: 'x', amount: 1, displayName: 'Unknown' },
+                    runServerUpdate: jest.fn(),
+                });
+
+                expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
+                expect(result).toEqual({ type: StripeCheckoutShippingChangeResultType.REJECT });
+            });
+        });
+
+        describe('confirm', () => {
+            it('applies the selected shipping rate to the session before submitting the order', async () => {
+                jest.spyOn(stripeActions, 'getSession').mockResolvedValue({
+                    id: 'cs_test_123',
+                    shippingOptions: [
+                        { id: 'rate-1', amount: 500, displayName: 'Standard' },
+                        { id: 'rate-2', amount: 1500, displayName: 'Express' },
+                    ],
+                } as any);
+
+                await strategy.initialize(initialiseOptions);
+
+                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
+                await new Promise((resolve) => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(stripeActions.updateShippingOption).toHaveBeenCalledWith('rate-2');
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: {
+                            formattedPayload: expect.objectContaining({
+                                credit_card_token: { token: 'cs_test_123' },
+                            }),
+                        },
+                    }),
+                );
             });
         });
     });
