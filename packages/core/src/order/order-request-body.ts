@@ -17,7 +17,6 @@ import {
     WithCheckoutcomSEPAInstrument,
     WithDocumentInstrument,
     WithIdealInstrument,
-    WithMollieIssuerInstrument,
 } from '../payment';
 
 /**
@@ -67,7 +66,6 @@ export type OrderPaymentInstrument =
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
     | (CreditCardInstrument & WithIdealInstrument)
-    | (HostedInstrument & WithMollieIssuerInstrument)
     | WithAccountCreation;
 
 /**

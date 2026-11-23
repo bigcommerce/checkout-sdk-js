@@ -35,7 +35,6 @@ export type {
     ThreeDSecure,
     ThreeDSecureToken,
     WithDocumentInstrument,
-    WithMollieIssuerInstrument,
 } from './payment';
 export { default as B2BCompanyPaymentMethodRequestSender } from './b2b-company-payment-method-request-sender';
 export { default as B2BPaymentsRefreshActionCreator } from './b2b-payments-refresh-action-creator';

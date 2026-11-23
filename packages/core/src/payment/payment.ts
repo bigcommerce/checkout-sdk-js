@@ -49,7 +49,6 @@ export type PaymentInstrument =
           | WithCheckoutcomSEPAInstrument
           | StripeV3Intent
           | StripeUPEIntent
-          | WithMollieIssuerInstrument
           | StripeV3FormattedPayload
       >
     | HostedInstrument
@@ -82,11 +81,6 @@ export interface CreditCardInstrument {
 
 export interface WithDocumentInstrument {
     ccDocument: string;
-}
-
-export interface WithMollieIssuerInstrument {
-    issuer: string;
-    shopper_locale: string;
 }
 
 export interface WithCheckoutcomSEPAInstrument {

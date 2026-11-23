@@ -653,36 +653,6 @@ export function getCheckoutcom(): PaymentMethod {
     };
 }
 
-export function getMollie(): PaymentMethod {
-    return {
-        id: 'mollie',
-        gateway: '',
-        logoUrl:
-            'https://charlsieremade-cloud-dev-vm.store.bcdev/rHEAD/modules/checkout/mollie/images/mollie.png',
-        method: 'multi-options',
-        supportedCards: ['VISA', 'AMEX', 'MC', 'MAESTRO'],
-        config: {
-            displayName: 'Mollie',
-            hasDefaultStoredInstrument: false,
-            helpText: '',
-            is3dsEnabled: false,
-            isHostedFormEnabled: true,
-            isVaultingCvvEnabled: false,
-            isVaultingEnabled: false,
-            isVisaCheckoutEnabled: false,
-            shouldVaultAllPayments: false,
-            merchantId: 'test_T0k3n',
-            requireCustomerCode: false,
-            testMode: true,
-        },
-        initializationData: {
-            locale: 'en-US',
-        },
-        type: 'PAYMENT_TYPE_API',
-        skipRedirectConfirmationAlert: true,
-    };
-}
-
 export function getMoneris(): PaymentMethod {
     return {
         id: 'moneris',
@@ -746,7 +716,6 @@ export function getPaymentMethods(): PaymentMethod[] {
         getGooglePayOrbital(),
         getHumm(),
         getKlarna(),
-        getMollie(),
         getMoneris(),
         getPaypalCommerce(),
         getPaypalExpress(),

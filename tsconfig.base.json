@@ -91,9 +91,6 @@
             "@bigcommerce/checkout-sdk/legacy-integration": [
                 "packages/legacy-integration/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/mollie-integration": [
-                "packages/mollie-integration/src/index.ts"
-            ],
             "@bigcommerce/checkout-sdk/moneris-integration": [
                 "packages/moneris-integration/src/index.ts"
             ],

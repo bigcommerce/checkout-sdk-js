@@ -29,7 +29,6 @@ enum PaymentStrategyType {
     KLARNA = 'klarna',
     KLARNAV2 = 'klarnav2',
     LEGACY = 'legacy',
-    MOLLIE = 'mollie',
     MONERIS = 'moneris',
     NO_PAYMENT_DATA_REQUIRED = 'nopaymentdatarequired',
     OFFLINE = 'offline',

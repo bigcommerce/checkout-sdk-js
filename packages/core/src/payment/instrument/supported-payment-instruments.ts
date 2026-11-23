@@ -3,10 +3,6 @@ import PaymentInstrument from './instrument';
 type SupportedInstruments = Record<string, Pick<PaymentInstrument, 'method' | 'provider'>>;
 
 const supportedInstruments: SupportedInstruments = {
-    'mollie.credit_card': {
-        provider: 'mollie',
-        method: 'credit_card',
-    },
     'adyenv2.scheme': {
         provider: 'adyenv2',
         method: 'scheme',

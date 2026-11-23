@@ -34,7 +34,6 @@ export type {
     ThreeDSecureToken,
     WithAccountCreation,
     WithDocumentInstrument,
-    WithMollieIssuerInstrument,
     PaypalInstrument,
     FormattedPayload,
     StripeUPEIntent,
