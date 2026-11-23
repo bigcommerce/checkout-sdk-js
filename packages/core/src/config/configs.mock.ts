@@ -90,7 +90,6 @@ export function getConfig(): Config {
                 bigpayBaseUrl: 'https://bigpay.integration.zone',
                 clientSidePaymentProviders: [
                     'eway',
-                    'securenet',
                     'usaepay',
                     'elavon',
                     'hps',
