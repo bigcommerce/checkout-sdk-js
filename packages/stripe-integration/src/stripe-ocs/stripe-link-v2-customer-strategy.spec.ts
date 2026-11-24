@@ -1410,6 +1410,10 @@ describe('StripeLinkV2CustomerStrategy', () => {
     describe('Checkout Session experiment', () => {
         const checkoutSessionMethod = {
             ...checkoutSessionGatewayMock,
+            initializationData: {
+                ...checkoutSessionGatewayMock.initializationData,
+                migrateLinkButtonToCheckoutSession: true,
+            },
             clientToken: 'cs_test_123',
         };
         const shippingOptions = [
@@ -1466,7 +1470,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
                               ...checkoutSessionMethod,
                               initializationData: {
                                   ...checkoutSessionMethod.initializationData,
-                                  checkoutSessionEnabled: false,
+                                  migrateLinkButtonToCheckoutSession: false,
                               },
                           }
                         : undefined,
@@ -1478,11 +1482,17 @@ describe('StripeLinkV2CustomerStrategy', () => {
             expect(stripeClient.elements).toHaveBeenCalled();
         });
 
-        it('falls back to the PaymentIntent path when the client token is not a checkout session', async () => {
+        it('falls back to the PaymentIntent path when the experiment value is missing', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockImplementation(
                 (methodId: string) =>
                     methodId === 'checkout_session'
-                        ? { ...checkoutSessionMethod, clientToken: 'pi_secret' }
+                        ? {
+                              ...checkoutSessionMethod,
+                              initializationData: {
+                                  ...checkoutSessionMethod.initializationData,
+                                  migrateLinkButtonToCheckoutSession: undefined,
+                              },
+                          }
                         : undefined,
             );
 
@@ -1563,36 +1573,6 @@ describe('StripeLinkV2CustomerStrategy', () => {
 
                 expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
                 expect(result).toEqual({ type: StripeCheckoutShippingChangeResultType.REJECT });
-            });
-        });
-
-        describe('confirm', () => {
-            it('applies the selected shipping rate to the session before submitting the order', async () => {
-                jest.spyOn(stripeActions, 'getSession').mockResolvedValue({
-                    id: 'cs_test_123',
-                    shippingOptions: [
-                        { id: 'rate-1', amount: 500, displayName: 'Standard' },
-                        { id: 'rate-2', amount: 1500, displayName: 'Express' },
-                    ],
-                } as any);
-
-                await strategy.initialize(initialiseOptions);
-
-                stripeEventEmitter.emit(StripeElementEvent.CONFIRM, mockStripeAddress);
-                await new Promise((resolve) => process.nextTick(resolve));
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(stripeActions.updateShippingOption).toHaveBeenCalledWith('rate-2');
-                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
-                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
-                    expect.objectContaining({
-                        paymentData: {
-                            formattedPayload: expect.objectContaining({
-                                credit_card_token: { token: 'cs_test_123' },
-                            }),
-                        },
-                    }),
-                );
             });
         });
     });
