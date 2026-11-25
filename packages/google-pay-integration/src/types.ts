@@ -362,7 +362,6 @@ export interface GooglePayPayPalCommerceInitializationData extends GooglePayBase
     isVenmoEnabled?: boolean;
     isGooglePayEnabled?: boolean;
     orderId?: string;
-    shouldRenderFields?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 

@@ -256,7 +256,6 @@ export interface PayPalCommerceInitializationData {
     isGooglePayEnabled?: boolean;
     merchantId?: string;
     orderId?: string;
-    shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];

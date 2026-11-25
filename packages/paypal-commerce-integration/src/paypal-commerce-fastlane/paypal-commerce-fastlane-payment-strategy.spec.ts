@@ -247,7 +247,6 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 initializationData: {
                     isAcceleratedCheckoutEnabled: true,
                     shouldRunAcceleratedCheckout: true,
-                    isFastlaneEnabled: true,
                     isFastlaneStylingEnabled: true,
                     fastlaneStyles: {
                         fastlaneRootSettingsBackgroundColor: 'red',

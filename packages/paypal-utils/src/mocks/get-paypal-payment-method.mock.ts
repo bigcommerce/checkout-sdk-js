@@ -49,7 +49,6 @@ export default function getPayPalPaymentMethod(): PaymentMethod {
             isPayPalCreditAvailable: false,
             isVenmoEnabled: false,
             isDeveloperModeApplicable: false,
-            shouldRenderFields: true,
             shouldRunAcceleratedCheckout: false,
             isHostedCheckoutEnabled: false,
             paypalBNPLConfiguration: [

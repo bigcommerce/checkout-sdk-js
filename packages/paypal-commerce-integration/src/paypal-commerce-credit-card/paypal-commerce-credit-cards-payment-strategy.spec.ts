@@ -292,7 +292,6 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                     isAcceleratedCheckoutEnabled: true,
                     isPayPalCommerceAnalyticsV2Enabled: true,
                     isDeveloperModeApplicable: false,
-                    isFastlaneEnabled: true,
                 },
             };
 

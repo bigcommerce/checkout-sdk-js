@@ -278,7 +278,6 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                 initializationData: {
                     isAcceleratedCheckoutEnabled: true,
                     shouldRunAcceleratedCheckout: true,
-                    isFastlaneEnabled: true,
                     isFastlaneStylingEnabled: true,
                     fastlaneStyles: {
                         fastlaneRootSettingsBackgroundColor: 'red',
@@ -353,7 +352,6 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
 
         it('does not throw anything if there is an error with Fastlane initialization', async () => {
             paymentMethod.initializationData.isDeveloperModeApplicable = true;
-            paymentMethod.initializationData.isFastlaneEnabled = true;
 
             jest.spyOn(
                 paymentIntegrationService.getState(),

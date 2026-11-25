@@ -94,7 +94,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             methodId,
             gatewayId,
         );
-        const { orderId, shouldRenderFields } = paymentMethod.initializationData || {};
+        const { orderId, shouldRenderFields = true } = paymentMethod.initializationData || {};
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
         this.isOrderApprovedProcessing = isExperimentEnabled(
