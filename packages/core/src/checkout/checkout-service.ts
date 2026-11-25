@@ -789,10 +789,12 @@ export default class CheckoutService {
      * Searches the addresses in the signed-in B2B customer's company address book.
      *
      * The search is performed by the storefront GraphQL API and the payload is
-     * returned as-is, without being persisted into the checkout state. Results
-     * are ordered by creation date, newest first. A B2B token must be loaded
-     * via `getB2BToken` beforehand, otherwise the returned promise rejects
-     * with a `MissingDataError`.
+     * returned without being persisted into the checkout state. Each address's
+     * `company` is the company name saved on the address, falling back to the
+     * active company's name when the address has none, or `null` when neither
+     * is set. Results are ordered by creation date, newest first. A B2B token
+     * must be loaded via `getB2BToken` beforehand, otherwise the returned
+     * promise rejects with a `MissingDataError`.
      *
      * ```js
      * await service.getB2BToken();
