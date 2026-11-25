@@ -38,6 +38,7 @@ export interface StoredCardHostedFormInstrumentForm {
 
 export interface StoredCardHostedFormInstrumentFields extends StoredCardHostedFormBillingAddress {
     defaultInstrument: boolean;
+    humanVerificationToken?: string;
 }
 
 export interface StoredCardHostedFormPayload {

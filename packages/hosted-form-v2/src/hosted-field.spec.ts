@@ -6,7 +6,11 @@ import {
 import { DetachmentObserver } from './common/dom';
 import { RequestError } from './common/errors';
 import { IframeEventListener, IframeEventPoster } from './common/iframe';
-import { InvalidHostedFormConfigError, InvalidHostedFormError } from './errors';
+import {
+    HumanVerificationRequiredError,
+    InvalidHostedFormConfigError,
+    InvalidHostedFormError,
+} from './errors';
 import HostedField from './hosted-field';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
@@ -271,6 +275,52 @@ describe('HostedField', () => {
                 errorType: HostedInputEventType.StoredCardFailed,
             },
         );
+    });
+
+    it('throws HumanVerificationRequiredError when stored card submission requires recaptcha', async () => {
+        jest.spyOn(eventPoster, 'post').mockRejectedValue({
+            type: HostedInputEventType.StoredCardFailed,
+            payload: {
+                additionalActionRequired: {
+                    type: 'recaptcha_v2_verification',
+                    data: { key: '6LeXXXXX' },
+                },
+            },
+        });
+
+        try {
+            await field.submitStoredCardForm(
+                StoredCardHostedFormInstrumentFieldsMock,
+                StoredCardHostedFormDataMock,
+            );
+
+            throw new Error('Expected submitStoredCardForm to reject');
+        } catch (error) {
+            expect(error).toBeInstanceOf(HumanVerificationRequiredError);
+            expect((error as HumanVerificationRequiredError).siteKey).toBe('6LeXXXXX');
+        }
+    });
+
+    it('rethrows the raw error for stored card failures unrelated to human verification', async () => {
+        const rejection = {
+            type: HostedInputEventType.StoredCardFailed,
+            payload: {
+                additionalActionRequired: { type: 'some_other_action' },
+            },
+        };
+
+        jest.spyOn(eventPoster, 'post').mockRejectedValue(rejection);
+
+        try {
+            await field.submitStoredCardForm(
+                StoredCardHostedFormInstrumentFieldsMock,
+                StoredCardHostedFormDataMock,
+            );
+
+            throw new Error('Expected submitStoredCardForm to reject');
+        } catch (error) {
+            expect(error).toEqual(rejection);
+        }
     });
 
     it('sends request to submit manual order form data', async () => {
