@@ -3,6 +3,10 @@ export { default as getBraintreePaypalSdkLocale } from './get-braintree-paypal-s
 export { default as getBraintreeFastlaneLocale } from './get-braintree-fastlane-locale';
 export { default as isBraintreeAcceleratedCheckoutCustomer } from './is-braintree-accelerated-checkout-customer';
 export { default as isBraintreeError } from './is-braintree-error';
+export {
+    default as isBraintreeFastlaneKnownShoppersEnabled,
+    BRAINTREE_FASTLANE_KNOWN_SHOPPERS_FEATURE,
+} from './is-braintree-fastlane-known-shoppers-enabled';
 export { default as isBraintreeFastlaneWindow } from './is-braintree-fastlane-window';
 export { default as isBraintreeHostedFormError } from './is-braintree-hosted-form-error';
 export { default as isBraintreeSupportedCardBrand } from './is-braintree-supported-card-brand';

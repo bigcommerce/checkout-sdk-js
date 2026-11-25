@@ -1,6 +1,8 @@
 import {
     BraintreeInitializationData,
     getFastlaneStyles,
+    isBraintreeAcceleratedCheckoutCustomer,
+    isBraintreeFastlaneKnownShoppersEnabled,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CustomerCredentials,
@@ -61,6 +63,10 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
                     paymentMethod.id,
                     fastlaneStyles,
                 );
+
+                // Info: known (logged in) shoppers do not pass the guest email step,
+                // so the Fastlane OTP is shown right after the strategy initialization for them
+                await this.runAuthenticationFlowForKnownShopper();
             }
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
@@ -82,6 +88,14 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
 
     async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
         await this.paymentIntegrationService.signInCustomer(credentials, options);
+
+        // Info: show Fastlane OTP right after login on the checkout page
+        // Do not throw anything here to avoid blocking customer from passing checkout flow
+        try {
+            await this.runAuthenticationFlowForKnownShopper();
+        } catch (error) {
+            this.handleErrorLog(error);
+        }
     }
 
     async signOut(options?: RequestOptions): Promise<void> {
@@ -99,10 +113,9 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             );
         }
 
-        const state = this.paymentIntegrationService.getState();
-        const customer = state.getCustomerOrThrow();
-
-        if (this.isAcceleratedCheckoutEnabled && customer.isGuest) {
+        // Info: this method is called only from the guest customer step (email form),
+        // so there is no need to check that the customer is a guest here
+        if (this.isAcceleratedCheckoutEnabled) {
             const shouldRunAuthenticationFlow = await this.shouldRunAuthenticationFlow();
 
             if (
@@ -122,6 +135,40 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
         }
 
         continueWithCheckoutCallback();
+    }
+
+    private async runAuthenticationFlowForKnownShopper(): Promise<void> {
+        if (!(await this.shouldRunAuthenticationFlowForKnownShopper())) {
+            return;
+        }
+
+        await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow(undefined, true, {
+            onErrorLog: this.onErrorLog,
+        });
+    }
+
+    private async shouldRunAuthenticationFlowForKnownShopper(): Promise<boolean> {
+        const state = this.paymentIntegrationService.getState();
+        const customer = state.getCustomer();
+        const features = state.getStoreConfig()?.checkoutSettings.features;
+        const paymentProviderCustomer = state.getPaymentProviderCustomer();
+        const authenticationState = isBraintreeAcceleratedCheckoutCustomer(paymentProviderCustomer)
+            ? paymentProviderCustomer.authenticationState
+            : undefined;
+
+        // Info: guests are authenticated after the email step (executePaymentMethodCheckout),
+        // so this flow is only for known (logged in) shoppers
+        if (
+            !this.isAcceleratedCheckoutEnabled ||
+            !customer ||
+            customer.isGuest ||
+            !isBraintreeFastlaneKnownShoppersEnabled(features) ||
+            authenticationState
+        ) {
+            return false;
+        }
+
+        return this.shouldRunAuthenticationFlow();
     }
 
     // TODO: remove this method after A/B testing finished
