@@ -40,7 +40,6 @@ export type PaymentInstrumentPayload<T = unknown> =
           | StripeV3Intent
           | StripeV3FormattedPayload
           | StripeUPEIntent
-          | WithMollieIssuerInstrument
           | PaypalGooglePayInstrument
           | T
       >
@@ -93,11 +92,6 @@ export interface WithBankAccountInstrument {
 
 export interface WithDocumentInstrument {
     ccDocument: string;
-}
-
-export interface WithMollieIssuerInstrument {
-    issuer: string;
-    shopper_locale: string;
 }
 
 export interface WithIdealInstrument {

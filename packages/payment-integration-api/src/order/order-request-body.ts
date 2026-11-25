@@ -12,7 +12,6 @@ import {
     WithDocumentInstrument,
     WithEcpInstrument,
     WithIdealInstrument,
-    WithMollieIssuerInstrument,
     WithPayByBankInstrument,
     WithSepaInstrument,
 } from '../payment';
@@ -83,6 +82,5 @@ export interface OrderPaymentRequestBody {
         | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
         | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
         | (CreditCardInstrument & WithIdealInstrument)
-        | (HostedInstrument & WithMollieIssuerInstrument)
         | WithAccountCreation;
 }
