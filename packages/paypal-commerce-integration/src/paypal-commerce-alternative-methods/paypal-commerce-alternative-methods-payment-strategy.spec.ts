@@ -514,9 +514,16 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#renderFields()', () => {
-        it('throws an error if apmFieldsContainer is not provided', async () => {
-            paymentMethod.initializationData.shouldRenderFields = true;
+        it('does not render fields when shouldRenderFields is false', async () => {
+            paymentMethod.initializationData.shouldRenderFields = false;
+            jest.spyOn(paypalSdk, 'PaymentFields');
 
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.PaymentFields).not.toHaveBeenCalled();
+        });
+
+        it('throws an error if apmFieldsContainer is not provided', async () => {
             const options = {
                 methodId: defaultMethodId,
                 gatewayId: defaultGatewayId,
@@ -533,33 +540,38 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             }
         });
 
-        it('renders apm payment fields', async () => {
-            const paymentFieldsRenderMock = jest.fn();
-            const fieldContainer = document.createElement('div');
+        it.each([undefined, true])(
+            'renders apm payment fields when shouldRenderFields is %s',
+            async (shouldRenderFields) => {
+                paymentMethod.initializationData.shouldRenderFields = shouldRenderFields;
 
-            fieldContainer.id = defaultApmFieldsContainerId.split('#')[1];
-            document.body.appendChild(fieldContainer);
+                const paymentFieldsRenderMock = jest.fn();
+                const fieldContainer = document.createElement('div');
 
-            jest.spyOn(paypalSdk, 'PaymentFields').mockImplementation(() => ({
-                render: paymentFieldsRenderMock,
-            }));
+                fieldContainer.id = defaultApmFieldsContainerId.split('#')[1];
+                document.body.appendChild(fieldContainer);
 
-            await strategy.initialize(initializationOptions);
+                jest.spyOn(paypalSdk, 'PaymentFields').mockImplementation(() => ({
+                    render: paymentFieldsRenderMock,
+                }));
 
-            expect(paypalSdk.PaymentFields).toHaveBeenCalledWith({
-                fundingSource: defaultMethodId,
-                style: {},
-                fields: {
-                    name: {
-                        value: `${billingAddress.firstName} ${billingAddress.lastName}`,
+                await strategy.initialize(initializationOptions);
+
+                expect(paypalSdk.PaymentFields).toHaveBeenCalledWith({
+                    fundingSource: defaultMethodId,
+                    style: {},
+                    fields: {
+                        name: {
+                            value: `${billingAddress.firstName} ${billingAddress.lastName}`,
+                        },
+                        email: {
+                            value: billingAddress.email,
+                        },
                     },
-                    email: {
-                        value: billingAddress.email,
-                    },
-                },
-            });
-            expect(paymentFieldsRenderMock).toHaveBeenCalled();
-        });
+                });
+                expect(paymentFieldsRenderMock).toHaveBeenCalled();
+            },
+        );
     });
 
     describe('#execute()', () => {

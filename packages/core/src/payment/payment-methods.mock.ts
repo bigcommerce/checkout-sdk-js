@@ -144,7 +144,6 @@ export function getPaypalCommerce(): PaymentMethod {
             intent: 'capture',
             isPayPalCreditAvailable: false,
             isVenmoEnabled: false,
-            shouldRenderFields: true,
             isHostedCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',

@@ -308,7 +308,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
                 clientToken: '123',
                 initializationData: {
-                    isFastlaneEnabled: true,
                     isFastlaneStylingEnabled: true,
                     isAcceleratedCheckoutEnabled: true,
                     fastlaneStyles: {
@@ -372,8 +371,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         });
 
         it('initializes paypal sdk and authenticates user with paypal fastlane', async () => {
-            paymentMethod.initializationData.isFastlaneEnabled = true;
-
             await strategy.initialize(initializationOptions);
 
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(methodId);
@@ -570,7 +567,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 ...paymentMethod,
                 clientToken: '123',
                 initializationData: {
-                    isFastlaneEnabled: true,
                     isFastlaneStylingEnabled: true,
                     isAcceleratedCheckoutEnabled: true,
                     fastlaneStyles: {
