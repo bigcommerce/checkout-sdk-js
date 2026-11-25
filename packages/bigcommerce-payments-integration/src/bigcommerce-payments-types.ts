@@ -280,6 +280,18 @@ export interface PayPalBuyNowInitializeOptions {
 
 /**
  *
+ * BigCommerce Payments Update Order Params
+ *
+ */
+export interface UpdateOrderParams {
+    providerId: string;
+    methodId?: string;
+    orderId?: number;
+    isServerSideShippingCallbacksEnabled?: boolean;
+}
+
+/**
+ *
  * BigCommerce Payments Hosted Fields
  *
  */
@@ -584,6 +596,7 @@ export interface BigCommercePaymentsMessagesStyleOptions {
  */
 export enum NonInstantAlternativePaymentMethods {
     OXXO = 'oxxo',
+    IDEAL = 'ideal',
 }
 
 export interface PayPalOrderData {
