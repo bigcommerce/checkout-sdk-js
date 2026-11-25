@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 
 import {
     BillingAddress,
-    Cart,
     HostedFieldType,
     InvalidArgumentError,
     NotInitializedError,
@@ -12,7 +11,6 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentInvalidFormError,
-    PaymentMethod,
     PaymentMethodBankDeclinedAuthenticationError,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -22,15 +20,12 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalFastlaneUtils,
-    createPayPalSdkScriptLoader,
     getPayPalFastlaneSdk,
     getPayPalIntegrationServiceMock,
     getPayPalPaymentMethod,
     getPayPalSDKMock,
     LiabilityShiftEnum,
     PaypalCardFieldsConfig,
-    PayPalFastlaneSdk,
     PayPalFastlaneUtils,
     PayPalHostWindow,
     PayPalIntegrationService,
@@ -45,14 +40,9 @@ import PayPalCommerceCreditCardsPaymentStrategy from './paypal-commerce-credit-c
 
 describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     let billingAddress: BillingAddress;
-    let cart: Cart;
     let strategy: PayPalCommerceCreditCardsPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
-    let paymentMethod: PaymentMethod;
     let paypalCommerceIntegrationService: PayPalIntegrationService;
-    let paypalSdkScriptLoader: PayPalSdkScriptLoader;
-    let paypalFastlaneSdk: PayPalFastlaneSdk;
-    let payPalFastlaneUtils: PayPalFastlaneUtils;
     let paypalSdk: PayPalSDK;
     let eventEmitter: EventEmitter;
     const mockRender = jest.fn();
@@ -163,37 +153,25 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     };
 
     beforeEach(() => {
-        cart = getCart();
         billingAddress = getBillingAddress();
         eventEmitter = new EventEmitter();
-        paymentMethod = { ...getPayPalPaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
-        paypalFastlaneSdk = getPayPalFastlaneSdk();
         paypalCommerceIntegrationService = getPayPalIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paypalSdkScriptLoader = createPayPalSdkScriptLoader();
-        payPalFastlaneUtils = createPayPalFastlaneUtils();
 
         strategy = new PayPalCommerceCreditCardsPaymentStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
-            paypalSdkScriptLoader,
-            payPalFastlaneUtils,
         );
 
         paypalCardNameFieldElement = document.createElement('div');
         paypalCardNameFieldElement.id = paypalCardNameFieldContainerId;
         document.body.appendChild(paypalCardNameFieldElement);
 
-        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-            paymentMethod,
-        );
-        jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(
             paymentIntegrationService.getState(),
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
-        jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue('en-US');
 
         jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
@@ -216,15 +194,11 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 return Promise.resolve(cardFieldsInstanceMock);
             },
         );
-
-        jest.spyOn(paypalSdkScriptLoader, 'getPayPalFastlaneSdk').mockImplementation(() =>
-            Promise.resolve(paypalFastlaneSdk),
-        );
-        jest.spyOn(payPalFastlaneUtils, 'initializePayPalFastlane').mockImplementation(jest.fn());
     });
 
     afterEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
 
         delete (window as PayPalHostWindow).paypal;
 
@@ -283,11 +257,12 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             ).toHaveBeenCalled();
         });
 
-        it('loads paypal fastlane sdk if paypal commerce fastlane analytic is enabled', async () => {
+        it('does not initialize Fastlane when accelerated checkout is enabled', async () => {
+            const paymentMethod = getPayPalPaymentMethod();
             const mockedPaymentMethod = {
                 ...paymentMethod,
                 initializationData: {
-                    ...paymentMethod,
+                    ...paymentMethod.initializationData,
                     connectClientToken: 'connectClientToken123',
                     isAcceleratedCheckoutEnabled: true,
                     isPayPalCommerceAnalyticsV2Enabled: true,
@@ -300,20 +275,25 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(mockedPaymentMethod);
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                getCart(),
+            );
+
+            const getFastlaneSdk = jest
+                .spyOn(PayPalSdkScriptLoader.prototype, 'getPayPalFastlaneSdk')
+                .mockResolvedValue(getPayPalFastlaneSdk());
+            const initializeFastlane = jest
+                .spyOn(PayPalFastlaneUtils.prototype, 'initializePayPalFastlane')
+                .mockImplementation(jest.fn());
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalSdkScriptLoader.getPayPalFastlaneSdk).toHaveBeenCalledWith(
-                mockedPaymentMethod,
-                cart.currency.code,
-                cart.id,
-                'en-US',
-            );
-
-            expect(payPalFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
-                paypalFastlaneSdk,
-                false,
-            );
+            expect(getFastlaneSdk).not.toHaveBeenCalled();
+            expect(initializeFastlane).not.toHaveBeenCalled();
+            expect(paypalSdk.CardFields).toHaveBeenCalled();
+            expect(
+                initializationOptions.paypalcommercecreditcards?.onLoadComplete,
+            ).toHaveBeenCalled();
         });
     });
 
