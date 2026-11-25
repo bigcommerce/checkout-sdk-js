@@ -36,13 +36,7 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { isPayPalCommerceAcceleratedCheckoutCustomer } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
-import {
-    PayPalFastlaneUtils,
-    PayPalInitializationData,
-    PayPalIntegrationService,
-    PayPalSdkScriptLoader,
-} from '@bigcommerce/checkout-sdk/paypal-utils';
+import { PayPalIntegrationService } from '@bigcommerce/checkout-sdk/paypal-utils';
 
 import {
     LiabilityShiftEnum,
@@ -77,8 +71,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalIntegrationService: PayPalIntegrationService,
-        private paypalSdkScriptLoader: PayPalSdkScriptLoader,
-        private paypalFastlaneUtils: PayPalFastlaneUtils,
     ) {}
 
     async initialize(
@@ -116,10 +108,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         }
 
         onLoadComplete?.();
-
-        if (this.shouldInitializePayPalFastlane(methodId)) {
-            await this.initializePayPalFastlaneOrThrow(methodId);
-        }
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -714,57 +702,5 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         event: PayPalCommerceCardFieldsState,
     ): void {
         formOptions?.onEnter?.(this.getFieldTypeByEmittedField(event));
-    }
-
-    /**
-     *
-     * PayPal Commerce Accelerated checkout related methods
-     *
-     */
-    // TODO: remove this part when PPCP AXO A/B testing will be finished
-    private shouldInitializePayPalFastlane(methodId: string) {
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-        const paymentProviderCustomer = state.getPaymentProviderCustomer();
-        const paypalCommercePaymentProviderCustomer = isPayPalCommerceAcceleratedCheckoutCustomer(
-            paymentProviderCustomer,
-        )
-            ? paymentProviderCustomer
-            : {};
-
-        return (
-            paymentMethod?.initializationData?.isAcceleratedCheckoutEnabled &&
-            paymentMethod?.initializationData?.isPayPalCommerceAnalyticsV2Enabled &&
-            !paypalCommercePaymentProviderCustomer?.authenticationState
-        );
-    }
-
-    // TODO: remove this part when PPCP AXO A/B testing will be finished
-    private async initializePayPalFastlaneOrThrow(methodId: string): Promise<void> {
-        try {
-            const state = this.paymentIntegrationService.getState();
-            const cart = state.getCartOrThrow();
-            const paymentMethod = state.getPaymentMethodOrThrow<PayPalInitializationData>(methodId);
-            const { initializationData } = paymentMethod;
-
-            if (!initializationData?.connectClientToken) {
-                return;
-            }
-
-            const payPalFastlaneSdk = await this.paypalSdkScriptLoader.getPayPalFastlaneSdk(
-                paymentMethod,
-                cart.currency.code,
-                cart.id,
-                state.getLocale(),
-            );
-
-            await this.paypalFastlaneUtils.initializePayPalFastlane(
-                payPalFastlaneSdk,
-                !!initializationData?.isDeveloperModeApplicable,
-            );
-        } catch {
-            // We should avoid throwing any error from this flow to do no brake default flow
-            // This flow is optional
-        }
     }
 }
