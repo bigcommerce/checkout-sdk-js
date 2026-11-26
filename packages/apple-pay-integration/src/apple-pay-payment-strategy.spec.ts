@@ -182,6 +182,60 @@ describe('ApplePayPaymentStrategy', () => {
             }
         });
 
+        describe('when merchant validation fails and onError is provided', () => {
+            const validateEvent = {
+                validationURL: 'test',
+            } as ApplePayJS.ApplePayValidateMerchantEvent;
+
+            let onError: jest.Mock;
+
+            beforeEach(async () => {
+                onError = jest.fn();
+
+                await strategy.initialize({
+                    methodId: paymentMethod.id,
+                    applepay: { onError },
+                });
+            });
+
+            it('calls onError with merchant not authorized error if response status is 417', async () => {
+                jest.spyOn(requestSender, 'post').mockRejectedValue(
+                    getResponse({}, {}, 417, 'Expectation Failed'),
+                );
+
+                const promise = strategy.execute(
+                    merge({}, getOrderRequestBody(), { payment: { methodId: paymentMethod.id } }),
+                );
+
+                await new Promise((resolve) => process.nextTick(resolve));
+                await applePaySession.onvalidatemerchant(validateEvent);
+
+                expect(applePaySession.abort).toHaveBeenCalled();
+                expect(onError).toHaveBeenCalledWith(
+                    new Error(
+                        'Apple Pay is unavailable: the merchant ID is not authorized to process transactions on behalf of the root merchant ID. Please check the Mass Enablement or WWDR registration.',
+                    ),
+                );
+                await expect(promise).rejects.toThrow(PaymentMethodCancelledError);
+            });
+
+            it('calls onError with generic error for other failures', async () => {
+                jest.spyOn(requestSender, 'post').mockRejectedValue(
+                    getResponse({}, {}, 500, 'Internal Server Error'),
+                );
+
+                const promise = strategy.execute(
+                    merge({}, getOrderRequestBody(), { payment: { methodId: paymentMethod.id } }),
+                );
+
+                await new Promise((resolve) => process.nextTick(resolve));
+                await applePaySession.onvalidatemerchant(validateEvent);
+
+                expect(onError).toHaveBeenCalledWith(new Error('Merchant validation failed'));
+                await expect(promise).rejects.toThrow(PaymentMethodCancelledError);
+            });
+        });
+
         it('throws error when Apple Pay payment sheet is cancelled', async () => {
             jest.spyOn(requestSender, 'post').mockRejectedValue(false);
 

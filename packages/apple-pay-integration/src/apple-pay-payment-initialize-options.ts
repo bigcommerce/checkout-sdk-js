@@ -9,6 +9,7 @@
  *     applepay: {
  *         shippingLabel: 'Shipping',
  *         subtotalLabel: 'Sub total',
+ *         onError: (error) => console.error(error),
  *     }
  * });
  * ```
@@ -28,6 +29,15 @@ export default interface ApplePayPaymentInitializeOptions {
      * Sub total label to be passed to apple sheet.
      */
     subtotalLabel?: string;
+
+    /**
+     * A callback that gets called if Apple Pay merchant validation fails.
+     * When it is provided, the Apple Pay session is aborted and the payment
+     * is rejected as cancelled, so the error is shown only once.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: Error): void;
 }
 
 export interface WithApplePayPaymentInitializeOptions {
