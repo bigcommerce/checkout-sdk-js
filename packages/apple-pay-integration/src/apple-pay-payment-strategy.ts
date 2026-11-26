@@ -4,7 +4,6 @@ import { BraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
     isHostedInstrumentLike,
-    isRequestError,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -24,14 +23,7 @@ import { ApplePayGatewayType } from './apple-pay';
 import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
 import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
-
-const MERCHANT_VALIDATION_FAILED_MESSAGE = 'Merchant validation failed';
-
-// Merchant validation responds with 417 when the merchant ID is not authorized
-// for the root merchant ID (Mass Enablement / WWDR registration issue).
-const MERCHANT_NOT_AUTHORIZED_STATUS = 417;
-const MERCHANT_NOT_AUTHORIZED_MESSAGE =
-    'Apple Pay is unavailable: the merchant ID is not authorized to process transactions on behalf of the root merchant ID. Please check the Mass Enablement or WWDR registration.';
+import getMerchantValidationError from './get-merchant-validation-error';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -51,7 +43,6 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _storeCreditLabel: string = DefaultLabels.StoreCredit;
-    private _onError?: (error: Error) => void;
 
     constructor(
         private _requestSender: RequestSender,
@@ -77,7 +68,6 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         this._shippingLabel = options.applepay?.shippingLabel || DefaultLabels.Shipping;
         this._subTotalLabel = options.applepay?.subtotalLabel || DefaultLabels.Subtotal;
         this._storeCreditLabel = options.applepay?.storeCreditLabel || DefaultLabels.StoreCredit;
-        this._onError = options.applepay?.onError;
 
         const state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
 
@@ -219,15 +209,9 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
                 applePaySession.completeMerchantValidation(merchantSession);
             } catch (error) {
-                const validationError = this._getMerchantValidationError(error);
-
-                if (!this._onError) {
-                    throw validationError;
-                }
-
                 applePaySession.abort();
-                this._onError(validationError);
-                promise.reject(new PaymentMethodCancelledError('Continue with applepay'));
+
+                return promise.reject(getMerchantValidationError(error));
             }
         };
 
@@ -242,18 +226,6 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 promise,
                 shouldSaveInstrument,
             );
-    }
-
-    private _getMerchantValidationError(error: unknown): Error {
-        if (
-            isRequestError(error) &&
-            'status' in error &&
-            error.status === MERCHANT_NOT_AUTHORIZED_STATUS
-        ) {
-            return new Error(MERCHANT_NOT_AUTHORIZED_MESSAGE);
-        }
-
-        return new Error(MERCHANT_VALIDATION_FAILED_MESSAGE);
     }
 
     private async _onValidateMerchant(

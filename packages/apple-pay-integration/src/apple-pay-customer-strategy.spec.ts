@@ -30,6 +30,7 @@ import {
 import ApplePayCustomerStrategy from './apple-pay-customer-strategy';
 import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
+import ApplePayMerchantNotAuthorizedError from './errors/apple-pay-merchant-not-authorized-error';
 import { getApplePay } from './mocks/apple-pay-method.mock';
 import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
 import {
@@ -298,7 +299,7 @@ describe('ApplePayCustomerStrategy', () => {
             }
         });
 
-        it('throws error if merchant validation fails', async () => {
+        it('aborts session and calls onError if merchant validation fails', async () => {
             jest.spyOn(requestSender, 'post').mockRejectedValue(false);
 
             const customerInitializeOptions = getApplePayCustomerInitializationOptions();
@@ -320,7 +321,42 @@ describe('ApplePayCustomerStrategy', () => {
 
                     await applePaySession.onvalidatemerchant(validateEvent);
 
-                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
+                    expect(applePaySession.abort).toHaveBeenCalled();
+                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalledWith(
+                        new Error('Merchant validation failed'),
+                    );
+                }
+            }
+        });
+
+        it('aborts session and calls onError with ApplePayMerchantNotAuthorizedError if response status is 417', async () => {
+            jest.spyOn(requestSender, 'post').mockRejectedValue(
+                getResponse({}, {}, 417, 'Expectation Failed'),
+            );
+
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+
+            await strategy.initialize(customerInitializeOptions);
+
+            if (customerInitializeOptions.applepay) {
+                const buttonContainer = document.getElementById(
+                    customerInitializeOptions.applepay.container,
+                );
+                const button = buttonContainer?.firstChild as HTMLElement;
+
+                if (button) {
+                    button.click();
+
+                    const validateEvent = {
+                        validationURL: 'test',
+                    } as ApplePayJS.ApplePayValidateMerchantEvent;
+
+                    await applePaySession.onvalidatemerchant(validateEvent);
+
+                    expect(applePaySession.abort).toHaveBeenCalled();
+                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalledWith(
+                        expect.any(ApplePayMerchantNotAuthorizedError),
+                    );
                 }
             }
         });
