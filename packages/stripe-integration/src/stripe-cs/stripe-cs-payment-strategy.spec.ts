@@ -548,28 +548,16 @@ describe('StripeOCSPaymentStrategy', () => {
                 );
             };
 
-            it('should update shipping address on Stripe side from checkout state', async () => {
-                const shippingAddress = getShippingAddress();
-
+            it('should not update shipping address on Stripe side because the server owns shipping details', async () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getShippingAddress',
-                ).mockReturnValue(shippingAddress);
+                ).mockReturnValue(getShippingAddress());
                 mockStripeCheckoutWithShipping();
 
                 await stripeCSPaymentStrategy.initialize(stripeOptions);
 
-                expect(updateShippingAddressMock).toHaveBeenCalledWith({
-                    name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
-                    address: {
-                        city: shippingAddress.city,
-                        country: shippingAddress.countryCode,
-                        postal_code: shippingAddress.postalCode,
-                        line1: shippingAddress.address1,
-                        line2: shippingAddress.address2,
-                        state: shippingAddress.stateOrProvinceCode,
-                    },
-                });
+                expect(updateShippingAddressMock).not.toHaveBeenCalled();
             });
 
             it('should not update shipping address if shipping address is not available', async () => {
