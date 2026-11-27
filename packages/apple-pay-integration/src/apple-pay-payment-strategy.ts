@@ -23,6 +23,7 @@ import { ApplePayGatewayType } from './apple-pay';
 import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
 import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
+import getMerchantValidationError from './get-merchant-validation-error';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -207,8 +208,10 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 );
 
                 applePaySession.completeMerchantValidation(merchantSession);
-            } catch {
-                throw new Error('Merchant validation failed');
+            } catch (error) {
+                applePaySession.abort();
+
+                return promise.reject(getMerchantValidationError(error));
             }
         };
 

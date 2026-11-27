@@ -28,6 +28,7 @@ import {
 import ApplePayPaymentStrategy from './apple-pay-payment-strategy';
 import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
+import ApplePayMerchantNotAuthorizedError from './errors/apple-pay-merchant-not-authorized-error';
 import { getApplePay } from './mocks/apple-pay-method.mock';
 import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
 
@@ -160,14 +161,14 @@ describe('ApplePayPaymentStrategy', () => {
             expect(requestSender.post).toHaveBeenCalled();
         });
 
-        it('throws error if merchant validation fails', async () => {
+        it('aborts session and rejects with error if merchant validation fails', async () => {
             jest.spyOn(requestSender, 'post').mockRejectedValue(false);
 
             const payload = merge({}, getOrderRequestBody(), {
                 payment: { methodId: paymentMethod.id },
             });
 
-            strategy.execute(payload);
+            const promise = strategy.execute(payload);
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -175,11 +176,33 @@ describe('ApplePayPaymentStrategy', () => {
                 validationURL: 'test',
             } as ApplePayJS.ApplePayValidateMerchantEvent;
 
-            try {
-                await applePaySession.onvalidatemerchant(validateEvent);
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-            }
+            await applePaySession.onvalidatemerchant(validateEvent);
+
+            expect(applePaySession.abort).toHaveBeenCalled();
+            await expect(promise).rejects.toThrow('Merchant validation failed');
+        });
+
+        it('aborts session and rejects with ApplePayMerchantNotAuthorizedError if response status is 417', async () => {
+            jest.spyOn(requestSender, 'post').mockRejectedValue(
+                getResponse({}, {}, 417, 'Expectation Failed'),
+            );
+
+            const payload = merge({}, getOrderRequestBody(), {
+                payment: { methodId: paymentMethod.id },
+            });
+
+            const promise = strategy.execute(payload);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            const validateEvent = {
+                validationURL: 'test',
+            } as ApplePayJS.ApplePayValidateMerchantEvent;
+
+            await applePaySession.onvalidatemerchant(validateEvent);
+
+            expect(applePaySession.abort).toHaveBeenCalled();
+            await expect(promise).rejects.toThrow(ApplePayMerchantNotAuthorizedError);
         });
 
         it('throws error when Apple Pay payment sheet is cancelled', async () => {
