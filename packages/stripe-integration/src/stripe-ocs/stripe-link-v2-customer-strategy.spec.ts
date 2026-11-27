@@ -1482,6 +1482,24 @@ describe('StripeLinkV2CustomerStrategy', () => {
             expect(stripeClient.elements).toHaveBeenCalled();
         });
 
+        it('falls back to the PaymentIntent path when only the OCS method is in state', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockImplementation(
+                (methodId: string) =>
+                    methodId === 'optimized_checkout'
+                        ? {
+                              ...checkoutSessionMethod,
+                              id: 'optimized_checkout',
+                              clientToken: 'pi_test_secret_123',
+                          }
+                        : undefined,
+            );
+
+            await strategy.initialize(initialiseOptions);
+
+            expect(scriptLoader.getStripeCheckout).not.toHaveBeenCalled();
+            expect(stripeClient.elements).toHaveBeenCalled();
+        });
+
         it('falls back to the PaymentIntent path when the experiment value is missing', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockImplementation(
                 (methodId: string) =>

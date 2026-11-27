@@ -124,7 +124,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             StripeJsVersion.CLOVER,
         );
 
-        if (this._isCheckoutSessionExperimentOn(initializationData, clientToken)) {
+        if (this._isCheckoutSessionExperimentOn(initializationData, methodId, clientToken)) {
             await this._mountCheckoutSessionExpressCheckoutElement(
                 container,
                 this._stripeClient,
@@ -612,9 +612,14 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
     private _isCheckoutSessionExperimentOn(
         initializationData: StripeInitializationData,
+        methodId: string,
         clientToken?: string,
     ): clientToken is string {
-        return !!initializationData.migrateLinkButtonToCheckoutSession && !!clientToken;
+        return (
+            !!initializationData.migrateLinkButtonToCheckoutSession &&
+            methodId === StripePaymentMethodType.CHECKOUT_SESSION &&
+            !!clientToken
+        );
     }
 
     private _loadCheckoutSessionPaymentMethod() {
