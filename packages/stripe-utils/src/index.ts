@@ -45,6 +45,7 @@ export {
     type StripeCheckoutSessionActionResult,
     type StripeCheckoutSessionActions,
     type StripeCheckoutSessionConfirmationError,
+    type StripeCheckoutSessionShippingOption,
     type StripeValidateElementsError,
     type StripeValidateElementsResult,
     StripeCheckoutSessionPaymentStatus,

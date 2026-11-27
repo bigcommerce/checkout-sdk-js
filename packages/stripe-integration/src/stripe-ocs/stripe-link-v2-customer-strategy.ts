@@ -22,6 +22,7 @@ import {
     StripeAdditionalActionRequired,
     StripeCheckoutExpressCheckoutElement,
     StripeCheckoutInstance,
+    StripeCheckoutSessionActions,
     StripeCheckoutShippingAddressChangeEvent,
     StripeCheckoutShippingChangeResult,
     StripeCheckoutShippingChangeResultType,
@@ -40,6 +41,7 @@ import {
     StripeLinkV2Event,
     StripeLinkV2Options,
     StripeLinkV2ShippingRate,
+    StripeLoadActionsResultType,
     StripePaymentMethodType,
     StripeResult,
     StripeScriptLoader,
@@ -263,7 +265,9 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         }
 
         this._linkV2Element.on(StripeElementEvent.CONFIRM, async (event) =>
-            this._onConfirm(event, methodId),
+            this._stripeCheckout
+                ? this._onCheckoutSessionConfirm(event, methodId)
+                : this._onConfirm(event, methodId),
         );
 
         this._linkV2Element.on(StripeElementEvent.CANCEL, this._onCancel);
@@ -414,6 +418,128 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         }
 
         return Promise.resolve();
+    }
+
+    private async _onCheckoutSessionConfirm(event: StripeEventType, methodId: string) {
+        if (!('billingDetails' in event) || !('shippingAddress' in event)) {
+            return;
+        }
+
+        await this.stripeIntegrationService.verifyCheckoutSpamProtection();
+        await this._updateShippingAndBillingAddress(event);
+        await this._syncCheckoutSession();
+
+        const stripeActions = await this._getStripeCheckoutActionsOrThrow();
+
+        // INFO: updateShippingOption can't be called inside the shippingratechange handler (it deadlocks),
+        // so the selected rate is applied to the session here, before the order is submitted
+        await this._selectCheckoutSessionShippingOption(stripeActions);
+        await this.paymentIntegrationService.submitOrder();
+
+        const { id: checkoutSessionId } = await stripeActions.getSession();
+
+        try {
+            await this.paymentIntegrationService.submitPayment(
+                this._getPaymentPayload(methodId, checkoutSessionId),
+            );
+        } catch (error) {
+            await this._processCheckoutSessionAdditionalAction(error, event, methodId);
+        }
+    }
+
+    private async _processCheckoutSessionAdditionalAction(
+        error: unknown,
+        event: StripeLinkV2Event,
+        methodId: string,
+    ): Promise<void> {
+        if (
+            !isRequestError(error) ||
+            !this.stripeIntegrationService.isAdditionalActionError(error.body.errors)
+        ) {
+            throw error;
+        }
+
+        const { redirect_url } = error.body.additional_action_required.data;
+        const stripeActions = await this._getStripeCheckoutActionsOrThrow();
+        const { session, error: stripeError } = await stripeActions.confirm({
+            expressCheckoutConfirmEvent: event,
+            redirect: StripeStringConstants.IF_REQUIRED,
+            returnUrl: redirect_url,
+        });
+
+        if (stripeError || !session) {
+            throw new PaymentMethodFailedError(stripeError?.message);
+        }
+
+        try {
+            this._toggleLoadingIndicator(true);
+            await this.paymentIntegrationService.submitPayment(
+                this._getPaymentPayload(methodId, session.id),
+            );
+            await this._completeCheckoutFlow();
+        } catch {
+            this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
+        } finally {
+            this._toggleLoadingIndicator(false);
+        }
+    }
+
+    private async _selectCheckoutSessionShippingOption(
+        stripeActions: StripeCheckoutSessionActions,
+    ): Promise<void> {
+        if (!this._shouldRequireShippingAddress()) {
+            return;
+        }
+
+        const { selectedShippingOption } =
+            this.paymentIntegrationService.getState().getConsignments()?.[0] || {};
+
+        if (!selectedShippingOption) {
+            return;
+        }
+
+        const { shippingOptions } = await stripeActions.getSession();
+        const shippingRate = shippingOptions?.find(
+            ({ displayName }) => displayName === selectedShippingOption.description.trim(),
+        );
+
+        // INFO: ordering with a rate that differs from the selected one would charge a wrong total
+        if (!shippingRate) {
+            throw new PaymentMethodFailedError(
+                'The selected shipping option is not available in the payment session',
+            );
+        }
+
+        const { error } = await stripeActions.updateShippingOption(shippingRate.id);
+
+        if (error) {
+            throw new PaymentMethodFailedError(error.message);
+        }
+    }
+
+    private async _getStripeCheckoutActionsOrThrow(): Promise<StripeCheckoutSessionActions> {
+        if (!this._stripeCheckout) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const { actions, error } = await this._stripeCheckout.loadActions();
+
+        if (!actions || error) {
+            throw new PaymentMethodFailedError(error?.message);
+        }
+
+        return actions;
+    }
+
+    private async _syncCheckoutSession(): Promise<void> {
+        const stripeActions = await this._getStripeCheckoutActionsOrThrow();
+        const { type, error } = await stripeActions.runServerUpdate(() =>
+            this._loadCheckoutSessionPaymentMethod(),
+        );
+
+        if (error || type === StripeLoadActionsResultType.ERROR) {
+            throw new PaymentMethodFailedError(error?.message);
+        }
     }
 
     private async _updateShippingAndBillingAddress(event: StripeLinkV2Event) {

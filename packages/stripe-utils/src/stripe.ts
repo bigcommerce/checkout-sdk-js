@@ -352,6 +352,7 @@ export interface StripeConfirmPaymentData {
 export interface StripeCheckoutSessionConfirmPaymentData {
     redirect?: StripeStringConstants.ALWAYS | StripeStringConstants.IF_REQUIRED;
     returnUrl?: string;
+    expressCheckoutConfirmEvent?: StripeLinkV2Event;
 }
 
 export interface FieldsOptions {
@@ -532,6 +533,12 @@ export interface StripeCheckoutSessionTotal {
     total: StripeCheckoutSessionAmount;
 }
 
+export interface StripeCheckoutSessionShippingOption {
+    id: string;
+    amount: number;
+    displayName: string;
+}
+
 export interface StripeCheckoutSession {
     id: string;
     savedPaymentMethods?: StripeSavedPaymentMethod[];
@@ -543,7 +550,7 @@ export interface StripeCheckoutSession {
     phoneNumber: string;
     shipping: unknown;
     shippingAddress: StripeAddressValues;
-    shippingOptions: unknown;
+    shippingOptions: StripeCheckoutSessionShippingOption[];
     status: StripeCheckoutSessionStatus;
     tax: unknown;
     taxAmounts: unknown;

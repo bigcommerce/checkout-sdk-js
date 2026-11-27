@@ -7,6 +7,7 @@ import {
     NotInitializedError,
     PaymentIntegrationService,
     PaymentMethodCancelledError,
+    PaymentMethodFailedError,
     RequestError,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -29,6 +30,7 @@ import {
     StripeElements,
     StripeIntegrationService,
     StripeJsVersion,
+    StripeLoadActionsResultType,
     StripeScriptLoader,
     StripeStringConstants,
 } from '@bigcommerce/checkout-sdk/stripe-utils';
@@ -1573,6 +1575,159 @@ describe('StripeLinkV2CustomerStrategy', () => {
 
                 expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
                 expect(result).toEqual({ type: StripeCheckoutShippingChangeResultType.REJECT });
+            });
+        });
+
+        describe('confirm', () => {
+            const sessionWithRates = {
+                id: 'cs_test_123',
+                shippingOptions: [
+                    { id: 'rate-1', amount: 500, displayName: 'Standard' },
+                    { id: 'rate-2', amount: 1500, displayName: 'Express' },
+                ],
+            };
+
+            const confirm = () => {
+                const [, handler] = (element.on as jest.Mock).mock.calls.find(
+                    ([name]) => name === StripeElementEvent.CONFIRM,
+                );
+
+                return handler(mockStripeAddress);
+            };
+
+            beforeEach(async () => {
+                jest.spyOn(paymentIntegrationService, 'submitOrder')
+                    .mockReset()
+                    .mockResolvedValue(undefined as any);
+                jest.spyOn(paymentIntegrationService, 'submitPayment')
+                    .mockReset()
+                    .mockResolvedValue(undefined as any);
+                jest.spyOn(stripeIntegrationService, 'isAdditionalActionError').mockReturnValue(
+                    false,
+                );
+                jest.spyOn(stripeActions, 'getSession').mockResolvedValue(sessionWithRates as any);
+
+                await strategy.initialize(initialiseOptions);
+            });
+
+            it('applies the selected shipping rate to the session before submitting the order', async () => {
+                await confirm();
+
+                expect(stripeActions.runServerUpdate).toHaveBeenCalled();
+                expect(stripeActions.updateShippingOption).toHaveBeenCalledWith('rate-2');
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: {
+                            formattedPayload: expect.objectContaining({
+                                credit_card_token: { token: 'cs_test_123' },
+                            }),
+                        },
+                    }),
+                );
+                expect(
+                    (stripeActions.updateShippingOption as jest.Mock).mock.invocationCallOrder[0],
+                ).toBeLessThan(
+                    (paymentIntegrationService.submitOrder as jest.Mock).mock
+                        .invocationCallOrder[0],
+                );
+            });
+
+            it('does not use the PaymentIntent confirm flow', async () => {
+                await confirm();
+
+                expect(stripeClient.confirmPayment).not.toHaveBeenCalled();
+            });
+
+            it('does not submit the order when the selected rate is not found in the session', async () => {
+                jest.spyOn(stripeActions, 'getSession').mockResolvedValue({
+                    ...sessionWithRates,
+                    shippingOptions: [{ id: 'rate-1', amount: 500, displayName: 'Standard' }],
+                } as any);
+
+                await expect(confirm()).rejects.toThrow(PaymentMethodFailedError);
+
+                expect(stripeActions.updateShippingOption).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+            });
+
+            it('does not submit the order when updating the shipping option fails', async () => {
+                jest.spyOn(stripeActions, 'updateShippingOption').mockResolvedValue({
+                    type: StripeLoadActionsResultType.ERROR,
+                    error: { message: 'rate failed' },
+                });
+
+                await expect(confirm()).rejects.toThrow('rate failed');
+
+                expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+            });
+
+            it('skips the shipping option update when no shipping option is selected', async () => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue(
+                    [{ availableShippingOptions: shippingOptions }] as any,
+                );
+
+                await confirm();
+
+                expect(stripeActions.updateShippingOption).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            });
+
+            it('confirms through the Checkout Session actions when additional action is required', async () => {
+                const additionalActionError = {
+                    body: {
+                        errors: [{ code: 'additional_action_required' }],
+                        additional_action_required: {
+                            data: { redirect_url: 'https://redirect.test' },
+                        },
+                    },
+                };
+
+                jest.spyOn(stripeIntegrationService, 'isAdditionalActionError').mockReturnValue(
+                    true,
+                );
+                jest.spyOn(paymentIntegrationService, 'submitPayment')
+                    .mockRejectedValueOnce(additionalActionError)
+                    .mockResolvedValueOnce(undefined as any);
+                jest.spyOn(stripeActions, 'confirm').mockResolvedValue({
+                    type: StripeLoadActionsResultType.SUCCESS,
+                    session: { id: 'cs_confirmed' },
+                } as any);
+
+                await confirm();
+
+                expect(stripeActions.confirm).toHaveBeenCalledWith({
+                    expressCheckoutConfirmEvent: mockStripeAddress,
+                    redirect: StripeStringConstants.IF_REQUIRED,
+                    returnUrl: 'https://redirect.test',
+                });
+                expect(stripeClient.confirmPayment).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitPayment).toHaveBeenLastCalledWith(
+                    expect.objectContaining({
+                        paymentData: {
+                            formattedPayload: expect.objectContaining({
+                                credit_card_token: { token: 'cs_confirmed' },
+                            }),
+                        },
+                    }),
+                );
+            });
+
+            it('throws when Checkout Session confirmation fails', async () => {
+                jest.spyOn(stripeIntegrationService, 'isAdditionalActionError').mockReturnValue(
+                    true,
+                );
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce({
+                    body: {
+                        errors: [{ code: 'additional_action_required' }],
+                        additional_action_required: { data: { redirect_url: 'x' } },
+                    },
+                });
+                jest.spyOn(stripeActions, 'confirm').mockResolvedValue({
+                    type: StripeLoadActionsResultType.ERROR,
+                    error: { message: '3ds failed' },
+                });
+
+                await expect(confirm()).rejects.toThrow('3ds failed');
             });
         });
     });
