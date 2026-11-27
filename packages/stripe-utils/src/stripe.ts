@@ -556,6 +556,56 @@ export interface StripeCheckoutInstance {
     getPaymentElement(): StripeElement | null;
     getCurrencySelectorElement(): StripeElement | null;
     createCurrencySelectorElement(): StripeElement;
+    createExpressCheckoutElement(
+        options?: StripeCheckoutExpressCheckoutElementOptions,
+    ): StripeCheckoutExpressCheckoutElement;
+    getExpressCheckoutElement(): StripeCheckoutExpressCheckoutElement | null;
+}
+
+export type StripeCheckoutExpressCheckoutElementOptions = Pick<
+    StripeElementsCreateOptions,
+    'buttonHeight' | 'layout' | 'paymentMethods'
+>;
+
+export interface StripeCheckoutExpressCheckoutElement extends StripeElement {
+    on(
+        event: StripeElementEvent.SHIPPING_ADDRESS_CHANGE,
+        handler: (
+            event: StripeCheckoutShippingAddressChangeEvent,
+        ) => Promise<StripeCheckoutShippingChangeResult>,
+    ): void;
+    on(
+        event: StripeElementEvent.SHIPPING_RATE_CHANGE,
+        handler: (
+            event: StripeCheckoutShippingRateChangeEvent,
+        ) => Promise<StripeCheckoutShippingChangeResult>,
+    ): void;
+    on(event: StripeElementEvent, handler: (event: StripeEventType) => void): void;
+}
+
+export interface StripeCheckoutShippingAddressChangeEvent {
+    name?: string;
+    address: {
+        city: string;
+        state: string;
+        postal_code: string;
+        country: string;
+    };
+    runServerUpdate(update: () => Promise<unknown>): Promise<void>;
+}
+
+export interface StripeCheckoutShippingRateChangeEvent {
+    rate: StripeLinkV2ShippingRate;
+    runServerUpdate(update: () => Promise<unknown>): Promise<void>;
+}
+
+export enum StripeCheckoutShippingChangeResultType {
+    ACCEPT = 'accept',
+    REJECT = 'reject',
+}
+
+export interface StripeCheckoutShippingChangeResult {
+    type: StripeCheckoutShippingChangeResultType;
 }
 
 export enum StripeLoadActionsResultType {
@@ -594,6 +644,7 @@ export interface StripeCheckoutSessionActions {
     updateBillingAddress(
         billingAddress: StripeAddressValues,
     ): Promise<StripeCheckoutSessionActionResult>;
+    updateShippingOption(shippingOptionId: string): Promise<StripeCheckoutSessionActionResult>;
     getSession(): Promise<StripeCheckoutSession>;
     confirm(
         options: StripeCheckoutSessionConfirmPaymentData,
@@ -825,6 +876,7 @@ export interface StripeInitializationData {
     allowRedisplayForStoredInstruments?: boolean;
     captureMethod?: 'automatic' | 'manual';
     checkoutSessionEnabled?: boolean;
+    migrateLinkButtonToCheckoutSession?: boolean;
     sendSecondPaymentRequestOnStripeError?: boolean;
     adaptivePricingEnabled?: boolean;
     hasSectionOnTopOfPaymentsList?: boolean;

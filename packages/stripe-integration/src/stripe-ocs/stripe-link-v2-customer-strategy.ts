@@ -20,6 +20,12 @@ import {
 import {
     isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
+    StripeCheckoutExpressCheckoutElement,
+    StripeCheckoutInstance,
+    StripeCheckoutShippingAddressChangeEvent,
+    StripeCheckoutShippingChangeResult,
+    StripeCheckoutShippingChangeResultType,
+    StripeCheckoutShippingRateChangeEvent,
     StripeClient,
     StripeElement,
     StripeElementEvent,
@@ -50,7 +56,9 @@ import { WithStripeOCSCustomerInitializeOptions } from './stripe-ocs-customer-in
 export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _stripeClient?: StripeClient;
     private _stripeElements?: StripeElements;
+    private _stripeCheckout?: StripeCheckoutInstance;
     private _linkV2Element?: StripeElement;
+    private _gatewayId?: string;
     private _amountTransformer?: AmountTransformer;
     private _onComplete?: (orderId?: number) => Promise<never>;
     private _onReady?: () => void;
@@ -105,9 +113,10 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { initializationData, id: methodId } = paymentMethod;
+        const { initializationData, id: methodId, clientToken } = paymentMethod;
         const { captureMethod } = initializationData;
 
+        this._gatewayId = gatewayId;
         this._captureMethod = captureMethod;
         this._stripeClient = await this.scriptLoader.getStripeClient(
             initializationData,
@@ -115,7 +124,17 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             StripeJsVersion.CLOVER,
         );
 
-        await this._mountExpressCheckoutElement(container, this._stripeClient, buttonHeight);
+        if (this._isCheckoutSessionExperimentOn(initializationData, methodId, clientToken)) {
+            await this._mountCheckoutSessionExpressCheckoutElement(
+                container,
+                this._stripeClient,
+                clientToken,
+                initializationData,
+                buttonHeight,
+            );
+        } else {
+            await this._mountExpressCheckoutElement(container, this._stripeClient, buttonHeight);
+        }
 
         this._initializeEvents(methodId);
     }
@@ -153,14 +172,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             billingAddressRequired: true,
             emailRequired: true,
             phoneNumberRequired: true,
-            paymentMethods: {
-                link: StripeStringConstants.AUTO,
-                applePay: StripeStringConstants.NEVER,
-                googlePay: StripeStringConstants.NEVER,
-                amazonPay: StripeStringConstants.NEVER,
-                paypal: StripeStringConstants.NEVER,
-                klarna: StripeStringConstants.NEVER,
-            },
+            paymentMethods: this._getExpressCheckoutPaymentMethods(),
             // Minimal buttonHeight value is 40
             buttonHeight,
         };
@@ -185,6 +197,49 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         return this._linkV2Element;
     }
 
+    private async _mountCheckoutSessionExpressCheckoutElement(
+        container: string,
+        stripeClient: StripeClient,
+        clientToken: string,
+        initializationData: Record<string, any>,
+        buttonHeight = 40,
+    ) {
+        this._stripeCheckout = await this.scriptLoader.getStripeCheckout(stripeClient, {
+            clientSecret: clientToken,
+            adaptivePricing: {
+                allowed: !!initializationData?.adaptivePricingEnabled,
+            },
+        });
+
+        this._stripeCheckout.getExpressCheckoutElement()?.destroy();
+
+        const linkV2Element = this._stripeCheckout.createExpressCheckoutElement({
+            paymentMethods: this._getExpressCheckoutPaymentMethods(),
+            // Minimal buttonHeight value is 40
+            buttonHeight,
+        });
+
+        if (this._shouldRequireShippingAddress()) {
+            this._initializeCheckoutSessionShippingEvents(linkV2Element);
+        }
+
+        this._linkV2Element = linkV2Element;
+        this._linkV2Element.mount(`#${container}`);
+
+        return this._linkV2Element;
+    }
+
+    private _getExpressCheckoutPaymentMethods(): StripeElementsCreateOptions['paymentMethods'] {
+        return {
+            link: StripeStringConstants.AUTO,
+            applePay: StripeStringConstants.NEVER,
+            googlePay: StripeStringConstants.NEVER,
+            amazonPay: StripeStringConstants.NEVER,
+            paypal: StripeStringConstants.NEVER,
+            klarna: StripeStringConstants.NEVER,
+        };
+    }
+
     /** Events * */
 
     private _initializeEvents(methodId: string): void {
@@ -198,7 +253,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         const shouldRequireShippingAddress = this._shouldRequireShippingAddress();
 
-        if (shouldRequireShippingAddress) {
+        if (shouldRequireShippingAddress && !this._stripeCheckout) {
             this._linkV2Element.on(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, async (event) =>
                 this._onShippingAddressChange(event),
             );
@@ -219,11 +274,28 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             return;
         }
 
-        const shippingAddress = event.address;
+        await this.paymentIntegrationService.updateShippingAddress(
+            this._mapPartialShippingAddress(event.address),
+        );
+
+        const shippingRates = await this._getAvailableShippingOptions();
+
+        await this._updateDisplayedPrice();
+
+        if (!shippingRates?.length) {
+            event.reject();
+        } else {
+            event.resolve({
+                shippingRates,
+            });
+        }
+    }
+
+    private _mapPartialShippingAddress(shippingAddress?: StripeLinkV2Event['address']) {
         // Depending on the country, some fields can be missing or partially redacted.
         // For example, the shipping address in the US can only contain a city, state, and ZIP code.
         // The full shipping address appears in the confirm event object after the purchase is confirmed in the browser’s payment interface.
-        const result = {
+        return {
             firstName: '',
             lastName: '',
             phone: '',
@@ -237,20 +309,71 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             stateOrProvinceCode: shippingAddress?.state || '',
             customFields: [],
         };
+    }
 
-        await this.paymentIntegrationService.updateShippingAddress(result);
+    private _initializeCheckoutSessionShippingEvents(
+        linkV2Element: StripeCheckoutExpressCheckoutElement,
+    ): void {
+        linkV2Element.on(StripeElementEvent.SHIPPING_ADDRESS_CHANGE, async (event) =>
+            this._onCheckoutSessionShippingAddressChange(event),
+        );
+        linkV2Element.on(StripeElementEvent.SHIPPING_RATE_CHANGE, async (event) =>
+            this._onCheckoutSessionShippingRateChange(event),
+        );
+    }
 
-        const shippingRates = await this._getAvailableShippingOptions();
+    private async _onCheckoutSessionShippingAddressChange({
+        address,
+        runServerUpdate,
+    }: StripeCheckoutShippingAddressChangeEvent): Promise<StripeCheckoutShippingChangeResult> {
+        try {
+            await this.paymentIntegrationService.updateShippingAddress(
+                this._mapPartialShippingAddress(address),
+            );
 
-        await this._updateDisplayedPrice();
+            const shippingRates = await this._getAvailableShippingOptions();
 
-        if (!shippingRates?.length) {
-            event.reject();
-        } else {
-            event.resolve({
-                shippingRates,
-            });
+            if (!shippingRates?.length) {
+                return { type: StripeCheckoutShippingChangeResultType.REJECT };
+            }
+
+            await runServerUpdate(() => this._loadCheckoutSessionPaymentMethod());
+
+            return { type: StripeCheckoutShippingChangeResultType.ACCEPT };
+        } catch {
+            return { type: StripeCheckoutShippingChangeResultType.REJECT };
         }
+    }
+
+    private async _onCheckoutSessionShippingRateChange({
+        rate,
+        runServerUpdate,
+    }: StripeCheckoutShippingRateChangeEvent): Promise<StripeCheckoutShippingChangeResult> {
+        try {
+            const shippingOptionId = this._getShippingOptionIdByRate(rate);
+
+            if (!shippingOptionId) {
+                return { type: StripeCheckoutShippingChangeResultType.REJECT };
+            }
+
+            await this._handleShippingOptionChange(shippingOptionId);
+            await runServerUpdate(() => this._loadCheckoutSessionPaymentMethod());
+
+            return { type: StripeCheckoutShippingChangeResultType.ACCEPT };
+        } catch {
+            return { type: StripeCheckoutShippingChangeResultType.REJECT };
+        }
+    }
+
+    private _getShippingOptionIdByRate({
+        displayName,
+    }: StripeLinkV2ShippingRate): string | undefined {
+        const { availableShippingOptions = [] } =
+            this.paymentIntegrationService.getState().getConsignments()?.[0] || {};
+
+        return availableShippingOptions.find(
+            ({ description }) => description.trim() === displayName,
+        )?.id;
     }
 
     private _onCancel() {
@@ -487,6 +610,32 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         }
     }
 
+    private _isCheckoutSessionExperimentOn(
+        initializationData: StripeInitializationData,
+        methodId: string,
+        clientToken?: string,
+    ): clientToken is string {
+        return (
+            !!initializationData.migrateLinkButtonToCheckoutSession &&
+            methodId === StripePaymentMethodType.CHECKOUT_SESSION &&
+            !!clientToken
+        );
+    }
+
+    private _loadCheckoutSessionPaymentMethod() {
+        const gatewayId = this._gatewayId;
+        const methodId = this._cachedMethodId;
+
+        if (!gatewayId || !methodId) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        // INFO: to trigger checkout session data update on the BE side we need to make stripe config request
+        return this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+            params: { method: methodId },
+        });
+    }
+
     private _getCurrency() {
         if (!this._currencyCode) {
             const { code: currencyCode } = this.paymentIntegrationService
@@ -635,7 +784,13 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         if (stripePaymentMethod) {
             this._cachedMethodId = stripePaymentMethod.id;
 
-            return stripePaymentMethod;
+            if (
+                !stripePaymentMethod.initializationData?.migrateLinkButtonToCheckoutSession ||
+                stripePaymentMethod.id !== StripePaymentMethodType.CHECKOUT_SESSION ||
+                stripePaymentMethod.clientToken
+            ) {
+                return stripePaymentMethod;
+            }
         }
 
         if (!this._cachedMethodId) {
